@@ -29,6 +29,10 @@ Thumbs.db
 .vscode/
 .claude/
 
+# Local project folders that should not be versioned
+synthea/
+synthetic_data/
+
 # Project outputs
 output/
 *.log

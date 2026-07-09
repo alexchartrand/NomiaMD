@@ -71,6 +71,18 @@ Today there's one task, `billing_codes` (`backend/app/tasks/billing_codes.py`), 
 Adding `prescriptions` or `consultation_notes` later: write a new class implementing
 `ExtractionTask`, register it in `registry.py`, done.
 
+## Quick start
+
+From the repository root, run:
+
+```bash
+make dev
+```
+
+This starts:
+- the backend on http://localhost:8000
+- the frontend on http://localhost:5173
+
 ## Running the backend
 
 ```bash
