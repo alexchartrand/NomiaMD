@@ -6,6 +6,7 @@ import {
   type ExtractionResult,
   type SamplePatientSummary,
 } from "./api";
+import { Logo } from "./Logo";
 
 export default function App() {
   const [transcript, setTranscript] = useState("");
@@ -55,17 +56,19 @@ export default function App() {
   }
 
   return (
-    <main style={{ maxWidth: 800, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>NomiaMD — billing code extraction (review draft)</h1>
-      <p style={{ color: "#666" }}>
+    <main className="app-shell">
+      <header className="app-header">
+        <Logo size={30} />
+        <span className="tagline">Billing code extraction — review draft</span>
+      </header>
+
+      <p className="lede">
         Paste a transcript below, or load a simulated patient. Codes are suggestions only —
         verify each against the transcript before submitting to RAMQ.
       </p>
 
-      <div style={{ marginBottom: "1rem" }}>
-        <label htmlFor="patient-select" style={{ marginRight: "0.5rem" }}>
-          Simulated patient:
-        </label>
+      <div className="field-row">
+        <label htmlFor="patient-select">Simulated patient:</label>
         <select
           id="patient-select"
           value={selectedPatientId}
@@ -81,9 +84,9 @@ export default function App() {
             </option>
           ))}
         </select>
-        {patientLoading && <span style={{ marginLeft: "0.5rem" }}>Loading...</span>}
+        {patientLoading && <span className="status-inline">Loading...</span>}
         {patientsError && (
-          <p style={{ color: "crimson" }}>Couldn&rsquo;t load patient list: {patientsError}</p>
+          <p className="error-text">Couldn&rsquo;t load patient list: {patientsError}</p>
         )}
       </div>
 
@@ -92,7 +95,6 @@ export default function App() {
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
           rows={12}
-          style={{ width: "100%", fontFamily: "monospace" }}
           placeholder="Paste the encounter transcript here, or select a simulated patient above..."
         />
         <button type="submit" disabled={loading || !transcript.trim()}>
@@ -100,37 +102,33 @@ export default function App() {
         </button>
       </form>
 
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
 
       {result && (
-        <section>
+        <section className="results">
           <h2>Suggested codes ({result.model})</h2>
-          {result.result.notes && (
-            <p style={{ background: "#fff3cd", padding: "0.5rem" }}>
-              ⚠ {result.result.notes}
-            </p>
-          )}
+          {result.result.notes && <p className="warning-banner">⚠ {result.result.notes}</p>}
           {result.result.codes.length === 0 ? (
             <p>No candidate codes were clearly supported by this transcript.</p>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table>
               <thead>
                 <tr>
-                  <th style={cellStyle}>Code</th>
-                  <th style={cellStyle}>Description</th>
-                  <th style={cellStyle}>Confidence</th>
-                  <th style={cellStyle}>Price (CAD)</th>
-                  <th style={cellStyle}>Supporting quote</th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th>Confidence</th>
+                  <th>Price (CAD)</th>
+                  <th>Supporting quote</th>
                 </tr>
               </thead>
               <tbody>
                 {result.result.codes.map((c) => (
                   <tr key={c.code}>
-                    <td style={cellStyle}>{c.code}</td>
-                    <td style={cellStyle}>{c.description}</td>
-                    <td style={cellStyle}>{(c.confidence * 100).toFixed(0)}%</td>
-                    <td style={cellStyle}>{formatPrice(c.price_cad)}</td>
-                    <td style={cellStyle}>
+                    <td className="code">{c.code}</td>
+                    <td>{c.description}</td>
+                    <td>{(c.confidence * 100).toFixed(0)}%</td>
+                    <td>{formatPrice(c.price_cad)}</td>
+                    <td>
                       <em>&ldquo;{c.supporting_quote}&rdquo;</em>
                     </td>
                   </tr>
@@ -138,18 +136,18 @@ export default function App() {
               </tbody>
               <tfoot>
                 <tr>
-                  <td style={cellStyle} colSpan={3}>
+                  <td colSpan={3}>
                     <strong>Total</strong>
                   </td>
-                  <td style={cellStyle}>
+                  <td>
                     <strong>{formatPrice(result.result.total_price_cad)}</strong>
                   </td>
-                  <td style={cellStyle} />
+                  <td />
                 </tr>
               </tfoot>
             </table>
           )}
-          <p style={{ color: "#666", fontSize: "0.9em" }}>
+          <p className="footnote">
             Prices are placeholder figures from a development reference table, not real
             RAMQ fees — see the project README.
           </p>
@@ -158,12 +156,6 @@ export default function App() {
     </main>
   );
 }
-
-const cellStyle: React.CSSProperties = {
-  border: "1px solid #ddd",
-  padding: "0.5rem",
-  textAlign: "left",
-};
 
 function formatPrice(priceCad: number | null): string {
   return priceCad === null
