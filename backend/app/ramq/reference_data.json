@@ -1,0 +1,41 @@
+{
+  "_warning": "PLACEHOLDER DATA — these are NOT real RAMQ billing codes and price_cad values are NOT real RAMQ fees. They exist only to exercise the extraction pipeline's schema, retrieval logic, and pricing wiring. Before any real use, replace this file with the official RAMQ nomenclature and fee schedule (from the current Manuel des médecins omnipraticiens / Manuel des médecins spécialistes) and remove this warning.",
+  "_pricing_note": "price_cad is a flat per-code fee for now. Real RAMQ fees vary by modifiers (specialist vs. GP, time of day/weekend, region, act complexity) that aren't modeled yet — this is a deliberate placeholder, not an oversight. Revisit before using this for real billing.",
+  "codes": [
+    {
+      "code": "PLACEHOLDER-CONSULT-GEN",
+      "description": "Example: general follow-up consultation, established patient",
+      "category": "consultation",
+      "keywords": ["follow-up", "follow up", "check-up", "checkup", "routine visit", "suivi"],
+      "price_cad": 42.5
+    },
+    {
+      "code": "PLACEHOLDER-CONSULT-NEW",
+      "description": "Example: initial consultation, new patient",
+      "category": "consultation",
+      "keywords": ["new patient", "first visit", "initial consultation"],
+      "price_cad": 68.0
+    },
+    {
+      "code": "PLACEHOLDER-BP-MGMT",
+      "description": "Example: chronic disease management, hypertension",
+      "category": "chronic_disease_management",
+      "keywords": ["blood pressure", "hypertension", "bp check", "antihypertensive"],
+      "price_cad": 35.75
+    },
+    {
+      "code": "PLACEHOLDER-BLOODWORK-ORDER",
+      "description": "Example: ordering and reviewing routine bloodwork",
+      "category": "diagnostic",
+      "keywords": ["blood work", "bloodwork", "lab test", "blood test", "labs"],
+      "price_cad": 18.25
+    },
+    {
+      "code": "PLACEHOLDER-MINOR-PROCEDURE",
+      "description": "Example: minor in-office procedure",
+      "category": "procedure",
+      "keywords": ["biopsy", "excision", "in-office procedure", "minor procedure"],
+      "price_cad": 95.0
+    }
+  ]
+}
