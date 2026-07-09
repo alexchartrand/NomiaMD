@@ -32,3 +32,4 @@ Thumbs.db
 # Project outputs
 output/
 *.log
+*.jar
