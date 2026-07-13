@@ -57,7 +57,7 @@ now.
 
 Every output type implements `ExtractionTask` (`backend/app/tasks/base.py`): a system
 prompt, a JSON schema for structured extraction, and a parser into a typed Pydantic result.
-`backend/app/extraction/engine.py` is the shared Claude API call — it never changes when a
+`backend/app/extraction/engine.py` is the shared LLM call — it never changes when a
 new task is added. `backend/app/tasks/registry.py` is where new tasks get wired in.
 
 Today there's one task, `billing_codes` (`backend/app/tasks/billing_codes.py`), which:
@@ -65,8 +65,8 @@ Today there's one task, `billing_codes` (`backend/app/tasks/billing_codes.py`), 
    (`backend/app/ramq/reference.py`) — this keeps the model choosing from a known list
    instead of relying on its own recall of RAMQ codes, and keeps the candidate set small
    enough to fit in the prompt as the table grows.
-2. Asks Claude (`claude-opus-4-8`, structured outputs) to pick from those candidates only,
-   with a supporting quote per code for physician review.
+2. Asks the model (structured outputs via `response_format`/`json_schema`) to pick from
+   those candidates only, with a supporting quote per code for physician review.
 
 Adding `prescriptions` or `consultation_notes` later: write a new class implementing
 `ExtractionTask`, register it in `registry.py`, done.
@@ -89,23 +89,27 @@ This starts:
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-cp .env.example .env   # fill in ANTHROPIC_API_KEY
+cp .env.example .env   # fill in NOMIAMD_BASE_URL (and NOMIAMD_MODEL) to point at LocalAI
 uvicorn app.main:app --reload
 ```
+
+The extraction engine (`backend/app/extraction/engine.py`) talks to any OpenAI-compatible
+chat completions endpoint — set `NOMIAMD_BASE_URL` to your LocalAI instance's `/v1` URL and
+`NOMIAMD_MODEL` to a model name configured there.
 
 - `GET /health` — lists registered tasks
 - `POST /extract` — `{"transcript": "...", "task": "billing_codes"}` → suggested codes
 
-Tests run against a mocked Claude response (no API key needed):
+Tests run against a mocked model response (no local server needed):
 
 ```bash
 pytest
 ```
 
-To try it against the real API once you have a key configured, `scripts/try_extraction.py`
-runs the pipeline against a sample transcript pulled from `synthetic_data/` — **this
-hasn't been run yet in this environment** (no `ANTHROPIC_API_KEY` was available while
-building this), so treat it as untested until you run it once yourself:
+To try it against a real local model once LocalAI is running and configured,
+`scripts/try_extraction.py` runs the pipeline against a sample transcript pulled from
+`synthetic_data/` — **this hasn't been run yet in this environment**, so treat it as
+untested until you run it once yourself:
 
 ```bash
 python scripts/try_extraction.py

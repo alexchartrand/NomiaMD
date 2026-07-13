@@ -1,6 +1,7 @@
 """Exercises the full pipeline (prompt building -> schema -> parsing -> storage -> API)
-against a mocked Claude response, since no ANTHROPIC_API_KEY is available in this
-environment. Once a key is configured, see scripts/try_extraction.py for a live smoke test."""
+against a mocked model response, since no local model server is available in this
+environment. Once NOMIAMD_BASE_URL is configured, see scripts/try_extraction.py for a
+live smoke test."""
 
 import json
 from types import SimpleNamespace
@@ -41,16 +42,20 @@ MOCK_RESULT = {
 
 def _mock_response():
     return SimpleNamespace(
-        stop_reason="end_turn",
-        model="claude-opus-4-8",
-        content=[SimpleNamespace(type="text", text=json.dumps(MOCK_RESULT))],
+        model="local-model",
+        choices=[
+            SimpleNamespace(
+                finish_reason="stop",
+                message=SimpleNamespace(content=json.dumps(MOCK_RESULT)),
+            )
+        ],
     )
 
 
 def test_run_extraction_parses_mocked_response():
     task = get_task("billing_codes")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.messages.create.return_value = _mock_response()
+        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
         result = run_extraction(task, SAMPLE_TRANSCRIPT)
 
     assert result.task == "billing_codes"
@@ -58,10 +63,10 @@ def test_run_extraction_parses_mocked_response():
         "PLACEHOLDER-BP-MGMT",
         "PLACEHOLDER-BLOODWORK-ORDER",
     ]
-    # The prompt actually sent to Claude should have narrowed candidates via keyword match,
-    # not dumped the whole reference table — confirm the call args reflect that.
-    call_kwargs = mock_get_client.return_value.messages.create.call_args.kwargs
-    user_message = call_kwargs["messages"][0]["content"]
+    # The prompt actually sent to the model should have narrowed candidates via keyword
+    # match, not dumped the whole reference table — confirm the call args reflect that.
+    call_kwargs = mock_get_client.return_value.chat.completions.create.call_args.kwargs
+    user_message = call_kwargs["messages"][1]["content"]
     assert "PLACEHOLDER-BP-MGMT" in user_message
     assert "PLACEHOLDER-CONSULT-NEW" not in user_message  # not relevant to this transcript
 
@@ -71,7 +76,7 @@ def test_run_extraction_enriches_prices_from_reference_table():
     output — the mock response above doesn't include price_cad at all."""
     task = get_task("billing_codes")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.messages.create.return_value = _mock_response()
+        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
         result = run_extraction(task, SAMPLE_TRANSCRIPT)
 
     prices = {c.code: c.price_cad for c in result.result.codes}
@@ -98,10 +103,14 @@ def test_run_extraction_handles_code_not_in_reference_table():
         "notes": None,
     }
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.messages.create.return_value = SimpleNamespace(
-            stop_reason="end_turn",
-            model="claude-opus-4-8",
-            content=[SimpleNamespace(type="text", text=json.dumps(mock_result))],
+        mock_get_client.return_value.chat.completions.create.return_value = SimpleNamespace(
+            model="local-model",
+            choices=[
+                SimpleNamespace(
+                    finish_reason="stop",
+                    message=SimpleNamespace(content=json.dumps(mock_result)),
+                )
+            ],
         )
         result = run_extraction(task, SAMPLE_TRANSCRIPT)
 
@@ -114,7 +123,7 @@ def test_extract_endpoint_end_to_end():
     # be swapped per-test via monkeypatch here — this exercises the real dev DB's schema.
     # Using TestClient as a context manager triggers the FastAPI lifespan (init_db()).
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.messages.create.return_value = _mock_response()
+        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
         with TestClient(app) as client:
             response = client.post(
                 "/extract",

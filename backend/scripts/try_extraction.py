@@ -1,6 +1,6 @@
-"""Live smoke test against the real Claude API. Requires ANTHROPIC_API_KEY (or `ant auth
-login`) to be configured — this was not available in the environment this scaffold was
-built in, so it hasn't been run yet. From backend/, with the venv active:
+"""Live smoke test against your local model server. Requires NOMIAMD_BASE_URL (and
+NOMIAMD_MODEL) to be configured to point at a running LocalAI instance. From backend/,
+with the venv active:
 
     python scripts/try_extraction.py
 """
@@ -11,8 +11,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.extraction.engine import run_extraction
-from app.tasks.registry import get_task
+from dotenv import load_dotenv
+
+# Must run before app.extraction.engine is imported below — it reads NOMIAMD_BASE_URL /
+# NOMIAMD_MODEL at import time. Explicit path for the same reason as app/main.py: under
+# a debugger, load_dotenv() searches os.getcwd() instead of walking up from this file.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
+from app.extraction.engine import run_extraction  # noqa: E402
+from app.tasks.registry import get_task  # noqa: E402
 
 SYNTHETIC_TRANSCRIPT_PATH = (
     Path(__file__).parent.parent.parent / "train.jsonl"
