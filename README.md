@@ -20,7 +20,7 @@ this repo has been developed and tested against synthetic data only.
 
 Also: the RAMQ code reference table (`backend/app/ramq/reference_data.json`) is ingested
 from the real *Manuel des médecins omnipraticiens — Rémunération à l'acte* (~4,000 codes —
-see `_meta` in that file for provenance and `backend/app/ramq/ingest/` for how it was
+see `_meta` in that file for provenance and the `ramq-ingestion` repo for how it was
 parsed). A meaningful fraction of entries are flagged `needs_review: true` where the
 automated parser was uncertain (see "RAMQ data ingestion" below) — treat those as lower
 confidence until spot-checked.
@@ -106,31 +106,20 @@ Adding `prescriptions` or `consultation_notes` later: write a new class implemen
 
 ## RAMQ data ingestion
 
-`backend/app/ramq/reference_data.json` is generated, not hand-written — regenerate it via
-`backend/scripts/ingest_ramq_manual.py` rather than editing it directly. The RAMQ manual
-site blocks automated fetching (Cloudflare), so the source export has to be saved manually
-(browser Save-As-HTML or print-to-PDF) into `backend/data/raw/` (gitignored — it's a large
-derived artifact, not committed).
-
-Two stages, with a human review pass in between (real regulatory text needs one):
+`backend/app/ramq/reference_data.json` is generated, not hand-written. Ingestion (raw RAMQ
+manual export → `reference_data.json`) lives in its own repo, `ramq-ingestion`
+(`~/Software/ramq-ingestion` — no remote host set up yet), decoupled on purpose: this
+backend consumes `reference_data.json` as a plain data file, with no code dependency on how
+it was produced. To regenerate it: run the ingestion pipeline there (see that repo's README
+for the extract → human-review → promote stages, and why the source has to be a
+manually-saved export rather than scraped), then copy the result over this file:
 
 ```bash
-# Stage 1: parse the export into a spreadsheet-friendly review CSV.
-python scripts/ingest_ramq_manual.py extract --input data/raw/manuel.html --output data/raw/ramq_codes_raw.csv
-
-# ... open the CSV, fix anything flagged needs_review=1 or otherwise wrong ...
-
-# Stage 2: promote the reviewed CSV into reference_data.json.
-python scripts/ingest_ramq_manual.py promote --input data/raw/ramq_codes_raw.csv \
-    --output app/ramq/reference_data.json \
-    --source-document "Manuel des médecins omnipraticiens — Rémunération à l'acte"
+cp ~/Software/ramq-ingestion/output/reference_data.json backend/app/ramq/reference_data.json
 ```
 
-`backend/app/ramq/ingest/parse_html.py`'s docstring documents the real table shapes this
-parser handles (standard fee rows, multi-price rows, majoration/surcharge rows, grouping
-headers, continuation rows) and the heuristics used where the source markup is ambiguous
-about row hierarchy — those heuristic resolutions are what `needs_review` flags. PDF export
-isn't implemented yet (`parse_pdf.py` doesn't exist) — add it if a PDF source is needed.
+`reference_data.json` itself continues to be tracked in this repo's git history exactly as
+before — only how it gets regenerated has moved out.
 
 ## Quick start
 

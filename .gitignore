@@ -32,7 +32,6 @@ Thumbs.db
 # Local project folders that should not be versioned
 synthea/
 synthetic_data/
-backend/data/raw/
 
 # Project outputs
 output/

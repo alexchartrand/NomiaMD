@@ -10,8 +10,6 @@ dependencies = [
     "pydantic>=2.9",
     "sqlalchemy>=2.0",
     "python-dotenv>=1.0",
-    "beautifulsoup4>=4.12",
-    "lxml>=5.0",
     "rank-bm25>=0.2",
     "snowballstemmer>=2.2",
 ]
