@@ -36,6 +36,13 @@
       "category": "procedure",
       "keywords": ["biopsy", "excision", "in-office procedure", "minor procedure"],
       "price_cad": 95.0
+    },
+        {
+      "code": "PLACEHOLDER-MINOR-PROCEDURE",
+      "description": "Example: suture",
+      "category": "procedure",
+      "keywords": ["suture", "wound", "in-office procedure", "minor procedure"],
+      "price_cad": 100.0
     }
   ]
 }

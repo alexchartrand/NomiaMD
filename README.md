@@ -30,12 +30,17 @@ generator, and a third-party synthetic consultation-transcript dataset) — not 
 application, but useful as synthetic test input. `backend/scripts/try_extraction.py` reads
 a sample transcript straight out of `synthetic_data/`.
 
-`train.jsonl` at the repo root is a 50-record set of synthetic South African English
-consultations (same format/source as `synthetic_data/`). The backend serves these as
+`notes_consultation_simulees.md` at the repo root is a set of freeform, French-language
+synthetic clinical notes (one per `## NOTE <n>` section). The backend serves these as
 selectable "simulated patients" (`GET /patients`, `GET /patients/{id}`) and the frontend's
 dropdown loads a transcript straight into the textarea from there — useful for demoing the
-pipeline without typing or pasting a transcript by hand. Point `SAMPLE_PATIENTS_PATH` at a
-different file if you want to swap the fixture set.
+pipeline without typing or pasting a transcript by hand.
+
+`train.jsonl` at the repo root (a 50-record set of synthetic South African English
+consultations, same format/source as `synthetic_data/`) is still supported as an
+alternate fixture set — set `SAMPLE_PATIENTS_PATH=../train.jsonl` to use it instead.
+`backend/app/sample_patients.py` picks the parser from the file extension (`.md` vs.
+`.jsonl`).
 
 ## Pricing
 
