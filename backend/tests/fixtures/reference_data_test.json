@@ -20,9 +20,9 @@
     },
     {
       "code": "TEST-CONSULT-NEW",
-      "description": "Consultation pour un nouveau patient non inscrit",
+      "description": "Ouverture de dossier pour une personne non inscrite à la clinique",
       "category": "consultation",
-      "keywords": ["nouveau patient", "non inscrit", "première visite"],
+      "keywords": ["nouvelle inscription", "non inscrit", "première visite"],
       "fees": [{"context_label": "", "price_cad": 80.0, "percentage": null}]
     }
   ]

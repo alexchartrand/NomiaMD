@@ -10,9 +10,20 @@ import re
 import unicodedata
 from typing import Callable, Generic, Protocol, Sequence, TypeVar
 
+import snowballstemmer
 from rank_bm25 import BM25Okapi
 
 T = TypeVar("T")
+
+_stemmer = snowballstemmer.stemmer("french")
+
+# The manual cites its own section numbers constantly — "(P.C. 13)", "(P.G. 2.2.9 A)",
+# "(P.A.D.T. 1.4)" — which tokenize into single letters and bare digits ("c", "g", "p",
+# "13", "2") that then look like spurious overlap with any other entry sharing the same
+# cross-reference. Other parenthetical content ("(voir ophtalmologie)", "(biopsies
+# comprises)") is real indexable text and must survive, so this only strips the citation
+# shape specifically rather than all parens.
+_CITATION_RE = re.compile(r"\(P\.[^)]*\d[^)]*\)|\(\d+\)")
 
 # Small hand-curated French stopword list — a generic English stopword list is useless for
 # Québec French clinical/regulatory text.
@@ -35,14 +46,22 @@ def _fold_accents(text: str) -> str:
 
 
 def tokenize(text: str) -> list[str]:
-    """Lowercase, accent-fold (é→e), and drop French stopwords.
+    """Strip citation boilerplate, lowercase, accent-fold (é→e), drop French stopwords,
+    and stem.
 
     Accent-folding matters here specifically: transcripts and the manual are both Québec
     French, and inconsistent accent usage (copy-paste artifacts, typing shortcuts) shouldn't
     cause a real match to score zero.
+
+    Stemming matters just as much: the manual's terse fragment descriptions are often
+    singular/differently-inflected from how a transcript phrases the same thing (a code's
+    own text says "plaies", a transcript says "plaie") — without stemming those never
+    overlap at all, so a candidate can silently never be retrievable no matter the query.
     """
+    text = _CITATION_RE.sub(" ", text)
     folded = _fold_accents(text.lower())
-    return [tok for tok in _TOKEN_RE.findall(folded) if tok not in _FRENCH_STOPWORDS]
+    tokens = [tok for tok in _TOKEN_RE.findall(folded) if tok not in _FRENCH_STOPWORDS]
+    return _stemmer.stemWords(tokens)
 
 
 class Retriever(Protocol[T]):

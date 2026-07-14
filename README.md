@@ -85,6 +85,17 @@ Today there's one task, `billing_codes` (`backend/app/tasks/billing_codes.py`), 
    local-first, no extra infra) can later be swapped for embeddings-based semantic retrieval
    without touching callers, once there's a stronger/hosted model in the loop to pair it
    with.
+
+   **⚠️ Known gap:** every entry in `reference_data.json` has an empty `keywords` field
+   (ingestion stub, `build_reference.py`) — retrieval currently relies entirely on BM25
+   over each code's terse manual description/category, with French stemming to bridge
+   simple inflection (a transcript saying "plaie" now matches a code description saying
+   "plaies"). It does **not** bridge lay/clinical vocabulary vs. the manual's formal
+   terminology (e.g. "coupure"/"couteau" won't match "Réparation de plaies" unless the
+   word "plaie" itself is also present). If a code you'd expect to see just isn't showing
+   up as a candidate, check this before assuming it's a model problem — either populating
+   `keywords` for the relevant entries or adding a synonym-expansion layer would be the
+   fix, neither of which exists yet.
 2. Asks the model (freeform JSON with the schema described in the prompt by default — see
    `NOMIAMD_STRUCTURED_OUTPUT` below — or grammar-constrained structured output for models
    capable of it) to pick from those candidates only, with a supporting quote per code for

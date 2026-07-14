@@ -88,6 +88,37 @@ def test_tokenize_drops_french_stopwords():
     assert "de" not in tokenize("bilan de contrôle")
 
 
+def test_tokenize_stems_plural_and_singular_to_the_same_root():
+    # A transcript saying "plaie" (singular) must be able to match a code description that
+    # only ever says "plaies" (plural) — without stemming these are unrelated tokens and a
+    # correct candidate can be permanently unretrievable regardless of query wording.
+    assert tokenize("une plaie") == tokenize("des plaies")
+
+
+def test_tokenize_strips_citation_boilerplate():
+    # "(P.C. 13)", "(P.G. 2.2.9 A)" etc. are the manual's internal section cross-references,
+    # not clinical content — left in, they tokenize into single letters/bare digits that
+    # spuriously "match" any other entry citing the same section.
+    assert tokenize("Réparation de plaies (P.C. 13)") == tokenize("Réparation de plaies")
+    assert tokenize("Examen d'urgence (P.G. 2.2.9 A)") == tokenize("Examen d'urgence")
+
+
+def test_candidates_for_finds_code_only_described_in_plural():
+    # Small corpus per this file's module docstring caveat about BM25 IDF degeneracy at
+    # tiny N — reuse the diverse table's unrelated filler entries (skipping its "SUTURE"
+    # entry, which already says "plaie" singular and would confound what this test is
+    # isolating: whether a plural-only description is still retrievable).
+    filler = [c for c in _diverse_table().all_codes() if c.code != "SUTURE"]
+    wound_code = RamqCode(
+        code="WOUND",
+        description="moins de deux centimètres et demi (2,5 cm)",
+        category="Réparation de plaies (débridement compris)",
+    )
+    table = RamqReferenceTable([*filler, wound_code])
+    results = table.candidates_for("Plaie de 2 cm à la paume, suturée sous anesthésie locale")
+    assert results and results[0].code == "WOUND"
+
+
 def test_ramq_code_price_cad_uses_first_fee_variant():
     code = RamqCode(
         code="A",
