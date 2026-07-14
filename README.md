@@ -133,6 +133,13 @@ This starts:
 - the backend on http://localhost:8000
 - the frontend on http://localhost:5173
 
+No local model server? Run `make dev-fake` instead — it also starts
+`backend/scripts/fake_llm_server.py`, a tiny OpenAI-compatible dev server that listens on
+the same `http://localhost:8080/v1` LocalAI would (no `.env` changes needed) and picks a
+fixed number of candidate codes back per request instead of doing real extraction. It's for
+exercising the pipeline and frontend end-to-end deterministically, not for judging
+extraction quality.
+
 ## Running the backend
 
 ```bash
@@ -145,7 +152,10 @@ uvicorn app.main:app --reload
 
 The extraction engine (`backend/app/extraction/engine.py`) talks to any OpenAI-compatible
 chat completions endpoint — set `NOMIAMD_BASE_URL` to your LocalAI instance's `/v1` URL and
-`NOMIAMD_MODEL` to a model name configured there.
+`NOMIAMD_MODEL` to a model name configured there. No model server available? Point
+`NOMIAMD_BASE_URL` at `backend/scripts/fake_llm_server.py` instead (`make fake-llm`, or see
+"Quick start" above) — a dumb but deterministic stand-in for testing/debugging the pipeline
+without a real model.
 
 - `GET /health` — lists registered tasks
 - `POST /extract` — `{"transcript": "...", "task": "billing_codes"}` → suggested codes
