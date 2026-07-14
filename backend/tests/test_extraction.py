@@ -1,7 +1,11 @@
 """Exercises the full pipeline (prompt building -> schema -> parsing -> storage -> API)
 against a mocked model response, since no local model server is available in this
 environment. Once NOMIAMD_BASE_URL is configured, see scripts/try_extraction.py for a
-live smoke test."""
+live smoke test.
+
+Uses the small tests/fixtures/reference_data_test.json table (via the small_reference_table
+fixture in conftest.py) rather than the real reference_data.json, so these tests don't
+depend on its size or exact content."""
 
 import json
 from types import SimpleNamespace
@@ -14,26 +18,26 @@ from app.main import app
 from app.tasks.registry import get_task
 
 SAMPLE_TRANSCRIPT = (
-    "patient: I'm here for my blood pressure follow-up, and some headaches.\n"
-    "doctor: Let's start with the headaches. How long, how often, how bad?\n"
-    "patient: About two weeks, comes and goes, maybe a 4 out of 10.\n"
-    "doctor: Your blood pressure today is 138/88, a bit high. Let's adjust your amlodipine "
-    "and order routine bloodwork to check your kidney function.\n"
+    "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "
+    "artérielle depuis 10 ans, se présente pour son suivi trimestriel. Tension artérielle "
+    "mesurée à 138/86. HbA1c à 7,8 %, cible non atteinte. Ajustement de la médication "
+    "antihypertensive envisagé. Bilan sanguin de contrôle demandé (HbA1c, fonction rénale, "
+    "ions) dans 3 mois pour réévaluer le contrôle glycémique."
 )
 
 MOCK_RESULT = {
     "codes": [
         {
-            "code": "PLACEHOLDER-BP-MGMT",
-            "description": "Chronic disease management, hypertension",
+            "code": "TEST-BP-MGMT",
+            "description": "Prise en charge d'une maladie chronique, hypertension artérielle",
             "confidence": 0.9,
-            "supporting_quote": "adjust your amlodipine",
+            "supporting_quote": "hypertension artérielle depuis 10 ans",
         },
         {
-            "code": "PLACEHOLDER-BLOODWORK-ORDER",
-            "description": "Ordering and reviewing routine bloodwork",
+            "code": "TEST-BLOODWORK-ORDER",
+            "description": "Demande et révision d'un bilan sanguin de routine",
             "confidence": 0.85,
-            "supporting_quote": "order routine bloodwork",
+            "supporting_quote": "Bilan sanguin de contrôle demandé",
         },
     ],
     "notes": None,
@@ -60,15 +64,15 @@ def test_run_extraction_parses_mocked_response():
 
     assert result.task == "billing_codes"
     assert [c.code for c in result.result.codes] == [
-        "PLACEHOLDER-BP-MGMT",
-        "PLACEHOLDER-BLOODWORK-ORDER",
+        "TEST-BP-MGMT",
+        "TEST-BLOODWORK-ORDER",
     ]
     # The prompt actually sent to the model should have narrowed candidates via keyword
     # match, not dumped the whole reference table — confirm the call args reflect that.
     call_kwargs = mock_get_client.return_value.chat.completions.create.call_args.kwargs
     user_message = call_kwargs["messages"][1]["content"]
-    assert "PLACEHOLDER-BP-MGMT" in user_message
-    assert "PLACEHOLDER-CONSULT-NEW" not in user_message  # not relevant to this transcript
+    assert "TEST-BP-MGMT" in user_message
+    assert "TEST-CONSULT-NEW" not in user_message  # not relevant to this transcript
 
 
 def test_run_extraction_enriches_prices_from_reference_table():
@@ -81,8 +85,8 @@ def test_run_extraction_enriches_prices_from_reference_table():
 
     prices = {c.code: c.price_cad for c in result.result.codes}
     assert prices == {
-        "PLACEHOLDER-BP-MGMT": 35.75,
-        "PLACEHOLDER-BLOODWORK-ORDER": 18.25,
+        "TEST-BP-MGMT": 35.75,
+        "TEST-BLOODWORK-ORDER": 18.25,
     }
     assert result.result.total_price_cad == 54.0
 

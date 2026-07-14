@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "source_document": "test fixture — not real RAMQ data",
+    "entry_count": 3
+  },
+  "codes": [
+    {
+      "code": "TEST-BP-MGMT",
+      "description": "Prise en charge d'une maladie chronique, hypertension artérielle",
+      "category": "chronic_disease_management",
+      "keywords": ["hypertension", "tension artérielle", "antihypertenseur"],
+      "fees": [{"context_label": "", "price_cad": 35.75, "percentage": null}]
+    },
+    {
+      "code": "TEST-BLOODWORK-ORDER",
+      "description": "Demande et révision d'un bilan sanguin de routine",
+      "category": "diagnostic",
+      "keywords": ["bilan sanguin", "prise de sang", "hba1c"],
+      "fees": [{"context_label": "", "price_cad": 18.25, "percentage": null}]
+    },
+    {
+      "code": "TEST-CONSULT-NEW",
+      "description": "Consultation pour un nouveau patient non inscrit",
+      "category": "consultation",
+      "keywords": ["nouveau patient", "non inscrit", "première visite"],
+      "fees": [{"context_label": "", "price_cad": 80.0, "percentage": null}]
+    }
+  ]
+}
