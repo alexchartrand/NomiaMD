@@ -63,7 +63,26 @@ class BillingCodesTask(ExtractionTask):
         }
 
     def parse(self, raw: dict[str, Any]) -> BillingCodesResult:
+        # Small local models (freeform JSON, no grammar constraint) sometimes collapse the
+        # `codes` array to bare code strings instead of the required {code, description,
+        # confidence, supporting_quote} objects, especially with a large real candidate
+        # list. Drop anything malformed rather than crashing the request — and rather than
+        # fabricating a supporting_quote for it, since that field exists specifically so a
+        # physician can verify the suggestion against the transcript; showing a code with a
+        # made-up quote would defeat that.
+        codes = raw.get("codes") or []
+        well_formed = [c for c in codes if isinstance(c, dict)]
+        dropped = len(codes) - len(well_formed)
+        raw = {**raw, "codes": well_formed}
+
         result = BillingCodesResult.model_validate(raw)
+        if dropped:
+            note = (
+                f"{dropped} candidate code(s) came back from the model in an unexpected "
+                "format (missing a supporting quote) and were dropped rather than shown "
+                "unverified."
+            )
+            result.notes = f"{result.notes} {note}".strip() if result.notes else note
 
         # Price is looked up here, deterministically, from the reference table — never
         # taken from the model's output. Claude's JSON schema (above) has no price field,
