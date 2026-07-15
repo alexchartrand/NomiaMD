@@ -148,3 +148,48 @@ def test_get_and_all_codes():
     assert table.get("HTA").code == "HTA"
     assert table.get("missing") is None
     assert len(table.all_codes()) == 6
+
+
+def test_candidates_for_stays_bm25_only_without_embeddings_enabled(monkeypatch):
+    import app.ramq.reference as reference_module
+
+    calls = []
+    monkeypatch.setattr(reference_module, "embed_texts", lambda texts: calls.append(texts) or [])
+    # embeddings_enabled() is False by default (no OPENAI_API_KEY) — constructing a table
+    # must not call embed_texts at all, so existing BM25-only behavior is unaffected.
+    _diverse_table()
+    assert calls == []
+
+
+def test_candidates_for_merges_embedding_hits_bm25_alone_would_miss(monkeypatch):
+    """A transcript phrased with zero vocabulary overlap against a code's own text can
+    never surface via BM25 (lexical, term-overlap only) — this is exactly the gap
+    EmbeddingRetriever exists to close. Uses a fake embed_fn (no real API call) that
+    considers the query and one code semantically close despite sharing no words."""
+    import app.ramq.reference as reference_module
+
+    monkeypatch.setattr(reference_module, "embeddings_enabled", lambda: True)
+
+    query = "défense abdominale mystère"
+
+    def fake_embed_texts(texts: list[str]) -> list[list[float]]:
+        # Pretends code A's real description and this unrelated-vocabulary query are
+        # semantically close — a stand-in for what a real embedding model would do with
+        # true synonyms/paraphrases, which BM25's term-overlap can never see.
+        return [
+            [1.0, 0.0] if ("lacération" in t.lower() or t == query) else [0.0, 1.0]
+            for t in texts
+        ]
+
+    monkeypatch.setattr(reference_module, "embed_texts", fake_embed_texts)
+
+    codes = [
+        RamqCode(code="A", description="Une lacération profonde de la main", category="procedure"),
+        RamqCode(code="B", description="Suivi de tension artérielle", category="chronic"),
+    ]
+    table = RamqReferenceTable(codes)
+
+    assert table._retriever.candidates_for(query, 25) == []  # confirms BM25 alone finds nothing
+
+    results = table.candidates_for(query)
+    assert any(c.code == "A" for c in results)

@@ -10,6 +10,7 @@ import re
 import unicodedata
 from typing import Callable, Generic, Protocol, Sequence, TypeVar
 
+import numpy as np
 import snowballstemmer
 from rank_bm25 import BM25Okapi
 
@@ -84,3 +85,38 @@ class BM25Retriever(Generic[T]):
         scores = self._bm25.get_scores(tokenize(query))
         ranked = sorted(zip(scores, self._items), key=lambda pair: pair[0], reverse=True)
         return [item for score, item in ranked[:limit] if score > 0]
+
+
+class EmbeddingRetriever(Generic[T]):
+    """Semantic-similarity retriever over an arbitrary list of items — same Retriever
+    protocol and generic text_for pattern as BM25Retriever, just cosine similarity over
+    embedding vectors instead of lexical term overlap. Meant to complement BM25, not
+    replace it: administrative rule text ("ne peut être facturé avec...") rarely shares
+    vocabulary with a clinical transcript, which is exactly the gap embeddings can close.
+    See reference.py for how RamqReferenceTable merges both retrievers' results.
+    """
+
+    def __init__(
+        self,
+        items: Sequence[T],
+        text_for: Callable[[T], str],
+        embed_fn: Callable[[list[str]], list[list[float]]],
+    ):
+        self._items = list(items)
+        self._embed_fn = embed_fn
+        if self._items:
+            vectors = np.array(embed_fn([text_for(item) for item in self._items]), dtype=np.float32)
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            norms[norms == 0] = 1.0
+            self._vectors = vectors / norms
+        else:
+            self._vectors = None
+
+    def candidates_for(self, query: str, limit: int) -> list[T]:
+        if self._vectors is None:
+            return []
+        query_vec = np.array(self._embed_fn([query])[0], dtype=np.float32)
+        query_norm = np.linalg.norm(query_vec) or 1.0
+        scores = self._vectors @ (query_vec / query_norm)
+        ranked_idx = np.argsort(-scores)[:limit]
+        return [self._items[i] for i in ranked_idx if scores[i] > 0]

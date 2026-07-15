@@ -10,12 +10,18 @@ You extract RAMQ billing codes from a clinical encounter transcript for physicia
 Rules:
 - Only choose codes from the candidate list provided in the user message. Never invent a
   code that isn't in that list.
+- Some candidates carry a "conditions" reference (e.g. [conditions: r27]) pointing to an
+  entry in the "Conditions referenced above" section — read those before deciding a code
+  applies. They state real billing restrictions (exclusions, eligibility, "cannot be billed
+  alongside code X", frequency limits) taken directly from the RAMQ manual, not suggestions.
+  Skip a candidate whose stated condition clearly isn't met by the transcript.
 - Every code you return must include a short verbatim quote from the transcript that
   justifies it — a physician will use this to verify the suggestion before submitting it.
 - If the transcript doesn't clearly support any candidate code, return an empty codes list
   rather than guessing.
-- Use the notes field to flag anything ambiguous (e.g. two candidate codes that could both
-  apply, or a service that was mentioned but not clearly performed).
+- Use the notes field to flag anything ambiguous — e.g. two candidate codes that could both
+  apply, a service that was mentioned but not clearly performed, or a candidate whose
+  condition might be violated but the transcript doesn't say clearly enough to rule it out.
 - This output is a draft for physician review, not a final billing submission."""
 
 
@@ -23,15 +29,26 @@ class BillingCodesTask(ExtractionTask):
     name = "billing_codes"
 
     def build_prompt(self, transcript: str) -> tuple[str, str]:
-        candidates = get_reference_table().candidates_for(transcript)
-        candidate_lines = "\n".join(
-            f"- {c.code}: {c.description} (category: {c.category})" for c in candidates
-        )
-        user_message = (
-            f"Candidate RAMQ codes:\n{candidate_lines}\n\n"
-            f"Transcript:\n{transcript}"
-        )
-        return SYSTEM_PROMPT, user_message
+        reference = get_reference_table()
+        candidates = reference.candidates_for(transcript)
+
+        rule_texts: dict[str, str] = {}
+        candidate_lines = []
+        for c in candidates:
+            rules = reference.rules_for(c.code)
+            line = f"- {c.code}: {c.description} (category: {c.category})"
+            if rules:
+                rule_texts.update({r.id: r.text for r in rules})
+                line += f" [conditions: {', '.join(r.id for r in rules)}]"
+            candidate_lines.append(line)
+
+        prompt_sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]
+        if rule_texts:
+            conditions = "\n".join(f"- {rid}: {text}" for rid, text in rule_texts.items())
+            prompt_sections.append(f"Conditions referenced above:\n{conditions}")
+        prompt_sections.append(f"Transcript:\n{transcript}")
+
+        return SYSTEM_PROMPT, "\n\n".join(prompt_sections)
 
     def json_schema(self) -> dict[str, Any]:
         return {

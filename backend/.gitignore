@@ -5,3 +5,7 @@ __pycache__/
 .env
 .pytest_cache/
 *.egg-info/
+
+# On-disk embeddings cache (app/ramq/embeddings.py) — derived, regenerable, and would
+# otherwise commit raw floats on every cache refresh.
+app/ramq/.embeddings_cache.json
