@@ -65,6 +65,11 @@ def run_extraction(task: ExtractionTask, transcript: str) -> ExtractionResult:
     response = get_client().chat.completions.create(
         model=MODEL,
         max_tokens=4096,
+        # Deterministic on purpose: this is a structured extraction task (pick codes from a
+        # closed candidate list), not a creative one — run-to-run variance here means the
+        # same transcript can non-reproducibly get a code or not, which undermines both
+        # debugging and the physician's trust in the suggestion.
+        temperature=0,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},

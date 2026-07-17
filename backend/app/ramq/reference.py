@@ -176,23 +176,39 @@ class RamqReferenceTable:
         fallback, and the model is instructed to return an empty codes list rather than
         guess from an empty/irrelevant candidate set.
 
-        When OPENAI_API_KEY is set, the BM25 list is unioned with the embedding
-        retriever's results (BM25 hits first, then any additional semantic-only hits) —
-        a first-version hybrid merge, not a reranked/weighted one; see retrieval.py's
-        EmbeddingRetriever docstring for why lexical matching alone misses candidates
-        whose relevance lives in rule text rather than their own description.
+        When embeddings are configured, results are fused via Reciprocal Rank Fusion (RRF)
+        over each retriever's *full* ranking, not a union of their independently-truncated
+        top-`limit` lists. That distinction matters in practice: a real (long, detail-heavy)
+        clinical note tokenizes into a large bag of terms, and at this table's current size
+        (a few hundred codes) BM25 degenerates — nearly every code picks up some nonzero
+        score from incidental vocabulary overlap (lab values, med names, clinic/admin
+        boilerplate), so the *correct* code can rank outside the top `limit` on lexical
+        grounds alone even though it's a clear semantic match. Fusing full rankings by
+        reciprocal rank lets a candidate that both retrievers rank moderately well (say,
+        top 50 lexically, top 30 semantically) outscore one either retriever ranks highly in
+        isolation but the other doesn't corroborate at all — see
+        test_ramq_reference.py for the regression case this fixes.
         """
-        bm25_hits = self._retriever.candidates_for(transcript, limit)
+        total = len(self._codes)
+        bm25_ranked = self._retriever.candidates_for(transcript, total)
         if self._embedding_retriever is None:
-            return bm25_hits
+            return bm25_ranked[:limit]
 
-        seen = {c.code for c in bm25_hits}
-        merged = list(bm25_hits)
-        for c in self._embedding_retriever.candidates_for(transcript, limit):
-            if c.code not in seen:
-                seen.add(c.code)
-                merged.append(c)
-        return merged
+        emb_ranked = self._embedding_retriever.candidates_for(transcript, total)
+
+        # Standard RRF constant (Cormack et al.) — large enough that a single retriever's
+        # #1 pick doesn't automatically dominate a code both retrievers rank moderately.
+        RRF_K = 60
+        by_code = {c.code: c for c in bm25_ranked}
+        scores: dict[str, float] = {}
+        for rank, c in enumerate(bm25_ranked):
+            scores[c.code] = scores.get(c.code, 0.0) + 1.0 / (RRF_K + rank + 1)
+        for rank, c in enumerate(emb_ranked):
+            by_code.setdefault(c.code, c)
+            scores[c.code] = scores.get(c.code, 0.0) + 1.0 / (RRF_K + rank + 1)
+
+        ranked_codes = sorted(scores, key=lambda code: scores[code], reverse=True)
+        return [by_code[code] for code in ranked_codes[:limit]]
 
 
 @lru_cache(maxsize=1)

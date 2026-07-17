@@ -71,8 +71,8 @@ class Retriever(Protocol[T]):
 
 class BM25Retriever(Generic[T]):
     """BM25 index over an arbitrary list of items, given a function to extract each item's
-    indexable text. Generic so it can index RamqCode descriptions today and RamqRuleChunk
-    text later without a second implementation."""
+    indexable text. Generic so it can index RamqCode descriptions without a second
+    implementation."""
 
     def __init__(self, items: Sequence[T], text_for: Callable[[T], str]):
         self._items = list(items)
