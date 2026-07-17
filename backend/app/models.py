@@ -58,6 +58,67 @@ class BillingCodesResult(BaseModel):
     )
 
 
+class PatientBillingProfile(BaseModel):
+    """Patient-side facts that gate RAMQ code eligibility — the same axes as
+    app.ramq.reference.PatientTag, extracted from the transcript instead of the manual."""
+
+    age: int | None = Field(
+        default=None,
+        description="Patient's age in years, if stated or clearly determinable from the transcript",
+    )
+    vulnerable: bool | None = Field(
+        default=None,
+        description=(
+            "Whether the transcript establishes the patient as vulnerable per RAMQ "
+            "criteria (e.g. chronic disease, loss of autonomy, palliative care) — null if "
+            "not addressed"
+        ),
+    )
+    inscription_status: str | None = Field(
+        default=None,
+        description="e.g. 'inscrit' or 'non inscrit', if the transcript states or clearly implies it",
+    )
+    evidence: str | None = Field(
+        default=None,
+        description=(
+            "Short verbatim quote(s) from the transcript backing whichever of age/"
+            "vulnerable/inscription_status above were filled in — null if none were"
+        ),
+    )
+
+
+class ConsultationSummaryResult(BaseModel):
+    """A structured summary of a clinical encounter, focused on the facts that matter for
+    RAMQ billing (visit type/location, patient eligibility axes) plus a short clinical
+    summary for physician review — not a full medical-record note."""
+
+    chief_complaint: str | None = Field(
+        default=None, description="Motif de consultation, in the transcript's own words"
+    )
+    visit_type: str | None = Field(
+        default=None,
+        description="e.g. 'sur rendez-vous', 'sans rendez-vous', 'téléconsultation' — null if not determinable",
+    )
+    visit_location: str | None = Field(
+        default=None,
+        description="e.g. 'cabinet', 'domicile', 'CLSC', 'GMF-U', 'établissement' — null if not determinable",
+    )
+    acts_performed: list[str] = Field(
+        default_factory=list,
+        description="Brief descriptions of exams/procedures/interventions actually performed during the encounter",
+    )
+    diagnoses: list[str] = Field(
+        default_factory=list,
+        description="Diagnoses or clinical impressions established during the encounter",
+    )
+    patient: PatientBillingProfile = Field(default_factory=PatientBillingProfile)
+    plan: str | None = Field(default=None, description="Brief follow-up plan")
+    notes: str | None = Field(
+        default=None,
+        description="Anything ambiguous or needing physician review before this summary informs billing",
+    )
+
+
 ResultT = TypeVar("ResultT", bound=BaseModel)
 
 

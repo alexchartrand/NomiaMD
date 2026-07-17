@@ -32,7 +32,7 @@ def main() -> None:
     print(transcript)
     print("--- extraction result ---")
 
-    task = get_task("billing_codes")
+    task = get_task("consultation_summary")
     result = run_extraction(task, transcript)
     print(result.model_dump_json(indent=2))
 

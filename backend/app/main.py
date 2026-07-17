@@ -18,6 +18,7 @@ from app.db import init_db, save_extraction  # noqa: E402
 from app.extraction.engine import run_extraction  # noqa: E402
 from app.models import (  # noqa: E402
     BillingCodesResult,
+    ConsultationSummaryResult,
     ExtractionRequest,
     ExtractionResult,
     SamplePatientDetail,
@@ -59,12 +60,21 @@ def get_patient(patient_id: str) -> SamplePatientDetail:
     return SamplePatientDetail(id=patient.id, label=patient.label, transcript=patient.transcript)
 
 
-@app.post("/extract", response_model=ExtractionResult[BillingCodesResult])
-def extract(request: ExtractionRequest) -> ExtractionResult[BillingCodesResult]:
-    # NOTE: hardcoded to BillingCodesResult since it's the only registered task today.
-    # Adding a second task type (prescriptions, consultation_notes) means this response_model
-    # needs to become a Union of parameterized ExtractionResult types, or this endpoint needs
-    # to split per task — either way, revisit this line then.
+@app.post("/extract", response_model=None)
+def extract(
+    request: ExtractionRequest,
+) -> ExtractionResult[BillingCodesResult] | ExtractionResult[ConsultationSummaryResult]:
+    # response_model=None (bypassing FastAPI's automatic use of the return-type annotation
+    # above for response validation/filtering) because Pydantic's Union matching for two
+    # *parameterized-generic* ExtractionResult types picks the wrong member here: neither
+    # BillingCodesResult nor ConsultationSummaryResult has every field required, so
+    # revalidating an already-correct instance against the *other* union member silently
+    # "succeeds" by falling back to that member's defaults for whatever fields don't exist
+    # on the real object, instead of keeping the real one. The return type above is still
+    # accurate documentation of what this actually returns — result is already a properly
+    # typed, task-specific pydantic model by the time it gets here (see run_extraction),
+    # so there's nothing left to validate; only accurate per-task OpenAPI schema docs are
+    # lost, which matters once there's a second consumer of this API beyond the frontend.
     try:
         task = get_task(request.task)
     except ValueError as exc:
