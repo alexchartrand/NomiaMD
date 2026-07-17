@@ -6,12 +6,12 @@ OPENAI_BASE_URL. Cloud now, matching the same cloud-first stance already taken f
 extraction LLM itself (local/self-hosted embeddings are future work once real patient data
 is in scope).
 
-OPENAI_BASE_URL lets this point at a gateway (e.g. OpenRouter, https://openrouter.ai/api/v1)
+NOMIAMD_EMBEDDING_BASE_URL lets this point at a gateway (e.g. OpenRouter, https://openrouter.ai/api/v1)
 instead of OpenAI directly — same client either way. Model IDs on a gateway are often
 provider-prefixed (e.g. "openai/text-embedding-3-small"); set NOMIAMD_EMBEDDING_MODEL
 accordingly.
 
-Entirely optional: without OPENAI_API_KEY set, embeddings_enabled() is False and
+Entirely optional: without NOMIAMD_EMBEDDING_API_KEY set, embeddings_enabled() is False and
 RamqReferenceTable falls back to BM25-only retrieval, unchanged from before this module
 existed.
 """
@@ -37,7 +37,7 @@ _BATCH_SIZE = 96
 
 
 def embeddings_enabled() -> bool:
-    return bool(os.environ.get("OPENAI_API_KEY"))
+    return bool(os.environ.get("NOMIAMD_EMBEDDING_API_KEY"))
 
 
 def _cache_key(text: str) -> str:
@@ -57,7 +57,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     missing = [(i, t) for i, (t, k) in enumerate(zip(texts, keys)) if k not in cache]
 
     if missing:
-        client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=os.environ.get("OPENAI_BASE_URL"))
+        client = OpenAI(api_key=os.environ["NOMIAMD_EMBEDDING_API_KEY"], base_url=os.environ.get("NOMIAMD_EMBEDDING_BASE_URL"))
         for start in range(0, len(missing), _BATCH_SIZE):
             chunk = missing[start : start + _BATCH_SIZE]
             response = client.embeddings.create(model=EMBEDDING_MODEL, input=[t for _, t in chunk])

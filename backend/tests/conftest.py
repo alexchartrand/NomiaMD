@@ -21,10 +21,12 @@ def small_reference_table(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def no_real_openai_key(monkeypatch):
-    """app/main.py loads .env at import time, so a real OPENAI_API_KEY configured there
-    (for actually running the app against OpenRouter/OpenAI) would otherwise leak into
-    every test process — silently turning on real embedding calls (slow, and network-
-    dependent) in tests that never asked for them. Tests that want embeddings "on" opt in
-    explicitly by monkeypatching embeddings_enabled/embed_texts themselves; everything else
-    should stay hermetic regardless of what's in the developer's local .env."""
+    """app/main.py loads .env at import time, so a real NOMIAMD_EMBEDDING_API_KEY
+    configured there (for actually running the app against OpenRouter/OpenAI) would
+    otherwise leak into every test process — silently turning on real embedding calls
+    (slow, and network-dependent) in tests that never asked for them. Tests that want
+    embeddings "on" opt in explicitly by monkeypatching embeddings_enabled/embed_texts
+    themselves; everything else should stay hermetic regardless of what's in the
+    developer's local .env."""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("NOMIAMD_EMBEDDING_API_KEY", raising=False)
