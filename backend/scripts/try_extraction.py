@@ -5,7 +5,6 @@ with the venv active:
     python scripts/try_extraction.py
 """
 
-import json
 import sys
 from pathlib import Path
 
@@ -19,18 +18,12 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.extraction.engine import run_extraction  # noqa: E402
+from app.sample_patients import get_sample_patients  # noqa: E402
 from app.tasks.registry import get_task  # noqa: E402
-
-SYNTHETIC_TRANSCRIPT_PATH = (
-    Path(__file__).parent.parent.parent / "train.jsonl"
-)
 
 
 def load_sample_transcript() -> str:
-    with SYNTHETIC_TRANSCRIPT_PATH.open() as f:
-        record = json.loads(f.readline())
-    lines = [f"{turn['speaker']}: {turn['utterance']}" for turn in record["conversation"]]
-    return "\n".join(lines)
+    return get_sample_patients()[3].transcript
 
 
 def main() -> None:

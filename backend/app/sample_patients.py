@@ -4,15 +4,11 @@ This is test/demo fixture data only, not representative of real Quebec RAMQ enco
 It exists so the extraction pipeline can be exercised end-to-end without any real (or even
 realistic) patient data.
 
-SAMPLE_PATIENTS_PATH's file extension picks the parser:
-- `.md` (default: notes_consultation_simulees.md at the repo root) — freeform clinical
-  notes, one per "## NOTE <n> — ..." section.
-- `.jsonl` (e.g. train.jsonl at the repo root) — synthetic South African English
-  consultations from a third-party generator (see synthetic_data/), one JSON record per
-  line with a "conversation" turn list.
+SAMPLE_PATIENTS_PATH defaults to notes_consultation_simulees.md at the repo root —
+freeform, French-language clinical notes, one per "## NOTE <n> — ..." section. Override it
+to point at a different file in the same format.
 """
 
-import json
 import os
 import re
 from dataclasses import dataclass
@@ -28,44 +24,6 @@ class SamplePatient:
     id: str
     label: str
     transcript: str
-
-
-def _build_label_jsonl(record: dict) -> str:
-    scenario = record.get("scenario", {})
-    persona = scenario.get("patient_persona", {})
-    clinical = scenario.get("clinical_context", {})
-
-    age = persona.get("age")
-    sex = (persona.get("sex") or "")[:1].upper()
-    demographic = f"{age}{sex}" if age is not None else sex
-
-    complaint = clinical.get("chief_complaint") or "no chief complaint recorded"
-    return f"{demographic} — {complaint}" if demographic else complaint
-
-
-def _build_transcript_jsonl(record: dict) -> str:
-    turns = record.get("conversation", [])
-    return "\n".join(
-        f"{turn.get('speaker', '?')}: {turn.get('utterance', '')}" for turn in turns
-    )
-
-
-def _load_jsonl() -> list[SamplePatient]:
-    patients: list[SamplePatient] = []
-    with SAMPLE_PATIENTS_PATH.open() as f:
-        for i, line in enumerate(f):
-            line = line.strip()
-            if not line:
-                continue
-            record = json.loads(line)
-            patients.append(
-                SamplePatient(
-                    id=record.get("conversation_id") or f"patient-{i}",
-                    label=_build_label_jsonl(record),
-                    transcript=_build_transcript_jsonl(record),
-                )
-            )
-    return patients
 
 
 _NOTE_HEADER_RE = re.compile(r"^## NOTE \d+.*$", re.MULTILINE)
@@ -110,8 +68,6 @@ def _load_markdown() -> list[SamplePatient]:
 def _load_all() -> list[SamplePatient]:
     if not SAMPLE_PATIENTS_PATH.exists():
         return []
-    if SAMPLE_PATIENTS_PATH.suffix == ".jsonl":
-        return _load_jsonl()
     return _load_markdown()
 
 

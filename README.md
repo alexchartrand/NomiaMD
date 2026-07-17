@@ -35,20 +35,15 @@ frontend/    React app — paste a transcript, review suggested codes
 `ClaudeCodingTest/`, `synthea/`, `synthetic_data/`, and `output/` are pre-existing
 scratch/reference material (a getting-started script, the Synthea synthetic patient
 generator, and a third-party synthetic consultation-transcript dataset) — not part of the
-application, but useful as synthetic test input. `backend/scripts/try_extraction.py` reads
-a sample transcript straight out of `synthetic_data/`.
+application.
 
 `notes_consultation_simulees.md` at the repo root is a set of freeform, French-language
 synthetic clinical notes (one per `## NOTE <n>` section). The backend serves these as
 selectable "simulated patients" (`GET /patients`, `GET /patients/{id}`) and the frontend's
 dropdown loads a transcript straight into the textarea from there — useful for demoing the
-pipeline without typing or pasting a transcript by hand.
-
-`train.jsonl` at the repo root (a 50-record set of synthetic South African English
-consultations, same format/source as `synthetic_data/`) is still supported as an
-alternate fixture set — set `SAMPLE_PATIENTS_PATH=../train.jsonl` to use it instead.
-`backend/app/sample_patients.py` picks the parser from the file extension (`.md` vs.
-`.jsonl`).
+pipeline without typing or pasting a transcript by hand. `backend/scripts/try_extraction.py`
+reads its sample transcript from the same source. Set `SAMPLE_PATIENTS_PATH` to point at a
+different file in the same format instead.
 
 ## Pricing
 
