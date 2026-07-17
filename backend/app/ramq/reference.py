@@ -1,8 +1,8 @@
 """Loads the RAMQ code reference table and narrows it down to candidates for a transcript.
 
-The reference file shipped in this repo (reference_data.json) is ingested from the official
-"Manuel des médecins omnipraticiens — Rémunération à l'acte" — see reference_data.json's
-"_meta" block for provenance (source document, ingestion date). Regenerate it via
+The reference file shipped in this repo is ingested from the official "Manuel des médecins
+omnipraticiens — Rémunération à l'acte" — see its "_meta" block for provenance (source
+document, ingestion date). Regenerate it via the ramq-ingestion repo's
 scripts/ingest_ramq_manual.py rather than hand-editing it.
 
 Scope: family doctors (omnipraticiens) only. Specialist billing codes live in a different
@@ -17,9 +17,8 @@ from pathlib import Path
 
 from app.ramq.embeddings import embed_texts, embeddings_enabled
 from app.ramq.retrieval import BM25Retriever, EmbeddingRetriever
-from app.ramq.rules import RamqRuleChunk, load_rules
 
-REFERENCE_PATH = Path(__file__).parent / "reference_data.json"
+REFERENCE_PATH = Path(__file__).parent / "reference_data.section_b.json"
 
 
 @dataclass(frozen=True)
@@ -40,23 +39,31 @@ class FeeVariant:
 
 
 @dataclass(frozen=True)
+class PatientTag:
+    """Structured eligibility conditions on the patient, extracted from the code's manual
+    entry alongside its free-text `rules` — e.g. a visit code that only applies to a
+    vulnerable, inscribed patient under 80."""
+
+    age: str | None = None
+    vulnerable: bool | None = None
+    inscription: str | None = None
+
+
+@dataclass(frozen=True)
 class RamqCode:
     code: str
     description: str
-    category: str
-    keywords: tuple[str, ...] = ()
     fees: tuple[FeeVariant, ...] = ()
     unit: str | None = None
-    source_ref: str | None = None
-    # IDs into reference_data.json's "rules" array — see rules.py. Look up the actual
-    # RamqRuleChunk objects via RamqReferenceTable.rules_for(code) rather than resolving
-    # these manually; that's what maintains the id -> chunk index.
-    rule_ids: tuple[str, ...] = ()
-    # Set by ingestion when the automated parser was uncertain about this entry (e.g. a
-    # description/price line-count mismatch, or a heuristic-resolved header ambiguity —
-    # see ingest/parse_html.py). Not re-verified by anything at runtime; it's a signal for
-    # future manual cleanup, not a gate on whether the code is usable.
-    needs_review: bool = False
+    # Free-text billing condition/reference note for this code (e.g. "Ne peut être
+    # réclamé avec les codes d'acte relatifs à l'intervention clinique.", or a pointer to a
+    # preamble paragraph) — carried verbatim from the manual, one note per code.
+    rules: str | None = None
+    # Free-text physician-side eligibility condition (e.g. "Clientèle inscrite de moins de
+    # 500 patients"), when the code is restricted by something about the billing physician
+    # rather than the patient.
+    physician: str | None = None
+    patient: PatientTag | None = None
 
     @property
     def price_cad(self) -> float | None:
@@ -84,59 +91,66 @@ def _load_codes(data: dict) -> list[RamqCode]:
         else:
             fees = ()
 
+        patient_data = entry.get("patient")
+        patient = (
+            PatientTag(
+                age=patient_data.get("age"),
+                vulnerable=patient_data.get("vulnerable"),
+                inscription=patient_data.get("inscription"),
+            )
+            if patient_data
+            else None
+        )
+
         codes.append(
             RamqCode(
                 code=entry["code"],
                 description=entry["description"],
-                category=entry["category"],
-                keywords=tuple(entry.get("keywords", [])),
                 fees=fees,
                 unit=entry.get("unit"),
-                source_ref=entry.get("source_ref"),
-                rule_ids=tuple(entry.get("rule_ids", [])),
-                needs_review=entry.get("needs_review", False),
+                rules=entry.get("rules"),
+                physician=entry.get("physician"),
+                patient=patient,
             )
         )
     return codes
 
 
 class RamqReferenceTable:
-    def __init__(self, codes: list[RamqCode], rules: list[RamqRuleChunk] | None = None):
+    def __init__(self, codes: list[RamqCode]):
         self._codes = codes
         self._by_code = {c.code: c for c in codes}
-        rules = rules or []
-        rules_by_code: dict[str, list[RamqRuleChunk]] = {}
-        for rule in rules:
-            for code_id in rule.code_ids:
-                rules_by_code.setdefault(code_id, []).append(rule)
 
         def text_for(c: RamqCode) -> str:
             # Many real descriptions are terse fragments ("sous anesthésie locale") that
             # only make sense read alongside their table section — folding category into
             # the indexed text lets a query like "douleur thoracique" also match codes
             # filed under "Cardiologie et angiologie" even without the word "thoracique"
-            # in the description itself. Linked rule text is folded in too (embeddings
-            # only — BM25 leaves it out, see its class docstring on why lexical matching
-            # doesn't help here) so a code's real eligibility nuance is part of what a
-            # semantic search matches against, not just its terse label.
-            base = f"{c.description} {c.category} {' '.join(c.keywords)}"
-            rule_text = " ".join(r.text for r in rules_by_code.get(c.code, []))
-            return f"{base} {rule_text}".strip()
+            # in the description itself. The code's rules/physician/patient eligibility
+            # text is folded in too (embeddings only — BM25 leaves it out, see its class
+            # docstring on why lexical matching doesn't help here) so a code's real
+            # eligibility nuance is part of what a semantic search matches against, not
+            # just its terse label.
+            base = f"{c.description}"
+            extra = [c.rules, c.physician]
+            if c.patient is not None:
+                extra += [c.patient.age, c.patient.inscription]
+                if c.patient.vulnerable:
+                    extra.append("patient vulnérable")
+            extra_text = " ".join(part for part in extra if part)
+            return f"{base} {extra_text}".strip()
 
-        # BM25 stays on the plain description+category+keywords text (rule text is
-        # administrative language that rarely overlaps lexically with a clinical
+        # BM25 stays on the plain description+category+keywords text (rule/eligibility text
+        # is administrative language that rarely overlaps lexically with a clinical
         # transcript — see EmbeddingRetriever's docstring); the semantic retriever below
-        # is where folding rule text into the indexed text actually helps.
+        # is where folding it into the indexed text actually helps.
         self._retriever = BM25Retriever(
             codes,
-            text_for=lambda c: f"{c.description} {c.category} {' '.join(c.keywords)}",
+            text_for=lambda c: f"{c.description}",
         )
         self._embedding_retriever: EmbeddingRetriever[RamqCode] | None = None
         if embeddings_enabled():
             self._embedding_retriever = EmbeddingRetriever(codes, text_for=text_for, embed_fn=embed_texts)
-
-        self._rules_by_id = {r.id: r for r in rules}
-        self._rules_by_code = rules_by_code
 
     @classmethod
     def load(cls, path: Path | None = None) -> "RamqReferenceTable":
@@ -144,7 +158,7 @@ class RamqReferenceTable:
         # that monkeypatching the module-level REFERENCE_PATH in tests actually takes
         # effect — a default argument value is bound once at def time, not per call.
         data = json.loads((path if path is not None else REFERENCE_PATH).read_text())
-        return cls(_load_codes(data), load_rules(data))
+        return cls(_load_codes(data))
 
     def all_codes(self) -> list[RamqCode]:
         return list(self._codes)
@@ -152,10 +166,7 @@ class RamqReferenceTable:
     def get(self, code: str) -> RamqCode | None:
         return self._by_code.get(code)
 
-    def rules_for(self, code: str) -> list[RamqRuleChunk]:
-        return list(self._rules_by_code.get(code, []))
-
-    def candidates_for(self, transcript: str, limit: int = 25) -> list[RamqCode]:
+    def candidates_for(self, transcript: str, limit: int = 40) -> list[RamqCode]:
         """BM25-ranked (plus semantic, when embeddings are configured) candidates for a
         transcript, narrowed to a closed set the LLM can choose from instead of relying on
         its own recall of RAMQ codes.
