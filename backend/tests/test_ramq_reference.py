@@ -14,42 +14,18 @@ from app.ramq.retrieval import tokenize
 def _diverse_table() -> RamqReferenceTable:
     return RamqReferenceTable(
         [
-            RamqCode(
-                code="DIABETE",
-                description="Suivi de diabète de type 2",
-                category="chronic_disease_management",
-                keywords=("diabète", "glycémie", "hba1c"),
-            ),
-            RamqCode(
-                code="HTA",
-                description="Prise en charge de l'hypertension artérielle",
-                category="chronic_disease_management",
-                keywords=("hypertension", "tension artérielle"),
-            ),
-            RamqCode(
-                code="SUTURE",
-                description="Suture d'une plaie à la main sous anesthésie locale",
-                category="procedure",
-                keywords=("suture", "plaie", "anesthésie locale"),
-            ),
+            RamqCode(code="DIABETE", description="Suivi de diabète de type 2"),
+            RamqCode(code="HTA", description="Prise en charge de l'hypertension artérielle"),
+            RamqCode(code="SUTURE", description="Suture d'une plaie à la main sous anesthésie locale"),
             RamqCode(
                 code="APPENDICE",
                 description="Consultation pour douleur abdominale, suspicion d'appendicite",
-                category="urgence",
-                keywords=("douleur abdominale", "appendicite"),
             ),
             RamqCode(
                 code="STEMI",
                 description="Prise en charge d'un infarctus aigu du myocarde (STEMI)",
-                category="cardiologie",
-                keywords=("infarctus", "stemi", "douleur thoracique"),
             ),
-            RamqCode(
-                code="PSY",
-                description="Évaluation d'une symptomatologie dépressive",
-                category="santé mentale",
-                keywords=("dépression", "phq-9"),
-            ),
+            RamqCode(code="PSY", description="Évaluation d'une symptomatologie dépressive"),
         ]
     )
 
@@ -111,8 +87,7 @@ def test_candidates_for_finds_code_only_described_in_plural():
     filler = [c for c in _diverse_table().all_codes() if c.code != "SUTURE"]
     wound_code = RamqCode(
         code="WOUND",
-        description="moins de deux centimètres et demi (2,5 cm)",
-        category="Réparation de plaies (débridement compris)",
+        description="Réparation de plaies (débridement compris), moins de deux centimètres et demi (2,5 cm)",
     )
     table = RamqReferenceTable([*filler, wound_code])
     results = table.candidates_for("Plaie de 2 cm à la paume, suturée sous anesthésie locale")
@@ -123,7 +98,6 @@ def test_ramq_code_price_cad_uses_first_fee_variant():
     code = RamqCode(
         code="A",
         description="Visite de suivi",
-        category="c",
         fees=(
             FeeVariant(context_label="en cabinet", price_cad=42.85),
             FeeVariant(context_label="en CLSC", price_cad=32.25),
@@ -136,7 +110,6 @@ def test_ramq_code_price_cad_none_for_majoration_only():
     code = RamqCode(
         code="A",
         description="Majoration de nuit",
-        category="c",
         unit="majoration %",
         fees=(FeeVariant(context_label="0h-8h", percentage=101.0),),
     )
@@ -184,8 +157,8 @@ def test_candidates_for_merges_embedding_hits_bm25_alone_would_miss(monkeypatch)
     monkeypatch.setattr(reference_module, "embed_texts", fake_embed_texts)
 
     codes = [
-        RamqCode(code="A", description="Une lacération profonde de la main", category="procedure"),
-        RamqCode(code="B", description="Suivi de tension artérielle", category="chronic"),
+        RamqCode(code="A", description="Une lacération profonde de la main"),
+        RamqCode(code="B", description="Suivi de tension artérielle"),
     ]
     table = RamqReferenceTable(codes)
 
