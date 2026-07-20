@@ -16,6 +16,7 @@ from fastapi import FastAPI, HTTPException  # noqa: E402
 
 from app.db import init_db, save_extraction  # noqa: E402
 from app.extraction.engine import run_extraction  # noqa: E402
+from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.models import (  # noqa: E402
     BillingCodesResult,
     ConsultationSummaryResult,
@@ -80,14 +81,31 @@ def extract(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    result = run_extraction(task, request.transcript)
+    source_system = request.source.system if request.source else None
+
+    if task.name == "billing_codes":
+        # billing_codes no longer runs off the raw transcript directly — it's a two-stage
+        # pipeline (transcript -> consultation_summary -> billing_codes), see
+        # app/extraction/pipeline.py. Store the intermediate summary too, since it's the
+        # actual input the billing model reasoned over and a physician reviewing a
+        # surprising code needs to see it, not just the raw transcript.
+        summary_result, result = run_billing_codes_pipeline(request.transcript)
+        save_extraction(
+            task=summary_result.task,
+            transcript=request.transcript,
+            result=summary_result.result.model_dump(),
+            model=summary_result.model,
+            source_system=source_system,
+        )
+    else:
+        result = run_extraction(task, request.transcript)
 
     save_extraction(
         task=result.task,
         transcript=request.transcript,
         result=result.result.model_dump(),
         model=result.model,
-        source_system=request.source.system if request.source else None,
+        source_system=source_system,
     )
 
     return result

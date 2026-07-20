@@ -16,8 +16,13 @@ class ExtractionTask(ABC):
     name: str
 
     @abstractmethod
-    def build_prompt(self, transcript: str) -> tuple[str, str]:
-        """Returns (system_prompt, user_message) for this transcript."""
+    def build_prompt(self, input_text: str) -> tuple[str, str]:
+        """Returns (system_prompt, user_message) for this task's input text.
+
+        For most tasks this is the raw transcript. billing_codes is the exception: it takes
+        the rendered text of an already-generated consultation_summary instead (see
+        app/extraction/pipeline.py), not the raw transcript directly.
+        """
 
     @abstractmethod
     def json_schema(self) -> dict[str, Any]:

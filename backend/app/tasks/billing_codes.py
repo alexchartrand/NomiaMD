@@ -6,7 +6,9 @@ from app.ramq.reference import RamqCode, get_reference_table
 from app.tasks.base import ExtractionTask
 
 SYSTEM_PROMPT = """\
-You extract RAMQ billing codes from a clinical encounter transcript for physician review.
+You extract RAMQ billing codes from a structured consultation summary — a set of clinical
+facts already extracted from the original transcript (setting, patient context, exam
+findings, procedures, etc.), not the raw transcript itself.
 
 Rules:
 - Only choose codes from the candidate list provided in the user message. Never invent a
@@ -16,30 +18,30 @@ Rules:
   not a suggestion. Two kinds behave differently:
     - A "patient: ..." condition (age, vulnerability, inscription) or any other billing
       restriction describes something the clinical encounter itself should establish. If
-      it's violated, or the transcript doesn't establish that it's met, exclude the code
-      entirely — do not include it at low confidence "just in case".
+      it's violated, or the consultation summary doesn't establish that it's met, exclude
+      the code entirely — do not include it at low confidence "just in case".
     - A "physician eligibility: ..." condition describes a fact about the billing
       physician's own practice (e.g. registered-patient panel size, a practice restricted
-      to a specialty) — not something a clinical transcript would ever state. Don't exclude
-      a code solely because this kind of condition can't be confirmed from the transcript:
-      include the best-fitting candidate anyway, and use the notes field to flag that the
-      physician must confirm it (naming the alternative code(s) when multiple candidates
-      differ only on this axis, so the physician can pick the right one).
+      to a specialty) — not something a clinical encounter would ever establish. Don't
+      exclude a code solely because this kind of condition can't be confirmed from the
+      summary: include the best-fitting candidate anyway, and use the notes field to flag
+      that the physician must confirm it (naming the alternative code(s) when multiple
+      candidates differ only on this axis, so the physician can pick the right one).
 - Some candidates are written as "code1/code2: ... — physician-eligibility variants, pick
   one: code1 if ... ($X); code2 if ... ($Y)" — this is several real codes that are
   otherwise identical, merged onto one line because they only differ by a physician
   eligibility condition (see above). If the visit itself is otherwise supported by the
-  transcript, pick whichever single code you'd guess is more likely correct, report only
+  summary, pick whichever single code you'd guess is more likely correct, report only
   that one code (not both) in `codes`, and use notes to name the other alternative and say
   the physician needs to confirm which applies.
-- Every code you return must include a short verbatim quote from the transcript that
-  describes the specific billed act itself (the exam/service/procedure the code's own
-  description names) — not incidental context like the clinic's name, a diagnosis, or a
+- Every code you return must include a short verbatim quote from the consultation summary
+  provided that describes the specific billed act itself (the exam/service/procedure the
+  code's own description names) — not incidental context like the clinic's name alone or a
   medication list. If you can't quote text establishing that the billed act actually
   happened, don't include the code.
 - The candidate list is a narrowed search result, not a guarantee the correct code is in
   it. An empty codes list is the correct, expected output whenever no candidate is clearly
-  supported by the transcript — never select the "closest" or "least wrong" candidate just
+  supported by the summary — never select the "closest" or "least wrong" candidate just
   to return something.
 - Use the notes field to flag anything ambiguous — e.g. two candidate codes that could both
   apply, a service that was mentioned but not clearly performed, or none of the candidates
@@ -124,9 +126,9 @@ def _format_candidate_group(group: list[RamqCode]) -> str:
 class BillingCodesTask(ExtractionTask):
     name = "billing_codes"
 
-    def build_prompt(self, transcript: str) -> tuple[str, str]:
+    def build_prompt(self, consultation_summary_text: str) -> tuple[str, str]:
         reference = get_reference_table()
-        candidates = reference.candidates_for(transcript)
+        candidates = reference.candidates_for(consultation_summary_text)
 
         # Group candidates that are identical except for their physician-eligibility split
         # (e.g. a "clientèle inscrite de moins/plus de 500 patients" pair) into one merged
@@ -146,7 +148,7 @@ class BillingCodesTask(ExtractionTask):
         candidate_lines = [_format_candidate_group(g) for g in groups.values()]
 
         prompt_sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]
-        prompt_sections.append(f"Transcript:\n{transcript}")
+        prompt_sections.append(f"Consultation summary:\n{consultation_summary_text}")
 
         return SYSTEM_PROMPT, "\n\n".join(prompt_sections)
 

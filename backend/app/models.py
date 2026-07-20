@@ -1,7 +1,7 @@
 """Shared Pydantic models for extraction requests and results."""
 
 from datetime import datetime, timezone
-from typing import Generic, TypeVar
+from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -35,7 +35,10 @@ class ExtractedCode(BaseModel):
     description: str
     confidence: float = Field(ge=0.0, le=1.0)
     supporting_quote: str = Field(
-        description="Short verbatim excerpt from the transcript that justifies this code"
+        description=(
+            "Short verbatim excerpt from the consultation summary (not the raw transcript) "
+            "that justifies this code"
+        )
     )
     price_cad: float | None = Field(
         default=None,
@@ -58,64 +61,159 @@ class BillingCodesResult(BaseModel):
     )
 
 
-class PatientBillingProfile(BaseModel):
-    """Patient-side facts that gate RAMQ code eligibility — the same axes as
-    app.ramq.reference.PatientTag, extracted from the transcript instead of the manual."""
+LocationType = Literal[
+    "cabinet",
+    "domicile",
+    "urgence",
+    "clsc",
+    "chsld",
+    "centre_readaptation",
+    "hopital_soins_courte_duree",
+    "hopital_soins_longue_duree",
+    "telemedecine",
+    "inconnu",
+]
 
-    age: int | None = Field(
-        default=None,
-        description="Patient's age in years, if stated or clearly determinable from the transcript",
+AppointmentType = Literal["sur_rendez_vous", "sans_rendez_vous_acces_adapte", "inconnu"]
+
+Trimester = Literal["first", "beyond_first", "unclear"]
+
+ReferralType = Literal[
+    "consultation_ecrite",
+    "reference_traitement",
+    "demande_opinion_verbale",
+    "aucune",
+    "inconnu",
+]
+
+RequesterRole = Literal[
+    "medecin_omnipraticien",
+    "medecin_specialiste",
+    "dentiste",
+    "optometriste",
+    "sage_femme",
+    "autre_professionnel",
+]
+
+SingleVsMultiSystem = Literal["single", "multi", "unclear"]
+
+SpecialExamType = Literal[
+    "gynecologique",
+    "ophtalmologique",
+    "articulaire_avec_evaluation_fonction",
+    "psychiatrique_semiologique",
+    "evaluation_fonctions_mentales_superieures",
+    "autre",
+]
+
+AnesthesiaUsed = Literal["local", "regional", "general", "none", "not_stated"]
+
+DiagnosticOrTherapeutic = Literal["diagnostic", "therapeutique", "both", "unclear"]
+
+BestGuessCategory = Literal[
+    "visite_suivi_ou_prise_en_charge",
+    "visite_ponctuelle",
+    "consultation_formelle",
+    "examen_complet_ou_majeur",
+    "intervention_clinique_longue",
+    "acte_diagnostique_ou_therapeutique",
+    "chirurgie",
+    "psychotherapie",
+    "constatation_deces",
+    "communication_professionnelle_seule",
+    "autre_ou_indetermine",
+]
+
+ConfidenceLevel = Literal["high", "medium", "low"]
+
+
+class PregnancyContext(BaseModel):
+    present: bool
+    trimester: Trimester | None = None
+
+
+class EncounterSetting(BaseModel):
+    location_type: LocationType
+    location_detail: str | None = None
+    date: str | None = Field(default=None, description="ISO date if stated, else null")
+    time_start: str | None = Field(default=None, description="HH:MM if stated, else null")
+    time_end: str | None = Field(default=None, description="HH:MM if stated, else null")
+    duration_minutes: float | None = None
+    duration_explicitly_stated: bool
+    appointment_type: AppointmentType
+
+
+class PatientInformation(BaseModel):
+    age_years: float | None = None
+    age_months_if_infant: float | None = None
+    sex_if_stated: str | None = None
+    pregnancy_context: PregnancyContext
+    relevant_vulnerability_or_context_mentioned: list[str] = Field(default_factory=list)
+    new_or_established_patient_language: str | None = None
+
+
+class ReferralInformation(BaseModel):
+    present: bool
+    referral_type: ReferralType
+    requester_role: RequesterRole | None = None
+    requester_identifier_mentioned: str | None = Field(
+        default=None, description="Verbatim name/number if stated, else null"
     )
-    vulnerable: bool | None = Field(
-        default=None,
-        description=(
-            "Whether the transcript establishes the patient as vulnerable per RAMQ "
-            "criteria (e.g. chronic disease, loss of autonomy, palliative care) — null if "
-            "not addressed"
-        ),
-    )
-    inscription_status: str | None = Field(
-        default=None,
-        description="e.g. 'inscrit' or 'non inscrit', if the transcript states or clearly implies it",
-    )
-    evidence: str | None = Field(
-        default=None,
-        description=(
-            "Short verbatim quote(s) from the transcript backing whichever of age/"
-            "vulnerable/inscription_status above were filled in — null if none were"
-        ),
-    )
+    reason_for_referral: str | None = Field(default=None, description="Short paraphrase, else null")
+    written_report_back_required_or_produced: bool | None = None
+
+
+class ClinicalSummary(BaseModel):
+    chief_complaint_or_reason_for_visit: str
+    systems_or_body_regions_involved: list[str] = Field(default_factory=list)
+    single_vs_multi_system: SingleVsMultiSystem
+    history_taken: bool | None = None
+    new_treatment_initiated: bool | None = None
+    existing_treatment_reviewed_or_adjusted: bool | None = None
+    diagnosis_or_impression_stated: str | None = None
+    recommendations_given_to_patient: bool | None = None
+    orders_or_prescriptions_mentioned: bool | None = None
+
+
+class PhysicalExamination(BaseModel):
+    performed: bool | None = None
+    regions_or_systems_examined: list[str] = Field(default_factory=list)
+    special_exam_type: list[SpecialExamType] = Field(default_factory=list)
+    notable_findings: str | None = None
+
+
+class ProcedurePerformed(BaseModel):
+    procedure_description: str
+    body_site: str | None = None
+    technique_or_approach_mentioned: str | None = None
+    anesthesia_used: AnesthesiaUsed
+    diagnostic_or_therapeutic: DiagnosticOrTherapeutic
+
+
+class EncounterCategoryHint(BaseModel):
+    best_guess_category: BestGuessCategory
+    confidence: ConfidenceLevel
+    rationale: str
 
 
 class ConsultationSummaryResult(BaseModel):
-    """A structured summary of a clinical encounter, focused on the facts that matter for
-    RAMQ billing (visit type/location, patient eligibility axes) plus a short clinical
-    summary for physician review — not a full medical-record note."""
+    """A structured summary of a clinical encounter's RAMQ-relevant facts (setting, patient
+    context, referral, clinical/exam content, a category hint) for physician review — never
+    a billing code itself; that's resolved downstream by the rules engine against
+    administrative facts not present in the transcript."""
 
-    chief_complaint: str | None = Field(
-        default=None, description="Motif de consultation, in the transcript's own words"
-    )
-    visit_type: str | None = Field(
-        default=None,
-        description="e.g. 'sur rendez-vous', 'sans rendez-vous', 'téléconsultation' — null if not determinable",
-    )
-    visit_location: str | None = Field(
-        default=None,
-        description="e.g. 'cabinet', 'domicile', 'CLSC', 'GMF-U', 'établissement' — null if not determinable",
-    )
-    acts_performed: list[str] = Field(
+    short_description: str
+    encounter_setting: EncounterSetting
+    patient_information: PatientInformation
+    referral_information: ReferralInformation
+    clinical_summary: ClinicalSummary
+    physical_examination: PhysicalExamination
+    procedures_performed: list[ProcedurePerformed] = Field(default_factory=list)
+    encounter_category_hint: EncounterCategoryHint
+    possible_billable_add_ons: list[str] = Field(default_factory=list)
+    notes_uncertain_items: list[str] = Field(
         default_factory=list,
-        description="Brief descriptions of exams/procedures/interventions actually performed during the encounter",
-    )
-    diagnoses: list[str] = Field(
-        default_factory=list,
-        description="Diagnoses or clinical impressions established during the encounter",
-    )
-    patient: PatientBillingProfile = Field(default_factory=PatientBillingProfile)
-    plan: str | None = Field(default=None, description="Brief follow-up plan")
-    notes: str | None = Field(
-        default=None,
-        description="Anything ambiguous or needing physician review before this summary informs billing",
+        description="Anything the model could not determine confidently, phrased as a question for the physician",
     )
 
 

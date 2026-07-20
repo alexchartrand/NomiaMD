@@ -17,9 +17,8 @@ from dotenv import load_dotenv
 # a debugger, load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from app.extraction.engine import run_extraction  # noqa: E402
+from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.sample_patients import get_sample_patients  # noqa: E402
-from app.tasks.registry import get_task  # noqa: E402
 
 
 def load_sample_transcript() -> str:
@@ -30,11 +29,13 @@ def main() -> None:
     transcript = load_sample_transcript()
     print("--- transcript ---")
     print(transcript)
-    print("--- extraction result ---")
 
-    task = get_task("consultation_summary")
-    result = run_extraction(task, transcript)
-    print(result.model_dump_json(indent=2))
+    summary_result, billing_result = run_billing_codes_pipeline(transcript)
+
+    print("--- consultation summary ---")
+    print(summary_result.model_dump_json(indent=2))
+    print("--- billing codes result ---")
+    print(billing_result.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,9 @@
-"""Runs billing-code extraction over a small hand-labeled eval set and reports how the
-configured model (NOMIAMD_BASE_URL / NOMIAMD_MODEL) did against expected codes, plus a
-sanity check that every supporting_quote is actually verbatim in the transcript.
+"""Runs billing-code extraction (via the two-stage transcript -> consultation_summary ->
+billing_codes pipeline, see app/extraction/pipeline.py) over a small hand-labeled eval set
+and reports how the configured model (NOMIAMD_BASE_URL / NOMIAMD_MODEL) did against
+expected codes, plus a sanity check that every supporting_quote is actually verbatim in
+the rendered consultation summary — the text billing_codes actually reasoned over, not the
+raw transcript.
 
 Requires NOMIAMD_BASE_URL (and NOMIAMD_MODEL) to point at a running model server —
 either the fake dev server (`make fake-llm`) or a real one. From backend/, with the venv
@@ -28,9 +31,9 @@ from dotenv import load_dotenv
 # a debugger, load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from app.extraction.engine import run_extraction  # noqa: E402
+from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.sample_patients import get_sample_patient  # noqa: E402
-from app.tasks.registry import get_task  # noqa: E402
+from app.tasks.consultation_summary import render_for_billing_codes  # noqa: E402
 
 DEFAULT_EVAL_PATH = Path(__file__).parent.parent / "tests" / "fixtures" / "eval_billing_codes.jsonl"
 
@@ -40,17 +43,16 @@ def load_eval_set(path: Path) -> list[dict]:
         return [json.loads(line) for line in f if line.strip()]
 
 
-def quote_is_grounded(transcript: str, quote: str) -> bool:
+def quote_is_grounded(source_text: str, quote: str) -> bool:
     """Loose containment check — whitespace-normalized, since models sometimes reflow
     line breaks in an otherwise-verbatim quote."""
     normalize = lambda s: " ".join(s.split())
-    return normalize(quote) in normalize(transcript)
+    return normalize(quote) in normalize(source_text)
 
 
 def main() -> None:
     eval_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_EVAL_PATH
     entries = load_eval_set(eval_path)
-    task = get_task("billing_codes")
 
     scored = 0
     total_precision = 0.0
@@ -64,13 +66,14 @@ def main() -> None:
             print(f"[skip] unknown patient_id {entry['patient_id']!r}")
             continue
 
-        result = run_extraction(task, patient.transcript)
+        summary_result, result = run_billing_codes_pipeline(patient.transcript)
+        summary_text = render_for_billing_codes(summary_result.result)
         returned_codes = {c.code for c in result.result.codes}
         expected_codes = set(entry.get("expected_codes") or [])
 
         for c in result.result.codes:
             total_quotes += 1
-            if not quote_is_grounded(patient.transcript, c.supporting_quote):
+            if not quote_is_grounded(summary_text, c.supporting_quote):
                 ungrounded_quotes += 1
 
         status = entry.get("label_status", "unknown")

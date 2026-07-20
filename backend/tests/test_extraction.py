@@ -25,6 +25,61 @@ SAMPLE_TRANSCRIPT = (
     "ions) dans 3 mois pour réévaluer le contrôle glycémique."
 )
 
+MOCK_SUMMARY_RESULT = {
+    "short_description": "Suivi trimestriel de diabète de type 2 et d'hypertension artérielle.",
+    "encounter_setting": {
+        "location_type": "cabinet",
+        "location_detail": None,
+        "date": None,
+        "time_start": None,
+        "time_end": None,
+        "duration_minutes": None,
+        "duration_explicitly_stated": False,
+        "appointment_type": "inconnu",
+    },
+    "patient_information": {
+        "age_years": 58,
+        "age_months_if_infant": None,
+        "sex_if_stated": None,
+        "pregnancy_context": {"present": False, "trimester": None},
+        "relevant_vulnerability_or_context_mentioned": [],
+        "new_or_established_patient_language": None,
+    },
+    "referral_information": {
+        "present": False,
+        "referral_type": "aucune",
+        "requester_role": None,
+        "requester_identifier_mentioned": None,
+        "reason_for_referral": None,
+        "written_report_back_required_or_produced": None,
+    },
+    "clinical_summary": {
+        "chief_complaint_or_reason_for_visit": "Suivi trimestriel de diabète de type 2 et d'hypertension artérielle",
+        "systems_or_body_regions_involved": ["endocrinien", "cardiovasculaire"],
+        "single_vs_multi_system": "multi",
+        "history_taken": True,
+        "new_treatment_initiated": False,
+        "existing_treatment_reviewed_or_adjusted": True,
+        "diagnosis_or_impression_stated": "Hypertension artérielle et diabète de type 2, cible glycémique non atteinte",
+        "recommendations_given_to_patient": True,
+        "orders_or_prescriptions_mentioned": True,
+    },
+    "physical_examination": {
+        "performed": True,
+        "regions_or_systems_examined": ["tension artérielle"],
+        "special_exam_type": [],
+        "notable_findings": "Tension artérielle mesurée à 138/86",
+    },
+    "procedures_performed": [],
+    "encounter_category_hint": {
+        "best_guess_category": "visite_suivi_ou_prise_en_charge",
+        "confidence": "high",
+        "rationale": "Suivi documenté d'un patient déjà pris en charge pour diabète et hypertension.",
+    },
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [],
+}
+
 MOCK_RESULT = {
     "codes": [
         {
@@ -44,13 +99,13 @@ MOCK_RESULT = {
 }
 
 
-def _mock_response():
+def _mock_response(payload=MOCK_RESULT):
     return SimpleNamespace(
         model="local-model",
         choices=[
             SimpleNamespace(
                 finish_reason="stop",
-                message=SimpleNamespace(content=json.dumps(MOCK_RESULT)),
+                message=SimpleNamespace(content=json.dumps(payload)),
             )
         ],
     )
@@ -161,8 +216,13 @@ def test_extract_endpoint_end_to_end():
     # DATABASE_URL is bound to a SQLAlchemy engine at import time (app/db.py), so it can't
     # be swapped per-test via monkeypatch here — this exercises the real dev DB's schema.
     # Using TestClient as a context manager triggers the FastAPI lifespan (init_db()).
+    # billing_codes is now a two-stage pipeline (consultation_summary, then billing_codes
+    # off that summary) — two chat-completion calls happen, so mock two responses in order.
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
+        mock_get_client.return_value.chat.completions.create.side_effect = [
+            _mock_response(MOCK_SUMMARY_RESULT),
+            _mock_response(MOCK_RESULT),
+        ]
         with TestClient(app) as client:
             response = client.post(
                 "/extract",
