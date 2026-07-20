@@ -14,18 +14,6 @@ from app.tasks.base import ExtractionTask
 MODEL = os.environ.get("NOMIAMD_MODEL")
 BASE_URL = os.environ.get("NOMIAMD_BASE_URL")
 
-# Small local models tend to collapse to a trivial-but-valid empty response (e.g.
-# {"codes": [], ...} in a handful of tokens) when decoding is grammar-constrained to the
-# JSON schema — the constraint enforces validity, not reasoning, and weak models take the
-# shortest valid way out. Set NOMIAMD_STRUCTURED_OUTPUT=false to fall back to freeform
-# generation (schema described in the prompt instead of enforced), which gives the model
-# room to actually reason before committing to output. Re-enable once running a model
-# capable enough to reason under the grammar constraint.
-STRUCTURED_OUTPUT = (os.environ.get("NOMIAMD_STRUCTURED_OUTPUT") or "true").lower() not in (
-    "false", "0", "no",
-)
-
-
 @lru_cache(maxsize=1)
 def get_client() -> OpenAI:
     if not BASE_URL:
@@ -35,34 +23,18 @@ def get_client() -> OpenAI:
     return OpenAI(base_url=BASE_URL, api_key=os.environ.get("NOMIAMD_API_KEY") or "not-needed")
 
 
-def _extract_json(text: str) -> dict:
-    """Freeform models sometimes wrap JSON in code fences or a stray sentence despite
-    being told not to — pull out the outermost {...} object rather than assuming the
-    whole response is clean JSON."""
-    start = text.find("{")
-    end = text.rfind("}")
-    if start == -1 or end == -1:
-        raise ValueError(f"Model response did not contain a JSON object: {text!r}")
-    return json.loads(text[start : end + 1])
-
-
-def run_extraction(task: ExtractionTask, transcript: str) -> ExtractionResult:
-    system_prompt, user_message = task.build_prompt(transcript)
+def run_extraction(
+    task: ExtractionTask, input_text: str) -> ExtractionResult:
+    system_prompt, user_message = task.build_prompt(input_text)
     schema = task.json_schema()
-
+    client = get_client()
     kwargs = {}
-    if STRUCTURED_OUTPUT:
-        kwargs["response_format"] = {
-            "type": "json_schema",
-            "json_schema": {"name": task.name, "schema": schema},
-        }
-    else:
-        system_prompt += (
-            "\n\nRespond with a single JSON object only (no markdown code fences, no other "
-            "text) matching exactly this JSON schema:\n" + json.dumps(schema)
-        )
 
-    response = get_client().chat.completions.create(
+    kwargs["response_format"] = {
+            "type": "json_schema",
+            "json_schema": {"name": task.name, "strict": True, "schema": schema}}
+
+    response = client.chat.completions.create(
         model=MODEL,
         max_tokens=4096,
         # Deterministic on purpose: this is a structured extraction task (pick codes from a
@@ -81,7 +53,7 @@ def run_extraction(task: ExtractionTask, transcript: str) -> ExtractionResult:
     if choice.finish_reason not in ("stop", "length"):
         raise RuntimeError(f"Model did not return a normal completion (finish_reason={choice.finish_reason!r})")
 
-    raw = json.loads(choice.message.content) if STRUCTURED_OUTPUT else _extract_json(choice.message.content)
+    raw = json.loads(choice.message.content)
     parsed = task.parse(raw)
 
     return ExtractionResult(task=task.name, result=parsed, model=response.model)
