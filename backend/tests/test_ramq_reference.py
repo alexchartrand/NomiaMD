@@ -7,7 +7,7 @@ of diverse entries rather than 1-2, so scores behave the way they will at real (
 of entries) scale.
 """
 
-from app.ramq.reference import FeeVariant, RamqCode, RamqReferenceTable
+from app.ramq.reference import EmbeddedChunk, FeeVariant, RamqCode, RamqReferenceTable
 from app.ramq.retrieval import tokenize
 
 
@@ -166,3 +166,74 @@ def test_candidates_for_merges_embedding_hits_bm25_alone_would_miss(monkeypatch)
 
     results = table.candidates_for(query)
     assert any(c.code == "A" for c in results)
+
+
+def test_candidates_for_uses_precomputed_embedded_chunks_when_given(monkeypatch):
+    """Mirrors the real ramq-ingestion export: multiple chunks (manual rows) can share one
+    code (e.g. distinct fee-variant sub-rows, like the real "15159" code), and a chunk's code
+    might not exist in the current reference table at all (the two files are generated
+    independently and can drift). Both cases must be handled without embedding the corpus
+    live — only the query goes through embed_fn."""
+    import app.ramq.reference as reference_module
+
+    monkeypatch.setattr(reference_module, "embeddings_enabled", lambda: True)
+
+    query = "défense abdominale mystère"
+    embed_calls = []
+
+    def fake_embed_texts(texts: list[str], model: str | None = None) -> list[list[float]]:
+        embed_calls.append((texts, model))
+        return [[1.0, 0.0] if t == query else [0.0, 1.0] for t in texts]
+
+    monkeypatch.setattr(reference_module, "embed_texts", fake_embed_texts)
+
+    codes = [
+        RamqCode(code="A", description="Une lacération profonde de la main"),
+        RamqCode(code="B", description="Suivi de tension artérielle"),
+    ]
+    embedded_chunks = [
+        # Two rows for code A (like real "15159") — best-ranked one should win the dedup.
+        EmbeddedChunk(code="A", text="row 1", embedding=(1.0, 0.0), embedding_model="fake-model", breadcrumb=("X",)),
+        EmbeddedChunk(code="A", text="row 2", embedding=(1.0, 0.0), embedding_model="fake-model", breadcrumb=("X",)),
+        EmbeddedChunk(code="B", text="row 3", embedding=(0.0, 1.0), embedding_model="fake-model", breadcrumb=("Y",)),
+        # A chunk for a code no longer present in the (independently generated) reference
+        # table — must be dropped, not raise.
+        EmbeddedChunk(code="GHOST", text="row 4", embedding=(1.0, 0.0), embedding_model="fake-model", breadcrumb=("X",)),
+    ]
+    table = RamqReferenceTable(codes, embedded_chunks=embedded_chunks)
+
+    results = table.candidates_for(query)
+    assert [c.code for c in results][:1] == ["A"]
+    assert all(c.code != "GHOST" for c in results)
+
+    # embed_fn is only ever called for the query text, pinned to the chunks' own model —
+    # never re-embedding the four precomputed chunks.
+    assert embed_calls == [([query], "fake-model")]
+
+
+def test_apply_cluster_cap_lets_a_smaller_relevant_cluster_through():
+    # 15 codes ranked ahead purely by incidental BM25 overlap all live in one noisy
+    # subsection; 2 genuinely relevant codes sit in a different, smaller subsection but rank
+    # just outside a plain top-10 slice. Capping the noisy cluster should let them in.
+    table = RamqReferenceTable([RamqCode(code=str(i), description="x") for i in range(17)])
+    table._code_cluster = {
+        **{str(i): ("NOISE",) for i in range(15)},
+        "15": ("REAL",),
+        "16": ("REAL",),
+    }
+    ranked = [str(i) for i in range(15)] + ["15", "16"]
+
+    capped = table._apply_cluster_cap(ranked, limit=10)
+
+    assert len(capped) == 10
+    assert "15" in capped and "16" in capped
+    noise_kept = sum(1 for code in capped if code not in ("15", "16"))
+    assert noise_kept == table._CLUSTER_CAP + 2  # cap (6) + 2 backfilled to reach limit=10
+
+
+def test_apply_cluster_cap_is_noop_without_cluster_data():
+    table = RamqReferenceTable([RamqCode(code=str(i), description="x") for i in range(5)])
+    assert table._code_cluster == {}
+    ranked = [str(i) for i in range(5)]
+    assert table._apply_cluster_cap(ranked, limit=3) == ranked[:3]
+

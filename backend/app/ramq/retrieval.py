@@ -94,23 +94,34 @@ class EmbeddingRetriever(Generic[T]):
     replace it: administrative rule text ("ne peut être facturé avec...") rarely shares
     vocabulary with a clinical transcript, which is exactly the gap embeddings can close.
     See reference.py for how RamqReferenceTable merges both retrievers' results.
+
+    `embed_fn` is always used for the query text in candidates_for(). For the corpus side,
+    pass either `vectors` (precomputed elsewhere — e.g. shipped by an ingestion pipeline, so
+    items never need to be re-embedded here) or `text_for` (embed each item's text via
+    `embed_fn` at construction time, for callers with no precomputed vectors on hand).
     """
 
     def __init__(
         self,
         items: Sequence[T],
-        text_for: Callable[[T], str],
         embed_fn: Callable[[list[str]], list[list[float]]],
+        text_for: Callable[[T], str] | None = None,
+        vectors: Sequence[Sequence[float]] | None = None,
     ):
         self._items = list(items)
         self._embed_fn = embed_fn
-        if self._items:
-            vectors = np.array(embed_fn([text_for(item) for item in self._items]), dtype=np.float32)
-            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
-            norms[norms == 0] = 1.0
-            self._vectors = vectors / norms
-        else:
+        if not self._items:
             self._vectors = None
+        else:
+            if vectors is not None:
+                raw_vectors = np.array(vectors, dtype=np.float32)
+            elif text_for is not None:
+                raw_vectors = np.array(embed_fn([text_for(item) for item in self._items]), dtype=np.float32)
+            else:
+                raise ValueError("EmbeddingRetriever requires either `vectors` or `text_for`")
+            norms = np.linalg.norm(raw_vectors, axis=1, keepdims=True)
+            norms[norms == 0] = 1.0
+            self._vectors = raw_vectors / norms
 
     def candidates_for(self, query: str, limit: int) -> list[T]:
         if self._vectors is None:

@@ -14,6 +14,14 @@ accordingly.
 Entirely optional: without NOMIAMD_EMBEDDING_API_KEY set, embeddings_enabled() is False and
 RamqReferenceTable falls back to BM25-only retrieval, unchanged from before this module
 existed.
+
+Two calling patterns use embed_texts():
+- Query-time embedding of a transcript against RAMQ's precomputed corpus vectors (see
+  reference.py) — always passes `model=` explicitly, pinned to whatever embedding_model the
+  precomputed corpus file recorded, so the query lands in the same vector space no matter
+  what NOMIAMD_EMBEDDING_MODEL happens to be set to locally.
+- Embedding a small ad-hoc table from scratch (e.g. in tests, or any future caller with no
+  precomputed vectors) — relies on the NOMIAMD_EMBEDDING_MODEL default below.
 """
 
 import hashlib
@@ -40,8 +48,10 @@ def embeddings_enabled() -> bool:
     return bool(os.environ.get("NOMIAMD_EMBEDDING_API_KEY"))
 
 
-def _cache_key(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+def _cache_key(model: str, text: str) -> str:
+    # Namespaced by model: a cached vector for one embedding model is meaningless (and
+    # dangerous to silently reuse) as a stand-in for another model's vector space.
+    return hashlib.sha256(f"{model}:{text}".encode("utf-8")).hexdigest()
 
 
 def _load_cache() -> dict[str, list[float]]:
@@ -50,17 +60,22 @@ def _load_cache() -> dict[str, list[float]]:
     return {}
 
 
-def embed_texts(texts: list[str]) -> list[list[float]]:
-    """Embeds a batch of texts, filling in only what's missing from the on-disk cache."""
+def embed_texts(texts: list[str], model: str | None = None) -> list[list[float]]:
+    """Embeds a batch of texts, filling in only what's missing from the on-disk cache.
+
+    `model` defaults to NOMIAMD_EMBEDDING_MODEL but callers that need a specific model (e.g.
+    matching a precomputed corpus's embedding_model) should pass it explicitly.
+    """
+    model = model or EMBEDDING_MODEL
     cache = _load_cache()
-    keys = [_cache_key(t) for t in texts]
+    keys = [_cache_key(model, t) for t in texts]
     missing = [(i, t) for i, (t, k) in enumerate(zip(texts, keys)) if k not in cache]
 
     if missing:
         client = OpenAI(api_key=os.environ["NOMIAMD_EMBEDDING_API_KEY"], base_url=os.environ.get("NOMIAMD_EMBEDDING_BASE_URL"))
         for start in range(0, len(missing), _BATCH_SIZE):
             chunk = missing[start : start + _BATCH_SIZE]
-            response = client.embeddings.create(model=EMBEDDING_MODEL, input=[t for _, t in chunk])
+            response = client.embeddings.create(model=model, input=[t for _, t in chunk])
             for (i, _), item in zip(chunk, response.data):
                 cache[keys[i]] = item.embedding
         _CACHE_PATH.write_text(json.dumps(cache))
