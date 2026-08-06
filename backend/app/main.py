@@ -18,13 +18,13 @@ from app.db import init_db, save_extraction  # noqa: E402
 from app.extraction.engine import run_extraction  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.models import (  # noqa: E402
-    BillingCodesResult,
     ExtractionRequest,
     ExtractionResult,
     SamplePatientDetail,
     SamplePatientSummary,
 )
 from app.sample_patients import get_sample_patient, get_sample_patients  # noqa: E402
+from app.tasks.billing_codes import BillingCodesResult  # noqa: E402
 from app.tasks.registry import available_tasks, get_task  # noqa: E402
 from app.tasks.summary import ConsultationSummaryResult  # noqa: E402
 

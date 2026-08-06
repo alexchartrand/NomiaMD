@@ -1,6 +1,6 @@
 """Semantic candidate retrieval for RAMQ codes, backed by a llama_index VectorStoreIndex.
 
-All llama_index types stay behind RamqVectorRetriever — billing_codes.py only ever sees
+All llama_index types stay behind RamqVectorRetriever — billing_codes/task.py only ever sees
 candidates_for()'s RamqCandidate objects, never a llama_index Node/Index/Retriever. That's
 the seam meant to absorb a future storage-backend change: the index is persisted locally
 today (app/ramq/vector/, a llama_index SimpleVectorStore/StorageContext dump built from
@@ -10,7 +10,7 @@ happens, only load()'s body changes, not this class's public shape or any caller
 This is now the sole source of RAMQ code data (description, when-to-use guidance, billing
 rules) — the old app/ramq/reference_data.section_b.json table (with per-code fees and
 structured patient/physician eligibility tags) was dropped because most of that data was
-wrong. Nothing here carries a price or a structured eligibility tag; billing_codes.py no
+wrong. Nothing here carries a price or a structured eligibility tag; billing_codes/task.py no
 longer computes a price.
 """
 
@@ -66,7 +66,7 @@ MISTRAL_EMBED_MODEL = "mistral-embed"
 
 # Below this cosine-similarity score, a hit is noise rather than a real candidate — without
 # this floor, an unrelated query still returns `limit` codes (whatever ranks least-badly),
-# and billing_codes.py has no way to tell "no real candidate" from "weakest of a bad batch".
+# and billing_codes/task.py has no way to tell "no real candidate" from "weakest of a bad batch".
 # Calibrated empirically against this corpus (relevant queries scored ~0.81-0.85 on-topic,
 # an unrelated query topped out ~0.69) — needs revisiting once a larger eval set is
 # available, not a finished number.

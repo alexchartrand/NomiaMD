@@ -1,8 +1,8 @@
 from typing import Any
 
-from app.models import BillingCodesResult
 from app.ramq.vector_retrieval import RamqCandidate, get_vector_retriever
 from app.tasks.base import ExtractionTask
+from app.tasks.billing_codes.models import BillingCodesResult
 
 SYSTEM_PROMPT = """\
 You extract RAMQ billing codes from a structured consultation summary — a set of clinical

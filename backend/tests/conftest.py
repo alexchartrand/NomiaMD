@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from app.ramq.vector_retrieval import RamqCandidate
-from app.tasks import billing_codes as billing_codes_module
+from app.tasks.billing_codes import task as billing_codes_module
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
 
@@ -35,8 +35,8 @@ def small_reference_table(monkeypatch):
     behave predictably without a real vector index, MISTRAL_API_KEY, or network call.
 
     Patches billing_codes_module.get_vector_retriever, not
-    app.ramq.vector_retrieval.get_vector_retriever itself: billing_codes.py imported that
-    exact function object directly (`from app.ramq.vector_retrieval import
+    app.ramq.vector_retrieval.get_vector_retriever itself: app/tasks/billing_codes/task.py
+    imported that exact function object directly (`from app.ramq.vector_retrieval import
     get_vector_retriever`) at module load time, so replacing the vector_retrieval module
     attribute wouldn't reach that already-bound name.
     """

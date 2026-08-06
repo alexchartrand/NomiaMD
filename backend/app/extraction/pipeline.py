@@ -6,7 +6,8 @@ freeform dictation, and grounds the model's code/eligibility reasoning in facts 
 extracted once instead of re-reading the whole transcript."""
 
 from app.extraction.engine import run_extraction
-from app.models import BillingCodesResult, ExtractionResult
+from app.models import ExtractionResult
+from app.tasks.billing_codes import BillingCodesResult
 from app.tasks.registry import get_task
 from app.tasks.summary import ConsultationSummaryResult, render_for_billing_codes
 

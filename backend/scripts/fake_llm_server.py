@@ -4,7 +4,7 @@ extraction pipeline (and the frontend end-to-end) without a real local model.
 Drop-in replacement for LocalAI: listens on the same host:port as NOMIAMD_BASE_URL's
 default (http://localhost:8080/v1) — no .env changes needed. It's deliberately "dumb": it
 parses the candidate RAMQ codes out of the prompt (built by
-app/tasks/billing_codes.py::build_prompt) and picks a fixed number of them back, with
+app/tasks/billing_codes/task.py::build_prompt) and picks a fixed number of them back, with
 placeholder confidence/quote values. This exercises the whole pipeline (retrieval -> prompt
 -> parse -> price lookup -> API -> frontend) deterministically, without depending on any
 real model's behavior.

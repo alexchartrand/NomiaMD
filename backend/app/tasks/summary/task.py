@@ -61,7 +61,7 @@ SYSTEM_PROMPT = _RULES.format(schema=render_schema_block(ConsultationSummaryResu
 
 def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
     """Renders a ConsultationSummaryResult back into a single French text blob — this,
-    not the raw transcript, is what billing_codes.py sends to the model (both for RAMQ
+    not the raw transcript, is what billing_codes/task.py sends to the model (both for RAMQ
     candidate retrieval and as the text its supporting_quote must be grounded in). Using
     the already-extracted, denser summary instead of a long freeform dictation is the
     point of the two-stage pipeline (app/extraction/pipeline.py): it retrieves RAMQ
