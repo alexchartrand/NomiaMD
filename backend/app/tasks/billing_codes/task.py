@@ -3,6 +3,7 @@ from typing import Any
 from app.ramq.vector_retrieval import RamqCandidate, get_vector_retriever
 from app.tasks.base import ExtractionTask
 from app.tasks.billing_codes.models import BillingCodesResult
+from app.tasks.schema import to_strict_schema
 
 SYSTEM_PROMPT = """\
 You extract RAMQ billing codes from a structured consultation summary — a set of clinical
@@ -65,33 +66,7 @@ class BillingCodesTask(ExtractionTask):
         return SYSTEM_PROMPT, "\n\n".join(prompt_sections)
 
     def json_schema(self) -> dict[str, Any]:
-        return {
-            "type": "object",
-            "properties": {
-                "codes": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "code": {"type": "string"},
-                            "description": {"type": "string"},
-                            "confidence": {"type": "number"},
-                            "supporting_quote": {"type": "string"},
-                        },
-                        "required": [
-                            "code",
-                            "description",
-                            "confidence",
-                            "supporting_quote",
-                        ],
-                        "additionalProperties": False,
-                    },
-                },
-                "notes": {"type": ["string", "null"]},
-            },
-            "required": ["codes", "notes"],
-            "additionalProperties": False,
-        }
+        return to_strict_schema(BillingCodesResult)
 
     def parse(self, raw: dict[str, Any]) -> BillingCodesResult:
         # Small local models (freeform JSON, no grammar constraint) sometimes collapse the
