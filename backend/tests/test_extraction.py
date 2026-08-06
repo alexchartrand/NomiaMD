@@ -4,8 +4,8 @@ environment. Once NOMIAMD_BASE_URL is configured, see scripts/try_extraction.py 
 live smoke test.
 
 Uses the small tests/fixtures/reference_data_test.json table (via the small_reference_table
-fixture in conftest.py) rather than the real reference_data.json, so these tests don't
-depend on its size or exact content."""
+fixture in conftest.py) rather than the real llama_index vector store, so these tests don't
+depend on its size, network access, or exact content."""
 
 import json
 from types import SimpleNamespace
@@ -130,53 +130,6 @@ def test_run_extraction_parses_mocked_response():
     assert "TEST-CONSULT-NEW" not in user_message  # not relevant to this transcript
 
 
-def test_run_extraction_enriches_prices_from_reference_table():
-    """Price must come from the reference table lookup, not from the (mocked) model
-    output — the mock response above doesn't include price_cad at all."""
-    task = get_task("billing_codes")
-    with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
-        result = run_extraction(task, SAMPLE_TRANSCRIPT)
-
-    prices = {c.code: c.price_cad for c in result.result.codes}
-    assert prices == {
-        "TEST-BP-MGMT": 35.75,
-        "TEST-BLOODWORK-ORDER": 18.25,
-    }
-    assert result.result.total_price_cad == 54.0
-
-
-def test_run_extraction_handles_code_not_in_reference_table():
-    """If the model somehow returns a code with no match (or no price on file), price
-    should be None rather than the pipeline erroring or fabricating a number."""
-    task = get_task("billing_codes")
-    mock_result = {
-        "codes": [
-            {
-                "code": "NOT-IN-TABLE",
-                "description": "Unknown",
-                "confidence": 0.5,
-                "supporting_quote": "n/a",
-            }
-        ],
-        "notes": None,
-    }
-    with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.return_value = SimpleNamespace(
-            model="local-model",
-            choices=[
-                SimpleNamespace(
-                    finish_reason="stop",
-                    message=SimpleNamespace(content=json.dumps(mock_result)),
-                )
-            ],
-        )
-        result = run_extraction(task, SAMPLE_TRANSCRIPT)
-
-    assert result.result.codes[0].price_cad is None
-    assert result.result.total_price_cad is None
-
-
 def test_run_extraction_drops_malformed_bare_string_codes():
     """A small local model sometimes collapses the codes array to bare code strings
     instead of {code, description, confidence, supporting_quote} objects, especially with
@@ -237,7 +190,6 @@ def test_extract_endpoint_end_to_end():
     body = response.json()
     assert body["task"] == "billing_codes"
     assert len(body["result"]["codes"]) == 2
-    assert body["result"]["total_price_cad"] == 54.0
 
 
 def test_unknown_task_returns_400():

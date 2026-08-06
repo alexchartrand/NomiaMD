@@ -117,7 +117,6 @@ export default function App() {
                   <th>Code</th>
                   <th>Description</th>
                   <th>Confidence</th>
-                  <th>Price (CAD)</th>
                   <th>Supporting quote</th>
                 </tr>
               </thead>
@@ -127,38 +126,16 @@ export default function App() {
                     <td className="code">{c.code}</td>
                     <td>{c.description}</td>
                     <td>{(c.confidence * 100).toFixed(0)}%</td>
-                    <td>{formatPrice(c.price_cad)}</td>
                     <td>
                       <em>&ldquo;{c.supporting_quote}&rdquo;</em>
                     </td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot>
-                <tr>
-                  <td colSpan={3}>
-                    <strong>Total</strong>
-                  </td>
-                  <td>
-                    <strong>{formatPrice(result.result.total_price_cad)}</strong>
-                  </td>
-                  <td />
-                </tr>
-              </tfoot>
             </table>
           )}
-          <p className="footnote">
-            Prices are placeholder figures from a development reference table, not real
-            RAMQ fees — see the project README.
-          </p>
         </section>
       )}
     </main>
   );
-}
-
-function formatPrice(priceCad: number | null): string {
-  return priceCad === null
-    ? "—"
-    : priceCad.toLocaleString("en-CA", { style: "currency", currency: "CAD" });
 }

@@ -40,7 +40,7 @@ def _retriever(vectors: dict[str, list[float]], nodes: list[TextNode]) -> RamqVe
 def _node(code: str, text: str) -> TextNode:
     # excluded_embed_metadata_keys: get_content(MetadataMode.EMBED) otherwise prepends
     # "number: <code>\n\n" to the node text, which would mean embedding "number: A\n\na"
-    # instead of the plain "a" the vectors lookup dict is keyed on.
+    # instead of the plain `text` the vectors lookup dict is keyed on.
     return TextNode(text=text, metadata={"number": code}, excluded_embed_metadata_keys=["number"])
 
 
@@ -55,7 +55,7 @@ def test_candidates_ranked_by_cosine_similarity():
         vectors,
         [_node("CHAT", "chat"), _node("CHIEN", "chien"), _node("AVION", "avion")],
     )
-    results = retriever.candidates_for("query", limit=3)
+    results = [c.code for c in retriever.candidates_for("query", limit=3)]
     assert results[0] == "CHAT"
     assert results[1] == "CHIEN"
     assert "AVION" not in results  # orthogonal vector -> similarity ~0, below MIN_SIMILARITY
@@ -88,4 +88,19 @@ def test_candidates_for_dedupes_and_drops_nodes_without_a_number():
         TextNode(text="a", metadata={}),  # no "number" metadata at all
     ]
     retriever = _retriever(vectors, nodes)
-    assert retriever.candidates_for("query", limit=5) == ["A"]
+    assert [c.code for c in retriever.candidates_for("query", limit=5)] == ["A"]
+
+
+def test_candidates_for_parses_description_when_to_use_and_rules_from_node_text():
+    text = (
+        "number A\n"
+        "description Description du code A\n"
+        "when_to_use Scénario A\n"
+        "rules Règle A"
+    )
+    vectors = {text: [1.0, 0.0], "query": [1.0, 0.0]}
+    retriever = _retriever(vectors, [_node("A", text)])
+    [candidate] = retriever.candidates_for("query", limit=5)
+    assert candidate.description == "Description du code A"
+    assert candidate.when_to_use == ("Scénario A",)
+    assert candidate.rules == ("Règle A",)

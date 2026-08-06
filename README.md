@@ -5,11 +5,11 @@ ambient scribe tools like Plume AI), with a physician review step before anythin
 submitted. Built to be extensible: adding a new output type (prescriptions, consultation
 notes) means adding one new task definition, not redesigning the pipeline.
 
-**Scope: family doctors (omnipraticiens) only, for now.** The RAMQ code table is ingested
+**Scope: family doctors (omnipraticiens) only, for now.** The RAMQ code corpus is ingested
 from the *omnipraticien* remuneration manual specifically — it does not cover specialist
 billing codes (a different manual, different nomenclature). A specialist code table and
-extractor are future work, not yet started; don't assume `reference_data.json` is usable
-for a specialist encounter.
+extractor are future work, not yet started; don't assume the RAMQ vector store
+(`backend/app/ramq/vector/`) is usable for a specialist encounter.
 
 ## ⚠️ Before using real patient data
 
@@ -18,12 +18,10 @@ may be sent to a third-party LLM API at all** (Quebec's Law 25 and the clinic's 
 policy govern this) before any real, non-synthetic PHI touches this system. Everything in
 this repo has been developed and tested against synthetic data only.
 
-Also: the RAMQ code reference table (`backend/app/ramq/reference_data.json`) is ingested
-from the real *Manuel des médecins omnipraticiens — Rémunération à l'acte* (~4,000 codes —
-see `_meta` in that file for provenance and the `ramq-ingestion` repo for how it was
-parsed). A meaningful fraction of entries are flagged `needs_review: true` where the
-automated parser was uncertain (see "RAMQ data ingestion" below) — treat those as lower
-confidence until spot-checked.
+Also: the RAMQ candidate corpus (`backend/app/ramq/vector/`) is ingested from the real
+*Manuel des médecins omnipraticiens — Rémunération à l'acte* (see the `ramq-ingestion` repo
+for how it was parsed). It's a curated subset (~100 codes), not the full ~4,000-code
+manual — treat candidate retrieval as covering common cases, not exhaustive.
 
 ## Layout
 
@@ -47,22 +45,11 @@ different file in the same format instead.
 
 ## Pricing
 
-Each RAMQ code in the reference table (`backend/app/ramq/reference_data.json`) carries a
-`fees` list, not a single flat price — most real codes are billed differently depending on
-context (e.g. *en cabinet ou à domicile* vs. *en CLSC ou en GMF-U*), and both amounts are
-kept rather than discarding one. `RamqCode.price_cad` is a convenience property returning
-the first/default fee variant's price. When a code is extracted,
-`backend/app/tasks/billing_codes.py` looks this up from the reference table and attaches it
-to the result — **the model never generates a price**; its JSON schema doesn't even include
-a price field. `BillingCodesResult` also carries a `total_price_cad` (sum across codes that
-have a price on file). This is deliberate: a monetary figure should come from a known table,
-not LLM recall.
-
-Time-of-day/weekend surcharges exist as their own "majoration" codes (`unit: "majoration %"`,
-a `percentage` instead of `price_cad` on their fee variant) rather than being modeled as
-automatic multipliers applied to a base code — that composition (which base codes a given
-majoration applies to, and picking the right fee variant for the encounter's setting) is
-still an open design question, not yet resolved.
+Not tracked. An earlier reference table (`backend/app/ramq/reference_data.section_b.json`)
+carried per-code fees and structured patient/physician eligibility conditions, but most of
+that data turned out to be wrong and it was dropped along with all code that depended on it
+— `ExtractedCode`/`BillingCodesResult` no longer have `price_cad`/`total_price_cad` fields.
+A trustworthy pricing source is future work.
 
 ## How it's extensible
 
@@ -72,25 +59,13 @@ prompt, a JSON schema for structured extraction, and a parser into a typed Pydan
 new task is added. `backend/app/tasks/registry.py` is where new tasks get wired in.
 
 Today there's one task, `billing_codes` (`backend/app/tasks/billing_codes.py`), which:
-1. Narrows the RAMQ reference table (~4,000 real codes) down to a small candidate list for
-   the transcript via BM25 (`backend/app/ramq/reference.py`, `backend/app/ramq/retrieval.py`)
-   — this keeps the model choosing from a known list instead of relying on its own recall of
+1. Narrows the RAMQ corpus down to a small candidate list for the transcript via semantic
+   similarity (`backend/app/ramq/vector_retrieval.py`, a llama_index `VectorStoreIndex`
+   persisted under `backend/app/ramq/vector/`, embedded with Mistral's `mistral-embed`) —
+   this keeps the model choosing from a known list instead of relying on its own recall of
    RAMQ codes, and keeps the candidate set small enough to fit in the prompt regardless of
-   table size. Retrieval is wrapped behind a small `Retriever` protocol so BM25 (lexical,
-   local-first, no extra infra) can later be swapped for embeddings-based semantic retrieval
-   without touching callers, once there's a stronger/hosted model in the loop to pair it
-   with.
-
-   **⚠️ Known gap:** every entry in `reference_data.json` has an empty `keywords` field
-   (ingestion stub, `build_reference.py`) — retrieval currently relies entirely on BM25
-   over each code's terse manual description/category, with French stemming to bridge
-   simple inflection (a transcript saying "plaie" now matches a code description saying
-   "plaies"). It does **not** bridge lay/clinical vocabulary vs. the manual's formal
-   terminology (e.g. "coupure"/"couteau" won't match "Réparation de plaies" unless the
-   word "plaie" itself is also present). If a code you'd expect to see just isn't showing
-   up as a candidate, check this before assuming it's a model problem — either populating
-   `keywords` for the relevant entries or adding a synonym-expansion layer would be the
-   fix, neither of which exists yet.
+   corpus size. Hits below `MIN_SIMILARITY` are dropped as noise rather than returned as
+   weak candidates. Requires `MISTRAL_API_KEY`.
 2. Asks the model (freeform JSON with the schema described in the prompt by default — see
    `NOMIAMD_STRUCTURED_OUTPUT` below — or grammar-constrained structured output for models
    capable of it) to pick from those candidates only, with a supporting quote per code for
@@ -101,20 +76,18 @@ Adding `prescriptions` or `consultation_notes` later: write a new class implemen
 
 ## RAMQ data ingestion
 
-`backend/app/ramq/reference_data.json` is generated, not hand-written. Ingestion (raw RAMQ
-manual export → `reference_data.json`) lives in its own repo, `ramq-ingestion`
+`backend/app/ramq/vector/` (the persisted vector index) is generated, not hand-written.
+Ingestion (raw RAMQ manual export → per-code `number`/`description`/`when_to_use`/`rules`
+→ embedded into the index) lives in its own repo, `ramq-ingestion`
 (`~/Software/ramq-ingestion` — no remote host set up yet), decoupled on purpose: this
-backend consumes `reference_data.json` as a plain data file, with no code dependency on how
-it was produced. To regenerate it: run the ingestion pipeline there (see that repo's README
-for the extract → human-review → promote stages, and why the source has to be a
-manually-saved export rather than scraped), then copy the result over this file:
+backend consumes the persisted index as a plain data artifact, with no code dependency on
+how it was produced. See that repo's README to regenerate it.
 
-```bash
-cp ~/Software/ramq-ingestion/output/reference_data.json backend/app/ramq/reference_data.json
-```
-
-`reference_data.json` itself continues to be tracked in this repo's git history exactly as
-before — only how it gets regenerated has moved out.
+An earlier iteration ingested a separate `reference_data.section_b.json` table carrying
+per-code fees and structured patient/physician eligibility conditions. Most of that data
+turned out to be wrong, so it and everything that depended on it (pricing, eligibility
+tagging in the billing_codes prompt) were removed — the vector index's `description`/
+`when_to_use`/`rules` text is now the only source of RAMQ code data.
 
 ## Quick start
 

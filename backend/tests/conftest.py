@@ -3,53 +3,60 @@ from pathlib import Path
 
 import pytest
 
-from app.ramq import reference as reference_module
+from app.ramq.vector_retrieval import RamqCandidate
+from app.tasks import billing_codes as billing_codes_module
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
 
 
 class _KeywordStubRetriever:
     """Deterministic, dependency-free stand-in for the real llama_index-backed retriever
-    used in tests: ranks fixture codes by how many of their fixture "keywords" appear in
-    the query text. Only ever used here — the real pipeline always goes through
+    used in tests: ranks fixture candidates by how many of their fixture "keywords" appear
+    in the query text. Only ever used here — the real pipeline always goes through
     RamqVectorRetriever (app/ramq/vector_retrieval.py)."""
 
-    def __init__(self, entries: list[tuple[str, list[str]]]):
+    def __init__(self, entries: list[tuple[RamqCandidate, list[str]]]):
         self._entries = entries
 
-    def candidates_for(self, query: str, limit: int) -> list[str]:
+    def candidates_for(self, query: str, limit: int) -> list[RamqCandidate]:
         query_lower = query.lower()
         scored = [
-            (code, sum(1 for kw in keywords if kw.lower() in query_lower))
-            for code, keywords in self._entries
+            (candidate, sum(1 for kw in keywords if kw.lower() in query_lower))
+            for candidate, keywords in self._entries
         ]
         ranked = sorted((pair for pair in scored if pair[1] > 0), key=lambda pair: pair[1], reverse=True)
-        return [code for code, _ in ranked[:limit]]
+        return [candidate for candidate, _ in ranked[:limit]]
 
 
 @pytest.fixture(autouse=True)
 def small_reference_table(monkeypatch):
-    """Points the RAMQ reference table at a tiny, stable fixture rather than the real
-    (large, frequently-regenerated) reference_data.json, and swaps the real llama_index
-    retriever for a deterministic keyword-based stub — tests need candidate narrowing to
+    """Points RAMQ candidate retrieval at a tiny, stable fixture rather than the real
+    (large, network-backed) llama_index vector store — tests need candidate narrowing to
     behave predictably without a real vector index, MISTRAL_API_KEY, or network call.
 
-    Patches REFERENCE_PATH and get_vector_retriever (not get_reference_table itself): every
-    caller of get_reference_table() imported that exact function object directly (e.g.
-    `from app.ramq.reference import get_reference_table` in billing_codes.py) before this
-    fixture ever runs, so replacing the reference.py module attribute wouldn't reach those
-    callers — but the function body itself resolves REFERENCE_PATH/get_vector_retriever via
-    reference.py's own module globals at call time, which patching here does reach.
+    Patches billing_codes_module.get_vector_retriever, not
+    app.ramq.vector_retrieval.get_vector_retriever itself: billing_codes.py imported that
+    exact function object directly (`from app.ramq.vector_retrieval import
+    get_vector_retriever`) at module load time, so replacing the vector_retrieval module
+    attribute wouldn't reach that already-bound name.
     """
     data = json.loads(SMALL_REFERENCE_PATH.read_text())
-    entries = [(entry["code"], entry.get("keywords", [])) for entry in data["codes"]]
+    entries = [
+        (
+            RamqCandidate(
+                code=entry["code"],
+                description=entry["description"],
+                when_to_use=tuple(entry.get("when_to_use", [])),
+                rules=tuple(entry.get("rules", [])),
+            ),
+            entry.get("keywords", []),
+        )
+        for entry in data["codes"]
+    ]
     stub_retriever = _KeywordStubRetriever(entries)
 
-    monkeypatch.setattr(reference_module, "REFERENCE_PATH", SMALL_REFERENCE_PATH)
-    monkeypatch.setattr(reference_module, "get_vector_retriever", lambda: stub_retriever)
-    reference_module.get_reference_table.cache_clear()
+    monkeypatch.setattr(billing_codes_module, "get_vector_retriever", lambda: stub_retriever)
     yield
-    reference_module.get_reference_table.cache_clear()
 
 
 @pytest.fixture(autouse=True)

@@ -3,13 +3,11 @@ export interface ExtractedCode {
   description: string;
   confidence: number;
   supporting_quote: string;
-  price_cad: number | null;
 }
 
 export interface BillingCodesResult {
   codes: ExtractedCode[];
   notes: string | null;
-  total_price_cad: number | null;
 }
 
 export interface ExtractionResult {
