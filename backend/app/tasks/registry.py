@@ -1,6 +1,6 @@
 from app.tasks.base import ExtractionTask
 from app.tasks.billing_codes import BillingCodesTask
-from app.tasks.consultation_summary import ConsultationSummaryTask
+from app.tasks.summary import ConsultationSummaryTask
 
 _TASKS: dict[str, ExtractionTask] = {
     task.name: task

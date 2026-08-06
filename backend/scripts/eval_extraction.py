@@ -33,7 +33,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.sample_patients import get_sample_patient  # noqa: E402
-from app.tasks.consultation_summary import render_for_billing_codes  # noqa: E402
+from app.tasks.summary import render_for_billing_codes  # noqa: E402
 
 DEFAULT_EVAL_PATH = Path(__file__).parent.parent / "tests" / "fixtures" / "eval_billing_codes.jsonl"
 

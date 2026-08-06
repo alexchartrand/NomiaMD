@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from app.extraction.pipeline import run_billing_codes_pipeline
-from app.tasks.consultation_summary import render_for_billing_codes
+from app.tasks.summary import render_for_billing_codes
 from tests.test_consultation_summary import MOCK_RESULT as MOCK_SUMMARY_RESULT
 from tests.test_extraction import MOCK_RESULT as MOCK_BILLING_RESULT
 

@@ -19,7 +19,6 @@ from app.extraction.engine import run_extraction  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.models import (  # noqa: E402
     BillingCodesResult,
-    ConsultationSummaryResult,
     ExtractionRequest,
     ExtractionResult,
     SamplePatientDetail,
@@ -27,6 +26,7 @@ from app.models import (  # noqa: E402
 )
 from app.sample_patients import get_sample_patient, get_sample_patients  # noqa: E402
 from app.tasks.registry import available_tasks, get_task  # noqa: E402
+from app.tasks.summary import ConsultationSummaryResult  # noqa: E402
 
 
 @asynccontextmanager
