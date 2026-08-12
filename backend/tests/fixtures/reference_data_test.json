@@ -9,6 +9,7 @@
       "description": "Prise en charge d'une maladie chronique, hypertension artérielle",
       "when_to_use": ["Suivi d'un patient déjà traité pour hypertension artérielle"],
       "rules": [],
+      "fees": [{"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": null}],
       "keywords": ["hypertension", "tension artérielle", "antihypertenseur"]
     },
     {

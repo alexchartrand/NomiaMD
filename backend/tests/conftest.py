@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from app.ramq.vector_retrieval import RamqCandidate
+from app.ramq.models import Fee, RamqCandidate
 from app.tasks.billing_codes import task as billing_codes_module
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
@@ -48,6 +48,10 @@ def small_reference_table(monkeypatch):
                 description=entry["description"],
                 when_to_use=tuple(entry.get("when_to_use", [])),
                 rules=tuple(entry.get("rules", [])),
+                fees=tuple(
+                    Fee(amount=f["amount"], when_to_use=f.get("when_to_use"), majoration=f.get("majoration"))
+                    for f in entry.get("fees", [])
+                ),
             ),
             entry.get("keywords", []),
         )

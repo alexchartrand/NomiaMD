@@ -5,9 +5,9 @@ Drop-in replacement for LocalAI: listens on the same host:port as NOMIAMD_BASE_U
 default (http://localhost:8080/v1) — no .env changes needed. It's deliberately "dumb": it
 parses the candidate RAMQ codes out of the prompt (built by
 app/tasks/billing_codes/task.py::build_prompt) and picks a fixed number of them back, with
-placeholder confidence/quote values. This exercises the whole pipeline (retrieval -> prompt
--> parse -> price lookup -> API -> frontend) deterministically, without depending on any
-real model's behavior.
+placeholder confidence/quote/fee values. This exercises the whole pipeline (retrieval ->
+prompt -> parse -> API -> frontend) deterministically, without depending on any real
+model's behavior.
 
     python scripts/fake_llm_server.py [--port 8080] [--pick 2]
 """
@@ -21,7 +21,10 @@ from fastapi import FastAPI, Request
 
 app = FastAPI(title="fake-llm")
 
-_CANDIDATE_RE = re.compile(r"^- (?P<code>\S+): (?P<description>.+?) \(category: .+?\)$", re.MULTILINE)
+# Matches the "- CODE: description" prefix _format_candidate() always emits (see
+# app/tasks/billing_codes/task.py) — the rest of the line (when-to-use/conditions/fees
+# brackets) is ignored, not part of this fake's stub output.
+_CANDIDATE_RE = re.compile(r"^- (?P<code>\S+): (?P<description>[^\[]+?)(?: \[|$)", re.MULTILINE)
 
 PICK = 2  # overridden by --pick at startup
 
@@ -35,6 +38,7 @@ def _fake_billing_codes_content(user_message: str) -> str:
             "description": description,
             "confidence": 0.5,
             "supporting_quote": "(stub quote — fake LLM, not a real extraction)",
+            "fee": {"amount": None, "when_to_use": None, "majoration": None},
         }
         for code, description in chosen
     ]

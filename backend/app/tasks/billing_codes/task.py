@@ -1,5 +1,6 @@
 from typing import Any
 
+from app.ramq.models import Fee
 from app.ramq.vector_retrieval import RamqCandidate, get_vector_retriever
 from app.tasks.base import ExtractionTask
 from app.tasks.billing_codes.models import BillingCodesResult
@@ -27,6 +28,15 @@ Rules:
       candidate anyway, and use the notes field to flag that the physician must confirm it
       (naming any other candidate that differs only on this axis, so the physician can pick
       the right one).
+- Every code's `fee` field must be filled in from that candidate's fee list, never invented:
+    - If a candidate has exactly one fee, use it.
+    - If a candidate has several fees tied to different conditions (e.g. time of day,
+      practice setting), pick the one whose condition the consultation summary establishes.
+      If you can't tell which one applies, pick the most defensible one and flag the
+      ambiguity in notes (naming the other candidate fee), same as the physician-practice
+      condition handling above — don't leave fee blank just because it's ambiguous.
+    - If a candidate has no fee data at all, return `fee` with every sub-field null rather
+      than omitting it or guessing an amount.
 - Every code you return must include a short verbatim quote from the consultation summary
   provided that describes the specific billed act itself (the exam/service/procedure the
   code's own description names) — not incidental context like the clinic's name alone or a
@@ -42,12 +52,24 @@ Rules:
 - This output is a draft for physician review, not a final billing submission."""
 
 
+def _format_fee(f: Fee) -> str:
+    amount = f"{f.amount:.2f}" if f.amount is not None else "?"
+    parts = [amount]
+    if f.when_to_use:
+        parts.append(f.when_to_use)
+    if f.majoration:
+        parts.append(f"majoration: {f.majoration}")
+    return " — ".join(parts)
+
+
 def _format_candidate(c: RamqCandidate) -> str:
     line = f"- {c.code}: {c.description}"
     if c.when_to_use:
         line += f" [when to use: {'; '.join(c.when_to_use)}]"
     if c.rules:
         line += f" [conditions: {'; '.join(c.rules)}]"
+    if c.fees:
+        line += f" [fees: {'; '.join(_format_fee(f) for f in c.fees)}]"
     return line
 
 

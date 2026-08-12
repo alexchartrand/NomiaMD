@@ -28,9 +28,9 @@ def _request_body(user_message: str) -> dict:
 def test_picks_candidates_from_prompt():
     user_message = (
         "Candidate RAMQ codes:\n"
-        "- 15801: Visite de prise en charge (category: B — Consultation)\n"
-        "- 08579: Révision d'un examen (category: Divers)\n"
-        "- 00260: Blocage du ganglion stellaire (category: Anesthésie)\n\n"
+        "- 15801: Visite de prise en charge [when to use: Prise en charge d'un nouveau patient]\n"
+        "- 08579: Révision d'un examen\n"
+        "- 00260: Blocage du ganglion stellaire [fees: 174.90 — Pour un déplacement entre 8h et 18h]\n\n"
         "Transcript:\nPatient exemple."
     )
     response = client.post("/v1/chat/completions", json=_request_body(user_message))
@@ -41,7 +41,9 @@ def test_picks_candidates_from_prompt():
     content = json.loads(body["choices"][0]["message"]["content"])
     assert len(content["codes"]) == fake_llm_server.PICK
     assert content["codes"][0]["code"] == "15801"
+    assert content["codes"][0]["description"] == "Visite de prise en charge"
     assert "supporting_quote" in content["codes"][0]
+    assert content["codes"][0]["fee"] == {"amount": None, "when_to_use": None, "majoration": None}
 
 
 def test_no_candidates_returns_empty_codes_with_note():

@@ -8,8 +8,8 @@ notes) means adding one new task definition, not redesigning the pipeline.
 **Scope: family doctors (omnipraticiens) only, for now.** The RAMQ code corpus is ingested
 from the *omnipraticien* remuneration manual specifically — it does not cover specialist
 billing codes (a different manual, different nomenclature). A specialist code table and
-extractor are future work, not yet started; don't assume the RAMQ vector store
-(`backend/app/ramq/vector/`) is usable for a specialist encounter.
+extractor are future work, not yet started; don't assume the RAMQ LanceDB `codes` table
+(at `DB_PATH`) is usable for a specialist encounter.
 
 ## ⚠️ Before using real patient data
 
@@ -18,10 +18,11 @@ may be sent to a third-party LLM API at all** (Quebec's Law 25 and the clinic's 
 policy govern this) before any real, non-synthetic PHI touches this system. Everything in
 this repo has been developed and tested against synthetic data only.
 
-Also: the RAMQ candidate corpus (`backend/app/ramq/vector/`) is ingested from the real
-*Manuel des médecins omnipraticiens — Rémunération à l'acte* (see the `ramq-ingestion` repo
-for how it was parsed). It's a curated subset (~100 codes), not the full ~4,000-code
-manual — treat candidate retrieval as covering common cases, not exhaustive.
+Also: the RAMQ candidate corpus (the LanceDB `codes` table at `DB_PATH`) is ingested from
+the real *Manuel des médecins omnipraticiens — Rémunération à l'acte* (see the
+`ramq-ingestion` repo for how it was parsed). It's a curated subset (currently ~370 codes),
+not the full ~4,000-code manual — treat candidate retrieval as covering common cases, not
+exhaustive.
 
 ## Layout
 
@@ -44,11 +45,15 @@ transcript from the same source.
 
 ## Pricing
 
-Not tracked. An earlier reference table (`backend/app/ramq/reference_data.section_b.json`)
-carried per-code fees and structured patient/physician eligibility conditions, but most of
-that data turned out to be wrong and it was dropped along with all code that depended on it
-— `ExtractedCode`/`BillingCodesResult` no longer have `price_cad`/`total_price_cad` fields.
-A trustworthy pricing source is future work.
+Fees are back, sourced per-code from `ramq-ingestion`'s extraction (`Code.fees`: amount,
+the situation it applies to, and any majoration) rather than the earlier structured
+patient/physician eligibility table that was dropped for being mostly wrong. Each
+`ExtractedCode` now carries a `fee` (`backend/app/tasks/billing_codes/models.py`), which
+the model selects from that candidate's fee list based on the consultation summary —
+picking the one whose condition applies when a code has several, or leaving all sub-fields
+null when no fee data exists or none could be determined. Like the codes themselves, this
+is not a verified/authoritative pricing source — a physician must confirm the amount before
+billing.
 
 ## How it's extensible
 
@@ -60,11 +65,11 @@ new task is added. `backend/app/tasks/registry.py` is where new tasks get wired 
 Today there's one task, `billing_codes` (`backend/app/tasks/billing_codes.py`), which:
 1. Narrows the RAMQ corpus down to a small candidate list for the transcript via semantic
    similarity (`backend/app/ramq/vector_retrieval.py`, a llama_index `VectorStoreIndex`
-   persisted under `backend/app/ramq/vector/`, embedded with Mistral's `mistral-embed`) —
+   over the LanceDB `codes` table at `DB_PATH`, embedded with Mistral's `mistral-embed`) —
    this keeps the model choosing from a known list instead of relying on its own recall of
    RAMQ codes, and keeps the candidate set small enough to fit in the prompt regardless of
    corpus size. Hits below `MIN_SIMILARITY` are dropped as noise rather than returned as
-   weak candidates. Requires `MISTRAL_API_KEY`.
+   weak candidates. Requires `MISTRAL_API_KEY` and `DB_PATH`.
 2. Asks the model (freeform JSON with the schema described in the prompt by default — see
    `NOMIAMD_STRUCTURED_OUTPUT` below — or grammar-constrained structured output for models
    capable of it) to pick from those candidates only, with a supporting quote per code for
@@ -75,18 +80,18 @@ Adding `prescriptions` or `consultation_notes` later: write a new class implemen
 
 ## RAMQ data ingestion
 
-`backend/app/ramq/vector/` (the persisted vector index) is generated, not hand-written.
-Ingestion (raw RAMQ manual export → per-code `number`/`description`/`when_to_use`/`rules`
-→ embedded into the index) lives in its own repo, `ramq-ingestion`
+The LanceDB `codes` table at `DB_PATH` is generated, not hand-written. Ingestion (raw RAMQ
+manual export → per-code `number`/`description`/`when_to_use`/`rules`/`fees`/`confidence`
+→ embedded into LanceDB) lives in its own repo, `ramq-ingestion`
 (`~/Software/ramq-ingestion` — no remote host set up yet), decoupled on purpose: this
-backend consumes the persisted index as a plain data artifact, with no code dependency on
+backend consumes the LanceDB directory as a plain data artifact, with no code dependency on
 how it was produced. See that repo's README to regenerate it.
 
 An earlier iteration ingested a separate `reference_data.section_b.json` table carrying
 per-code fees and structured patient/physician eligibility conditions. Most of that data
-turned out to be wrong, so it and everything that depended on it (pricing, eligibility
-tagging in the billing_codes prompt) were removed — the vector index's `description`/
-`when_to_use`/`rules` text is now the only source of RAMQ code data.
+turned out to be wrong, so it and everything that depended on it were removed; fees have
+since come back in a different, per-code free-text-qualified shape (see "Pricing" above) —
+there is still no structured eligibility tag beyond what's in each code's `rules` text.
 
 ## Quick start
 
