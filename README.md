@@ -40,8 +40,7 @@ clinical notes, one per file. The backend serves these as selectable "simulated 
 (`GET /patients`, `GET /patients/{id}`) and the frontend's dropdown loads a transcript
 straight into the textarea from there — useful for demoing the pipeline without typing or
 pasting a transcript by hand. `backend/scripts/try_extraction.py` reads its sample
-transcript from the same source. Set `SAMPLE_PATIENTS_DIR` to point at a different
-directory of files in the same format instead.
+transcript from the same source.
 
 ## Pricing
 

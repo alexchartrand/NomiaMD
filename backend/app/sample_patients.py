@@ -9,17 +9,14 @@ French-language clinical note per file (`README.md` and `all_notes.md` in that d
 are skipped). Override it to point at a different directory of files in the same format.
 """
 
-import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-DEFAULT_DIR = Path(__file__).parent.parent.parent / "consultations"
-SAMPLE_PATIENTS_DIR = Path(os.environ.get("SAMPLE_PATIENTS_DIR") or DEFAULT_DIR)
+SAMPLE_PATIENTS_DIR = Path(__file__).parent.parent.parent / "consultations"
 
 _SKIP_STEMS = {"README", "all_notes"}
-
 
 @dataclass(frozen=True)
 class SamplePatient:
