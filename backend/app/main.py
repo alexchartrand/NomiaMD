@@ -12,6 +12,9 @@ from dotenv import load_dotenv
 # working directory isn't backend/.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
+from app.settings import configure_settings  # noqa: E402
+configure_settings()
+
 from fastapi import FastAPI, HTTPException  # noqa: E402
 
 from app.db import init_db, save_extraction  # noqa: E402
