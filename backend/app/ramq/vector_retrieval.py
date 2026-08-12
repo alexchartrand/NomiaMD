@@ -41,7 +41,7 @@ MISTRAL_EMBED_MODEL = "mistral-embed"
 # Calibrated empirically against the previous corpus (relevant queries scored ~0.81-0.85 on-topic,
 # an unrelated query topped out ~0.69) — needs revisiting against the current LanceDB corpus once
 # a larger eval set is available, not a finished number.
-MIN_SIMILARITY = 0.75
+MIN_SIMILARITY = 0.7
 
 
 def _fee_from_metadata(raw: dict) -> Fee:
