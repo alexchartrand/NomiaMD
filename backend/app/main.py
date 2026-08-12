@@ -48,7 +48,7 @@ def health() -> dict:
 
 @app.get("/patients", response_model=list[SamplePatientSummary])
 def list_patients() -> list[SamplePatientSummary]:
-    """Synthetic test patients from notes_consultation_simulees.md, for the frontend's patient picker."""
+    """Synthetic test patients from consultations/, for the frontend's patient picker."""
     return [
         SamplePatientSummary(id=p.id, label=p.label) for p in get_sample_patients()
     ]

@@ -1,5 +1,5 @@
-"""Exercises the real notes_consultation_simulees.md fixture at the repo root — no
-mocking needed, this is pure file parsing."""
+"""Exercises the real consultations/ fixture at the repo root — no mocking needed,
+this is pure file parsing."""
 
 from fastapi.testclient import TestClient
 
@@ -9,13 +9,12 @@ from app.sample_patients import get_sample_patient, get_sample_patients
 
 def test_loads_patients_from_real_fixture():
     patients = get_sample_patients()
-    assert len(patients) == 5
-    assert len({p.id for p in patients}) == 5  # ids are unique
-    first = patients[0]
-    assert first.id == "URG-2026-04471"
-    assert "67" in first.label
-    assert "thoracique" in first.label.lower()
-    assert "STEMI" in first.transcript
+    assert len(patients) == 25
+    assert len({p.id for p in patients}) == 25  # ids are unique
+    stemi = next(p for p in patients if p.id == "URG-2026-04471")
+    assert "67" in stemi.label
+    assert "thoracique" in stemi.label.lower()
+    assert "STEMI" in stemi.transcript
 
 
 def test_get_sample_patient_by_id():
@@ -33,7 +32,7 @@ def test_list_patients_endpoint():
         response = client.get("/patients")
     assert response.status_code == 200
     body = response.json()
-    assert len(body) == 5
+    assert len(body) == 25
     assert all(set(entry.keys()) == {"id", "label"} for entry in body)
 
 

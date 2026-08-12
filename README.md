@@ -35,13 +35,13 @@ scratch/reference material (a getting-started script, the Synthea synthetic pati
 generator, and a third-party synthetic consultation-transcript dataset) — not part of the
 application.
 
-`notes_consultation_simulees.md` at the repo root is a set of freeform, French-language
-synthetic clinical notes (one per `## NOTE <n>` section). The backend serves these as
-selectable "simulated patients" (`GET /patients`, `GET /patients/{id}`) and the frontend's
-dropdown loads a transcript straight into the textarea from there — useful for demoing the
-pipeline without typing or pasting a transcript by hand. `backend/scripts/try_extraction.py`
-reads its sample transcript from the same source. Set `SAMPLE_PATIENTS_PATH` to point at a
-different file in the same format instead.
+`consultations/` at the repo root holds a set of freeform, French-language synthetic
+clinical notes, one per file. The backend serves these as selectable "simulated patients"
+(`GET /patients`, `GET /patients/{id}`) and the frontend's dropdown loads a transcript
+straight into the textarea from there — useful for demoing the pipeline without typing or
+pasting a transcript by hand. `backend/scripts/try_extraction.py` reads its sample
+transcript from the same source. Set `SAMPLE_PATIENTS_DIR` to point at a different
+directory of files in the same format instead.
 
 ## Pricing
 

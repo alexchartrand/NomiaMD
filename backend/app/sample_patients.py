@@ -4,9 +4,9 @@ This is test/demo fixture data only, not representative of real Quebec RAMQ enco
 It exists so the extraction pipeline can be exercised end-to-end without any real (or even
 realistic) patient data.
 
-SAMPLE_PATIENTS_PATH defaults to notes_consultation_simulees.md at the repo root —
-freeform, French-language clinical notes, one per "## NOTE <n> — ..." section. Override it
-to point at a different file in the same format.
+SAMPLE_PATIENTS_DIR defaults to consultations/ at the repo root — one freeform,
+French-language clinical note per file (`README.md` and `all_notes.md` in that directory
+are skipped). Override it to point at a different directory of files in the same format.
 """
 
 import os
@@ -15,8 +15,10 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-DEFAULT_PATH = Path(__file__).parent.parent.parent / "notes_consultation_simulees.md"
-SAMPLE_PATIENTS_PATH = Path(os.environ.get("SAMPLE_PATIENTS_PATH") or DEFAULT_PATH)
+DEFAULT_DIR = Path(__file__).parent.parent.parent / "consultations"
+SAMPLE_PATIENTS_DIR = Path(os.environ.get("SAMPLE_PATIENTS_DIR") or DEFAULT_DIR)
+
+_SKIP_STEMS = {"README", "all_notes"}
 
 
 @dataclass(frozen=True)
@@ -26,49 +28,38 @@ class SamplePatient:
     transcript: str
 
 
-_NOTE_HEADER_RE = re.compile(r"^## NOTE \d+.*$", re.MULTILINE)
 _FIELD_RE = re.compile(r"^\*\*(.+?)\s*:\*\*\s*(.*)$", re.MULTILINE)
 _AGE_SEX_RE = re.compile(r"(\d+)\s*ans\s*\((\w)\)")
 _MOTIF_RE = re.compile(r"### Motif de consultation\s*\n(.+?)(?=\n#{2,3}|\Z)", re.DOTALL)
 
 
-def _build_label_markdown(section: str, fields: dict[str, str]) -> str:
+def _build_label(note: str, fields: dict[str, str]) -> str:
     age_sex = _AGE_SEX_RE.search(fields.get("Patient", ""))
     demographic = f"{age_sex.group(1)}{age_sex.group(2)}" if age_sex else ""
 
-    motif_match = _MOTIF_RE.search(section)
+    motif_match = _MOTIF_RE.search(note)
     motif = motif_match.group(1).strip() if motif_match else "no chief complaint recorded"
 
     return f"{demographic} — {motif}" if demographic else motif
 
 
-def _load_markdown() -> list[SamplePatient]:
-    text = SAMPLE_PATIENTS_PATH.read_text()
-    headers = list(_NOTE_HEADER_RE.finditer(text))
+def _load_note(path: Path, index: int) -> SamplePatient:
+    note = path.read_text().strip()
+    fields = dict(_FIELD_RE.findall(note))
+    dossier = fields.get("Dossier", "").strip().lstrip("#").strip()
 
-    patients: list[SamplePatient] = []
-    for i, header in enumerate(headers):
-        end = headers[i + 1].start() if i + 1 < len(headers) else len(text)
-        # Each section is terminated by a "---" separator (or end of file for the last one).
-        section = text[header.start():end].split("\n---", 1)[0].strip()
-
-        fields = dict(_FIELD_RE.findall(section))
-        dossier = fields.get("Dossier", "").strip().lstrip("#").strip()
-
-        patients.append(
-            SamplePatient(
-                id=dossier or f"note-{i}",
-                label=_build_label_markdown(section, fields),
-                transcript=section,
-            )
-        )
-    return patients
+    return SamplePatient(
+        id=dossier or f"note-{index}",
+        label=_build_label(note, fields),
+        transcript=note,
+    )
 
 
 def _load_all() -> list[SamplePatient]:
-    if not SAMPLE_PATIENTS_PATH.exists():
+    if not SAMPLE_PATIENTS_DIR.is_dir():
         return []
-    return _load_markdown()
+    paths = sorted(p for p in SAMPLE_PATIENTS_DIR.glob("*.md") if p.stem not in _SKIP_STEMS)
+    return [_load_note(p, i) for i, p in enumerate(paths)]
 
 
 @lru_cache(maxsize=1)
