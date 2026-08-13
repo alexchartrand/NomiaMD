@@ -1,6 +1,6 @@
 """Seam over the LanceDB directory RAMQ data is read from — mirrors ramq-ingestion's
 src/embedding/vector_store.py + lancedb_vector_store.py exactly (same interface, this side
-only ever reads). Kept separate from vector_retrieval.py so the DB backend can be swapped
+only ever reads). Kept separate from retriever.py so the DB backend can be swapped
 (or faked in tests) without touching retrieval logic."""
 
 from abc import ABC, abstractmethod

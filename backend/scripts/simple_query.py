@@ -1,10 +1,9 @@
 import os
 
-from llama_index.core import VectorStoreIndex
 from llama_index.llms.mistralai import MistralAI
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
 
-from app.ramq_query.query_engine import RAMQManualQueryEngine
+from app.ramq_query.engine import RAMQManualQueryEngine
 from app.ramq_query.retriever import RAMQManualRetriever
 from app.embedings import get_embeding_model
 
@@ -15,7 +14,7 @@ def query_test_with_custom_query_engine():
     # reload the LanceDB-backed index (flat_metadata must match what it was built with)
     vector_store = LanceDBVectorStore(uri=os.environ["DB_PATH"], table_name=TABLE_NAME, flat_metadata=False)
     api_key = os.environ["MISTRAL_API_KEY"]
-    llm = MistralAI(model="mistral-medium-latest", api_key=api_key)
+    llm = MistralAI(model="mistral-medium-latest", api_key=api_key, temperature=0, max_tokens=4096,)
 
     retriever = RAMQManualRetriever(
         vector_store=vector_store, llm=llm, embed_model=get_embeding_model()
@@ -24,16 +23,6 @@ def query_test_with_custom_query_engine():
     query_engine = RAMQManualQueryEngine(retriever=retriever, llm=llm)
 
     response = query_engine.query(query)
-    print(response)
-
-def query_test():
-    # reload the LanceDB-backed index (flat_metadata must match what it was built with)
-    vector_store = LanceDBVectorStore(uri=os.environ["DB_PATH"], table_name=TABLE_NAME, flat_metadata=False)
-    index = VectorStoreIndex.from_vector_store(vector_store)
-
-    query_engine = index.as_query_engine(
-    response_mode="compact",verbose=True,)
-    response = query_engine.query("J'ai eu à me rendre à l'hopita en urgence pour voir un patient. Qu'est-ce que je dois facturer?")
     print(response)
 
 if __name__ == "__main__":

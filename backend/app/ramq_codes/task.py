@@ -1,9 +1,8 @@
 from typing import Any
 
-from app.ramq.models import Fee
-from app.ramq.vector_retrieval import RamqCandidate, candidates_from_nodes
+from app.ramq_codes.models import BillingCodesResult, Fee
+from app.ramq_codes.retriever import RamqCandidate, candidates_from_nodes
 from app.tasks.base import ExtractionTask
-from app.tasks.billing_codes.models import BillingCodesResult
 from app.tasks.schema import to_strict_schema
 
 from llama_index.core.retrievers import BaseRetriever

@@ -1,4 +1,4 @@
-"""Live smoke test for RAMQ candidate retrieval (app/ramq/vector_retrieval.py). Requires a
+"""Live smoke test for RAMQ candidate retrieval (app/ramq_codes/retriever.py). Requires a
 real MISTRAL_API_KEY and DB_PATH (see .env) — this is a real network call against Mistral's
 embedding API plus a real read of the local LanceDB `codes` table, run manually rather than
 as part of the pytest suite. From backend/, with the venv active:
@@ -6,7 +6,7 @@ as part of the pytest suite. From backend/, with the venv active:
     python scripts/ramq_vector_smoke_test.py
 
 Checks two things pytest can't cheaply cover: that the corpus's embedding model assumption
-in vector_retrieval.py (MISTRAL_EMBED_MODEL) actually matches whatever ramq-ingestion used
+in retriever.py (MISTRAL_EMBED_MODEL) actually matches whatever ramq-ingestion used
 to build the `codes` table (a wrong model would still load and query without error, just
 against numerically valid but semantically meaningless scores), and that real French
 clinical text surfaces sensible candidates end to end.
@@ -24,8 +24,8 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 import os
 
 from app.embedings import get_embeding_model  # noqa: E402
-from app.ramq.vector_retrieval import DEFAULT_TABLE_NAME, RAMQCodesRetriever, candidates_from_nodes  # noqa: E402
-from app.ramq.vector_store import LanceVectorStore  # noqa: E402
+from app.ramq_codes.retriever import DEFAULT_TABLE_NAME, RAMQCodesRetriever, candidates_from_nodes  # noqa: E402
+from app.ramq_codes.vector_store import LanceVectorStore  # noqa: E402
 
 # (query, expected top-ranked code) — a handful of unambiguous cases from the real manual.
 KNOWN_QUERIES = [

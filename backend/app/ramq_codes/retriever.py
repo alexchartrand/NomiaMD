@@ -2,7 +2,7 @@
 over the LanceDB `codes` table at DB_PATH.
 
 All llama_index types stay behind RAMQCodesRetriever/candidates_from_nodes —
-billing_codes/task.py only ever sees RamqCandidate objects, never a llama_index
+task.py (BillingCodesTask) only ever sees RamqCandidate objects, never a llama_index
 Node/Index/Retriever directly.
 
 The LanceDB `codes` table is produced by the sibling repo `ramq-ingestion`
@@ -22,8 +22,8 @@ from llama_index.core.schema import NodeWithScore, QueryBundle
 from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 
-from app.ramq.models import Fee, RamqCandidate
-from app.ramq.vector_store import LanceVectorStore
+from app.ramq_codes.models import Fee, RamqCandidate
+from app.ramq_codes.vector_store import LanceVectorStore
 from app.embedings import get_embeding_model
 
 __all__ = ["RamqCandidate", "RAMQCodesRetriever", "get_ramq_retriever", "candidates_from_nodes"]
@@ -54,7 +54,7 @@ def candidates_from_nodes(nodes: list[NodeWithScore]) -> list[RamqCandidate]:
 class RAMQCodesRetriever(BaseRetriever):
     def __init__(self, vector_store: BasePydanticVectorStore, embed_model: BaseEmbedding):
         index = VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
-        self._retriever = index.as_retriever(similarity_top_k=30)
+        self._retriever = index.as_retriever(similarity_top_k=20)
 
     def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         return self._retriever.retrieve(query_bundle)

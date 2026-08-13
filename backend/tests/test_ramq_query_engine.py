@@ -1,6 +1,6 @@
-"""Unit tests for RAMQManualQueryEngine (app/ramq_query/query_engine.py) — pairs with
+"""Unit tests for RAMQManualQueryEngine (app/ramq_query/engine.py) — pairs with
 RAMQManualRetriever (see test_ramq_query_retriever.py) in scripts/simple_query.py; not part
-of the actively-used app/ramq pipeline.
+of the actively-used app/ramq_codes pipeline (see app/ramq_codes/retriever.py).
 
 The retriever is stubbed with a deterministic fake (real BaseRetriever subclass, fixed
 return nodes) and the injected llm is a spy that records the exact prompt it was called with
@@ -14,7 +14,7 @@ from llama_index.core.llms.custom import CustomLLM
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
 
-from app.ramq_query.query_engine import RAMQManualQueryEngine
+from app.ramq_query.engine import RAMQManualQueryEngine
 
 
 class _StubRetriever(BaseRetriever):

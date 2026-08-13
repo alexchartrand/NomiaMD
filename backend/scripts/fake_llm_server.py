@@ -5,7 +5,7 @@ Speaks the same wire protocol app/extraction/engine.py's MistralAI client uses (
 /v1/chat/completions, Mistral's own request/response shape). Point the app at it by
 setting MISTRAL_ENDPOINT=http://localhost:8080 before starting the backend. It's
 deliberately "dumb": it parses the candidate RAMQ codes out of the prompt (built by
-app/tasks/billing_codes/task.py::build_prompt) and picks a fixed number of them back, with
+app/ramq_codes/task.py::build_prompt) and picks a fixed number of them back, with
 placeholder confidence/quote/fee values. This exercises the whole pipeline (retrieval ->
 prompt -> parse -> API -> frontend) deterministically, without depending on any real
 model's behavior.
@@ -23,7 +23,7 @@ from fastapi import FastAPI, Request
 app = FastAPI(title="fake-llm")
 
 # Matches the "- CODE: description" prefix _format_candidate() always emits (see
-# app/tasks/billing_codes/task.py) — the rest of the line (when-to-use/conditions/fees
+# app/ramq_codes/task.py) — the rest of the line (when-to-use/conditions/fees
 # brackets) is ignored, not part of this fake's stub output.
 _CANDIDATE_RE = re.compile(r"^- (?P<code>\S+): (?P<description>[^\[]+?)(?: \[|$)", re.MULTILINE)
 

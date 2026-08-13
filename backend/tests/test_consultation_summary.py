@@ -9,8 +9,8 @@ from fastapi.testclient import TestClient
 
 from app.extraction.engine import run_extraction
 from app.main import app
+from app.summary import ConsultationSummaryResult, render_for_billing_codes
 from app.tasks.registry import get_task
-from app.tasks.summary import ConsultationSummaryResult, render_for_billing_codes
 
 SAMPLE_TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "

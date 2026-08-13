@@ -1,8 +1,8 @@
 from typing import Any
 
+from app.summary.models import ConsultationSummaryResult
 from app.tasks.base import ExtractionTask
 from app.tasks.schema import render_instance, render_schema_block, to_strict_schema
-from app.tasks.summary.models import ConsultationSummaryResult
 
 _RULES = """\
 You are a clinical documentation parser for RAMQ billing preparation in Quebec.
@@ -69,7 +69,7 @@ def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
     pulled out once, rather than re-reading the whole transcript. The rendering itself
     (labels, which fields show up, empty/null handling) is generic — see
     app/tasks/schema.py — and driven by the fr_label/description metadata on
-    ConsultationSummaryResult's fields in app/tasks/summary/models.py, so a schema change
+    ConsultationSummaryResult's fields in app/summary/models.py, so a schema change
     here doesn't require touching this function.
     """
     return render_instance(result)

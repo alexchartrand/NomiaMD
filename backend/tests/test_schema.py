@@ -8,8 +8,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from app.summary import ConsultationSummaryResult
 from app.tasks.schema import render_instance, render_schema_block, to_strict_schema
-from app.tasks.summary import ConsultationSummaryResult
 from tests.test_consultation_summary import MOCK_RESULT
 
 

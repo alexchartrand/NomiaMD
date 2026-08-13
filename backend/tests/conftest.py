@@ -21,9 +21,9 @@ class _KeywordStubRetriever:
     """Deterministic, dependency-free stand-in for the real llama_index-backed retriever
     used in tests: ranks fixture candidates by how many of their fixture "keywords" appear
     in the query text. Only ever used here — the real pipeline always goes through
-    RAMQCodesRetriever (app/ramq/vector_retrieval.py). Mimics BaseRetriever's `.retrieve()`
+    RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics BaseRetriever's `.retrieve()`
     (list[NodeWithScore] out), since that's the interface BillingCodesTask._retriever
-    is used through (app/tasks/billing_codes/task.py's build_prompt)."""
+    is used through (app/ramq_codes/task.py's build_prompt)."""
 
     def __init__(self, entries: list[tuple[dict, list[str]]]):
         self._entries = entries
@@ -79,7 +79,7 @@ def no_real_api_keys(monkeypatch):
     """app/main.py loads .env at import time, so real API keys configured there (for
     actually running the app) would otherwise leak into every test process — silently
     enabling real network calls in tests that never asked for them. MISTRAL_API_KEY in
-    particular now gates all RAMQ candidate retrieval (app/ramq/vector_retrieval.py), so a
+    particular now gates all RAMQ candidate retrieval (app/ramq_codes/retriever.py), so a
     stray real key here would make small_reference_table's stub retriever pointless if any
     test path bypassed it."""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)

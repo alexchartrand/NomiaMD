@@ -15,8 +15,8 @@ except `README.md` is loaded as a selectable "simulated patient" (`GET /patients
   note per file.
 - `eval_labels.jsonl` — one entry per note (notes 1-20 only) with a best-effort
   candidate RAMQ code guess, in the same schema as
-  `backend/tests/fixtures/eval_billing_codes.jsonl`. Not yet merged into that fixture —
-  see "RAMQ code labels" below before doing so.
+  `backend/tests/fixtures/eval_billing_codes.jsonl`. Merged into that fixture — see
+  "RAMQ code labels" below for the caveats that still apply to every entry.
 
 ## Scope and diversity
 
@@ -39,8 +39,9 @@ hand laceration/suture, pediatric appendicitis).
 
 `eval_labels.jsonl`'s `expected_codes` are **not verified by a physician or RAMQ
 billing expert**. This session cross-referenced each note against the descriptions in
-the persisted 101-code vector corpus (`backend/app/ramq/vector/`) and picked the
-most plausible-sounding code, but picking correct RAMQ codes requires billing
+the ~101-code corpus in the LanceDB `codes` table at `DB_PATH` (produced by the
+separate `ramq-ingestion` repo — see root `README.md`'s "RAMQ data ingestion" section)
+and picked the most plausible-sounding code, but picking correct RAMQ codes requires billing
 expertise this session doesn't have — see `label_notes` on each entry for the specific
 reasoning and open ambiguities (panel-size splits, vulnerability-status judgment calls,
 near-duplicate code families whose actual distinction isn't recoverable from the
@@ -48,9 +49,5 @@ corpus's parsed text). One entry (`CLI-2026-01230`) is marked `needs_physician_l
 outright rather than guessed, because the three candidate codes were textually
 indistinguishable in the corpus. Treat every `draft-unverified` entry as a starting
 point for a physician/billing-literate reviewer, not as ground truth — same caveat
-that already applies to the existing entries in
-`backend/tests/fixtures/eval_billing_codes.jsonl`.
-
-To use these as eval fixtures, merge `eval_labels.jsonl`'s lines into
-`backend/tests/fixtures/eval_billing_codes.jsonl` (patient IDs already resolve via
-`get_sample_patient()` since this directory is the default sample-patients source).
+that already applies to the other entries in
+`backend/tests/fixtures/eval_billing_codes.jsonl`, which these lines have been merged into.

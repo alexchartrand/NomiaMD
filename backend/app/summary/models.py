@@ -3,7 +3,7 @@
 Field types plus each field's `description=` (extraction guidance for the LLM) and
 `json_schema_extra={"fr_label": ...}` (French label for rendering) are the single source
 of truth this task's schema/prompt/renderer are all derived from — see app/tasks/schema.py
-(generic, shared across tasks) and app/tasks/summary/task.py."""
+(generic, shared across tasks) and app/summary/task.py."""
 
 from typing import Literal
 

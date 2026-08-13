@@ -1,9 +1,10 @@
 """Unit tests for RAMQManualRetriever (app/ramq_query/retriever.py) — the BM25+vector
 fusion retriever used by scripts/simple_query.py.
 
-Note: app/ramq_query is separate from, and not wired into, the actively-used app/ramq
-pipeline (see tests/test_vector_retrieval.py) — it's only exercised by that manual script.
-These tests exist to pin down its current wiring, not to certify it for production use.
+Note: app/ramq_query is separate from, and not wired into, the actively-used
+app/ramq_codes pipeline (see tests/test_ramq_codes_retriever.py) — it's only exercised
+by that manual script. These tests exist to pin down its current wiring, not to certify
+it for production use.
 
 No network calls / real API keys: the vector store is an in-memory fake with precomputed
 node embeddings (no embedding client involved), the injected embed_model is a deterministic

@@ -4,8 +4,8 @@ ever created. Mirrors ramq-ingestion's tests/test_lancedb_vector_store.py."""
 
 import pytest
 
-import app.ramq.vector_store as vector_store_module
-from app.ramq.vector_store import IVectorStore
+import app.ramq_codes.vector_store as vector_store_module
+from app.ramq_codes.vector_store import IVectorStore
 
 
 class _FakeLanceDBVectorStore:

@@ -22,10 +22,10 @@ from app.models import (  # noqa: E402
     SamplePatientDetail,
     SamplePatientSummary,
 )
+from app.ramq_codes import BillingCodesResult  # noqa: E402
 from app.sample_patients import get_sample_patient, get_sample_patients  # noqa: E402
-from app.tasks.billing_codes import BillingCodesResult  # noqa: E402
+from app.summary import ConsultationSummaryResult  # noqa: E402
 from app.tasks.registry import available_tasks, get_task  # noqa: E402
-from app.tasks.summary import ConsultationSummaryResult  # noqa: E402
 
 
 @asynccontextmanager

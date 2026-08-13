@@ -7,7 +7,7 @@ from llama_index.vector_stores.lancedb import LanceDBVectorStore
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.embedings import get_embeding_model
-from app.ramq.vector_retrieval import RAMQCodesRetriever
+from app.ramq_codes.retriever import RAMQCodesRetriever
 
 TABLE_NAME="codes"
 QUERY="J'ai vu un patien en clinique au sans rendez-vous. C'est un de mes patients et j'ai plus de 500 patients."

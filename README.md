@@ -31,11 +31,6 @@ backend/     FastAPI service — transcript ingestion, extraction pipeline, stor
 frontend/    React app — paste a transcript, review suggested codes
 ```
 
-`ClaudeCodingTest/`, `synthea/`, `synthetic_data/`, and `output/` are pre-existing
-scratch/reference material (a getting-started script, the Synthea synthetic patient
-generator, and a third-party synthetic consultation-transcript dataset) — not part of the
-application.
-
 `consultations/` at the repo root holds a set of freeform, French-language synthetic
 clinical notes, one per file. The backend serves these as selectable "simulated patients"
 (`GET /patients`, `GET /patients/{id}`) and the frontend's dropdown loads a transcript
@@ -48,7 +43,7 @@ transcript from the same source.
 Fees are back, sourced per-code from `ramq-ingestion`'s extraction (`Code.fees`: amount,
 the situation it applies to, and any majoration) rather than the earlier structured
 patient/physician eligibility table that was dropped for being mostly wrong. Each
-`ExtractedCode` now carries a `fee` (`backend/app/tasks/billing_codes/models.py`), which
+`ExtractedCode` now carries a `fee` (`backend/app/ramq_codes/models.py`), which
 the model selects from that candidate's fee list based on the consultation summary —
 picking the one whose condition applies when a code has several, or leaving all sub-fields
 null when no fee data exists or none could be determined. Like the codes themselves, this
@@ -62,18 +57,21 @@ prompt, a JSON schema for structured extraction, and a parser into a typed Pydan
 `backend/app/extraction/engine.py` is the shared LLM call — it never changes when a
 new task is added. `backend/app/tasks/registry.py` is where new tasks get wired in.
 
-Today there's one task, `billing_codes` (`backend/app/tasks/billing_codes.py`), which:
+Today there's one task, `billing_codes` (`backend/app/ramq_codes/task.py`), which:
 1. Narrows the RAMQ corpus down to a small candidate list for the transcript via semantic
-   similarity (`backend/app/ramq/vector_retrieval.py`, a llama_index `VectorStoreIndex`
+   similarity (`backend/app/ramq_codes/retriever.py`, a llama_index `VectorStoreIndex`
    over the LanceDB `codes` table at `DB_PATH`, embedded with Mistral's `mistral-embed`) —
    this keeps the model choosing from a known list instead of relying on its own recall of
    RAMQ codes, and keeps the candidate set small enough to fit in the prompt regardless of
-   corpus size. Hits below `MIN_SIMILARITY` are dropped as noise rather than returned as
-   weak candidates. Requires `MISTRAL_API_KEY` and `DB_PATH`.
-2. Asks the model (freeform JSON with the schema described in the prompt by default — see
-   `NOMIAMD_STRUCTURED_OUTPUT` below — or grammar-constrained structured output for models
-   capable of it) to pick from those candidates only, with a supporting quote per code for
-   physician review.
+   corpus size. Currently returns the top 30 hits unconditionally — there's no relevance
+   floor, so an unrelated transcript still gets 30 candidates back rather than an empty or
+   short list; a prior `MIN_SIMILARITY` cosine-similarity floor (and per-code dedup) was
+   dropped during the move to a llama_index-backed retriever and hasn't been reinstated, and
+   there's no test pinning this behavior — treat candidate narrowing as a known gap, not a
+   finished feature. Requires `MISTRAL_API_KEY` and `DB_PATH`.
+2. Asks the model for grammar-constrained (`strict: true`) JSON matching the task's schema,
+   to pick from those candidates only, with a supporting quote per code for physician
+   review.
 
 Adding `prescriptions` or `consultation_notes` later: write a new class implementing
 `ExtractionTask`, register it in `registry.py`, done.
@@ -140,8 +138,8 @@ pytest
 
 To try it against the real Mistral API once `MISTRAL_API_KEY` is configured,
 `scripts/try_extraction.py` runs the pipeline against a sample transcript pulled from
-`synthetic_data/` — **this hasn't been run yet in this environment**, so treat it as
-untested until you run it once yourself:
+`consultations/` (see "Layout" above) — **this hasn't been run yet in this
+environment**, so treat it as untested until you run it once yourself:
 
 ```bash
 python scripts/try_extraction.py
