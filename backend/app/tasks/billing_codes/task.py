@@ -1,10 +1,12 @@
 from typing import Any
 
 from app.ramq.models import Fee
-from app.ramq.vector_retrieval import RamqCandidate, get_vector_retriever
+from app.ramq.vector_retrieval import RamqCandidate, candidates_from_nodes
 from app.tasks.base import ExtractionTask
 from app.tasks.billing_codes.models import BillingCodesResult
 from app.tasks.schema import to_strict_schema
+
+from llama_index.core.retrievers import BaseRetriever
 
 SYSTEM_PROMPT = """\
 You extract RAMQ billing codes from a structured consultation summary — a set of clinical
@@ -76,10 +78,12 @@ def _format_candidate(c: RamqCandidate) -> str:
 class BillingCodesTask(ExtractionTask):
     name = "billing_codes"
 
-    def build_prompt(self, consultation_summary_text: str) -> tuple[str, str]:
-        retriever = get_vector_retriever()
-        candidates = retriever.candidates_for(consultation_summary_text, limit=40)
+    def __init__(self, retriever: BaseRetriever):
+        self._retriever = retriever
 
+    def build_prompt(self, consultation_summary_text: str) -> tuple[str, str]:
+        nodes = self._retriever.retrieve(consultation_summary_text)
+        candidates = candidates_from_nodes(nodes)
         candidate_lines = [_format_candidate(c) for c in candidates]
 
         prompt_sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]

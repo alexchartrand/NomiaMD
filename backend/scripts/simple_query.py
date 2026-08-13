@@ -1,12 +1,12 @@
 import os
 
 from llama_index.core import VectorStoreIndex
-from llama_index.embeddings.mistralai import MistralAIEmbedding
 from llama_index.llms.mistralai import MistralAI
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
 
 from app.ramq_query.query_engine import RAMQManualQueryEngine
 from app.ramq_query.retriever import RAMQManualRetriever
+from app.embedings import get_embeding_model
 
 TABLE_NAME = "manuel-omnipraticiens"
 
@@ -18,7 +18,7 @@ def query_test_with_custom_query_engine():
     llm = MistralAI(model="mistral-medium-latest", api_key=api_key)
 
     retriever = RAMQManualRetriever(
-        vector_store=vector_store, llm=llm, embed_model=MistralAIEmbedding(api_key=api_key)
+        vector_store=vector_store, llm=llm, embed_model=get_embeding_model()
     )
 
     query_engine = RAMQManualQueryEngine(retriever=retriever, llm=llm)

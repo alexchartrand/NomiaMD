@@ -21,7 +21,11 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from app.ramq.vector_retrieval import RamqVectorRetriever  # noqa: E402
+import os
+
+from app.embedings import get_embeding_model  # noqa: E402
+from app.ramq.vector_retrieval import DEFAULT_TABLE_NAME, RAMQCodesRetriever, candidates_from_nodes  # noqa: E402
+from app.ramq.vector_store import LanceVectorStore  # noqa: E402
 
 # (query, expected top-ranked code) — a handful of unambiguous cases from the real manual.
 KNOWN_QUERIES = [
@@ -37,11 +41,12 @@ KNOWN_QUERIES = [
 
 
 def main() -> None:
-    retriever = RamqVectorRetriever.load()
+    vector_store = LanceVectorStore(persist_dir=os.environ["DB_PATH"]).get_vector_store(DEFAULT_TABLE_NAME)
+    retriever = RAMQCodesRetriever(vector_store, get_embeding_model())
 
     all_passed = True
     for query, expected_top_code in KNOWN_QUERIES:
-        results = retriever.candidates_for(query, limit=10)
+        results = candidates_from_nodes(retriever.retrieve(query))
         codes = [c.code for c in results]
         print(f"--- query: {query}")
         print(f"    candidates: {codes}")
