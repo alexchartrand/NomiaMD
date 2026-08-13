@@ -19,19 +19,17 @@ TRANSCRIPT = (
 
 def _response(payload):
     return SimpleNamespace(
-        model="local-model",
-        choices=[
-            SimpleNamespace(
-                finish_reason="stop",
-                message=SimpleNamespace(content=json.dumps(payload)),
-            )
-        ],
+        message=SimpleNamespace(content=json.dumps(payload)),
+        raw={
+            "model": "mistral-small-latest",
+            "choices": [SimpleNamespace(finish_reason="stop")],
+        },
     )
 
 
 def test_pipeline_feeds_rendered_summary_into_billing_codes():
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.side_effect = [
+        mock_get_client.return_value.chat.side_effect = [
             _response(MOCK_SUMMARY_RESULT),
             _response(MOCK_BILLING_RESULT),
         ]
@@ -40,13 +38,13 @@ def test_pipeline_feeds_rendered_summary_into_billing_codes():
     assert summary_result.task == "consultation_summary"
     assert billing_result.task == "billing_codes"
 
-    create = mock_get_client.return_value.chat.completions.create
-    assert create.call_count == 2
+    chat = mock_get_client.return_value.chat
+    assert chat.call_count == 2
 
-    first_user_message = create.call_args_list[0].kwargs["messages"][1]["content"]
+    first_user_message = chat.call_args_list[0].kwargs["messages"][1].content
     assert TRANSCRIPT in first_user_message
 
-    second_user_message = create.call_args_list[1].kwargs["messages"][1]["content"]
+    second_user_message = chat.call_args_list[1].kwargs["messages"][1].content
     rendered_summary = render_for_billing_codes(summary_result.result)
     # billing_codes must have been called with the rendered summary, not the raw
     # transcript — the whole point of the two-stage pipeline.

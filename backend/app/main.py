@@ -3,10 +3,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Must run before app.db / app.extraction.engine are imported below — both read
-# environment variables (DATABASE_URL, NOMIAMD_BASE_URL, NOMIAMD_API_KEY, NOMIAMD_MODEL,
-# NOMIAMD_STRUCTURED_OUTPUT) at import time. Loaded from an explicit path (not a bare
-# load_dotenv()) because
+# Must run before app.db / app.extraction.engine are imported below — app.db reads
+# DATABASE_URL at import time, and app.extraction.engine.get_client() reads
+# MISTRAL_API_KEY. Loaded from an explicit path (not a bare load_dotenv()) because
 # python-dotenv falls back to os.getcwd() instead of walking up from this file whenever
 # a debugger is attached (sys.gettrace() set) — which silently no-ops if the debugger's
 # working directory isn't backend/.

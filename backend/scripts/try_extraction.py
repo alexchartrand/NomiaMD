@@ -1,6 +1,6 @@
-"""Live smoke test against your local model server. Requires NOMIAMD_BASE_URL (and
-NOMIAMD_MODEL) to be configured to point at a running LocalAI instance. From backend/,
-with the venv active:
+"""Live smoke test against the Mistral API. Requires MISTRAL_API_KEY to be configured
+(point MISTRAL_ENDPOINT at scripts/fake_llm_server.py instead to avoid a real API call).
+From backend/, with the venv active:
 
     python scripts/try_extraction.py
 """
@@ -12,9 +12,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
 
-# Must run before app.extraction.engine is imported below — it reads NOMIAMD_BASE_URL /
-# NOMIAMD_MODEL at import time. Explicit path for the same reason as app/main.py: under
-# a debugger, load_dotenv() searches os.getcwd() instead of walking up from this file.
+# Must run before app.extraction.engine is imported below — app.extraction.engine.get_client()
+# reads MISTRAL_API_KEY. Explicit path for the same reason as app/main.py: under a debugger,
+# load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402

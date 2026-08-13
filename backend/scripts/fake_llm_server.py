@@ -1,9 +1,10 @@
-"""A tiny fake OpenAI-compatible chat completions server, for testing and debugging the
-extraction pipeline (and the frontend end-to-end) without a real local model.
+"""A tiny fake chat completions server, for testing and debugging the extraction
+pipeline (and the frontend end-to-end) without calling the real Mistral API.
 
-Drop-in replacement for LocalAI: listens on the same host:port as NOMIAMD_BASE_URL's
-default (http://localhost:8080/v1) — no .env changes needed. It's deliberately "dumb": it
-parses the candidate RAMQ codes out of the prompt (built by
+Speaks the same wire protocol app/extraction/engine.py's MistralAI client uses (POST
+/v1/chat/completions, Mistral's own request/response shape). Point the app at it by
+setting MISTRAL_ENDPOINT=http://localhost:8080 before starting the backend. It's
+deliberately "dumb": it parses the candidate RAMQ codes out of the prompt (built by
 app/tasks/billing_codes/task.py::build_prompt) and picks a fixed number of them back, with
 placeholder confidence/quote/fee values. This exercises the whole pipeline (retrieval ->
 prompt -> parse -> API -> frontend) deterministically, without depending on any real
@@ -55,11 +56,24 @@ def list_models():
     return {"object": "list", "data": [{"id": "fake-llm", "object": "model"}]}
 
 
+def _content_to_text(content) -> str:
+    """Message content is a bare string over the OpenAI wire format, but the Mistral
+    client (llama_index's MistralAI) always sends it as a list of {"type": "text", ...}
+    chunks instead — handle both."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "".join(chunk.get("text", "") for chunk in content if isinstance(chunk, dict))
+    return ""
+
+
 @app.post("/v1/chat/completions")
 async def chat_completions(request: Request):
     body = await request.json()
     messages = body.get("messages", [])
-    user_message = next((m["content"] for m in messages if m.get("role") == "user"), "")
+    user_message = _content_to_text(
+        next((m["content"] for m in messages if m.get("role") == "user"), "")
+    )
 
     content = _fake_billing_codes_content(user_message)
 
@@ -75,6 +89,8 @@ async def chat_completions(request: Request):
                 "finish_reason": "stop",
             }
         ],
+        # Required by mistralai's ChatCompletionResponse model, unused by the pipeline.
+        "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
     }
 
 

@@ -1,6 +1,6 @@
 """Sanity-checks the fake LLM dev server's response shape — it needs to look enough like a
-real OpenAI-compatible response that run_extraction() (app/extraction/engine.py) accepts
-it unmodified."""
+real Mistral chat-completions response that run_extraction() (app/extraction/engine.py)
+accepts it unmodified."""
 
 import json
 import sys
@@ -16,11 +16,13 @@ client = TestClient(fake_llm_server.app)
 
 
 def _request_body(user_message: str) -> dict:
+    # content-as-list-of-chunks, matching what the Mistral client (llama_index's
+    # MistralAI) actually sends over the wire — see fake_llm_server._content_to_text.
     return {
         "model": "fake-llm",
         "messages": [
-            {"role": "system", "content": "system prompt"},
-            {"role": "user", "content": user_message},
+            {"role": "system", "content": [{"type": "text", "text": "system prompt"}]},
+            {"role": "user", "content": [{"type": "text", "text": user_message}]},
         ],
     }
 

@@ -1,13 +1,13 @@
 """Runs billing-code extraction (via the two-stage transcript -> consultation_summary ->
 billing_codes pipeline, see app/extraction/pipeline.py) over a small hand-labeled eval set
-and reports how the configured model (NOMIAMD_BASE_URL / NOMIAMD_MODEL) did against
-expected codes, plus a sanity check that every supporting_quote is actually verbatim in
-the rendered consultation summary — the text billing_codes actually reasoned over, not the
-raw transcript.
+and reports how the configured model (app/extraction/engine.py's MODEL constant) did
+against expected codes, plus a sanity check that every supporting_quote is actually
+verbatim in the rendered consultation summary — the text billing_codes actually reasoned
+over, not the raw transcript.
 
-Requires NOMIAMD_BASE_URL (and NOMIAMD_MODEL) to point at a running model server —
-either the fake dev server (`make fake-llm`) or a real one. From backend/, with the venv
-active:
+Requires MISTRAL_API_KEY to be set — either for a real Mistral API call, or with
+MISTRAL_ENDPOINT pointed at the fake dev server (`make fake-llm`). From backend/, with
+the venv active:
 
     python scripts/eval_extraction.py [path/to/eval_set.jsonl]
 
@@ -26,9 +26,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
 
-# Must run before app.extraction.engine is imported below — it reads NOMIAMD_BASE_URL /
-# NOMIAMD_MODEL at import time. Explicit path for the same reason as app/main.py: under
-# a debugger, load_dotenv() searches os.getcwd() instead of walking up from this file.
+# Must run before app.extraction.engine is imported below — app.extraction.engine.get_client()
+# reads MISTRAL_API_KEY. Explicit path for the same reason as app/main.py: under a debugger,
+# load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402

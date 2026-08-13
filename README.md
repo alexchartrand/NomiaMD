@@ -105,12 +105,11 @@ This starts:
 - the backend on http://localhost:8000
 - the frontend on http://localhost:5173
 
-No local model server? Run `make dev-fake` instead — it also starts
-`backend/scripts/fake_llm_server.py`, a tiny OpenAI-compatible dev server that listens on
-the same `http://localhost:8080/v1` LocalAI would (no `.env` changes needed) and picks a
-fixed number of candidate codes back per request instead of doing real extraction. It's for
-exercising the pipeline and frontend end-to-end deterministically, not for judging
-extraction quality.
+Don't want to spend real Mistral API calls? Run `make dev-fake` instead — it also starts
+`backend/scripts/fake_llm_server.py`, a tiny dev server that speaks the same wire protocol
+as the Mistral API, and picks a fixed number of candidate codes back per request instead of
+doing real extraction. It's for exercising the pipeline and frontend end-to-end
+deterministically, not for judging extraction quality.
 
 ## Running the backend
 
@@ -118,16 +117,17 @@ extraction quality.
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-cp .env.example .env   # fill in NOMIAMD_BASE_URL (and NOMIAMD_MODEL) to point at LocalAI
+cp .env.example .env   # fill in MISTRAL_API_KEY
 uvicorn app.main:app --reload
 ```
 
-The extraction engine (`backend/app/extraction/engine.py`) talks to any OpenAI-compatible
-chat completions endpoint — set `NOMIAMD_BASE_URL` to your LocalAI instance's `/v1` URL and
-`NOMIAMD_MODEL` to a model name configured there. No model server available? Point
-`NOMIAMD_BASE_URL` at `backend/scripts/fake_llm_server.py` instead (`make fake-llm`, or see
-"Quick start" above) — a dumb but deterministic stand-in for testing/debugging the pipeline
-without a real model.
+The extraction engine (`backend/app/extraction/engine.py`) talks to the Mistral API
+directly via llama_index's `MistralAI` client — set `MISTRAL_API_KEY`, and the model name
+is a constant (`MODEL`) at the top of that file. No API key handy, or want to avoid real
+API calls? Set `MISTRAL_ENDPOINT=http://localhost:8080` and point it at
+`backend/scripts/fake_llm_server.py` instead (`make fake-llm`, or see "Quick start"
+above) — a dumb but deterministic stand-in for testing/debugging the pipeline without a
+real model.
 
 - `GET /health` — lists registered tasks
 - `POST /extract` — `{"transcript": "...", "task": "billing_codes"}` → suggested codes
@@ -138,7 +138,7 @@ Tests run against a mocked model response (no local server needed):
 pytest
 ```
 
-To try it against a real local model once LocalAI is running and configured,
+To try it against the real Mistral API once `MISTRAL_API_KEY` is configured,
 `scripts/try_extraction.py` runs the pipeline against a sample transcript pulled from
 `synthetic_data/` — **this hasn't been run yet in this environment**, so treat it as
 untested until you run it once yourself:

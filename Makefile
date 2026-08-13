@@ -8,12 +8,12 @@ dev:
 	wait
 
 # Backend + frontend + the fake LLM dev server (scripts/fake_llm_server.py) instead of a
-# real local model — use this when there's no LocalAI (or similar) instance running.
+# real Mistral API call — use this when you don't want to burn real API calls/credits.
 dev-fake:
 	@echo "Starting backend, frontend, and the fake LLM dev server..."
 	@trap 'kill 0' EXIT; \
 	(cd backend && . .venv/bin/activate && python scripts/fake_llm_server.py) & \
-	(cd backend && . .venv/bin/activate && uvicorn app.main:app --reload) & \
+	(cd backend && . .venv/bin/activate && MISTRAL_ENDPOINT=http://localhost:8080 uvicorn app.main:app --reload) & \
 	(cd frontend && npm run dev) & \
 	wait
 

@@ -1,6 +1,6 @@
 """Exercises the full pipeline (prompt building -> schema -> parsing -> storage -> API)
-against a mocked model response, since no local model server is available in this
-environment. Once NOMIAMD_BASE_URL is configured, see scripts/try_extraction.py for a
+against a mocked model response, since no live Mistral API call is made in this
+environment. Once MISTRAL_API_KEY is configured, see scripts/try_extraction.py for a
 live smoke test.
 
 Uses the small tests/fixtures/reference_data_test.json table (via the small_reference_table
@@ -103,20 +103,18 @@ MOCK_RESULT = {
 
 def _mock_response(payload=MOCK_RESULT):
     return SimpleNamespace(
-        model="local-model",
-        choices=[
-            SimpleNamespace(
-                finish_reason="stop",
-                message=SimpleNamespace(content=json.dumps(payload)),
-            )
-        ],
+        message=SimpleNamespace(content=json.dumps(payload)),
+        raw={
+            "model": "mistral-small-latest",
+            "choices": [SimpleNamespace(finish_reason="stop")],
+        },
     )
 
 
 def test_run_extraction_parses_mocked_response():
     task = get_task("billing_codes")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
+        mock_get_client.return_value.chat.return_value = _mock_response()
         result = run_extraction(task, SAMPLE_TRANSCRIPT)
 
     assert result.task == "billing_codes"
@@ -126,8 +124,8 @@ def test_run_extraction_parses_mocked_response():
     ]
     # The prompt actually sent to the model should have narrowed candidates via keyword
     # match, not dumped the whole reference table — confirm the call args reflect that.
-    call_kwargs = mock_get_client.return_value.chat.completions.create.call_args.kwargs
-    user_message = call_kwargs["messages"][1]["content"]
+    call_kwargs = mock_get_client.return_value.chat.call_args.kwargs
+    user_message = call_kwargs["messages"][1].content
     assert "TEST-BP-MGMT" in user_message
     assert "TEST-CONSULT-NEW" not in user_message  # not relevant to this transcript
 
@@ -152,15 +150,7 @@ def test_run_extraction_drops_malformed_bare_string_codes():
         "notes": None,
     }
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.return_value = SimpleNamespace(
-            model="local-model",
-            choices=[
-                SimpleNamespace(
-                    finish_reason="stop",
-                    message=SimpleNamespace(content=json.dumps(mock_result)),
-                )
-            ],
-        )
+        mock_get_client.return_value.chat.return_value = _mock_response(mock_result)
         result = run_extraction(task, SAMPLE_TRANSCRIPT)
 
     assert [c.code for c in result.result.codes] == ["TEST-BLOODWORK-ORDER"]
@@ -175,7 +165,7 @@ def test_extract_endpoint_end_to_end():
     # billing_codes is now a two-stage pipeline (consultation_summary, then billing_codes
     # off that summary) — two chat-completion calls happen, so mock two responses in order.
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.side_effect = [
+        mock_get_client.return_value.chat.side_effect = [
             _mock_response(MOCK_SUMMARY_RESULT),
             _mock_response(MOCK_RESULT),
         ]

@@ -79,20 +79,18 @@ MOCK_RESULT = {
 
 def _mock_response():
     return SimpleNamespace(
-        model="local-model",
-        choices=[
-            SimpleNamespace(
-                finish_reason="stop",
-                message=SimpleNamespace(content=json.dumps(MOCK_RESULT)),
-            )
-        ],
+        message=SimpleNamespace(content=json.dumps(MOCK_RESULT)),
+        raw={
+            "model": "mistral-small-latest",
+            "choices": [SimpleNamespace(finish_reason="stop")],
+        },
     )
 
 
 def test_run_extraction_parses_mocked_response():
     task = get_task("consultation_summary")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
+        mock_get_client.return_value.chat.return_value = _mock_response()
         result = run_extraction(task, SAMPLE_TRANSCRIPT)
 
     assert result.task == "consultation_summary"
@@ -107,7 +105,7 @@ def test_run_extraction_parses_mocked_response():
 
 def test_extract_endpoint_end_to_end():
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.completions.create.return_value = _mock_response()
+        mock_get_client.return_value.chat.return_value = _mock_response()
         with TestClient(app) as client:
             response = client.post(
                 "/extract",
