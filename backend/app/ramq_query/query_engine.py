@@ -1,11 +1,13 @@
 
-from llama_index.core import Settings, PromptTemplate
+from llama_index.core import PromptTemplate
+from llama_index.core.llms import LLM
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.query_engine import CustomQueryEngine
 
 class RAMQManualQueryEngine(CustomQueryEngine):
 
     retriever: BaseRetriever
+    llm: LLM
     qa_prompt: PromptTemplate = PromptTemplate(
     "You are a RAMQ billing specialist. Context information is below.\n"
     "---------------------\n"
@@ -20,7 +22,7 @@ class RAMQManualQueryEngine(CustomQueryEngine):
         nodes = self.retriever.retrieve(query_str)
 
         context_str = "\n\n".join([n.node.get_content() for n in nodes])
-        response = Settings.llm.complete(
+        response = self.llm.complete(
             self.qa_prompt.format(context_str=context_str, query_str=query_str)
         )
 
