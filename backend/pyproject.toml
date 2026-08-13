@@ -15,6 +15,7 @@ dependencies = [
     "llama-index-vector-stores-lancedb>=0.5",
     "llama-index-retrievers-bm25>=0.7",
     "pandas>=2.0",
+    "lancedb>=0.37",
 ]
 
 [project.optional-dependencies]

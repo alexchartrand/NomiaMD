@@ -50,11 +50,14 @@ npm run build    # tsc -b && vite build
 2. `billing_codes` task (`backend/app/ramq_codes/`) takes the *rendered summary text*, not
    the raw transcript, and:
    - retrieves RAMQ candidates via `RAMQCodesRetriever` (`ramq_codes/retriever.py`), a
-     llama_index `VectorStoreIndex` over the LanceDB `codes` table at `DB_PATH`, embedded
-     with Mistral's `mistral-embed`. Currently returns top-30 hits unconditionally — no
-     relevance floor, no dedup (a prior `MIN_SIMILARITY` floor was dropped during a
-     llama_index migration and hasn't been reinstated) — treat candidate narrowing as a
-     known gap.
+     llama_index `BaseRetriever` that embeds the query itself and does a direct LanceDB
+     vector search (`table.search(...)`) over the `codes` table at `DB_PATH`, embedded with
+     Mistral's `mistral-embed` — no `VectorStoreIndex` involved, since the table's columns
+     are flat (`number`, `description`, `when_to_use`, `rules`, `fees`, `confidence`, `text`,
+     `vector`; see ramq-ingestion's `src/embedding/code_table_schema.py`), not a llama_index
+     metadata blob. Currently returns top-20 hits unconditionally — no relevance floor, no
+     dedup (a prior `MIN_SIMILARITY` floor was dropped during an earlier retriever rewrite
+     and hasn't been reinstated) — treat candidate narrowing as a known gap.
    - asks the model to pick only from those candidates, attaching a fee (from the
      candidate's own fee list, never invented) and a verbatim `supporting_quote` from the
      summary per code, for physician review. Empty output is correct/expected when nothing

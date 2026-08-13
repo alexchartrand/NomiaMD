@@ -25,7 +25,7 @@ import os
 
 from app.embedings import get_embeding_model  # noqa: E402
 from app.ramq_codes.retriever import DEFAULT_TABLE_NAME, RAMQCodesRetriever, candidates_from_nodes  # noqa: E402
-from app.ramq_codes.vector_store import LanceVectorStore  # noqa: E402
+from app.ramq_codes.vector_store import LanceCodeTableReader  # noqa: E402
 
 # (query, expected top-ranked code) — a handful of unambiguous cases from the real manual.
 KNOWN_QUERIES = [
@@ -41,8 +41,8 @@ KNOWN_QUERIES = [
 
 
 def main() -> None:
-    vector_store = LanceVectorStore(persist_dir=os.environ["DB_PATH"]).get_vector_store(DEFAULT_TABLE_NAME)
-    retriever = RAMQCodesRetriever(vector_store, get_embeding_model())
+    table = LanceCodeTableReader(persist_dir=os.environ["DB_PATH"]).open_table(DEFAULT_TABLE_NAME)
+    retriever = RAMQCodesRetriever(table, get_embeding_model())
 
     all_passed = True
     for query, expected_top_code in KNOWN_QUERIES:
