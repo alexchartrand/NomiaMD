@@ -1,12 +1,11 @@
-from app.ramq_codes import BillingCodesTask
-from app.ramq_codes.retriever import get_ramq_retriever
+from app.ramq_codes import BillingCodesTask, get_codes_data, get_ramq_retriever
 from app.summary import ConsultationSummaryTask
 from app.tasks.base import ExtractionTask
 
 _TASKS: dict[str, ExtractionTask] = {
     task.name: task
     for task in [
-        BillingCodesTask(get_ramq_retriever()),
+        BillingCodesTask(get_ramq_retriever(), get_codes_data()),
         ConsultationSummaryTask(),
         # Future tasks (PrescriptionTask, ...) get added here — nothing else in the
         # pipeline needs to change.

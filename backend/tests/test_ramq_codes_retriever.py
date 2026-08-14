@@ -1,23 +1,33 @@
-"""Unit tests for RAMQCodesRetriever/candidates_from_nodes (app/ramq_codes/retriever.py),
-against a small in-memory lancedb-table stand-in built with a deterministic fake embedding
-model (exact text->vector lookup, no network call, no real Mistral API key needed).
+"""Unit tests for RAMQCodesRetriever (app/ramq_codes/retriever.py).
+
+RAMQCodesRetriever is exercised against a small in-memory llama_index vector store
+(`_FakeVectorStore`, standing in for the real `code-embeddings` LanceDB table) built with a
+deterministic fake embedding model (exact text->vector lookup, no network call, no real
+Mistral API key needed). RAMQCodesRetriever itself does no joining against the `codes` table
+— it only surfaces candidate `number`s off `code-embeddings` node metadata; task.py
+(BillingCodesTask) is what joins those numbers against full row data via CodesData/
+CodesData's ITableReader, see tests/test_ramq_codes_data.py for that.
 
 Known gap this file documents rather than hides: the current implementation applies no
-relevance floor and no per-code dedup (see root README's "How it's extensible" section) —
-a prior MIN_SIMILARITY cosine-similarity floor + dedup existed on the old retriever and
-were dropped when this module was rewritten, without being reinstated.
-test_retrieve_returns_low_similarity_hits_unfiltered below pins that current (gap)
-behavior explicitly, so reinstating a floor is a visible, intentional test change rather
-than an unnoticed regression the way the removal itself was.
+relevance floor and no per-code dedup (see CLAUDE.md's Architecture section) — a prior
+MIN_SIMILARITY cosine-similarity floor existed on an earlier retriever rewrite and hasn't
+been reinstated. test_retrieve_returns_low_similarity_hits_unfiltered below pins that
+current (gap) behavior explicitly, so reinstating a floor is a visible, intentional test
+change rather than an unnoticed regression the way the removal itself was.
 """
 
-from typing import Any
+from typing import Any, Optional
 
 from llama_index.core.base.embeddings.base import BaseEmbedding
-from llama_index.core.schema import NodeWithScore, TextNode
-import pytest
+from llama_index.core.schema import BaseNode, TextNode
+from llama_index.core.vector_stores.types import (
+    BasePydanticVectorStore,
+    VectorStoreQuery,
+    VectorStoreQueryResult,
+)
+from llama_index.core.bridge.pydantic import PrivateAttr
 
-from app.ramq_codes.retriever import RAMQCodesRetriever, candidates_from_nodes
+from app.ramq_codes.retriever import RAMQCodesRetriever
 
 
 def _cosine(a: list[float], b: list[float]) -> float:
@@ -27,38 +37,45 @@ def _cosine(a: list[float], b: list[float]) -> float:
     return dot / (norm_a * norm_b) if norm_a and norm_b else 0.0
 
 
-class _FakeSearchQuery:
-    """Chainable stand-in for lancedb's query builder: .distance_type(...).limit(k).to_list()."""
+class _FakeVectorStore(BasePydanticVectorStore):
+    """In-memory stand-in for the real `code-embeddings` LanceDBVectorStore: stores nodes
+    directly (with precomputed .embedding vectors) and answers query() with plain cosine
+    similarity, so RAMQCodesRetriever's VectorStoreIndex.from_vector_store(...).as_retriever()
+    has something real to search without a Lance dataset or embedding API call."""
 
-    def __init__(self, rows: list[dict]):
-        self._rows = rows
-        self._limit: int | None = None
+    stores_text: bool = True
+    _nodes: list[BaseNode] = PrivateAttr(default_factory=list)
 
-    def distance_type(self, name: str) -> "_FakeSearchQuery":
-        return self
+    def __init__(self, nodes: list[BaseNode]):
+        super().__init__()
+        self._nodes = list(nodes)
 
-    def limit(self, k: int) -> "_FakeSearchQuery":
-        self._limit = k
-        return self
+    @property
+    def client(self) -> None:
+        return None
 
-    def to_list(self) -> list[dict]:
-        return self._rows[: self._limit] if self._limit is not None else self._rows
+    def add(self, nodes: list[BaseNode], **kwargs: Any) -> list[str]:
+        self._nodes.extend(nodes)
+        return [n.node_id for n in nodes]
 
+    def delete(self, ref_doc_id: str, **kwargs: Any) -> None:
+        self._nodes = [n for n in self._nodes if n.ref_doc_id != ref_doc_id]
 
-class _FakeTable:
-    """In-memory stand-in for a real lancedb Table: stores rows directly (each a dict with
-    a "vector" key) and answers .search(vector) with plain cosine-distance ranking, so
-    RAMQCodesRetriever has something real to search without an actual Lance dataset."""
+    def get_nodes(self, node_ids: Optional[list[str]] = None, filters: Any = None) -> list[BaseNode]:
+        return list(self._nodes)
 
-    def __init__(self, rows: list[dict]):
-        self._rows = rows
-
-    def search(self, query_vector: list[float]) -> _FakeSearchQuery:
+    def query(self, query: VectorStoreQuery, **kwargs: Any) -> VectorStoreQueryResult:
         scored = sorted(
-            ({**row, "_distance": 1 - _cosine(query_vector, row["vector"])} for row in self._rows),
-            key=lambda row: row["_distance"],
+            ((n, _cosine(query.query_embedding, n.embedding)) for n in self._nodes),
+            key=lambda pair: pair[1],
+            reverse=True,
         )
-        return _FakeSearchQuery(scored)
+        top = scored[: query.similarity_top_k]
+        return VectorStoreQueryResult(
+            nodes=[n for n, _ in top],
+            similarities=[s for _, s in top],
+            ids=[n.node_id for n, _ in top],
+        )
 
 
 class _LookupEmbedding(BaseEmbedding):
@@ -82,12 +99,22 @@ class _LookupEmbedding(BaseEmbedding):
         return self.vectors[text]
 
 
-def _row(code: str, text: str, vectors: dict[str, list[float]], metadata: dict | None = None) -> dict:
-    return {"number": code, "text": text, "vector": vectors[text], **(metadata or {})}
+def _embedding_node(code: str, text: str) -> TextNode:
+    # code-embeddings' node metadata carries only `number` (see ramq-ingestion's
+    # src/embedding/code_node_builder.py).
+    return TextNode(text=text, metadata={"number": code})
 
 
-def _retriever(vectors: dict[str, list[float]], rows: list[dict]) -> RAMQCodesRetriever:
-    return RAMQCodesRetriever(_FakeTable(rows), _LookupEmbedding(vectors))
+def _retriever(
+    vectors: dict[str, list[float]], embedding_nodes: list[TextNode], **kwargs: Any
+) -> RAMQCodesRetriever:
+    for node in embedding_nodes:
+        node.embedding = vectors[node.text]
+    return RAMQCodesRetriever(_FakeVectorStore(embedding_nodes), _LookupEmbedding(vectors), **kwargs)
+
+
+def _numbers(retriever: RAMQCodesRetriever, query: str) -> list[str]:
+    return [hit.node.metadata.get("number") for hit in retriever.retrieve(query)]
 
 
 def test_retrieve_ranks_best_semantic_match_first():
@@ -97,92 +124,49 @@ def test_retrieve_ranks_best_semantic_match_first():
         "avion": [0.0, 1.0],
         "query": [1.0, 0.0],
     }
-    rows = [_row("CHAT", "chat", vectors), _row("CHIEN", "chien", vectors), _row("AVION", "avion", vectors)]
-    retriever = _retriever(vectors, rows)
+    embedding_nodes = [_embedding_node("CHAT", "chat"), _embedding_node("CHIEN", "chien"), _embedding_node("AVION", "avion")]
+    retriever = _retriever(vectors, embedding_nodes)
 
-    results = candidates_from_nodes(retriever.retrieve("query"))
-
-    assert [c.code for c in results][:2] == ["CHAT", "CHIEN"]
+    assert _numbers(retriever, "query")[:2] == ["CHAT", "CHIEN"]
 
 
-def test_retrieve_caps_results_at_similarity_top_k():
+def test_retrieve_caps_results_at_default_similarity_top_k():
     vectors = {f"code {i}": [1.0, float(i)] for i in range(35)}
     vectors["query"] = [1.0, 0.0]
-    rows = [_row(str(i), f"code {i}", vectors) for i in range(35)]
+    embedding_nodes = [_embedding_node(str(i), f"code {i}") for i in range(35)]
 
-    retriever = _retriever(vectors, rows)
-    results = retriever.retrieve("query")
+    retriever = _retriever(vectors, embedding_nodes)
 
-    assert len(results) == 20
+    assert len(retriever.retrieve("query")) == 20
+
+
+def test_retrieve_respects_custom_similarity_top_k():
+    vectors = {f"code {i}": [1.0, float(i)] for i in range(10)}
+    vectors["query"] = [1.0, 0.0]
+    embedding_nodes = [_embedding_node(str(i), f"code {i}") for i in range(10)]
+
+    retriever = _retriever(vectors, embedding_nodes, similarity_top_k=3)
+
+    assert len(retriever.retrieve("query")) == 3
 
 
 def test_retrieve_returns_low_similarity_hits_unfiltered():
     # Documents a known gap (see module docstring): an orthogonal/unrelated query still
     # comes back with a candidate today, because no MIN_SIMILARITY-style floor is applied
-    # here anymore. If a floor is reinstated, this assertion is expected to flip.
+    # here. If a floor is reinstated, this assertion is expected to flip.
     vectors = {"a": [1.0, 0.0], "query": [0.0, 1.0]}
-    retriever = _retriever(vectors, [_row("A", "a", vectors)])
+    retriever = _retriever(vectors, [_embedding_node("A", "a")])
 
-    results = candidates_from_nodes(retriever.retrieve("query"))
-
-    assert [c.code for c in results] == ["A"]
+    assert _numbers(retriever, "query") == ["A"]
 
 
-def test_candidates_from_nodes_builds_candidate_from_full_metadata():
-    metadata = {
-        "number": "15801",
-        "description": "Visite de prise en charge",
-        "when_to_use": ["Nouveau patient"],
-        "rules": ["Clientele < 500 patients inscrits"],
-        "fees": [{"amount": 33.15, "when_to_use": "Par visite", "majoration": None}],
-    }
-    hit = NodeWithScore(node=TextNode(text="", metadata=metadata), score=0.9)
-
-    (candidate,) = candidates_from_nodes([hit])
-
-    assert candidate.code == "15801"
-    assert candidate.description == "Visite de prise en charge"
-    assert candidate.when_to_use == ("Nouveau patient",)
-    assert candidate.rules == ("Clientele < 500 patients inscrits",)
-    assert candidate.fees[0].amount == 33.15
-    assert candidate.fees[0].when_to_use == "Par visite"
-
-
-def test_candidates_from_nodes_defaults_missing_optional_fields():
-    hit = NodeWithScore(node=TextNode(text="", metadata={"number": "15801"}), score=0.9)
-
-    (candidate,) = candidates_from_nodes([hit])
-
-    assert candidate.description == ""
-    assert candidate.when_to_use == ()
-    assert candidate.rules == ()
-    assert candidate.fees == ()
-
-
-def test_candidates_from_nodes_drops_hits_without_a_number():
-    with_number = NodeWithScore(node=TextNode(text="", metadata={"number": "15801"}), score=0.9)
-    without_number = NodeWithScore(node=TextNode(text="", metadata={"description": "no code here"}), score=0.9)
-
-    results = candidates_from_nodes([without_number, with_number])
-
-    assert [c.code for c in results] == ["15801"]
-
-
-@pytest.mark.parametrize("bad_metadata", [{"number": ""}, {"number": None}])
-def test_candidates_from_nodes_treats_empty_number_as_missing(bad_metadata):
-    hit = NodeWithScore(node=TextNode(text="", metadata=bad_metadata), score=0.9)
-
-    assert candidates_from_nodes([hit]) == []
-
-
-def test_retrieve_wraps_rows_as_nodes_with_metadata_matching_row_fields():
+def test_retrieve_hit_metadata_carries_only_the_code_number():
+    # task.py (BillingCodesTask.build_prompt) reads nothing off retriever hits besides
+    # metadata["number"] — pin that this is genuinely all a code-embeddings hit carries,
+    # rather than accidentally depending on richer node data that only test fakes provide.
     vectors = {"a": [1.0, 0.0], "query": [1.0, 0.0]}
-    row = _row("15801", "a", vectors, metadata={"description": "d", "when_to_use": ["x"]})
-    retriever = _retriever(vectors, [row])
+    retriever = _retriever(vectors, [_embedding_node("15801", "a")])
 
     (hit,) = retriever.retrieve("query")
 
-    assert hit.node.metadata["number"] == "15801"
-    assert hit.node.metadata["description"] == "d"
-    assert hit.node.metadata["when_to_use"] == ["x"]
-    assert hit.node.text == "a"
+    assert hit.node.metadata == {"number": "15801"}

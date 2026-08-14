@@ -1,9 +1,9 @@
 from typing import Any
 
-from app.ramq_codes.models import BillingCodesResult, Fee
-from app.ramq_codes.retriever import RamqCandidate, candidates_from_nodes
+from app.ramq_codes.models import BillingCodesResult, Code, CodeFee
 from app.tasks.base import ExtractionTask
 from app.tasks.schema import to_strict_schema
+from app.ramq_codes.codes_data import CodesData
 
 from llama_index.core.retrievers import BaseRetriever
 
@@ -53,7 +53,7 @@ Rules:
 - This output is a draft for physician review, not a final billing submission."""
 
 
-def _format_fee(f: Fee) -> str:
+def _format_fee(f: CodeFee) -> str:
     amount = f"{f.amount:.2f}" if f.amount is not None else "?"
     parts = [amount]
     if f.when_to_use:
@@ -63,8 +63,8 @@ def _format_fee(f: Fee) -> str:
     return " — ".join(parts)
 
 
-def _format_candidate(c: RamqCandidate) -> str:
-    line = f"- {c.code}: {c.description}"
+def _format_candidate(c: Code) -> str:
+    line = f"- {c.number}: {c.description}"
     if c.when_to_use:
         line += f" [when to use: {'; '.join(c.when_to_use)}]"
     if c.rules:
@@ -77,12 +77,14 @@ def _format_candidate(c: RamqCandidate) -> str:
 class BillingCodesTask(ExtractionTask):
     name = "billing_codes"
 
-    def __init__(self, retriever: BaseRetriever):
+    def __init__(self, retriever: BaseRetriever, codes_data: CodesData):
         self._retriever = retriever
+        self._codes_data = codes_data
 
     def build_prompt(self, consultation_summary_text: str) -> tuple[str, str]:
         nodes = self._retriever.retrieve(consultation_summary_text)
-        candidates = candidates_from_nodes(nodes)
+        nodes_number = [node.node.metadata.get('number') for node in nodes if node is not None]
+        candidates = self._codes_data.get(nodes_number)
         candidate_lines = [_format_candidate(c) for c in candidates]
 
         prompt_sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]

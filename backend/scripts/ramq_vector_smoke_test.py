@@ -1,15 +1,15 @@
 """Live smoke test for RAMQ candidate retrieval (app/ramq_codes/retriever.py). Requires a
 real MISTRAL_API_KEY and DB_PATH (see .env) — this is a real network call against Mistral's
-embedding API plus a real read of the local LanceDB `codes` table, run manually rather than
-as part of the pytest suite. From backend/, with the venv active:
+embedding API plus a real read of the local LanceDB `code-embeddings` and `codes` tables, run
+manually rather than as part of the pytest suite. From backend/, with the venv active:
 
     python scripts/ramq_vector_smoke_test.py
 
 Checks two things pytest can't cheaply cover: that the corpus's embedding model assumption
 in retriever.py (MISTRAL_EMBED_MODEL) actually matches whatever ramq-ingestion used
-to build the `codes` table (a wrong model would still load and query without error, just
-against numerically valid but semantically meaningless scores), and that real French
-clinical text surfaces sensible candidates end to end.
+to build the `code-embeddings` table (a wrong model would still load and query without
+error, just against numerically valid but semantically meaningless scores), and that real
+French clinical text surfaces sensible candidates end to end.
 """
 
 import sys
@@ -21,11 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-import os
-
-from app.embedings import get_embeding_model  # noqa: E402
-from app.ramq_codes.retriever import DEFAULT_TABLE_NAME, RAMQCodesRetriever, candidates_from_nodes  # noqa: E402
-from app.ramq_codes.vector_store import LanceCodeTableReader  # noqa: E402
+from app.ramq_codes.factory import get_ramq_retriever
 
 # (query, expected top-ranked code) — a handful of unambiguous cases from the real manual.
 KNOWN_QUERIES = [
@@ -39,15 +35,14 @@ KNOWN_QUERIES = [
     ),
 ]
 
-
 def main() -> None:
-    table = LanceCodeTableReader(persist_dir=os.environ["DB_PATH"]).open_table(DEFAULT_TABLE_NAME)
-    retriever = RAMQCodesRetriever(table, get_embeding_model())
+    retriever = get_ramq_retriever()
 
     all_passed = True
     for query, expected_top_code in KNOWN_QUERIES:
-        results = candidates_from_nodes(retriever.retrieve(query))
-        codes = [c.code for c in results]
+        nodes = retriever.retrieve(query)
+        codes = [node.node.metadata.get('number') for node in nodes if node is not None]
+
         print(f"--- query: {query}")
         print(f"    candidates: {codes}")
         if not codes:

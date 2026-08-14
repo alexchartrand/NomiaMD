@@ -2,24 +2,27 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 
+from llama_index.vector_stores.lancedb import LanceDBVectorStore
+
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.embedings import get_embeding_model
 from app.ramq_codes.retriever import RAMQCodesRetriever
-from app.ramq_codes.vector_store import LanceCodeTableReader
 
-TABLE_NAME="codes"
-QUERY="J'ai vu un patien en clinique au sans rendez-vous. C'est un de mes patients et j'ai plus de 500 patients."
+EMBEDDINGS_TABLE_NAME = "code-embeddings"
+QUERY="J'ai vu un patient en clinique au sans rendez-vous. C'est un de mes patients et j'ai plus de 500 patients."
 
 def test():
-    table = LanceCodeTableReader(persist_dir=os.environ["DB_PATH"]).open_table(TABLE_NAME)
+    persist_dir = os.environ["DB_PATH"]
+    vector_store = LanceDBVectorStore(uri=persist_dir, table_name=EMBEDDINGS_TABLE_NAME, flat_metadata=False)
+
     retriever = RAMQCodesRetriever(
-        table=table,
+        vector_store=vector_store,
         embed_model=get_embeding_model())
     nodes = retriever.retrieve(QUERY)
 
     for node in nodes:
-        print(f"score: {node.score}, code: {node.node.metadata.get('number')}, description: {node.node.metadata.get('description')}")
+        print(f"score: {node.score}, code: {node.node.metadata.get('number')}")
 
 if __name__ == "__main__":
     test()

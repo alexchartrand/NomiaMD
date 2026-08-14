@@ -1,11 +1,13 @@
 """Shared RAMQ code data shapes — mirrors ramq-ingestion's src/models.py, which is where
 this shape originates (Code.fees -> here). This module owns the read-side (RamqCandidate,
-built from a retrieved node's metadata); ramq-ingestion owns the write-side (Code, the
-extraction/embedding schema).
+built from a `codes`-table row joined in by retriever.py after a `code-embeddings` vector
+hit); ramq-ingestion owns the write-side (Code, the extraction/embedding schema, and both
+the `codes` and `code-embeddings` LanceDB tables).
 
 Also holds BillingCodesTask's own output schema (ExtractedFee/ExtractedCode/
 BillingCodesResult), which is a distinct, model-facing shape rather than a mirror of the
 candidate data above."""
+
 
 from dataclasses import dataclass
 
@@ -13,19 +15,20 @@ from pydantic import BaseModel, Field
 
 
 @dataclass(frozen=True)
-class Fee:
+class CodeFee:
     amount: float | None
     when_to_use: str | None
     majoration: str | None
 
 
 @dataclass(frozen=True)
-class RamqCandidate:
-    code: str
+class Code:
+    number: str
     description: str
+    confidence: float
     when_to_use: tuple[str, ...] = ()
     rules: tuple[str, ...] = ()
-    fees: tuple[Fee, ...] = ()
+    fees: tuple[CodeFee, ...] = ()
 
 
 class ExtractedFee(BaseModel):
