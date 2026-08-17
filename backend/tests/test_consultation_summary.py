@@ -103,20 +103,17 @@ def test_run_extraction_parses_mocked_response():
     ]
 
 
-def test_extract_endpoint_end_to_end():
-    with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.return_value = _mock_response()
-        with TestClient(app) as client:
-            response = client.post(
-                "/extract",
-                json={"transcript": SAMPLE_TRANSCRIPT, "task": "consultation_summary"},
-            )
+def test_extract_endpoint_rejects_consultation_summary_task():
+    # consultation_summary is billing_codes' internal first stage (see
+    # app/extraction/pipeline.py), not something a client can invoke directly via
+    # /extract — billing_codes is the only task wired to that endpoint (app/main.py).
+    with TestClient(app) as client:
+        response = client.post(
+            "/extract",
+            json={"transcript": SAMPLE_TRANSCRIPT, "task": "consultation_summary"},
+        )
 
-    assert response.status_code == 200
-    body = response.json()
-    assert body["task"] == "consultation_summary"
-    assert body["result"]["encounter_category_hint"]["best_guess_category"] == "visite_suivi_ou_prise_en_charge"
-    assert body["result"]["referral_information"]["present"] is False
+    assert response.status_code == 400
 
 
 def test_render_for_billing_codes_surfaces_quotable_facts():

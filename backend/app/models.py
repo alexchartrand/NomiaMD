@@ -15,7 +15,7 @@ class TranscriptSource(BaseModel):
 
 class ExtractionRequest(BaseModel):
     transcript: str
-    task: str = Field(description="Registered task name, e.g. 'billing_codes'")
+    task: str = Field(description="Registered task name — /extract only accepts 'billing_codes'")
     source: TranscriptSource | None = None
 
 
