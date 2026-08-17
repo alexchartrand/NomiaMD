@@ -1,8 +1,15 @@
+export interface ExtractedFee {
+  amount: number | null;
+  when_to_use: string | null;
+  majoration: string | null;
+}
+
 export interface ExtractedCode {
   code: string;
   description: string;
   confidence: number;
   supporting_quote: string;
+  fee: ExtractedFee;
 }
 
 export interface BillingCodesResult {
@@ -26,12 +33,30 @@ export interface SamplePatientDetail extends SamplePatientSummary {
   transcript: string;
 }
 
+export interface RAMQChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface RAMQQueryResult {
+  answer: string;
+}
+
 async function unwrap<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const body = await response.json().catch(() => ({ detail: response.statusText }));
-    throw new Error(body.detail ?? `Request failed: ${response.status}`);
+    throw new Error(body.detail ?? `La requête a échoué : ${response.status}`);
   }
   return response.json();
+}
+
+// A network-level fetch failure (server unreachable, connection reset) surfaces as a
+// TypeError with an opaque browser message ("Failed to fetch") rather than an HTTP error.
+export function describeError(err: unknown): string {
+  if (err instanceof TypeError) {
+    return "Impossible de joindre le serveur. Vérifiez que le serveur est démarré, puis réessayez.";
+  }
+  return err instanceof Error ? err.message : String(err);
 }
 
 export async function extractBillingCodes(transcript: string): Promise<ExtractionResult> {
@@ -49,4 +74,16 @@ export async function listSamplePatients(): Promise<SamplePatientSummary[]> {
 
 export async function getSamplePatient(id: string): Promise<SamplePatientDetail> {
   return unwrap<SamplePatientDetail>(await fetch(`/api/patients/${encodeURIComponent(id)}`));
+}
+
+export async function queryChatbot(
+  query: string,
+  history: RAMQChatMessage[],
+): Promise<RAMQQueryResult> {
+  const response = await fetch("/api/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, history }),
+  });
+  return unwrap<RAMQQueryResult>(response);
 }

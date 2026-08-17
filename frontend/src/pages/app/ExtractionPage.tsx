@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import {
+  describeError,
   extractBillingCodes,
   getSamplePatient,
   listSamplePatients,
   type ExtractionResult,
   type SamplePatientSummary,
-} from "./api";
-import { Logo } from "./Logo";
+} from "../../api";
+import { Banner, Button, Select, Table, TextArea } from "../../components";
 
-export default function App() {
+export default function ExtractionPage() {
   const [transcript, setTranscript] = useState("");
   const [result, setResult] = useState<ExtractionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,7 @@ export default function App() {
   useEffect(() => {
     listSamplePatients()
       .then(setPatients)
-      .catch((err) => setPatientsError(err instanceof Error ? err.message : String(err)));
+      .catch((err) => setPatientsError(describeError(err)));
   }, []);
 
   async function handleSelectPatient(id: string) {
@@ -35,7 +36,7 @@ export default function App() {
       setTranscript(patient.transcript);
       setResult(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(describeError(err));
     } finally {
       setPatientLoading(false);
     }
@@ -49,75 +50,73 @@ export default function App() {
     try {
       setResult(await extractBillingCodes(transcript));
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(describeError(err));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="app-shell">
-      <header className="app-header">
-        <Logo size={30} />
-        <span className="tagline">Billing code extraction — review draft</span>
-      </header>
-
+    <section className="page-panel">
+      <h1>Extraction de codes</h1>
       <p className="lede">
-        Paste a transcript below, or load a simulated patient. Codes are suggestions only —
-        verify each against the transcript before submitting to RAMQ.
+        Collez une transcription ci-dessous, ou chargez un patient simulé. Les codes sont des
+        suggestions seulement — vérifiez chacun par rapport à la transcription avant de
+        soumettre à la RAMQ.
       </p>
 
       <div className="field-row">
-        <label htmlFor="patient-select">Simulated patient:</label>
-        <select
+        <label htmlFor="patient-select">Patient simulé :</label>
+        <Select
           id="patient-select"
           value={selectedPatientId}
           onChange={(e) => handleSelectPatient(e.target.value)}
           disabled={patientLoading || patients.length === 0}
         >
           <option value="">
-            {patients.length === 0 ? "No simulated patients available" : "Select a patient..."}
+            {patients.length === 0 ? "Aucun patient simulé disponible" : "Sélectionnez un patient..."}
           </option>
           {patients.map((p) => (
             <option key={p.id} value={p.id}>
               {p.label}
             </option>
           ))}
-        </select>
-        {patientLoading && <span className="status-inline">Loading...</span>}
+        </Select>
+        {patientLoading && <span className="status-inline">Chargement...</span>}
         {patientsError && (
-          <p className="error-text">Couldn&rsquo;t load patient list: {patientsError}</p>
+          <Banner tone="error">Impossible de charger la liste des patients : {patientsError}</Banner>
         )}
       </div>
 
       <form onSubmit={handleSubmit}>
-        <textarea
+        <TextArea
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
           rows={12}
-          placeholder="Paste the encounter transcript here, or select a simulated patient above..."
+          placeholder="Collez la transcription de la consultation ici, ou sélectionnez un patient simulé ci-dessus..."
         />
-        <button type="submit" disabled={loading || !transcript.trim()}>
-          {loading ? "Extracting..." : "Extract billing codes"}
-        </button>
+        <Button type="submit" disabled={loading || !transcript.trim()}>
+          {loading ? "Extraction en cours..." : "Extraire les codes de facturation"}
+        </Button>
       </form>
 
-      {error && <p className="error-text">{error}</p>}
+      {error && <Banner tone="error">{error}</Banner>}
 
       {result && (
         <section className="results">
-          <h2>Suggested codes ({result.model})</h2>
-          {result.result.notes && <p className="warning-banner">⚠ {result.result.notes}</p>}
+          <h2>Codes suggérés ({result.model})</h2>
+          {result.result.notes && <Banner tone="warning">⚠ {result.result.notes}</Banner>}
           {result.result.codes.length === 0 ? (
-            <p>No candidate codes were clearly supported by this transcript.</p>
+            <p>Aucun code candidat n&rsquo;est clairement appuyé par cette transcription.</p>
           ) : (
-            <table>
+            <Table>
               <thead>
                 <tr>
                   <th>Code</th>
                   <th>Description</th>
-                  <th>Confidence</th>
-                  <th>Supporting quote</th>
+                  <th>Confiance</th>
+                  <th>Tarif</th>
+                  <th>Citation à l&rsquo;appui</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,16 +125,17 @@ export default function App() {
                     <td className="code">{c.code}</td>
                     <td>{c.description}</td>
                     <td>{(c.confidence * 100).toFixed(0)}%</td>
+                    <td>{c.fee.amount != null ? `${c.fee.amount.toFixed(2)} $` : "—"}</td>
                     <td>
-                      <em>&ldquo;{c.supporting_quote}&rdquo;</em>
+                      <em>&laquo; {c.supporting_quote} &raquo;</em>
                     </td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           )}
         </section>
       )}
-    </main>
+    </section>
   );
 }
