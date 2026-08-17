@@ -1,5 +1,5 @@
 
-from llama_index.core.base.llms.types import ChatMessage, MessageRole
+from llama_index.core.base.llms.types import ChatMessage, ChatResponse, MessageRole
 from llama_index.core.llms import LLM
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.query_engine import CustomQueryEngine
@@ -28,6 +28,27 @@ def _to_chat_messages(history: list[RAMQChatMessage]) -> list[ChatMessage]:
     return [ChatMessage(role=_ROLE_MAP[m.role], content=m.content) for m in history]
 
 
+def _build_messages(
+    query_str: str, context_str: str, chat_history: list[RAMQChatMessage] | None
+) -> list[ChatMessage]:
+    messages = [ChatMessage(role=MessageRole.SYSTEM, content=SYSTEM_PROMPT)]
+    messages.extend(_to_chat_messages(chat_history or []))
+    messages.append(
+        ChatMessage(
+            role=MessageRole.USER,
+            content=USER_MESSAGE_TEMPLATE.format(context_str=context_str, query_str=query_str),
+        )
+    )
+    return messages
+
+
+def _extract_content(response: ChatResponse) -> str:
+    content = response.message.content
+    if content is None:
+        raise RuntimeError("Model returned an empty chat response")
+    return content
+
+
 class RAMQManualQueryEngine(CustomQueryEngine):
 
     retriever: BaseRetriever
@@ -35,21 +56,14 @@ class RAMQManualQueryEngine(CustomQueryEngine):
 
     def custom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
         nodes = self.retriever.retrieve(query_str)
-
         context_str = "\n\n".join([n.node.get_content() for n in nodes])
-
-        messages = [ChatMessage(role=MessageRole.SYSTEM, content=SYSTEM_PROMPT)]
-        messages.extend(_to_chat_messages(chat_history or []))
-        messages.append(
-            ChatMessage(
-                role=MessageRole.USER,
-                content=USER_MESSAGE_TEMPLATE.format(context_str=context_str, query_str=query_str),
-            )
-        )
-
+        messages = _build_messages(query_str, context_str, chat_history)
         response = self.llm.chat(messages)
+        return _extract_content(response)
 
-        content = response.message.content
-        if content is None:
-            raise RuntimeError("Model returned an empty chat response")
-        return content
+    async def acustom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
+        nodes = await self.retriever.aretrieve(query_str)
+        context_str = "\n\n".join([n.node.get_content() for n in nodes])
+        messages = _build_messages(query_str, context_str, chat_history)
+        response = await self.llm.achat(messages)
+        return _extract_content(response)

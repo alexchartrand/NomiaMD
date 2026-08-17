@@ -16,7 +16,7 @@ class _StubQueryEngine:
         self._answer = answer
         self.calls: list[tuple[str, list[RAMQChatMessage] | None]] = []
 
-    def custom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
+    async def acustom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
         self.calls.append((query_str, chat_history))
         return self._answer
 

@@ -106,10 +106,9 @@ async def extract(
 
 @app.post("/query", response_model=RAMQQueryResult)
 @limiter.limit("20/minute")
-def query_ramq_manual(request: Request, body: RAMQQueryRequest) -> RAMQQueryResult:
-    """Free-form, multi-turn billing question answered from the RAMQ omnipraticien manual —
-    not tied to any specific encounter/transcript, unlike /extract. History is stateless:
-    the client resends prior turns each request, nothing is persisted server-side."""
+# Free-form, multi-turn billing question answered from the RAMQ manual, not tied to a specific
+# transcript. POST a query + optional history; history is stateless (client resends prior turns).
+async def query_ramq_manual(request: Request, body: RAMQQueryRequest) -> RAMQQueryResult:
     engine = get_ramq_query_engine()
-    answer = engine.custom_query(body.query, chat_history=body.history)
+    answer = await engine.acustom_query(body.query, chat_history=body.history)
     return RAMQQueryResult(answer=answer)

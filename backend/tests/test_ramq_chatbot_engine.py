@@ -122,3 +122,44 @@ def test_chat_history_threaded_between_system_and_current_turn():
     assert messages[2].content == "27,25$ selon le manuel RAMQ."
     assert messages[3].role == MessageRole.USER
     assert "Query: Et pour un enfant?" in messages[3].content
+
+
+# -- acustom_query (app/main.py's /query route calls this, not custom_query) --------------
+# _StubRetriever/_SpyLLM need no async-specific setup: BaseRetriever/CustomLLM's own
+# .aretrieve()/.achat() defaults delegate to the sync _retrieve()/chat() overrides above.
+
+
+async def test_acustom_query_joins_retrieved_node_texts_into_context():
+    spy = _SpyLLM()
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Texte A"), _node("Texte B")]), llm=spy)
+
+    await engine.acustom_query("Ma question")
+
+    user_message = spy.message_lists[0][-1]
+    assert user_message.role == MessageRole.USER
+    assert "Texte A\n\nTexte B" in user_message.content
+
+
+async def test_acustom_query_returns_llm_response_unchanged():
+    spy = _SpyLLM(response_text="27,25$ selon le manuel RAMQ")
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Contexte")]), llm=spy)
+
+    response = await engine.acustom_query("Combien facturer?")
+
+    assert response == "27,25$ selon le manuel RAMQ"
+
+
+async def test_acustom_query_threads_chat_history_same_as_sync():
+    spy = _SpyLLM()
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Contexte")]), llm=spy)
+    history = [
+        RAMQChatMessage(role="user", content="Quelle est la majoration de nuit?"),
+        RAMQChatMessage(role="assistant", content="27,25$ selon le manuel RAMQ."),
+    ]
+
+    await engine.acustom_query("Et pour un enfant?", chat_history=history)
+
+    messages = spy.message_lists[0]
+    assert messages[1].content == "Quelle est la majoration de nuit?"
+    assert messages[2].content == "27,25$ selon le manuel RAMQ."
+    assert "Query: Et pour un enfant?" in messages[3].content

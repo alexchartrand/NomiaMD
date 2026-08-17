@@ -40,3 +40,11 @@ class RAMQManualRetriever(BaseRetriever):
 
     def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         return self.retriever.retrieve(query_bundle)
+
+    async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+        # Unlike the sync path (use_async=False above), QueryFusionRetriever.aretrieve()
+        # always fans its num_queries=4 generated queries out across both the vector and
+        # BM25 retrievers concurrently (asyncio.gather) rather than looping through up to 8
+        # sequential retrieval calls — the real win, since the vector leg and query
+        # generation both make genuine async network calls to Mistral.
+        return await self.retriever.aretrieve(query_bundle)

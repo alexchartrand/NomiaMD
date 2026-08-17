@@ -144,6 +144,25 @@ def _build_retriever(
     )
 
 
+async def test_aretrieve_delegates_to_the_inner_query_fusion_retriever():
+    # app/ramq_chatbot/engine.py's acustom_query calls .aretrieve(), not .retrieve() — pin
+    # that RAMQManualRetriever._aretrieve actually delegates to the inner
+    # QueryFusionRetriever's own .aretrieve() (which fans the fused vector+BM25 queries out
+    # concurrently) rather than silently falling back to BaseRetriever's default sync-under-
+    # an-async-wrapper behavior.
+    vectors = {
+        "urgence de nuit": [1.0, 0.0],
+        "consultation de routine": [0.0, 1.0],
+    }
+    node_a = _node("A", "urgence de nuit", vectors)
+    node_b = _node("B", "consultation de routine", vectors)
+
+    retriever = _build_retriever(vectors, [node_a, node_b])
+    results = await retriever.aretrieve("urgence de nuit")
+
+    assert results[0].node.node_id == "A"
+
+
 def test_retrieve_ranks_best_semantic_and_lexical_match_first():
     vectors = {
         "urgence de nuit": [1.0, 0.0],
