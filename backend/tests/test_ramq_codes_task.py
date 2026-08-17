@@ -13,7 +13,7 @@ class _FakeRetriever:
     def __init__(self, hits: list[NodeWithScore | None]):
         self._hits = hits
 
-    def retrieve(self, query: str) -> list[NodeWithScore | None]:
+    async def aretrieve(self, query: str) -> list[NodeWithScore | None]:
         return self._hits
 
 
@@ -22,7 +22,7 @@ class _FakeCodesData:
         self._codes_by_number = codes_by_number
         self.requested: list[str] | None = None
 
-    def get(self, numbers: list[str]) -> list[Code]:
+    async def get(self, numbers: list[str]) -> list[Code]:
         self.requested = list(numbers)
         return [self._codes_by_number[n] for n in numbers if n in self._codes_by_number]
 
@@ -39,41 +39,41 @@ def _task(codes: list[Code], hits: list[NodeWithScore | None] | None = None) -> 
 # -- build_prompt -------------------------------------------------------------------------
 
 
-def test_build_prompt_returns_the_fixed_system_prompt():
+async def test_build_prompt_returns_the_fixed_system_prompt():
     task = _task([])
 
-    system_prompt, _ = task.build_prompt("résumé")
+    system_prompt, _ = await task.build_prompt("résumé")
 
     assert system_prompt == SYSTEM_PROMPT
 
 
-def test_build_prompt_includes_the_summary_text_verbatim():
+async def test_build_prompt_includes_the_summary_text_verbatim():
     task = _task([])
 
-    _, user_message = task.build_prompt("Patiente de 58 ans, suivi diabète.")
+    _, user_message = await task.build_prompt("Patiente de 58 ans, suivi diabète.")
 
     assert "Patiente de 58 ans, suivi diabète." in user_message
 
 
-def test_build_prompt_looks_up_codes_data_with_retrieved_numbers():
+async def test_build_prompt_looks_up_codes_data_with_retrieved_numbers():
     codes_data = _FakeCodesData({})
     task = BillingCodesTask(_FakeRetriever([_hit("A"), _hit("B")]), codes_data)
 
-    task.build_prompt("résumé")
+    await task.build_prompt("résumé")
 
     assert codes_data.requested == ["A", "B"]
 
 
-def test_build_prompt_skips_none_hits_before_looking_up_codes_data():
+async def test_build_prompt_skips_none_hits_before_looking_up_codes_data():
     codes_data = _FakeCodesData({"A": Code(number="A", description="", confidence=1.0)})
     task = BillingCodesTask(_FakeRetriever([_hit("A"), None]), codes_data)
 
-    task.build_prompt("résumé")
+    await task.build_prompt("résumé")
 
     assert codes_data.requested == ["A"]
 
 
-def test_build_prompt_formats_full_candidate_line():
+async def test_build_prompt_formats_full_candidate_line():
     code = Code(
         number="15801",
         description="Visite de prise en charge",
@@ -84,7 +84,7 @@ def test_build_prompt_formats_full_candidate_line():
     )
     task = _task([code])
 
-    _, user_message = task.build_prompt("résumé")
+    _, user_message = await task.build_prompt("résumé")
 
     assert "- 15801: Visite de prise en charge" in user_message
     assert "[when to use: Nouveau patient]" in user_message
@@ -92,11 +92,11 @@ def test_build_prompt_formats_full_candidate_line():
     assert "[fees: 33.15 — Par visite — majoration: 20%]" in user_message
 
 
-def test_build_prompt_omits_optional_sections_when_absent():
+async def test_build_prompt_omits_optional_sections_when_absent():
     code = Code(number="15801", description="Visite de prise en charge", confidence=0.9)
     task = _task([code])
 
-    _, user_message = task.build_prompt("résumé")
+    _, user_message = await task.build_prompt("résumé")
 
     assert "- 15801: Visite de prise en charge" in user_message
     assert "[when to use:" not in user_message
@@ -104,7 +104,7 @@ def test_build_prompt_omits_optional_sections_when_absent():
     assert "[fees:" not in user_message
 
 
-def test_build_prompt_formats_unknown_fee_amount_as_question_mark():
+async def test_build_prompt_formats_unknown_fee_amount_as_question_mark():
     code = Code(
         number="15801",
         description="",
@@ -113,15 +113,15 @@ def test_build_prompt_formats_unknown_fee_amount_as_question_mark():
     )
     task = _task([code])
 
-    _, user_message = task.build_prompt("résumé")
+    _, user_message = await task.build_prompt("résumé")
 
     assert "[fees: ?]" in user_message
 
 
-def test_build_prompt_with_no_candidates_lists_none():
+async def test_build_prompt_with_no_candidates_lists_none():
     task = _task([])
 
-    _, user_message = task.build_prompt("résumé")
+    _, user_message = await task.build_prompt("résumé")
 
     assert "Candidate RAMQ codes:\n" in user_message
 

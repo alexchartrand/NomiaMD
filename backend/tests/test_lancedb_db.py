@@ -1,5 +1,5 @@
 """Tests for app/lancedb/db.py — ITableReader's ABC contract, and CodeTable's query building
-and row validation against a fake lancedb table (no real Lance dataset ever opened)."""
+and row validation against a fake async lancedb table (no real Lance dataset ever opened)."""
 
 import re
 
@@ -10,7 +10,8 @@ from app.lancedb.models import CodeRow
 
 
 class _FakeSearchQuery:
-    """Chainable stand-in for lancedb's filter-only query builder: .where(...).to_list().
+    """Chainable stand-in for lancedb's async filter-only query builder: .where(...) is a
+    sync builder step, .to_list() is the async terminal call — matching lancedb.AsyncQuery.
     Actually applies the `number = '...'` / `number IN (...)` filter CodeTable builds (by
     picking quoted values back out of it), so tests exercise real filtering behavior rather
     than a query object that ignores its own filter."""
@@ -25,12 +26,12 @@ class _FakeSearchQuery:
         self._rows = [row for row in self._rows if row["number"] in wanted]
         return self
 
-    def to_list(self) -> list[dict]:
+    async def to_list(self) -> list[dict]:
         return self._rows
 
 
 class _FakeTable:
-    """In-memory stand-in for the real `codes` lancedb Table: .search() returns a query
+    """In-memory stand-in for the real `codes` lancedb AsyncTable: .query() returns a query
     object pre-loaded with whichever rows the test wants back, and records the filter
     string CodeTable built so tests can assert on the actual escaping/quoting logic."""
 
@@ -38,7 +39,7 @@ class _FakeTable:
         self.rows = rows
         self.queries: list[_FakeSearchQuery] = []
 
-    def search(self) -> _FakeSearchQuery:
+    def query(self) -> _FakeSearchQuery:
         query = _FakeSearchQuery(self.rows)
         self.queries.append(query)
         return query
@@ -47,10 +48,19 @@ class _FakeTable:
 class _FakeDB:
     def __init__(self, table: _FakeTable):
         self._table = table
+        self.open_table_calls = 0
 
-    def open_table(self, name: str) -> _FakeTable:
+    async def open_table(self, name: str) -> _FakeTable:
         assert name == "codes"
+        self.open_table_calls += 1
         return self._table
+
+
+def _reader(db: _FakeDB) -> CodeTable:
+    async def get_db() -> _FakeDB:
+        return db
+
+    return CodeTable(get_db)
 
 
 def _row(number: str, **fields) -> dict:
@@ -70,20 +80,27 @@ def test_cannot_instantiate_interface_directly():
         ITableReader()
 
 
-def test_code_table_opens_codes_table_at_construction():
+async def test_opens_codes_table_lazily_on_first_call_and_reuses_it():
+    # The async lancedb connection can only be opened inside a running event loop, so
+    # CodeTable can't eagerly open its table at construction (unlike the old sync
+    # lancedb.connect) — it opens on first get()/get_all() and caches the handle.
     table = _FakeTable([])
     db = _FakeDB(table)
+    reader = _reader(db)
 
-    reader = CodeTable(db)
+    assert db.open_table_calls == 0
 
-    assert reader._table is table
+    await reader.get_all([])
+    await reader.get_all([])
+
+    assert db.open_table_calls == 1
 
 
-def test_get_returns_validated_code_row():
+async def test_get_returns_validated_code_row():
     table = _FakeTable([_row("15801", description="Visite de prise en charge", confidence=0.9)])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
-    row = reader.get("15801")
+    row = await reader.get("15801")
 
     assert isinstance(row, CodeRow)
     assert row.number == "15801"
@@ -91,72 +108,72 @@ def test_get_returns_validated_code_row():
     assert row.confidence == 0.9
 
 
-def test_get_filters_by_quoted_number():
+async def test_get_filters_by_quoted_number():
     table = _FakeTable([_row("15801")])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
-    reader.get("15801")
+    await reader.get("15801")
 
     assert table.queries[0].last_where == "number = '15801'"
 
 
-def test_get_escapes_single_quotes_in_id():
+async def test_get_escapes_single_quotes_in_id():
     table = _FakeTable([_row("15'801")])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
-    reader.get("15'801")
+    await reader.get("15'801")
 
     assert table.queries[0].last_where == "number = '15''801'"
 
 
-def test_get_raises_when_no_row_matches():
+async def test_get_raises_when_no_row_matches():
     table = _FakeTable([])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
     with pytest.raises(ValueError, match="found 0"):
-        reader.get("missing")
+        await reader.get("missing")
 
 
-def test_get_raises_when_more_than_one_row_matches():
+async def test_get_raises_when_more_than_one_row_matches():
     table = _FakeTable([_row("15801"), _row("15801")])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
     with pytest.raises(ValueError, match="found 2"):
-        reader.get("15801")
+        await reader.get("15801")
 
 
-def test_get_all_returns_validated_code_rows_for_every_id():
+async def test_get_all_returns_validated_code_rows_for_every_id():
     table = _FakeTable([_row("A", description="a"), _row("B", description="b")])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
-    rows = reader.get_all(["A", "B"])
+    rows = await reader.get_all(["A", "B"])
 
     assert [r.number for r in rows] == ["A", "B"]
     assert all(isinstance(r, CodeRow) for r in rows)
 
 
-def test_get_all_filters_by_quoted_ids():
+async def test_get_all_filters_by_quoted_ids():
     table = _FakeTable([_row("A"), _row("B")])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
-    reader.get_all(["A", "B"])
+    await reader.get_all(["A", "B"])
 
     assert table.queries[0].last_where == "number IN ('A', 'B')"
 
 
-def test_get_all_returns_empty_list_for_empty_input():
+async def test_get_all_returns_empty_list_for_empty_input():
     table = _FakeTable([_row("A")])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
-    assert reader.get_all([]) == []
+    assert await reader.get_all([]) == []
 
 
-def test_get_all_silently_drops_ids_with_no_matching_row():
+async def test_get_all_silently_drops_ids_with_no_matching_row():
     # A retrieved candidate number with no matching `codes` row (stale embeddings index) is
     # dropped rather than raising — get_all is a best-effort bulk lookup, unlike get().
     table = _FakeTable([_row("A")])
-    reader = CodeTable(_FakeDB(table))
+    reader = _reader(_FakeDB(table))
 
-    rows = reader.get_all(["A", "MISSING"])
+    rows = await reader.get_all(["A", "MISSING"])
 
     assert [r.number for r in rows] == ["A"]

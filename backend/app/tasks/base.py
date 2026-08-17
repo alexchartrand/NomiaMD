@@ -16,7 +16,7 @@ class ExtractionTask(ABC):
     name: str
 
     @abstractmethod
-    def build_prompt(self, input_text: str) -> tuple[str, str]:
+    async def build_prompt(self, input_text: str) -> tuple[str, str]:
         """Returns (system_prompt, user_message) for this task's input text.
 
         For most tasks this is the raw transcript. billing_codes is the exception: it takes

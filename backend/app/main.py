@@ -64,21 +64,18 @@ def get_patient(patient_id: str) -> SamplePatientDetail:
 
 @app.post("/extract", response_model=ExtractionResult[BillingCodesResult])
 @limiter.limit("10/minute")
+# Runs a transcript through the billing_codes pipeline (consultation_summary -> billing_codes)
+# and persists both stages. POST a transcript + task="billing_codes"; returns the candidate RAMQ
+# codes for physician review.
 async def extract(
     request: Request,
     body: ExtractionRequest,
 ) -> ExtractionResult[BillingCodesResult]:
-    # `request: Request` (unused beyond slowapi's @limiter.limit, which requires a
-    # literally-named `request` param to find it) sits alongside the Pydantic body,
-    # renamed to `body` to avoid the name collision.
     try:
         task = get_task(body.task)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    # billing_codes is the only task wired to /extract — consultation_summary exists only
-    # as billing_codes' internal first stage (see run_billing_codes_pipeline below), not as
-    # something a client can invoke directly here.
     if task.name != "billing_codes":
         raise HTTPException(
             status_code=400,
@@ -87,11 +84,7 @@ async def extract(
 
     source_system = body.source.system if body.source else None
 
-    # billing_codes runs off a two-stage pipeline (transcript -> consultation_summary ->
-    # billing_codes), see app/extraction/pipeline.py. Store the intermediate summary too,
-    # since it's the actual input the billing model reasoned over and a physician
-    # reviewing a surprising code needs to see it, not just the raw transcript.
-    summary_result, result = run_billing_codes_pipeline(body.transcript)
+    summary_result, result = await run_billing_codes_pipeline(body.transcript)
     await save_extraction(
         task=summary_result.task,
         transcript=body.transcript,

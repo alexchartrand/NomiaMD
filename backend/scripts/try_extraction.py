@@ -5,6 +5,7 @@ From backend/, with the venv active:
     python scripts/try_extraction.py
 """
 
+import asyncio
 import sys
 from pathlib import Path
 
@@ -25,12 +26,12 @@ def load_sample_transcript() -> str:
     return get_sample_patients()[3].transcript
 
 
-def main() -> None:
+async def main() -> None:
     transcript = load_sample_transcript()
     print("--- transcript ---")
     print(transcript)
 
-    summary_result, billing_result = run_billing_codes_pipeline(transcript)
+    summary_result, billing_result = await run_billing_codes_pipeline(transcript)
 
     print("--- consultation summary ---")
     print(summary_result.model_dump_json(indent=2))
@@ -39,4 +40,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

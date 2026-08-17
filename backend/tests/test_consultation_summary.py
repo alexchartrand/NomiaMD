@@ -3,7 +3,7 @@ as test_extraction.py's billing_codes tests."""
 
 import json
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
 
@@ -87,11 +87,11 @@ def _mock_response():
     )
 
 
-def test_run_extraction_parses_mocked_response():
+async def test_run_extraction_parses_mocked_response():
     task = get_task("consultation_summary")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.return_value = _mock_response()
-        result = run_extraction(task, SAMPLE_TRANSCRIPT)
+        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response())
+        result = await run_extraction(task, SAMPLE_TRANSCRIPT)
 
     assert result.task == "consultation_summary"
     assert result.result.encounter_category_hint.best_guess_category == "visite_suivi_ou_prise_en_charge"

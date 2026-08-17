@@ -81,10 +81,10 @@ class BillingCodesTask(ExtractionTask):
         self._retriever = retriever
         self._codes_data = codes_data
 
-    def build_prompt(self, consultation_summary_text: str) -> tuple[str, str]:
-        nodes = self._retriever.retrieve(consultation_summary_text)
+    async def build_prompt(self, consultation_summary_text: str) -> tuple[str, str]:
+        nodes = await self._retriever.aretrieve(consultation_summary_text)
         nodes_number = [node.node.metadata.get('number') for node in nodes if node is not None]
-        candidates = self._codes_data.get(nodes_number)
+        candidates = await self._codes_data.get(nodes_number)
         candidate_lines = [_format_candidate(c) for c in candidates]
 
         prompt_sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]

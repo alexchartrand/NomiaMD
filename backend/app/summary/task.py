@@ -78,7 +78,7 @@ def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
 class ConsultationSummaryTask(ExtractionTask):
     name = "consultation_summary"
 
-    def build_prompt(self, transcript: str) -> tuple[str, str]:
+    async def build_prompt(self, transcript: str) -> tuple[str, str]:
         return SYSTEM_PROMPT, f"Transcript:\n{transcript}\n\nExtract the structured facts per your instructions."
 
     def json_schema(self) -> dict[str, Any]:

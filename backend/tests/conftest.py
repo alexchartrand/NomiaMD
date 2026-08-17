@@ -22,7 +22,7 @@ class _KeywordStubRetriever:
     """Deterministic, dependency-free stand-in for the real llama_index-backed retriever
     used in tests: ranks fixture candidates by how many of their fixture "keywords" appear
     in the query text. Only ever used here — the real pipeline always goes through
-    RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics BaseRetriever's `.retrieve()`
+    RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics BaseRetriever's `.aretrieve()`
     (list[NodeWithScore] out), since that's the interface BillingCodesTask._retriever
     is used through (app/ramq_codes/task.py's build_prompt). Node metadata carries only
     `number`, mirroring the real `code-embeddings` table's node shape — BillingCodesTask
@@ -44,6 +44,9 @@ class _KeywordStubRetriever:
             for number, score in ranked
         ]
 
+    async def aretrieve(self, query: str) -> list[NodeWithScore]:
+        return self.retrieve(query)
+
 
 class _StubCodesData:
     """Deterministic, dependency-free stand-in for CodesData (app/ramq_codes/codes_data.py):
@@ -55,7 +58,7 @@ class _StubCodesData:
     def __init__(self, codes_by_number: dict[str, Code]):
         self._codes_by_number = codes_by_number
 
-    def get(self, numbers: list[str]) -> list[Code]:
+    async def get(self, numbers: list[str]) -> list[Code]:
         return [self._codes_by_number[n] for n in numbers if n in self._codes_by_number]
 
 

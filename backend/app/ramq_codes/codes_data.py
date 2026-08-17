@@ -10,7 +10,7 @@ class CodesData:
         self._table = table
         self._converter = converter
 
-    def get(self, numbers: List[str]) -> List[Code]:
-        codes = self._table.get_all(numbers)
+    async def get(self, numbers: List[str]) -> List[Code]:
+        codes = await self._table.get_all(numbers)
         return [self._converter.convert(code) for code in codes]
 

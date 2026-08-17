@@ -43,4 +43,14 @@ class RAMQCodesRetriever(BaseRetriever):
 
         return hits
 
+    async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+        # Not just BaseRetriever's default sync-under-the-hood fallback: the inner
+        # VectorIndexRetriever's own _aretrieve awaits a real async network call for the
+        # query embedding (MistralAIEmbedding._aget_query_embedding), which is the actual
+        # blocking cost here — the local LanceDB vector search itself stays synchronous
+        # either way.
+        hits = await self._retriever.aretrieve(query_bundle)
+
+        return hits
+
 

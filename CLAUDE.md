@@ -26,9 +26,10 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    - joins those numbers against the flat `codes` table (same `DB_PATH`) for the full
      candidate row (`description`, `when_to_use`, `rules`, `fees`, `confidence`; see
      ramq-ingestion's `src/embedding/code_table_schema.py`) — this join is `task.py`'s job,
-     not the retriever's: `BillingCodesTask.build_prompt` calls `CodesData.get(numbers)`
-     (`ramq_codes/codes_data.py`), which does a direct LanceDB query
-     (`table.search().where("number IN (...)")`) via `CodeTable` (`app/lancedb/db.py`) and
+     not the retriever's: `BillingCodesTask.build_prompt` calls `await CodesData.get(numbers)`
+     (`ramq_codes/codes_data.py`), which does a direct async LanceDB query
+     (`table.query().where("number IN (...)")` against a lazily-opened `lancedb.AsyncTable`)
+     via `CodeTable` (`app/lancedb/db.py`) and
      converts each raw row into this backend's own `Code` shape via `CodesRowConverter`
      (`app/lancedb/converter.py`). A candidate number with no matching `codes` row (stale
      index) is silently dropped rather than surfaced with missing data.

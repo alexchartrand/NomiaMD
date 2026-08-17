@@ -29,9 +29,9 @@ def get_client() -> MistralAI:
     )
 
 
-def run_extraction(
+async def run_extraction(
     task: ExtractionTask, input_text: str) -> ExtractionResult:
-    system_prompt, user_message = task.build_prompt(input_text)
+    system_prompt, user_message = await task.build_prompt(input_text)
     schema = task.json_schema()
     client = get_client()
 
@@ -40,7 +40,7 @@ def run_extraction(
         "json_schema": {"name": task.name, "strict": True, "schema": schema},
     }
 
-    response = client.chat(
+    response = await client.achat(
         messages=[
             ChatMessage(role=MessageRole.SYSTEM, content=system_prompt),
             ChatMessage(role=MessageRole.USER, content=user_message),

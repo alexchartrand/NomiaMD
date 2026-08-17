@@ -18,6 +18,7 @@ Entries with expected_codes == [] are skipped for scoring (there's nothing to co
 against) but still run, so quote-grounding still gets checked on them.
 """
 
+import asyncio
 import json
 import sys
 from pathlib import Path
@@ -50,7 +51,7 @@ def quote_is_grounded(source_text: str, quote: str) -> bool:
     return normalize(quote) in normalize(source_text)
 
 
-def main() -> None:
+async def main() -> None:
     eval_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_EVAL_PATH
     entries = load_eval_set(eval_path)
 
@@ -66,7 +67,7 @@ def main() -> None:
             print(f"[skip] unknown patient_id {entry['patient_id']!r}")
             continue
 
-        summary_result, result = run_billing_codes_pipeline(patient.transcript)
+        summary_result, result = await run_billing_codes_pipeline(patient.transcript)
         summary_text = render_for_billing_codes(summary_result.result)
         returned_codes = {c.code for c in result.result.codes}
         expected_codes = set(entry.get("expected_codes") or [])
@@ -106,4 +107,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

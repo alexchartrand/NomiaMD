@@ -117,6 +117,25 @@ def _numbers(retriever: RAMQCodesRetriever, query: str) -> list[str]:
     return [hit.node.metadata.get("number") for hit in retriever.retrieve(query)]
 
 
+async def test_aretrieve_delegates_to_the_inner_retriever_like_retrieve_does():
+    # BillingCodesTask.build_prompt calls .aretrieve(), not .retrieve() — pin that the
+    # async path (RAMQCodesRetriever._aretrieve) actually delegates to the inner
+    # VectorIndexRetriever's own .aretrieve() rather than silently falling back to
+    # BaseRetriever's default (which just runs the sync path under an async wrapper).
+    vectors = {
+        "chat": [1.0, 0.0],
+        "chien": [0.9, 0.1],
+        "avion": [0.0, 1.0],
+        "query": [1.0, 0.0],
+    }
+    embedding_nodes = [_embedding_node("CHAT", "chat"), _embedding_node("CHIEN", "chien"), _embedding_node("AVION", "avion")]
+    retriever = _retriever(vectors, embedding_nodes)
+
+    hits = await retriever.aretrieve("query")
+
+    assert [hit.node.metadata.get("number") for hit in hits][:2] == ["CHAT", "CHIEN"]
+
+
 def test_retrieve_ranks_best_semantic_match_first():
     vectors = {
         "chat": [1.0, 0.0],

@@ -14,10 +14,10 @@ class _FakeTableReader(ITableReader):
         self._rows_by_number = rows_by_number
         self.get_all_calls: list[list[str]] = []
 
-    def get(self, id: str):
+    async def get(self, id: str):
         return self._rows_by_number[id]
 
-    def get_all(self, ids: list[str]) -> list:
+    async def get_all(self, ids: list[str]) -> list:
         self.get_all_calls.append(list(ids))
         return [self._rows_by_number[i] for i in ids if i in self._rows_by_number]
 
@@ -35,41 +35,41 @@ class _FakeConverter(IConverter):
         return Code(number=data["number"], description=data["description"], confidence=1.0)
 
 
-def test_get_converts_every_row_the_table_returns():
+async def test_get_converts_every_row_the_table_returns():
     table = _FakeTableReader({"A": {"number": "A", "description": "desc A"}, "B": {"number": "B", "description": "desc B"}})
     converter = _FakeConverter()
     codes_data = CodesData(table, converter)
 
-    result = codes_data.get(["A", "B"])
+    result = await codes_data.get(["A", "B"])
 
     assert [c.number for c in result] == ["A", "B"]
     assert [c.description for c in result] == ["desc A", "desc B"]
 
 
-def test_get_passes_requested_numbers_through_to_the_table_unchanged():
+async def test_get_passes_requested_numbers_through_to_the_table_unchanged():
     table = _FakeTableReader({"A": {"number": "A", "description": ""}})
     codes_data = CodesData(table, _FakeConverter())
 
-    codes_data.get(["A", "Z"])
+    await codes_data.get(["A", "Z"])
 
     assert table.get_all_calls == [["A", "Z"]]
 
 
-def test_get_only_converts_rows_the_table_actually_returned():
+async def test_get_only_converts_rows_the_table_actually_returned():
     # A requested number the table couldn't resolve (stale candidate) is simply absent from
     # the table's result — CodesData doesn't call the converter for it.
     table = _FakeTableReader({"A": {"number": "A", "description": ""}})
     converter = _FakeConverter()
     codes_data = CodesData(table, converter)
 
-    result = codes_data.get(["A", "MISSING"])
+    result = await codes_data.get(["A", "MISSING"])
 
     assert [c.number for c in result] == ["A"]
     assert len(converter.converted) == 1
 
 
-def test_get_with_no_numbers_returns_no_codes():
+async def test_get_with_no_numbers_returns_no_codes():
     table = _FakeTableReader({})
     codes_data = CodesData(table, _FakeConverter())
 
-    assert codes_data.get([]) == []
+    assert await codes_data.get([]) == []

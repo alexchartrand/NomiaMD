@@ -4,7 +4,7 @@ that summary's rendered text — never the raw transcript directly."""
 
 import json
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from app.extraction.pipeline import run_billing_codes_pipeline
 from app.summary import render_for_billing_codes
@@ -27,18 +27,18 @@ def _response(payload):
     )
 
 
-def test_pipeline_feeds_rendered_summary_into_billing_codes():
+async def test_pipeline_feeds_rendered_summary_into_billing_codes():
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.chat.side_effect = [
+        mock_get_client.return_value.achat = AsyncMock(side_effect=[
             _response(MOCK_SUMMARY_RESULT),
             _response(MOCK_BILLING_RESULT),
-        ]
-        summary_result, billing_result = run_billing_codes_pipeline(TRANSCRIPT)
+        ])
+        summary_result, billing_result = await run_billing_codes_pipeline(TRANSCRIPT)
 
     assert summary_result.task == "consultation_summary"
     assert billing_result.task == "billing_codes"
 
-    chat = mock_get_client.return_value.chat
+    chat = mock_get_client.return_value.achat
     assert chat.call_count == 2
 
     first_user_message = chat.call_args_list[0].kwargs["messages"][1].content
