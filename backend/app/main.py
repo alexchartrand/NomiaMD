@@ -3,12 +3,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Must run before app.db / app.extraction.engine are imported below — app.db reads
-# DATABASE_URL at import time, and app.extraction.engine.get_client() reads
-# MISTRAL_API_KEY. Loaded from an explicit path (not a bare load_dotenv()) because
-# python-dotenv falls back to os.getcwd() instead of walking up from this file whenever
-# a debugger is attached (sys.gettrace() set) — which silently no-ops if the debugger's
-# working directory isn't backend/.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI, HTTPException, Request  # noqa: E402
@@ -44,19 +38,21 @@ app.add_middleware(RequestLoggingMiddleware)
 
 
 @app.get("/health")
+# Liveness/readiness check. Returns "ok" plus the list of registered task names.
 def health() -> dict:
     return {"status": "ok", "tasks": available_tasks()}
 
 
 @app.get("/patients", response_model=list[SamplePatientSummary])
+# Lists the synthetic demo patients from consultations/, for the frontend's patient picker.
 def list_patients() -> list[SamplePatientSummary]:
-    """Synthetic test patients from consultations/, for the frontend's patient picker."""
     return [
         SamplePatientSummary(id=p.id, label=p.label) for p in get_sample_patients()
     ]
 
 
 @app.get("/patients/{patient_id}", response_model=SamplePatientDetail)
+# Fetches one demo patient's full transcript by id; 404 if the id doesn't match a file in consultations/.
 def get_patient(patient_id: str) -> SamplePatientDetail:
     patient = get_sample_patient(patient_id)
     if patient is None:
