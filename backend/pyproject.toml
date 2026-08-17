@@ -16,12 +16,17 @@ dependencies = [
     "llama-index-retrievers-bm25>=0.7",
     "pandas>=2.0",
     "lancedb>=0.37",
+    "psycopg[binary]>=3.2",
+    "aiosqlite>=0.20",
+    "slowapi>=0.1.9",
+    "redis>=5.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
     "httpx>=0.27",
+    "pip-tools>=7.4",
 ]
 
 [tool.setuptools.packages.find]

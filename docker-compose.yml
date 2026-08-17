@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: nomiamd
+      POSTGRES_USER: nomiamd
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nomiamd"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
+      REDIS_URL: redis://redis:6379/0
+      DB_PATH: /data/ramq-lancedb
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
+    volumes:
+      # Produced by the separate ramq-ingestion repo, not by this compose file — must
+      # already be populated at RAMQ_LANCEDB_PATH before `backend` can even start (it reads
+      # DB_PATH at import time, before /health can respond). See docker-compose.yml.example
+      # note in the root .env.example.
+      - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      ALLOWED_CIDRS: ${ALLOWED_CIDRS}
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
