@@ -16,7 +16,6 @@ from slowapi import _rate_limit_exceeded_handler  # noqa: E402
 from slowapi.errors import RateLimitExceeded  # noqa: E402
 
 from app.db import init_db, save_extraction  # noqa: E402
-from app.extraction.engine import run_extraction  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.models import (  # noqa: E402
     ExtractionRequest,
@@ -29,7 +28,6 @@ from app.ramq_chatbot import RAMQQueryRequest, RAMQQueryResult, get_ramq_query_e
 from app.rate_limit import limiter  # noqa: E402
 from app.request_logging import RequestLoggingMiddleware  # noqa: E402
 from app.sample_patients import get_sample_patient, get_sample_patients  # noqa: E402
-from app.summary import ConsultationSummaryResult  # noqa: E402
 from app.tasks.registry import available_tasks, get_task  # noqa: E402
 
 
@@ -68,23 +66,12 @@ def get_patient(patient_id: str) -> SamplePatientDetail:
     return SamplePatientDetail(id=patient.id, label=patient.label, transcript=patient.transcript)
 
 
-@app.post("/extract", response_model=None)
+@app.post("/extract", response_model=ExtractionResult[BillingCodesResult])
 @limiter.limit("10/minute")
 async def extract(
     request: Request,
     body: ExtractionRequest,
-) -> ExtractionResult[BillingCodesResult] | ExtractionResult[ConsultationSummaryResult]:
-    # response_model=None (bypassing FastAPI's automatic use of the return-type annotation
-    # above for response validation/filtering) because Pydantic's Union matching for two
-    # *parameterized-generic* ExtractionResult types picks the wrong member here: neither
-    # BillingCodesResult nor ConsultationSummaryResult has every field required, so
-    # revalidating an already-correct instance against the *other* union member silently
-    # "succeeds" by falling back to that member's defaults for whatever fields don't exist
-    # on the real object, instead of keeping the real one. The return type above is still
-    # accurate documentation of what this actually returns — result is already a properly
-    # typed, task-specific pydantic model by the time it gets here (see run_extraction),
-    # so there's nothing left to validate; only accurate per-task OpenAPI schema docs are
-    # lost, which matters once there's a second consumer of this API beyond the frontend.
+) -> ExtractionResult[BillingCodesResult]:
     # `request: Request` (unused beyond slowapi's @limiter.limit, which requires a
     # literally-named `request` param to find it) sits alongside the Pydantic body,
     # renamed to `body` to avoid the name collision.
@@ -93,24 +80,29 @@ async def extract(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    # billing_codes is the only task wired to /extract — consultation_summary exists only
+    # as billing_codes' internal first stage (see run_billing_codes_pipeline below), not as
+    # something a client can invoke directly here.
+    if task.name != "billing_codes":
+        raise HTTPException(
+            status_code=400,
+            detail="Only 'billing_codes' is available via /extract",
+        )
+
     source_system = body.source.system if body.source else None
 
-    if task.name == "billing_codes":
-        # billing_codes no longer runs off the raw transcript directly — it's a two-stage
-        # pipeline (transcript -> consultation_summary -> billing_codes), see
-        # app/extraction/pipeline.py. Store the intermediate summary too, since it's the
-        # actual input the billing model reasoned over and a physician reviewing a
-        # surprising code needs to see it, not just the raw transcript.
-        summary_result, result = run_billing_codes_pipeline(body.transcript)
-        await save_extraction(
-            task=summary_result.task,
-            transcript=body.transcript,
-            result=summary_result.result.model_dump(),
-            model=summary_result.model,
-            source_system=source_system,
-        )
-    else:
-        result = run_extraction(task, body.transcript)
+    # billing_codes runs off a two-stage pipeline (transcript -> consultation_summary ->
+    # billing_codes), see app/extraction/pipeline.py. Store the intermediate summary too,
+    # since it's the actual input the billing model reasoned over and a physician
+    # reviewing a surprising code needs to see it, not just the raw transcript.
+    summary_result, result = run_billing_codes_pipeline(body.transcript)
+    await save_extraction(
+        task=summary_result.task,
+        transcript=body.transcript,
+        result=summary_result.result.model_dump(),
+        model=summary_result.model,
+        source_system=source_system,
+    )
 
     await save_extraction(
         task=result.task,
