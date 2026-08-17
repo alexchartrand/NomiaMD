@@ -4,7 +4,7 @@ from llama_index.core.llms import LLM
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.query_engine import CustomQueryEngine
 
-from app.ramq_query.models import RAMQChatMessage
+from app.ramq_chatbot.models import RAMQChatMessage
 
 SYSTEM_PROMPT = """\
 You are a RAMQ billing specialist.

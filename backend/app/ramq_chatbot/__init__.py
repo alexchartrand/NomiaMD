@@ -7,7 +7,7 @@ from the manual text itself, rather than proposing codes for a specific encounte
 Public interface — everything else that needs this imports it from here rather than
 reaching into .engine/.retriever/.factory/.models directly."""
 
-from app.ramq_query.factory import get_ramq_query_engine
-from app.ramq_query.models import RAMQChatMessage, RAMQQueryRequest, RAMQQueryResult
+from app.ramq_chatbot.factory import get_ramq_query_engine
+from app.ramq_chatbot.models import RAMQChatMessage, RAMQQueryRequest, RAMQQueryResult
 
 __all__ = ["get_ramq_query_engine", "RAMQChatMessage", "RAMQQueryRequest", "RAMQQueryResult"]

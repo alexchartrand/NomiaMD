@@ -1,7 +1,7 @@
-"""Unit tests for RAMQManualRetriever (app/ramq_query/retriever.py) — the BM25+vector
+"""Unit tests for RAMQManualRetriever (app/ramq_chatbot/retriever.py) — the BM25+vector
 fusion retriever used by scripts/simple_query.py.
 
-Note: app/ramq_query is separate from, and not wired into, the actively-used
+Note: app/ramq_chatbot is separate from, and not wired into, the actively-used
 app/ramq_codes pipeline (see tests/test_ramq_codes_retriever.py) — it's only exercised
 by that manual script. These tests exist to pin down its current wiring, not to certify
 it for production use.
@@ -27,7 +27,7 @@ from llama_index.core.vector_stores.types import (
 )
 import pytest
 
-from app.ramq_query.retriever import RAMQManualRetriever
+from app.ramq_chatbot.retriever import RAMQManualRetriever
 
 
 def _cosine(a: list[float], b: list[float]) -> float:

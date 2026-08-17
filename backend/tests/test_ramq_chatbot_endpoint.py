@@ -1,14 +1,14 @@
-"""Exercises POST /query (app/main.py's wiring of app/ramq_query's RAMQManualQueryEngine)
+"""Exercises POST /query (app/main.py's wiring of app/ramq_chatbot's RAMQManualQueryEngine)
 end to end, with the engine itself stubbed out — get_ramq_query_engine builds a real
 BM25+vector retriever over the `manuel-omnipraticiens` LanceDB table (see
-app/ramq_query/factory.py), which this test suite must not depend on."""
+app/ramq_chatbot/factory.py), which this test suite must not depend on."""
 
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.ramq_query.models import RAMQChatMessage
+from app.ramq_chatbot.models import RAMQChatMessage
 
 
 class _StubQueryEngine:

@@ -1,5 +1,5 @@
-"""Unit tests for RAMQManualQueryEngine (app/ramq_query/engine.py) — pairs with
-RAMQManualRetriever (see test_ramq_query_retriever.py) in scripts/simple_query.py; not part
+"""Unit tests for RAMQManualQueryEngine (app/ramq_chatbot/engine.py) — pairs with
+RAMQManualRetriever (see test_ramq_chatbot_retriever.py) in scripts/simple_query.py; not part
 of the actively-used app/ramq_codes pipeline (see app/ramq_codes/retriever.py).
 
 The retriever is stubbed with a deterministic fake (real BaseRetriever subclass, fixed
@@ -14,8 +14,8 @@ from llama_index.core.llms.custom import CustomLLM
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
 
-from app.ramq_query.engine import RAMQManualQueryEngine
-from app.ramq_query.models import RAMQChatMessage
+from app.ramq_chatbot.engine import RAMQManualQueryEngine
+from app.ramq_chatbot.models import RAMQChatMessage
 
 
 class _StubRetriever(BaseRetriever):

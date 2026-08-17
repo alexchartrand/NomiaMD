@@ -3,8 +3,8 @@ import os
 from llama_index.llms.mistralai import MistralAI
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
 
-from app.ramq_query.engine import RAMQManualQueryEngine
-from app.ramq_query.retriever import RAMQManualRetriever
+from app.ramq_chatbot.engine import RAMQManualQueryEngine
+from app.ramq_chatbot.retriever import RAMQManualRetriever
 from app.embedings import get_embeding_model
 
 TABLE_NAME = "manuel-omnipraticiens"
