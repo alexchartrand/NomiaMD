@@ -23,6 +23,7 @@ from app.models import (  # noqa: E402
     SamplePatientSummary,
 )
 from app.ramq_codes import BillingCodesResult  # noqa: E402
+from app.ramq_query import RAMQQueryRequest, RAMQQueryResult, get_ramq_query_engine  # noqa: E402
 from app.sample_patients import get_sample_patient, get_sample_patients  # noqa: E402
 from app.summary import ConsultationSummaryResult  # noqa: E402
 from app.tasks.registry import available_tasks, get_task  # noqa: E402
@@ -108,3 +109,13 @@ def extract(
     )
 
     return result
+
+
+@app.post("/query", response_model=RAMQQueryResult)
+def query_ramq_manual(request: RAMQQueryRequest) -> RAMQQueryResult:
+    """Free-form, multi-turn billing question answered from the RAMQ omnipraticien manual —
+    not tied to any specific encounter/transcript, unlike /extract. History is stateless:
+    the client resends prior turns each request, nothing is persisted server-side."""
+    engine = get_ramq_query_engine()
+    answer = engine.custom_query(request.query, chat_history=request.history)
+    return RAMQQueryResult(answer=answer)

@@ -36,8 +36,10 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
      candidate's own fee list, never invented) and a verbatim `supporting_quote` from the
      summary per code, for physician review. Empty output is correct/expected when nothing
      is clearly supported — never picks a "closest" candidate just to return something.
-3. ramq_query: Used to answers generic questions about billing from a user. Will be wired in a later stage. 
-It's only called by simple_query.py script.
+3. `ramq_query` task (`backend/app/ramq_query/`): a free-form, multi-turn chatbot for
+   generic billing questions — not tied to any specific encounter/transcript, unlike
+   `billing_codes`. Wired at `POST /query` (`app/main.py`). History is stateless: the
+   client resends prior turns each request; nothing is persisted server-side.
 
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH`
 (`code-embeddings` for retrieval, `codes` for full row data) are produced by a separate
