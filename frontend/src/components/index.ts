@@ -7,5 +7,6 @@ export { Banner } from "./Banner";
 export { Spinner } from "./Spinner";
 export { Table } from "./Table";
 export { PageHeader } from "./PageHeader";
+export { SiteHeader } from "./SiteHeader";
 export { Sidebar, NavItem, SidebarFooter } from "./Sidebar";
 export { ChatBubble } from "./ChatBubble";

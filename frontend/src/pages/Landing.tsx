@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button, Card, PageHeader } from "../components";
+import { Button, Card, SiteHeader } from "../components";
 
 const FEATURES = [
   {
@@ -52,17 +52,10 @@ const PREVIEW_ROWS = [
 export default function Landing() {
   return (
     <main className="landing">
+      <SiteHeader />
+
       <div className="landing-hero-band">
         <div className="landing-inner">
-          <PageHeader
-            logoSize={44}
-            actions={
-              <Link to="/login">
-                <Button variant="secondary">Se connecter</Button>
-              </Link>
-            }
-          />
-
           <section className="landing-hero">
             <div className="landing-hero-copy">
               <span className="landing-eyebrow">Ébauche &mdash; médecins</span>

@@ -293,8 +293,52 @@ label {
   color: var(--color-text-muted);
 }
 
+.page-header-brand {
+  display: inline-flex;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.page-header-nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.page-header-nav a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.page-header-nav a:hover {
+  color: var(--color-primary);
+}
+
 .page-header-actions {
   margin-left: auto;
+}
+
+/* ---------- Sticky site header (marketing pages) ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--color-bg) 97%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header .page-header {
+  padding: 1rem 0;
+}
+
+@media (max-width: 700px) {
+  .page-header-nav {
+    display: none;
+  }
 }
 
 .lede {
@@ -633,6 +677,16 @@ form .btn[type="submit"] {
   border-top: 1px solid var(--color-border);
 }
 
+.static-page {
+  padding: 4rem 0 6rem;
+  max-width: 40rem;
+}
+
+.static-page h1 {
+  font-size: 2rem;
+  margin: 0 0 1rem;
+}
+
 .landing-footer-inner {
   padding: 1.5rem;
   display: flex;
@@ -711,6 +765,7 @@ form .btn[type="submit"] {
 
 .sidebar-brand {
   display: inline-flex;
+  text-decoration: none;
   padding: 0.25rem;
 }
 

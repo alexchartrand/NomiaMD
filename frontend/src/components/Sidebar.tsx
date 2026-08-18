@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Mark } from "../Logo";
+import { Logo } from "../Logo";
 
 type SidebarProps = {
   children: ReactNode;
@@ -9,8 +9,8 @@ type SidebarProps = {
 export function Sidebar({ children }: SidebarProps) {
   return (
     <aside className="sidebar">
-      <Link to="/" className="sidebar-brand" aria-label="NomiaMD home">
-        <Mark size={26} />
+      <Link to="/app" className="sidebar-brand" aria-label="NomiaMD accueil">
+        <Logo size={26} />
       </Link>
       <nav className="sidebar-nav">{children}</nav>
     </aside>
