@@ -60,12 +60,27 @@ services:
       context: ./frontend
     environment:
       ALLOWED_CIDRS: ${ALLOWED_CIDRS}
-    ports:
-      - "8080:80"
     depends_on:
       backend:
         condition: service_healthy
 
+  # TLS termination for nomiamd.com / www.nomiamd.com — the only public ingress. Caddy
+  # fetches and renews Let's Encrypt certs automatically from the Caddyfile's site
+  # addresses; caddy_data is where it persists the ACME account + certs across restarts.
+  caddy:
+    image: caddy:2-alpine
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+
 volumes:
   postgres_data:
   redis_data:
+  caddy_data:
+  caddy_config:

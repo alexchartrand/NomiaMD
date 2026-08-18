@@ -1,0 +1,7 @@
+nomiamd.com {
+	reverse_proxy frontend:80
+}
+
+www.nomiamd.com {
+	redir https://nomiamd.com{uri}
+}
