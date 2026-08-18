@@ -9,7 +9,7 @@ from llama_index.core.base.llms.types import ChatMessage, MessageRole
 from llama_index.llms.mistralai import MistralAI
 
 from app.config import settings
-from app.models import ExtractionResult
+from app.extraction.models import ExtractionResult
 from app.tasks.base import ExtractionTask
 
 MODEL = "mistral-small-latest"

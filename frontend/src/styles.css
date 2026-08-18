@@ -803,6 +803,30 @@ form .btn[type="submit"] {
   border-top: 1px solid var(--color-border);
 }
 
+.sidebar-user {
+  display: block;
+  padding: 0.2rem 0.75rem 0.6rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+button.nav-item {
+  width: 100%;
+  border: none;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
 .app-content {
   flex: 1;
   min-width: 0;

@@ -6,6 +6,7 @@ import Contact from "./pages/Contact";
 import AppLayout from "./pages/app/AppLayout";
 import ExtractionPage from "./pages/app/ExtractionPage";
 import ChatbotPage from "./pages/app/ChatbotPage";
+import { RequireAuth } from "./AuthContext";
 
 export default function AppRouter() {
   return (
@@ -14,7 +15,14 @@ export default function AppRouter() {
       <Route path="/login" element={<Login />} />
       <Route path="/prix" element={<Pricing />} />
       <Route path="/contact" element={<Contact />} />
-      <Route path="/app" element={<AppLayout />}>
+      <Route
+        path="/app"
+        element={
+          <RequireAuth>
+            <AppLayout />
+          </RequireAuth>
+        }
+      >
         <Route index element={<Navigate to="/app/extraction" replace />} />
         <Route path="extraction" element={<ExtractionPage />} />
         <Route path="chat" element={<ChatbotPage />} />

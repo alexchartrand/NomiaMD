@@ -26,6 +26,7 @@ jobs:
           DB_PATH: ${{ runner.temp }}/ci-lancedb
           MISTRAL_API_KEY: fake-key-not-used-tests-are-fully-mocked
           MISTRAL_EMBEDDING_MODEL: mistral-embed
+          JWT_SECRET_KEY: test-secret-not-for-production
 
   docker-build:
     runs-on: ubuntu-latest

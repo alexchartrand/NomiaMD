@@ -32,6 +32,11 @@ services:
       DB_PATH: /data/ramq-lancedb
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      # No TLS in this compose file yet (see root .env.example) — a `Secure` cookie would
+      # be silently dropped by the browser over plain HTTP. Flip to true once a
+      # TLS-terminating reverse proxy is in front of `frontend`.
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
     volumes:
       # Produced by the separate ramq-ingestion repo, not by this compose file — must
       # already be populated at RAMQ_LANCEDB_PATH before `backend` can even start (it reads

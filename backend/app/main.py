@@ -1,24 +1,19 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
+from app.auth import auth_router, get_current_user
 from app.config import settings
-from app.db import init_db, save_extraction
-from app.extraction.pipeline import run_billing_codes_pipeline
-from app.models import (
-    ExtractionRequest,
-    ExtractionResult,
-    SamplePatientDetail,
-    SamplePatientSummary,
-)
-from app.ramq_codes import BillingCodesResult
-from app.ramq_chatbot import RAMQQueryRequest, RAMQQueryResult, get_ramq_query_engine
+from app.extraction import extraction_router
+from app.models import SamplePatientDetail, SamplePatientSummary
+from app.postgresdb import init_db
+from app.ramq_chatbot import ramq_chatbot_router
 from app.rate_limit import limiter
 from app.request_logging import RequestLoggingMiddleware
 from app.sample_patients import get_sample_patient, get_sample_patients
-from app.tasks.registry import available_tasks, get_task
+from app.tasks.registry import available_tasks
 
 
 @asynccontextmanager
@@ -31,6 +26,9 @@ app = FastAPI(title="NomiaMD", lifespan=lifespan, debug=settings.debug)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 app.add_middleware(RequestLoggingMiddleware)
+app.include_router(auth_router)
+app.include_router(extraction_router)
+app.include_router(ramq_chatbot_router)
 
 
 @app.get("/health")
@@ -39,7 +37,7 @@ def health() -> dict:
     return {"status": "ok", "tasks": available_tasks()}
 
 
-@app.get("/patients", response_model=list[SamplePatientSummary])
+@app.get("/patients", response_model=list[SamplePatientSummary], dependencies=[Depends(get_current_user)])
 # Lists the synthetic demo patients from consultations/, for the frontend's patient picker.
 def list_patients() -> list[SamplePatientSummary]:
     return [
@@ -47,7 +45,11 @@ def list_patients() -> list[SamplePatientSummary]:
     ]
 
 
-@app.get("/patients/{patient_id}", response_model=SamplePatientDetail)
+@app.get(
+    "/patients/{patient_id}",
+    response_model=SamplePatientDetail,
+    dependencies=[Depends(get_current_user)],
+)
 # Fetches one demo patient's full transcript by id; 404 if the id doesn't match a file in consultations/.
 def get_patient(patient_id: str) -> SamplePatientDetail:
     patient = get_sample_patient(patient_id)
@@ -56,55 +58,3 @@ def get_patient(patient_id: str) -> SamplePatientDetail:
             status_code=404, detail=f"No sample patient with id '{patient_id}'"
         )
     return SamplePatientDetail(id=patient.id, label=patient.label, transcript=patient.transcript)
-
-
-@app.post("/extract", response_model=ExtractionResult[BillingCodesResult])
-@limiter.limit("10/minute")
-# Runs a transcript through the billing_codes pipeline (consultation_summary -> billing_codes)
-# and persists both stages. POST a transcript + task="billing_codes"; returns the candidate RAMQ
-# codes for physician review.
-async def extract(
-    request: Request,
-    body: ExtractionRequest,
-) -> ExtractionResult[BillingCodesResult]:
-    try:
-        task = get_task(body.task)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-    if task.name != "billing_codes":
-        raise HTTPException(
-            status_code=400,
-            detail="Only 'billing_codes' is available via /extract",
-        )
-
-    source_system = body.source.system if body.source else None
-
-    summary_result, result = await run_billing_codes_pipeline(body.transcript)
-    await save_extraction(
-        task=summary_result.task,
-        transcript=body.transcript,
-        result=summary_result.result.model_dump(),
-        model=summary_result.model,
-        source_system=source_system,
-    )
-
-    await save_extraction(
-        task=result.task,
-        transcript=body.transcript,
-        result=result.result.model_dump(),
-        model=result.model,
-        source_system=source_system,
-    )
-
-    return result
-
-
-@app.post("/query", response_model=RAMQQueryResult)
-@limiter.limit("20/minute")
-# Free-form, multi-turn billing question answered from the RAMQ manual, not tied to a specific
-# transcript. POST a query + optional history; history is stateless (client resends prior turns).
-async def query_ramq_manual(request: Request, body: RAMQQueryRequest) -> RAMQQueryResult:
-    engine = get_ramq_query_engine()
-    answer = await engine.acustom_query(body.query, chat_history=body.history)
-    return RAMQQueryResult(answer=answer)

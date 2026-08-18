@@ -1,22 +1,9 @@
-"""Shared Pydantic models for extraction requests and results."""
+"""API-response shapes for the sample-patient endpoints (app/main.py's /patients,
+/patients/{id}). Not colocated in a feature folder like app/extraction/models.py:
+app/sample_patients.py is a flat module, not a package — see its own SamplePatient
+dataclass for the underlying data these are built from."""
 
-from datetime import datetime, timezone
-from typing import Generic, TypeVar
-
-from pydantic import BaseModel, Field
-
-
-class TranscriptSource(BaseModel):
-    """Where a transcript came from, so downstream review can weigh confidence accordingly."""
-
-    system: str = Field(description="e.g. 'epic', 'plume_ai', 'manual'")
-    encounter_id: str | None = None
-
-
-class ExtractionRequest(BaseModel):
-    transcript: str
-    task: str = Field(description="Registered task name — /extract only accepts 'billing_codes'")
-    source: TranscriptSource | None = None
+from pydantic import BaseModel
 
 
 class SamplePatientSummary(BaseModel):
@@ -28,16 +15,3 @@ class SamplePatientSummary(BaseModel):
 
 class SamplePatientDetail(SamplePatientSummary):
     transcript: str
-
-
-ResultT = TypeVar("ResultT", bound=BaseModel)
-
-
-class ExtractionResult(BaseModel, Generic[ResultT]):
-    """Generic over the task's result type — each new task (prescriptions, consultation
-    notes, ...) supplies its own result model without changing this wrapper."""
-
-    task: str
-    result: ResultT
-    model: str
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

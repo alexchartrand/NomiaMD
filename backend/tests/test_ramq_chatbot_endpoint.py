@@ -1,5 +1,5 @@
-"""Exercises POST /query (app/main.py's wiring of app/ramq_chatbot's RAMQManualQueryEngine)
-end to end, with the engine itself stubbed out — get_ramq_query_engine builds a real
+"""Exercises POST /query (app/ramq_chatbot/router.py's wiring of RAMQManualQueryEngine) end
+to end, with the engine itself stubbed out — get_ramq_query_engine builds a real
 BM25+vector retriever over the `manuel-omnipraticiens` LanceDB table (see
 app/ramq_chatbot/factory.py), which this test suite must not depend on."""
 
@@ -23,7 +23,7 @@ class _StubQueryEngine:
 
 def test_query_endpoint_returns_engine_answer():
     stub = _StubQueryEngine("La majoration de nuit est de 27,25$ selon le manuel RAMQ.")
-    with patch("app.main.get_ramq_query_engine", return_value=stub):
+    with patch("app.ramq_chatbot.router.get_ramq_query_engine", return_value=stub):
         with TestClient(app) as client:
             response = client.post("/query", json={"query": "Quelle est la majoration de nuit?"})
 
@@ -38,7 +38,7 @@ def test_query_endpoint_forwards_chat_history():
         {"role": "user", "content": "Quelle est la majoration de nuit?"},
         {"role": "assistant", "content": "27,25$ selon le manuel RAMQ."},
     ]
-    with patch("app.main.get_ramq_query_engine", return_value=stub):
+    with patch("app.ramq_chatbot.router.get_ramq_query_engine", return_value=stub):
         with TestClient(app) as client:
             response = client.post(
                 "/query",

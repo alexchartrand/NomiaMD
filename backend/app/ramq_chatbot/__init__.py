@@ -5,9 +5,16 @@ app/ramq_codes and app/summary. Answers a physician's direct billing question, s
 from the manual text itself, rather than proposing codes for a specific encounter.
 
 Public interface — everything else that needs this imports it from here rather than
-reaching into .engine/.retriever/.factory/.models directly."""
+reaching into .engine/.retriever/.factory/.models/.router directly."""
 
 from app.ramq_chatbot.factory import get_ramq_query_engine
 from app.ramq_chatbot.models import RAMQChatMessage, RAMQQueryRequest, RAMQQueryResult
+from app.ramq_chatbot.router import router as ramq_chatbot_router
 
-__all__ = ["get_ramq_query_engine", "RAMQChatMessage", "RAMQQueryRequest", "RAMQQueryResult"]
+__all__ = [
+    "get_ramq_query_engine",
+    "RAMQChatMessage",
+    "RAMQQueryRequest",
+    "RAMQQueryResult",
+    "ramq_chatbot_router",
+]

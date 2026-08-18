@@ -9,6 +9,9 @@ from llama_index.core.schema import NodeWithScore, TextNode
 # time, not looked up fresh per call). That chain imports app.config, which loads .env on
 # its own first import — so .env is guaranteed to be loaded before any of these env-derived
 # settings are read, regardless of which module happens to import app.config first.
+from app.auth import get_current_user  # noqa: E402
+from app.postgresdb import User, UserRole  # noqa: E402
+from app.main import app  # noqa: E402
 from app.ramq_codes.models import Code, CodeFee  # noqa: E402
 from app.tasks.registry import get_task  # noqa: E402
 
@@ -109,3 +112,27 @@ def no_real_api_keys(monkeypatch):
     test path bypassed it."""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
+
+
+@pytest.fixture(autouse=True)
+def default_authenticated_user():
+    """Overrides the get_current_user FastAPI dependency with a fixed, in-memory user (no
+    DB row) for every test by default — route tests (test_extraction.py,
+    test_ramq_chatbot_endpoint.py, test_sample_patients.py) exercise extraction/retrieval/
+    patient logic, not auth, so they shouldn't need to know a login guard exists.
+
+    tests/test_auth.py, which specifically tests that guard, pops this override at the top
+    of the individual test bodies that need the real dependency; it comes back for every
+    other test since this fixture re-runs per test."""
+    fake_user = User(
+        id=1,
+        email="physician@example.test",
+        full_name="Dr. Test",
+        role=UserRole.PHYSICIAN,
+        physician_type=None,
+        number_of_patients=None,
+        is_active=True,
+    )
+    app.dependency_overrides[get_current_user] = lambda: fake_user
+    yield fake_user
+    app.dependency_overrides.pop(get_current_user, None)

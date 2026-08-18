@@ -10,8 +10,8 @@ No network calls / real API keys: the vector store is an in-memory fake with pre
 node embeddings (no embedding client involved), the injected embed_model is a deterministic
 exact-text-lookup fake for the query side (mirrors tests/test_vector_retrieval.py's
 _LookupEmbedding), and the injected llm is a fake standing in for the LLM that
-QueryFusionRetriever calls to generate extra search queries (num_queries=4 in
-RAMQManualRetriever means 3 extra queries are requested by default)."""
+QueryFusionRetriever calls to generate extra search queries (num_queries=3 in
+RAMQManualRetriever means 2 extra queries are requested by default)."""
 
 from typing import Any, Optional
 
@@ -185,19 +185,19 @@ def test_raises_when_vector_store_has_no_nodes():
         _build_retriever({}, [])
 
 
-def test_limits_results_to_six():
-    vectors = {f"code {i}": [1.0, float(i)] for i in range(8)}
-    nodes = [_node(str(i), f"code {i}", vectors) for i in range(8)]
+def test_limits_results_to_ten():
+    vectors = {f"code {i}": [1.0, float(i)] for i in range(12)}
+    nodes = [_node(str(i), f"code {i}", vectors) for i in range(12)]
 
     retriever = _build_retriever(vectors, nodes)
     results = retriever.retrieve("code 0")
 
-    assert len(results) <= 6
+    assert len(results) <= 10
 
 
 def test_passes_custom_query_gen_prompt_to_llm():
     # Regression guard: RAMQManualRetriever builds QueryFusionRetriever with its own
-    # QUERY_GEN_PROMPT (French, family-doctor-specific, "do not suggest billing codes") —
+    # QUERY_GEN_PROMPT (French, Quebec-doctor-specific, "do not suggest billing codes") —
     # if that wiring were dropped, QueryFusionRetriever would silently fall back to its
     # generic English default prompt.
     vectors = {"urgence": [1.0, 0.0]}
@@ -208,6 +208,6 @@ def test_passes_custom_query_gen_prompt_to_llm():
 
     assert len(spy.prompts) == 1
     prompt = spy.prompts[0]
-    assert "family doctors" in prompt
+    assert "doctors in Quebec, Canada" in prompt
     assert "Do not suggest any billing codes." in prompt
     assert "Query: urgence" in prompt

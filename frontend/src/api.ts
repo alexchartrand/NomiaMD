@@ -42,6 +42,20 @@ export interface RAMQQueryResult {
   answer: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface UserOut {
+  id: number;
+  email: string;
+  full_name: string;
+  role: "admin" | "physician";
+  physician_type: string | null;
+  number_of_patients: number | null;
+}
+
 async function unwrap<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const body = await response.json().catch(() => ({ detail: response.statusText }));
@@ -86,4 +100,28 @@ export async function queryChatbot(
     body: JSON.stringify({ query, history }),
   });
   return unwrap<RAMQQueryResult>(response);
+}
+
+export async function login(email: string, password: string): Promise<UserOut> {
+  const response = await fetch("/api/auth/login", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password } satisfies LoginRequest),
+  });
+  return unwrap<UserOut>(response);
+}
+
+export async function logout(): Promise<void> {
+  await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
+}
+
+// Returns null (rather than throwing) when nobody's logged in — that's an expected state
+// on first page load, not an error.
+export async function getCurrentUser(): Promise<UserOut | null> {
+  const response = await fetch("/api/auth/me", { credentials: "same-origin" });
+  if (response.status === 401) {
+    return null;
+  }
+  return unwrap<UserOut>(response);
 }
