@@ -1,52 +1,199 @@
 import { Link } from "react-router-dom";
-import { Button, PageHeader } from "../components";
+import { Button, Card, PageHeader } from "../components";
 
 const FEATURES = [
   {
-    title: "Extraire des codes candidats",
-    body: "Collez la transcription d'une consultation et obtenez des codes de facturation RAMQ suggérés, chacun appuyé par une citation exacte de la note.",
+    icon: IconExtract,
+    title: "Extraire des codes de facturation",
+    body: "Accélérer votre processus de facturation et ne manquez plus aucun code. NomiaMD utilise l'intelligence artificielle pour extraire les codes de facturation de vos consultations",
   },
   {
+    icon: IconChat,
     title: "Posez des questions de facturation",
-    body: "Un clavardage pour poser librement des questions de facturation RAMQ, sans lien avec une consultation précise.",
+    body: "NomiaMD vous offre un clavardage automatisé spécialiste en facturation RAMQ qui s'adapte à votre situation particulière.",
   },
   {
-    title: "Révision médicale, toujours",
-    body: "Rien n'est jamais soumis automatiquement. Chaque code suggéré est une ébauche que le médecin doit vérifier.",
+    icon: IconShield,
+    title: "Facturation à la RAMQ",
+    body: "Tout est automatisé pour vous simplifiez la vie et mettre vos efforts là où ça compte vraiement. NomiaMD s'occupe de la génération automatique de vos factures.",
+  },
+];
+
+const STEPS = [
+  {
+    title: "Importez une note de consultation",
+    body: "Une note de votre dossier médical électronique (DMÉ) ou le texte produit par un outil de scribe médical.",
+  },
+  {
+    title: "NomiaMD suggère des codes",
+    body: "Des codes de facturations RAMQ candidats sont proposés, chacun avec un tarif et une explication.",
+  },
+  {
+    title: "Votre facturation est générée",
+    body: "Les codes de facturation retenus sont utilisés pour générer automatiquement votre facturation à la RAMQ.",
+  },
+];
+
+const PREVIEW_ROWS = [
+  {
+    code: "00103",
+    description: "Examen complet",
+    confidence: 92,
+    quote: "présente pour un examen périodique complet, sans plainte particulière",
+  },
+  {
+    code: "08820",
+    description: "Visite de suivi",
+    confidence: 78,
+    quote: "revient pour ajuster le traitement de son hypertension",
   },
 ];
 
 export default function Landing() {
   return (
     <main className="landing">
-      <PageHeader
-        actions={
-          <Link to="/login">
-            <Button variant="secondary">Se connecter</Button>
-          </Link>
-        }
-      />
+      <div className="landing-hero-band">
+        <div className="landing-inner">
+          <PageHeader
+            logoSize={44}
+            actions={
+              <Link to="/login">
+                <Button variant="secondary">Se connecter</Button>
+              </Link>
+            }
+          />
 
-      <section className="landing-hero">
-        <h1>Des codes de facturation ébauchés à partir de la consultation, vérifiés par vous.</h1>
-        <p className="lede">
-          NomiaMD lit la transcription d&rsquo;une consultation et ébauche les codes de
-          facturation RAMQ qu&rsquo;elle appuie — pour les omnipraticiens seulement. Un
-          médecin révise et confirme toujours avant toute soumission.
-        </p>
-        <Link to="/login">
-          <Button>Commencer</Button>
-        </Link>
-      </section>
+          <section className="landing-hero">
+            <div className="landing-hero-copy">
+              <span className="landing-eyebrow">Ébauche &mdash; médecins</span>
+              <h1>
+                Un processus de facturation simplifié grâce à l&rsquo;IA.
+              </h1>
+              <p className="lede">
+                NomiaMD vous permez d&rsquo;automatiser votre facturation grâce à l&rsquo;extraction des codes de
+                facturation RAMQ provenant d&rsquo;une note de consultation. L&rsquo;IA vous fait sauver du temps et 
+                de l&rsquo;argent en simplifiant et optimisant votre facturation.
+              </p>
+              <div className="landing-hero-actions">
+                <Link to="/login">
+                  <Button>Commencer</Button>
+                </Link>
+                <a href="#comment-ca-marche" className="landing-hero-link">
+                  Voir comment ça marche ↓
+                </a>
+              </div>
+            </div>
 
-      <section className="landing-features">
-        {FEATURES.map((feature) => (
-          <div className="landing-feature" key={feature.title}>
-            <h2>{feature.title}</h2>
-            <p>{feature.body}</p>
+            <div className="landing-hero-preview">
+              <Card className="preview-card">
+                <div className="preview-card-header">
+                  <span>Codes suggérés</span>
+                  <span className="preview-card-badge">Exemple</span>
+                </div>
+                {PREVIEW_ROWS.map((row) => (
+                  <div className="preview-row" key={row.code}>
+                    <div className="preview-row-top">
+                      <span className="preview-code">{row.code}</span>
+                      <span className="preview-description">{row.description}</span>
+                      <span className="preview-confidence">{row.confidence}%</span>
+                    </div>
+                    <p className="preview-quote">&laquo; {row.quote} &raquo;</p>
+                  </div>
+                ))}
+              </Card>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div className="landing-inner">
+        <section className="landing-features">
+          {FEATURES.map((feature) => (
+            <div className="landing-feature" key={feature.title}>
+              <div className="landing-feature-icon">
+                <feature.icon />
+              </div>
+              <h2>{feature.title}</h2>
+              <p>{feature.body}</p>
+            </div>
+          ))}
+        </section>
+
+        <section className="landing-steps" id="comment-ca-marche">
+          <h2>Comment ça marche</h2>
+          <div className="landing-steps-list">
+            {STEPS.map((step, index) => (
+              <div className="landing-step" key={step.title}>
+                <span className="landing-step-number">{index + 1}</span>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </section>
+        </section>
+
+        <section className="landing-scope">
+          <h2>Conçu pour les médecins du Québec</h2>
+          <p>
+            Le corpus de codes provient du manuel de rémunération des omnipraticiens de la
+            RAMQ. La facturation des spécialistes n&rsquo;est pas couverte pour l&rsquo;instant.
+          </p>
+        </section>
+      </div>
+
+      <div className="landing-cta-band">
+        <div className="landing-inner landing-cta-inner">
+          <h2>Prêt à essayer NomiaMD ?</h2>
+          <p>Version d&rsquo;aperçu — connectez-vous.</p>
+          <Link to="/login">
+            <Button variant="secondary">Commencer</Button>
+          </Link>
+        </div>
+      </div>
+
+      <footer className="landing-footer">
+        <div className="landing-inner landing-footer-inner">
+          <span>NomiaMD — Facturation RAMQ</span>
+          <span>© {new Date().getFullYear()} NomiaMD</span>
+        </div>
+      </footer>
     </main>
+  );
+}
+
+function IconExtract() {
+  return (
+    <svg viewBox="0 0 28 28" width="24" height="24" fill="none" aria-hidden="true">
+      <g stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 4h10l4 4v16H7z" />
+        <path d="M17 4v4h4" />
+        <path d="M10.5 15.5l2.5 2.5 5-5" />
+      </g>
+    </svg>
+  );
+}
+
+function IconChat() {
+  return (
+    <svg viewBox="0 0 28 28" width="24" height="24" fill="none" aria-hidden="true">
+      <path
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 6h18v13H12l-5 4v-4H5z"
+      />
+    </svg>
+  );
+}
+
+function IconShield() {
+  return (
+    <svg viewBox="0 0 28 28" width="24" height="24" fill="none" aria-hidden="true">
+      <g stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 3l9 3.5v6c0 6-4 9.5-9 12.5-5-3-9-6.5-9-12.5v-6z" />
+        <path d="M10.5 14l2.5 2.5 5-5" />
+      </g>
+    </svg>
   );
 }

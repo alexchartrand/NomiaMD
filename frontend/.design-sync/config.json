@@ -1,0 +1,21 @@
+{
+  "projectId": "151379cd-9304-4638-a1f1-e3fa8c0019f2",
+  "pkg": "facturemd-frontend",
+  "globalName": "NomiaMD",
+  "shape": "package",
+  "srcDir": "src/components",
+  "cssEntry": "src/styles.css",
+  "extraEntries": ["react-router-dom"],
+  "componentSrcMap": {
+    "NavItem": "src/components/Sidebar.tsx",
+    "SidebarFooter": "src/components/Sidebar.tsx"
+  },
+  "extraFonts": [".design-sync/assets/fonts.css"],
+  "provider": {
+    "component": "MemoryRouter",
+    "props": {}
+  },
+  "overrides": {
+    "Select": { "cardMode": "column" }
+  }
+}
