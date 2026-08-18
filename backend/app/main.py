@@ -1,28 +1,24 @@
 from contextlib import asynccontextmanager
-from pathlib import Path
 
-from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-
-from fastapi import FastAPI, HTTPException, Request  # noqa: E402
-from slowapi import _rate_limit_exceeded_handler  # noqa: E402
-from slowapi.errors import RateLimitExceeded  # noqa: E402
-
-from app.db import init_db, save_extraction  # noqa: E402
-from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
-from app.models import (  # noqa: E402
+from app.config import settings
+from app.db import init_db, save_extraction
+from app.extraction.pipeline import run_billing_codes_pipeline
+from app.models import (
     ExtractionRequest,
     ExtractionResult,
     SamplePatientDetail,
     SamplePatientSummary,
 )
-from app.ramq_codes import BillingCodesResult  # noqa: E402
-from app.ramq_chatbot import RAMQQueryRequest, RAMQQueryResult, get_ramq_query_engine  # noqa: E402
-from app.rate_limit import limiter  # noqa: E402
-from app.request_logging import RequestLoggingMiddleware  # noqa: E402
-from app.sample_patients import get_sample_patient, get_sample_patients  # noqa: E402
-from app.tasks.registry import available_tasks, get_task  # noqa: E402
+from app.ramq_codes import BillingCodesResult
+from app.ramq_chatbot import RAMQQueryRequest, RAMQQueryResult, get_ramq_query_engine
+from app.rate_limit import limiter
+from app.request_logging import RequestLoggingMiddleware
+from app.sample_patients import get_sample_patient, get_sample_patients
+from app.tasks.registry import available_tasks, get_task
 
 
 @asynccontextmanager
@@ -31,7 +27,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="NomiaMD", lifespan=lifespan, debug=False)
+app = FastAPI(title="NomiaMD", lifespan=lifespan, debug=settings.debug)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 app.add_middleware(RequestLoggingMiddleware)

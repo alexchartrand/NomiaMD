@@ -2,16 +2,13 @@ import json
 from pathlib import Path
 
 import pytest
-from dotenv import load_dotenv
 from llama_index.core.schema import NodeWithScore, TextNode
 
 # app.tasks.registry builds a real, DB_PATH/MISTRAL_API_KEY-backed retriever the moment
 # it's imported (BillingCodesTask's retriever is now constructed once at registry-import
-# time, not looked up fresh per call) — and conftest.py is pytest's first import, before any
-# test module gets a chance to load .env itself. Mirrors app/main.py's own load_dotenv call,
-# needed here for the same reason.
-load_dotenv(Path(__file__).parent.parent / ".env")
-
+# time, not looked up fresh per call). That chain imports app.config, which loads .env on
+# its own first import — so .env is guaranteed to be loaded before any of these env-derived
+# settings are read, regardless of which module happens to import app.config first.
 from app.ramq_codes.models import Code, CodeFee  # noqa: E402
 from app.tasks.registry import get_task  # noqa: E402
 

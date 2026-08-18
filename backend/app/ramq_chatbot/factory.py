@@ -1,9 +1,9 @@
-import os
 from functools import lru_cache
 
 from llama_index.llms.mistralai import MistralAI
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
 
+from app.config import settings
 from app.embedings import get_embeding_model
 from app.ramq_chatbot.engine import RAMQManualQueryEngine
 from app.ramq_chatbot.retriever import RAMQManualRetriever
@@ -19,15 +19,15 @@ def get_ramq_query_engine() -> RAMQManualQueryEngine:
     actually exist and needs a real MISTRAL_API_KEY — importing app/main.py (and therefore
     test collection) must not require either."""
     vector_store = LanceDBVectorStore(
-        uri=os.environ["DB_PATH"], table_name=TABLE_NAME, flat_metadata=False
+        uri=settings.db_path, table_name=TABLE_NAME, flat_metadata=False
     )
     llm = MistralAI(
         model="mistral-medium-latest",
-        api_key=os.environ["MISTRAL_API_KEY"],
+        api_key=settings.mistral_api_key,
         temperature=0,
         max_tokens=4096,
     )
     retriever = RAMQManualRetriever(
-        vector_store=vector_store, llm=llm, embed_model=get_embeding_model()
+        vector_store=vector_store, llm=llm, embed_model=get_embeding_model(), debug=settings.debug
     )
     return RAMQManualQueryEngine(retriever=retriever, llm=llm)

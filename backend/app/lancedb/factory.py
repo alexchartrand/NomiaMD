@@ -1,15 +1,15 @@
 import asyncio
 from functools import cache
-import os
 
 import lancedb
 from lancedb import AsyncConnection
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
+from app.config import settings
 from app.lancedb.db import CodeTable
 
 EMBEDDINGS_TABLE_NAME = "code-embeddings"
 
-db_dir = os.environ["DB_PATH"]
+db_dir = settings.db_path
 
 _db: AsyncConnection | None = None
 _db_lock = asyncio.Lock()

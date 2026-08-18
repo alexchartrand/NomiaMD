@@ -8,14 +8,15 @@ support under that same dialect string, and aiosqlite backs the SQLite default.
 """
 
 import json
-import os
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, String, Text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-DATABASE_URL = os.environ.get("DATABASE_URL") or "sqlite+aiosqlite:///./nomiamd.db"
+from app.config import settings
+
+DATABASE_URL = settings.database_url
 
 engine = create_async_engine(DATABASE_URL, connect_args=(
     {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}

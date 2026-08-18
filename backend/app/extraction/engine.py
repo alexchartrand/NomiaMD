@@ -3,12 +3,12 @@ Task-specific logic lives entirely in app/tasks/* — adding a new output type n
 requires touching this file."""
 
 import json
-import os
 from functools import lru_cache
 
 from llama_index.core.base.llms.types import ChatMessage, MessageRole
 from llama_index.llms.mistralai import MistralAI
 
+from app.config import settings
 from app.models import ExtractionResult
 from app.tasks.base import ExtractionTask
 
@@ -19,7 +19,7 @@ MODEL = "mistral-small-latest"
 def get_client() -> MistralAI:
     return MistralAI(
         model=MODEL,
-        api_key=os.environ["MISTRAL_API_KEY"],
+        api_key=settings.mistral_api_key,
         # Deterministic on purpose: this is a structured extraction task (pick codes from a
         # closed candidate list), not a creative one — run-to-run variance here means the
         # same transcript can non-reproducibly get a code or not, which undermines both

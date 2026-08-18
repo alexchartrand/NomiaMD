@@ -21,7 +21,13 @@ class RAMQManualRetriever(BaseRetriever):
     "Query: {query}\n"
     "Queries:\n")
 
-    def __init__(self, vector_store: BasePydanticVectorStore, llm: LLM, embed_model: BaseEmbedding):
+    def __init__(
+        self,
+        vector_store: BasePydanticVectorStore,
+        llm: LLM,
+        embed_model: BaseEmbedding,
+        debug: bool = False,
+    ):
         index = VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
         vector_retriever = index.as_retriever(similarity_top_k=6)
         nodes = vector_store.get_nodes()
@@ -35,7 +41,7 @@ class RAMQManualRetriever(BaseRetriever):
             num_queries=4,  # set this to 1 to disable query generation
             mode= "reciprocal_rerank",
             use_async=False,
-            verbose=True,
+            verbose=debug,
             query_gen_prompt=self.QUERY_GEN_PROMPT)
 
     def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
