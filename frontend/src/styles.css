@@ -891,6 +891,52 @@ button.nav-item {
   border-bottom-left-radius: 3px;
 }
 
+.chat-bubble-markdown {
+  white-space: normal;
+}
+
+.chat-bubble-markdown > *:first-child {
+  margin-top: 0;
+}
+
+.chat-bubble-markdown > *:last-child {
+  margin-bottom: 0;
+}
+
+.chat-bubble-markdown p,
+.chat-bubble-markdown ul,
+.chat-bubble-markdown ol {
+  margin: 0.5em 0;
+}
+
+.chat-bubble-markdown ul,
+.chat-bubble-markdown ol {
+  padding-left: 1.4em;
+}
+
+.chat-bubble-markdown li + li {
+  margin-top: 0.25em;
+}
+
+.chat-bubble-markdown code {
+  background: var(--color-surface-muted, rgba(0, 0, 0, 0.06));
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.88em;
+}
+
+.chat-bubble-markdown pre {
+  background: var(--color-surface-muted, rgba(0, 0, 0, 0.06));
+  border-radius: 8px;
+  padding: 0.6em 0.8em;
+  overflow-x: auto;
+}
+
+.chat-bubble-markdown pre code {
+  background: none;
+  padding: 0;
+}
+
 .chat-composer {
   display: flex;
   align-items: flex-end;
