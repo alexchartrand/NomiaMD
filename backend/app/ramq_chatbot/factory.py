@@ -22,7 +22,7 @@ def get_ramq_query_engine() -> RAMQManualQueryEngine:
         uri=settings.db_path, table_name=TABLE_NAME, flat_metadata=False
     )
     llm = MistralAI(
-        model="mistral-medium-latest",
+        model="mistral-small-latest",
         api_key=settings.mistral_api_key,
         temperature=0,
         max_tokens=4096,

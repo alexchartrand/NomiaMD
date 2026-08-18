@@ -5,6 +5,7 @@ from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.llms import LLM
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.core.retrievers import BaseRetriever, QueryFusionRetriever
+from llama_index.core.retrievers.fusion_retriever import FUSION_MODES
 from llama_index.core.schema import NodeWithScore, QueryBundle
 from llama_index.retrievers.bm25 import BM25Retriever
 
@@ -41,18 +42,14 @@ class RAMQManualRetriever(BaseRetriever):
             llm=llm,
             similarity_top_k=10,
             num_queries=3,  # set this to 1 to disable query generation
-            mode= "reciprocal_rerank",
+            mode= FUSION_MODES.RECIPROCAL_RANK,
             use_async=False,
             verbose=debug,
             query_gen_prompt=QUERY_GEN_PROMPT)
+        super().__init__()
 
     def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         return self.retriever.retrieve(query_bundle)
 
     async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        # Unlike the sync path (use_async=False above), QueryFusionRetriever.aretrieve()
-        # always fans its num_queries=4 generated queries out across both the vector and
-        # BM25 retrievers concurrently (asyncio.gather) rather than looping through up to 8
-        # sequential retrieval calls — the real win, since the vector leg and query
-        # generation both make genuine async network calls to Mistral.
         return await self.retriever.aretrieve(query_bundle)

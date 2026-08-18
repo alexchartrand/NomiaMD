@@ -8,6 +8,13 @@ Mistral API key needed). RAMQCodesRetriever itself does no joining against the `
 (BillingCodesTask) is what joins those numbers against full row data via CodesData/
 CodesData's ITableReader, see tests/test_ramq_codes_data.py for that.
 
+The retriever fuses a vector retriever with a BM25Retriever (QueryFusionRetriever, mode=
+"relative_score", num_queries=1 so no LLM-generated query variants — just the raw query
+against both). `num_queries=1` means the llm is never actually invoked, but
+QueryFusionRetriever still resolves one at construction time regardless (see
+app/ramq_codes/factory.py's docstring), so tests pass a MockLLM — cheap, deterministic,
+no API key — as a stand-in for the real Mistral llm.
+
 Known gap this file documents rather than hides: the current implementation applies no
 relevance floor and no per-code dedup (see CLAUDE.md's Architecture section) — a prior
 MIN_SIMILARITY cosine-similarity floor existed on an earlier retriever rewrite and hasn't
@@ -26,6 +33,7 @@ from llama_index.core.vector_stores.types import (
     VectorStoreQueryResult,
 )
 from llama_index.core.bridge.pydantic import PrivateAttr
+from llama_index.core.llms.mock import MockLLM
 
 from app.ramq_codes.retriever import RAMQCodesRetriever
 
@@ -110,7 +118,9 @@ def _retriever(
 ) -> RAMQCodesRetriever:
     for node in embedding_nodes:
         node.embedding = vectors[node.text]
-    return RAMQCodesRetriever(_FakeVectorStore(embedding_nodes), _LookupEmbedding(vectors), **kwargs)
+    return RAMQCodesRetriever(
+        _FakeVectorStore(embedding_nodes), _LookupEmbedding(vectors), MockLLM(), **kwargs
+    )
 
 
 def _numbers(retriever: RAMQCodesRetriever, query: str) -> list[str]:
@@ -149,7 +159,9 @@ def test_retrieve_ranks_best_semantic_match_first():
     assert _numbers(retriever, "query")[:2] == ["CHAT", "CHIEN"]
 
 
-def test_retrieve_caps_results_at_default_similarity_top_k():
+def test_retrieve_caps_results_at_similarity_top_k_of_20():
+    # Both the vector and BM25 legs, and the fusion itself, are hardcoded to
+    # similarity_top_k=20 (app/ramq_codes/retriever.py) — no longer a constructor param.
     vectors = {f"code {i}": [1.0, float(i)] for i in range(35)}
     vectors["query"] = [1.0, 0.0]
     embedding_nodes = [_embedding_node(str(i), f"code {i}") for i in range(35)]
@@ -157,16 +169,6 @@ def test_retrieve_caps_results_at_default_similarity_top_k():
     retriever = _retriever(vectors, embedding_nodes)
 
     assert len(retriever.retrieve("query")) == 20
-
-
-def test_retrieve_respects_custom_similarity_top_k():
-    vectors = {f"code {i}": [1.0, float(i)] for i in range(10)}
-    vectors["query"] = [1.0, 0.0]
-    embedding_nodes = [_embedding_node(str(i), f"code {i}") for i in range(10)]
-
-    retriever = _retriever(vectors, embedding_nodes, similarity_top_k=3)
-
-    assert len(retriever.retrieve("query")) == 3
 
 
 def test_retrieve_returns_low_similarity_hits_unfiltered():
