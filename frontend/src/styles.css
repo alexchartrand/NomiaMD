@@ -726,6 +726,18 @@ form .btn[type="submit"] {
   gap: 0.4rem;
 }
 
+.login-back-link {
+  align-self: flex-start;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin-bottom: 0.25rem;
+}
+
+.login-back-link:hover {
+  text-decoration: underline;
+}
+
 .login-logo {
   margin-bottom: 0.5rem;
 }

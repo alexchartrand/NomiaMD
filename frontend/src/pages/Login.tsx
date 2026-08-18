@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Banner, Button, Card, TextField } from "../components";
 import { Logo } from "../Logo";
 import { useAuth } from "../AuthContext";
@@ -31,6 +31,9 @@ export default function Login() {
   return (
     <main className="login-shell">
       <Card className="login-card">
+        <Link to="/" className="login-back-link">
+          ← Retour à l&rsquo;accueil
+        </Link>
         <Logo size={28} className="login-logo" />
         {error && <Banner tone="error">{error}</Banner>}
         <form onSubmit={handleSubmit} className="login-form">
