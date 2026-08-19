@@ -1,3 +1,13 @@
+networks:
+  # A fixed subnet so `frontend` can be given a static address (below) — backend pins
+  # --forwarded-allow-ips to that exact address rather than trusting any peer that can
+  # reach it (see backend/Dockerfile).
+  internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -7,6 +17,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks: [internal]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U nomiamd"]
       interval: 5s
@@ -17,6 +28,7 @@ services:
     image: redis:7-alpine
     volumes:
       - redis_data:/data
+    networks: [internal]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -26,6 +38,7 @@ services:
   backend:
     build:
       context: ./backend
+    networks: [internal]
     environment:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
@@ -60,6 +73,11 @@ services:
       context: ./frontend
     environment:
       ALLOWED_CIDRS: ${ALLOWED_CIDRS}
+    networks:
+      # Static IP so backend/Dockerfile's --forwarded-allow-ips can pin trust to nginx
+      # specifically instead of the whole subnet — keep these two values in sync.
+      internal:
+        ipv4_address: 172.28.0.10
     depends_on:
       backend:
         condition: service_healthy
@@ -76,6 +94,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    networks: [internal]
     depends_on:
       - frontend
 
