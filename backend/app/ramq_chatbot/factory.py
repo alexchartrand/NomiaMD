@@ -13,11 +13,11 @@ TABLE_NAME = "manuel-omnipraticiens"
 
 @lru_cache(maxsize=1)
 def get_ramq_query_engine() -> RAMQManualQueryEngine:
-    """Built lazily on first call (not at import time, unlike app/tasks/registry's eager
-    BillingCodesTask): RAMQManualRetriever's BM25 index reads every node out of the
-    `manuel-omnipraticiens` LanceDB table up front, so constructing it needs that table to
-    actually exist and needs a real MISTRAL_API_KEY — importing app/main.py (and therefore
-    test collection) must not require either."""
+    """Built eagerly at import time (app/ramq_chatbot/__init__.py calls this once at module
+    scope), same as app/tasks/registry's BillingCodesTask: RAMQManualRetriever's BM25 index
+    reads every node out of the `manuel-omnipraticiens` LanceDB table up front and tokenizes
+    them, so doing this per-request would block the event loop on the first request and any
+    concurrent ones. lru_cache still guards against rebuilding on incidental repeat calls."""
     vector_store = LanceDBVectorStore(
         uri=settings.db_path, table_name=TABLE_NAME, flat_metadata=False
     )

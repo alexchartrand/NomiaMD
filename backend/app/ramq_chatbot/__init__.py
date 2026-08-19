@@ -11,6 +11,10 @@ from app.ramq_chatbot.factory import get_ramq_query_engine
 from app.ramq_chatbot.models import RAMQChatMessage, RAMQQueryRequest, RAMQQueryResult
 from app.ramq_chatbot.router import router as ramq_chatbot_router
 
+# Eager, same as app/tasks/registry.py's BillingCodesTask: build the BM25+vector engine now,
+# at import time, so the first /query request doesn't pay for it on the event loop.
+get_ramq_query_engine()
+
 __all__ = [
     "get_ramq_query_engine",
     "RAMQChatMessage",
