@@ -36,9 +36,6 @@
 - [ ] 🟢 Prompt injection surface is unhardened — *added 8/19, from codebase audit*
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
-- [ ] 🟢 Two sequential Postgres writes tail every extraction — *added 8/19, from codebase audit*
-  - `extraction/router.py` fires two separate sessions/commits back-to-back after the LLM calls finish. Trivial next to LLM latency; worth batching into one transaction as a cleanliness win.
-
 ## ✨ Features
 
 
@@ -69,5 +66,8 @@
 
 - [x] Chat bubbles re-parse markdown on every new message — *added 8/19, done 8/19, from codebase audit*
   - `ChatBubble.tsx` now wraps its component with `React.memo`. Since props are already primitive (`role`, `content`) rather than an object, and `ChatbotPage.tsx` only ever appends to `messages` (never mutates/reorders), older bubbles bail out of re-render/re-parse when a new message is appended instead of re-running `ReactMarkdown` on unchanged content.
+
+- [x] Two sequential Postgres writes tail every extraction — *added 8/19, done 8/19, from codebase audit*
+  - `ExtractionRepository.create` replaced with `create_many`, which opens a single session and does one `commit()` for both the `consultation_summary` and `billing_codes` rows. `extraction/router.py` now makes one `create_many([...])` call instead of two sequential `create(...)` calls — also closes a small atomicity gap where a mid-request failure could leave a summary row persisted with no matching billing_codes row.
 
 ---

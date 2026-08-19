@@ -7,13 +7,18 @@ reaching into .database/.models/.repository directly."""
 
 from app.postgresdb.database import init_db
 from app.postgresdb.models import ExtractionRecord, User, UserRole
-from app.postgresdb.repository import ExtractionRepository, UserRepository
+from app.postgresdb.repository import (
+    ExtractionRecordInput,
+    ExtractionRepository,
+    UserRepository,
+)
 
 __all__ = [
     "init_db",
     "ExtractionRecord",
     "User",
     "UserRole",
+    "ExtractionRecordInput",
     "ExtractionRepository",
     "UserRepository",
 ]

@@ -2,7 +2,9 @@
 owning its own session/query handling."""
 
 import json
+from dataclasses import dataclass
 from datetime import datetime, timezone
+from typing import Sequence
 
 from sqlalchemy import select
 
@@ -54,27 +56,34 @@ class UserRepository:
                 await session.commit()
 
 
+@dataclass
+class ExtractionRecordInput:
+    task: str
+    transcript: str
+    result: dict
+    model: str
+    source_system: str | None
+    user_id: int
+
+
 class ExtractionRepository:
-    async def create(
-        self,
-        *,
-        task: str,
-        transcript: str,
-        result: dict,
-        model: str,
-        source_system: str | None,
-        user_id: int,
-    ) -> ExtractionRecord:
+    async def create_many(
+        self, records: Sequence[ExtractionRecordInput]
+    ) -> list[ExtractionRecord]:
         async with async_session() as session:
-            record = ExtractionRecord(
-                task=task,
-                transcript=transcript,
-                result_json=json.dumps(result),
-                model=model,
-                source_system=source_system,
-                user_id=user_id,
-            )
-            session.add(record)
+            created = [
+                ExtractionRecord(
+                    task=r.task,
+                    transcript=r.transcript,
+                    result_json=json.dumps(r.result),
+                    model=r.model,
+                    source_system=r.source_system,
+                    user_id=r.user_id,
+                )
+                for r in records
+            ]
+            session.add_all(created)
             await session.commit()
-            await session.refresh(record)
-            return record
+            for record in created:
+                await session.refresh(record)
+            return created
