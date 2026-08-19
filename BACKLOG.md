@@ -39,9 +39,6 @@
 - [ ] 🟢 Two sequential Postgres writes tail every extraction — *added 8/19, from codebase audit*
   - `extraction/router.py` fires two separate sessions/commits back-to-back after the LLM calls finish. Trivial next to LLM latency; worth batching into one transaction as a cleanliness win.
 
-- [ ] 🟢 Chat bubbles re-parse markdown on every new message — *added 8/19, from codebase audit*
-  - `ChatBubble.tsx` isn't wrapped in `React.memo`, so the full thread re-renders and re-parses every prior bubble on each append — O(n²) over a long conversation. No token streaming either.
-
 ## ✨ Features
 
 
@@ -69,5 +66,8 @@
 
 - [x] Chatbot's BM25 index builds synchronously on first request — *added 8/19, done 8/19, from codebase audit*
   - `ramq_chatbot/__init__.py` now calls `get_ramq_query_engine()` at import time (same trigger chain as `app/tasks/registry.py`'s eager `BillingCodesTask`), so the BM25 build runs once before uvicorn serves any request instead of blocking the first `/query` coroutine. `scripts/make_ci_fixture_db.py` extended with a throwaway `manuel-omnipraticiens` table so test collection still works without a real ramq-ingestion DB.
+
+- [x] Chat bubbles re-parse markdown on every new message — *added 8/19, done 8/19, from codebase audit*
+  - `ChatBubble.tsx` now wraps its component with `React.memo`. Since props are already primitive (`role`, `content`) rather than an object, and `ChatbotPage.tsx` only ever appends to `messages` (never mutates/reorders), older bubbles bail out of re-render/re-parse when a new message is appended instead of re-running `ReactMarkdown` on unchanged content.
 
 ---
