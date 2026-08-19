@@ -2,6 +2,10 @@ import { useState } from "react";
 import { describeError, queryChatbot, type RAMQChatMessage } from "../../api";
 import { Banner, Button, ChatBubble, Spinner, TextArea } from "../../components";
 
+// Mirrors backend's ramq_chatbot/engine.py MAX_HISTORY_MESSAGES. Bandwidth/latency
+// optimization only — the backend is the authoritative cap regardless of what's sent here.
+const MAX_HISTORY_MESSAGES = 20;
+
 export default function ChatbotPage() {
   const [messages, setMessages] = useState<RAMQChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -13,8 +17,8 @@ export default function ChatbotPage() {
     const query = input.trim();
     if (!query || loading) return;
 
-    const history = messages;
-    const nextMessages: RAMQChatMessage[] = [...history, { role: "user", content: query }];
+    const history = messages.slice(-MAX_HISTORY_MESSAGES);
+    const nextMessages: RAMQChatMessage[] = [...messages, { role: "user", content: query }];
     setMessages(nextMessages);
     setInput("");
     setError(null);
@@ -29,13 +33,25 @@ export default function ChatbotPage() {
     }
   }
 
+  function handleClear() {
+    setMessages([]);
+    setError(null);
+  }
+
   return (
     <section className="page-panel chat-panel">
-      <h1>Clavardage de facturation</h1>
-      <p className="lede">
-        Posez des questions générales de facturation RAMQ — sans lien avec une consultation
-        précise.
-      </p>
+      <div className="chat-header">
+        <div>
+          <h1>Clavardage de facturation</h1>
+          <p className="lede">
+            Posez des questions générales de facturation RAMQ — sans lien avec une consultation
+            précise.
+          </p>
+        </div>
+        <Button variant="secondary" onClick={handleClear} disabled={loading || messages.length === 0}>
+          Effacer la conversation
+        </Button>
+      </div>
 
       <div className="chat-thread">
         {messages.length === 0 && !loading && (

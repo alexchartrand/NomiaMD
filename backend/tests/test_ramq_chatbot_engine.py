@@ -14,7 +14,7 @@ from llama_index.core.llms.custom import CustomLLM
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
 
-from app.ramq_chatbot.engine import RAMQManualQueryEngine
+from app.ramq_chatbot.engine import MAX_HISTORY_MESSAGES, RAMQManualQueryEngine
 from app.ramq_chatbot.models import RAMQChatMessage
 
 
@@ -60,6 +60,15 @@ class _SpyLLM(CustomLLM):
 
 def _node(text: str) -> NodeWithScore:
     return NodeWithScore(node=TextNode(text=text), score=1.0)
+
+
+def _alternating_history(n: int) -> list[RAMQChatMessage]:
+    """n messages alternating user/assistant, content tagged with its 0-based index so tests
+    can assert exactly which ones survived truncation."""
+    return [
+        RAMQChatMessage(role="user" if i % 2 == 0 else "assistant", content=f"msg-{i}")
+        for i in range(n)
+    ]
 
 
 def test_joins_retrieved_node_texts_into_context():
@@ -124,6 +133,33 @@ def test_chat_history_threaded_between_system_and_current_turn():
     assert "Query: Et pour un enfant?" in messages[3].content
 
 
+def test_chat_history_longer_than_cap_is_truncated_to_most_recent():
+    spy = _SpyLLM()
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Contexte")]), llm=spy)
+    history = _alternating_history(MAX_HISTORY_MESSAGES + 4)
+
+    engine.custom_query("La suite?", chat_history=history)
+
+    messages = spy.message_lists[0]
+    threaded_history = messages[1:-1]  # strip leading SYSTEM and trailing current-turn USER
+    assert len(threaded_history) == MAX_HISTORY_MESSAGES
+    assert threaded_history[0].content == "msg-4"  # oldest 4 dropped
+    assert threaded_history[-1].content == f"msg-{MAX_HISTORY_MESSAGES + 3}"  # most recent kept
+    assert threaded_history[0].role == MessageRole.USER  # alternation preserved after slicing
+
+
+def test_chat_history_at_cap_is_not_truncated():
+    spy = _SpyLLM()
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Contexte")]), llm=spy)
+    history = _alternating_history(MAX_HISTORY_MESSAGES)
+
+    engine.custom_query("La suite?", chat_history=history)
+
+    threaded_history = spy.message_lists[0][1:-1]
+    assert len(threaded_history) == MAX_HISTORY_MESSAGES
+    assert threaded_history[0].content == "msg-0"
+
+
 # -- acustom_query (app/main.py's /query route calls this, not custom_query) --------------
 # _StubRetriever/_SpyLLM need no async-specific setup: BaseRetriever/CustomLLM's own
 # .aretrieve()/.achat() defaults delegate to the sync _retrieve()/chat() overrides above.
@@ -163,3 +199,15 @@ async def test_acustom_query_threads_chat_history_same_as_sync():
     assert messages[1].content == "Quelle est la majoration de nuit?"
     assert messages[2].content == "27,25$ selon le manuel RAMQ."
     assert "Query: Et pour un enfant?" in messages[3].content
+
+
+async def test_acustom_query_truncates_chat_history_same_as_sync():
+    spy = _SpyLLM()
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Contexte")]), llm=spy)
+    history = _alternating_history(MAX_HISTORY_MESSAGES + 4)
+
+    await engine.acustom_query("La suite?", chat_history=history)
+
+    threaded_history = spy.message_lists[0][1:-1]
+    assert len(threaded_history) == MAX_HISTORY_MESSAGES
+    assert threaded_history[0].content == "msg-4"

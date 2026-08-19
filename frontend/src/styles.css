@@ -857,6 +857,14 @@ button.nav-item {
   height: calc(100vh - 5rem);
 }
 
+.chat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .chat-thread {
   flex: 1;
   overflow-y: auto;

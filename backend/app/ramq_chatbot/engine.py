@@ -29,16 +29,29 @@ Query: {query_str}
 
 _ROLE_MAP = {"user": MessageRole.USER, "assistant": MessageRole.ASSISTANT}
 
+# Sliding-window cap on chat_history: the chatbot is stateless server-side (the client resends
+# the full conversation every turn — see router.py), so nothing else bounds prompt size. Keep
+# only the most recent MAX_HISTORY_MESSAGES entries so LLM cost/latency stay bounded regardless
+# of conversation length. MUST stay even: history is always an even-length, strictly alternating
+# [user, assistant, user, assistant, ...] sequence (built by appending pairs client-side), and
+# slicing an even count off an even-length alternating sequence preserves that alternation — an
+# odd cap would desync roles.
+MAX_HISTORY_MESSAGES = 20
+
 
 def _to_chat_messages(history: list[RAMQChatMessage]) -> list[ChatMessage]:
     return [ChatMessage(role=_ROLE_MAP[m.role], content=m.content) for m in history]
+
+
+def _truncate_history(history: list[RAMQChatMessage]) -> list[RAMQChatMessage]:
+    return history[-MAX_HISTORY_MESSAGES:]
 
 
 def _build_messages(
     query_str: str, context_str: str, chat_history: list[RAMQChatMessage] | None
 ) -> list[ChatMessage]:
     messages = [ChatMessage(role=MessageRole.SYSTEM, content=SYSTEM_PROMPT)]
-    messages.extend(_to_chat_messages(chat_history or []))
+    messages.extend(_to_chat_messages(_truncate_history(chat_history or [])))
     messages.append(
         ChatMessage(
             role=MessageRole.USER,

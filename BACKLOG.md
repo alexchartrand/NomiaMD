@@ -24,9 +24,6 @@
 - [ ] 🟡 Argon2 verify blocks the event loop on every login — *added 8/19, from codebase audit*
   - `AuthService.login` (async) calls the sync, CPU-slow `PasswordHasher.verify` directly (`auth/security.py`), no `run_in_threadpool`. Stalls the whole process for tens–hundreds of ms, including other physicians' in-flight `/extract`/`/query` requests.
 
-- [ ] 🟡 Chat history grows unbounded, no truncation — *added 8/19, from codebase audit*
-  - `ChatbotPage.tsx` resends the full message array every turn (stateless server by design), but nothing truncates or summarizes it. Cost and latency grow linearly with conversation length, no ceiling before hitting context limits.
-
 - [ ] 🟡 Chatbot's BM25 index builds synchronously on first request — *added 8/19, from codebase audit*
   - `get_ramq_query_engine()` (`ramq_chatbot/factory.py`) is `lru_cache`d but invoked lazily inside the request handler (`router.py`), so building the BM25 retriever blocks the first user's coroutine and any concurrent requests. billing_codes' retriever builds eagerly at import time instead — chatbot doesn't.
   - Note: commit 51d729a only added a CI fixture table to unblock test collection — it did not fix this.
@@ -70,5 +67,8 @@
 
 - [x] Rate-limit bypass via X-Forwarded-For spoofing — *added 8/19, done 8/18, from codebase audit*
   - Fixed by commit 5c231b5 ("Pin backend's trusted proxy IP to nginx's static compose address") — `--forwarded-allow-ips` now pinned to nginx's static IP on an internal compose network, instead of trusting `*`.
+
+- [x] Chat history grows unbounded, no truncation — *added 8/19, done 8/19, from codebase audit*
+  - `ramq_chatbot/engine.py` now caps `chat_history` to the most recent `MAX_HISTORY_MESSAGES` (20) entries before threading it into the LLM prompt — backend-authoritative regardless of client behavior. `ChatbotPage.tsx` mirrors the same cap on what it sends (full scrollback still displays) and gained a "Effacer la conversation" clear button.
 
 ---
