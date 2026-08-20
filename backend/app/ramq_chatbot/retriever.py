@@ -32,15 +32,15 @@ class RAMQManualRetriever(BaseRetriever):
         debug: bool = False,
     ):
         index = VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
-        vector_retriever = index.as_retriever(similarity_top_k=10)
+        vector_retriever = index.as_retriever(similarity_top_k=20)
         nodes = vector_store.get_nodes()
         bm25_retriever = BM25Retriever.from_defaults(
-            nodes=nodes, similarity_top_k=10)
+            nodes=nodes, similarity_top_k=20)
 
         self.retriever = QueryFusionRetriever(
             [vector_retriever, bm25_retriever],
             llm=llm,
-            similarity_top_k=10,
+            similarity_top_k=20,
             num_queries=3,  # set this to 1 to disable query generation
             mode= FUSION_MODES.RECIPROCAL_RANK,
             use_async=False,
