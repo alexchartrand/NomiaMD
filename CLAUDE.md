@@ -10,6 +10,19 @@ anything is submitted. **Scope: family doctors (omnipraticiens) only** — the R
 corpus is ingested from the *omnipraticien* remuneration manual specifically. Ingestion is
 done by a different repo: ramq-ingestion wich produce a LanceDB.
 
+## Git Guidelines
+
+### Branch Naming
+- Always use the format: `type/issue-description` (lowercase, kebab-case)
+- Allowed types: feat, fix, chore, refactor, docs
+- Example: `feat/api-migration`
+
+### Commit Messages
+- Follow Conventional Commits format: `<type>(<scope>): <short description>`
+- Never commit directly to the `main` branch.
+- Always write explicit, imperative descriptions (e.g., "add", not "added").
+
+
 ## Architecture
 
 1. `consultation_summary` task (`backend/app/summary/`) turns the raw transcript into
