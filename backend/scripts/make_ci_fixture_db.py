@@ -1,12 +1,13 @@
-"""Creates throwaway `codes`, `code-embeddings`, and `manuel-omnipraticiens` LanceDB tables
-at DB_PATH — CI-only tooling, not used in prod.
+"""Creates throwaway `codes`/`code-embeddings` LanceDB tables at DB_PATH and a
+`documents-embeddings` table at RAMQ_CHATBOT_DB_PATH (a separate database) — CI-only
+tooling, not used in prod.
 
 app/lancedb/db.py's CodeTable opens the `codes` table eagerly at construction time
 (db.open_table(...)), and app/ramq_codes/retriever.py's RAMQCodesRetriever now calls
 vector_store.get_nodes() (to build a BM25Retriever) eagerly in __init__ too — both
 constructions happen at import time via app/tasks/registry.py. Likewise
 app/ramq_chatbot/retriever.py's RAMQManualRetriever does the same eager
-vector_store.get_nodes() + BM25Retriever.from_defaults() over the `manuel-omnipraticiens`
+vector_store.get_nodes() + BM25Retriever.from_defaults() over the `documents-embeddings`
 table, constructed at import time via app/ramq_chatbot/__init__.py. So pytest collection
 fails without all three tables on disk, even though no test ever actually queries any of
 them (tests/conftest.py's autouse small_reference_table fixture replaces the billing_codes
@@ -17,7 +18,7 @@ needing a real ramq-ingestion-produced database in CI.
 
 `codes` schema mirrors app/lancedb/models.py's CodeRow, which itself mirrors
 ramq-ingestion's src/embedding/code_table_schema.py. `code-embeddings` and
-`manuel-omnipraticiens` are created via LanceDBVectorStore.add() (rather than a hand-written
+`documents-embeddings` are created via LanceDBVectorStore.add() (rather than a hand-written
 pyarrow schema) so their columns match whatever that llama_index integration actually
 expects, since RAMQCodesRetriever/RAMQManualRetriever open them through the same class
 (app/lancedb/factory.py's get_vectorstore, app/ramq_chatbot/factory.py's own LanceDBVectorStore).
@@ -51,6 +52,7 @@ EMBEDDING_DIM = 1024
 
 def main() -> None:
     db_path = os.environ["DB_PATH"]
+    ramq_chatbot_db_path = os.environ["RAMQ_CHATBOT_DB_PATH"]
 
     db = lancedb.connect(db_path)
     db.create_table("codes", schema=SCHEMA)
@@ -63,7 +65,9 @@ def main() -> None:
     )
     vector_store.add([placeholder])
 
-    manual_vector_store = LanceDBVectorStore(uri=db_path, table_name="manuel-omnipraticiens", flat_metadata=False)
+    manual_vector_store = LanceDBVectorStore(
+        uri=ramq_chatbot_db_path, table_name="documents-embeddings", flat_metadata=False
+    )
     manual_vector_store.add([
         TextNode(text="placeholder", embedding=[0.0] * EMBEDDING_DIM),
     ])

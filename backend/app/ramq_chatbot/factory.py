@@ -8,18 +8,18 @@ from app.embedings import get_embeding_model
 from app.ramq_chatbot.engine import RAMQManualQueryEngine
 from app.ramq_chatbot.retriever import RAMQManualRetriever
 
-TABLE_NAME = "manuel-omnipraticiens"
+TABLE_NAME = "documents-embeddings"
 
 
 @lru_cache(maxsize=1)
 def get_ramq_query_engine() -> RAMQManualQueryEngine:
     """Built eagerly at import time (app/ramq_chatbot/__init__.py calls this once at module
     scope), same as app/tasks/registry's BillingCodesTask: RAMQManualRetriever's BM25 index
-    reads every node out of the `manuel-omnipraticiens` LanceDB table up front and tokenizes
+    reads every node out of the `documents-embeddings` LanceDB table up front and tokenizes
     them, so doing this per-request would block the event loop on the first request and any
     concurrent ones. lru_cache still guards against rebuilding on incidental repeat calls."""
     vector_store = LanceDBVectorStore(
-        uri=settings.db_path, table_name=TABLE_NAME, flat_metadata=False
+        uri=settings.ramq_chatbot_db_path, table_name=TABLE_NAME, flat_metadata=False
     )
     llm = MistralAI(
         model="mistral-small-latest",

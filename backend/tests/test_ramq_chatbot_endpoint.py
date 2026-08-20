@@ -1,6 +1,6 @@
 """Exercises POST /query (app/ramq_chatbot/router.py's wiring of RAMQManualQueryEngine) end
 to end, with the engine itself stubbed out — get_ramq_query_engine builds a real
-BM25+vector retriever over the `manuel-omnipraticiens` LanceDB table (see
+BM25+vector retriever over the `documents-embeddings` LanceDB table (see
 app/ramq_chatbot/factory.py), which this test suite must not depend on."""
 
 from unittest.mock import patch

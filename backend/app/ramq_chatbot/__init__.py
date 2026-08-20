@@ -1,5 +1,5 @@
 """Free-form Q&A over the RAMQ omnipraticien manual (RAMQManualQueryEngine, backed by
-RAMQManualRetriever's BM25+vector fusion search over the `manuel-omnipraticiens` LanceDB
+RAMQManualRetriever's BM25+vector fusion search over the `documents-embeddings` LanceDB
 table) — distinct from the transcript -> structured-output extraction pipeline in
 app/ramq_codes and app/summary. Answers a physician's direct billing question, sourced
 from the manual text itself, rather than proposing codes for a specific encounter.

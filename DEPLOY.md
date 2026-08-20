@@ -59,7 +59,7 @@ Fill in `.env`:
   ```
 - `MISTRAL_API_KEY`, `MISTRAL_EMBEDDING_MODEL=mistral-embed` — real Mistral
   credentials; `/extract` and `/query` spend real money per call.
-- `RAMQ_LANCEDB_PATH` — see step 5 below.
+- `RAMQ_LANCEDB_PATH`, `RAMQ_CHATBOT_LANCEDB_PATH` — see step 5 below.
 - `COOKIE_SECURE=true` — already the `.env.example` default; keep it, since
   Caddy terminates real TLS here.
 - Leave `ALLOWED_CIDRS` unset — this deploy is open to the internet, gated
@@ -69,16 +69,21 @@ Fill in `.env`:
 ## 5. Get the RAMQ LanceDB data onto the VPS
 
 There's no automated sync between `ramq-ingestion` and this repo/VPS today.
-From wherever `ramq-ingestion` produces its output LanceDB directory:
+`ramq-ingestion` now produces two separate LanceDB directories: one with the
+`codes`/`code-embeddings` tables for `billing_codes`, and a distinct one with
+the `documents-embeddings` table for `ramq_chatbot`. From wherever
+`ramq-ingestion` produces each:
 
 ```bash
 rsync -av /path/to/ramq-ingestion/output/ your-vps:/opt/nomiamd-lancedb/
+rsync -av /path/to/ramq-ingestion/chatbot-output/ your-vps:/opt/nomiamd-chatbot-lancedb/
 ```
 
-Then set `RAMQ_LANCEDB_PATH=/opt/nomiamd-lancedb` in the VPS's `.env`. The
-backend reads this directory at import time — it won't even start if it's
-missing or empty. Repeat this rsync whenever the RAMQ code corpus changes
-upstream; nothing here does it automatically.
+Then set `RAMQ_LANCEDB_PATH=/opt/nomiamd-lancedb` and
+`RAMQ_CHATBOT_LANCEDB_PATH=/opt/nomiamd-chatbot-lancedb` in the VPS's `.env`.
+The backend reads both directories at import time — it won't even start if
+either is missing or empty. Repeat the relevant rsync whenever the
+corresponding corpus changes upstream; nothing here does it automatically.
 
 ## 6. First boot
 

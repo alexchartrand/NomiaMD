@@ -30,6 +30,7 @@ class Settings:
         self.database_url = os.environ.get("DATABASE_URL") or "sqlite+aiosqlite:///./nomiamd.db"
         self.redis_url = os.environ.get("REDIS_URL", "memory://")
         self.db_path = os.environ["DB_PATH"]
+        self.ramq_chatbot_db_path = os.environ["RAMQ_CHATBOT_DB_PATH"]
         self.secret_key = os.environ["JWT_SECRET_KEY"]
         self.jwt_expiry_seconds = int(os.environ.get("JWT_EXPIRY_SECONDS", 12 * 3600))
         self.cookie_secure = _as_bool(os.environ.get("COOKIE_SECURE"), default=True)

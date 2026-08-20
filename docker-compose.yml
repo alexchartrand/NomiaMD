@@ -43,6 +43,7 @@ services:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
+      RAMQ_CHATBOT_DB_PATH: /data/ramq-chatbot-lancedb
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
@@ -51,11 +52,15 @@ services:
       # TLS-terminating reverse proxy is in front of `frontend`.
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
     volumes:
-      # Produced by the separate ramq-ingestion repo, not by this compose file — must
-      # already be populated at RAMQ_LANCEDB_PATH before `backend` can even start (it reads
-      # DB_PATH at import time, before /health can respond). See docker-compose.yml.example
-      # note in the root .env.example.
+      # Both produced by the separate ramq-ingestion repo, not by this compose file — must
+      # already be populated at RAMQ_LANCEDB_PATH/RAMQ_CHATBOT_LANCEDB_PATH before `backend`
+      # can even start (it reads DB_PATH/RAMQ_CHATBOT_DB_PATH at import time, before /health
+      # can respond). Two separate databases: DB_PATH backs billing_codes'
+      # `codes`/`code-embeddings` tables, RAMQ_CHATBOT_DB_PATH backs ramq_chatbot's own
+      # `documents-embeddings` table. See docker-compose.yml.example note in the root
+      # .env.example.
       - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
+      - ${RAMQ_CHATBOT_LANCEDB_PATH}:/data/ramq-chatbot-lancedb:ro
     depends_on:
       postgres:
         condition: service_healthy
