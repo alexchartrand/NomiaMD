@@ -19,15 +19,19 @@ from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.base.llms.types import CompletionResponse, LLMMetadata
 from llama_index.core.bridge.pydantic import Field, PrivateAttr
 from llama_index.core.llms.custom import CustomLLM
-from llama_index.core.schema import BaseNode, TextNode
+from llama_index.core.schema import BaseNode, NodeWithScore, TextNode
 from llama_index.core.vector_stores.types import (
     BasePydanticVectorStore,
+    MetadataFilters,
     VectorStoreQuery,
     VectorStoreQueryResult,
 )
 import pytest
 
+from app.ramq_chatbot.manual_references import ManualSectionLookup
+from app.ramq_chatbot.reference_expansion import ReferenceExpander
 from app.ramq_chatbot.retriever import RAMQManualRetriever
+from app.ramq_codes.codes_data import CodesData
 
 
 def _cosine(a: list[float], b: list[float]) -> float:
@@ -61,8 +65,15 @@ class _FakeVectorStore(BasePydanticVectorStore):
     def delete(self, ref_doc_id: str, **kwargs: Any) -> None:
         self._nodes = [n for n in self._nodes if n.ref_doc_id != ref_doc_id]
 
-    def get_nodes(self, node_ids: Optional[list[str]] = None, filters: Any = None) -> list[BaseNode]:
-        return list(self._nodes)
+    def get_nodes(
+        self, node_ids: Optional[list[str]] = None, filters: Optional[MetadataFilters] = None
+    ) -> list[BaseNode]:
+        # Minimal support for RAMQManualRetriever's real usage: ManualSectionLookup issues a
+        # single equality filter on one metadata key.
+        if filters is None:
+            return list(self._nodes)
+        key, value = filters.filters[0].key, filters.filters[0].value
+        return [n for n in self._nodes if n.metadata.get(key) == value]
 
     def query(self, query: VectorStoreQuery, **kwargs: Any) -> VectorStoreQueryResult:
         scored = sorted(
@@ -126,8 +137,31 @@ class _NoOpQueryGenLLM(CustomLLM):
         raise NotImplementedError
 
 
-def _node(node_id: str, text: str, vectors: dict[str, list[float]]) -> TextNode:
-    node = TextNode(text=text, id_=node_id)
+class _NoOpReferenceExpander:
+    """Stands in for ReferenceExpander in tests that aren't about reference expansion — just
+    passes hits through unchanged, so existing retrieval-ranking tests don't need reference
+    metadata fixtures."""
+
+    def expand(self, nodes: list[NodeWithScore]) -> list[NodeWithScore]:
+        return nodes
+
+    async def aexpand(self, nodes: list[NodeWithScore]) -> list[NodeWithScore]:
+        return nodes
+
+
+class _EmptyCodesTableReader:
+    """Empty ITableReader stand-in for tests that only exercise section-reference expansion
+    (ReferenceExpander.aexpand's code_references half is unreachable when no node carries any
+    code_references metadata)."""
+
+    async def get_all(self, ids: list[str]) -> list:
+        return []
+
+
+def _node(
+    node_id: str, text: str, vectors: dict[str, list[float]], metadata: dict | None = None
+) -> TextNode:
+    node = TextNode(text=text, id_=node_id, metadata=metadata or {})
     node.embedding = vectors[text]
     return node
 
@@ -136,11 +170,22 @@ def _build_retriever(
     vectors: dict[str, list[float]],
     nodes: list[BaseNode],
     llm: CustomLLM | None = None,
+    reference_expander=None,
 ) -> RAMQManualRetriever:
     return RAMQManualRetriever(
         vector_store=_FakeVectorStore(nodes),
         llm=llm or _NoOpQueryGenLLM(),
         embed_model=_LookupQueryEmbedding(vectors),
+        reference_expander=reference_expander or _NoOpReferenceExpander(),
+    )
+
+
+def _build_reference_expander(nodes: list[BaseNode]) -> ReferenceExpander:
+    from app.lancedb.converter import CodesRowConverter
+
+    return ReferenceExpander(
+        section_lookup=ManualSectionLookup(_FakeVectorStore(nodes)),
+        codes_data=CodesData(_EmptyCodesTableReader(), CodesRowConverter()),
     )
 
 
@@ -185,14 +230,18 @@ def test_raises_when_vector_store_has_no_nodes():
         _build_retriever({}, [])
 
 
-def test_limits_results_to_ten():
-    vectors = {f"code {i}": [1.0, float(i)] for i in range(12)}
-    nodes = [_node(str(i), f"code {i}", vectors) for i in range(12)]
+def test_limits_direct_retrieval_results_to_similarity_top_k():
+    # Pins the inner fusion retriever's own cap (similarity_top_k=20) — the no-op
+    # ReferenceExpander here means RAMQManualRetriever.retrieve()'s output is exactly the
+    # fusion retriever's, unaffected by expansion (see the reference-expansion tests below for
+    # the additive-on-top-of-this-cap behavior).
+    vectors = {f"code {i}": [1.0, float(i)] for i in range(22)}
+    nodes = [_node(str(i), f"code {i}", vectors) for i in range(22)]
 
     retriever = _build_retriever(vectors, nodes)
     results = retriever.retrieve("code 0")
 
-    assert len(results) <= 10
+    assert len(results) <= 20
 
 
 def test_passes_custom_query_gen_prompt_to_llm():
@@ -211,3 +260,70 @@ def test_passes_custom_query_gen_prompt_to_llm():
     assert "doctors in Quebec, Canada" in prompt
     assert "Do not suggest any billing codes." in prompt
     assert "Query: urgence" in prompt
+
+
+# -- reference expansion: RAMQManualRetriever wired with a real ReferenceExpander ----------
+# (test_ramq_chatbot_reference_expansion.py covers ReferenceExpander's own algorithm in
+# isolation; these tests only pin that RAMQManualRetriever actually wires it in.)
+
+
+def test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ranks_last():
+    # 21 filler nodes plus a "target" whose vector is far outside the filler range: 22 nodes
+    # total, one more than similarity_top_k=20, and target is the single farthest — the one
+    # direct retrieval cuts (see test_limits_direct_retrieval_results_to_similarity_top_k).
+    vectors = {f"code {i}": [1.0, float(i)] for i in range(21)}
+    vectors["far"] = [1.0, 1000.0]
+    nodes = [_node(str(i), f"code {i}", vectors) for i in range(21)]
+    referenced = _node("target", "far", vectors, metadata={"section_number": "9.9"})
+    nodes[0].metadata["section_references"] = ["9.9"]
+
+    retriever = _build_retriever(
+        vectors, [*nodes, referenced], reference_expander=_build_reference_expander([*nodes, referenced])
+    )
+    results = retriever.retrieve("code 0")
+
+    assert "target" in {n.node.node_id for n in results}
+    assert next(n for n in results if n.node.node_id == "target").node.metadata["is_expansion"] is True
+
+
+def test_retrieve_does_not_crash_on_a_section_reference_with_no_match():
+    vectors = {"urgence": [1.0, 0.0]}
+    node = _node("A", "urgence", vectors, metadata={"section_references": ["9.9"]})
+
+    retriever = _build_retriever(vectors, [node], reference_expander=_build_reference_expander([node]))
+    results = retriever.retrieve("urgence")
+
+    assert [n.node.node_id for n in results] == ["A"]
+
+
+def test_retrieve_includes_every_node_sharing_a_referenced_section_number():
+    # Same "farthest nodes get cut by the top-k cap" setup as the first test above, but with
+    # two nodes sharing the referenced section_number (the OversizedNodeSplitter case) — both
+    # must survive expansion, not just one.
+    vectors = {f"code {i}": [1.0, float(i)] for i in range(20)}
+    vectors["detail 1"] = [1.0, 1000.0]
+    vectors["detail 2"] = [1.0, 1001.0]
+    fillers = [_node(str(i), f"code {i}", vectors) for i in range(20)]
+    fillers[0].metadata["section_references"] = ["9.9"]
+    detail_1 = _node("B", "detail 1", vectors, metadata={"section_number": "9.9"})
+    detail_2 = _node("C", "detail 2", vectors, metadata={"section_number": "9.9"})
+
+    all_nodes = [*fillers, detail_1, detail_2]
+    retriever = _build_retriever(vectors, all_nodes, reference_expander=_build_reference_expander(all_nodes))
+    results = retriever.retrieve("code 0")
+
+    node_ids = {n.node.node_id for n in results}
+    assert {"B", "C"} <= node_ids
+
+
+def test_retrieve_does_not_duplicate_a_reference_that_is_already_a_direct_hit():
+    vectors = {"urgence": [1.0, 0.0], "detail": [0.9, 0.1]}
+    origin = _node("A", "urgence", vectors, metadata={"section_references": ["9.9"]})
+    detail = _node("B", "detail", vectors, metadata={"section_number": "9.9"})
+
+    all_nodes = [origin, detail]
+    retriever = _build_retriever(vectors, all_nodes, reference_expander=_build_reference_expander(all_nodes))
+    results = retriever.retrieve("urgence")
+
+    node_ids = [n.node.node_id for n in results]
+    assert node_ids.count("B") == 1

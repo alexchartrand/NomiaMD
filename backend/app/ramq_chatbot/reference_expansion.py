@@ -1,0 +1,88 @@
+from llama_index.core.schema import BaseNode, NodeWithScore, TextNode
+
+from app.ramq_chatbot.manual_references import ManualSectionLookup
+from app.ramq_codes.codes_data import CodesData
+from app.ramq_codes.models import Code
+
+MAX_EXPANSION_NODES = 5
+
+
+def _format_code_reference(code: Code) -> str:
+    return f"{code.number}: {code.description}"
+
+
+class ReferenceExpander:
+    """Expands a retriever's raw hits with the manual sections/billing codes those hits'
+    prose references (ramq-ingestion's `section_references`/`code_references` metadata).
+
+    One-hop only: expansion nodes are never themselves re-scanned, so reference cycles can't
+    loop and no cycle-detection is needed. expand()/aexpand() are asymmetric because
+    CodesData (code-reference lookups) is async-only — needs a running event loop — while
+    section lookups are sync; expand() only follows section references, aexpand() follows
+    both. Costs nothing in production (the real caller is always aexpand), only the sync dev
+    path (scripts/simple_query.py) misses code-reference following.
+    """
+
+    def __init__(
+        self,
+        section_lookup: ManualSectionLookup,
+        codes_data: CodesData,
+        max_expansions: int = MAX_EXPANSION_NODES,
+    ):
+        self._section_lookup = section_lookup
+        self._codes_data = codes_data
+        self._max_expansions = max_expansions
+
+    def expand(self, nodes: list[NodeWithScore]) -> list[NodeWithScore]:
+        seen_node_ids = {n.node.node_id for n in nodes}
+        expansions: list[NodeWithScore] = []
+        budget = self._max_expansions
+
+        for section_number in self._collect_references(nodes, "section_references"):
+            if budget <= 0:
+                break
+            for referenced in self._section_lookup.get_by_section_number(section_number):
+                if budget <= 0:
+                    break
+                if referenced.node_id in seen_node_ids:
+                    continue
+                expansions.append(self._tag_expansion(referenced, f"section {section_number} referenced"))
+                seen_node_ids.add(referenced.node_id)
+                budget -= 1
+
+        return [*nodes, *expansions]
+
+    async def aexpand(self, nodes: list[NodeWithScore]) -> list[NodeWithScore]:
+        expanded = self.expand(nodes)
+        budget = self._max_expansions - (len(expanded) - len(nodes))
+        if budget <= 0:
+            return expanded
+
+        code_numbers = self._collect_references(nodes, "code_references")[:budget]
+        codes = await self._codes_data.get(code_numbers)
+
+        code_expansions = [
+            self._tag_expansion(
+                TextNode(text=_format_code_reference(code)), f"code {code.number} referenced"
+            )
+            for code in codes
+        ]
+
+        return [*expanded, *code_expansions]
+
+    def _collect_references(self, nodes: list[NodeWithScore], metadata_key: str) -> list[str]:
+        """Flat, order-preserving, deduped list of every value under `metadata_key` (e.g.
+        "section_references"/"code_references") across all given nodes."""
+        seen: set[str] = set()
+        values: list[str] = []
+        for n in nodes:
+            for value in n.node.metadata.get(metadata_key, []):
+                if value not in seen:
+                    seen.add(value)
+                    values.append(value)
+        return values
+
+    def _tag_expansion(self, node: BaseNode, reason: str) -> NodeWithScore:
+        node.metadata["is_expansion"] = True
+        node.metadata["expansion_reason"] = reason
+        return NodeWithScore(node=node, score=None)

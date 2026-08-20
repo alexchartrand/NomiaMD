@@ -3,6 +3,7 @@ from llama_index.core.base.llms.types import ChatMessage, ChatResponse, MessageR
 from llama_index.core.llms import LLM
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.query_engine import CustomQueryEngine
+from llama_index.core.schema import MetadataMode, NodeWithScore
 
 from app.ramq_chatbot.models import RAMQChatMessage
 
@@ -29,13 +30,6 @@ Query: {query_str}
 
 _ROLE_MAP = {"user": MessageRole.USER, "assistant": MessageRole.ASSISTANT}
 
-# Sliding-window cap on chat_history: the chatbot is stateless server-side (the client resends
-# the full conversation every turn — see router.py), so nothing else bounds prompt size. Keep
-# only the most recent MAX_HISTORY_MESSAGES entries so LLM cost/latency stay bounded regardless
-# of conversation length. MUST stay even: history is always an even-length, strictly alternating
-# [user, assistant, user, assistant, ...] sequence (built by appending pairs client-side), and
-# slicing an even count off an even-length alternating sequence preserves that alternation — an
-# odd cap would desync roles.
 MAX_HISTORY_MESSAGES = 20
 
 
@@ -61,6 +55,29 @@ def _build_messages(
     return messages
 
 
+def _citation_prefix(metadata: dict) -> str:
+    """Builds a "[Section 2.2.6, p.14-16]"-style prefix from a node's metadata, so the model
+    can follow the system prompt's "cite source" instruction. All fields optional. Nodes
+    ReferenceExpander pulled in (metadata["is_expansion"]) get a distinct label."""
+    section = metadata.get("section_number")
+    if not section:
+        return ""
+
+    label = "Section référencée" if metadata.get("is_expansion") else "Section"
+    parts = [f"{label} {section}"]
+
+    page_start = metadata.get("page_start")
+    page_end = metadata.get("page_end")
+    if page_start is not None:
+        parts.append(f"p.{page_start}" if page_end in (None, page_start) else f"p.{page_start}-{page_end}")
+
+    return f"[{', '.join(parts)}] "
+
+
+def _format_context_entry(n: NodeWithScore) -> str:
+    return _citation_prefix(n.node.metadata) + n.node.get_content(metadata_mode=MetadataMode.NONE)
+
+
 def _extract_content(response: ChatResponse) -> str:
     content = response.message.content
     if content is None:
@@ -75,14 +92,14 @@ class RAMQManualQueryEngine(CustomQueryEngine):
 
     def custom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
         nodes = self.retriever.retrieve(query_str)
-        context_str = "\n\n".join([n.node.get_content() for n in nodes])
+        context_str = "\n\n".join(_format_context_entry(n) for n in nodes)
         messages = _build_messages(query_str, context_str, chat_history)
         response = self.llm.chat(messages)
         return _extract_content(response)
 
     async def acustom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
         nodes = await self.retriever.aretrieve(query_str)
-        context_str = "\n\n".join([n.node.get_content() for n in nodes])
+        context_str = "\n\n".join(_format_context_entry(n) for n in nodes)
         messages = _build_messages(query_str, context_str, chat_history)
         response = await self.llm.achat(messages)
         return _extract_content(response)

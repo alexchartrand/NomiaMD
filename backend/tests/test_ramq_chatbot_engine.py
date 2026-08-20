@@ -201,6 +201,56 @@ async def test_acustom_query_threads_chat_history_same_as_sync():
     assert "Query: Et pour un enfant?" in messages[3].content
 
 
+# -- citation prefixes (section/page metadata attached by ramq-ingestion, and by
+# ReferenceExpander on reference-pulled-in nodes) ------------------------------------------
+
+
+def _node_with_metadata(text: str, metadata: dict) -> NodeWithScore:
+    return NodeWithScore(node=TextNode(text=text, metadata=metadata), score=1.0)
+
+
+def test_context_entry_is_prefixed_with_section_and_page_when_present():
+    spy = _SpyLLM()
+    node = _node_with_metadata("Texte", {"section_number": "2.2.6", "page_start": 14, "page_end": 16})
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([node]), llm=spy)
+
+    engine.custom_query("Ma question")
+
+    context = spy.message_lists[0][-1].content
+    assert "[Section 2.2.6, p.14-16] Texte" in context
+
+
+def test_context_entry_omits_page_range_when_page_start_equals_page_end():
+    spy = _SpyLLM()
+    node = _node_with_metadata("Texte", {"section_number": "2.2.6", "page_start": 14, "page_end": 14})
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([node]), llm=spy)
+
+    engine.custom_query("Ma question")
+
+    assert "[Section 2.2.6, p.14] Texte" in spy.message_lists[0][-1].content
+
+
+def test_expansion_node_gets_a_distinct_citation_label():
+    spy = _SpyLLM()
+    node = _node_with_metadata("Texte", {"section_number": "2.2.6", "is_expansion": True})
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([node]), llm=spy)
+
+    engine.custom_query("Ma question")
+
+    assert "[Section référencée 2.2.6] Texte" in spy.message_lists[0][-1].content
+
+
+def test_context_entry_with_no_metadata_falls_back_to_bare_text():
+    # Regression guard: test_joins_retrieved_node_texts_into_context (above) asserts the exact
+    # substring "Texte A\n\nTexte B" — a node with no citation metadata must render unprefixed.
+    spy = _SpyLLM()
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Texte")]), llm=spy)
+
+    engine.custom_query("Ma question")
+
+    assert spy.message_lists[0][-1].content.count("[") == 0
+
+
 async def test_acustom_query_truncates_chat_history_same_as_sync():
     spy = _SpyLLM()
     engine = RAMQManualQueryEngine(retriever=_StubRetriever([_node("Contexte")]), llm=spy)
