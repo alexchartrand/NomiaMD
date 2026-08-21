@@ -41,6 +41,9 @@
 
 ## 🧹 Cleanup / Dead code
 
+- [ ] 🟢 Remove `MISTRAL_EMBEDDING_MODEL` from `.env` — *added 8/21*
+  - `config.py`'s `mistral_embedding_model` reads it from env and `embedings.py` passes it straight to `MistralAIEmbedding`, but it must always match whatever model ramq-ingestion used to embed the `code-embeddings`/`documents-embeddings` LanceDB tables (`mistral-embed`) — changing it doesn't degrade gracefully, it silently breaks retrieval (embedding-space mismatch). Extraction's model name is already hardcoded as `MODEL` in `app/extraction/engine.py`; this should be too, rather than exposed as an operator-configurable env var.
+
 - [ ] 🟢 Unused dependency: pandas — *added 8/19, from codebase audit*
   - Declared in `backend/pyproject.toml`; zero imports anywhere in `app/`, `scripts/`, or `tests/`.
 
