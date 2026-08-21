@@ -20,6 +20,7 @@ ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1
 WORKDIR /app
 COPY app ./app
+COPY scripts ./scripts
 USER appuser
 
 EXPOSE 8000
