@@ -49,8 +49,8 @@ code changed, not the RAMQ data.
 ## 3. Deploy the new version to the server
 
 ```bash
-ssh user@nomiamd-server
-cd nomiamd
+ssh user@nomiamd.com
+cd /opt/nomiamd/NomiaMD/
 git fetch --tags
 git checkout vX.Y.Z
 docker compose up --build -d
@@ -68,17 +68,3 @@ docker compose exec backend python scripts/create_user.py \
 ```
 
 It prompts for a password interactively (never pass it as a CLI arg).
-
-## Known, deliberately-accepted gaps for this demo
-
-- **No backup of the `postgres_data` volume.** Fine for a short-lived demo
-  seeded with synthetic data; take a manual `pg_dump` first if that stops
-  being true.
-- **No purge/retention policy on `extraction_records`** (stores each
-  transcript + result). Acceptable for demoing with the synthetic notes in
-  `consultations/`; revisit before this ever touches real patient data
-  (Law 25).
-- **Docker's default `json-file` log driver has no rotation.** Not a concern
-  at demo traffic/duration; add `logging: driver: json-file, options:
-  {max-size: 10m, max-file: "3"}` per service if this runs long enough to
-  matter.

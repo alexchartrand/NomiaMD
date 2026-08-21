@@ -10,6 +10,15 @@
 
 ## 🐛 Bugs
 
+- [ ] 🟡 No purge/retention policy on `extraction_records` — *added 8/21, moved from DEPLOY.md*
+  - Stores each transcript + result indefinitely. Acceptable while demoing with the synthetic notes in `consultations/`; must revisit before this ever touches real patient data (Law 25).
+
+- [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
+  - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
+
+- [ ] 🟢 Docker's default `json-file` log driver has no rotation — *added 8/21, moved from DEPLOY.md*
+  - Not a concern at demo traffic/duration. Add `logging: driver: json-file, options: {max-size: 10m, max-file: "3"}` per service in `docker-compose.yml` if this runs long enough to matter.
+
 - [ ] 🔴 Vector search blocks the event loop — *added 8/19, from codebase audit*
   - `LanceDBVectorStore` has no `aquery` override, so both retrievers' `_aretrieve` (`ramq_codes/retriever.py`, `ramq_chatbot/retriever.py`) fall back to the sync `.retrieve()` call under the hood. Every concurrent physician's request stalls the single event loop for the duration of the native call.
   - Fix: wrap the sync query in `run_in_threadpool`, or move to an async-native vector store call path.
@@ -38,6 +47,7 @@
 
 ## ✨ Features
 
+- [ ] 🟡 Add a logger for production — *added 8/21*
 
 ## 🧹 Cleanup / Dead code
 
