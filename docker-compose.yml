@@ -47,6 +47,7 @@ services:
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
       RAMQ_CHATBOT_DB_PATH: /data/ramq-chatbot-lancedb
+      SAMPLE_PATIENTS_DIR: /consultations
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
@@ -64,6 +65,10 @@ services:
       # .env.example.
       - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
       - ${RAMQ_CHATBOT_LANCEDB_PATH}:/data/ramq-chatbot-lancedb:ro
+      # consultations/ is a repo-root directory, outside this service's build context
+      # (./backend), so it can't be baked into the image via COPY — bind-mounted instead.
+      # See SAMPLE_PATIENTS_DIR in app/sample_patients.py.
+      - ./consultations:/consultations:ro
     depends_on:
       postgres:
         condition: service_healthy

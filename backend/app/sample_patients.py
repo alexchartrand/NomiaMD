@@ -6,15 +6,23 @@ realistic) patient data.
 
 SAMPLE_PATIENTS_DIR defaults to consultations/ at the repo root — one freeform,
 French-language clinical note per file (`README.md` and `all_notes.md` in that directory
-are skipped). Override it to point at a different directory of files in the same format.
+are skipped). Override with the SAMPLE_PATIENTS_DIR env var to point at a different
+directory of files in the same format — needed under Docker, where the backend image's
+build context is backend/ only, so consultations/ (a repo-root directory) isn't in the
+image and has to be bind-mounted instead (see docker-compose.yml).
 """
 
+import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-SAMPLE_PATIENTS_DIR = Path(__file__).parent.parent.parent / "consultations"
+SAMPLE_PATIENTS_DIR = (
+    Path(os.environ["SAMPLE_PATIENTS_DIR"])
+    if os.environ.get("SAMPLE_PATIENTS_DIR")
+    else Path(__file__).parent.parent.parent / "consultations"
+)
 
 _SKIP_STEMS = {"README", "all_notes"}
 
