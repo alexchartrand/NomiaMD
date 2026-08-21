@@ -11,6 +11,7 @@ networks:
 services:
   postgres:
     image: postgres:16-alpine
+    container_name: postgres
     environment:
       POSTGRES_DB: nomiamd
       POSTGRES_USER: nomiamd
@@ -26,6 +27,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: redis
     volumes:
       - redis_data:/data
     networks: [internal]
@@ -38,12 +40,14 @@ services:
   backend:
     build:
       context: ./backend
+    container_name: backend
     networks: [internal]
     environment:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
       RAMQ_CHATBOT_DB_PATH: /data/ramq-chatbot-lancedb
+      SAMPLE_PATIENTS_DIR: /consultations
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
@@ -61,6 +65,10 @@ services:
       # .env.example.
       - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
       - ${RAMQ_CHATBOT_LANCEDB_PATH}:/data/ramq-chatbot-lancedb:ro
+      # consultations/ is a repo-root directory, outside this service's build context
+      # (./backend), so it can't be baked into the image via COPY — bind-mounted instead.
+      # See SAMPLE_PATIENTS_DIR in app/sample_patients.py.
+      - ./consultations:/consultations:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -76,6 +84,7 @@ services:
   frontend:
     build:
       context: ./frontend
+    container_name: frontend
     environment:
       ALLOWED_CIDRS: ${ALLOWED_CIDRS}
     networks:
@@ -92,6 +101,7 @@ services:
   # addresses; caddy_data is where it persists the ACME account + certs across restarts.
   caddy:
     image: caddy:2-alpine
+    container_name: caddy
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
