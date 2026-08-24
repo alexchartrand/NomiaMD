@@ -12,16 +12,19 @@ from fastapi.testclient import TestClient
 
 import fake_llm_server
 
+from app.summary import ConsultationSummaryResult
+from app.summary.task import SYSTEM_PROMPT as SUMMARY_SYSTEM_PROMPT
+
 client = TestClient(fake_llm_server.app)
 
 
-def _request_body(user_message: str) -> dict:
+def _request_body(user_message: str, system_message: str = "system prompt") -> dict:
     # content-as-list-of-chunks, matching what the Mistral client (llama_index's
     # MistralAI) actually sends over the wire — see fake_llm_server._content_to_text.
     return {
         "model": "fake-llm",
         "messages": [
-            {"role": "system", "content": [{"type": "text", "text": "system prompt"}]},
+            {"role": "system", "content": [{"type": "text", "text": system_message}]},
             {"role": "user", "content": [{"type": "text", "text": user_message}]},
         ],
     }
@@ -54,6 +57,37 @@ def test_no_candidates_returns_empty_codes_with_note():
     content = json.loads(response.json()["choices"][0]["message"]["content"])
     assert content["codes"] == []
     assert content["notes"]
+
+
+def test_consultation_summary_request_echoes_header_fields_as_valid_result():
+    transcript = (
+        "**Patient :** Desjardins, Roch — 45 ans (H)\n"
+        "**NAM :** DESR81021001\n"
+        "**Dossier :** #CLI-2026-01220\n"
+        "**Date/heure :** 10 février 2026, 09h15\n"
+    )
+    user_message = f"Transcript:\n{transcript}\n\nExtract the structured facts per your instructions."
+
+    response = client.post(
+        "/v1/chat/completions", json=_request_body(user_message, system_message=SUMMARY_SYSTEM_PROMPT)
+    )
+    assert response.status_code == 200
+
+    content = json.loads(response.json()["choices"][0]["message"]["content"])
+    # Must parse as a real ConsultationSummaryResult — this is what run_extraction() feeds
+    # ConsultationSummaryTask.parse() with.
+    result = ConsultationSummaryResult.model_validate(content)
+
+    assert result.patient_information.name_as_stated == "Desjardins, Roch"
+    assert result.patient_information.ramq_number_as_stated == "DESR81021001"
+    assert result.patient_information.age_years == 45
+    assert result.encounter_setting.date == "10 février 2026"
+
+
+def test_billing_codes_request_is_not_misdetected_as_consultation_summary():
+    from app.ramq_codes.task import SYSTEM_PROMPT as BILLING_SYSTEM_PROMPT
+
+    assert not fake_llm_server._is_consultation_summary_request(BILLING_SYSTEM_PROMPT)
 
 
 def test_models_endpoint():
