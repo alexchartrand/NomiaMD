@@ -154,3 +154,23 @@ def test_render_for_billing_codes_includes_procedure_and_pregnancy_lines():
     assert "Grossesse" in rendered and "beyond_first" in rendered
     assert "Suture d'une plaie de 3 cm" in rendered
     assert "avant-bras gauche" in rendered
+
+
+def test_name_and_nam_present_on_parsed_result_but_stripped_from_billing_rendering():
+    data = {
+        **MOCK_RESULT,
+        "patient_information": {
+            **MOCK_RESULT["patient_information"],
+            "name_as_stated": "Desjardins, Roch",
+            "ramq_number_as_stated": "DESR 8102 1001",
+        },
+    }
+    summary = ConsultationSummaryResult.model_validate(data)
+
+    assert summary.patient_information.name_as_stated == "Desjardins, Roch"
+    assert summary.patient_information.ramq_number_as_stated == "DESR 8102 1001"
+
+    rendered = render_for_billing_codes(summary)
+    assert "Desjardins" not in rendered
+    assert "DESR" not in rendered
+    assert "8102" not in rendered

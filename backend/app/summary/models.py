@@ -88,7 +88,12 @@ class EncounterSetting(BaseModel):
         json_schema_extra={"fr_label": "Lieu (détail)"},
     )
     date: str | None = Field(
-        default=None, description="ISO date if stated, else null", json_schema_extra={"fr_label": "Date"}
+        default=None,
+        description=(
+            "ISO 8601 date (YYYY-MM-DD) if the note states one — convert French dates such as "
+            "'10 février 2026' to 2026-02-10; else null"
+        ),
+        json_schema_extra={"fr_label": "Date"},
     )
     time_start: str | None = Field(
         default=None, description="HH:MM if stated, else null", json_schema_extra={"fr_label": "Heure de début"}
@@ -116,6 +121,25 @@ class PatientInformation(BaseModel):
     age_months_if_infant: float | None = Field(default=None, json_schema_extra={"fr_label": "Âge (mois)"})
     sex_if_stated: str | None = Field(
         default=None, description="Free text or null", json_schema_extra={"fr_label": "Sexe"}
+    )
+    name_as_stated: str | None = Field(
+        default=None,
+        description=(
+            "The patient's full name exactly as written in the note, in the order it appears "
+            "(e.g. 'Desjardins, Roch'). Do not reorder, expand, or clean it. null if the note "
+            "never names the patient."
+        ),
+        json_schema_extra={"fr_label": "Nom du patient"},
+    )
+    ramq_number_as_stated: str | None = Field(
+        default=None,
+        description=(
+            "The patient's RAMQ health insurance number (NAM / numéro d'assurance maladie) "
+            "exactly as written, e.g. 'DESR 8102 1001' — 4 letters followed by 8 digits, "
+            "sometimes spaced or hyphenated. null if the note does not state one. Never infer "
+            "it from the name or from a chart/dossier number."
+        ),
+        json_schema_extra={"fr_label": "NAM"},
     )
     pregnancy_context: PregnancyContext
     relevant_vulnerability_or_context_mentioned: list[str] = Field(

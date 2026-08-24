@@ -71,8 +71,25 @@ def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
     app/tasks/schema.py — and driven by the fr_label/description metadata on
     ConsultationSummaryResult's fields in app/summary/models.py, so a schema change
     here doesn't require touching this function.
+
+    Strips the patient's name and NAM first: this rendering is both the retrieval query and
+    the grounding text for billing_codes' supporting_quote, so the identity fields must never
+    reach that prompt — sanitized here at the boundary rather than via a generic opt-out flag
+    on the shared schema renderer, since the rule is "billing_codes must not see identity",
+    not "these fields are never renderable" (a future "voir le résumé extrait" view still
+    should). Stripping the NAM matters most: it's a direct patient identifier that would
+    otherwise be sent to the embedding endpoint as part of the retrieval query on every
+    extraction.
     """
-    return render_instance(result)
+    return render_instance(
+        result.model_copy(
+            update={
+                "patient_information": result.patient_information.model_copy(
+                    update={"name_as_stated": None, "ramq_number_as_stated": None}
+                )
+            }
+        )
+    )
 
 
 class ConsultationSummaryTask(ExtractionTask):
