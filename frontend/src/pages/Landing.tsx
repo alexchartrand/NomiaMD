@@ -5,17 +5,17 @@ const FEATURES = [
   {
     icon: IconExtract,
     title: "Extraire des codes de facturation",
-    body: "Accélérer votre processus de facturation et ne manquez plus aucun code. NomiaMD utilise l'intelligence artificielle pour extraire les codes de facturation de vos consultations",
+    body: "Accélérez votre processus de facturation et ne manquez plus aucun code. NomiaMD utilise l'intelligence artificielle pour extraire les codes de facturation de vos consultations",
   },
   {
     icon: IconChat,
     title: "Posez des questions de facturation",
-    body: "NomiaMD vous offre un clavardage automatisé spécialiste en facturation RAMQ qui s'adapte à votre situation particulière.",
+    body: "Grâce à l'IA, NomiaMD vous offre un clavardage automatisé spécialisé en facturation RAMQ.",
   },
   {
     icon: IconShield,
     title: "Facturation à la RAMQ",
-    body: "Tout est automatisé pour vous simplifiez la vie et mettre vos efforts là où ça compte vraiement. NomiaMD s'occupe de la génération automatique de vos factures.",
+    body: "Tout est automatisé pour vous simplifier la vie et mettre vos efforts là où ça compte vraiment. NomiaMD s’occupe de générer automatiquement les factures.",
   },
 ];
 
@@ -60,12 +60,12 @@ export default function Landing() {
             <div className="landing-hero-copy">
               <span className="landing-eyebrow">Ébauche &mdash; médecins</span>
               <h1>
-                Un processus de facturation simplifié grâce à l&rsquo;IA.
+                Un processus de facturation simplifié grâce à l&rsquo;IA
               </h1>
               <p className="lede">
-                NomiaMD vous permez d&rsquo;automatiser votre facturation grâce à l&rsquo;extraction des codes de
+                NomiaMD vous permet d&rsquo;automatiser votre facturation grâce à l&rsquo;extraction des codes de
                 facturation RAMQ provenant d&rsquo;une note de consultation. L&rsquo;IA vous fait sauver du temps et 
-                de l&rsquo;argent en simplifiant et optimisant votre facturation.
+                de l&rsquo;argent en simplifiant et en optimisant votre facturation.
               </p>
               <div className="landing-hero-actions">
                 <Link to="/login">
