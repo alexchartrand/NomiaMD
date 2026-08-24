@@ -10,6 +10,18 @@
 
 ## 🐛 Bugs
 
+- [ ] 🟡 NAM matching scans the whole roster instead of an indexed lookup — *added 8/24, from billing-workflow code review*
+  - `PatientSuggestionService._match` (`app/patients/suggestion.py`) calls `list_for_physician` and filters for a NAM match in Python, on every `/extract` call. `PatientRepository` has no `find_by_ramq(physician_id, nam)`. Fine at demo scale; a physician with hundreds of roster patients pays for the full roster transfer/deserialization just to find at most one match, on a rate-limited hot path.
+
+- [ ] 🟢 No unique constraint on `(physician_id, ramq_number)` on `patients` — *added 8/24, from billing-workflow code review*
+  - Soft-deleting a patient and re-adding the same NAM (or a data-entry duplicate) creates two roster rows sharing a NAM. `PatientSuggestionService._match` already degrades gracefully (logs a warning, treats it as no match) rather than crashing or guessing, but the duplicate itself is never surfaced to the physician as a data-integrity problem.
+
+- [ ] 🟢 Slash-date parsing assumes `DD/MM/YYYY`, would misparse an Epic-style `MM/DD/YYYY` note — *added 8/24, from billing-workflow code review*
+  - `app/extraction/encounter_date.py`'s `_SLASH_DATE_RE` always reads `d/m/y`. Harmless today (Epic/Plume AI sources are still disabled buttons in the UI, and Quebec notes use `DD/MM/YYYY`), but once a US-market EHR source is wired up, a date like "03/04/2026" would silently parse as March 4 instead of April 3 for any day/month both ≤ 12 — no error, just a silently wrong `encounter_date`. Revisit once a real `source.system` other than `simule` sends dates.
+
+- [ ] 🟢 Facturation's patient filter can't select a soft-deleted patient — *added 8/24, from billing-workflow code review*
+  - `BillingRecordRepository.list_for_physician` deliberately doesn't filter `is_deleted` (a deleted patient's past billing records must keep showing their name), but `FacturationPage.tsx`'s patient filter dropdown is populated from `listPatients()`, which does filter it out — so there's no way to filter the list down to just that patient's records once they've left the roster. Minor; the "all patients" view still shows them.
+
 - [ ] 🔴 No purge/retention policy on `extraction_records` — *added 8/21, moved from DEPLOY.md, escalated 8/24*
   - Stores each transcript + result indefinitely. Acceptable while demoing with the synthetic notes in `consultations/`; must revisit before this ever touches real patient data (Law 25).
   - Escalated: `extraction_records.result_json` now holds the patient's name **and NAM** as discrete, greppable fields (`patient_information.name_as_stated`/`ramq_number_as_stated`, billing-workflow plan Part 1) — a NAM is a direct government identifier, which makes this materially more pressing than before.
@@ -60,6 +72,16 @@
   - Fixed: `app/logging_config.py` configures stdlib `logging` to emit one JSON line per event to stdout (same shape as `app/request_logging.py`'s existing per-request access log), wired at startup in `app/main.py`. Added `logger` calls at the silent-failure spots worth surfacing: `CodeTable.get_all` (`app/lancedb/db.py`) now warns on candidate numbers with no matching `codes` row (stale index), `AuthService.login` (`app/auth/service.py`) now logs failed/successful login attempts, and `RequestLoggingMiddleware` now logs unhandled exceptions with the same `request_id` as its access-log line before re-raising.
 
 ## 🧹 Cleanup / Dead code
+
+- [ ] 🟢 Ownership/soft-delete guard copy-pasted across repository methods — *added 8/24, from billing-workflow code review*
+  - `if patient is None or patient.physician_id != physician_id or patient.is_deleted: return None/False` is typed out identically in `PatientRepository.get_for_physician`/`update_for_physician`/`delete_for_physician`, and the analogous `record is None or record.physician_id != physician_id` check appears three more times in `BillingRecordRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means finding and updating all six copies by hand.
+
+- [ ] 🟢 `patients/router.py` and `PatientSuggestionService`'s construction skip the factory/`Depends` DI pattern — *added 8/24, from billing-workflow code review*
+  - `billing/factory.py` and `auth/factory.py` both expose a `get_*_service()` wired via FastAPI `Depends`, but `patients/router.py` instantiates `PatientRepository()` inline in every handler (no `patients/factory.py`), and `extraction/router.py` does the same for `PatientSuggestionService()`. Not a bug, just an inconsistent seam — swapping or mocking either at the dependency layer (the way tests already do for `BillingService`) isn't possible without editing the router directly.
+
+- [ ] 🟢 A few independent DB round trips are awaited sequentially instead of concurrently — *added 8/24, from billing-workflow code review*
+  - `BillingService.create` (`app/billing/service.py`) awaits the patient/extraction/duplicate-check lookups one at a time even though none depends on another's result; `extraction/router.py`'s `create_many(...)` and `_build_patient_suggestion(...)` are similarly independent. `asyncio.gather` would roughly halve the added latency on both the extraction and billing-save hot paths. Not measured against real Postgres latency — worth profiling before spending effort here.
+  - Related: `BillingService.update_status` re-fetches the record it just updated via a second full query (`update_status_for_physician` + `get_for_physician`) instead of having the update return the same detail shape directly.
 
 - [ ] 🟢 Remove `MISTRAL_EMBEDDING_MODEL` from `.env` — *added 8/21*
   - `config.py`'s `mistral_embedding_model` reads it from env and `embedings.py` passes it straight to `MistralAIEmbedding`, but it must always match whatever model ramq-ingestion used to embed the `code-embeddings`/`documents-embeddings` LanceDB tables (`mistral-embed`) — changing it doesn't degrade gracefully, it silently breaks retrieval (embedding-space mismatch). Extraction's model name is already hardcoded as `MODEL` in `app/extraction/engine.py`; this should be too, rather than exposed as an operator-configurable env var.
