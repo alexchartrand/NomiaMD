@@ -9,6 +9,7 @@ from app.config import settings
 from app.extraction import extraction_router
 from app.logging_config import configure_logging
 from app.models import SamplePatientDetail, SamplePatientSummary
+from app.patients import patients_router
 from app.postgresdb import init_db
 from app.ramq_chatbot import ramq_chatbot_router
 from app.rate_limit import limiter
@@ -31,6 +32,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # ty
 app.add_middleware(RequestLoggingMiddleware)
 app.include_router(auth_router)
 app.include_router(extraction_router)
+app.include_router(patients_router)
 app.include_router(ramq_chatbot_router)
 
 
@@ -40,21 +42,23 @@ def health() -> dict:
     return {"status": "ok", "tasks": available_tasks()}
 
 
-@app.get("/patients", response_model=list[SamplePatientSummary], dependencies=[Depends(get_current_user)])
+@app.get(
+    "/sample-patients", response_model=list[SamplePatientSummary], dependencies=[Depends(get_current_user)]
+)
 # Lists the synthetic demo patients from consultations/, for the frontend's patient picker.
-def list_patients() -> list[SamplePatientSummary]:
+def list_sample_patients_endpoint() -> list[SamplePatientSummary]:
     return [
         SamplePatientSummary(id=p.id, label=p.label) for p in get_sample_patients()
     ]
 
 
 @app.get(
-    "/patients/{patient_id}",
+    "/sample-patients/{patient_id}",
     response_model=SamplePatientDetail,
     dependencies=[Depends(get_current_user)],
 )
 # Fetches one demo patient's full transcript by id; 404 if the id doesn't match a file in consultations/.
-def get_patient(patient_id: str) -> SamplePatientDetail:
+def get_sample_patient_endpoint(patient_id: str) -> SamplePatientDetail:
     patient = get_sample_patient(patient_id)
     if patient is None:
         raise HTTPException(

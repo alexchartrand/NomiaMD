@@ -16,6 +16,7 @@ export default function AppLayout() {
       <Sidebar>
         <NavItem to="/app/extraction">Extraction de codes</NavItem>
         <NavItem to="/app/chat">Clavardage</NavItem>
+        <NavItem to="/app/patients">Patients</NavItem>
         <NavItem to="/app/profile">Profil</NavItem>
         <SidebarFooter>
           {user && <span className="sidebar-user">{user.full_name}</span>}

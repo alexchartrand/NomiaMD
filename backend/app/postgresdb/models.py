@@ -2,9 +2,9 @@
 ExtractionRepository), not here."""
 
 import enum
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.postgresdb.database import Base
@@ -42,6 +42,39 @@ class User(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class Gender(str, enum.Enum):
+    """Placeholder list — refine once the exact set needed is confirmed."""
+
+    MALE = "M"
+    FEMALE = "F"
+    OTHER = "Autre"
+
+
+class Patient(Base):
+    """A physician's own patient roster — distinct from sample_patients.py's synthetic
+    demo transcripts. Holds administrative facts (registration status, vulnerability) that
+    billing_codes needs but can never derive from a transcript (see CLAUDE.md)."""
+
+    __tablename__ = "patients"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    full_name: Mapped[str] = mapped_column(String(255))
+    ramq_number: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    date_of_birth: Mapped[date] = mapped_column(Date)
+    gender: Mapped[Gender | None] = mapped_column(Enum(Gender), nullable=True)
+    is_registered_with_physician: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_vulnerable: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
 
 
 class ExtractionRecord(Base):

@@ -145,6 +145,17 @@ h2 {
   color: var(--color-text);
 }
 
+.btn-danger {
+  background: transparent;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
 /* ---------- Card ---------- */
 .card {
   background: var(--color-surface);
@@ -286,6 +297,11 @@ label {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   color: var(--color-primary);
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 /* ---------- Shared page chrome ---------- */

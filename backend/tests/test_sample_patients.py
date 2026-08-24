@@ -29,7 +29,7 @@ def test_get_sample_patient_unknown_id_returns_none():
 
 def test_list_patients_endpoint():
     with TestClient(app) as client:
-        response = client.get("/patients")
+        response = client.get("/sample-patients")
     assert response.status_code == 200
     body = response.json()
     assert len(body) == 25
@@ -38,7 +38,7 @@ def test_list_patients_endpoint():
 
 def test_get_patient_endpoint():
     with TestClient(app) as client:
-        response = client.get("/patients/URG-2026-04471")
+        response = client.get("/sample-patients/URG-2026-04471")
     assert response.status_code == 200
     body = response.json()
     assert body["id"] == "URG-2026-04471"
@@ -47,5 +47,5 @@ def test_get_patient_endpoint():
 
 def test_get_patient_endpoint_404():
     with TestClient(app) as client:
-        response = client.get("/patients/does-not-exist")
+        response = client.get("/sample-patients/does-not-exist")
     assert response.status_code == 404

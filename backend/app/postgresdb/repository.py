@@ -3,13 +3,13 @@ owning its own session/query handling."""
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Sequence
 
 from sqlalchemy import select
 
 from app.postgresdb.database import async_session
-from app.postgresdb.models import ExtractionRecord, User, UserRole
+from app.postgresdb.models import ExtractionRecord, Gender, Patient, User, UserRole
 
 
 class UserRepository:
@@ -80,6 +80,83 @@ class UserRepository:
             if user is not None:
                 user.hashed_password = hashed_password
                 await session.commit()
+
+
+class PatientRepository:
+    async def list_for_physician(self, physician_id: int) -> Sequence[Patient]:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Patient).where(Patient.physician_id == physician_id).order_by(Patient.full_name)
+            )
+            return result.scalars().all()
+
+    async def create(
+        self,
+        *,
+        physician_id: int,
+        full_name: str,
+        ramq_number: str | None,
+        date_of_birth: date,
+        gender: Gender | None,
+        is_registered_with_physician: bool,
+        is_vulnerable: bool,
+    ) -> Patient:
+        async with async_session() as session:
+            patient = Patient(
+                physician_id=physician_id,
+                full_name=full_name,
+                ramq_number=ramq_number,
+                date_of_birth=date_of_birth,
+                gender=gender,
+                is_registered_with_physician=is_registered_with_physician,
+                is_vulnerable=is_vulnerable,
+            )
+            session.add(patient)
+            await session.commit()
+            await session.refresh(patient)
+            return patient
+
+    async def get_for_physician(self, patient_id: int, physician_id: int) -> Patient | None:
+        async with async_session() as session:
+            patient = await session.get(Patient, patient_id)
+            if patient is None or patient.physician_id != physician_id:
+                return None
+            return patient
+
+    async def update_for_physician(
+        self,
+        patient_id: int,
+        physician_id: int,
+        *,
+        full_name: str,
+        ramq_number: str | None,
+        date_of_birth: date,
+        gender: Gender | None,
+        is_registered_with_physician: bool,
+        is_vulnerable: bool,
+    ) -> Patient | None:
+        async with async_session() as session:
+            patient = await session.get(Patient, patient_id)
+            if patient is None or patient.physician_id != physician_id:
+                return None
+            patient.full_name = full_name
+            patient.ramq_number = ramq_number
+            patient.date_of_birth = date_of_birth
+            patient.gender = gender
+            patient.is_registered_with_physician = is_registered_with_physician
+            patient.is_vulnerable = is_vulnerable
+            await session.commit()
+            await session.refresh(patient)
+            return patient
+
+    async def delete_for_physician(self, patient_id: int, physician_id: int) -> bool:
+        async with async_session() as session:
+            patient = await session.get(Patient, patient_id)
+            if patient is None or patient.physician_id != physician_id:
+                return False
+            await session.delete(patient)
+            await session.commit()
+            return True
 
 
 @dataclass

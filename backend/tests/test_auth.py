@@ -109,7 +109,7 @@ async def test_protected_route_without_cookie_returns_401():
     _drop_auth_override()
 
     with TestClient(app) as client:
-        response = client.get("/patients")
+        response = client.get("/sample-patients")
 
     assert response.status_code == 401
 
