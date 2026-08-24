@@ -18,6 +18,8 @@
   --color-danger: #d98f86;
   --color-warning-bg: rgba(240, 196, 138, 0.16);
   --color-warning-text: #8a5a1a;
+  --color-success-bg: rgba(107, 163, 97, 0.16);
+  --color-success-text: #3f6b35;
   --color-primary-tint: rgba(27, 94, 111, 0.08);
 
   --font-display: "Bricolage Grotesque", -apple-system, "Segoe UI", system-ui, sans-serif;
@@ -38,6 +40,8 @@
     --color-danger: #c48e88;
     --color-warning-bg: rgba(217, 179, 132, 0.18);
     --color-warning-text: #d9b384;
+    --color-success-bg: rgba(129, 179, 118, 0.18);
+    --color-success-text: #9bc98d;
     --color-primary-tint: rgba(79, 163, 181, 0.14);
   }
 }
@@ -207,6 +211,11 @@ label {
 .banner-warning {
   background: var(--color-warning-bg);
   color: var(--color-warning-text);
+}
+
+.banner-success {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 /* ---------- Spinner ---------- */

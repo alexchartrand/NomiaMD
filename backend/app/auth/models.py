@@ -1,8 +1,8 @@
 """Auth request/response models — same style as app/models.py."""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from app.postgresdb import UserRole
+from app.postgresdb import PhysicianType, UserRole
 
 
 class LoginRequest(BaseModel):
@@ -21,3 +21,14 @@ class UserOut(BaseModel):
     number_of_patients: int | None
 
     model_config = {"from_attributes": True}
+
+
+class ProfileUpdateRequest(BaseModel):
+    full_name: str
+    physician_type: PhysicianType | None = None
+    number_of_patients: int | None = Field(default=None, ge=0)
+
+
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8)

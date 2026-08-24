@@ -55,6 +55,32 @@ class UserRepository:
                 user.last_login_at = datetime.now(timezone.utc)
                 await session.commit()
 
+    async def update_profile(
+        self,
+        user_id: int,
+        *,
+        full_name: str,
+        physician_type: str | None,
+        number_of_patients: int | None,
+    ) -> User | None:
+        async with async_session() as session:
+            user = await session.get(User, user_id)
+            if user is None:
+                return None
+            user.full_name = full_name
+            user.physician_type = physician_type
+            user.number_of_patients = number_of_patients
+            await session.commit()
+            await session.refresh(user)
+            return user
+
+    async def update_password_hash(self, user_id: int, hashed_password: str) -> None:
+        async with async_session() as session:
+            user = await session.get(User, user_id)
+            if user is not None:
+                user.hashed_password = hashed_password
+                await session.commit()
+
 
 @dataclass
 class ExtractionRecordInput:

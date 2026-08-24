@@ -13,6 +13,7 @@ from app.auth import get_current_user  # noqa: E402
 from app.postgresdb import User, UserRole  # noqa: E402
 from app.main import app  # noqa: E402
 from app.ramq_codes.models import Code, CodeFee  # noqa: E402
+from app.rate_limit import limiter  # noqa: E402
 from app.tasks.registry import get_task  # noqa: E402
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
@@ -112,6 +113,17 @@ def no_real_api_keys(monkeypatch):
     test path bypassed it."""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limits():
+    """slowapi's in-process storage (used whenever REDIS_URL is unset, as in tests) is a
+    process-wide singleton keyed by client address — without a reset, login-heavy tests in
+    test_auth.py would accumulate hits against each other and trip /auth/login's and
+    /auth/me/password's 10/minute caps well before either test file's own request count
+    would otherwise warrant it."""
+    limiter.reset()
+    yield
 
 
 @pytest.fixture(autouse=True)

@@ -6,6 +6,7 @@ import Contact from "./pages/Contact";
 import AppLayout from "./pages/app/AppLayout";
 import ExtractionPage from "./pages/app/ExtractionPage";
 import ChatbotPage from "./pages/app/ChatbotPage";
+import ProfilePage from "./pages/app/ProfilePage";
 import { RequireAuth } from "./AuthContext";
 
 export default function AppRouter() {
@@ -26,6 +27,7 @@ export default function AppRouter() {
         <Route index element={<Navigate to="/app/extraction" replace />} />
         <Route path="extraction" element={<ExtractionPage />} />
         <Route path="chat" element={<ChatbotPage />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>
   );

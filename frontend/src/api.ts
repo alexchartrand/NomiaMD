@@ -56,10 +56,39 @@ export interface UserOut {
   number_of_patients: number | null;
 }
 
+// Kept in sync by hand with PhysicianType in backend/app/postgresdb/models.py.
+export const PHYSICIAN_TYPES = ["Médecin de famille", "Spécialiste", "Autre"] as const;
+export type PhysicianType = (typeof PHYSICIAN_TYPES)[number];
+
+export interface ProfileUpdateRequest {
+  full_name: string;
+  physician_type: PhysicianType | null;
+  number_of_patients: number | null;
+}
+
+export interface PasswordChangeRequest {
+  current_password: string;
+  new_password: string;
+}
+
+// FastAPI's `detail` is a plain string for hand-raised HTTPExceptions (401, 400, ...) but a
+// list of { msg, loc, type } objects for Pydantic validation errors (422) — stringifying
+// that list directly (e.g. via `new Error(detail)`) collapses it to "[object Object]".
+function extractErrorDetail(body: unknown, fallback: string): string {
+  const detail = (body as { detail?: unknown } | null)?.detail;
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    return detail
+      .map((entry) => (entry && typeof entry === "object" && "msg" in entry ? String(entry.msg) : String(entry)))
+      .join(" ");
+  }
+  return fallback;
+}
+
 async function unwrap<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const body = await response.json().catch(() => ({ detail: response.statusText }));
-    throw new Error(body.detail ?? `La requête a échoué : ${response.status}`);
+    throw new Error(extractErrorDetail(body, `La requête a échoué : ${response.status}`));
   }
   return response.json();
 }
@@ -124,4 +153,27 @@ export async function getCurrentUser(): Promise<UserOut | null> {
     return null;
   }
   return unwrap<UserOut>(response);
+}
+
+export async function updateProfile(payload: ProfileUpdateRequest): Promise<UserOut> {
+  const response = await fetch("/api/auth/me", {
+    method: "PATCH",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return unwrap<UserOut>(response);
+}
+
+export async function changePassword(payload: PasswordChangeRequest): Promise<void> {
+  const response = await fetch("/api/auth/me/password", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({ detail: response.statusText }));
+    throw new Error(extractErrorDetail(body, `La requête a échoué : ${response.status}`));
+  }
 }

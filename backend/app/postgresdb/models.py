@@ -15,6 +15,14 @@ class UserRole(str, enum.Enum):
     PHYSICIAN = "physician"
 
 
+class PhysicianType(str, enum.Enum):
+    """Placeholder list — refine once the exact set of practice settings is confirmed."""
+
+    MED_FAM = "Médecin de famille"
+    SPECIALIST = "Spécialiste"
+    AUTRE = "Autre"
+
+
 class User(Base):
     """A manually-provisioned login (see scripts/create_user.py — there is no signup path).
     `is_active` lets an account be revoked instantly without deleting its history; it's

@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.auth.security import PasswordHasher
-from app.postgresdb import UserRepository, UserRole, init_db
+from app.postgresdb import PhysicianType, UserRepository, UserRole, init_db
 from app.main import app
 
 PASSWORD = "correct horse battery staple"
@@ -159,3 +159,112 @@ async def test_deactivated_user_login_logs_a_warning_with_reason(caplog):
     [record] = [r for r in caplog.records if r.name == "app.auth.service"]
     assert record.levelname == "WARNING"
     assert record.reason == "deactivated"
+
+
+async def test_update_profile_success():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        response = client.patch(
+            "/auth/me",
+            json={
+                "full_name": "Dr. Jane Doe",
+                "physician_type": PhysicianType.MED_FAM.value,
+                "number_of_patients": 500,
+            },
+        )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["full_name"] == "Dr. Jane Doe"
+    assert body["physician_type"] == PhysicianType.MED_FAM.value
+    assert body["number_of_patients"] == 500
+
+
+async def test_update_profile_negative_patient_count_returns_422():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        response = client.patch(
+            "/auth/me",
+            json={"full_name": "Dr. Doe", "physician_type": None, "number_of_patients": -1},
+        )
+
+    assert response.status_code == 422
+
+
+async def test_update_profile_invalid_physician_type_returns_422():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        response = client.patch(
+            "/auth/me",
+            json={"full_name": "Dr. Doe", "physician_type": "Not a real type", "number_of_patients": None},
+        )
+
+    assert response.status_code == 422
+
+
+async def test_update_profile_without_cookie_returns_401():
+    _drop_auth_override()
+
+    with TestClient(app) as client:
+        response = client.patch(
+            "/auth/me",
+            json={"full_name": "Dr. Doe", "physician_type": None, "number_of_patients": None},
+        )
+
+    assert response.status_code == 401
+
+
+async def test_change_password_success_allows_login_with_new_password():
+    _drop_auth_override()
+    user = await _create_user()
+    new_password = "a new correct horse battery staple"
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        change_response = client.post(
+            "/auth/me/password",
+            json={"current_password": PASSWORD, "new_password": new_password},
+        )
+        relogin_response = client.post(
+            "/auth/login", json={"email": user.email, "password": new_password}
+        )
+
+    assert change_response.status_code == 204
+    assert relogin_response.status_code == 200
+
+
+async def test_change_password_wrong_current_password_returns_400_and_leaves_password_unchanged():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        change_response = client.post(
+            "/auth/me/password",
+            json={"current_password": "not the current password", "new_password": "irrelevant new pw"},
+        )
+        relogin_response = client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+
+    assert change_response.status_code == 400
+    assert relogin_response.status_code == 200
+
+
+async def test_change_password_without_cookie_returns_401():
+    _drop_auth_override()
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/auth/me/password",
+            json={"current_password": PASSWORD, "new_password": "irrelevant new pw"},
+        )
+
+    assert response.status_code == 401

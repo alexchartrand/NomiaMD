@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.auth.dependencies import COOKIE_NAME, get_current_user
 from app.auth.factory import get_auth_service
-from app.auth.models import LoginRequest, UserOut
+from app.auth.models import LoginRequest, PasswordChangeRequest, ProfileUpdateRequest, UserOut
 from app.config import settings
 from app.postgresdb import User
 from app.rate_limit import limiter
@@ -37,3 +37,25 @@ async def logout(response: Response) -> None:
 @router.get("/me", response_model=UserOut)
 async def me(current_user: User = Depends(get_current_user)) -> User:
     return current_user
+
+
+@router.patch("/me", response_model=UserOut)
+async def update_me(body: ProfileUpdateRequest, current_user: User = Depends(get_current_user)) -> User:
+    return await get_auth_service().update_profile(
+        current_user,
+        full_name=body.full_name,
+        physician_type=body.physician_type.value if body.physician_type else None,
+        number_of_patients=body.number_of_patients,
+    )
+
+
+@router.post("/me/password", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("10/minute")
+async def change_password(
+    request: Request, body: PasswordChangeRequest, current_user: User = Depends(get_current_user)
+) -> None:
+    changed = await get_auth_service().change_password(
+        current_user, current_password=body.current_password, new_password=body.new_password
+    )
+    if not changed:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Mot de passe actuel invalide")

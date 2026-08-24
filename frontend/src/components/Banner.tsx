@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from "react";
 
-type BannerTone = "error" | "warning";
+type BannerTone = "error" | "warning" | "success";
 
 type BannerProps = HTMLAttributes<HTMLParagraphElement> & {
   tone: BannerTone;

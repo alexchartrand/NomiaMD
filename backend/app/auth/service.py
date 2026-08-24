@@ -47,3 +47,33 @@ class AuthService:
         if user is None or not user.is_active:
             return None
         return user
+
+    async def update_profile(
+        self,
+        user: User,
+        *,
+        full_name: str,
+        physician_type: str | None,
+        number_of_patients: int | None,
+    ) -> User:
+        updated = await self._users.update_profile(
+            user.id,
+            full_name=full_name,
+            physician_type=physician_type,
+            number_of_patients=number_of_patients,
+        )
+        if updated is None:
+            raise RuntimeError(f"user {user.id} vanished mid-request")
+        return updated
+
+    async def change_password(self, user: User, *, current_password: str, new_password: str) -> bool:
+        """Returns False on a wrong current password, True once the new one is persisted."""
+        if not self._hasher.verify(current_password, user.hashed_password):
+            logger.warning(
+                "Failed password change attempt",
+                extra={"email": user.email, "reason": "bad_current_password"},
+            )
+            return False
+        await self._users.update_password_hash(user.id, self._hasher.hash(new_password))
+        logger.info("Password changed", extra={"email": user.email})
+        return True
