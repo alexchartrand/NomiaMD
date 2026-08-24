@@ -4,7 +4,20 @@ ExtractionRepository), not here."""
 import enum
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.postgresdb.database import Base
@@ -95,3 +108,57 @@ class ExtractionRecord(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
+
+
+class BillingRecord(Base):
+    """One physician-confirmed billing record for an encounter, with many code lines
+    (BillingRecordCode). `status` is a plain string, not a SQLAlchemy Enum — see the note in
+    docs/plans/billing-workflow.md, Part 5: with no Alembic, adding a status value later must
+    not require an `ALTER TYPE` on the prod Postgres box, so the allowed set is enforced by a
+    Pydantic Literal at the API boundary instead."""
+
+    __tablename__ = "billing_records"
+    __table_args__ = (
+        Index("ix_billing_records_physician_service_date", "physician_id", "service_date"),
+        UniqueConstraint("billing_extraction_record_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"), index=True)
+    service_date: Mapped[date] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(16), default="brouillon")
+    source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    summary_extraction_record_id: Mapped[int | None] = mapped_column(
+        ForeignKey("extraction_records.id"), nullable=True
+    )
+    billing_extraction_record_id: Mapped[int | None] = mapped_column(
+        ForeignKey("extraction_records.id"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+
+class BillingRecordCode(Base):
+    """One selected RAMQ code on a billing record. Fields are a snapshot of the candidate at
+    save time (not a live join back to the LanceDB `codes` table), because that table is a
+    regenerated external artifact — re-deriving a historical record's fee/rules would
+    silently rewrite history whenever the tariff data changes."""
+
+    __tablename__ = "billing_record_codes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    billing_record_id: Mapped[int] = mapped_column(ForeignKey("billing_records.id"), index=True)
+    code: Mapped[str] = mapped_column(String(16))
+    description: Mapped[str] = mapped_column(Text)
+    confidence: Mapped[float] = mapped_column(Float)
+    supporting_quote: Mapped[str] = mapped_column(Text)
+    fee_amount: Mapped[float | None] = mapped_column(Numeric(10, 2, asdecimal=False), nullable=True)
+    fee_when_to_use: Mapped[str | None] = mapped_column(Text, nullable=True)
+    majoration: Mapped[str | None] = mapped_column(Text, nullable=True)

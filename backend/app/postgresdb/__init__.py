@@ -6,8 +6,22 @@ Public interface — everything else that needs this imports it from here rather
 reaching into .database/.models/.repository directly."""
 
 from app.postgresdb.database import init_db
-from app.postgresdb.models import ExtractionRecord, Gender, Patient, PhysicianType, User, UserRole
+from app.postgresdb.models import (
+    BillingRecord,
+    BillingRecordCode,
+    ExtractionRecord,
+    Gender,
+    Patient,
+    PhysicianType,
+    User,
+    UserRole,
+)
 from app.postgresdb.repository import (
+    BillingRecordCodeInput,
+    BillingRecordDetail,
+    BillingRecordInput,
+    BillingRecordRepository,
+    BillingRecordWithCodes,
     ExtractionRecordInput,
     ExtractionRepository,
     PatientRepository,
@@ -16,12 +30,19 @@ from app.postgresdb.repository import (
 
 __all__ = [
     "init_db",
+    "BillingRecord",
+    "BillingRecordCode",
     "ExtractionRecord",
     "Gender",
     "Patient",
     "PhysicianType",
     "User",
     "UserRole",
+    "BillingRecordCodeInput",
+    "BillingRecordDetail",
+    "BillingRecordInput",
+    "BillingRecordRepository",
+    "BillingRecordWithCodes",
     "ExtractionRecordInput",
     "ExtractionRepository",
     "PatientRepository",

@@ -6,10 +6,18 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from typing import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import delete, func, select
 
 from app.postgresdb.database import async_session
-from app.postgresdb.models import ExtractionRecord, Gender, Patient, User, UserRole
+from app.postgresdb.models import (
+    BillingRecord,
+    BillingRecordCode,
+    ExtractionRecord,
+    Gender,
+    Patient,
+    User,
+    UserRole,
+)
 
 
 class UserRepository:
@@ -195,3 +203,191 @@ class ExtractionRepository:
             for record in created:
                 await session.refresh(record)
             return created
+
+
+@dataclass
+class BillingRecordCodeInput:
+    code: str
+    description: str
+    confidence: float
+    supporting_quote: str
+    fee_amount: float | None
+    fee_when_to_use: str | None
+    majoration: str | None
+
+
+@dataclass
+class BillingRecordInput:
+    physician_id: int
+    patient_id: int
+    service_date: date
+    status: str
+    source_system: str | None
+    summary_extraction_record_id: int | None
+    billing_extraction_record_id: int | None
+    codes: Sequence[BillingRecordCodeInput]
+
+
+@dataclass
+class BillingRecordWithCodes:
+    record: BillingRecord
+    codes: list[BillingRecordCode]
+
+
+@dataclass
+class BillingRecordDetail:
+    record: BillingRecord
+    patient_full_name: str
+    codes: list[BillingRecordCode]
+
+
+class BillingRecordRepository:
+    """No relationship() — manual second queries, matching the existing house style.
+    DB-level cascade is a no-op on SQLite and live on Postgres (see database.py), so nothing
+    here may lean on it either way; code rows are always written/deleted explicitly."""
+
+    async def create(self, data: BillingRecordInput) -> BillingRecordWithCodes:
+        async with async_session() as session:
+            record = BillingRecord(
+                physician_id=data.physician_id,
+                patient_id=data.patient_id,
+                service_date=data.service_date,
+                status=data.status,
+                source_system=data.source_system,
+                summary_extraction_record_id=data.summary_extraction_record_id,
+                billing_extraction_record_id=data.billing_extraction_record_id,
+            )
+            session.add(record)
+            await session.flush()  # populate record.id for the code rows' FK
+            code_rows = [
+                BillingRecordCode(
+                    billing_record_id=record.id,
+                    code=c.code,
+                    description=c.description,
+                    confidence=c.confidence,
+                    supporting_quote=c.supporting_quote,
+                    fee_amount=c.fee_amount,
+                    fee_when_to_use=c.fee_when_to_use,
+                    majoration=c.majoration,
+                )
+                for c in data.codes
+            ]
+            session.add_all(code_rows)
+            await session.commit()
+            await session.refresh(record)
+            for row in code_rows:
+                await session.refresh(row)
+            return BillingRecordWithCodes(record=record, codes=code_rows)
+
+    async def list_for_physician(
+        self,
+        physician_id: int,
+        *,
+        patient_id: int | None = None,
+        date_from: date | None = None,
+        date_to: date | None = None,
+        status: str | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[BillingRecordDetail]:
+        limit = min(limit, 200)
+        async with async_session() as session:
+            # Joins Patient for the name without filtering is_deleted — a soft-deleted
+            # patient's name must still render on an existing billing record.
+            query = (
+                select(BillingRecord, Patient.full_name)
+                .join(Patient, Patient.id == BillingRecord.patient_id)
+                .where(BillingRecord.physician_id == physician_id)
+            )
+            if patient_id is not None:
+                query = query.where(BillingRecord.patient_id == patient_id)
+            if date_from is not None:
+                query = query.where(BillingRecord.service_date >= date_from)
+            if date_to is not None:
+                query = query.where(BillingRecord.service_date <= date_to)
+            if status is not None:
+                query = query.where(BillingRecord.status == status)
+            query = (
+                query.order_by(BillingRecord.service_date.desc(), BillingRecord.created_at.desc())
+                .limit(limit)
+                .offset(offset)
+            )
+
+            rows = (await session.execute(query)).all()
+            if not rows:
+                return []
+            names_by_id = {record.id: full_name for record, full_name in rows}
+
+            code_rows = (
+                await session.execute(
+                    select(BillingRecordCode).where(
+                        BillingRecordCode.billing_record_id.in_(names_by_id.keys())
+                    )
+                )
+            ).scalars().all()
+            codes_by_record: dict[int, list[BillingRecordCode]] = {}
+            for code_row in code_rows:
+                codes_by_record.setdefault(code_row.billing_record_id, []).append(code_row)
+
+            return [
+                BillingRecordDetail(
+                    record=record,
+                    patient_full_name=names_by_id[record.id],
+                    codes=codes_by_record.get(record.id, []),
+                )
+                for record, _ in rows
+            ]
+
+    async def get_for_physician(self, record_id: int, physician_id: int) -> BillingRecordDetail | None:
+        async with async_session() as session:
+            record = await session.get(BillingRecord, record_id)
+            if record is None or record.physician_id != physician_id:
+                return None
+            patient = await session.get(Patient, record.patient_id)
+            code_rows = (
+                await session.execute(
+                    select(BillingRecordCode).where(BillingRecordCode.billing_record_id == record_id)
+                )
+            ).scalars().all()
+            return BillingRecordDetail(
+                record=record,
+                patient_full_name=patient.full_name if patient is not None else "",
+                codes=list(code_rows),
+            )
+
+    async def update_status_for_physician(
+        self, record_id: int, physician_id: int, *, status: str
+    ) -> BillingRecord | None:
+        async with async_session() as session:
+            record = await session.get(BillingRecord, record_id)
+            if record is None or record.physician_id != physician_id:
+                return None
+            record.status = status
+            await session.commit()
+            await session.refresh(record)
+            return record
+
+    async def delete_for_physician(self, record_id: int, physician_id: int) -> bool:
+        async with async_session() as session:
+            record = await session.get(BillingRecord, record_id)
+            if record is None or record.physician_id != physician_id:
+                return False
+            await session.execute(
+                delete(BillingRecordCode).where(BillingRecordCode.billing_record_id == record_id)
+            )
+            await session.delete(record)
+            await session.commit()
+            return True
+
+    async def count_for_patient_on_date(self, physician_id: int, patient_id: int, service_date: date) -> int:
+        async with async_session() as session:
+            result = await session.execute(
+                select(func.count())
+                .select_from(BillingRecord)
+                .where(
+                    BillingRecord.physician_id == physician_id,
+                    BillingRecord.patient_id == patient_id,
+                    BillingRecord.service_date == service_date,
+                )
+            )
+            return result.scalar_one()
