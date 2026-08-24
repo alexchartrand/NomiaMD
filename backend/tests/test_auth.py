@@ -55,6 +55,36 @@ async def test_login_success_logs_an_info_record(caplog):
     assert record.email == user.email
 
 
+async def test_login_without_remember_me_uses_default_expiry():
+    from app.config import settings
+
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        response = client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+
+    set_cookie_headers = [v for k, v in response.headers.multi_items() if k.lower() == "set-cookie"]
+    cookie = next(c for c in set_cookie_headers if c.startswith("nomiamd_session="))
+    assert f"Max-Age={settings.jwt_expiry_seconds}" in cookie
+
+
+async def test_login_with_remember_me_uses_longer_expiry():
+    from app.config import settings
+
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/auth/login", json={"email": user.email, "password": PASSWORD, "remember_me": True}
+        )
+
+    set_cookie_headers = [v for k, v in response.headers.multi_items() if k.lower() == "set-cookie"]
+    cookie = next(c for c in set_cookie_headers if c.startswith("nomiamd_session="))
+    assert f"Max-Age={settings.jwt_remember_me_expiry_seconds}" in cookie
+
+
 async def test_login_wrong_password_returns_401():
     _drop_auth_override()
     user = await _create_user()

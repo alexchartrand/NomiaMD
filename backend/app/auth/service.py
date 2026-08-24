@@ -20,11 +20,11 @@ class AuthService:
         self._hasher = password_hasher
         self._tokens = token_service
 
-    async def login(self, email: str, password: str) -> tuple[str, User] | None:
-        """Returns (signed session token, user) on success, None on bad credentials or a
-        deactivated account. Deliberately doesn't distinguish "unknown email" from "wrong
-        password" in its return value — that distinction belongs in a timing-safe login
-        endpoint, not here."""
+    async def login(self, email: str, password: str, remember_me: bool = False) -> tuple[str, User, int] | None:
+        """Returns (signed session token, user, cookie max-age in seconds) on success, None
+        on bad credentials or a deactivated account. Deliberately doesn't distinguish
+        "unknown email" from "wrong password" in its return value — that distinction
+        belongs in a timing-safe login endpoint, not here."""
         user = await self._users.get_by_email(email)
         if user is None:
             logger.warning("Failed login attempt", extra={"email": email, "reason": "unknown_email"})
@@ -37,7 +37,8 @@ class AuthService:
             return None
         await self._users.touch_last_login(user.id)
         logger.info("Successful login", extra={"email": email})
-        return self._tokens.issue(user), user
+        token = self._tokens.issue(user, remember_me=remember_me)
+        return token, user, self._tokens.expiry_for(remember_me)
 
     async def get_user_from_token(self, token: str) -> User | None:
         payload = self._tokens.decode(token)

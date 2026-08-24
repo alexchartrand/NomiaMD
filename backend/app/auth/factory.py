@@ -11,5 +11,7 @@ def get_auth_service() -> AuthService:
     return AuthService(
         user_repository=UserRepository(),
         password_hasher=PasswordHasher(),
-        token_service=TokenService(settings.secret_key, settings.jwt_expiry_seconds),
+        token_service=TokenService(
+            settings.secret_key, settings.jwt_expiry_seconds, settings.jwt_remember_me_expiry_seconds
+        ),
     )

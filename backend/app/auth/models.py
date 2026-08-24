@@ -8,6 +8,7 @@ from app.postgresdb import PhysicianType, UserRole
 class LoginRequest(BaseModel):
     email: str
     password: str
+    remember_me: bool = False
 
 
 class UserOut(BaseModel):

@@ -7,7 +7,7 @@ import { Spinner } from "./components";
 type AuthContextValue = {
   user: UserOut | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: (updated: UserOut) => void;
 };
@@ -25,8 +25,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  async function login(email: string, password: string) {
-    const loggedInUser = await api.login(email, password);
+  async function login(email: string, password: string, rememberMe: boolean) {
+    const loggedInUser = await api.login(email, password, rememberMe);
     setUser(loggedInUser);
   }
 

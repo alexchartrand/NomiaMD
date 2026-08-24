@@ -37,16 +37,20 @@ class TokenService:
 
     ALGORITHM = "HS256"
 
-    def __init__(self, secret_key: str, expiry_seconds: int) -> None:
+    def __init__(self, secret_key: str, expiry_seconds: int, remember_me_expiry_seconds: int) -> None:
         self._secret_key = secret_key
         self._expiry_seconds = expiry_seconds
+        self._remember_me_expiry_seconds = remember_me_expiry_seconds
 
-    def issue(self, user: User) -> str:
+    def expiry_for(self, remember_me: bool) -> int:
+        return self._remember_me_expiry_seconds if remember_me else self._expiry_seconds
+
+    def issue(self, user: User, remember_me: bool = False) -> str:
         now = datetime.now(timezone.utc)
         payload = {
             "sub": str(user.id),
             "iat": now,
-            "exp": now + timedelta(seconds=self._expiry_seconds),
+            "exp": now + timedelta(seconds=self.expiry_for(remember_me)),
         }
         return jwt.encode(payload, self._secret_key, algorithm=self.ALGORITHM)
 

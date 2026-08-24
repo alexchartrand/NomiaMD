@@ -45,6 +45,7 @@ export interface RAMQQueryResult {
 export interface LoginRequest {
   email: string;
   password: string;
+  remember_me: boolean;
 }
 
 export interface UserOut {
@@ -179,12 +180,12 @@ export async function queryChatbot(
   return unwrap<RAMQQueryResult>(response);
 }
 
-export async function login(email: string, password: string): Promise<UserOut> {
+export async function login(email: string, password: string, rememberMe: boolean): Promise<UserOut> {
   const response = await fetch("/api/auth/login", {
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password } satisfies LoginRequest),
+    body: JSON.stringify({ email, password, remember_me: rememberMe } satisfies LoginRequest),
   });
   return unwrap<UserOut>(response);
 }

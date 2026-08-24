@@ -783,6 +783,21 @@ form .btn[type="submit"] {
   margin-top: 0.75rem;
 }
 
+.login-remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.login-remember-me input {
+  cursor: pointer;
+}
+
 /* ---------- App layout / sidebar ---------- */
 .app-layout {
   display: flex;

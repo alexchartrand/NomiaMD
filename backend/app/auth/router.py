@@ -13,15 +13,15 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/login", response_model=UserOut)
 @limiter.limit("10/minute")
 async def login(request: Request, body: LoginRequest, response: Response) -> User:
-    result = await get_auth_service().login(body.email, body.password)
+    result = await get_auth_service().login(body.email, body.password, body.remember_me)
     if result is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 
-    token, user = result
+    token, user, max_age = result
     response.set_cookie(
         key=COOKIE_NAME,
         value=token,
-        max_age=settings.jwt_expiry_seconds,
+        max_age=max_age,
         httponly=True,
         secure=settings.cookie_secure,
         samesite="lax",
