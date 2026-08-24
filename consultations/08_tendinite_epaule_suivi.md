@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Louis-Philippe Gagné, MD, médecine familiale
 **Patient :** Paquette, Nathalie — 45 ans (F)
+**NAM :** PAQN81540701
 **Dossier :** #CLI-2026-01224
 **Date/heure :** 7 avril 2026, 14h10
 

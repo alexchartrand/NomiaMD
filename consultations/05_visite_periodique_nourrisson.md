@@ -4,6 +4,7 @@
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
 **Patient :** Tremblay-Roy, Léa — 18 mois (F), accompagnée de son père
+**NAM :** TREL24590301
 **Dossier :** #GMF-2026-00303
 **Date/heure :** 3 mars 2026, 09h00
 

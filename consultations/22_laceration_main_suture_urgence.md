@@ -4,6 +4,7 @@
 **Service :** Urgence, CHU fictif
 **Médecin :** Dr. Samuel Boucher, MD, urgentologue
 **Patient :** Lavoie, Chloé — 24 ans (F)
+**NAM :** LAVC02571301
 **Dossier :** #URG-2026-04512
 **Date/heure :** 13 juillet 2026, 14h15
 

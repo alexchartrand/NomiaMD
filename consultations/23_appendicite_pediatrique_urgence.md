@@ -4,6 +4,7 @@
 **Service :** Urgence, CHU fictif
 **Médecin :** Dr. Anh Nguyen, MD, urgentologue
 **Patient :** Bélanger, Émile — 8 ans (H), accompagné de sa mère
+**NAM :** BELE18071301
 **Dossier :** #URG-2026-04538
 **Date/heure :** 13 juillet 2026, 19h20
 

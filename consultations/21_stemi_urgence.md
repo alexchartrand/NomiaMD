@@ -4,6 +4,7 @@
 **Service :** Urgence, CHU fictif
 **Médecin :** Dr. Marie-Ève Tremblay, MD, urgentologue
 **Patient :** Gagnon, Robert — 67 ans (H)
+**NAM :** GAGR59071301
 **Dossier :** #URG-2026-04471
 **Date/heure :** 13 juillet 2026, 08h42
 

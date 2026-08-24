@@ -43,7 +43,7 @@ SEED_PATIENTS = [
     },
     {
         "full_name": "Sabrina Nadeau",
-        "ramq_number": "NADS94052201",
+        "ramq_number": "NADS94552201",
         "date_of_birth": date(1994, 5, 22),
         "gender": Gender.FEMALE,
         "is_registered_with_physician": True,

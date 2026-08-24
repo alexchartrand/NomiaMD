@@ -4,6 +4,7 @@
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Fatima Ouedraogo, MD, médecine familiale
 **Patient :** Haidari, Rahim — 58 ans (H), inscrit, communication assistée par interprète (dari)
+**NAM :** HAIR68061601
 **Dossier :** #GMF-2026-00307
 **Date/heure :** 16 juin 2026, 14h30
 

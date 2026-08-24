@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Isabelle Roy, MD, médecine familiale
 **Patient :** Beaulieu, Francine — 61 ans (F)
+**NAM :** BEAF65521701
 **Dossier :** #CLI-2026-01221
 **Date/heure :** 17 février 2026, 13h40
 

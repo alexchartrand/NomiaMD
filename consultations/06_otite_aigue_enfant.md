@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Karim El-Amrani, MD, médecine familiale
 **Patient :** Cormier, Félix — 4 ans (H), accompagné de sa mère
+**NAM :** CORF22031001
 **Dossier :** #CLI-2026-01222
 **Date/heure :** 10 mars 2026, 16h20
 

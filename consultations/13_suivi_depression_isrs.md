@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Isabelle Roy, MD, médecine familiale
 **Patient :** Dubé, Caroline — 40 ans (F)
+**NAM :** DUBC86551201
 **Dossier :** #CLI-2026-01228
 **Date/heure :** 12 mai 2026, 09h30
 

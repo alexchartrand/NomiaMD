@@ -27,6 +27,16 @@ def test_get_sample_patient_unknown_id_returns_none():
     assert get_sample_patient("does-not-exist") is None
 
 
+def test_nam_header_line_does_not_disturb_id_or_label_parsing():
+    # id still comes from **Dossier :**, not from the new **NAM :** line that now sits
+    # between **Patient :** and **Dossier :** in every fixture note.
+    stemi = get_sample_patient("URG-2026-04471")
+    assert stemi is not None
+    assert stemi.id == "URG-2026-04471"
+    assert "67" in stemi.label
+    assert "**NAM :** GAGR59071301" in stemi.transcript
+
+
 def test_list_patients_endpoint():
     with TestClient(app) as client:
         response = client.get("/sample-patients")

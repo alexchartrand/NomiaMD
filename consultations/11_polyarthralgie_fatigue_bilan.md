@@ -4,6 +4,7 @@
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
 **Patient :** Bergeron, Manon — 47 ans (F)
+**NAM :** BERM79542801
 **Dossier :** #GMF-2026-00304
 **Date/heure :** 28 avril 2026, 11h45
 

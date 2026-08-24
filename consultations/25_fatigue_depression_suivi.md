@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Karim El-Amrani, MD, médecine familiale
 **Patient :** Bouchard, Antoine — 34 ans (H)
+**NAM :** BOUA92071301
 **Dossier :** #CLI-2026-01203
 **Date/heure :** 13 juillet 2026, 15h30
 

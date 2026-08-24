@@ -4,6 +4,7 @@
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
 **Patient :** Lefebvre, Madeleine — 88 ans (F)
+**NAM :** LEFM38552601
 **Dossier :** #GMF-2026-00306
 **Date/heure :** 26 mai 2026, 10h15
 

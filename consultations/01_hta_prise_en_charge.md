@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Louis-Philippe Gagné, MD, médecine familiale
 **Patient :** Desjardins, Roch — 45 ans (H)
+**NAM :** DESR81021001
 **Dossier :** #CLI-2026-01220
 **Date/heure :** 10 février 2026, 09h15
 

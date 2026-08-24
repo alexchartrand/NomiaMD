@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Karim El-Amrani, MD, médecine familiale
 **Patient :** Lachance, Réjean — 63 ans (H)
+**NAM :** LACR63041401
 **Dossier :** #CLI-2026-01225
 **Date/heure :** 14 avril 2026, 10h30
 

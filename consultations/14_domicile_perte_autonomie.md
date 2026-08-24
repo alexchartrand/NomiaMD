@@ -4,6 +4,7 @@
 **Clinique :** GMF Boisé-des-Cèdres (visite à domicile)
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
 **Patient :** Rousseau, Gérard — 84 ans (H)
+**NAM :** ROUG42051901
 **Dossier :** #GMF-2026-00305
 **Date/heure :** 19 mai 2026, 13h00
 

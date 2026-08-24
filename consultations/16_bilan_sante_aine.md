@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Karim El-Amrani, MD, médecine familiale
 **Patient :** Morin, Jean-Guy — 76 ans (H)
+**NAM :** MORJ50060201
 **Dossier :** #CLI-2026-01229
 **Date/heure :** 2 juin 2026, 09h00
 

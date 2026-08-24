@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Étienne Marchand, MD, médecine familiale
 **Patient :** Simard, Yannick — 38 ans (H)
+**NAM :** SIMY88031701
 **Dossier :** #CLI-2026-01223
 **Date/heure :** 17 mars 2026, 08h50
 

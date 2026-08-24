@@ -4,6 +4,7 @@
 **Clinique :** Clinique médicale Les Tilleuls (téléconsultation vidéo)
 **Médecin :** Dr. Étienne Marchand, MD, médecine familiale
 **Patient :** Boivin, Maxime — 29 ans (H)
+**NAM :** BOIM97072101
 **Dossier :** #TEL-2026-00090
 **Date/heure :** 21 juillet 2026, 16h00
 

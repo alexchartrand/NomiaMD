@@ -4,6 +4,7 @@
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Fatima Ouedraogo, MD, médecine familiale
 **Patient :** Nadeau, Sabrina — 32 ans (F)
+**NAM :** NADS94552201
 **Dossier :** #GMF-2026-00302
 **Date/heure :** 9 juin 2026, 11h15
 

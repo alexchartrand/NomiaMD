@@ -4,6 +4,7 @@
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Fatima Ouedraogo, MD, médecine familiale
 **Patient :** Girard, Camille — 29 ans (F)
+**NAM :** GIRC97522401
 **Dossier :** #GMF-2026-00301
 **Date/heure :** 24 février 2026, 10h00
 
