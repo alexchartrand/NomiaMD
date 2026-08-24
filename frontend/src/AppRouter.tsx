@@ -7,6 +7,7 @@ import AppLayout from "./pages/app/AppLayout";
 import ExtractionPage from "./pages/app/ExtractionPage";
 import ChatbotPage from "./pages/app/ChatbotPage";
 import PatientsPage from "./pages/app/PatientsPage";
+import FacturationPage from "./pages/app/FacturationPage";
 import ProfilePage from "./pages/app/ProfilePage";
 import { RequireAuth } from "./AuthContext";
 
@@ -29,6 +30,7 @@ export default function AppRouter() {
         <Route path="extraction" element={<ExtractionPage />} />
         <Route path="chat" element={<ChatbotPage />} />
         <Route path="patients" element={<PatientsPage />} />
+        <Route path="facturation" element={<FacturationPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>

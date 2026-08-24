@@ -304,6 +304,113 @@ label {
   gap: 0.5rem;
 }
 
+/* ---------- Extraction stepper ---------- */
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.stepper-item.active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.stepper-item.done {
+  color: var(--color-text);
+}
+
+.source-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.source-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  min-width: 160px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.source-card:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.source-card:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.source-card-badge {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--color-primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.patient-match {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* ---------- Facturation ---------- */
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.billing-details-row td {
+  background: var(--color-primary-tint);
+}
+
+.billing-details-row ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.billing-details-row li + li {
+  margin-top: 0.5rem;
+}
+
+.code-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-primary);
+}
+
 /* ---------- Shared page chrome ---------- */
 .page-header {
   display: flex;
