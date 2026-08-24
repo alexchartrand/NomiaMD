@@ -204,6 +204,13 @@ class ExtractionRepository:
                 await session.refresh(record)
             return created
 
+    async def get_for_user(self, record_id: int, user_id: int) -> ExtractionRecord | None:
+        async with async_session() as session:
+            record = await session.get(ExtractionRecord, record_id)
+            if record is None or record.user_id != user_id:
+                return None
+            return record
+
 
 @dataclass
 class BillingRecordCodeInput:
@@ -378,6 +385,15 @@ class BillingRecordRepository:
             await session.delete(record)
             await session.commit()
             return True
+
+    async def get_by_billing_extraction_record_id(self, billing_extraction_record_id: int) -> BillingRecord | None:
+        async with async_session() as session:
+            result = await session.execute(
+                select(BillingRecord).where(
+                    BillingRecord.billing_extraction_record_id == billing_extraction_record_id
+                )
+            )
+            return result.scalar_one_or_none()
 
     async def count_for_patient_on_date(self, physician_id: int, patient_id: int, service_date: date) -> int:
         async with async_session() as session:

@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import User, UserRole
+from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User, UserRole
 
 VALID_PATIENT = {
     "full_name": "Jean Tremblay",
@@ -104,6 +104,52 @@ def test_deleting_already_deleted_patient_returns_404():
         second_delete = client.delete(f"/patients/{created['id']}")
 
     assert second_delete.status_code == 404
+
+
+async def test_deleted_patient_name_still_shows_on_an_existing_billing_record():
+    billing_result = {
+        "codes": [
+            {
+                "code": "TEST-BP-MGMT",
+                "description": "Prise en charge d'une hypertension",
+                "confidence": 0.9,
+                "supporting_quote": "hypertension artérielle depuis 10 ans",
+                "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
+            }
+        ],
+        "notes": None,
+    }
+
+    with TestClient(app) as client:
+        created = client.post("/patients", json=VALID_PATIENT).json()
+        [extraction_record] = await ExtractionRepository().create_many(
+            [
+                ExtractionRecordInput(
+                    task="billing_codes",
+                    transcript="transcript de test",
+                    result=billing_result,
+                    model="mistral-small-latest",
+                    source_system="simule",
+                    user_id=1,
+                )
+            ]
+        )
+        billing_record = client.post(
+            "/billing-records",
+            json={
+                "patient_id": created["id"],
+                "service_date": "2026-02-10",
+                "billing_extraction_record_id": extraction_record.id,
+                "selected_codes": ["TEST-BP-MGMT"],
+                "source_system": "simule",
+            },
+        ).json()
+
+        client.delete(f"/patients/{created['id']}")
+        billing_list = client.get("/billing-records").json()
+
+    record = next(r for r in billing_list if r["id"] == billing_record["id"])
+    assert record["patient_full_name"] == "Jean Tremblay"
 
 
 def test_create_patient_missing_required_field_returns_422():

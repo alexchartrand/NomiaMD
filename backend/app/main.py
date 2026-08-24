@@ -5,6 +5,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.auth import auth_router, get_current_user
+from app.billing import billing_router
 from app.config import settings
 from app.extraction import extraction_router
 from app.logging_config import configure_logging
@@ -31,6 +32,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 app.add_middleware(RequestLoggingMiddleware)
 app.include_router(auth_router)
+app.include_router(billing_router)
 app.include_router(extraction_router)
 app.include_router(patients_router)
 app.include_router(ramq_chatbot_router)
