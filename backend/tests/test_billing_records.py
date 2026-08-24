@@ -56,11 +56,11 @@ async def _seed_patient(physician_id=1):
     )
 
 
-async def _seed_extraction_record(*, user_id=1, result=None):
+async def _seed_extraction_record(*, user_id=1, result=None, task="billing_codes"):
     [record] = await ExtractionRepository().create_many(
         [
             ExtractionRecordInput(
-                task="billing_codes",
+                task=task,
                 transcript="transcript de test",
                 result=result if result is not None else BILLING_RESULT,
                 model="mistral-small-latest",
@@ -158,6 +158,50 @@ async def test_creating_against_another_physicians_patient_is_404():
                 patient_id=other_physicians_patient.id, billing_extraction_record_id=extraction_record.id
             ),
         )
+
+    assert response.status_code == 404
+
+
+async def test_creating_against_another_physicians_extraction_record_is_404():
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        other_physicians_extraction = await _seed_extraction_record(user_id=99)
+
+        response = client.post(
+            "/billing-records",
+            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=other_physicians_extraction.id),
+        )
+
+    assert response.status_code == 404
+
+
+async def test_billing_extraction_record_id_pointing_at_a_summary_record_is_404():
+    # get_for_user only checks ownership, not task type — swapping the ids in a request
+    # (summary_extraction_record_id where billing_extraction_record_id belongs) must still
+    # be rejected, not silently treated as "no candidate codes matched".
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        summary_record = await _seed_extraction_record(
+            task="consultation_summary", result={"short_description": "not a billing_codes result"}
+        )
+
+        response = client.post(
+            "/billing-records",
+            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=summary_record.id),
+        )
+
+    assert response.status_code == 404
+
+
+async def test_summary_extraction_record_id_owned_by_another_physician_is_404():
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        billing_record = await _seed_extraction_record()
+        other_physicians_summary = await _seed_extraction_record(user_id=99)
+
+        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=billing_record.id)
+        payload["summary_extraction_record_id"] = other_physicians_summary.id
+        response = client.post("/billing-records", json=payload)
 
     assert response.status_code == 404
 

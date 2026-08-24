@@ -193,3 +193,23 @@ async def test_count_for_patient_on_date(physician_id):
 
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 10)) == 1
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 11)) == 0
+
+
+async def test_update_status_returns_none_when_record_vanishes_between_the_two_queries():
+    """Regression test: BillingService.update_status does an update then a re-fetch (two
+    separate sessions, per this repo's no-relationship() house style). If the record is
+    deleted between them (e.g. a racing DELETE), the service must return None (-> 404 at
+    the router) rather than raising on an unexpected missing row."""
+    from unittest.mock import AsyncMock
+
+    from app.billing.service import BillingService
+    from app.postgresdb.models import BillingRecord
+
+    billing_repository = AsyncMock()
+    billing_repository.update_status_for_physician.return_value = BillingRecord(id=1, status="facture")
+    billing_repository.get_for_physician.return_value = None
+
+    service = BillingService(billing_repository, AsyncMock(), AsyncMock())
+    result = await service.update_status(1, 1, status="facture")
+
+    assert result is None

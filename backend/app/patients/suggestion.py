@@ -55,7 +55,7 @@ def _suggested_full_name(name_as_stated: str | None) -> str | None:
         return None
     if "," in name_as_stated:
         surname, given = name_as_stated.split(",", 1)
-        return f"{given.strip()} {surname.strip()}"
+        return " ".join(part.strip() for part in (given, surname) if part.strip()) or None
     return name_as_stated.strip().title()
 
 
@@ -110,9 +110,14 @@ def _build_prefill(extracted: ExtractedIdentity, *, on_date: date) -> PatientPre
     )
 
 
-class PatientSuggestionService(PatientRepository):
-    """Constructor-injected on top of PatientRepository per the repo's convention — no
-    FastAPI, no HTTP."""
+class PatientSuggestionService:
+    """Constructor-injected with PatientRepository (defaulted, so existing
+    `PatientSuggestionService()` call sites don't need to change) — no FastAPI, no HTTP.
+    Composition rather than inheriting PatientRepository: this class's job is NAM-matching
+    and prefill logic, not being a patient repository itself."""
+
+    def __init__(self, patient_repository: PatientRepository | None = None):
+        self._patient_repository = patient_repository or PatientRepository()
 
     async def suggest(
         self, extracted: ExtractedIdentity, *, physician_id: int, on_date: date
@@ -126,7 +131,7 @@ class PatientSuggestionService(PatientRepository):
         if normalized is None:
             return None
 
-        roster: list[Patient] = list(await self.list_for_physician(physician_id))
+        roster: list[Patient] = list(await self._patient_repository.list_for_physician(physician_id))
         matches = [p for p in roster if nam.normalize(p.ramq_number) == normalized]
 
         if len(matches) == 1:

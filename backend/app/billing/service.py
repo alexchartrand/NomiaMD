@@ -100,8 +100,15 @@ class BillingService:
         extraction_record = await self._extraction_repository.get_for_user(
             billing_extraction_record_id, physician_id
         )
-        if extraction_record is None:
+        if extraction_record is None or extraction_record.task != "billing_codes":
             raise ExtractionRecordNotFoundError()
+
+        if summary_extraction_record_id is not None:
+            summary_record = await self._extraction_repository.get_for_user(
+                summary_extraction_record_id, physician_id
+            )
+            if summary_record is None:
+                raise ExtractionRecordNotFoundError()
 
         # The billing_extraction_record_id unique constraint already enforces this at the DB
         # level; checking here first gives a clean 409 instead of a raw IntegrityError, and
@@ -201,8 +208,12 @@ class BillingService:
         )
         if updated is None:
             return None
+        # A second query, not a relationship load (house style) — but it does mean a delete
+        # racing this update between the two calls would otherwise turn a 404 into a 500;
+        # handle that gracefully instead of asserting it can't happen.
         detail = await self._billing_repository.get_for_physician(record_id, physician_id)
-        assert detail is not None
+        if detail is None:
+            return None
         return _detail_to_out(detail)
 
     async def delete(self, record_id: int, physician_id: int) -> bool:

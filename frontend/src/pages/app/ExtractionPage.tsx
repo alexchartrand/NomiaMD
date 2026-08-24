@@ -211,7 +211,11 @@ export default function ExtractionPage() {
       await createBillingRecord(payload, confirmDuplicate);
       setSaved(true);
     } catch (err) {
-      if (err instanceof DuplicateBillingRecordError) {
+      // Only offer the confirm-and-retry dance on the first attempt: re-submitting the
+      // exact same extraction (as opposed to the same patient/date via a different one) is
+      // never overridable server-side, so retrying with confirmDuplicate=true would 409
+      // again forever. Surfacing it as a plain error here breaks that loop.
+      if (err instanceof DuplicateBillingRecordError && !confirmDuplicate) {
         if (window.confirm(`${err.message} Enregistrer quand même ?`)) {
           await handleSave(true);
           return;
@@ -227,6 +231,9 @@ export default function ExtractionPage() {
   const suggestion = result?.patient_suggestion ?? null;
   const extracted = suggestion?.extracted ?? null;
   const matchedId = suggestion?.matched_patient_id ?? null;
+  // The match is purely NAM-based, independent of name spelling — show the roster's own
+  // name rather than the transcript's (which may be a nickname, typo, or absent entirely).
+  const matchedPatientName = matchedId != null ? roster.find((p) => p.id === matchedId)?.full_name : null;
 
   return (
     <section className="page-panel">
@@ -323,7 +330,7 @@ export default function ExtractionPage() {
           <div className="patient-match">
             {matchedId != null ? (
               <Banner tone="success">
-                Patient identifié par son NAM : {extracted?.suggested_full_name}
+                Patient identifié par son NAM : {matchedPatientName ?? extracted?.suggested_full_name}
               </Banner>
             ) : extracted?.suggested_ramq_number ? (
               <Banner tone="warning">
@@ -476,7 +483,7 @@ export default function ExtractionPage() {
           <Button
             type="button"
             onClick={() => handleSave(false)}
-            disabled={saving || !selectedRosterId || !serviceDate || selection.size === 0}
+            disabled={saving || saved || !selectedRosterId || !serviceDate || selection.size === 0}
           >
             {saving ? "Enregistrement..." : "Enregistrer la facturation"}
           </Button>
