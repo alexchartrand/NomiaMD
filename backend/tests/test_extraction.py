@@ -159,8 +159,6 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
 
 
 def test_extract_endpoint_end_to_end():
-    # DATABASE_URL is bound to a SQLAlchemy engine at import time (app/postgresdb/database.py),
-    # so it can't be swapped per-test via monkeypatch here — this exercises the real dev DB's schema.
     # Using TestClient as a context manager triggers the FastAPI lifespan (init_db()).
     # billing_codes is now a two-stage pipeline (consultation_summary, then billing_codes
     # off that summary) — two chat-completion calls happen, so mock two responses in order.

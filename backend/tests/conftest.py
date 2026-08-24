@@ -1,3 +1,14 @@
+import os
+import shutil
+import tempfile
+
+# Route every test at a throwaway SQLite file instead of the developer's own dev DB.
+# Must sit above the `from app...` imports below: app.postgresdb.database binds DATABASE_URL
+# to a SQLAlchemy engine at import time, and app.config's load_dotenv(override=False) means
+# a pre-set env var wins over anything in .env — so this has to run before any app import.
+_TEST_DB_DIR = tempfile.mkdtemp(prefix="nomiamd-test-")
+os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{_TEST_DB_DIR}/test.db"
+
 import json
 from pathlib import Path
 
@@ -126,6 +137,10 @@ def reset_rate_limits():
     yield
 
 
+def pytest_sessionfinish(session, exitstatus):
+    shutil.rmtree(_TEST_DB_DIR, ignore_errors=True)
+
+
 @pytest.fixture(autouse=True)
 def default_authenticated_user():
     """Overrides the get_current_user FastAPI dependency with a fixed, in-memory user (no
@@ -135,7 +150,11 @@ def default_authenticated_user():
 
     tests/test_auth.py, which specifically tests that guard, pops this override at the top
     of the individual test bodies that need the real dependency; it comes back for every
-    other test since this fixture re-runs per test."""
+    other test since this fixture re-runs per test.
+
+    Pre-existing wart: this injects an in-memory User(id=1) with no DB row, so every test
+    row's physician_id=1 is a dangling FK — harmless only because SQLite doesn't enforce
+    foreign keys (see database.py)."""
     fake_user = User(
         id=1,
         email="physician@example.test",
