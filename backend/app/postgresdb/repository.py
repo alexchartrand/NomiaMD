@@ -86,7 +86,9 @@ class PatientRepository:
     async def list_for_physician(self, physician_id: int) -> Sequence[Patient]:
         async with async_session() as session:
             result = await session.execute(
-                select(Patient).where(Patient.physician_id == physician_id).order_by(Patient.full_name)
+                select(Patient)
+                .where(Patient.physician_id == physician_id, Patient.is_deleted.is_(False))
+                .order_by(Patient.full_name)
             )
             return result.scalars().all()
 
@@ -119,7 +121,7 @@ class PatientRepository:
     async def get_for_physician(self, patient_id: int, physician_id: int) -> Patient | None:
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id:
+            if patient is None or patient.physician_id != physician_id or patient.is_deleted:
                 return None
             return patient
 
@@ -137,7 +139,7 @@ class PatientRepository:
     ) -> Patient | None:
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id:
+            if patient is None or patient.physician_id != physician_id or patient.is_deleted:
                 return None
             patient.full_name = full_name
             patient.ramq_number = ramq_number
@@ -150,11 +152,14 @@ class PatientRepository:
             return patient
 
     async def delete_for_physician(self, patient_id: int, physician_id: int) -> bool:
+        # Soft delete: billing history must stay readable (name intact) after a patient
+        # leaves the roster, and this also guarantees billing_records.patient_id is never
+        # dangling — see docs/plans/billing-workflow.md, Part 4.
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id:
+            if patient is None or patient.physician_id != physician_id or patient.is_deleted:
                 return False
-            await session.delete(patient)
+            patient.is_deleted = True
             await session.commit()
             return True
 

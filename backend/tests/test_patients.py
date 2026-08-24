@@ -84,6 +84,28 @@ def test_delete_patient_then_404():
     assert get_response.status_code == 404
 
 
+def test_deleted_patient_is_soft_deleted_and_absent_from_list():
+    # Soft delete (is_deleted flag), not a row removal — billing history must still be able
+    # to resolve the patient's name after they leave the roster (see billing tests).
+    with TestClient(app) as client:
+        created = client.post("/patients", json=VALID_PATIENT).json()
+        client.delete(f"/patients/{created['id']}")
+        list_response = client.get("/patients")
+        get_response = client.get(f"/patients/{created['id']}")
+
+    assert all(p["id"] != created["id"] for p in list_response.json())
+    assert get_response.status_code == 404
+
+
+def test_deleting_already_deleted_patient_returns_404():
+    with TestClient(app) as client:
+        created = client.post("/patients", json=VALID_PATIENT).json()
+        client.delete(f"/patients/{created['id']}")
+        second_delete = client.delete(f"/patients/{created['id']}")
+
+    assert second_delete.status_code == 404
+
+
 def test_create_patient_missing_required_field_returns_422():
     with TestClient(app) as client:
         response = client.post("/patients", json={**VALID_PATIENT, "date_of_birth": None})

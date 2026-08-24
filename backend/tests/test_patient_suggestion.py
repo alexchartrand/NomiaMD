@@ -145,6 +145,18 @@ async def test_malformed_or_absent_nam_no_lookup_no_match(service, physician_id)
     assert suggestion_absent.matched_patient_id is None
 
 
+async def test_soft_deleted_patient_is_never_matched(service, physician_id):
+    patient = await _seed_patient(physician_id=physician_id)
+    assert await PatientRepository().delete_for_physician(patient.id, physician_id) is True
+
+    extracted = ExtractedIdentity(
+        ramq_number="DESR81021001", name_as_stated="Desjardins, Roch", age_years=45, age_months=None, sex="H"
+    )
+    suggestion = await service.suggest(extracted, physician_id=physician_id, on_date=ON_DATE)
+
+    assert suggestion.matched_patient_id is None
+
+
 async def test_prefill_comma_flip_and_nam_decoded_dob_not_estimated(service, physician_id):
     extracted = ExtractedIdentity(
         ramq_number="DESR81021001", name_as_stated="Desjardins, Roch", age_years=45, age_months=None, sex="H"
