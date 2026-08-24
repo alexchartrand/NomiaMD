@@ -10,8 +10,15 @@
 
 ## 🐛 Bugs
 
-- [ ] 🟡 No purge/retention policy on `extraction_records` — *added 8/21, moved from DEPLOY.md*
+- [ ] 🔴 No purge/retention policy on `extraction_records` — *added 8/21, moved from DEPLOY.md, escalated 8/24*
   - Stores each transcript + result indefinitely. Acceptable while demoing with the synthetic notes in `consultations/`; must revisit before this ever touches real patient data (Law 25).
+  - Escalated: `extraction_records.result_json` now holds the patient's name **and NAM** as discrete, greppable fields (`patient_information.name_as_stated`/`ramq_number_as_stated`, billing-workflow plan Part 1) — a NAM is a direct government identifier, which makes this materially more pressing than before.
+
+- [ ] 🟡 No Alembic — schema changes require a DB wipe or a hand-run `ALTER TABLE` — *added 8/24*
+  - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one. `patients.is_deleted` (billing-workflow plan Part 4) is the first column added to an existing table since this app went live; the next one needs the same manual `ALTER TABLE` step on prod, or a wipe locally. Adopt Alembic before billing data is real.
+
+- [ ] 🟡 Hard-deleting a `facturé` billing record destroys audit trail — *added 8/24*
+  - `DELETE /billing-records/{id}` (`app/billing/router.py`) hard-deletes regardless of `status` — there's no soft-delete equivalent to `patients.is_deleted` for billing records. Fine for a `brouillon` mistake; loses the audit trail for anything already marked `facturé`.
 
 - [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
   - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
@@ -24,8 +31,9 @@
   - `LanceDBVectorStore` has no `aquery` override, so both retrievers' `_aretrieve` (`ramq_codes/retriever.py`, `ramq_chatbot/retriever.py`) fall back to the sync `.retrieve()` call under the hood. Every concurrent physician's request stalls the single event loop for the duration of the native call.
   - Fix: wrap the sync query in `run_in_threadpool`, or move to an async-native vector store call path.
 
-- [ ] 🟡 No server-side check that returned billing codes are from the candidate set — *added 8/19, from codebase audit*
+- [ ] 🟡 No server-side check that returned billing codes are from the candidate set — *added 8/19, from codebase audit, note added 8/24*
   - `ramq_codes/task.py`'s `parse()` only validates JSON shape, never cross-checks returned `number`s against the candidates built in `build_prompt`. The "only choose from candidates" constraint lives in the prompt only. Mandatory physician review is the only backstop today — no defense in depth.
+  - Note: `POST /billing-records` (`app/billing/service.py`) *does* validate its `selected_codes` against the referenced extraction's own stored candidates (422 on an unknown code) — but that's checking the physician's selection against what the model already returned, not checking what the model returned against what it was offered. This item is still open.
 
 - [ ] 🟡 Login timing side-channel enables user enumeration — *added 8/19, from codebase audit*
   - `auth/service.py` `login()` returns immediately on `user is None`, but runs the deliberately slow Argon2 `verify()` when the email exists — response time distinguishes valid from invalid emails.

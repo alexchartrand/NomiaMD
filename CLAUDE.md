@@ -55,20 +55,42 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    `billing_codes`. Wired at `POST /query` (`app/main.py`). History is stateless: the
    client resends prior turns each request; nothing is persisted server-side.
 
+**`app/patients/`** owns a physician's own patient roster (`Patient` in
+`app/postgresdb/models.py`, CRUD at `/patients`) and NAM-based identification of that
+roster from an extraction's identified patient (`PatientSuggestionService`, `app/patients/
+nam.py`/`suggestion.py`) — matched by exact NAM only, never by name, since a NAM is unique
+across every Quebec resident and a name-based near-miss risks billing the wrong person.
+`Patient.is_deleted` makes patient deletion a soft delete: a deleted patient disappears from
+the roster and its lookups, but any `billing_records` row referencing it keeps rendering the
+patient's name, and the id is never left dangling.
+
+**`app/billing/`** turns a physician-confirmed `billing_codes` extraction into a persisted
+billing record — not an LLM task itself, just the save step downstream of it.
+`BillingService` hydrates each saved code's description/fee/quote from the extraction's own
+stored result (never trusted from the request body) and snapshots them onto
+`billing_record_codes`, since the LanceDB `codes` table they originally came from is
+regenerated independently and re-deriving fees later would silently rewrite billing history.
+Wired at `POST/GET/PATCH/DELETE /billing-records` (`app/main.py`).
+
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH`
 (`code-embeddings` for retrieval, `codes` for full row data) are produced by a separate
 sibling repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this backend has no code
 dependency on it, only on those tables' shapes.
 
-**Frontend** (`frontend/`, React + TypeScript + Vite): a single-page transcript-in,
-codes-out UI (`src/App.tsx`), typed API client in `src/api.ts`. `/api/*` proxies to the
-backend per `vite.config.ts` — no CORS config, no hardcoded backend URL. Types in `api.ts`
-must be kept in sync by hand with the backend's Pydantic response models (no codegen).
+**Frontend** (`frontend/`, React + TypeScript + Vite): a router (`src/AppRouter.tsx`) over
+`src/pages/app/*` — extraction (a 3-step source/transcript/review-and-bill flow), patients,
+facturation, chat, profile — with a typed API client in `src/api.ts`. `/api/*` proxies to
+the backend per `vite.config.ts` — no CORS config, no hardcoded backend URL. Types in
+`api.ts` must be kept in sync by hand with the backend's Pydantic response models (no
+codegen).
 
 **`consultations/`** at repo root holds freeform, French-language synthetic clinical notes,
-one per file — served as "simulated patients" (`GET /patients`, `GET /patients/{id}`, parsed
-by `backend/app/sample_patients.py`) for demoing/testing without hand-typing a transcript.
-`README.md` and `all_notes.md` in that directory are not patient files and are skipped.
+one per file — served as "simulated patients" (`GET /sample-patients`, `GET
+/sample-patients/{id}`, parsed by `backend/app/sample_patients.py`) for demoing/testing
+without hand-typing a transcript. Every note's header carries a `**NAM :**` line (alongside
+`**Patient :**`/`**Dossier :**`/`**Date/heure :**`) so the NAM-matching path is exercisable
+against real fixtures. `README.md` and `all_notes.md` in that directory are not patient
+files and are skipped.
 
 ## Working in this codebase
 - Always use OOP, with best parctice principles. A class should has only one task and do it well.
