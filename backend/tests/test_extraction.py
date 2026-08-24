@@ -8,6 +8,7 @@ fixture in conftest.py) rather than the real llama_index vector store, so these 
 depend on its size, network access, or exact content."""
 
 import json
+from datetime import date
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
@@ -15,7 +16,11 @@ from fastapi.testclient import TestClient
 
 from app.extraction.engine import run_extraction
 from app.main import app
+from app.postgresdb import Gender, PatientRepository
 from app.tasks.registry import get_task
+
+# default_authenticated_user (conftest.py, autouse) injects a fake physician with this id.
+PHYSICIAN_ID = 1
 
 SAMPLE_TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "
@@ -40,7 +45,9 @@ MOCK_SUMMARY_RESULT = {
     "patient_information": {
         "age_years": 58,
         "age_months_if_infant": None,
-        "sex_if_stated": None,
+        "sex_if_stated": "F",
+        "name_as_stated": "Tremblay, Louise",
+        "ramq_number_as_stated": "TREL58021501",
         "pregnancy_context": {"present": False, "trimester": None},
         "relevant_vulnerability_or_context_mentioned": [],
         "new_or_established_patient_language": None,
@@ -158,29 +165,74 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
     assert "1 candidate code" in result.result.notes
 
 
+def _extract(client: TestClient, *, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT):
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.achat = AsyncMock(
+            side_effect=[_mock_response(summary), _mock_response(billing)]
+        )
+        return client.post(
+            "/extract",
+            json={
+                "transcript": SAMPLE_TRANSCRIPT,
+                "task": "billing_codes",
+                "source": {"system": "plume_ai", "encounter_id": "enc-123"},
+            },
+        )
+
+
 def test_extract_endpoint_end_to_end():
     # Using TestClient as a context manager triggers the FastAPI lifespan (init_db()).
     # billing_codes is now a two-stage pipeline (consultation_summary, then billing_codes
     # off that summary) — two chat-completion calls happen, so mock two responses in order.
-    with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(side_effect=[
-            _mock_response(MOCK_SUMMARY_RESULT),
-            _mock_response(MOCK_RESULT),
-        ])
-        with TestClient(app) as client:
-            response = client.post(
-                "/extract",
-                json={
-                    "transcript": SAMPLE_TRANSCRIPT,
-                    "task": "billing_codes",
-                    "source": {"system": "plume_ai", "encounter_id": "enc-123"},
-                },
-            )
+    with TestClient(app) as client:
+        response = _extract(client)
 
     assert response.status_code == 200
     body = response.json()
-    assert body["task"] == "billing_codes"
-    assert len(body["result"]["codes"]) == 2
+    assert body["billing"]["task"] == "billing_codes"
+    assert len(body["billing"]["result"]["codes"]) == 2
+    assert isinstance(body["summary_extraction_record_id"], int)
+    assert isinstance(body["billing_extraction_record_id"], int)
+    # MOCK_SUMMARY_RESULT's encounter_setting.date is null -> must stay null, never "today".
+    assert body["encounter_date"] is None
+    assert body["encounter_date_raw"] is None
+
+
+async def test_extract_endpoint_matches_roster_patient_by_nam():
+    with TestClient(app) as client:
+        # Entering the TestClient context triggers the lifespan's init_db() first, so the
+        # patients table is guaranteed to exist before this direct repository seed.
+        patient = await PatientRepository().create(
+            physician_id=PHYSICIAN_ID,
+            full_name="Louise Tremblay",
+            ramq_number="TREL58021501",
+            date_of_birth=date(1958, 2, 15),
+            gender=Gender.FEMALE,
+            is_registered_with_physician=True,
+            is_vulnerable=False,
+        )
+        response = _extract(client)
+
+    assert response.status_code == 200
+    suggestion = response.json()["patient_suggestion"]
+    assert suggestion["matched_patient_id"] == patient.id
+    assert suggestion["extracted"]["name_as_stated"] == "Tremblay, Louise"
+
+
+async def test_extract_endpoint_no_nam_in_note_no_match_but_extracted_present():
+    summary_without_nam = {
+        **MOCK_SUMMARY_RESULT,
+        "patient_information": {**MOCK_SUMMARY_RESULT["patient_information"], "ramq_number_as_stated": None},
+    }
+
+    with TestClient(app) as client:
+        response = _extract(client, summary=summary_without_nam)
+
+    assert response.status_code == 200
+    suggestion = response.json()["patient_suggestion"]
+    assert suggestion["matched_patient_id"] is None
+    assert suggestion["extracted"]["name_as_stated"] == "Tremblay, Louise"
+    assert suggestion["extracted"]["suggested_full_name"] == "Louise Tremblay"
 
 
 def test_unknown_task_returns_400():
