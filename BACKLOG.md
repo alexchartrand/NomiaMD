@@ -16,8 +16,9 @@
 - [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
   - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
 
-- [ ] 🟢 Docker's default `json-file` log driver has no rotation — *added 8/21, moved from DEPLOY.md*
+- [x] 🟢 Docker's default `json-file` log driver has no rotation — *added 8/21, moved from DEPLOY.md, done 8/24*
   - Not a concern at demo traffic/duration. Add `logging: driver: json-file, options: {max-size: 10m, max-file: "3"}` per service in `docker-compose.yml` if this runs long enough to matter.
+  - Fixed: all five services in `docker-compose.yml` now set `logging: driver: json-file, options: {max-size: "10m", max-file: "3"}`.
 
 - [ ] 🔴 Vector search blocks the event loop — *added 8/19, from codebase audit*
   - `LanceDBVectorStore` has no `aquery` override, so both retrievers' `_aretrieve` (`ramq_codes/retriever.py`, `ramq_chatbot/retriever.py`) fall back to the sync `.retrieve()` call under the hood. Every concurrent physician's request stalls the single event loop for the duration of the native call.
@@ -47,7 +48,8 @@
 
 ## ✨ Features
 
-- [ ] 🟡 Add a logger for production — *added 8/21*
+- [x] 🟡 Add a data logger for production — *added 8/21, done 8/24*
+  - Fixed: `app/logging_config.py` configures stdlib `logging` to emit one JSON line per event to stdout (same shape as `app/request_logging.py`'s existing per-request access log), wired at startup in `app/main.py`. Added `logger` calls at the silent-failure spots worth surfacing: `CodeTable.get_all` (`app/lancedb/db.py`) now warns on candidate numbers with no matching `codes` row (stale index), `AuthService.login` (`app/auth/service.py`) now logs failed/successful login attempts, and `RequestLoggingMiddleware` now logs unhandled exceptions with the same `request_id` as its access-log line before re-raising.
 
 ## 🧹 Cleanup / Dead code
 

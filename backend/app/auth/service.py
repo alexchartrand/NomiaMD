@@ -1,8 +1,12 @@
 """Login use case: composes password verification, token issuance, and user persistence
 so route handlers in app/auth/router.py stay thin (HTTP glue only)."""
 
+import logging
+
 from app.auth.security import PasswordHasher, TokenService
 from app.postgresdb import User, UserRepository
+
+logger = logging.getLogger(__name__)
 
 
 class AuthService:
@@ -22,11 +26,17 @@ class AuthService:
         password" in its return value — that distinction belongs in a timing-safe login
         endpoint, not here."""
         user = await self._users.get_by_email(email)
-        if user is None or not user.is_active:
+        if user is None:
+            logger.warning("Failed login attempt", extra={"email": email, "reason": "unknown_email"})
+            return None
+        if not user.is_active:
+            logger.warning("Failed login attempt", extra={"email": email, "reason": "deactivated"})
             return None
         if not self._hasher.verify(password, user.hashed_password):
+            logger.warning("Failed login attempt", extra={"email": email, "reason": "bad_password"})
             return None
         await self._users.touch_last_login(user.id)
+        logger.info("Successful login", extra={"email": email})
         return self._tokens.issue(user), user
 
     async def get_user_from_token(self, token: str) -> User | None:

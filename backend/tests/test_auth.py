@@ -42,6 +42,19 @@ async def test_login_success_sets_cookie_and_returns_user():
     assert "nomiamd_session" in response.cookies
 
 
+async def test_login_success_logs_an_info_record(caplog):
+    _drop_auth_override()
+    user = await _create_user()
+
+    with caplog.at_level("INFO", logger="app.auth.service"):
+        with TestClient(app) as client:
+            client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+
+    [record] = [r for r in caplog.records if r.name == "app.auth.service"]
+    assert record.levelname == "INFO"
+    assert record.email == user.email
+
+
 async def test_login_wrong_password_returns_401():
     _drop_auth_override()
     user = await _create_user()
@@ -53,6 +66,20 @@ async def test_login_wrong_password_returns_401():
     assert "nomiamd_session" not in response.cookies
 
 
+async def test_login_wrong_password_logs_a_warning_with_reason(caplog):
+    _drop_auth_override()
+    user = await _create_user()
+
+    with caplog.at_level("WARNING", logger="app.auth.service"):
+        with TestClient(app) as client:
+            client.post("/auth/login", json={"email": user.email, "password": "not the password"})
+
+    [record] = [r for r in caplog.records if r.name == "app.auth.service"]
+    assert record.levelname == "WARNING"
+    assert record.email == user.email
+    assert record.reason == "bad_password"
+
+
 async def test_login_unknown_email_returns_401():
     _drop_auth_override()
 
@@ -62,6 +89,20 @@ async def test_login_unknown_email_returns_401():
         )
 
     assert response.status_code == 401
+
+
+async def test_login_unknown_email_logs_a_warning_with_reason(caplog):
+    _drop_auth_override()
+
+    with caplog.at_level("WARNING", logger="app.auth.service"):
+        with TestClient(app) as client:
+            client.post(
+                "/auth/login", json={"email": "nobody@example.test", "password": PASSWORD}
+            )
+
+    [record] = [r for r in caplog.records if r.name == "app.auth.service"]
+    assert record.levelname == "WARNING"
+    assert record.reason == "unknown_email"
 
 
 async def test_protected_route_without_cookie_returns_401():
@@ -105,3 +146,16 @@ async def test_deactivated_user_is_rejected_even_with_a_valid_cookie():
     with TestClient(app) as client:
         login_response = client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
         assert login_response.status_code == 401
+
+
+async def test_deactivated_user_login_logs_a_warning_with_reason(caplog):
+    _drop_auth_override()
+    user = await _create_user(is_active=False)
+
+    with caplog.at_level("WARNING", logger="app.auth.service"):
+        with TestClient(app) as client:
+            client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+
+    [record] = [r for r in caplog.records if r.name == "app.auth.service"]
+    assert record.levelname == "WARNING"
+    assert record.reason == "deactivated"

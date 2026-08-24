@@ -1,8 +1,11 @@
+import logging
 from typing import Awaitable, Callable, List
 from lancedb import AsyncConnection, AsyncTable
 from app.lancedb.models import CodeRow
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 CODES_TABLE_NAME = "codes"
 
@@ -45,4 +48,14 @@ class CodeTable(ITableReader):
         quoted = ", ".join("'" + n.replace("'", "''") + "'" for n in ids)
         table = await self._open_table()
         rows = await table.query().where(f"number IN ({quoted})").to_list()
-        return [CodeRow.model_validate(row) for row in rows]
+        results = [CodeRow.model_validate(row) for row in rows]
+
+        missing = sorted(set(ids) - {r.number for r in results})
+        if missing:
+            logger.warning(
+                "Candidate RAMQ code number(s) not found in the codes table (stale "
+                "embeddings index?) — dropped from results",
+                extra={"missing_numbers": missing},
+            )
+
+        return results

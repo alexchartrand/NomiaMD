@@ -177,3 +177,25 @@ async def test_get_all_silently_drops_ids_with_no_matching_row():
     rows = await reader.get_all(["A", "MISSING"])
 
     assert [r.number for r in rows] == ["A"]
+
+
+async def test_get_all_logs_a_warning_for_ids_with_no_matching_row(caplog):
+    table = _FakeTable([_row("A")])
+    reader = _reader(_FakeDB(table))
+
+    with caplog.at_level("WARNING", logger="app.lancedb.db"):
+        await reader.get_all(["A", "MISSING"])
+
+    [record] = caplog.records
+    assert record.levelname == "WARNING"
+    assert record.missing_numbers == ["MISSING"]
+
+
+async def test_get_all_logs_nothing_when_every_id_matches(caplog):
+    table = _FakeTable([_row("A")])
+    reader = _reader(_FakeDB(table))
+
+    with caplog.at_level("WARNING", logger="app.lancedb.db"):
+        await reader.get_all(["A"])
+
+    assert caplog.records == []

@@ -34,6 +34,7 @@ class Settings:
         self.secret_key = os.environ["JWT_SECRET_KEY"]
         self.jwt_expiry_seconds = int(os.environ.get("JWT_EXPIRY_SECONDS", 12 * 3600))
         self.cookie_secure = _as_bool(os.environ.get("COOKIE_SECURE"), default=True)
+        self.log_level = os.environ.get("LOG_LEVEL", "INFO")
 
     @property
     def mistral_api_key(self) -> str:

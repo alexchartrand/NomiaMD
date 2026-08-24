@@ -7,6 +7,7 @@ from slowapi.errors import RateLimitExceeded
 from app.auth import auth_router, get_current_user
 from app.config import settings
 from app.extraction import extraction_router
+from app.logging_config import configure_logging
 from app.models import SamplePatientDetail, SamplePatientSummary
 from app.postgresdb import init_db
 from app.ramq_chatbot import ramq_chatbot_router
@@ -14,6 +15,8 @@ from app.rate_limit import limiter
 from app.request_logging import RequestLoggingMiddleware
 from app.sample_patients import get_sample_patient, get_sample_patients
 from app.tasks.registry import available_tasks
+
+configure_logging(settings.log_level)
 
 
 @asynccontextmanager

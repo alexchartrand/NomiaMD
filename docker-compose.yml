@@ -24,6 +24,11 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   redis:
     image: redis:7-alpine
@@ -36,6 +41,11 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   backend:
     build:
@@ -55,6 +65,7 @@ services:
       # be silently dropped by the browser over plain HTTP. Flip to true once a
       # TLS-terminating reverse proxy is in front of `frontend`.
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     volumes:
       # Both produced by the separate ramq-ingestion repo, not by this compose file — must
       # already be populated at RAMQ_LANCEDB_PATH/RAMQ_CHATBOT_LANCEDB_PATH before `backend`
@@ -80,6 +91,11 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   frontend:
     build:
@@ -95,6 +111,11 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # TLS termination for nomiamd.com / www.nomiamd.com — the only public ingress. Caddy
   # fetches and renews Let's Encrypt certs automatically from the Caddyfile's site
@@ -112,6 +133,11 @@ services:
     networks: [internal]
     depends_on:
       - frontend
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:
