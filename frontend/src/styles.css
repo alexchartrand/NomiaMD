@@ -451,6 +451,11 @@ label {
   cursor: not-allowed;
 }
 
+.source-card.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+}
+
 .source-card-badge {
   font-size: 0.75rem;
   color: var(--color-text-muted);
@@ -618,13 +623,18 @@ form .btn[type="submit"] {
 .results h2 {
   font-weight: 700;
   font-size: 1.3rem;
-  margin: 2rem 0 1rem;
+  margin: 0;
 }
 
 .results-card {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.85rem;
+}
+
+.results-card .patient-match,
+.results-card .field-row {
+  margin: 0;
 }
 
 .results-summary {
@@ -633,7 +643,7 @@ form .btn[type="submit"] {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  padding-top: 1.25rem;
+  padding-top: 0.85rem;
   border-top: 1px solid var(--color-border);
 }
 
