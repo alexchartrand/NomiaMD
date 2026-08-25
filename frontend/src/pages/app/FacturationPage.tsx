@@ -144,13 +144,13 @@ export default function FacturationPage() {
                   <td>{record.patient_full_name}</td>
                   <td>
                     {record.codes.map((c) => c.code).join(", ")}{" "}
-                    <button
+                    <Button
                       type="button"
-                      className="link-button"
+                      variant="link"
                       onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
                     >
                       Détails
-                    </button>
+                    </Button>
                   </td>
                   <td>{record.total_amount != null ? `${record.total_amount.toFixed(2)} $` : "—"}</td>
                   <td>

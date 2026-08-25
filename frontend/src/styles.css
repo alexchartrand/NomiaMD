@@ -188,7 +188,16 @@ label {
   width: 100%;
 }
 
+/* Date inputs don't need to stretch full-width like other text fields — the native
+   picker renders at a fixed, compact size regardless of the field's width. */
+.text-field[type="date"] {
+  width: auto;
+  max-width: 200px;
+}
+
 .select-field {
+  width: 100%;
+  max-width: 20rem;
   padding: 0.45rem 0.7rem;
 }
 
@@ -207,6 +216,47 @@ label {
 .btn:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+/* ---------- Checkbox ---------- */
+.checkbox {
+  appearance: none;
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  vertical-align: middle;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 5px;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.checkbox:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.checkbox:checked {
+  background: var(--color-primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.2l3 3 6-6.4'/%3E%3C/svg%3E") center/68% no-repeat;
+  border-color: var(--color-primary);
+}
+
+.checkbox:checked:hover:not(:disabled) {
+  background-color: var(--color-primary-strong);
+  border-color: var(--color-primary-strong);
+}
+
+.checkbox:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.checkbox:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 /* ---------- Banner ---------- */
@@ -461,14 +511,18 @@ label {
   color: var(--color-text-muted);
 }
 
-.link-button {
+.btn-link {
   background: none;
-  border: none;
+  border-color: transparent;
   padding: 0;
-  font: inherit;
+  border-radius: 0;
+  font-weight: 400;
   color: var(--color-primary);
   text-decoration: underline;
-  cursor: pointer;
+}
+
+.btn-link:hover:not(:disabled) {
+  color: var(--color-primary-strong);
 }
 
 .patient-match {
@@ -611,10 +665,6 @@ label {
   margin-bottom: 1rem;
 }
 
-.field-row .select-field {
-  width: 100%;
-}
-
 form .btn[type="submit"] {
   margin-top: 0.85rem;
 }
@@ -662,6 +712,94 @@ form .btn[type="submit"] {
   font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 700;
+}
+
+/* ---------- Code review cards ---------- */
+.code-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.code-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.code-card-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+}
+
+.code-card-checkbox {
+  margin-top: 0.3rem;
+}
+
+.code-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.code-card-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.code-stamp {
+  font-family: var(--font-mono);
+  font-weight: 650;
+  font-size: 1rem;
+  padding: 0.2rem 0.55rem;
+  border: 2px solid var(--color-text);
+  border-radius: 8px;
+  transform: rotate(-1.5deg);
+  color: var(--color-text);
+}
+
+.code-card-selected .code-stamp {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.code-card-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.code-card-fee {
+  font-family: var(--font-display);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.code-card-quote {
+  font-style: italic;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.code-card-footer {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* ---------- Landing page ---------- */

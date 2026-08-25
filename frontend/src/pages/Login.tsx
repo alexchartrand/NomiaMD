@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Banner, Button, Card, TextField } from "../components";
+import { Banner, Button, Card, Checkbox, TextField } from "../components";
 import { Logo } from "../Logo";
 import { useAuth } from "../AuthContext";
 import { describeError } from "../api";
@@ -62,9 +62,8 @@ export default function Login() {
           />
 
           <label className="login-remember-me" htmlFor="login-remember-me">
-            <input
+            <Checkbox
               id="login-remember-me"
-              type="checkbox"
               checked={rememberMe}
               onChange={(event) => setRememberMe(event.target.checked)}
             />

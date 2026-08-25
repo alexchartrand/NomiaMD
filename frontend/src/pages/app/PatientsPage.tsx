@@ -10,7 +10,7 @@ import {
   type Patient,
   type PatientInput,
 } from "../../api";
-import { Banner, Button, Card, Select, TextField, Table } from "../../components";
+import { Banner, Button, Card, Checkbox, Select, TextField, Table } from "../../components";
 
 const BLANK_FORM: PatientInput = {
   full_name: "",
@@ -162,8 +162,7 @@ export default function PatientsPage() {
             </Select>
 
             <label>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={form.is_registered_with_physician}
                 onChange={(e) => setForm({ ...form, is_registered_with_physician: e.target.checked })}
               />{" "}
@@ -171,8 +170,7 @@ export default function PatientsPage() {
             </label>
 
             <label>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={form.is_vulnerable}
                 onChange={(e) => setForm({ ...form, is_vulnerable: e.target.checked })}
               />{" "}

@@ -1,7 +1,7 @@
-import { Banner, Card, TextField } from "../../../components";
+import { Banner, Button, Card, TextField } from "../../../components";
 import type { BillingExtractionResponse, Patient } from "../../../api";
 import { PatientMatchSection } from "./PatientMatchSection";
-import { CodesTable } from "./CodesTable";
+import { CodesReview } from "./CodesReview";
 import { SaveSummary } from "./SaveSummary";
 import type { useCreatePatientForm } from "./useCreatePatientForm";
 
@@ -58,9 +58,9 @@ export function ReviewStep({
   return (
     <section className="results">
       <p className="status-inline">
-        <button type="button" className="link-button" onClick={onBack}>
+        <Button type="button" variant="link" onClick={onBack}>
           ← Modifier la transcription
-        </button>
+        </Button>
       </p>
       <Card className="results-card">
         <h2>Révision</h2>
@@ -91,7 +91,7 @@ export function ReviewStep({
           )}
         </div>
 
-        <CodesTable codes={result.billing.result.codes} selection={selection} onToggle={onToggleCode} />
+        <CodesReview codes={result.billing.result.codes} selection={selection} onToggle={onToggleCode} />
 
         <SaveSummary
           totalAmount={totalAmount}
