@@ -11,6 +11,7 @@ import {
   type PatientInput,
 } from "../../api";
 import { Banner, Button, Card, Checkbox, Select, TextField, Table } from "../../components";
+import { formatDate } from "../../utils/date";
 
 const BLANK_FORM: PatientInput = {
   full_name: "",
@@ -215,7 +216,7 @@ export default function PatientsPage() {
               <tr key={patient.id}>
                 <td>{patient.full_name}</td>
                 <td>{patient.ramq_number ?? "—"}</td>
-                <td>{patient.date_of_birth}</td>
+                <td>{formatDate(patient.date_of_birth)}</td>
                 <td>{patient.gender ?? "—"}</td>
                 <td>{patient.is_registered_with_physician ? "Oui" : "Non"}</td>
                 <td>{patient.is_vulnerable ? "Oui" : "Non"}</td>
