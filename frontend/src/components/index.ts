@@ -5,6 +5,7 @@ export { TextArea } from "./TextArea";
 export { TextField } from "./TextField";
 export { Select } from "./Select";
 export { Banner } from "./Banner";
+export { Modal } from "./Modal";
 export { Spinner } from "./Spinner";
 export { Table } from "./Table";
 export { PageHeader } from "./PageHeader";

@@ -41,6 +41,10 @@ class DuplicateBillingRecordError(Exception):
         super().__init__(message)
 
 
+class RecordOnBillError(Exception):
+    pass
+
+
 def _total_amount(codes: list[BillingRecordCodeOut]) -> float | None:
     amounts = [c.fee_amount for c in codes if c.fee_amount is not None]
     return sum(amounts) if amounts else None
@@ -202,19 +206,13 @@ class BillingService:
         )
         return [_detail_to_out(d) for d in details]
 
-    async def update_status(self, record_id: int, physician_id: int, *, status: str) -> BillingRecordOut | None:
-        updated = await self._billing_repository.update_status_for_physician(
-            record_id, physician_id, status=status
-        )
-        if updated is None:
-            return None
-        # A second query, not a relationship load (house style) — but it does mean a delete
-        # racing this update between the two calls would otherwise turn a 404 into a 500;
-        # handle that gracefully instead of asserting it can't happen.
+    async def delete(self, record_id: int, physician_id: int) -> bool:
+        # Once a record is on a generated bill (status != "brouillon"), it can only be freed
+        # by deleting that bill — otherwise a hard delete here would leave a dangling link
+        # row and silently shrink a bill's total behind the physician's back.
         detail = await self._billing_repository.get_for_physician(record_id, physician_id)
         if detail is None:
-            return None
-        return _detail_to_out(detail)
-
-    async def delete(self, record_id: int, physician_id: int) -> bool:
+            return False
+        if detail.record.status != "brouillon":
+            raise RecordOnBillError()
         return await self._billing_repository.delete_for_physician(record_id, physician_id)

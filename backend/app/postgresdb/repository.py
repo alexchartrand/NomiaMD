@@ -6,10 +6,12 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from typing import Sequence
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 
 from app.postgresdb.database import async_session
 from app.postgresdb.models import (
+    Bill,
+    BillBillingRecord,
     BillingRecord,
     BillingRecordCode,
     ExtractionRecord,
@@ -170,6 +172,16 @@ class PatientRepository:
             patient.is_deleted = True
             await session.commit()
             return True
+
+    async def get_many_for_physician(self, patient_ids: Sequence[int], physician_id: int) -> list[Patient]:
+        # Deliberately not filtered on is_deleted — same reasoning as
+        # BillingRecordRepository.list_for_physician's join: a bill's patient details (NAM
+        # included) must stay renderable after the patient leaves the roster.
+        async with async_session() as session:
+            result = await session.execute(
+                select(Patient).where(Patient.id.in_(patient_ids), Patient.physician_id == physician_id)
+            )
+            return list(result.scalars().all())
 
 
 @dataclass
@@ -362,18 +374,6 @@ class BillingRecordRepository:
                 codes=list(code_rows),
             )
 
-    async def update_status_for_physician(
-        self, record_id: int, physician_id: int, *, status: str
-    ) -> BillingRecord | None:
-        async with async_session() as session:
-            record = await session.get(BillingRecord, record_id)
-            if record is None or record.physician_id != physician_id:
-                return None
-            record.status = status
-            await session.commit()
-            await session.refresh(record)
-            return record
-
     async def delete_for_physician(self, record_id: int, physician_id: int) -> bool:
         async with async_session() as session:
             record = await session.get(BillingRecord, record_id)
@@ -407,3 +407,112 @@ class BillingRecordRepository:
                 )
             )
             return result.scalar_one()
+
+
+@dataclass
+class BillInput:
+    physician_id: int
+    start_date: date
+    end_date: date
+    billing_record_ids: Sequence[int]
+    total_amount: float | None
+
+
+@dataclass
+class BillDetail:
+    bill: Bill
+    records: list[BillingRecordDetail]
+
+
+class BillRepository:
+    """No relationship() — same house style as BillingRecordRepository. `create` and
+    `delete_for_physician` each do their multi-table write in a single session/commit so a
+    bill and its status flip (or release) never land only half-done."""
+
+    async def create(self, data: BillInput) -> Bill | None:
+        async with async_session() as session:
+            # Re-select the requested records under physician + status='brouillon'. If the
+            # match isn't exact, something changed since the candidate list was loaded (a
+            # record got billed or deleted concurrently) — bail out with nothing written
+            # rather than silently billing a subset the physician never confirmed.
+            result = await session.execute(
+                select(BillingRecord.id).where(
+                    BillingRecord.id.in_(data.billing_record_ids),
+                    BillingRecord.physician_id == data.physician_id,
+                    BillingRecord.status == "brouillon",
+                )
+            )
+            found_ids = set(result.scalars().all())
+            if found_ids != set(data.billing_record_ids):
+                return None
+
+            bill = Bill(
+                physician_id=data.physician_id,
+                start_date=data.start_date,
+                end_date=data.end_date,
+                total_amount=data.total_amount,
+                record_count=len(data.billing_record_ids),
+            )
+            session.add(bill)
+            await session.flush()  # populate bill.id for the link rows' FK
+
+            session.add_all(
+                BillBillingRecord(bill_id=bill.id, billing_record_id=record_id)
+                for record_id in data.billing_record_ids
+            )
+            await session.execute(
+                update(BillingRecord)
+                .where(BillingRecord.id.in_(data.billing_record_ids))
+                .values(status="soumis")
+            )
+            await session.commit()
+            await session.refresh(bill)
+            return bill
+
+    async def list_for_physician(self, physician_id: int, *, limit: int = 100, offset: int = 0) -> list[Bill]:
+        limit = min(limit, 200)
+        async with async_session() as session:
+            result = await session.execute(
+                select(Bill)
+                .where(Bill.physician_id == physician_id)
+                .order_by(Bill.generated_at.desc())
+                .limit(limit)
+                .offset(offset)
+            )
+            return list(result.scalars().all())
+
+    async def get_for_physician(self, bill_id: int, physician_id: int) -> Bill | None:
+        async with async_session() as session:
+            bill = await session.get(Bill, bill_id)
+            if bill is None or bill.physician_id != physician_id:
+                return None
+            return bill
+
+    async def record_ids_for_bill(self, bill_id: int) -> list[int]:
+        async with async_session() as session:
+            result = await session.execute(
+                select(BillBillingRecord.billing_record_id).where(BillBillingRecord.bill_id == bill_id)
+            )
+            return list(result.scalars().all())
+
+    async def delete_for_physician(self, bill_id: int, physician_id: int) -> bool:
+        async with async_session() as session:
+            bill = await session.get(Bill, bill_id)
+            if bill is None or bill.physician_id != physician_id:
+                return False
+
+            link_result = await session.execute(
+                select(BillBillingRecord.billing_record_id).where(BillBillingRecord.bill_id == bill_id)
+            )
+            record_ids = list(link_result.scalars().all())
+
+            if record_ids:
+                await session.execute(
+                    update(BillingRecord)
+                    .where(BillingRecord.id.in_(record_ids))
+                    .values(status="brouillon")
+                )
+            await session.execute(delete(BillBillingRecord).where(BillBillingRecord.bill_id == bill_id))
+            await session.delete(bill)
+            await session.commit()
+            return True

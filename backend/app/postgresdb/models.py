@@ -162,3 +162,38 @@ class BillingRecordCode(Base):
     fee_amount: Mapped[float | None] = mapped_column(Numeric(10, 2, asdecimal=False), nullable=True)
     fee_when_to_use: Mapped[str | None] = mapped_column(Text, nullable=True)
     majoration: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+class Bill(Base):
+    """One generated invoice grouping many billing records over a date range. The PDF is
+    rendered on demand from the linked records (which are themselves already snapshots —
+    see BillingRecordCode), so nothing is stored as bytes; total_amount/record_count are
+    snapshotted anyway so listing bills never has to re-sum every record's codes."""
+
+    __tablename__ = "bills"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    start_date: Mapped[date] = mapped_column(Date)
+    end_date: Mapped[date] = mapped_column(Date)
+    generated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    total_amount: Mapped[float | None] = mapped_column(Numeric(10, 2, asdecimal=False), nullable=True)
+    record_count: Mapped[int] = mapped_column(Integer)
+
+
+class BillBillingRecord(Base):
+    """Association table linking a Bill to the billing_records it covers, rather than a
+    bill_id column on BillingRecord — with no Alembic (see BillingRecord's docstring), a new
+    table is created for free by create_all while a new column on an existing table is not.
+    The unique index on billing_record_id is the DB-level guarantee that a record can never
+    land on two bills at once."""
+
+    __tablename__ = "bill_billing_records"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    bill_id: Mapped[int] = mapped_column(ForeignKey("bills.id"), index=True)
+    billing_record_id: Mapped[int] = mapped_column(
+        ForeignKey("billing_records.id"), unique=True, index=True
+    )

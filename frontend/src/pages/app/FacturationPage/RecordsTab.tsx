@@ -5,20 +5,20 @@ import {
   describeError,
   listBillingRecords,
   listPatients,
-  updateBillingRecordStatus,
   type BillingRecord,
   type BillingRecordFilters,
   type BillingStatus,
   type Patient,
-} from "../../api";
-import { Banner, Button, Select, Table, TextField } from "../../components";
+} from "../../../api";
+import { Banner, Button, Select, Table, TextField } from "../../../components";
+import { formatDate } from "../../../utils/date";
+import { STATUS_LABELS } from "./constants";
 
-const STATUS_LABELS: Record<BillingStatus, string> = {
-  brouillon: "Brouillon",
-  facture: "Facturé",
-};
+interface RecordsTabProps {
+  reloadSignal: number;
+}
 
-export default function FacturationPage() {
+export function RecordsTab({ reloadSignal }: RecordsTabProps) {
   const [records, setRecords] = useState<BillingRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
@@ -52,23 +52,13 @@ export default function FacturationPage() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(loadRecords, [patientFilter, dateFrom, dateTo, statusFilter]);
-
-  async function handleStatusChange(record: BillingRecord, status: BillingStatus) {
-    try {
-      await updateBillingRecordStatus(record.id, status);
-      loadRecords();
-    } catch (err) {
-      setListError(describeError(err));
-    }
-  }
+  // reloadSignal changes after a bill is generated/deleted on the other tab — records may
+  // have moved between "brouillon" and "soumis" without this tab knowing.
+  useEffect(loadRecords, [patientFilter, dateFrom, dateTo, statusFilter, reloadSignal]);
 
   async function handleDelete(record: BillingRecord) {
-    const confirmMessage =
-      record.status === "facture"
-        ? `${record.patient_full_name} est déjà facturé. Supprimer quand même cette facturation ?`
-        : `Supprimer la facturation de ${record.patient_full_name} ? Cette action est irréversible.`;
-    if (!window.confirm(confirmMessage)) return;
+    if (!window.confirm(`Supprimer la facturation de ${record.patient_full_name} ? Cette action est irréversible.`))
+      return;
     try {
       await deleteBillingRecord(record.id);
       loadRecords();
@@ -78,9 +68,7 @@ export default function FacturationPage() {
   }
 
   return (
-    <section className="page-panel">
-      <h1>Facturation</h1>
-
+    <>
       <div className="filters-row">
         <label htmlFor="filter-patient">Patient</label>
         <Select id="filter-patient" value={patientFilter} onChange={(e) => setPatientFilter(e.target.value)}>
@@ -137,64 +125,68 @@ export default function FacturationPage() {
             </tr>
           </thead>
           <tbody>
-            {records.map((record) => (
-              <Fragment key={record.id}>
-                <tr>
-                  <td>{record.service_date}</td>
-                  <td>{record.patient_full_name}</td>
-                  <td>
-                    {record.codes.map((c) => c.code).join(", ")}{" "}
-                    <Button
-                      type="button"
-                      variant="link"
-                      onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
-                    >
-                      Détails
-                    </Button>
-                  </td>
-                  <td>{record.total_amount != null ? `${record.total_amount.toFixed(2)} $` : "—"}</td>
-                  <td>
-                    <Select
-                      value={record.status}
-                      onChange={(e) => handleStatusChange(record, e.target.value as BillingStatus)}
-                    >
-                      {BILLING_STATUSES.map((s) => (
-                        <option key={s} value={s}>
-                          {STATUS_LABELS[s]}
-                        </option>
-                      ))}
-                    </Select>
-                  </td>
-                  <td>
-                    <div className="table-actions">
-                      <Button type="button" variant="danger" onClick={() => handleDelete(record)}>
-                        Supprimer
+            {records.map((record) => {
+              const deletable = record.status === "brouillon";
+              return (
+                <Fragment key={record.id}>
+                  <tr>
+                    <td>{formatDate(record.service_date)}</td>
+                    <td>{record.patient_full_name}</td>
+                    <td>
+                      {record.codes.map((c) => c.code).join(", ")}{" "}
+                      <Button
+                        type="button"
+                        variant="link"
+                        onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
+                      >
+                        Détails
                       </Button>
-                    </div>
-                  </td>
-                </tr>
-                {expandedId === record.id && (
-                  <tr className="billing-details-row">
-                    <td colSpan={6}>
-                      <ul>
-                        {record.codes.map((c) => (
-                          <li key={c.code}>
-                            <span className="code-chip">{c.code}</span> {c.description}
-                            {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}
-                            {c.fee_when_to_use && <> — {c.fee_when_to_use}</>}
-                            <br />
-                            <em>&laquo; {c.supporting_quote} &raquo;</em>
-                          </li>
-                        ))}
-                      </ul>
+                    </td>
+                    <td>{record.total_amount != null ? `${record.total_amount.toFixed(2)} $` : "—"}</td>
+                    <td>
+                      <span
+                        className={`status-badge${record.status === "facture" ? " status-badge-facture" : ""}`}
+                      >
+                        {STATUS_LABELS[record.status]}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="table-actions">
+                        <Button
+                          type="button"
+                          variant="danger"
+                          disabled={!deletable}
+                          title={deletable ? undefined : "Cette facturation fait partie d'une facture générée."}
+                          onClick={() => handleDelete(record)}
+                        >
+                          Supprimer
+                        </Button>
+                      </div>
                     </td>
                   </tr>
-                )}
-              </Fragment>
-            ))}
+                  {expandedId === record.id && (
+                    <tr className="billing-details-row">
+                      <td colSpan={6}>
+                        <ul>
+                          {record.codes.map((c) => (
+                            <li key={c.code}>
+                              <span className="code-chip">{c.code}</span> {c.description}
+                              {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}
+                              {c.fee_when_to_use && <> — {c.fee_when_to_use}</>}
+                              <br />
+                              <em>&laquo; {c.supporting_quote} &raquo;</em>
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
           </tbody>
         </Table>
       )}
-    </section>
+    </>
   );
 }

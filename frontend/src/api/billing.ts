@@ -1,7 +1,9 @@
 import { unwrap, unwrapVoid } from "./http";
 
-// Kept in sync by hand with app/billing/models.py's BillingStatus Literal.
-export const BILLING_STATUSES = ["brouillon", "facture"] as const;
+// Kept in sync by hand with app/billing/models.py's BillingStatus Literal. Read-only from
+// this API — a record only leaves "brouillon" via POST /bills (see api/bills.ts), and
+// "facture" is reserved for a future real RAMQ submission response; nothing sets it yet.
+export const BILLING_STATUSES = ["brouillon", "soumis", "facture"] as const;
 export type BillingStatus = (typeof BILLING_STATUSES)[number];
 
 export interface BillingCodeLine {
@@ -41,6 +43,8 @@ export interface BillingRecordFilters {
   date_from?: string;
   date_to?: string;
   status?: BillingStatus;
+  limit?: number;
+  offset?: number;
 }
 
 export class DuplicateBillingRecordError extends Error {}
@@ -75,6 +79,8 @@ export async function listBillingRecords(filters: BillingRecordFilters = {}): Pr
   if (filters.date_from) params.set("date_from", filters.date_from);
   if (filters.date_to) params.set("date_to", filters.date_to);
   if (filters.status) params.set("status", filters.status);
+  if (filters.limit != null) params.set("limit", String(filters.limit));
+  if (filters.offset != null) params.set("offset", String(filters.offset));
   const query = params.toString();
 
   return unwrap<BillingRecord[]>(
@@ -82,16 +88,8 @@ export async function listBillingRecords(filters: BillingRecordFilters = {}): Pr
   );
 }
 
-export async function updateBillingRecordStatus(id: number, status: BillingStatus): Promise<BillingRecord> {
-  const response = await fetch(`/api/billing-records/${id}`, {
-    method: "PATCH",
-    credentials: "same-origin",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
-  });
-  return unwrap<BillingRecord>(response);
-}
-
+// Status is otherwise read-only from this API — there is no PATCH endpoint for it, see
+// BILLING_STATUSES' comment above.
 export async function deleteBillingRecord(id: number): Promise<void> {
   await unwrapVoid(await fetch(`/api/billing-records/${id}`, { method: "DELETE", credentials: "same-origin" }));
 }

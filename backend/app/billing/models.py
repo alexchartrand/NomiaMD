@@ -5,7 +5,11 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-BillingStatus = Literal["brouillon", "facture"]
+# "brouillon" -> "soumis" -> "facture". "soumis" is set only by BillService.create when a
+# record is grouped onto a generated bill; "facture" is reserved for a future real RAMQ
+# submission response and nothing in this codebase sets it yet. Status is otherwise
+# read-only from the API's perspective — there is no PATCH endpoint for it.
+BillingStatus = Literal["brouillon", "soumis", "facture"]
 
 
 class BillingRecordCreate(BaseModel):
@@ -15,10 +19,6 @@ class BillingRecordCreate(BaseModel):
     summary_extraction_record_id: int | None = None
     selected_codes: list[str]
     source_system: str | None = None
-
-
-class BillingStatusUpdate(BaseModel):
-    status: BillingStatus
 
 
 class BillingRecordCodeOut(BaseModel):

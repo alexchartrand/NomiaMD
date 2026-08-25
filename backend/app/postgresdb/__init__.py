@@ -7,6 +7,8 @@ reaching into .database/.models/.repository directly."""
 
 from app.postgresdb.database import init_db
 from app.postgresdb.models import (
+    Bill,
+    BillBillingRecord,
     BillingRecord,
     BillingRecordCode,
     ExtractionRecord,
@@ -17,11 +19,14 @@ from app.postgresdb.models import (
     UserRole,
 )
 from app.postgresdb.repository import (
+    BillDetail,
+    BillInput,
     BillingRecordCodeInput,
     BillingRecordDetail,
     BillingRecordInput,
     BillingRecordRepository,
     BillingRecordWithCodes,
+    BillRepository,
     ExtractionRecordInput,
     ExtractionRepository,
     PatientRepository,
@@ -30,6 +35,8 @@ from app.postgresdb.repository import (
 
 __all__ = [
     "init_db",
+    "Bill",
+    "BillBillingRecord",
     "BillingRecord",
     "BillingRecordCode",
     "ExtractionRecord",
@@ -38,11 +45,14 @@ __all__ = [
     "PhysicianType",
     "User",
     "UserRole",
+    "BillDetail",
+    "BillInput",
     "BillingRecordCodeInput",
     "BillingRecordDetail",
     "BillingRecordInput",
     "BillingRecordRepository",
     "BillingRecordWithCodes",
+    "BillRepository",
     "ExtractionRecordInput",
     "ExtractionRepository",
     "PatientRepository",

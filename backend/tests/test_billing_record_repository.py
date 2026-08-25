@@ -122,7 +122,7 @@ async def test_list_filters_and_ordering(physician_id):
     assert [r.record.id for r in date_ranged] == [newer.record.id]
 
 
-async def test_update_status_and_delete(physician_id):
+async def test_delete(physician_id):
     patient = await _seed_patient(physician_id)
     repo = BillingRecordRepository()
     created = await repo.create(
@@ -137,10 +137,6 @@ async def test_update_status_and_delete(physician_id):
             codes=[_one_code_input()],
         )
     )
-
-    updated = await repo.update_status_for_physician(created.record.id, physician_id, status="facture")
-    assert updated is not None
-    assert updated.status == "facture"
 
     deleted = await repo.delete_for_physician(created.record.id, physician_id)
     assert deleted is True
@@ -166,9 +162,6 @@ async def test_cross_physician_access_returns_none_or_false(physician_id):
     other_physician_id = physician_id + 1
 
     assert await repo.get_for_physician(created.record.id, other_physician_id) is None
-    assert (
-        await repo.update_status_for_physician(created.record.id, other_physician_id, status="facture") is None
-    )
     assert await repo.delete_for_physician(created.record.id, other_physician_id) is False
 
 
@@ -193,23 +186,3 @@ async def test_count_for_patient_on_date(physician_id):
 
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 10)) == 1
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 11)) == 0
-
-
-async def test_update_status_returns_none_when_record_vanishes_between_the_two_queries():
-    """Regression test: BillingService.update_status does an update then a re-fetch (two
-    separate sessions, per this repo's no-relationship() house style). If the record is
-    deleted between them (e.g. a racing DELETE), the service must return None (-> 404 at
-    the router) rather than raising on an unexpected missing row."""
-    from unittest.mock import AsyncMock
-
-    from app.billing.service import BillingService
-    from app.postgresdb.models import BillingRecord
-
-    billing_repository = AsyncMock()
-    billing_repository.update_status_for_physician.return_value = BillingRecord(id=1, status="facture")
-    billing_repository.get_for_physician.return_value = None
-
-    service = BillingService(billing_repository, AsyncMock(), AsyncMock())
-    result = await service.update_status(1, 1, status="facture")
-
-    assert result is None

@@ -41,7 +41,9 @@ certifi==2026.7.22
 cffi==2.1.1
     # via argon2-cffi-bindings
 charset-normalizer==3.5.1
-    # via requests
+    # via
+    #   reportlab
+    #   requests
 click==8.4.2
     # via
     #   nltk
@@ -183,7 +185,9 @@ packaging==26.3
 pandas==3.0.5
     # via nomiamd-backend (pyproject.toml)
 pillow==12.3.0
-    # via llama-index-core
+    # via
+    #   llama-index-core
+    #   reportlab
 platformdirs==4.11.3
     # via
     #   banks
@@ -240,6 +244,8 @@ regex==2026.7.19
     # via
     #   nltk
     #   tiktoken
+reportlab==5.0.1
+    # via nomiamd-backend (pyproject.toml)
 requests==2.34.2
     # via
     #   llama-index-core

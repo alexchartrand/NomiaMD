@@ -4,13 +4,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.auth import get_current_user
 from app.billing.factory import get_billing_service
-from app.billing.models import BillingRecordCreate, BillingRecordOut, BillingStatus, BillingStatusUpdate
+from app.billing.models import BillingRecordCreate, BillingRecordOut, BillingStatus
 from app.billing.service import (
     BillingService,
     DuplicateBillingRecordError,
     EmptySelectionError,
     ExtractionRecordNotFoundError,
     PatientNotFoundError,
+    RecordOnBillError,
     UnknownCodesError,
 )
 from app.postgresdb import User
@@ -76,25 +77,18 @@ async def list_billing_records(
     )
 
 
-@router.patch("/{record_id}", response_model=BillingRecordOut)
-async def update_billing_record_status(
-    record_id: int,
-    body: BillingStatusUpdate,
-    current_user: User = Depends(get_current_user),
-    service: BillingService = Depends(get_billing_service),
-) -> BillingRecordOut:
-    updated = await service.update_status(record_id, current_user.id, status=body.status)
-    if updated is None:
-        raise HTTPException(status_code=404, detail="Facture introuvable")
-    return updated
-
-
 @router.delete("/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_billing_record(
     record_id: int,
     current_user: User = Depends(get_current_user),
     service: BillingService = Depends(get_billing_service),
 ) -> None:
-    deleted = await service.delete(record_id, current_user.id)
+    try:
+        deleted = await service.delete(record_id, current_user.id)
+    except RecordOnBillError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail="Cette facturation fait partie d'une facture générée. Supprimez d'abord la facture.",
+        ) from exc
     if not deleted:
         raise HTTPException(status_code=404, detail="Facture introuvable")

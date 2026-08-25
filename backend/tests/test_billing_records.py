@@ -1,5 +1,7 @@
-"""Exercises the /billing-records API end-to-end: create -> list -> filter -> status PATCH
--> delete, plus ownership scoping and the validation/duplicate rules in app/billing/service.py.
+"""Exercises the /billing-records API end-to-end: create -> list -> filter -> delete, plus
+ownership scoping and the validation/duplicate rules in app/billing/service.py. Status is
+read-only from this API (no PATCH) — a record only leaves "brouillon" via POST /bills, see
+test_deleting_a_record_on_a_bill_is_409 and tests/test_bills.py.
 """
 
 import json
@@ -82,7 +84,7 @@ def _valid_payload(*, patient_id, billing_extraction_record_id, service_date="20
     }
 
 
-async def test_create_then_list_then_filter_then_status_then_delete():
+async def test_create_then_list_then_filter_then_delete():
     with TestClient(app) as client:
         patient = await _seed_patient()
         extraction_record = await _seed_extraction_record()
@@ -110,17 +112,39 @@ async def test_create_then_list_then_filter_then_status_then_delete():
 
         filtered_by_status = client.get("/billing-records", params={"status": "brouillon"})
         assert created["id"] in [r["id"] for r in filtered_by_status.json()]
-        filtered_by_wrong_status = client.get("/billing-records", params={"status": "facture"})
+        filtered_by_wrong_status = client.get("/billing-records", params={"status": "soumis"})
         assert created["id"] not in [r["id"] for r in filtered_by_wrong_status.json()]
-
-        patch_response = client.patch(f"/billing-records/{created['id']}", json={"status": "facture"})
-        assert patch_response.status_code == 200
-        assert patch_response.json()["status"] == "facture"
 
         delete_response = client.delete(f"/billing-records/{created['id']}")
         assert delete_response.status_code == 204
         list_after_delete = client.get("/billing-records")
         assert created["id"] not in [r["id"] for r in list_after_delete.json()]
+
+
+async def test_deleting_a_record_on_a_bill_is_409():
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        extraction_record = await _seed_extraction_record()
+        created = client.post(
+            "/billing-records",
+            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id),
+        ).json()
+
+        bill_response = client.post(
+            "/bills",
+            json={
+                "start_date": "2026-02-01",
+                "end_date": "2026-02-28",
+                "billing_record_ids": [created["id"]],
+            },
+        )
+        assert bill_response.status_code == 201
+
+        record_after_billing = client.get("/billing-records", params={"status": "soumis"}).json()
+        assert created["id"] in [r["id"] for r in record_after_billing]
+
+        delete_response = client.delete(f"/billing-records/{created['id']}")
+        assert delete_response.status_code == 409
 
 
 async def test_cross_physician_access_is_404():
@@ -137,13 +161,11 @@ async def test_cross_physician_access_is_404():
         app.dependency_overrides[get_current_user] = lambda: other_physician
         try:
             get_list = client.get("/billing-records")
-            patch_response = client.patch(f"/billing-records/{created['id']}", json={"status": "facture"})
             delete_response = client.delete(f"/billing-records/{created['id']}")
         finally:
             app.dependency_overrides.pop(get_current_user, None)
 
     assert all(r["id"] != created["id"] for r in get_list.json())
-    assert patch_response.status_code == 404
     assert delete_response.status_code == 404
 
 
