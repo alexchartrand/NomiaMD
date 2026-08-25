@@ -19,6 +19,12 @@ import {
 } from "../../api";
 import { Banner, Button, Card, Select, Table, TextArea, TextField } from "../../components";
 
+function confidenceBucket(confidence: number): "high" | "medium" | "low" {
+  if (confidence >= 0.85) return "high";
+  if (confidence >= 0.6) return "medium";
+  return "low";
+}
+
 const BLANK_CREATE_FORM = {
   full_name: "",
   ramq_number: "",
@@ -246,12 +252,17 @@ export default function ExtractionPage() {
 
       <ol className="stepper">
         <li className={`stepper-item${step === 1 ? " active" : step > 1 ? " done" : ""}`}>
-          1. Source d&rsquo;importation
+          <span className="stepper-marker">{step > 1 ? "✓" : 1}</span>
+          <span className="stepper-label">Source d&rsquo;importation</span>
         </li>
         <li className={`stepper-item${step === 2 ? " active" : step > 2 ? " done" : ""}`}>
-          2. Note de consultation
+          <span className="stepper-marker">{step > 2 ? "✓" : 2}</span>
+          <span className="stepper-label">Note de consultation</span>
         </li>
-        <li className={`stepper-item${step === 3 ? " active" : ""}`}>3. Révision et facturation</li>
+        <li className={`stepper-item${step === 3 ? " active" : ""}`}>
+          <span className="stepper-marker">3</span>
+          <span className="stepper-label">Révision et facturation</span>
+        </li>
       </ol>
 
       {step === 1 ? (
@@ -269,7 +280,7 @@ export default function ExtractionPage() {
           </li>
           <li>
             <button type="button" className="source-card" disabled>
-              Plume AI
+              Telus Health
               <span className="source-card-badge">Bientôt disponible</span>
             </button>
           </li>
@@ -283,40 +294,42 @@ export default function ExtractionPage() {
             </button>
           </p>
 
-          <div className="field-row">
-            <label htmlFor="patient-select">Patient simulé :</label>
-            <Select
-              id="patient-select"
-              value={selectedSamplePatientId}
-              onChange={(e) => handleSelectSamplePatient(e.target.value)}
-              disabled={samplePatientLoading || samplePatients.length === 0}
-            >
-              <option value="">
-                {samplePatients.length === 0 ? "Aucun patient simulé disponible" : "Sélectionnez un patient..."}
-              </option>
-              {samplePatients.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
+          <Card>
+            <div className="field-row">
+              <label htmlFor="patient-select">Patient simulé :</label>
+              <Select
+                id="patient-select"
+                value={selectedSamplePatientId}
+                onChange={(e) => handleSelectSamplePatient(e.target.value)}
+                disabled={samplePatientLoading || samplePatients.length === 0}
+              >
+                <option value="">
+                  {samplePatients.length === 0 ? "Aucun patient simulé disponible" : "Sélectionnez un patient..."}
                 </option>
-              ))}
-            </Select>
-            {samplePatientLoading && <span className="status-inline">Chargement...</span>}
-            {samplePatientsError && (
-              <Banner tone="error">Impossible de charger la liste des patients : {samplePatientsError}</Banner>
-            )}
-          </div>
+                {samplePatients.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </Select>
+              {samplePatientLoading && <span className="status-inline">Chargement...</span>}
+              {samplePatientsError && (
+                <Banner tone="error">Impossible de charger la liste des patients : {samplePatientsError}</Banner>
+              )}
+            </div>
 
-          <form onSubmit={handleSubmit}>
-            <TextArea
-              value={transcript}
-              onChange={(e) => handleTranscriptChange(e.target.value)}
-              rows={12}
-              placeholder="Collez la transcription de la consultation ici, ou sélectionnez un patient simulé ci-dessus..."
-            />
-            <Button type="submit" disabled={loading || !transcript.trim()}>
-              {loading ? "Extraction en cours..." : "Extraire les codes de facturation"}
-            </Button>
-          </form>
+            <form onSubmit={handleSubmit}>
+              <TextArea
+                value={transcript}
+                onChange={(e) => handleTranscriptChange(e.target.value)}
+                rows={12}
+                placeholder="Collez la transcription de la consultation ici, ou sélectionnez un patient simulé ci-dessus..."
+              />
+              <Button type="submit" disabled={loading || !transcript.trim()}>
+                {loading ? "Extraction en cours..." : "Extraire les codes de facturation"}
+              </Button>
+            </form>
+          </Card>
         </>
       )}
 
@@ -325,6 +338,7 @@ export default function ExtractionPage() {
       {step === 3 && result && (
         <section className="results">
           <h2>Révision et facturation ({result.billing.model})</h2>
+          <Card className="results-card">
           {result.billing.result.notes && <Banner tone="warning">⚠ {result.billing.result.notes}</Banner>}
 
           <div className="patient-match">
@@ -464,7 +478,11 @@ export default function ExtractionPage() {
                     </td>
                     <td className="code">{c.code}</td>
                     <td>{c.description}</td>
-                    <td>{(c.confidence * 100).toFixed(0)}%</td>
+                    <td>
+                      <span className={`confidence-badge confidence-badge-${confidenceBucket(c.confidence)}`}>
+                        {(c.confidence * 100).toFixed(0)}%
+                      </span>
+                    </td>
                     <td>{c.fee.amount != null ? `${c.fee.amount.toFixed(2)} $` : "—"}</td>
                     <td>
                       <em>&laquo; {c.supporting_quote} &raquo;</em>
@@ -475,18 +493,25 @@ export default function ExtractionPage() {
             </Table>
           )}
 
-          <p>
-            Total indicatif : {totalAmount.toFixed(2)} $
-            {codesMissingFee > 0 && ` (${codesMissingFee} code${codesMissingFee > 1 ? "s" : ""} sans tarif)`}
-          </p>
+          <div className="results-summary">
+            <div className="results-total">
+              <span className="results-total-label">Total indicatif</span>
+              <span className="results-total-amount">{totalAmount.toFixed(2)} $</span>
+              {codesMissingFee > 0 && (
+                <span className="status-inline">
+                  ({codesMissingFee} code{codesMissingFee > 1 ? "s" : ""} sans tarif)
+                </span>
+              )}
+            </div>
 
-          <Button
-            type="button"
-            onClick={() => handleSave(false)}
-            disabled={saving || saved || !selectedRosterId || !serviceDate || selection.size === 0}
-          >
-            {saving ? "Enregistrement..." : "Enregistrer la facturation"}
-          </Button>
+            <Button
+              type="button"
+              onClick={() => handleSave(false)}
+              disabled={saving || saved || !selectedRosterId || !serviceDate || selection.size === 0}
+            >
+              {saving ? "Enregistrement..." : "Enregistrer la facturation"}
+            </Button>
+          </div>
 
           {saveError && <Banner tone="error">{saveError}</Banner>}
           {saved && (
@@ -494,6 +519,7 @@ export default function ExtractionPage() {
               Facturation enregistrée. <Link to="/app/facturation">Voir la facturation</Link>
             </Banner>
           )}
+          </Card>
         </section>
       )}
     </section>

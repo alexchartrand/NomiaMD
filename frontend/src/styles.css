@@ -16,6 +16,7 @@
   --color-accent: #e8a33d;
   --color-border: rgba(18, 35, 44, 0.16);
   --color-danger: #d98f86;
+  --color-danger-bg: rgba(217, 143, 134, 0.16);
   --color-warning-bg: rgba(240, 196, 138, 0.16);
   --color-warning-text: #8a5a1a;
   --color-success-bg: rgba(107, 163, 97, 0.16);
@@ -39,6 +40,7 @@
   --color-accent: #f0b563;
   --color-border: rgba(234, 242, 241, 0.18);
   --color-danger: #c48e88;
+  --color-danger-bg: rgba(196, 142, 136, 0.18);
   --color-warning-bg: rgba(217, 179, 132, 0.18);
   --color-warning-text: #d9b384;
   --color-success-bg: rgba(129, 179, 118, 0.18);
@@ -278,8 +280,8 @@ label {
 
 .data-table th,
 .data-table td {
-  border: 1px solid var(--color-border);
-  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.65rem 0.7rem;
   text-align: left;
 }
 
@@ -290,13 +292,43 @@ label {
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--color-text-muted);
-  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.data-table tbody tr:hover {
+  background: var(--color-primary-tint);
 }
 
 .data-table td.code {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   color: var(--color-primary);
+}
+
+/* ---------- Confidence badge ---------- */
+.confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 650;
+  font-size: 0.82rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.confidence-badge-high {
+  color: var(--color-success-text);
+  background: var(--color-success-bg);
+}
+
+.confidence-badge-medium {
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+}
+
+.confidence-badge-low {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
 }
 
 .table-actions {
@@ -307,22 +339,82 @@ label {
 /* ---------- Extraction stepper ---------- */
 .stepper {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  align-items: center;
   list-style: none;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   padding: 0;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--color-text-muted);
 }
 
-.stepper-item.active {
-  color: var(--color-primary);
-  font-weight: 600;
+.stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
-.stepper-item.done {
+.stepper-item:not(:last-child) {
+  flex: 1;
+}
+
+.stepper-item:not(:last-child)::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  min-width: 1.5rem;
+  margin: 0 0.9rem;
+  background: var(--color-border);
+}
+
+.stepper-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+
+.stepper-label {
+  white-space: nowrap;
+}
+
+.stepper-item.active .stepper-marker {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.stepper-item.active .stepper-label {
+  color: var(--color-primary);
+  font-weight: 650;
+}
+
+.stepper-item.done .stepper-marker {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+}
+
+.stepper-item.done .stepper-label {
   color: var(--color-text);
+}
+
+.stepper-item.done:not(:last-child)::after {
+  background: var(--color-primary);
+  opacity: 0.4;
+}
+
+@media (max-width: 620px) {
+  .stepper-label {
+    display: none;
+  }
 }
 
 .source-list {
@@ -377,9 +469,13 @@ label {
 .patient-match {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 0.5rem;
   margin: 1rem 0;
+}
+
+.patient-match > .btn {
+  align-self: flex-start;
 }
 
 /* ---------- Facturation ---------- */
@@ -523,6 +619,39 @@ form .btn[type="submit"] {
   font-weight: 700;
   font-size: 1.3rem;
   margin: 2rem 0 1rem;
+}
+
+.results-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.results-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.results-total {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.results-total-label {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.results-total-amount {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
 }
 
 /* ---------- Landing page ---------- */
