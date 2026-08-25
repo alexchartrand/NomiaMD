@@ -92,7 +92,7 @@ codegen).
 
 **`consultations/`** at repo root holds freeform, French-language synthetic clinical notes,
 one per file — served as "simulated patients" (`GET /sample-patients`, `GET
-/sample-patients/{id}`, parsed by `backend/app/sample_patients.py`) for demoing/testing
+/sample-patients/{id}`, parsed by `backend/app/sample_patients/service.py`) for demoing/testing
 without hand-typing a transcript. Every note's header carries a `**NAM :**` line (alongside
 `**Patient :**`/`**Dossier :**`/`**Date/heure :**`) so the NAM-matching path is exercisable
 against real fixtures. `README.md` and `all_notes.md` in that directory are not patient

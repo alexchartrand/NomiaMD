@@ -21,7 +21,7 @@ from pathlib import Path
 SAMPLE_PATIENTS_DIR = (
     Path(os.environ["SAMPLE_PATIENTS_DIR"])
     if os.environ.get("SAMPLE_PATIENTS_DIR")
-    else Path(__file__).parent.parent.parent / "consultations"
+    else Path(__file__).parent.parent.parent.parent / "consultations"
 )
 
 _SKIP_STEMS = {"README", "all_notes"}

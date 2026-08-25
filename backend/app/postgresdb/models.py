@@ -66,7 +66,7 @@ class Gender(str, enum.Enum):
 
 
 class Patient(Base):
-    """A physician's own patient roster — distinct from sample_patients.py's synthetic
+    """A physician's own patient roster — distinct from app/sample_patients/'s synthetic
     demo transcripts. Holds administrative facts (registration status, vulnerability) that
     billing_codes needs but can never derive from a transcript (see CLAUDE.md)."""
 

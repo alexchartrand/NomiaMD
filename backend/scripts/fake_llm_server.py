@@ -32,7 +32,7 @@ app = FastAPI(title="fake-llm")
 # brackets) is ignored, not part of this fake's stub output.
 _CANDIDATE_RE = re.compile(r"^- (?P<code>\S+): (?P<description>[^\[]+?)(?: \[|$)", re.MULTILINE)
 
-# Same field format sample_patients.py parses (**Field :** value), used to echo identity
+# Same field format app/sample_patients/service.py parses (**Field :** value), used to echo identity
 # back out of the transcript embedded in consultation_summary's user message.
 _FIELD_RE = re.compile(r"^\*\*(.+?)\s*:\*\*\s*(.*)$", re.MULTILINE)
 _AGE_SEX_RE = re.compile(r"(\d+)\s*(ans|mois)\s*\((\w)\)")
