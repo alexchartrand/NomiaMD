@@ -7,14 +7,14 @@
 }
 
 :root {
-  --color-bg: #fdfcfa;
+  --color-bg: #f2efe7;
   --color-surface: #ffffff;
   --color-text: #33474c;
   --color-text-muted: #7c8f92;
   --color-primary: #1b5e6f;
   --color-primary-strong: #123e49;
   --color-accent: #e8a33d;
-  --color-border: rgba(18, 35, 44, 0.07);
+  --color-border: rgba(18, 35, 44, 0.16);
   --color-danger: #d98f86;
   --color-warning-bg: rgba(240, 196, 138, 0.16);
   --color-warning-text: #8a5a1a;
@@ -27,23 +27,23 @@
   --font-mono: "SF Mono", "IBM Plex Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0d1a1f;
-    --color-surface: #15292f;
-    --color-text: #eaf2f1;
-    --color-text-muted: #93a9ac;
-    --color-primary: #4fa3b5;
-    --color-primary-strong: #6fbcc9;
-    --color-accent: #f0b563;
-    --color-border: rgba(234, 242, 241, 0.1);
-    --color-danger: #c48e88;
-    --color-warning-bg: rgba(217, 179, 132, 0.18);
-    --color-warning-text: #d9b384;
-    --color-success-bg: rgba(129, 179, 118, 0.18);
-    --color-success-text: #9bc98d;
-    --color-primary-tint: rgba(79, 163, 181, 0.14);
-  }
+/* Dark palette is opt-in only (no toggle wired up yet) — light is always the
+   default, regardless of the OS/browser prefers-color-scheme setting. */
+:root[data-theme="dark"] {
+  --color-bg: #0d1a1f;
+  --color-surface: #15292f;
+  --color-text: #eaf2f1;
+  --color-text-muted: #93a9ac;
+  --color-primary: #4fa3b5;
+  --color-primary-strong: #6fbcc9;
+  --color-accent: #f0b563;
+  --color-border: rgba(234, 242, 241, 0.18);
+  --color-danger: #c48e88;
+  --color-warning-bg: rgba(217, 179, 132, 0.18);
+  --color-warning-text: #d9b384;
+  --color-success-bg: rgba(129, 179, 118, 0.18);
+  --color-success-text: #9bc98d;
+  --color-primary-tint: rgba(79, 163, 181, 0.14);
 }
 
 * {
