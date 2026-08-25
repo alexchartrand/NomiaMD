@@ -12,6 +12,7 @@ error, just against numerically valid but semantically meaningless scores), and 
 French clinical text surfaces sensible candidates end to end.
 """
 
+import asyncio
 import sys
 from pathlib import Path
 
@@ -21,7 +22,8 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from app.ramq_codes.factory import get_ramq_retriever
+from app.lancedb import LanceDB
+from app.ramq_codes.factory import build_ramq_retriever
 
 # (query, expected top-ranked code) — a handful of unambiguous cases from the real manual.
 KNOWN_QUERIES = [
@@ -35,27 +37,31 @@ KNOWN_QUERIES = [
     ),
 ]
 
-def main() -> None:
-    retriever = get_ramq_retriever()
+async def main() -> None:
+    db = await LanceDB.open()
+    try:
+        retriever = build_ramq_retriever(db.vector_store)
 
-    all_passed = True
-    for query, expected_top_code in KNOWN_QUERIES:
-        nodes = retriever.retrieve(query)
-        codes = [node.node.metadata.get('number') for node in nodes if node is not None]
+        all_passed = True
+        for query, expected_top_code in KNOWN_QUERIES:
+            nodes = retriever.retrieve(query)
+            codes = [node.node.metadata.get('number') for node in nodes if node is not None]
 
-        print(f"--- query: {query}")
-        print(f"    candidates: {codes}")
-        if not codes:
-            print("    FAIL: no candidates returned")
-            all_passed = False
-        elif expected_top_code is not None and codes[0] != expected_top_code:
-            print(f"    FAIL: expected top code {expected_top_code}, got {codes[0]}")
-            all_passed = False
-        else:
-            print("    OK")
+            print(f"--- query: {query}")
+            print(f"    candidates: {codes}")
+            if not codes:
+                print("    FAIL: no candidates returned")
+                all_passed = False
+            elif expected_top_code is not None and codes[0] != expected_top_code:
+                print(f"    FAIL: expected top code {expected_top_code}, got {codes[0]}")
+                all_passed = False
+            else:
+                print("    OK")
+    finally:
+        db.close()
 
     sys.exit(0 if all_passed else 1)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

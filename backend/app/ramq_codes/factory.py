@@ -1,14 +1,15 @@
-from app.embedings import get_embeding_model
-from functools import lru_cache
 from llama_index.llms.mistralai import MistralAI
+from llama_index.vector_stores.lancedb import LanceDBVectorStore
+
+from app.embedings import get_embeding_model
 from app.ramq_codes.retriever import RAMQCodesRetriever
 from app.ramq_codes.codes_data import CodesData
-from app.lancedb import get_codes_table_reader, get_vectorstore
+from app.lancedb import ICodeRepository
 from app.lancedb.converter import CodesRowConverter
 from app.config import settings
 
-@lru_cache(maxsize=1)
-def get_ramq_retriever() -> RAMQCodesRetriever:
+
+def build_ramq_retriever(vector_store: LanceDBVectorStore) -> RAMQCodesRetriever:
     """The BaseRetriever BillingCodesTask is constructed with (see app/tasks/registry.py).
 
     QueryFusionRetriever resolves an LLM at construction time regardless of num_queries
@@ -21,7 +22,7 @@ def get_ramq_retriever() -> RAMQCodesRetriever:
         temperature=0,
         max_tokens=4096,
     )
-    return RAMQCodesRetriever(get_vectorstore(), get_embeding_model(), llm, settings.debug)
+    return RAMQCodesRetriever(vector_store, get_embeding_model(), llm, settings.debug)
 
-def get_codes_data() -> CodesData:
-    return CodesData(get_codes_table_reader(), CodesRowConverter())
+def build_codes_data(codes: ICodeRepository) -> CodesData:
+    return CodesData(codes, CodesRowConverter())

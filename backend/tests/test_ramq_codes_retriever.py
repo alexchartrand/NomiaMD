@@ -6,7 +6,7 @@ deterministic fake embedding model (exact text->vector lookup, no network call, 
 Mistral API key needed). RAMQCodesRetriever itself does no joining against the `codes` table
 — it only surfaces candidate `number`s off `code-embeddings` node metadata; task.py
 (BillingCodesTask) is what joins those numbers against full row data via CodesData/
-CodesData's ITableReader, see tests/test_ramq_codes_data.py for that.
+CodesData's ICodeRepository, see tests/test_ramq_codes_codes_data.py for that.
 
 The retriever fuses a vector retriever with a BM25Retriever (QueryFusionRetriever, mode=
 "relative_score", num_queries=1 so no LLM-generated query variants — just the raw query

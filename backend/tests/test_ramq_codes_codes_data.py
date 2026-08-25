@@ -1,25 +1,25 @@
 """Tests for app/ramq_codes/codes_data.py — CodesData is a thin join: pass candidate numbers
-to an ITableReader, run whatever rows come back through an IConverter. Both collaborators
-are fakes here so this only pins CodesData's own wiring, not CodeTable/CodesRowConverter
-(covered separately in tests/test_lancedb_db.py and tests/test_lancedb_converter.py)."""
+to an ICodeRepository, run whatever rows come back through an IConverter. Both collaborators
+are fakes here so this only pins CodesData's own wiring, not CodeRepository/CodesRowConverter
+(covered separately in tests/test_lancedb_repository.py and tests/test_lancedb_converter.py)."""
 
-from app.lancedb.db import ITableReader
+from app.lancedb.repository import ICodeRepository
 from app.lancedb.converter import IConverter
 from app.ramq_codes.codes_data import CodesData
 from app.ramq_codes.models import Code
 
 
-class _FakeTableReader(ITableReader):
+class _FakeCodeRepository(ICodeRepository):
     def __init__(self, rows_by_number: dict[str, object]):
         self._rows_by_number = rows_by_number
-        self.get_all_calls: list[list[str]] = []
+        self.list_by_numbers_calls: list[list[str]] = []
 
-    async def get(self, id: str):
-        return self._rows_by_number[id]
+    async def get_by_number(self, number: str):
+        return self._rows_by_number[number]
 
-    async def get_all(self, ids: list[str]) -> list:
-        self.get_all_calls.append(list(ids))
-        return [self._rows_by_number[i] for i in ids if i in self._rows_by_number]
+    async def list_by_numbers(self, numbers: list[str]) -> list:
+        self.list_by_numbers_calls.append(list(numbers))
+        return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
 
 
 class _FakeConverter(IConverter):
@@ -36,9 +36,9 @@ class _FakeConverter(IConverter):
 
 
 async def test_get_converts_every_row_the_table_returns():
-    table = _FakeTableReader({"A": {"number": "A", "description": "desc A"}, "B": {"number": "B", "description": "desc B"}})
+    repository = _FakeCodeRepository({"A": {"number": "A", "description": "desc A"}, "B": {"number": "B", "description": "desc B"}})
     converter = _FakeConverter()
-    codes_data = CodesData(table, converter)
+    codes_data = CodesData(repository, converter)
 
     result = await codes_data.get(["A", "B"])
 
@@ -47,20 +47,20 @@ async def test_get_converts_every_row_the_table_returns():
 
 
 async def test_get_passes_requested_numbers_through_to_the_table_unchanged():
-    table = _FakeTableReader({"A": {"number": "A", "description": ""}})
-    codes_data = CodesData(table, _FakeConverter())
+    repository = _FakeCodeRepository({"A": {"number": "A", "description": ""}})
+    codes_data = CodesData(repository, _FakeConverter())
 
     await codes_data.get(["A", "Z"])
 
-    assert table.get_all_calls == [["A", "Z"]]
+    assert repository.list_by_numbers_calls == [["A", "Z"]]
 
 
 async def test_get_only_converts_rows_the_table_actually_returned():
     # A requested number the table couldn't resolve (stale candidate) is simply absent from
     # the table's result — CodesData doesn't call the converter for it.
-    table = _FakeTableReader({"A": {"number": "A", "description": ""}})
+    repository = _FakeCodeRepository({"A": {"number": "A", "description": ""}})
     converter = _FakeConverter()
-    codes_data = CodesData(table, converter)
+    codes_data = CodesData(repository, converter)
 
     result = await codes_data.get(["A", "MISSING"])
 
@@ -69,7 +69,7 @@ async def test_get_only_converts_rows_the_table_actually_returned():
 
 
 async def test_get_with_no_numbers_returns_no_codes():
-    table = _FakeTableReader({})
-    codes_data = CodesData(table, _FakeConverter())
+    repository = _FakeCodeRepository({})
+    codes_data = CodesData(repository, _FakeConverter())
 
     assert await codes_data.get([]) == []

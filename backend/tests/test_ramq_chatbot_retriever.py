@@ -150,11 +150,11 @@ class _NoOpReferenceExpander:
 
 
 class _EmptyCodesTableReader:
-    """Empty ITableReader stand-in for tests that only exercise section-reference expansion
-    (ReferenceExpander.aexpand's code_references half is unreachable when no node carries any
-    code_references metadata)."""
+    """Empty ICodeRepository stand-in for tests that only exercise section-reference
+    expansion (ReferenceExpander.aexpand's code_references half is unreachable when no node
+    carries any code_references metadata)."""
 
-    async def get_all(self, ids: list[str]) -> list:
+    async def list_by_numbers(self, numbers: list[str]) -> list:
         return []
 
 

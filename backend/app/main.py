@@ -6,6 +6,7 @@ from slowapi.errors import RateLimitExceeded
 
 from app.auth import auth_router, get_current_user
 from app.billing import billing_router
+from app.bootstrap import application_services
 from app.config import settings
 from app.extraction import extraction_router
 from app.logging_config import configure_logging
@@ -24,7 +25,9 @@ configure_logging(settings.log_level)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
-    yield
+    async with application_services() as db:
+        app.state.lancedb = db
+        yield
 
 
 app = FastAPI(title="NomiaMD", lifespan=lifespan, debug=settings.debug)

@@ -10,22 +10,20 @@ _TEST_DB_DIR = tempfile.mkdtemp(prefix="nomiamd-test-")
 os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{_TEST_DB_DIR}/test.db"
 
 import json
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import pytest
 from llama_index.core.schema import NodeWithScore, TextNode
 
-# app.tasks.registry builds a real, DB_PATH/MISTRAL_API_KEY-backed retriever the moment
-# it's imported (BillingCodesTask's retriever is now constructed once at registry-import
-# time, not looked up fresh per call). That chain imports app.config, which loads .env on
-# its own first import — so .env is guaranteed to be loaded before any of these env-derived
-# settings are read, regardless of which module happens to import app.config first.
 from app.auth import get_current_user  # noqa: E402
 from app.postgresdb import User, UserRole  # noqa: E402
 from app.main import app  # noqa: E402
+from app.ramq_codes import BillingCodesTask  # noqa: E402
 from app.ramq_codes.models import Code, CodeFee  # noqa: E402
 from app.rate_limit import limiter  # noqa: E402
-from app.tasks.registry import get_task  # noqa: E402
+from app.summary import ConsultationSummaryTask  # noqa: E402
+from app.tasks.registry import register_tasks  # noqa: E402
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
 
@@ -75,18 +73,17 @@ class _StubCodesData:
 
 
 @pytest.fixture(autouse=True)
-def small_reference_table(monkeypatch):
+def small_reference_table():
     """Points RAMQ candidate retrieval and code lookup at a tiny, stable fixture rather than
     the real (large, network-backed) llama_index vector store and LanceDB `codes` table —
     tests need candidate narrowing to behave predictably without a real vector index,
     MISTRAL_API_KEY, or network call.
 
-    Patches the `_retriever` and `_codes_data` attributes on the singleton BillingCodesTask
-    instance held by app.tasks.registry, not module-level functions: BillingCodesTask now
-    takes both at construction time (app/tasks/registry.py wires in get_ramq_retriever() and
-    get_codes_data() when the registry module is first imported), rather than calling a
-    lookup function fresh on every build_prompt(), so there's no module-level symbol left to
-    monkeypatch.
+    Populates app.tasks.registry's task dict directly with a BillingCodesTask built from
+    these stubs (register_tasks — the same call app/bootstrap.py's init_tasks makes with
+    real collaborators), rather than patching attributes on a pre-built singleton: nothing
+    builds the task registry at import time any more (see app/bootstrap.py), so there's no
+    singleton for this fixture to reach into until it makes one itself.
     """
     data = json.loads(SMALL_REFERENCE_PATH.read_text())
     entries = [(entry["code"], entry.get("keywords", [])) for entry in data["codes"]]
@@ -108,9 +105,28 @@ def small_reference_table(monkeypatch):
     }
     stub_codes_data = _StubCodesData(codes_by_number)
 
-    task = get_task("billing_codes")
-    monkeypatch.setattr(task, "_retriever", stub_retriever)
-    monkeypatch.setattr(task, "_codes_data", stub_codes_data)
+    register_tasks([
+        BillingCodesTask(stub_retriever, stub_codes_data),
+        ConsultationSummaryTask(),
+    ])
+    yield
+
+
+@pytest.fixture(autouse=True)
+def no_real_lancedb_on_startup(monkeypatch):
+    """TestClient(app) as a context manager triggers app.main's lifespan, which normally
+    opens a real LanceDB connection and rebuilds the task registry / chatbot engine from it
+    (app/bootstrap.py's application_services()) — tests must not touch a real LanceDB, and
+    must not clobber the stub registry small_reference_table just set up. Stubs out the
+    lifespan's call to application_services with a no-op so init_db() (Postgres/SQLite) is
+    the only real startup work TestClient still triggers.
+    """
+
+    @asynccontextmanager
+    async def _fake_application_services():
+        yield None
+
+    monkeypatch.setattr("app.main.application_services", _fake_application_services)
     yield
 
 

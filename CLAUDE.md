@@ -33,19 +33,25 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    the raw transcript, and:
    - retrieves candidate *numbers* via `RAMQCodesRetriever` (`ramq_codes/retriever.py`), a
      llama_index `BaseRetriever` built on a `VectorStoreIndex` over the `code-embeddings`
-     LanceDB table at `DB_PATH` (a `LanceDBVectorStore`, wired in `app/lancedb/factory.py`),
-     embedded with Mistral's `mistral-embed`. `code-embeddings` node metadata carries only
-     `number` (see ramq-ingestion's `src/embedding/code_node_builder.py`) — nothing else.
+     LanceDB table at `DB_PATH` (a `LanceDBVectorStore`, held by `LanceDB`,
+     `app/lancedb/database.py`), embedded with Mistral's `mistral-embed`. `code-embeddings`
+     node metadata carries only `number` (see ramq-ingestion's
+     `src/embedding/code_node_builder.py`) — nothing else.
    - joins those numbers against the flat `codes` table (same `DB_PATH`) for the full
      candidate row (`description`, `when_to_use`, `rules`, `fees`, `confidence`; see
      ramq-ingestion's `src/embedding/code_table_schema.py`) — this join is `task.py`'s job,
      not the retriever's: `BillingCodesTask.build_prompt` calls `await CodesData.get(numbers)`
      (`ramq_codes/codes_data.py`), which does a direct async LanceDB query
-     (`table.query().where("number IN (...)")` against a lazily-opened `lancedb.AsyncTable`)
-     via `CodeTable` (`app/lancedb/db.py`) and
-     converts each raw row into this backend's own `Code` shape via `CodesRowConverter`
+     (`table.query().where("number IN (...)")` against an `AsyncTable` opened once by the
+     app's `lifespan`, not per-request) via `CodeRepository` (`app/lancedb/repository.py`)
+     and converts each raw row into this backend's own `Code` shape via `CodesRowConverter`
      (`app/lancedb/converter.py`). A candidate number with no matching `codes` row (stale
-     index) is silently dropped rather than surfaced with missing data.
+     index) is silently dropped rather than surfaced with missing data. `app/lancedb/`
+     mirrors `app/postgresdb/`'s `database.py`/`models.py`/`repository.py` split; unlike
+     Postgres, LanceDB has no migration/session story, and its connection can only be
+     opened once an event loop is running, so `LanceDB.open()` is called from
+     `app/bootstrap.py`'s `application_services()` — the process's single composition root,
+     used by `app/main.py`'s `lifespan` and by the real-API scripts.
    - asks the model to pick only from those candidates, attaching a fee (from the
      candidate's own fee list, never invented) and a verbatim `supporting_quote` from the
      summary per code, for physician review. Empty output is correct/expected when nothing

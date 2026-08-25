@@ -7,16 +7,18 @@ from the manual text itself, rather than proposing codes for a specific encounte
 Public interface — everything else that needs this imports it from here rather than
 reaching into .engine/.retriever/.factory/.models/.router directly."""
 
-from app.ramq_chatbot.factory import get_ramq_query_engine
+from app.ramq_chatbot.factory import get_ramq_query_engine, init_ramq_query_engine
 from app.ramq_chatbot.models import RAMQChatMessage, RAMQQueryRequest, RAMQQueryResult
 from app.ramq_chatbot.router import router as ramq_chatbot_router
 
-# Eager, same as app/tasks/registry.py's BillingCodesTask: build the BM25+vector engine now,
-# at import time, so the first /query request doesn't pay for it on the event loop.
-get_ramq_query_engine()
+# init_ramq_query_engine() builds the BM25+vector engine and must run once before any
+# /query request — called by app/bootstrap.py's application_services(), not here at import
+# time: building it needs a running event loop and an already-open LanceDB connection,
+# neither of which exist yet when this module is first imported.
 
 __all__ = [
     "get_ramq_query_engine",
+    "init_ramq_query_engine",
     "RAMQChatMessage",
     "RAMQQueryRequest",
     "RAMQQueryResult",

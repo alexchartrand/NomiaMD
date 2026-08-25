@@ -32,6 +32,7 @@ from dotenv import load_dotenv
 # load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
+from app.bootstrap import application_services  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.sample_patients import get_sample_patient  # noqa: E402
 from app.summary import render_for_billing_codes  # noqa: E402
@@ -61,38 +62,39 @@ async def main() -> None:
     ungrounded_quotes = 0
     total_quotes = 0
 
-    for entry in entries:
-        patient = get_sample_patient(entry["patient_id"])
-        if patient is None:
-            print(f"[skip] unknown patient_id {entry['patient_id']!r}")
-            continue
+    async with application_services():
+        for entry in entries:
+            patient = get_sample_patient(entry["patient_id"])
+            if patient is None:
+                print(f"[skip] unknown patient_id {entry['patient_id']!r}")
+                continue
 
-        summary_result, result = await run_billing_codes_pipeline(patient.transcript)
-        summary_text = render_for_billing_codes(summary_result.result)
-        returned_codes = {c.code for c in result.result.codes}
-        expected_codes = set(entry.get("expected_codes") or [])
+            summary_result, result = await run_billing_codes_pipeline(patient.transcript)
+            summary_text = render_for_billing_codes(summary_result.result)
+            returned_codes = {c.code for c in result.result.codes}
+            expected_codes = set(entry.get("expected_codes") or [])
 
-        for c in result.result.codes:
-            total_quotes += 1
-            if not quote_is_grounded(summary_text, c.supporting_quote):
-                ungrounded_quotes += 1
+            for c in result.result.codes:
+                total_quotes += 1
+                if not quote_is_grounded(summary_text, c.supporting_quote):
+                    ungrounded_quotes += 1
 
-        status = entry.get("label_status", "unknown")
-        print(f"\n=== {entry['patient_id']} ({status}) ===")
-        print(f"  returned: {sorted(returned_codes) or '(none)'}")
+            status = entry.get("label_status", "unknown")
+            print(f"\n=== {entry['patient_id']} ({status}) ===")
+            print(f"  returned: {sorted(returned_codes) or '(none)'}")
 
-        if not expected_codes:
-            print(f"  expected: (none labeled — {entry.get('label_notes', '')[:100]}...)")
-            continue
+            if not expected_codes:
+                print(f"  expected: (none labeled — {entry.get('label_notes', '')[:100]}...)")
+                continue
 
-        true_positives = returned_codes & expected_codes
-        precision = len(true_positives) / len(returned_codes) if returned_codes else 0.0
-        recall = len(true_positives) / len(expected_codes) if expected_codes else 0.0
-        total_precision += precision
-        total_recall += recall
-        scored += 1
-        print(f"  expected: {sorted(expected_codes)}")
-        print(f"  precision={precision:.2f} recall={recall:.2f}")
+            true_positives = returned_codes & expected_codes
+            precision = len(true_positives) / len(returned_codes) if returned_codes else 0.0
+            recall = len(true_positives) / len(expected_codes) if expected_codes else 0.0
+            total_precision += precision
+            total_recall += recall
+            scored += 1
+            print(f"  expected: {sorted(expected_codes)}")
+            print(f"  precision={precision:.2f} recall={recall:.2f}")
 
     print(f"\n--- summary (model={result.model}) ---")
     if scored:

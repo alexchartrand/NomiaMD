@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 # load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
+from app.bootstrap import application_services  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.sample_patients import get_sample_patients  # noqa: E402
 
@@ -31,7 +32,8 @@ async def main() -> None:
     print("--- transcript ---")
     print(transcript)
 
-    summary_result, billing_result = await run_billing_codes_pipeline(transcript)
+    async with application_services():
+        summary_result, billing_result = await run_billing_codes_pipeline(transcript)
 
     print("--- consultation summary ---")
     print(summary_result.model_dump_json(indent=2))
