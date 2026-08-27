@@ -67,16 +67,16 @@ roster from an extraction's identified patient (`PatientSuggestionService`, `app
 nam.py`/`suggestion.py`) — matched by exact NAM only, never by name, since a NAM is unique
 across every Quebec resident and a name-based near-miss risks billing the wrong person.
 `Patient.is_deleted` makes patient deletion a soft delete: a deleted patient disappears from
-the roster and its lookups, but any `billing_records` row referencing it keeps rendering the
+the roster and its lookups, but any `claims` row referencing it keeps rendering the
 patient's name, and the id is never left dangling.
 
-**`app/billing/`** turns a physician-confirmed `billing_codes` extraction into a persisted
-billing record — not an LLM task itself, just the save step downstream of it.
-`BillingService` hydrates each saved code's description/fee/quote from the extraction's own
+**`app/claims/`** turns a physician-confirmed `billing_codes` extraction into a persisted
+claim — not an LLM task itself, just the save step downstream of it.
+`ClaimService` hydrates each saved code's description/fee/quote from the extraction's own
 stored result (never trusted from the request body) and snapshots them onto
-`billing_record_codes`, since the LanceDB `codes` table they originally came from is
+`claim_codes`, since the LanceDB `codes` table they originally came from is
 regenerated independently and re-deriving fees later would silently rewrite billing history.
-Wired at `POST/GET/PATCH/DELETE /billing-records` (`app/main.py`).
+Wired at `POST/GET/PATCH/DELETE /claims` (`app/main.py`).
 
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH`
 (`code-embeddings` for retrieval, `codes` for full row data) are produced by a separate

@@ -3,29 +3,29 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.auth import get_current_user
-from app.billing.factory import get_billing_service
-from app.billing.models import BillingRecordCreate, BillingRecordOut, BillingStatus
-from app.billing.service import (
-    BillingService,
-    DuplicateBillingRecordError,
+from app.claims.factory import get_claim_service
+from app.claims.models import ClaimCreate, ClaimOut, ClaimStatus
+from app.claims.service import (
+    ClaimOnBillError,
+    ClaimService,
+    DuplicateClaimError,
     EmptySelectionError,
     ExtractionRecordNotFoundError,
     PatientNotFoundError,
-    RecordOnBillError,
     UnknownCodesError,
 )
 from app.postgresdb import User
 
-router = APIRouter(prefix="/billing-records", tags=["billing"])
+router = APIRouter(prefix="/claims", tags=["claims"])
 
 
-@router.post("", response_model=BillingRecordOut, status_code=status.HTTP_201_CREATED)
-async def create_billing_record(
-    body: BillingRecordCreate,
+@router.post("", response_model=ClaimOut, status_code=status.HTTP_201_CREATED)
+async def create_claim(
+    body: ClaimCreate,
     confirm_duplicate: bool = False,
     current_user: User = Depends(get_current_user),
-    service: BillingService = Depends(get_billing_service),
-) -> BillingRecordOut:
+    service: ClaimService = Depends(get_claim_service),
+) -> ClaimOut:
     try:
         return await service.create(
             physician_id=current_user.id,
@@ -48,24 +48,24 @@ async def create_billing_record(
             status_code=422,
             detail=f"Code(s) absent(s) de cette extraction : {', '.join(exc.codes)}",
         ) from exc
-    except DuplicateBillingRecordError as exc:
+    except DuplicateClaimError as exc:
         raise HTTPException(
             status_code=409,
-            detail={"code": "duplicate_billing_record", "message": exc.message},
+            detail={"code": "duplicate_claim", "message": exc.message},
         ) from exc
 
 
-@router.get("", response_model=list[BillingRecordOut])
-async def list_billing_records(
+@router.get("", response_model=list[ClaimOut])
+async def list_claims(
     patient_id: int | None = None,
     date_from: date | None = None,
     date_to: date | None = None,
-    status_filter: BillingStatus | None = Query(default=None, alias="status"),
+    status_filter: ClaimStatus | None = Query(default=None, alias="status"),
     limit: int = 100,
     offset: int = 0,
     current_user: User = Depends(get_current_user),
-    service: BillingService = Depends(get_billing_service),
-) -> list[BillingRecordOut]:
+    service: ClaimService = Depends(get_claim_service),
+) -> list[ClaimOut]:
     return await service.list_for_physician(
         current_user.id,
         patient_id=patient_id,
@@ -78,14 +78,14 @@ async def list_billing_records(
 
 
 @router.delete("/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_billing_record(
+async def delete_claim(
     record_id: int,
     current_user: User = Depends(get_current_user),
-    service: BillingService = Depends(get_billing_service),
+    service: ClaimService = Depends(get_claim_service),
 ) -> None:
     try:
         deleted = await service.delete(record_id, current_user.id)
-    except RecordOnBillError as exc:
+    except ClaimOnBillError as exc:
         raise HTTPException(
             status_code=409,
             detail="Cette facturation fait partie d'une facture générée. Supprimez d'abord la facture.",

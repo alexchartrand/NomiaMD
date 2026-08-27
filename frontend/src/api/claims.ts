@@ -1,12 +1,12 @@
 import { unwrap, unwrapVoid } from "./http";
 
-// Kept in sync by hand with app/billing/models.py's BillingStatus Literal. Read-only from
-// this API — a record only leaves "brouillon" via POST /bills (see api/bills.ts), and
+// Kept in sync by hand with app/claims/models.py's ClaimStatus Literal. Read-only from
+// this API — a claim only leaves "brouillon" via POST /bills (see api/bills.ts), and
 // "facture" is reserved for a future real RAMQ submission response; nothing sets it yet.
-export const BILLING_STATUSES = ["brouillon", "soumis", "facture"] as const;
-export type BillingStatus = (typeof BILLING_STATUSES)[number];
+export const CLAIM_STATUSES = ["brouillon", "soumis", "facture"] as const;
+export type ClaimStatus = (typeof CLAIM_STATUSES)[number];
 
-export interface BillingCodeLine {
+export interface ClaimCodeLine {
   code: string;
   description: string;
   confidence: number;
@@ -16,20 +16,20 @@ export interface BillingCodeLine {
   majoration: string | null;
 }
 
-export interface BillingRecord {
+export interface Claim {
   id: number;
   patient_id: number;
   patient_full_name: string;
   service_date: string; // ISO date (YYYY-MM-DD)
-  status: BillingStatus;
+  status: ClaimStatus;
   source_system: string | null;
-  codes: BillingCodeLine[];
+  codes: ClaimCodeLine[];
   total_amount: number | null;
   created_at: string;
   updated_at: string;
 }
 
-export interface BillingRecordInput {
+export interface ClaimInput {
   patient_id: number;
   service_date: string;
   billing_extraction_record_id: number;
@@ -38,22 +38,19 @@ export interface BillingRecordInput {
   source_system: string | null;
 }
 
-export interface BillingRecordFilters {
+export interface ClaimFilters {
   patient_id?: number;
   date_from?: string;
   date_to?: string;
-  status?: BillingStatus;
+  status?: ClaimStatus;
   limit?: number;
   offset?: number;
 }
 
-export class DuplicateBillingRecordError extends Error {}
+export class DuplicateClaimError extends Error {}
 
-export async function createBillingRecord(
-  payload: BillingRecordInput,
-  confirmDuplicate = false,
-): Promise<BillingRecord> {
-  const response = await fetch(`/api/billing-records?confirm_duplicate=${confirmDuplicate}`, {
+export async function createClaim(payload: ClaimInput, confirmDuplicate = false): Promise<Claim> {
+  const response = await fetch(`/api/claims?confirm_duplicate=${confirmDuplicate}`, {
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
@@ -67,13 +64,13 @@ export async function createBillingRecord(
       detail && typeof detail === "object" && typeof detail.message === "string"
         ? detail.message
         : "Une facturation existe déjà pour ce patient à cette date.";
-    throw new DuplicateBillingRecordError(message);
+    throw new DuplicateClaimError(message);
   }
 
-  return unwrap<BillingRecord>(response);
+  return unwrap<Claim>(response);
 }
 
-export async function listBillingRecords(filters: BillingRecordFilters = {}): Promise<BillingRecord[]> {
+export async function listClaims(filters: ClaimFilters = {}): Promise<Claim[]> {
   const params = new URLSearchParams();
   if (filters.patient_id != null) params.set("patient_id", String(filters.patient_id));
   if (filters.date_from) params.set("date_from", filters.date_from);
@@ -83,13 +80,11 @@ export async function listBillingRecords(filters: BillingRecordFilters = {}): Pr
   if (filters.offset != null) params.set("offset", String(filters.offset));
   const query = params.toString();
 
-  return unwrap<BillingRecord[]>(
-    await fetch(`/api/billing-records${query ? `?${query}` : ""}`, { credentials: "same-origin" }),
-  );
+  return unwrap<Claim[]>(await fetch(`/api/claims${query ? `?${query}` : ""}`, { credentials: "same-origin" }));
 }
 
 // Status is otherwise read-only from this API — there is no PATCH endpoint for it, see
-// BILLING_STATUSES' comment above.
-export async function deleteBillingRecord(id: number): Promise<void> {
-  await unwrapVoid(await fetch(`/api/billing-records/${id}`, { method: "DELETE", credentials: "same-origin" }));
+// CLAIM_STATUSES' comment above.
+export async function deleteClaim(id: number): Promise<void> {
+  await unwrapVoid(await fetch(`/api/claims/${id}`, { method: "DELETE", credentials: "same-origin" }));
 }

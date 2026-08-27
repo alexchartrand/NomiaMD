@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  createBill,
-  describeError,
-  listBillingRecords,
-  StaleBillSelectionError,
-  type BillingRecord,
-} from "../../../api";
+import { createBill, describeError, listClaims, StaleBillSelectionError, type Claim } from "../../../api";
 import { Banner, Button, Checkbox, Modal, Table, TextField } from "../../../components";
 import { formatDate } from "../../../utils/date";
 
@@ -14,16 +8,16 @@ interface CreateBillModalProps {
   onCreated: () => void;
 }
 
-// The backend hard-caps a single page at 200 (BillingRecordRepository.list_for_physician),
-// so a date range with more unbilled records than that needs several pages to avoid
+// The backend hard-caps a single page at 200 (ClaimRepository.list_for_physician),
+// so a date range with more unbilled claims than that needs several pages to avoid
 // silently truncating the candidate list.
 const PAGE_SIZE = 200;
 
-async function fetchAllUnsubmitted(dateFrom: string, dateTo: string): Promise<BillingRecord[]> {
-  const all: BillingRecord[] = [];
+async function fetchAllUnsubmitted(dateFrom: string, dateTo: string): Promise<Claim[]> {
+  const all: Claim[] = [];
   let offset = 0;
   for (;;) {
-    const page = await listBillingRecords({
+    const page = await listClaims({
       date_from: dateFrom,
       date_to: dateTo,
       status: "brouillon",
@@ -42,7 +36,7 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
   const [dateTo, setDateTo] = useState("");
   const [rangeError, setRangeError] = useState<string | null>(null);
 
-  const [candidates, setCandidates] = useState<BillingRecord[] | null>(null);
+  const [candidates, setCandidates] = useState<Claim[] | null>(null);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
 
   const [selection, setSelection] = useState<Set<number>>(new Set());
@@ -108,14 +102,14 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
       await createBill({
         start_date: dateFrom,
         end_date: dateTo,
-        billing_record_ids: Array.from(selection),
+        claim_ids: Array.from(selection),
       });
       onCreated();
       onClose();
     } catch (err) {
       if (err instanceof StaleBillSelectionError) {
         setSubmitError(`${err.message} La liste a été mise à jour, veuillez vérifier votre sélection.`);
-        // The candidate set went stale (a record was billed/deleted elsewhere) — refresh it
+        // The candidate set went stale (a claim was billed/deleted elsewhere) — refresh it
         // so the physician isn't left selecting ids that no longer qualify.
         try {
           const found = await fetchAllUnsubmitted(dateFrom, dateTo);
@@ -188,19 +182,19 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
             </tr>
           </thead>
           <tbody>
-            {candidates.map((record) => (
-              <tr key={record.id}>
+            {candidates.map((claim) => (
+              <tr key={claim.id}>
                 <td>
                   <Checkbox
-                    checked={selection.has(record.id)}
-                    onChange={() => toggle(record.id)}
-                    aria-label={`Sélectionner la facturation de ${record.patient_full_name}`}
+                    checked={selection.has(claim.id)}
+                    onChange={() => toggle(claim.id)}
+                    aria-label={`Sélectionner la facturation de ${claim.patient_full_name}`}
                   />
                 </td>
-                <td>{formatDate(record.service_date)}</td>
-                <td>{record.patient_full_name}</td>
-                <td>{record.codes.map((c) => c.code).join(", ")}</td>
-                <td>{record.total_amount != null ? `${record.total_amount.toFixed(2)} $` : "—"}</td>
+                <td>{formatDate(claim.service_date)}</td>
+                <td>{claim.patient_full_name}</td>
+                <td>{claim.codes.map((c) => c.code).join(", ")}</td>
+                <td>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</td>
               </tr>
             ))}
           </tbody>

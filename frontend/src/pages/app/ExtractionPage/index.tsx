@@ -1,5 +1,5 @@
 import { useMemo, useReducer, useState, type FormEvent } from "react";
-import { createBillingRecord, describeError, DuplicateBillingRecordError, extractBillingCodes } from "../../../api";
+import { createClaim, describeError, DuplicateClaimError, extractBillingCodes } from "../../../api";
 import { Banner } from "../../../components";
 import { SourceStep } from "./SourceStep";
 import { ReviewStep } from "./ReviewStep";
@@ -97,7 +97,7 @@ export default function ExtractionPage() {
     if (!result || !selectedRosterId || !serviceDate || selection.size === 0) return;
     dispatch({ type: "save-started" });
     try {
-      await createBillingRecord(
+      await createClaim(
         {
           patient_id: selectedRosterId,
           service_date: serviceDate,
@@ -114,7 +114,7 @@ export default function ExtractionPage() {
       // exact same extraction (as opposed to the same patient/date via a different one) is
       // never overridable server-side, so retrying with confirmDuplicate=true would 409
       // again forever. Surfacing it as a plain error here breaks that loop.
-      if (err instanceof DuplicateBillingRecordError && !confirmDuplicate) {
+      if (err instanceof DuplicateClaimError && !confirmDuplicate) {
         if (window.confirm(`${err.message} Enregistrer quand même ?`)) {
           await handleSave(true);
           return;
@@ -128,7 +128,7 @@ export default function ExtractionPage() {
 
   return (
     <section className="page-panel">
-      <h1>Extraction de codes</h1>
+      <h1>Réclamation</h1>
 
       <ol className="stepper">
         <li className={`stepper-item${step === 1 ? " active" : " done"}`}>

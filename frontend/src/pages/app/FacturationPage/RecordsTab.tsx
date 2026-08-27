@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState } from "react";
 import {
-  BILLING_STATUSES,
-  deleteBillingRecord,
+  CLAIM_STATUSES,
+  deleteClaim,
   describeError,
-  listBillingRecords,
+  listClaims,
   listPatients,
-  type BillingRecord,
-  type BillingRecordFilters,
-  type BillingStatus,
+  type Claim,
+  type ClaimFilters,
+  type ClaimStatus,
   type Patient,
 } from "../../../api";
 import { Banner, Button, Select, Table, TextField } from "../../../components";
@@ -19,7 +19,7 @@ interface RecordsTabProps {
 }
 
 export function RecordsTab({ reloadSignal }: RecordsTabProps) {
-  const [records, setRecords] = useState<BillingRecord[]>([]);
+  const [claims, setClaims] = useState<Claim[]>([]);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
 
@@ -27,7 +27,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
   const [patientFilter, setPatientFilter] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [statusFilter, setStatusFilter] = useState<BillingStatus | "">("");
+  const [statusFilter, setStatusFilter] = useState<ClaimStatus | "">("");
 
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
@@ -37,31 +37,31 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
       .catch((err) => setListError(describeError(err)));
   }, []);
 
-  function loadRecords() {
+  function loadClaims() {
     setLoading(true);
     setListError(null);
-    const filters: BillingRecordFilters = {};
+    const filters: ClaimFilters = {};
     if (patientFilter) filters.patient_id = Number(patientFilter);
     if (dateFrom) filters.date_from = dateFrom;
     if (dateTo) filters.date_to = dateTo;
     if (statusFilter) filters.status = statusFilter;
 
-    listBillingRecords(filters)
-      .then(setRecords)
+    listClaims(filters)
+      .then(setClaims)
       .catch((err) => setListError(describeError(err)))
       .finally(() => setLoading(false));
   }
 
-  // reloadSignal changes after a bill is generated/deleted on the other tab — records may
+  // reloadSignal changes after a bill is generated/deleted on the other tab — claims may
   // have moved between "brouillon" and "soumis" without this tab knowing.
-  useEffect(loadRecords, [patientFilter, dateFrom, dateTo, statusFilter, reloadSignal]);
+  useEffect(loadClaims, [patientFilter, dateFrom, dateTo, statusFilter, reloadSignal]);
 
-  async function handleDelete(record: BillingRecord) {
-    if (!window.confirm(`Supprimer la facturation de ${record.patient_full_name} ? Cette action est irréversible.`))
+  async function handleDelete(claim: Claim) {
+    if (!window.confirm(`Supprimer la facturation de ${claim.patient_full_name} ? Cette action est irréversible.`))
       return;
     try {
-      await deleteBillingRecord(record.id);
-      loadRecords();
+      await deleteClaim(claim.id);
+      loadClaims();
     } catch (err) {
       setListError(describeError(err));
     }
@@ -95,10 +95,10 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
         <Select
           id="filter-status"
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as BillingStatus | "")}
+          onChange={(e) => setStatusFilter(e.target.value as ClaimStatus | "")}
         >
           <option value="">Tous</option>
-          {BILLING_STATUSES.map((s) => (
+          {CLAIM_STATUSES.map((s) => (
             <option key={s} value={s}>
               {STATUS_LABELS[s]}
             </option>
@@ -110,7 +110,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
 
       {loading ? (
         <p className="status-inline">Chargement...</p>
-      ) : records.length === 0 ? (
+      ) : claims.length === 0 ? (
         <p>Aucune facturation enregistrée.</p>
       ) : (
         <Table>
@@ -125,29 +125,29 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
             </tr>
           </thead>
           <tbody>
-            {records.map((record) => {
-              const deletable = record.status === "brouillon";
+            {claims.map((claim) => {
+              const deletable = claim.status === "brouillon";
               return (
-                <Fragment key={record.id}>
+                <Fragment key={claim.id}>
                   <tr>
-                    <td>{formatDate(record.service_date)}</td>
-                    <td>{record.patient_full_name}</td>
+                    <td>{formatDate(claim.service_date)}</td>
+                    <td>{claim.patient_full_name}</td>
                     <td>
-                      {record.codes.map((c) => c.code).join(", ")}{" "}
+                      {claim.codes.map((c) => c.code).join(", ")}{" "}
                       <Button
                         type="button"
                         variant="link"
-                        onClick={() => setExpandedId(expandedId === record.id ? null : record.id)}
+                        onClick={() => setExpandedId(expandedId === claim.id ? null : claim.id)}
                       >
                         Détails
                       </Button>
                     </td>
-                    <td>{record.total_amount != null ? `${record.total_amount.toFixed(2)} $` : "—"}</td>
+                    <td>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</td>
                     <td>
                       <span
-                        className={`status-badge${record.status === "facture" ? " status-badge-facture" : ""}`}
+                        className={`status-badge${claim.status === "facture" ? " status-badge-facture" : ""}`}
                       >
-                        {STATUS_LABELS[record.status]}
+                        {STATUS_LABELS[claim.status]}
                       </span>
                     </td>
                     <td>
@@ -157,18 +157,18 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                           variant="danger"
                           disabled={!deletable}
                           title={deletable ? undefined : "Cette facturation fait partie d'une facture générée."}
-                          onClick={() => handleDelete(record)}
+                          onClick={() => handleDelete(claim)}
                         >
                           Supprimer
                         </Button>
                       </div>
                     </td>
                   </tr>
-                  {expandedId === record.id && (
+                  {expandedId === claim.id && (
                     <tr className="billing-details-row">
                       <td colSpan={6}>
                         <ul>
-                          {record.codes.map((c) => (
+                          {claim.codes.map((c) => (
                             <li key={c.code}>
                               <span className="code-chip">{c.code}</span> {c.description}
                               {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}

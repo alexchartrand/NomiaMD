@@ -1,6 +1,6 @@
-"""Exercises BillingRecordRepository directly against the test DB — no HTTP. The full
+"""Exercises ClaimRepository directly against the test DB — no HTTP. The full
 API-level behavior (validation, hydration from an extraction record, duplicate handling)
-is covered by tests/test_billing_records.py once the billing router exists."""
+is covered by tests/test_claims.py once the claims router exists."""
 
 import itertools
 from datetime import date
@@ -8,9 +8,9 @@ from datetime import date
 import pytest
 
 from app.postgresdb import (
-    BillingRecordCodeInput,
-    BillingRecordInput,
-    BillingRecordRepository,
+    ClaimCodeInput,
+    ClaimInput,
+    ClaimRepository,
     Gender,
     PatientRepository,
     init_db,
@@ -52,15 +52,15 @@ def _one_code_input(**overrides):
         majoration=None,
     )
     defaults.update(overrides)
-    return BillingRecordCodeInput(**defaults)
+    return ClaimCodeInput(**defaults)
 
 
 async def test_create_then_get_then_list(physician_id):
     patient = await _seed_patient(physician_id)
-    repo = BillingRecordRepository()
+    repo = ClaimRepository()
 
     created = await repo.create(
-        BillingRecordInput(
+        ClaimInput(
             physician_id=physician_id,
             patient_id=patient.id,
             service_date=date(2026, 2, 10),
@@ -86,9 +86,9 @@ async def test_create_then_get_then_list(physician_id):
 
 async def test_list_filters_and_ordering(physician_id):
     patient = await _seed_patient(physician_id)
-    repo = BillingRecordRepository()
+    repo = ClaimRepository()
     older = await repo.create(
-        BillingRecordInput(
+        ClaimInput(
             physician_id=physician_id,
             patient_id=patient.id,
             service_date=date(2026, 1, 1),
@@ -100,7 +100,7 @@ async def test_list_filters_and_ordering(physician_id):
         )
     )
     newer = await repo.create(
-        BillingRecordInput(
+        ClaimInput(
             physician_id=physician_id,
             patient_id=patient.id,
             service_date=date(2026, 3, 1),
@@ -124,9 +124,9 @@ async def test_list_filters_and_ordering(physician_id):
 
 async def test_delete(physician_id):
     patient = await _seed_patient(physician_id)
-    repo = BillingRecordRepository()
+    repo = ClaimRepository()
     created = await repo.create(
-        BillingRecordInput(
+        ClaimInput(
             physician_id=physician_id,
             patient_id=patient.id,
             service_date=date(2026, 2, 10),
@@ -146,9 +146,9 @@ async def test_delete(physician_id):
 
 async def test_cross_physician_access_returns_none_or_false(physician_id):
     patient = await _seed_patient(physician_id)
-    repo = BillingRecordRepository()
+    repo = ClaimRepository()
     created = await repo.create(
-        BillingRecordInput(
+        ClaimInput(
             physician_id=physician_id,
             patient_id=patient.id,
             service_date=date(2026, 2, 10),
@@ -167,12 +167,12 @@ async def test_cross_physician_access_returns_none_or_false(physician_id):
 
 async def test_count_for_patient_on_date(physician_id):
     patient = await _seed_patient(physician_id)
-    repo = BillingRecordRepository()
+    repo = ClaimRepository()
 
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 10)) == 0
 
     await repo.create(
-        BillingRecordInput(
+        ClaimInput(
             physician_id=physician_id,
             patient_id=patient.id,
             service_date=date(2026, 2, 10),

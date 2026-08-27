@@ -106,7 +106,7 @@ def test_deleting_already_deleted_patient_returns_404():
     assert second_delete.status_code == 404
 
 
-async def test_deleted_patient_name_still_shows_on_an_existing_billing_record():
+async def test_deleted_patient_name_still_shows_on_an_existing_claim():
     billing_result = {
         "codes": [
             {
@@ -134,8 +134,8 @@ async def test_deleted_patient_name_still_shows_on_an_existing_billing_record():
                 )
             ]
         )
-        billing_record = client.post(
-            "/billing-records",
+        claim = client.post(
+            "/claims",
             json={
                 "patient_id": created["id"],
                 "service_date": "2026-02-10",
@@ -146,9 +146,9 @@ async def test_deleted_patient_name_still_shows_on_an_existing_billing_record():
         ).json()
 
         client.delete(f"/patients/{created['id']}")
-        billing_list = client.get("/billing-records").json()
+        claim_list = client.get("/claims").json()
 
-    record = next(r for r in billing_list if r["id"] == billing_record["id"])
+    record = next(r for r in claim_list if r["id"] == claim["id"])
     assert record["patient_full_name"] == "Jean Tremblay"
 
 

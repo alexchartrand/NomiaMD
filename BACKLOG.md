@@ -20,7 +20,7 @@
   - `app/extraction/encounter_date.py`'s `_SLASH_DATE_RE` always reads `d/m/y`. Harmless today (Epic/Plume AI sources are still disabled buttons in the UI, and Quebec notes use `DD/MM/YYYY`), but once a US-market EHR source is wired up, a date like "03/04/2026" would silently parse as March 4 instead of April 3 for any day/month both ≤ 12 — no error, just a silently wrong `encounter_date`. Revisit once a real `source.system` other than `simule` sends dates.
 
 - [ ] 🟢 Facturation's patient filter can't select a soft-deleted patient — *added 8/24, from billing-workflow code review*
-  - `BillingRecordRepository.list_for_physician` deliberately doesn't filter `is_deleted` (a deleted patient's past billing records must keep showing their name), but `FacturationPage.tsx`'s patient filter dropdown is populated from `listPatients()`, which does filter it out — so there's no way to filter the list down to just that patient's records once they've left the roster. Minor; the "all patients" view still shows them.
+  - `ClaimRepository.list_for_physician` deliberately doesn't filter `is_deleted` (a deleted patient's past claims must keep showing their name), but `FacturationPage.tsx`'s patient filter dropdown is populated from `listPatients()`, which does filter it out — so there's no way to filter the list down to just that patient's claims once they've left the roster. Minor; the "all patients" view still shows them.
 
 - [ ] 🔴 No purge/retention policy on `extraction_records` — *added 8/21, moved from DEPLOY.md, escalated 8/24*
   - Stores each transcript + result indefinitely. Acceptable while demoing with the synthetic notes in `consultations/`; must revisit before this ever touches real patient data (Law 25).
@@ -30,7 +30,7 @@
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one. `patients.is_deleted` (billing-workflow plan Part 4) is the first column added to an existing table since this app went live; the next one needs the same manual `ALTER TABLE` step on prod, or a wipe locally. Adopt Alembic before billing data is real.
 
 - [ ] 🟡 Hard-deleting a `facturé` billing record destroys audit trail — *added 8/24*
-  - `DELETE /billing-records/{id}` (`app/billing/router.py`) hard-deletes regardless of `status` — there's no soft-delete equivalent to `patients.is_deleted` for billing records. Fine for a `brouillon` mistake; loses the audit trail for anything already marked `facturé`.
+  - `DELETE /claims/{id}` (`app/claims/router.py`) hard-deletes regardless of `status` — there's no soft-delete equivalent to `patients.is_deleted` for claims. Fine for a `brouillon` mistake; loses the audit trail for anything already marked `facturé`.
 
 - [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
   - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
@@ -45,7 +45,7 @@
 
 - [ ] 🟡 No server-side check that returned billing codes are from the candidate set — *added 8/19, from codebase audit, note added 8/24*
   - `ramq_codes/task.py`'s `parse()` only validates JSON shape, never cross-checks returned `number`s against the candidates built in `build_prompt`. The "only choose from candidates" constraint lives in the prompt only. Mandatory physician review is the only backstop today — no defense in depth.
-  - Note: `POST /billing-records` (`app/billing/service.py`) *does* validate its `selected_codes` against the referenced extraction's own stored candidates (422 on an unknown code) — but that's checking the physician's selection against what the model already returned, not checking what the model returned against what it was offered. This item is still open.
+  - Note: `POST /claims` (`app/claims/service.py`) *does* validate its `selected_codes` against the referenced extraction's own stored candidates (422 on an unknown code) — but that's checking the physician's selection against what the model already returned, not checking what the model returned against what it was offered. This item is still open.
 
 - [ ] 🟡 Login timing side-channel enables user enumeration — *added 8/19, from codebase audit*
   - `auth/service.py` `login()` returns immediately on `user is None`, but runs the deliberately slow Argon2 `verify()` when the email exists — response time distinguishes valid from invalid emails.
@@ -68,19 +68,24 @@
 
 ## ✨ Features
 
+- [ ] 🟢 LLM usage/timing logging (token counts, execution time) — *added 8/27*
+  - Every extraction LLM call already funnels through one chokepoint, `app/extraction/engine.py`'s `run_extraction` (`client.achat(...)`), and `ramq_chatbot/factory.py` builds its own `MistralAI` client the same way — so either option below is a single integration point, not scattered instrumentation.
+  - Decide between: (a) self-hosted Langfuse, using its `llama_index` instrumentor (`LlamaIndexInstrumentor` from `langfuse.llama_index`, started once in `bootstrap.py`) for full traces/dashboards/cost aggregation, vs (b) lightweight DB logging — wrap the `achat` call with `time.perf_counter()`, read `response.raw["usage"]` (Mistral's API is OpenAI-compatible), and persist onto the existing `ExtractionRecord` row (`app/postgresdb/models.py`).
+  - Self-hosted Langfuse means another service to run/maintain but gets a UI, prompt diffing, and cost views; DB logging is zero new infra and keeps prompt/response content off any third-party system (relevant here since transcripts carry patient name + NAM), but you build your own queries/views to look at it.
+
 - [x] 🟡 Add a data logger for production — *added 8/21, done 8/24*
   - Fixed: `app/logging_config.py` configures stdlib `logging` to emit one JSON line per event to stdout (same shape as `app/request_logging.py`'s existing per-request access log), wired at startup in `app/main.py`. Added `logger` calls at the silent-failure spots worth surfacing: `CodeTable.get_all` (`app/lancedb/db.py`) now warns on candidate numbers with no matching `codes` row (stale index), `AuthService.login` (`app/auth/service.py`) now logs failed/successful login attempts, and `RequestLoggingMiddleware` now logs unhandled exceptions with the same `request_id` as its access-log line before re-raising.
 
 ## 🧹 Cleanup / Dead code
 
 - [ ] 🟢 Ownership/soft-delete guard copy-pasted across repository methods — *added 8/24, from billing-workflow code review*
-  - `if patient is None or patient.physician_id != physician_id or patient.is_deleted: return None/False` is typed out identically in `PatientRepository.get_for_physician`/`update_for_physician`/`delete_for_physician`, and the analogous `record is None or record.physician_id != physician_id` check appears three more times in `BillingRecordRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means finding and updating all six copies by hand.
+  - `if patient is None or patient.physician_id != physician_id or patient.is_deleted: return None/False` is typed out identically in `PatientRepository.get_for_physician`/`update_for_physician`/`delete_for_physician`, and the analogous `record is None or record.physician_id != physician_id` check appears three more times in `ClaimRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means finding and updating all six copies by hand.
 
 - [ ] 🟢 `patients/router.py` and `PatientSuggestionService`'s construction skip the factory/`Depends` DI pattern — *added 8/24, from billing-workflow code review*
   - `billing/factory.py` and `auth/factory.py` both expose a `get_*_service()` wired via FastAPI `Depends`, but `patients/router.py` instantiates `PatientRepository()` inline in every handler (no `patients/factory.py`), and `extraction/router.py` does the same for `PatientSuggestionService()`. Not a bug, just an inconsistent seam — swapping or mocking either at the dependency layer (the way tests already do for `BillingService`) isn't possible without editing the router directly.
 
 - [ ] 🟢 A few independent DB round trips are awaited sequentially instead of concurrently — *added 8/24, from billing-workflow code review*
-  - `BillingService.create` (`app/billing/service.py`) awaits the patient/extraction/duplicate-check lookups one at a time even though none depends on another's result; `extraction/router.py`'s `create_many(...)` and `_build_patient_suggestion(...)` are similarly independent. `asyncio.gather` would roughly halve the added latency on both the extraction and billing-save hot paths. Not measured against real Postgres latency — worth profiling before spending effort here.
+  - `ClaimService.create` (`app/claims/service.py`) awaits the patient/extraction/duplicate-check lookups one at a time even though none depends on another's result; `extraction/router.py`'s `create_many(...)` and `_build_patient_suggestion(...)` are similarly independent. `asyncio.gather` would roughly halve the added latency on both the extraction and claim-save hot paths. Not measured against real Postgres latency — worth profiling before spending effort here.
   - Related: `BillingService.update_status` re-fetches the record it just updated via a second full query (`update_status_for_physician` + `get_for_physician`) instead of having the update return the same detail shape directly.
 
 - [ ] 🟢 Remove `MISTRAL_EMBEDDING_MODEL` from `.env` — *added 8/21*

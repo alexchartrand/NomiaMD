@@ -7,11 +7,11 @@ from datetime import date
 import pytest
 
 from app.postgresdb import (
-    BillingRecordCodeInput,
-    BillingRecordInput,
-    BillingRecordRepository,
     BillInput,
     BillRepository,
+    ClaimCodeInput,
+    ClaimInput,
+    ClaimRepository,
     Gender,
     PatientRepository,
     init_db,
@@ -42,9 +42,9 @@ async def _seed_patient(physician_id):
     )
 
 
-async def _seed_billing_record(physician_id, patient_id, *, status="brouillon", service_date=date(2026, 2, 10)):
-    created = await BillingRecordRepository().create(
-        BillingRecordInput(
+async def _seed_claim(physician_id, patient_id, *, status="brouillon", service_date=date(2026, 2, 10)):
+    created = await ClaimRepository().create(
+        ClaimInput(
             physician_id=physician_id,
             patient_id=patient_id,
             service_date=service_date,
@@ -53,7 +53,7 @@ async def _seed_billing_record(physician_id, patient_id, *, status="brouillon", 
             summary_extraction_record_id=None,
             billing_extraction_record_id=None,
             codes=[
-                BillingRecordCodeInput(
+                ClaimCodeInput(
                     code="TEST-BP-MGMT",
                     description="Prise en charge d'une hypertension",
                     confidence=0.9,
@@ -68,10 +68,10 @@ async def _seed_billing_record(physician_id, patient_id, *, status="brouillon", 
     return created.record
 
 
-async def test_create_flips_records_to_soumis_in_one_transaction(physician_id):
+async def test_create_flips_claims_to_soumis_in_one_transaction(physician_id):
     patient = await _seed_patient(physician_id)
-    record_a = await _seed_billing_record(physician_id, patient.id)
-    record_b = await _seed_billing_record(physician_id, patient.id, service_date=date(2026, 2, 15))
+    claim_a = await _seed_claim(physician_id, patient.id)
+    claim_b = await _seed_claim(physician_id, patient.id, service_date=date(2026, 2, 15))
 
     repo = BillRepository()
     bill = await repo.create(
@@ -79,25 +79,25 @@ async def test_create_flips_records_to_soumis_in_one_transaction(physician_id):
             physician_id=physician_id,
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
-            billing_record_ids=[record_a.id, record_b.id],
+            claim_ids=[claim_a.id, claim_b.id],
             total_amount=66.30,
         )
     )
 
     assert bill is not None
     assert bill.record_count == 2
-    assert set(await repo.record_ids_for_bill(bill.id)) == {record_a.id, record_b.id}
+    assert set(await repo.claim_ids_for_bill(bill.id)) == {claim_a.id, claim_b.id}
 
-    billing_repo = BillingRecordRepository()
-    refreshed_a = await billing_repo.get_for_physician(record_a.id, physician_id)
-    refreshed_b = await billing_repo.get_for_physician(record_b.id, physician_id)
+    claim_repo = ClaimRepository()
+    refreshed_a = await claim_repo.get_for_physician(claim_a.id, physician_id)
+    refreshed_b = await claim_repo.get_for_physician(claim_b.id, physician_id)
     assert refreshed_a.record.status == "soumis"
     assert refreshed_b.record.status == "soumis"
 
 
-async def test_create_rejects_a_non_brouillon_record_and_writes_nothing(physician_id):
+async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician_id):
     patient = await _seed_patient(physician_id)
-    record = await _seed_billing_record(physician_id, patient.id, status="soumis")
+    claim = await _seed_claim(physician_id, patient.id, status="soumis")
 
     repo = BillRepository()
     bill = await repo.create(
@@ -105,7 +105,7 @@ async def test_create_rejects_a_non_brouillon_record_and_writes_nothing(physicia
             physician_id=physician_id,
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
-            billing_record_ids=[record.id],
+            claim_ids=[claim.id],
             total_amount=33.15,
         )
     )
@@ -114,10 +114,10 @@ async def test_create_rejects_a_non_brouillon_record_and_writes_nothing(physicia
     assert await repo.list_for_physician(physician_id) == []
 
 
-async def test_create_rejects_another_physicians_record(physician_id):
+async def test_create_rejects_another_physicians_claim(physician_id):
     other_physician_id = physician_id + 1
     other_patient = await _seed_patient(other_physician_id)
-    foreign_record = await _seed_billing_record(other_physician_id, other_patient.id)
+    foreign_claim = await _seed_claim(other_physician_id, other_patient.id)
 
     repo = BillRepository()
     bill = await repo.create(
@@ -125,7 +125,7 @@ async def test_create_rejects_another_physicians_record(physician_id):
             physician_id=physician_id,
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
-            billing_record_ids=[foreign_record.id],
+            claim_ids=[foreign_claim.id],
             total_amount=33.15,
         )
     )
@@ -133,9 +133,9 @@ async def test_create_rejects_another_physicians_record(physician_id):
     assert bill is None
 
 
-async def test_delete_releases_records_to_brouillon(physician_id):
+async def test_delete_releases_claims_to_brouillon(physician_id):
     patient = await _seed_patient(physician_id)
-    record = await _seed_billing_record(physician_id, patient.id)
+    claim = await _seed_claim(physician_id, patient.id)
 
     repo = BillRepository()
     bill = await repo.create(
@@ -143,7 +143,7 @@ async def test_delete_releases_records_to_brouillon(physician_id):
             physician_id=physician_id,
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
-            billing_record_ids=[record.id],
+            claim_ids=[claim.id],
             total_amount=33.15,
         )
     )
@@ -153,14 +153,14 @@ async def test_delete_releases_records_to_brouillon(physician_id):
     assert deleted is True
     assert await repo.get_for_physician(bill.id, physician_id) is None
 
-    billing_repo = BillingRecordRepository()
-    refreshed = await billing_repo.get_for_physician(record.id, physician_id)
+    claim_repo = ClaimRepository()
+    refreshed = await claim_repo.get_for_physician(claim.id, physician_id)
     assert refreshed.record.status == "brouillon"
 
 
 async def test_cross_physician_access_returns_none_or_false(physician_id):
     patient = await _seed_patient(physician_id)
-    record = await _seed_billing_record(physician_id, patient.id)
+    claim = await _seed_claim(physician_id, patient.id)
 
     repo = BillRepository()
     bill = await repo.create(
@@ -168,7 +168,7 @@ async def test_cross_physician_access_returns_none_or_false(physician_id):
             physician_id=physician_id,
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
-            billing_record_ids=[record.id],
+            claim_ids=[claim.id],
             total_amount=33.15,
         )
     )

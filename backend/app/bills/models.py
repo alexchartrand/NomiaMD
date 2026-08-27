@@ -1,16 +1,16 @@
-"""Bill request/response models — same style as app/billing/models.py."""
+"""Bill request/response models — same style as app/claims/models.py."""
 
 from datetime import date, datetime
 
 from pydantic import BaseModel
 
-from app.billing.models import BillingRecordOut
+from app.claims.models import ClaimOut
 
 
 class BillCreate(BaseModel):
     start_date: date
     end_date: date
-    billing_record_ids: list[int]
+    claim_ids: list[int]
 
 
 class BillOut(BaseModel):
@@ -24,4 +24,4 @@ class BillOut(BaseModel):
 
 
 class BillDetailOut(BillOut):
-    records: list[BillingRecordOut]
+    claims: list[ClaimOut]

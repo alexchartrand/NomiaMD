@@ -1,17 +1,17 @@
-"""Business logic for turning a physician-reviewed extraction into a billing record.
-Constructor-injected (BillingRecordRepository, PatientRepository, ExtractionRepository) —
+"""Business logic for turning a physician-reviewed extraction into a claim.
+Constructor-injected (ClaimRepository, PatientRepository, ExtractionRepository) —
 composed at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
 
 import json
 from datetime import date
 
-from app.billing.models import BillingRecordCodeOut, BillingRecordOut
+from app.claims.models import ClaimCodeOut, ClaimOut
 from app.postgresdb import (
-    BillingRecordCodeInput,
-    BillingRecordDetail,
-    BillingRecordInput,
-    BillingRecordRepository,
-    BillingRecordWithCodes,
+    ClaimCodeInput,
+    ClaimDetail,
+    ClaimInput,
+    ClaimRepository,
+    ClaimWithCodes,
     ExtractionRepository,
     PatientRepository,
 )
@@ -35,28 +35,28 @@ class EmptySelectionError(Exception):
     pass
 
 
-class DuplicateBillingRecordError(Exception):
+class DuplicateClaimError(Exception):
     def __init__(self, message: str):
         self.message = message
         super().__init__(message)
 
 
-class RecordOnBillError(Exception):
+class ClaimOnBillError(Exception):
     pass
 
 
-def _total_amount(codes: list[BillingRecordCodeOut]) -> float | None:
+def _total_amount(codes: list[ClaimCodeOut]) -> float | None:
     amounts = [c.fee_amount for c in codes if c.fee_amount is not None]
     return sum(amounts) if amounts else None
 
 
-def _codes_out(codes) -> list[BillingRecordCodeOut]:
-    return [BillingRecordCodeOut.model_validate(c) for c in codes]
+def _codes_out(codes) -> list[ClaimCodeOut]:
+    return [ClaimCodeOut.model_validate(c) for c in codes]
 
 
-def _detail_to_out(detail: BillingRecordDetail) -> BillingRecordOut:
+def _detail_to_out(detail: ClaimDetail) -> ClaimOut:
     codes = _codes_out(detail.codes)
-    return BillingRecordOut(
+    return ClaimOut(
         id=detail.record.id,
         patient_id=detail.record.patient_id,
         patient_full_name=detail.patient_full_name,
@@ -70,14 +70,14 @@ def _detail_to_out(detail: BillingRecordDetail) -> BillingRecordOut:
     )
 
 
-class BillingService:
+class ClaimService:
     def __init__(
         self,
-        billing_repository: BillingRecordRepository,
+        claim_repository: ClaimRepository,
         patient_repository: PatientRepository,
         extraction_repository: ExtractionRepository,
     ):
-        self._billing_repository = billing_repository
+        self._claim_repository = claim_repository
         self._patient_repository = patient_repository
         self._extraction_repository = extraction_repository
 
@@ -92,7 +92,7 @@ class BillingService:
         selected_codes: list[str],
         source_system: str | None,
         confirm_duplicate: bool,
-    ) -> BillingRecordOut:
+    ) -> ClaimOut:
         deduped_selected = list(dict.fromkeys(selected_codes))
         if not deduped_selected:
             raise EmptySelectionError()
@@ -117,12 +117,12 @@ class BillingService:
         # The billing_extraction_record_id unique constraint already enforces this at the DB
         # level; checking here first gives a clean 409 instead of a raw IntegrityError, and
         # this one is never overridable by confirm_duplicate — resubmitting the exact same
-        # extraction as a second record would be a client bug, not a legitimate re-bill.
-        already_saved = await self._billing_repository.get_by_billing_extraction_record_id(
+        # extraction as a second claim would be a client bug, not a legitimate re-bill.
+        already_saved = await self._claim_repository.get_by_billing_extraction_record_id(
             billing_extraction_record_id
         )
         if already_saved is not None:
-            raise DuplicateBillingRecordError("Cette extraction a déjà été enregistrée comme facturation.")
+            raise DuplicateClaimError("Cette extraction a déjà été enregistrée comme facturation.")
 
         candidates_by_code: dict[str, dict] = {}
         result = json.loads(extraction_record.result_json)
@@ -136,16 +136,16 @@ class BillingService:
         # Unlike the same-extraction case above, a physician can legitimately bill the same
         # patient twice in one day — this is a warning the caller can override, not a block.
         if not confirm_duplicate:
-            existing_count = await self._billing_repository.count_for_patient_on_date(
+            existing_count = await self._claim_repository.count_for_patient_on_date(
                 physician_id, patient_id, service_date
             )
             if existing_count > 0:
-                raise DuplicateBillingRecordError(
+                raise DuplicateClaimError(
                     "Une facturation existe déjà pour ce patient à cette date."
                 )
 
         code_inputs = [
-            BillingRecordCodeInput(
+            ClaimCodeInput(
                 code=code,
                 description=candidates_by_code[code]["description"],
                 confidence=candidates_by_code[code]["confidence"],
@@ -157,8 +157,8 @@ class BillingService:
             for code in deduped_selected
         ]
 
-        created: BillingRecordWithCodes = await self._billing_repository.create(
-            BillingRecordInput(
+        created: ClaimWithCodes = await self._claim_repository.create(
+            ClaimInput(
                 physician_id=physician_id,
                 patient_id=patient_id,
                 service_date=service_date,
@@ -171,7 +171,7 @@ class BillingService:
         )
 
         codes_out = _codes_out(created.codes)
-        return BillingRecordOut(
+        return ClaimOut(
             id=created.record.id,
             patient_id=created.record.patient_id,
             patient_full_name=patient.full_name,
@@ -194,8 +194,8 @@ class BillingService:
         status: str | None,
         limit: int,
         offset: int,
-    ) -> list[BillingRecordOut]:
-        details = await self._billing_repository.list_for_physician(
+    ) -> list[ClaimOut]:
+        details = await self._claim_repository.list_for_physician(
             physician_id,
             patient_id=patient_id,
             date_from=date_from,
@@ -207,12 +207,12 @@ class BillingService:
         return [_detail_to_out(d) for d in details]
 
     async def delete(self, record_id: int, physician_id: int) -> bool:
-        # Once a record is on a generated bill (status != "brouillon"), it can only be freed
+        # Once a claim is on a generated bill (status != "brouillon"), it can only be freed
         # by deleting that bill — otherwise a hard delete here would leave a dangling link
         # row and silently shrink a bill's total behind the physician's back.
-        detail = await self._billing_repository.get_for_physician(record_id, physician_id)
+        detail = await self._claim_repository.get_for_physician(record_id, physician_id)
         if detail is None:
             return False
         if detail.record.status != "brouillon":
-            raise RecordOnBillError()
-        return await self._billing_repository.delete_for_physician(record_id, physician_id)
+            raise ClaimOnBillError()
+        return await self._claim_repository.delete_for_physician(record_id, physician_id)

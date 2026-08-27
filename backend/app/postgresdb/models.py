@@ -62,7 +62,7 @@ class Gender(str, enum.Enum):
 
     MALE = "M"
     FEMALE = "F"
-    OTHER = "Autre"
+    OTHER = "X"
 
 
 class Patient(Base):
@@ -110,16 +110,16 @@ class ExtractionRecord(Base):
     )
 
 
-class BillingRecord(Base):
-    """One physician-confirmed billing record for an encounter, with many code lines
-    (BillingRecordCode). `status` is a plain string, not a SQLAlchemy Enum — see the note in
+class Claim(Base):
+    """One physician-confirmed RAMQ claim for an encounter, with many code lines
+    (ClaimCode). `status` is a plain string, not a SQLAlchemy Enum — see the note in
     docs/plans/billing-workflow.md, Part 5: with no Alembic, adding a status value later must
     not require an `ALTER TYPE` on the prod Postgres box, so the allowed set is enforced by a
     Pydantic Literal at the API boundary instead."""
 
-    __tablename__ = "billing_records"
+    __tablename__ = "claims"
     __table_args__ = (
-        Index("ix_billing_records_physician_service_date", "physician_id", "service_date"),
+        Index("ix_claims_physician_service_date", "physician_id", "service_date"),
         UniqueConstraint("billing_extraction_record_id"),
     )
 
@@ -145,16 +145,16 @@ class BillingRecord(Base):
     )
 
 
-class BillingRecordCode(Base):
-    """One selected RAMQ code on a billing record. Fields are a snapshot of the candidate at
+class ClaimCode(Base):
+    """One selected RAMQ code on a claim. Fields are a snapshot of the candidate at
     save time (not a live join back to the LanceDB `codes` table), because that table is a
-    regenerated external artifact — re-deriving a historical record's fee/rules would
+    regenerated external artifact — re-deriving a historical claim's fee/rules would
     silently rewrite history whenever the tariff data changes."""
 
-    __tablename__ = "billing_record_codes"
+    __tablename__ = "claim_codes"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    billing_record_id: Mapped[int] = mapped_column(ForeignKey("billing_records.id"), index=True)
+    claim_id: Mapped[int] = mapped_column(ForeignKey("claims.id"), index=True)
     code: Mapped[str] = mapped_column(String(16))
     description: Mapped[str] = mapped_column(Text)
     confidence: Mapped[float] = mapped_column(Float)
@@ -165,10 +165,10 @@ class BillingRecordCode(Base):
 
 
 class Bill(Base):
-    """One generated invoice grouping many billing records over a date range. The PDF is
-    rendered on demand from the linked records (which are themselves already snapshots —
-    see BillingRecordCode), so nothing is stored as bytes; total_amount/record_count are
-    snapshotted anyway so listing bills never has to re-sum every record's codes."""
+    """One generated invoice grouping many claims over a date range. The PDF is
+    rendered on demand from the linked claims (which are themselves already snapshots —
+    see ClaimCode), so nothing is stored as bytes; total_amount/record_count are
+    snapshotted anyway so listing bills never has to re-sum every claim's codes."""
 
     __tablename__ = "bills"
 
@@ -183,17 +183,17 @@ class Bill(Base):
     record_count: Mapped[int] = mapped_column(Integer)
 
 
-class BillBillingRecord(Base):
-    """Association table linking a Bill to the billing_records it covers, rather than a
-    bill_id column on BillingRecord — with no Alembic (see BillingRecord's docstring), a new
+class BillClaim(Base):
+    """Association table linking a Bill to the claims it covers, rather than a
+    bill_id column on Claim — with no Alembic (see Claim's docstring), a new
     table is created for free by create_all while a new column on an existing table is not.
-    The unique index on billing_record_id is the DB-level guarantee that a record can never
+    The unique index on claim_id is the DB-level guarantee that a claim can never
     land on two bills at once."""
 
-    __tablename__ = "bill_billing_records"
+    __tablename__ = "bill_claims"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     bill_id: Mapped[int] = mapped_column(ForeignKey("bills.id"), index=True)
-    billing_record_id: Mapped[int] = mapped_column(
-        ForeignKey("billing_records.id"), unique=True, index=True
+    claim_id: Mapped[int] = mapped_column(
+        ForeignKey("claims.id"), unique=True, index=True
     )

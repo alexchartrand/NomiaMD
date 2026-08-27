@@ -1,4 +1,4 @@
-import type { BillingRecord } from "./billing";
+import type { Claim } from "./claims";
 import { unwrap, unwrapVoid } from "./http";
 
 export interface Bill {
@@ -12,13 +12,13 @@ export interface Bill {
 }
 
 export interface BillDetail extends Bill {
-  records: BillingRecord[];
+  claims: Claim[];
 }
 
 export interface BillCreateInput {
   start_date: string;
   end_date: string;
-  billing_record_ids: number[];
+  claim_ids: number[];
 }
 
 export class StaleBillSelectionError extends Error {}

@@ -1,4 +1,4 @@
-"""Exercises the /bills API end-to-end: create from a set of brouillon billing records ->
+"""Exercises the /bills API end-to-end: create from a set of brouillon claims ->
 list -> get detail -> download PDF -> delete, plus ownership scoping and the
 empty-selection/stale-selection validation in app/bills/service.py."""
 
@@ -64,10 +64,10 @@ async def _seed_extraction_record(*, user_id=1, result=None):
     return record
 
 
-async def _seed_billing_record(client, *, patient_id, service_date="2026-02-10"):
+async def _seed_claim(client, *, patient_id, service_date="2026-02-10"):
     extraction_record = await _seed_extraction_record()
     response = client.post(
-        "/billing-records",
+        "/claims",
         json={
             "patient_id": patient_id,
             "service_date": service_date,
@@ -83,15 +83,15 @@ async def _seed_billing_record(client, *, patient_id, service_date="2026-02-10")
 async def test_create_then_list_then_get_then_pdf_then_delete():
     with TestClient(app) as client:
         patient = await _seed_patient()
-        record_a = await _seed_billing_record(client, patient_id=patient.id, service_date="2026-02-10")
-        record_b = await _seed_billing_record(client, patient_id=patient.id, service_date="2026-02-15")
+        claim_a = await _seed_claim(client, patient_id=patient.id, service_date="2026-02-10")
+        claim_b = await _seed_claim(client, patient_id=patient.id, service_date="2026-02-15")
 
         create_response = client.post(
             "/bills",
             json={
                 "start_date": "2026-02-01",
                 "end_date": "2026-02-28",
-                "billing_record_ids": [record_a["id"], record_b["id"]],
+                "claim_ids": [claim_a["id"], claim_b["id"]],
             },
         )
         assert create_response.status_code == 201
@@ -107,8 +107,8 @@ async def test_create_then_list_then_get_then_pdf_then_delete():
         detail_response = client.get(f"/bills/{bill['id']}")
         assert detail_response.status_code == 200
         detail = detail_response.json()
-        assert {r["id"] for r in detail["records"]} == {record_a["id"], record_b["id"]}
-        assert all(r["status"] == "soumis" for r in detail["records"])
+        assert {c["id"] for c in detail["claims"]} == {claim_a["id"], claim_b["id"]}
+        assert all(c["status"] == "soumis" for c in detail["claims"])
 
         pdf_response = client.get(f"/bills/{bill['id']}/pdf")
         assert pdf_response.status_code == 200
@@ -119,40 +119,40 @@ async def test_create_then_list_then_get_then_pdf_then_delete():
         assert delete_response.status_code == 204
 
         assert client.get(f"/bills/{bill['id']}").status_code == 404
-        records_after_delete = client.get("/billing-records", params={"status": "brouillon"}).json()
-        assert {record_a["id"], record_b["id"]} <= {r["id"] for r in records_after_delete}
+        claims_after_delete = client.get("/claims", params={"status": "brouillon"}).json()
+        assert {claim_a["id"], claim_b["id"]} <= {c["id"] for c in claims_after_delete}
 
 
 async def test_empty_selection_is_422():
     with TestClient(app) as client:
         response = client.post(
-            "/bills", json={"start_date": "2026-02-01", "end_date": "2026-02-28", "billing_record_ids": []}
+            "/bills", json={"start_date": "2026-02-01", "end_date": "2026-02-28", "claim_ids": []}
         )
     assert response.status_code == 422
 
 
-async def test_submitting_an_already_billed_record_is_409():
+async def test_submitting_an_already_billed_claim_is_409():
     with TestClient(app) as client:
         patient = await _seed_patient()
-        record = await _seed_billing_record(client, patient_id=patient.id)
+        claim = await _seed_claim(client, patient_id=patient.id)
 
         first = client.post(
             "/bills",
-            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "billing_record_ids": [record["id"]]},
+            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "claim_ids": [claim["id"]]},
         )
         assert first.status_code == 201
 
         second = client.post(
             "/bills",
-            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "billing_record_ids": [record["id"]]},
+            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "claim_ids": [claim["id"]]},
         )
     assert second.status_code == 409
 
 
-async def test_another_physicians_record_id_is_409():
+async def test_another_physicians_claim_id_is_409():
     with TestClient(app) as client:
         patient = await _seed_patient()
-        record = await _seed_billing_record(client, patient_id=patient.id)
+        claim = await _seed_claim(client, patient_id=patient.id)
 
         app.dependency_overrides[get_current_user] = _other_physician
         try:
@@ -161,7 +161,7 @@ async def test_another_physicians_record_id_is_409():
                 json={
                     "start_date": "2026-02-01",
                     "end_date": "2026-02-28",
-                    "billing_record_ids": [record["id"]],
+                    "claim_ids": [claim["id"]],
                 },
             )
         finally:
@@ -175,10 +175,10 @@ async def test_cross_physician_access_is_404():
 
     with TestClient(app) as client:
         patient = await _seed_patient()
-        record = await _seed_billing_record(client, patient_id=patient.id)
+        claim = await _seed_claim(client, patient_id=patient.id)
         bill = client.post(
             "/bills",
-            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "billing_record_ids": [record["id"]]},
+            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "claim_ids": [claim["id"]]},
         ).json()
 
         app.dependency_overrides[get_current_user] = lambda: other_physician

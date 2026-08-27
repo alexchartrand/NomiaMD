@@ -1,16 +1,16 @@
-"""Business logic for grouping physician-confirmed billing records into a generated bill.
-Constructor-injected (BillRepository, BillingRecordRepository, PatientRepository,
+"""Business logic for grouping physician-confirmed claims into a generated bill.
+Constructor-injected (BillRepository, ClaimRepository, PatientRepository,
 UserRepository, BillPdfRenderer) — composed at the module boundary by factory.py, no
 FastAPI/HTTP concerns here."""
 
-from app.billing.service import _codes_out, _detail_to_out
 from app.bills.models import BillDetailOut, BillOut
 from app.bills.pdf import BillDocument, BillLineItem, BillPatientGroup, BillPdfRenderer
+from app.claims.service import _codes_out, _detail_to_out
 from app.postgresdb import (
     Bill,
     BillInput,
-    BillingRecordRepository,
     BillRepository,
+    ClaimRepository,
     PatientRepository,
     UserRepository,
 )
@@ -21,7 +21,7 @@ class EmptySelectionError(Exception):
 
 
 class StaleSelectionError(Exception):
-    """A requested billing_record_id is missing, owned by another physician, or no longer
+    """A requested claim_id is missing, owned by another physician, or no longer
     "brouillon" — the candidate list the physician acted on has gone stale since it loaded."""
 
     pass
@@ -47,36 +47,36 @@ class BillService:
     def __init__(
         self,
         bill_repository: BillRepository,
-        billing_record_repository: BillingRecordRepository,
+        claim_repository: ClaimRepository,
         patient_repository: PatientRepository,
         user_repository: UserRepository,
         pdf_renderer: BillPdfRenderer,
     ):
         self._bill_repository = bill_repository
-        self._billing_record_repository = billing_record_repository
+        self._claim_repository = claim_repository
         self._patient_repository = patient_repository
         self._user_repository = user_repository
         self._pdf_renderer = pdf_renderer
 
-    async def create(self, *, physician_id: int, start_date, end_date, billing_record_ids: list[int]) -> BillOut:
-        deduped = list(dict.fromkeys(billing_record_ids))
+    async def create(self, *, physician_id: int, start_date, end_date, claim_ids: list[int]) -> BillOut:
+        deduped = list(dict.fromkeys(claim_ids))
         if not deduped:
             raise EmptySelectionError()
 
-        # Total is computed from each record's own snapshotted code rows (never invented,
-        # never re-derived from LanceDB) — same reasoning as BillingRecordCode's docstring.
+        # Total is computed from each claim's own snapshotted code rows (never invented,
+        # never re-derived from LanceDB) — same reasoning as ClaimCode's docstring.
         # This loop also re-validates ownership/status before the repository's own
         # transactional re-check, so a stale/foreign id is rejected with a clear error
         # instead of the generic "some ids didn't match" the repository raises.
         total = 0.0
         has_amount = False
-        for record_id in deduped:
-            detail = await self._billing_record_repository.get_for_physician(record_id, physician_id)
+        for claim_id in deduped:
+            detail = await self._claim_repository.get_for_physician(claim_id, physician_id)
             if detail is None or detail.record.status != "brouillon":
                 raise StaleSelectionError()
-            record_amount = _detail_to_out(detail).total_amount
-            if record_amount is not None:
-                total += record_amount
+            claim_amount = _detail_to_out(detail).total_amount
+            if claim_amount is not None:
+                total += claim_amount
                 has_amount = True
 
         bill = await self._bill_repository.create(
@@ -84,7 +84,7 @@ class BillService:
                 physician_id=physician_id,
                 start_date=start_date,
                 end_date=end_date,
-                billing_record_ids=deduped,
+                claim_ids=deduped,
                 total_amount=total if has_amount else None,
             )
         )
@@ -102,13 +102,13 @@ class BillService:
         bill = await self._bill_repository.get_for_physician(bill_id, physician_id)
         if bill is None:
             return None
-        record_ids = await self._bill_repository.record_ids_for_bill(bill_id)
-        records = []
-        for record_id in record_ids:
-            detail = await self._billing_record_repository.get_for_physician(record_id, physician_id)
+        claim_ids = await self._bill_repository.claim_ids_for_bill(bill_id)
+        claims = []
+        for claim_id in claim_ids:
+            detail = await self._claim_repository.get_for_physician(claim_id, physician_id)
             if detail is not None:
-                records.append(_detail_to_out(detail))
-        return BillDetailOut(**_bill_to_out(bill).model_dump(), records=records)
+                claims.append(_detail_to_out(detail))
+        return BillDetailOut(**_bill_to_out(bill).model_dump(), claims=claims)
 
     async def render_pdf(self, bill_id: int, physician_id: int) -> bytes | None:
         bill = await self._bill_repository.get_for_physician(bill_id, physician_id)
@@ -116,10 +116,10 @@ class BillService:
             return None
 
         physician = await self._user_repository.get_by_id(physician_id)
-        record_ids = await self._bill_repository.record_ids_for_bill(bill_id)
+        claim_ids = await self._bill_repository.claim_ids_for_bill(bill_id)
         details = []
-        for record_id in record_ids:
-            detail = await self._billing_record_repository.get_for_physician(record_id, physician_id)
+        for claim_id in claim_ids:
+            detail = await self._claim_repository.get_for_physician(claim_id, physician_id)
             if detail is not None:
                 details.append(detail)
 

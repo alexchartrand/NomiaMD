@@ -122,11 +122,11 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
                   {!detailError && !expandedDetail && <p className="status-inline">Chargement...</p>}
                   {expandedDetail && (
                     <ul>
-                      {expandedDetail.records.map((r) => (
-                        <li key={r.id}>
-                          {formatDate(r.service_date)} — {r.patient_full_name} —{" "}
-                          {r.codes.map((c) => c.code).join(", ")}
-                          {r.total_amount != null && ` — ${r.total_amount.toFixed(2)} $`}
+                      {expandedDetail.claims.map((c) => (
+                        <li key={c.id}>
+                          {formatDate(c.service_date)} — {c.patient_full_name} —{" "}
+                          {c.codes.map((code) => code.code).join(", ")}
+                          {c.total_amount != null && ` — ${c.total_amount.toFixed(2)} $`}
                         </li>
                       ))}
                     </ul>
