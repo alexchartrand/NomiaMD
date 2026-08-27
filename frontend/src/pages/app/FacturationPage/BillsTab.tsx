@@ -57,7 +57,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
   async function handleDelete(bill: Bill) {
     if (
       !window.confirm(
-        `Supprimer la facture ${bill.number} ? Les ${bill.record_count} facturation(s) qu'elle contient redeviendront des brouillons.`,
+        `Supprimer la facture ${bill.number} ? Les ${bill.record_count} réclamation(s) qu'elle contient redeviendront des brouillons.`,
       )
     )
       return;

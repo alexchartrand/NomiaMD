@@ -36,7 +36,7 @@ export default function FacturationPage() {
           )}
           onClick={() => setTab("records")}
         >
-          Facturations
+          Réclamations
         </button>
         <button
           type="button"

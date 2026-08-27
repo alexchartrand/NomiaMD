@@ -69,7 +69,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
   useEffect(loadClaims, [patientFilter, dateFrom, dateTo, statusFilter, reloadSignal]);
 
   async function handleDelete(claim: Claim) {
-    if (!window.confirm(`Supprimer la facturation de ${claim.patient_full_name} ? Cette action est irréversible.`))
+    if (!window.confirm(`Supprimer la réclamation de ${claim.patient_full_name} ? Cette action est irréversible.`))
       return;
     try {
       await deleteClaim(claim.id);
@@ -138,7 +138,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
       {loading ? (
         <p className="text-sm text-muted-foreground">Chargement...</p>
       ) : claims.length === 0 ? (
-        <p>Aucune facturation enregistrée.</p>
+        <p>Aucune réclamation enregistrée.</p>
       ) : (
         <Table>
           <TableHeader>
@@ -188,7 +188,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                           type="button"
                           variant="danger"
                           disabled={!deletable}
-                          title={deletable ? undefined : "Cette facturation fait partie d'une facture générée."}
+                          title={deletable ? undefined : "Cette réclamation fait partie d'une facture générée."}
                           onClick={() => handleDelete(claim)}
                         >
                           Supprimer
