@@ -15,9 +15,9 @@ export default function AppLayout() {
     <div className="app-layout">
       <Sidebar>
         <NavItem to="/app/extraction">Réclamation</NavItem>
+        <NavItem to="/app/facturation">Facturation</NavItem>
         <NavItem to="/app/chat">Clavardage</NavItem>
         <NavItem to="/app/patients">Patients</NavItem>
-        <NavItem to="/app/facturation">Facturation</NavItem>
         <NavItem to="/app/profile">Profil</NavItem>
         <SidebarFooter>
           {user && <span className="sidebar-user">{user.full_name}</span>}

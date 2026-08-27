@@ -133,7 +133,7 @@ export default function ExtractionPage() {
       <ol className="stepper">
         <li className={`stepper-item${step === 1 ? " active" : " done"}`}>
           <span className="stepper-marker">{step > 1 ? "✓" : 1}</span>
-          <span className="stepper-label">Consultation</span>
+          <span className="stepper-label">Source</span>
         </li>
         <li className={`stepper-item${step === 2 ? " active" : ""}`}>
           <span className="stepper-marker">2</span>
