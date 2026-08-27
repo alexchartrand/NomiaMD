@@ -4,6 +4,7 @@ read-only from this API (no PATCH) — a claim only leaves "brouillon" via POST 
 test_deleting_a_claim_on_a_bill_is_409 and tests/test_bills.py.
 """
 
+import itertools
 import json
 from datetime import date
 
@@ -12,6 +13,12 @@ from fastapi.testclient import TestClient
 from app.auth import get_current_user
 from app.main import app
 from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
+
+# The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
+# most tests here reuse physician_id=1 — so each seeded patient needs its own NAM to avoid
+# tripping ix_patients_physician_ramq_number_active (models.py) against an earlier test's
+# still-active patient.
+_ramq_numbers = itertools.count(1)
 
 BILLING_RESULT = {
     "codes": [
@@ -48,7 +55,7 @@ async def _seed_patient(physician_id=1):
     return await PatientRepository().create(
         physician_id=physician_id,
         full_name="Roch Desjardins",
-        ramq_number="DESR81021001",
+        ramq_number=f"DESR{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
         gender=Gender.MALE,
         is_registered_with_physician=True,

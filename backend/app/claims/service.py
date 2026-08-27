@@ -2,7 +2,6 @@
 Constructor-injected (ClaimRepository, PatientRepository, ExtractionRepository) —
 composed at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
 
-import json
 from datetime import date
 from decimal import Decimal
 
@@ -132,7 +131,7 @@ class ClaimService:
             raise DuplicateClaimError("Cette extraction a déjà été enregistrée comme facturation.")
 
         candidates_by_code: dict[str, dict] = {}
-        result = json.loads(extraction_record.result_json)
+        result = extraction_record.result_json
         for entry in result.get("codes", []):
             candidates_by_code.setdefault(entry["code"], entry)
 

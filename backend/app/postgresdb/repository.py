@@ -1,13 +1,13 @@
 """Persistence for the ORM models in models.py — one repository class per model, each
 owning its own session/query handling."""
 
-import json
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from decimal import Decimal
 from typing import Sequence
 
 from sqlalchemy import delete, func, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.postgresdb.database import async_session
 from app.postgresdb.models import (
@@ -143,15 +143,47 @@ class PhysicianProfileRepository:
             return profile
 
 
+class DuplicatePatientRamqNumberError(Exception):
+    """Raised on a create/update that would leave two active (non-deleted) patients on
+    the same physician's roster sharing a NAM. Checked in Python first — same reasoning
+    as ClaimService's billing_extraction_record_id pre-check — so the caller gets a clean
+    409 instead of a raw IntegrityError; ix_patients_physician_ramq_number_active
+    (models.py) is the DB-level backstop for a raw insert/psql session."""
+
+    def __init__(self, ramq_number: str) -> None:
+        self.ramq_number = ramq_number
+
+
 class PatientRepository:
     async def list_for_physician(self, physician_id: int) -> Sequence[Patient]:
         async with async_session() as session:
             result = await session.execute(
                 select(Patient)
-                .where(Patient.physician_id == physician_id, Patient.is_deleted.is_(False))
+                .where(Patient.physician_id == physician_id, Patient.deleted_at.is_(None))
                 .order_by(Patient.full_name)
             )
             return result.scalars().all()
+
+    async def _raise_if_duplicate_ramq_number(
+        self,
+        session: AsyncSession,
+        *,
+        physician_id: int,
+        ramq_number: str | None,
+        exclude_patient_id: int | None = None,
+    ) -> None:
+        if ramq_number is None:
+            return
+        query = select(Patient.id).where(
+            Patient.physician_id == physician_id,
+            Patient.ramq_number == ramq_number,
+            Patient.deleted_at.is_(None),
+        )
+        if exclude_patient_id is not None:
+            query = query.where(Patient.id != exclude_patient_id)
+        result = await session.execute(query)
+        if result.scalars().first() is not None:
+            raise DuplicatePatientRamqNumberError(ramq_number)
 
     async def create(
         self,
@@ -165,6 +197,9 @@ class PatientRepository:
         is_vulnerable: bool,
     ) -> Patient:
         async with async_session() as session:
+            await self._raise_if_duplicate_ramq_number(
+                session, physician_id=physician_id, ramq_number=ramq_number
+            )
             patient = Patient(
                 physician_id=physician_id,
                 full_name=full_name,
@@ -182,7 +217,7 @@ class PatientRepository:
     async def get_for_physician(self, patient_id: int, physician_id: int) -> Patient | None:
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id or patient.is_deleted:
+            if patient is None or patient.physician_id != physician_id or patient.deleted_at is not None:
                 return None
             return patient
 
@@ -200,8 +235,14 @@ class PatientRepository:
     ) -> Patient | None:
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id or patient.is_deleted:
+            if patient is None or patient.physician_id != physician_id or patient.deleted_at is not None:
                 return None
+            await self._raise_if_duplicate_ramq_number(
+                session,
+                physician_id=physician_id,
+                ramq_number=ramq_number,
+                exclude_patient_id=patient_id,
+            )
             patient.full_name = full_name
             patient.ramq_number = ramq_number
             patient.date_of_birth = date_of_birth
@@ -218,14 +259,14 @@ class PatientRepository:
         # dangling — see docs/plans/billing-workflow.md, Part 4.
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id or patient.is_deleted:
+            if patient is None or patient.physician_id != physician_id or patient.deleted_at is not None:
                 return False
-            patient.is_deleted = True
+            patient.deleted_at = datetime.now(timezone.utc)
             await session.commit()
             return True
 
     async def get_many_for_physician(self, patient_ids: Sequence[int], physician_id: int) -> list[Patient]:
-        # Deliberately not filtered on is_deleted — same reasoning as
+        # Deliberately not filtered on deleted_at — same reasoning as
         # ClaimRepository.list_for_physician's join: a bill's patient details (NAM
         # included) must stay renderable after the patient leaves the roster.
         async with async_session() as session:
@@ -254,7 +295,7 @@ class ExtractionRepository:
                 ExtractionRecord(
                     task=r.task,
                     transcript=r.transcript,
-                    result_json=json.dumps(r.result),
+                    result_json=r.result,
                     model=r.model,
                     source_system=r.source_system,
                     user_id=r.user_id,
@@ -362,7 +403,7 @@ class ClaimRepository:
     ) -> list[ClaimDetail]:
         limit = min(limit, 200)
         async with async_session() as session:
-            # Joins Patient for the name without filtering is_deleted — a soft-deleted
+            # Joins Patient for the name without filtering deleted_at — a soft-deleted
             # patient's name must still render on an existing claim.
             query = (
                 select(Claim, Patient.full_name)

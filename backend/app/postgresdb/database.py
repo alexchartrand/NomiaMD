@@ -13,10 +13,16 @@ from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
 DATABASE_URL = settings.database_url
+_is_sqlite = DATABASE_URL.startswith("sqlite")
 
-engine = create_async_engine(DATABASE_URL, connect_args=(
-    {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-))
+engine = create_async_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if _is_sqlite else {},
+    # A long-lived container against a Postgres that recycles/drops idle connections would
+    # otherwise be handed a stale one from the pool; pool_pre_ping pings before reuse.
+    # Meaningless (and unsupported by aiosqlite's NullPool) on the SQLite dev path.
+    **({} if _is_sqlite else {"pool_pre_ping": True, "pool_size": 10}),
+)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 

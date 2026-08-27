@@ -2,6 +2,8 @@
 default_authenticated_user override (fake physician id=1); the ownership-scoping test
 swaps in a second fake physician to prove patients aren't visible across physicians."""
 
+import itertools
+
 from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
@@ -17,6 +19,17 @@ VALID_PATIENT = {
     "is_vulnerable": False,
 }
 
+# The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
+# almost every test here is physician id=1 — so each created patient needs its own NAM to
+# avoid tripping ix_patients_physician_ramq_number_active (models.py) against an earlier
+# test's still-active patient. Tests that care about the duplicate-NAM behavior itself
+# pass an explicit ramq_number instead of using this default.
+_ramq_numbers = itertools.count(1)
+
+
+def _valid_patient(**overrides):
+    return {**VALID_PATIENT, "ramq_number": f"TREJ{next(_ramq_numbers):08d}", **overrides}
+
 
 def _other_physician():
     return User(
@@ -29,12 +42,13 @@ def _other_physician():
 
 
 def test_create_patient_then_appears_in_list():
+    payload = _valid_patient()
     with TestClient(app) as client:
-        create_response = client.post("/patients", json=VALID_PATIENT)
+        create_response = client.post("/patients", json=payload)
         assert create_response.status_code == 201
         created = create_response.json()
         assert created["full_name"] == "Jean Tremblay"
-        assert created["ramq_number"] == "TREJ12345678"
+        assert created["ramq_number"] == payload["ramq_number"]
 
         list_response = client.get("/patients")
 
@@ -44,7 +58,7 @@ def test_create_patient_then_appears_in_list():
 
 def test_get_patient_by_id():
     with TestClient(app) as client:
-        created = client.post("/patients", json=VALID_PATIENT).json()
+        created = client.post("/patients", json=_valid_patient()).json()
         response = client.get(f"/patients/{created['id']}")
 
     assert response.status_code == 200
@@ -60,10 +74,10 @@ def test_get_unknown_patient_returns_404():
 
 def test_update_patient():
     with TestClient(app) as client:
-        created = client.post("/patients", json=VALID_PATIENT).json()
+        created = client.post("/patients", json=_valid_patient()).json()
         response = client.patch(
             f"/patients/{created['id']}",
-            json={**VALID_PATIENT, "full_name": "Jean-Pierre Tremblay", "is_vulnerable": True},
+            json={**created, "full_name": "Jean-Pierre Tremblay", "is_vulnerable": True},
         )
 
     assert response.status_code == 200
@@ -74,7 +88,7 @@ def test_update_patient():
 
 def test_delete_patient_then_404():
     with TestClient(app) as client:
-        created = client.post("/patients", json=VALID_PATIENT).json()
+        created = client.post("/patients", json=_valid_patient()).json()
         delete_response = client.delete(f"/patients/{created['id']}")
         get_response = client.get(f"/patients/{created['id']}")
 
@@ -83,10 +97,10 @@ def test_delete_patient_then_404():
 
 
 def test_deleted_patient_is_soft_deleted_and_absent_from_list():
-    # Soft delete (is_deleted flag), not a row removal — billing history must still be able
+    # Soft delete (deleted_at timestamp), not a row removal — billing history must still be able
     # to resolve the patient's name after they leave the roster (see billing tests).
     with TestClient(app) as client:
-        created = client.post("/patients", json=VALID_PATIENT).json()
+        created = client.post("/patients", json=_valid_patient()).json()
         client.delete(f"/patients/{created['id']}")
         list_response = client.get("/patients")
         get_response = client.get(f"/patients/{created['id']}")
@@ -97,11 +111,52 @@ def test_deleted_patient_is_soft_deleted_and_absent_from_list():
 
 def test_deleting_already_deleted_patient_returns_404():
     with TestClient(app) as client:
-        created = client.post("/patients", json=VALID_PATIENT).json()
+        created = client.post("/patients", json=_valid_patient()).json()
         client.delete(f"/patients/{created['id']}")
         second_delete = client.delete(f"/patients/{created['id']}")
 
     assert second_delete.status_code == 404
+
+
+def test_re_adding_the_same_nam_after_a_soft_delete_succeeds():
+    # The unique index (ix_patients_physician_ramq_number_active, models.py) is partial —
+    # scoped to active rows — precisely so this doesn't collide with the row it replaces.
+    payload = _valid_patient()
+    with TestClient(app) as client:
+        first = client.post("/patients", json=payload).json()
+        client.delete(f"/patients/{first['id']}")
+        second_response = client.post("/patients", json=payload)
+
+    assert second_response.status_code == 201
+    assert second_response.json()["ramq_number"] == payload["ramq_number"]
+
+
+def test_creating_a_second_active_patient_with_the_same_nam_is_409():
+    payload = _valid_patient()
+    with TestClient(app) as client:
+        first_response = client.post("/patients", json=payload)
+        second_response = client.post("/patients", json={**payload, "full_name": "Jean Tremblay Deux"})
+
+    assert first_response.status_code == 201
+    assert second_response.status_code == 409
+
+
+def test_creating_two_patients_with_no_nam_does_not_collide():
+    with TestClient(app) as client:
+        first_response = client.post("/patients", json=_valid_patient(ramq_number=None))
+        second_response = client.post("/patients", json=_valid_patient(ramq_number=None, full_name="Deux"))
+
+    assert first_response.status_code == 201
+    assert second_response.status_code == 201
+
+
+def test_updating_a_patient_to_another_active_patients_nam_is_409():
+    with TestClient(app) as client:
+        first = client.post("/patients", json=_valid_patient()).json()
+        second = client.post("/patients", json=_valid_patient()).json()
+        response = client.patch(f"/patients/{second['id']}", json={**second, "ramq_number": first["ramq_number"]})
+
+    assert response.status_code == 409
 
 
 async def test_deleted_patient_name_still_shows_on_an_existing_claim():
@@ -119,7 +174,7 @@ async def test_deleted_patient_name_still_shows_on_an_existing_claim():
     }
 
     with TestClient(app) as client:
-        created = client.post("/patients", json=VALID_PATIENT).json()
+        created = client.post("/patients", json=_valid_patient()).json()
         [extraction_record] = await ExtractionRepository().create_many(
             [
                 ExtractionRecordInput(
@@ -152,7 +207,7 @@ async def test_deleted_patient_name_still_shows_on_an_existing_claim():
 
 def test_create_patient_missing_required_field_returns_422():
     with TestClient(app) as client:
-        response = client.post("/patients", json={**VALID_PATIENT, "date_of_birth": None})
+        response = client.post("/patients", json=_valid_patient(date_of_birth=None))
 
     assert response.status_code == 422
 
@@ -161,12 +216,12 @@ def test_patient_not_visible_to_a_different_physician():
     other_physician = _other_physician()
 
     with TestClient(app) as client:
-        created = client.post("/patients", json=VALID_PATIENT).json()
+        created = client.post("/patients", json=_valid_patient()).json()
 
         app.dependency_overrides[get_current_user] = lambda: other_physician
         try:
             get_response = client.get(f"/patients/{created['id']}")
-            update_response = client.patch(f"/patients/{created['id']}", json=VALID_PATIENT)
+            update_response = client.patch(f"/patients/{created['id']}", json=created)
             delete_response = client.delete(f"/patients/{created['id']}")
             list_response = client.get("/patients")
         finally:

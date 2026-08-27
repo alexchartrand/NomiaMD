@@ -19,6 +19,10 @@ from app.postgresdb import (
 )
 
 _physician_ids = itertools.count(3000)
+# other_physician_id = physician_id + 1 (below) can land on a value the counter above
+# hands to a later test, so each seeded patient still needs its own NAM to avoid
+# tripping ix_patients_physician_ramq_number_active (models.py) for that reused id.
+_ramq_numbers = itertools.count(1)
 
 
 @pytest.fixture(autouse=True)
@@ -35,7 +39,7 @@ async def _seed_patient(physician_id):
     return await PatientRepository().create(
         physician_id=physician_id,
         full_name="Roch Desjardins",
-        ramq_number="DESR81021001",
+        ramq_number=f"DESR{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
         gender=Gender.MALE,
         is_registered_with_physician=True,

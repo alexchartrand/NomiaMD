@@ -6,6 +6,7 @@ from datetime import date, datetime, timezone
 from decimal import Decimal
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Date,
     DateTime,
@@ -19,7 +20,10 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    func,
+    text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.postgresdb.database import Base
@@ -59,7 +63,7 @@ class User(Base):
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.PHYSICIAN)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
@@ -92,7 +96,7 @@ class PhysicianProfile(Base):
     number_of_patients: Mapped[int | None] = mapped_column(Integer, nullable=True)
     remuneration_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
 
 
@@ -115,6 +119,19 @@ class Patient(Base):
         # itself rejects billing a patient onto a physician they aren't rostered under —
         # not just ClaimService's application-level check.
         UniqueConstraint("id", "physician_id"),
+        # Partial (not table-wide) so a soft-deleted patient never blocks re-adding the
+        # same NAM, or a later correction of a duplicate. NULL ramq_number never
+        # collides either way — both dialects already treat NULLs as distinct in a
+        # unique index. Live on both dialects (unlike the FK ondelete/composite-FK
+        # items) since SQLite enforces unique indexes unconditionally, no PRAGMA needed.
+        Index(
+            "ix_patients_physician_ramq_number_active",
+            "physician_id",
+            "ramq_number",
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+            sqlite_where=text("deleted_at IS NULL"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -125,14 +142,18 @@ class Patient(Base):
     gender: Mapped[Gender | None] = mapped_column(Enum(Gender), nullable=True)
     is_registered_with_physician: Mapped[bool] = mapped_column(Boolean, default=False)
     is_vulnerable: Mapped[bool] = mapped_column(Boolean, default=False)
-    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    # Nullable timestamp rather than a bool: under Law 25 the deletion date is the thing
+    # an audit asks for, not just whether the patient is gone. `IS NULL`/`IS NOT NULL`
+    # filters identically to the old is_deleted flag.
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
     )
 
 
@@ -142,16 +163,19 @@ class ExtractionRecord(Base):
     compliance note in the top-level README."""
 
     __tablename__ = "extraction_records"
+    __table_args__ = (Index("ix_extraction_records_user_created", "user_id", "created_at"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     task: Mapped[str] = mapped_column(String(64))
     transcript: Mapped[str] = mapped_column(Text)
-    result_json: Mapped[str] = mapped_column(Text)
+    # JSON on SQLite (dev), JSONB on Postgres: keeps the retention purge and
+    # "which extractions mention this NAM" query indexable instead of a full-table LIKE.
+    result_json: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"))
     model: Mapped[str] = mapped_column(String(64))
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
     user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
 
 
@@ -170,7 +194,9 @@ class Claim(Base):
         # patient_id/physician_id pairing doesn't match an actual roster row, closing the
         # gap where only ClaimService enforced "this patient belongs to this physician".
         ForeignKeyConstraint(
-            ["patient_id", "physician_id"], ["patients.id", "patients.physician_id"]
+            ["patient_id", "physician_id"],
+            ["patients.id", "patients.physician_id"],
+            ondelete="RESTRICT",
         ),
     )
 
@@ -187,12 +213,13 @@ class Claim(Base):
         ForeignKey("extraction_records.id"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
     )
 
 
@@ -205,7 +232,7 @@ class ClaimCode(Base):
     __tablename__ = "claim_codes"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    claim_id: Mapped[int] = mapped_column(ForeignKey("claims.id"), index=True)
+    claim_id: Mapped[int] = mapped_column(ForeignKey("claims.id", ondelete="CASCADE"), index=True)
     code: Mapped[str] = mapped_column(String(16))
     description: Mapped[str] = mapped_column(Text)
     confidence: Mapped[float] = mapped_column(Float)
@@ -222,13 +249,14 @@ class Bill(Base):
     snapshotted anyway so listing bills never has to re-sum every claim's codes."""
 
     __tablename__ = "bills"
+    __table_args__ = (Index("ix_bills_physician_start_date", "physician_id", "start_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     start_date: Mapped[date] = mapped_column(Date)
     end_date: Mapped[date] = mapped_column(Date)
     generated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
     total_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
     record_count: Mapped[int] = mapped_column(Integer)
@@ -244,7 +272,7 @@ class BillClaim(Base):
     __tablename__ = "bill_claims"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    bill_id: Mapped[int] = mapped_column(ForeignKey("bills.id"), index=True)
+    bill_id: Mapped[int] = mapped_column(ForeignKey("bills.id", ondelete="CASCADE"), index=True)
     claim_id: Mapped[int] = mapped_column(
-        ForeignKey("claims.id"), unique=True, index=True
+        ForeignKey("claims.id", ondelete="CASCADE"), unique=True, index=True
     )

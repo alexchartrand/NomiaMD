@@ -10,38 +10,15 @@
 
 ## 🐛 Bugs
 
-- [ ] 🟡 No `ondelete` on any foreign key — *added 8/27, from schema review*
-  - `ClaimRepository.delete_for_physician` deletes `ClaimCode` rows by hand (`repository.py:387`) and `BillRepository.delete_for_physician` does the same for `BillClaim`. Correct today, but nothing at the DB level stops a future path — or a psql session — from orphaning them.
-  - Fix: `ondelete="CASCADE"` on `claim_codes.claim_id` and `bill_claims.*`, `ondelete="RESTRICT"` on `claims.patient_id`. (`physician_profiles.user_id` already has it.)
-
 - [ ] 🟡 Three different strategies for the same enum problem — *added 8/27, from schema review*
   - `UserRole`/`Gender` are native `Enum(...)`; `PhysicianProfile.physician_type`/`remuneration_type` are `String(255)` shadowing a Python enum; `Claim.status` is `String(16)` validated by a Pydantic `Literal`. All three defensible in isolation, incoherent together.
   - Fix once Alembic lands: native `Enum` for vocabularies this codebase owns (role, gender), `String` + boundary validation for anything RAMQ's vocabulary controls (status, physician/remuneration type).
-
-- [ ] 🟡 `extraction_records.result_json` is `Text`, not JSONB — *added 8/27, from schema review*
-  - It holds the patient name and NAM as discrete fields. As `Text`, both the retention purge (see the Law 25 item above) and any "which extractions mention this NAM" query are a full table scan with a `LIKE`.
-  - Fix: `JSON().with_variant(JSONB, "postgresql")` — keeps the SQLite dev path working, makes the Postgres path indexable.
-
-- [ ] 🟢 Timestamp defaults are Python-side only — *added 8/27, from schema review*
-  - Every `created_at`/`updated_at` uses `default=lambda: datetime.now(timezone.utc)`, which never fires for a migration backfill, a raw `INSERT`, or a `psql` fix-up. Add `server_default=func.now()` alongside the Python default.
-
-- [ ] 🟢 Index gaps on the per-physician list queries — *added 8/27, from schema review*
-  - `extraction_records` has no index on `(user_id, created_at)` despite being listed per user; `bills` has none on `(physician_id, start_date)` despite being listed per physician per date range. `claims` already got this right (`ix_claims_physician_service_date`).
-
-- [ ] 🟢 `is_deleted` bool loses *when* a record was removed — *added 8/27, from schema review*
-  - `patients.is_deleted` filters identically as a nullable `deleted_at` timestamp (`IS NULL`), but under Law 25 the deletion date is the thing an audit asks for. Cheap to change now, awkward once there are rows.
-
-- [ ] 🟢 No `pool_pre_ping` on the Postgres engine — *added 8/27, from schema review*
-  - `database.py`'s `create_async_engine` takes no pool config. A long-lived container against a Postgres that recycles connections hands out stale ones; `pool_pre_ping=True` (plus an explicit `pool_size`) is the standard guard.
 
 - [ ] 🟢 NAM stored in plaintext — *added 8/27, from schema review*
   - `patients.ramq_number` and the NAM inside `extraction_records.result_json` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
 
 - [ ] 🟡 NAM matching scans the whole roster instead of an indexed lookup — *added 8/24, from billing-workflow code review*
   - `PatientSuggestionService._match` (`app/patients/suggestion.py`) calls `list_for_physician` and filters for a NAM match in Python, on every `/extract` call. `PatientRepository` has no `find_by_ramq(physician_id, nam)`. Fine at demo scale; a physician with hundreds of roster patients pays for the full roster transfer/deserialization just to find at most one match, on a rate-limited hot path.
-
-- [ ] 🟢 No unique constraint on `(physician_id, ramq_number)` on `patients` — *added 8/24, from billing-workflow code review*
-  - Soft-deleting a patient and re-adding the same NAM (or a data-entry duplicate) creates two roster rows sharing a NAM. `PatientSuggestionService._match` already degrades gracefully (logs a warning, treats it as no match) rather than crashing or guessing, but the duplicate itself is never surfaced to the physician as a data-integrity problem.
 
 - [ ] 🟢 Slash-date parsing assumes `DD/MM/YYYY`, would misparse an Epic-style `MM/DD/YYYY` note — *added 8/24, from billing-workflow code review*
   - `app/extraction/encounter_date.py`'s `_SLASH_DATE_RE` always reads `d/m/y`. Harmless today (Epic/Plume AI sources are still disabled buttons in the UI, and Quebec notes use `DD/MM/YYYY`), but once a US-market EHR source is wired up, a date like "03/04/2026" would silently parse as March 4 instead of April 3 for any day/month both ≤ 12 — no error, just a silently wrong `encounter_date`. Revisit once a real `source.system` other than `simule` sends dates.
@@ -132,6 +109,34 @@
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend doesn't send a `source` object today. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] 🟢 No unique constraint on `(physician_id, ramq_number)` on `patients` — *added 8/24, done 8/27, from billing-workflow code review*
+  - Soft-deleting a patient and re-adding the same NAM (or a data-entry duplicate) created two roster rows sharing a NAM. `PatientSuggestionService._match` already degraded gracefully (logs a warning, treats it as no match) rather than crashing or guessing, but the duplicate itself was never surfaced to the physician as a data-integrity problem.
+  - Fixed: `ix_patients_physician_ramq_number_active` (`app/postgresdb/models.py`) — a **partial** unique index on `(physician_id, ramq_number)`, scoped to `deleted_at IS NULL` (`postgresql_where`/`sqlite_where`) so a soft-deleted patient never blocks re-adding the same NAM. Unlike the FK `ondelete`/composite-FK schema-review items, this is live on both dialects: SQLite enforces unique indexes unconditionally (no `PRAGMA foreign_keys` gate involved), confirmed with a standalone in-memory-SQLite repro. `PatientRepository.create`/`update_for_physician` (`app/postgresdb/repository.py`) also pre-check for an active NAM collision and raise `DuplicatePatientRamqNumberError` (excluding the patient's own row on update) — same "clean error over a raw IntegrityError, DB constraint as the backstop" shape as `ClaimService`'s duplicate-extraction check — which `patients/router.py` maps to a 409. Doesn't cover a NAM that's merely `nam.normalize()`-equivalent under different literal formatting (e.g. `"DESR81021001"` vs `"desr 8102-1001"`) — that gap is real and intentionally left to `PatientSuggestionService._match`'s existing multi-match fallback, now the only remaining code path that can still see two active rows sharing a NAM; `test_patient_suggestion.py`'s `test_duplicate_nam_across_roster_rows_is_no_match_not_a_coin_flip` was rewritten around exactly that case (its old exact-literal-duplicate setup no longer round-trips through `PatientRepository.create`). Added `test_patients.py` coverage: re-adding the same NAM after a soft delete succeeds, a second active create/update onto the same NAM is 409, and two patients with no NAM at all don't collide. Several fixture helpers across `test_patients.py`/`test_claims.py`/`test_bills.py`/`test_bill_repository.py` previously reused one hardcoded NAM per physician across many tests against the same never-reset session-scoped test DB (see conftest.py) — harmless before this constraint, a 409 after — so each now mints a fresh NAM per seeded patient.
+
+- [x] 🟡 `extraction_records.result_json` is `Text`, not JSONB — *added 8/27, done 8/27, from schema review*
+  - It holds the patient name and NAM as discrete fields. As `Text`, both the retention purge (see the Law 25 item above) and any "which extractions mention this NAM" query are a full table scan with a `LIKE`.
+  - Fixed: `result_json` is now `JSON().with_variant(JSONB, "postgresql")` (`app/postgresdb/models.py`), typed as `dict` instead of `str`. `ExtractionRepository.create_many` now stores the dict directly instead of `json.dumps`-ing it, and `ClaimService.create` reads `extraction_record.result_json` directly instead of `json.loads`-ing it — the now-unused `json` imports were dropped from both `postgresdb/repository.py` and `claims/service.py`. Keeps the SQLite dev path working, makes the Postgres path indexable.
+
+- [x] 🟢 Timestamp defaults are Python-side only — *added 8/27, done 8/27, from schema review*
+  - Every `created_at`/`updated_at` uses `default=lambda: datetime.now(timezone.utc)`, which never fires for a migration backfill, a raw `INSERT`, or a `psql` fix-up.
+  - Fixed: every such column across `User`, `PhysicianProfile`, `Patient`, `ExtractionRecord`, `Claim`, and `Bill` (`app/postgresdb/models.py`) now also sets `server_default=func.now()` alongside the existing Python-side default.
+
+- [x] 🟢 Index gaps on the per-physician list queries — *added 8/27, done 8/27, from schema review*
+  - `extraction_records` has no index on `(user_id, created_at)` despite being listed per user; `bills` has none on `(physician_id, start_date)` despite being listed per physician per date range. `claims` already got this right (`ix_claims_physician_service_date`).
+  - Fixed: added `ix_extraction_records_user_created` on `ExtractionRecord.__table_args__` and `ix_bills_physician_start_date` on `Bill.__table_args__` (`app/postgresdb/models.py`), mirroring `claims`' existing composite index.
+
+- [x] 🟢 `is_deleted` bool loses *when* a record was removed — *added 8/27, done 8/27, from schema review*
+  - `patients.is_deleted` filters identically as a nullable `deleted_at` timestamp (`IS NULL`), but under Law 25 the deletion date is the thing an audit asks for.
+  - Fixed: `Patient.is_deleted` (`Boolean`) replaced with `Patient.deleted_at` (`DateTime | None`, indexed) in `app/postgresdb/models.py`. `PatientRepository` (`app/postgresdb/repository.py`) updated throughout: `is_deleted.is_(False)` → `deleted_at.is_(None)`, the ownership/soft-delete guards in `get_for_physician`/`update_for_physician`/`delete_for_physician` check `deleted_at is not None`, and `delete_for_physician` now sets `deleted_at = datetime.now(timezone.utc)` instead of `is_deleted = True`. No API/frontend exposure existed to update — the flag never left the repository layer.
+
+- [x] 🟢 No `pool_pre_ping` on the Postgres engine — *added 8/27, done 8/27, from schema review*
+  - `database.py`'s `create_async_engine` took no pool config. A long-lived container against a Postgres that recycles connections would be handed a stale one.
+  - Fixed: on the non-SQLite path, `create_async_engine` (`app/postgresdb/database.py`) now also passes `pool_pre_ping=True` and an explicit `pool_size=10`; the SQLite dev path is untouched (meaningless there, and unsupported by aiosqlite's `NullPool`).
+
+- [x] 🟡 No `ondelete` on any foreign key — *added 8/27, done 8/27, from schema review*
+  - `ClaimRepository.delete_for_physician` deletes `ClaimCode` rows by hand (`repository.py:387`) and `BillRepository.delete_for_physician` does the same for `BillClaim`. Correct today, but nothing at the DB level stopped a future path — or a psql session — from orphaning them.
+  - Fixed: `ondelete="CASCADE"` on `claim_codes.claim_id` and `bill_claims.bill_id`/`claim_id`, `ondelete="RESTRICT"` on the `claims` composite `ForeignKeyConstraint(["patient_id", "physician_id"], ...)` (`app/postgresdb/models.py`). Same SQLite-is-a-no-op caveat as the composite-FK item below: live on Postgres only, so the repository methods' manual explicit deletes stay as the real guarantee in tests/dev — this closes the gap only for a future path or a raw psql session against prod. All 208 tests still pass unchanged.
 
 - [x] Split `users` into credentials + dated physician profile — *added and done 8/27, from schema review*
   - `physician_type`/`number_of_patients`/`remuneration_type` moved off `users` into a new append-only `physician_profiles` table keyed by `(user_id, effective_from)`. They aren't preferences — they decide which RAMQ codes a physician may legally bill, and editing them used to silently rewrite the basis of every past claim (the failure `ClaimCode`'s fee snapshot already exists to prevent). Reads go through `PhysicianProfileRepository.get_effective_on(user_id, date)`; `get_current` is the same call with today's date. Same-day edits overwrite in place rather than appending.

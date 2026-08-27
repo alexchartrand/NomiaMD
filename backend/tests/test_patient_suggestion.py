@@ -115,8 +115,15 @@ async def test_roster_patient_with_null_ramq_number_is_never_matched(service, ph
 
 
 async def test_duplicate_nam_across_roster_rows_is_no_match_not_a_coin_flip(service, physician_id, caplog):
-    await _seed_patient(physician_id=physician_id, full_name="Roch Desjardins")
-    await _seed_patient(physician_id=physician_id, full_name="Roch Desjardins Deux")
+    # ix_patients_physician_ramq_number_active (models.py) blocks two roster rows sharing
+    # the exact same literal NAM string, but _match compares via nam.normalize()
+    # (case/spacing-insensitive) — two different literal strings that normalize to the
+    # same NAM still slip past that constraint, so this state is still reachable through
+    # the ordinary PatientRepository.create path.
+    await _seed_patient(physician_id=physician_id, full_name="Roch Desjardins", ramq_number="DESR81021001")
+    await _seed_patient(
+        physician_id=physician_id, full_name="Roch Desjardins Deux", ramq_number="desr 8102-1001"
+    )
     extracted = ExtractedIdentity(
         ramq_number="DESR81021001", name_as_stated="Desjardins, Roch", age_years=45, age_months=None, sex="H"
     )

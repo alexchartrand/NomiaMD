@@ -2,6 +2,7 @@
 list -> get detail -> download PDF -> delete, plus ownership scoping and the
 empty-selection/stale-selection validation in app/bills/service.py."""
 
+import itertools
 from datetime import date
 
 from fastapi.testclient import TestClient
@@ -9,6 +10,12 @@ from fastapi.testclient import TestClient
 from app.auth import get_current_user
 from app.main import app
 from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
+
+# The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
+# most tests here reuse physician_id=1 — so each seeded patient needs its own NAM to avoid
+# tripping ix_patients_physician_ramq_number_active (models.py) against an earlier test's
+# still-active patient.
+_ramq_numbers = itertools.count(1)
 
 BILLING_RESULT = {
     "codes": [
@@ -34,11 +41,13 @@ def _other_physician():
     )
 
 
-async def _seed_patient(physician_id=1, full_name="Roch Desjardins", ramq_number="DESR81021001"):
+async def _seed_patient(physician_id=1, full_name="Roch Desjardins", ramq_number=None):
     return await PatientRepository().create(
         physician_id=physician_id,
         full_name=full_name,
-        ramq_number=ramq_number,
+        # Distinct prefix from test_claims.py's own _seed_patient — both default to
+        # physician_id=1, and a shared prefix would let their counters collide across files.
+        ramq_number=ramq_number or f"BILP{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
         gender=Gender.MALE,
         is_registered_with_physician=True,
