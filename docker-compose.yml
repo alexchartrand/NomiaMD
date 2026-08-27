@@ -12,6 +12,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: nomiamd
       POSTGRES_USER: nomiamd
@@ -33,6 +34,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: redis
+    restart: unless-stopped
     volumes:
       - redis_data:/data
     networks: [internal]
@@ -51,6 +53,7 @@ services:
     build:
       context: ./backend
     container_name: backend
+    restart: unless-stopped
     networks: [internal]
     environment:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
@@ -101,6 +104,7 @@ services:
     build:
       context: ./frontend
     container_name: frontend
+    restart: unless-stopped
     environment:
       ALLOWED_CIDRS: ${ALLOWED_CIDRS}
     networks:
@@ -123,6 +127,7 @@ services:
   caddy:
     image: caddy:2-alpine
     container_name: caddy
+    restart: unless-stopped
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
