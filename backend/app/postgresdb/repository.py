@@ -229,7 +229,7 @@ class BillingRecordCodeInput:
     code: str
     description: str
     confidence: float
-    supporting_quote: str
+    explanation: str
     fee_amount: float | None
     fee_when_to_use: str | None
     majoration: str | None
@@ -284,7 +284,7 @@ class BillingRecordRepository:
                     code=c.code,
                     description=c.description,
                     confidence=c.confidence,
-                    supporting_quote=c.supporting_quote,
+                    explanation=c.explanation,
                     fee_amount=c.fee_amount,
                     fee_when_to_use=c.fee_when_to_use,
                     majoration=c.majoration,

@@ -93,14 +93,14 @@ MOCK_RESULT = {
             "code": "TEST-BP-MGMT",
             "description": "Prise en charge d'une maladie chronique, hypertension artérielle",
             "confidence": 0.9,
-            "supporting_quote": "hypertension artérielle depuis 10 ans",
+            "explanation": "hypertension artérielle depuis 10 ans",
             "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
         },
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",
             "confidence": 0.85,
-            "supporting_quote": "Bilan sanguin de contrôle demandé",
+            "explanation": "Bilan sanguin de contrôle demandé",
             "fee": {"amount": None, "when_to_use": None, "majoration": None},
         },
     ],
@@ -139,9 +139,9 @@ async def test_run_extraction_parses_mocked_response():
 
 async def test_run_extraction_drops_malformed_bare_string_codes():
     """A small local model sometimes collapses the codes array to bare code strings
-    instead of {code, description, confidence, supporting_quote} objects, especially with
+    instead of {code, description, confidence, explanation} objects, especially with
     a large real candidate list — this must not crash the request, and must not fabricate
-    a supporting_quote for something the model didn't actually justify."""
+    an explanation for something the model didn't actually justify."""
     task = get_task("billing_codes")
     mock_result = {
         "codes": [
@@ -150,7 +150,7 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
                 "code": "TEST-BLOODWORK-ORDER",
                 "description": "Demande et révision d'un bilan sanguin de routine",
                 "confidence": 0.85,
-                "supporting_quote": "Bilan sanguin de contrôle demandé",
+                "explanation": "Bilan sanguin de contrôle demandé",
                 "fee": {"amount": None, "when_to_use": None, "majoration": None},
             },
         ],

@@ -38,11 +38,7 @@ Rules:
       condition handling above — don't leave fee blank just because it's ambiguous.
     - If a candidate has no fee data at all, return `fee` with every sub-field null rather
       than omitting it or guessing an amount.
-- Every code you return must include a short verbatim quote from the consultation summary
-  provided that describes the specific billed act itself (the exam/service/procedure the
-  code's own description names) — not incidental context like the clinic's name alone or a
-  medication list. If you can't quote text establishing that the billed act actually
-  happened, don't include the code.
+- Every code you return must include an explanation that describes why you choose this code. Explanation should be short and concise.
 - The candidate list is a narrowed search result, not a guarantee the correct code is in
   it. An empty codes list is the correct, expected output whenever no candidate is clearly
   supported by the summary — never select the "closest" or "least wrong" candidate just
@@ -98,11 +94,11 @@ class BillingCodesTask(ExtractionTask):
     def parse(self, raw: dict[str, Any]) -> BillingCodesResult:
         # Small local models (freeform JSON, no grammar constraint) sometimes collapse the
         # `codes` array to bare code strings instead of the required {code, description,
-        # confidence, supporting_quote} objects, especially with a large real candidate
+        # confidence, explanation} objects, especially with a large real candidate
         # list. Drop anything malformed rather than crashing the request — and rather than
-        # fabricating a supporting_quote for it, since that field exists specifically so a
-        # physician can verify the suggestion against the transcript; showing a code with a
-        # made-up quote would defeat that.
+        # fabricating an explanation for it, since that field exists specifically so a
+        # physician can see the model's reasoning for the suggestion; a made-up explanation
+        # would defeat that.
         codes = raw.get("codes") or []
         well_formed = [c for c in codes if isinstance(c, dict)]
         dropped = len(codes) - len(well_formed)
@@ -112,7 +108,7 @@ class BillingCodesTask(ExtractionTask):
         if dropped:
             note = (
                 f"{dropped} candidate code(s) came back from the model in an unexpected "
-                "format (missing a supporting quote) and were dropped rather than shown "
+                "format (missing an explanation) and were dropped rather than shown "
                 "unverified."
             )
             result.notes = f"{result.notes} {note}".strip() if result.notes else note

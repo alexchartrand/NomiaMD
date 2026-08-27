@@ -47,7 +47,7 @@ def test_picks_candidates_from_prompt():
     assert len(content["codes"]) == fake_llm_server.PICK
     assert content["codes"][0]["code"] == "15801"
     assert content["codes"][0]["description"] == "Visite de prise en charge"
-    assert "supporting_quote" in content["codes"][0]
+    assert "explanation" in content["codes"][0]
     assert content["codes"][0]["fee"] == {"amount": None, "when_to_use": None, "majoration": None}
 
 

@@ -10,7 +10,7 @@ export interface BillingCodeLine {
   code: string;
   description: string;
   confidence: number;
-  supporting_quote: string;
+  explanation: string;
   fee_amount: number | null;
   fee_when_to_use: string | null;
   majoration: string | null;

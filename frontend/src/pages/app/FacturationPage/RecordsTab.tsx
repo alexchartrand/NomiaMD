@@ -174,7 +174,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                               {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}
                               {c.fee_when_to_use && <> — {c.fee_when_to_use}</>}
                               <br />
-                              <em>&laquo; {c.supporting_quote} &raquo;</em>
+                              <em>{c.explanation}</em>
                             </li>
                           ))}
                         </ul>

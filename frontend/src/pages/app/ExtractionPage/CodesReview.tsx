@@ -38,7 +38,7 @@ export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
                 <span className="code-card-fee">{c.fee.amount != null ? `${c.fee.amount.toFixed(2)} $` : "—"}</span>
               </div>
 
-              <p className="code-card-quote">&laquo; {c.supporting_quote} &raquo;</p>
+              <p className="code-card-explanation">{c.explanation}</p>
 
               <div className="code-card-footer">
                 <span className={`confidence-badge confidence-badge-${confidenceBucket(c.confidence)}`}>

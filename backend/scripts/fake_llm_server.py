@@ -204,7 +204,7 @@ def _fake_billing_codes_content(user_message: str) -> str:
             "code": code,
             "description": description,
             "confidence": 0.5,
-            "supporting_quote": "(stub quote — fake LLM, not a real extraction)",
+            "explanation": "(stub explanation — fake LLM, not a real extraction)",
             "fee": _fake_fee_for_code(user_message, code),
         }
         for code, description in chosen

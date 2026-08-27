@@ -117,7 +117,7 @@ def test_extract_endpoint_rejects_consultation_summary_task():
 
 
 def test_render_for_billing_codes_surfaces_quotable_facts():
-    # billing_codes.py's supporting_quote requirement depends on this rendering actually
+    # billing_codes.py's explanation requirement depends on this rendering actually
     # containing the underlying facts verbatim, not just describing that they exist.
     summary = ConsultationSummaryResult.model_validate(MOCK_RESULT)
     rendered = render_for_billing_codes(summary)

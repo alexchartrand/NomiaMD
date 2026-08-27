@@ -897,7 +897,7 @@ form .btn[type="submit"] {
   white-space: nowrap;
 }
 
-.code-card-quote {
+.code-card-explanation {
   font-style: italic;
   color: var(--color-text-muted);
   font-size: 0.92rem;

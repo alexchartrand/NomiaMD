@@ -25,7 +25,7 @@ class BillingRecordCodeOut(BaseModel):
     code: str
     description: str
     confidence: float
-    supporting_quote: str
+    explanation: str
     fee_amount: float | None
     fee_when_to_use: str | None
     majoration: str | None

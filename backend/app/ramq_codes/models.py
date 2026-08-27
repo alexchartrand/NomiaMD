@@ -45,12 +45,7 @@ class ExtractedCode(BaseModel):
     code: str = Field(description="RAMQ code as it appears in the reference table")
     description: str
     confidence: float = Field(ge=0.0, le=1.0)
-    supporting_quote: str = Field(
-        description=(
-            "Short verbatim excerpt from the consultation summary (not the raw transcript) "
-            "that justifies this code"
-        )
-    )
+    explanation: str = Field(description="Short explanation of why this code was chosen")
     fee: ExtractedFee = Field(
         description=(
             "The fee selected from this code's candidate fee list based on the consultation "

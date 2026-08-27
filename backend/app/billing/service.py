@@ -149,7 +149,7 @@ class BillingService:
                 code=code,
                 description=candidates_by_code[code]["description"],
                 confidence=candidates_by_code[code]["confidence"],
-                supporting_quote=candidates_by_code[code]["supporting_quote"],
+                explanation=candidates_by_code[code]["explanation"],
                 fee_amount=(candidates_by_code[code].get("fee") or {}).get("amount"),
                 fee_when_to_use=(candidates_by_code[code].get("fee") or {}).get("when_to_use"),
                 majoration=(candidates_by_code[code].get("fee") or {}).get("majoration"),

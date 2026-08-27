@@ -146,7 +146,7 @@ def _extracted_code(code: str = "15801") -> dict:
         "code": code,
         "description": "Visite de prise en charge",
         "confidence": 0.9,
-        "supporting_quote": "quote",
+        "explanation": "quote",
         "fee": {"amount": 33.15, "when_to_use": None, "majoration": None},
     }
 

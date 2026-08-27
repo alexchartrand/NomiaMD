@@ -1,9 +1,7 @@
 """Runs billing-code extraction (via the two-stage transcript -> consultation_summary ->
 billing_codes pipeline, see app/extraction/pipeline.py) over a small hand-labeled eval set
 and reports how the configured model (app/extraction/engine.py's MODEL constant) did
-against expected codes, plus a sanity check that every supporting_quote is actually
-verbatim in the rendered consultation summary — the text billing_codes actually reasoned
-over, not the raw transcript.
+against expected codes.
 
 Requires MISTRAL_API_KEY to be set — either for a real Mistral API call, or with
 MISTRAL_ENDPOINT pointed at the fake dev server (`make fake-llm`). From backend/, with
@@ -15,7 +13,7 @@ Defaults to tests/fixtures/eval_billing_codes.jsonl, which is a *draft* fixture 
 entries have label_status "needs_physician_label" rather than real expected_codes, since
 picking correct RAMQ billing codes requires domain expertise this script doesn't have.
 Entries with expected_codes == [] are skipped for scoring (there's nothing to compare
-against) but still run, so quote-grounding still gets checked on them.
+against) but still run.
 """
 
 import asyncio
@@ -35,7 +33,6 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from app.bootstrap import application_services  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.sample_patients import get_sample_patient  # noqa: E402
-from app.summary import render_for_billing_codes  # noqa: E402
 
 DEFAULT_EVAL_PATH = Path(__file__).parent.parent / "tests" / "fixtures" / "eval_billing_codes.jsonl"
 
@@ -45,13 +42,6 @@ def load_eval_set(path: Path) -> list[dict]:
         return [json.loads(line) for line in f if line.strip()]
 
 
-def quote_is_grounded(source_text: str, quote: str) -> bool:
-    """Loose containment check — whitespace-normalized, since models sometimes reflow
-    line breaks in an otherwise-verbatim quote."""
-    normalize = lambda s: " ".join(s.split())
-    return normalize(quote) in normalize(source_text)
-
-
 async def main() -> None:
     eval_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_EVAL_PATH
     entries = load_eval_set(eval_path)
@@ -59,8 +49,6 @@ async def main() -> None:
     scored = 0
     total_precision = 0.0
     total_recall = 0.0
-    ungrounded_quotes = 0
-    total_quotes = 0
 
     async with application_services():
         for entry in entries:
@@ -69,15 +57,9 @@ async def main() -> None:
                 print(f"[skip] unknown patient_id {entry['patient_id']!r}")
                 continue
 
-            summary_result, result = await run_billing_codes_pipeline(patient.transcript)
-            summary_text = render_for_billing_codes(summary_result.result)
+            _summary_result, result = await run_billing_codes_pipeline(patient.transcript)
             returned_codes = {c.code for c in result.result.codes}
             expected_codes = set(entry.get("expected_codes") or [])
-
-            for c in result.result.codes:
-                total_quotes += 1
-                if not quote_is_grounded(summary_text, c.supporting_quote):
-                    ungrounded_quotes += 1
 
             status = entry.get("label_status", "unknown")
             print(f"\n=== {entry['patient_id']} ({status}) ===")
@@ -103,9 +85,6 @@ async def main() -> None:
     else:
         print("scored entries: 0 — no entries in the eval set have expected_codes yet; "
               "see label_status/label_notes in the fixture.")
-    if total_quotes:
-        print(f"quote grounding: {total_quotes - ungrounded_quotes}/{total_quotes} "
-              f"supporting_quote(s) found verbatim in their transcript")
 
 
 if __name__ == "__main__":

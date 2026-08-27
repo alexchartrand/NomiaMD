@@ -11,7 +11,7 @@ export interface ExtractedCode {
   code: string;
   description: string;
   confidence: number;
-  supporting_quote: string;
+  explanation: string;
   fee: ExtractedFee;
 }
 

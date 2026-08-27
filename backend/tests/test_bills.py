@@ -16,7 +16,7 @@ BILLING_RESULT = {
             "code": "TEST-BP-MGMT",
             "description": "Prise en charge d'une hypertension",
             "confidence": 0.9,
-            "supporting_quote": "hypertension artérielle depuis 10 ans",
+            "explanation": "hypertension artérielle depuis 10 ans",
             "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
         }
     ],

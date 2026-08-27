@@ -158,7 +158,7 @@ class BillingRecordCode(Base):
     code: Mapped[str] = mapped_column(String(16))
     description: Mapped[str] = mapped_column(Text)
     confidence: Mapped[float] = mapped_column(Float)
-    supporting_quote: Mapped[str] = mapped_column(Text)
+    explanation: Mapped[str] = mapped_column(Text)
     fee_amount: Mapped[float | None] = mapped_column(Numeric(10, 2, asdecimal=False), nullable=True)
     fee_when_to_use: Mapped[str | None] = mapped_column(Text, nullable=True)
     majoration: Mapped[str | None] = mapped_column(Text, nullable=True)
