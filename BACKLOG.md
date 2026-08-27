@@ -10,6 +10,41 @@
 
 ## 🐛 Bugs
 
+- [ ] 🔴 Money is a Python float end to end — *added 8/27, from schema review*
+  - `ClaimCode.fee_amount` and `Bill.total_amount` are `Numeric(10, 2, asdecimal=False)`, so SQLAlchemy hands back `float`, and `bills/service.py:88` sums those floats into the invoice total. Postgres storage is exact; the arithmetic isn't, and the SQLite dev default has no exact numeric type at all. The output of this system is a dollar figure sent to RAMQ.
+  - Fix: `asdecimal=True` with `Decimal` through `ClaimCodeInput`/`BillInput`/the Pydantic models and the PDF renderer, or store integer cents.
+
+- [ ] 🟡 No DB-level guarantee that a claim's patient belongs to its physician — *added 8/27, from schema review*
+  - `claims.physician_id` and `claims.patient_id` are independent FKs; only `ClaimService` enforces that the patient is on that physician's roster. One bad code path bills the wrong doctor's patient — a Law 25 incident, not a bug report.
+  - Fix: `UniqueConstraint("id", "physician_id")` on `patients`, then make `claims` reference `(patient_id, physician_id)` as a composite FK so the DB rejects the pairing.
+
+- [ ] 🟡 No `ondelete` on any foreign key — *added 8/27, from schema review*
+  - `ClaimRepository.delete_for_physician` deletes `ClaimCode` rows by hand (`repository.py:387`) and `BillRepository.delete_for_physician` does the same for `BillClaim`. Correct today, but nothing at the DB level stops a future path — or a psql session — from orphaning them.
+  - Fix: `ondelete="CASCADE"` on `claim_codes.claim_id` and `bill_claims.*`, `ondelete="RESTRICT"` on `claims.patient_id`. (`physician_profiles.user_id` already has it.)
+
+- [ ] 🟡 Three different strategies for the same enum problem — *added 8/27, from schema review*
+  - `UserRole`/`Gender` are native `Enum(...)`; `PhysicianProfile.physician_type`/`remuneration_type` are `String(255)` shadowing a Python enum; `Claim.status` is `String(16)` validated by a Pydantic `Literal`. All three defensible in isolation, incoherent together.
+  - Fix once Alembic lands: native `Enum` for vocabularies this codebase owns (role, gender), `String` + boundary validation for anything RAMQ's vocabulary controls (status, physician/remuneration type).
+
+- [ ] 🟡 `extraction_records.result_json` is `Text`, not JSONB — *added 8/27, from schema review*
+  - It holds the patient name and NAM as discrete fields. As `Text`, both the retention purge (see the Law 25 item above) and any "which extractions mention this NAM" query are a full table scan with a `LIKE`.
+  - Fix: `JSON().with_variant(JSONB, "postgresql")` — keeps the SQLite dev path working, makes the Postgres path indexable.
+
+- [ ] 🟢 Timestamp defaults are Python-side only — *added 8/27, from schema review*
+  - Every `created_at`/`updated_at` uses `default=lambda: datetime.now(timezone.utc)`, which never fires for a migration backfill, a raw `INSERT`, or a `psql` fix-up. Add `server_default=func.now()` alongside the Python default.
+
+- [ ] 🟢 Index gaps on the per-physician list queries — *added 8/27, from schema review*
+  - `extraction_records` has no index on `(user_id, created_at)` despite being listed per user; `bills` has none on `(physician_id, start_date)` despite being listed per physician per date range. `claims` already got this right (`ix_claims_physician_service_date`).
+
+- [ ] 🟢 `is_deleted` bool loses *when* a record was removed — *added 8/27, from schema review*
+  - `patients.is_deleted` filters identically as a nullable `deleted_at` timestamp (`IS NULL`), but under Law 25 the deletion date is the thing an audit asks for. Cheap to change now, awkward once there are rows.
+
+- [ ] 🟢 No `pool_pre_ping` on the Postgres engine — *added 8/27, from schema review*
+  - `database.py`'s `create_async_engine` takes no pool config. A long-lived container against a Postgres that recycles connections hands out stale ones; `pool_pre_ping=True` (plus an explicit `pool_size`) is the standard guard.
+
+- [ ] 🟢 NAM stored in plaintext — *added 8/27, from schema review*
+  - `patients.ramq_number` and the NAM inside `extraction_records.result_json` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
+
 - [ ] 🟡 NAM matching scans the whole roster instead of an indexed lookup — *added 8/24, from billing-workflow code review*
   - `PatientSuggestionService._match` (`app/patients/suggestion.py`) calls `list_for_physician` and filters for a NAM match in Python, on every `/extract` call. `PatientRepository` has no `find_by_ramq(physician_id, nam)`. Fine at demo scale; a physician with hundreds of roster patients pays for the full roster transfer/deserialization just to find at most one match, on a rate-limited hot path.
 
@@ -26,8 +61,9 @@
   - Stores each transcript + result indefinitely. Acceptable while demoing with the synthetic notes in `consultations/`; must revisit before this ever touches real patient data (Law 25).
   - Escalated: `extraction_records.result_json` now holds the patient's name **and NAM** as discrete, greppable fields (`patient_information.name_as_stated`/`ramq_number_as_stated`, billing-workflow plan Part 1) — a NAM is a direct government identifier, which makes this materially more pressing than before.
 
-- [ ] 🟡 No Alembic — schema changes require a DB wipe or a hand-run `ALTER TABLE` — *added 8/24*
+- [ ] 🔴 No Alembic — schema changes require a DB wipe or a hand-run `ALTER TABLE` — *added 8/24, escalated 8/27*
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one. `patients.is_deleted` (billing-workflow plan Part 4) is the first column added to an existing table since this app went live; the next one needs the same manual `ALTER TABLE` step on prod, or a wipe locally. Adopt Alembic before billing data is real.
+  - Escalated 8/27: this is the blocker for every other schema item in this section — none of them are applicable to a live DB without migrations. It's also the stated cause of two existing workarounds (`Claim.status` as a bare `String` instead of an enum; `BillClaim` existing as a table because "a new column on an existing table isn't free"), so adopting Alembic removes the constraint those were designed around. Not urgent while there's no production DB — the local SQLite file is disposable — but it gates going live.
 
 - [ ] 🟡 Hard-deleting a `facturé` billing record destroys audit trail — *added 8/24*
   - `DELETE /claims/{id}` (`app/claims/router.py`) hard-deletes regardless of `status` — there's no soft-delete equivalent to `patients.is_deleted` for claims. Fine for a `brouillon` mistake; loses the audit trail for anything already marked `facturé`.
@@ -104,6 +140,10 @@
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend doesn't send a `source` object today. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] Split `users` into credentials + dated physician profile — *added and done 8/27, from schema review*
+  - `physician_type`/`number_of_patients`/`remuneration_type` moved off `users` into a new append-only `physician_profiles` table keyed by `(user_id, effective_from)`. They aren't preferences — they decide which RAMQ codes a physician may legally bill, and editing them used to silently rewrite the basis of every past claim (the failure `ClaimCode`'s fee snapshot already exists to prevent). Reads go through `PhysicianProfileRepository.get_effective_on(user_id, date)`; `get_current` is the same call with today's date. Same-day edits overwrite in place rather than appending.
+  - `AuthService` kept authentication only; the new `ProfileService` (`app/auth/profile.py`) owns the profile read/write and returns a `PhysicianAccount` (user + applicable profile) that `UserOut` flattens — the API shape is unchanged, so no frontend change. `BillService.render_pdf` now prints the profile in effect at `bill.end_date` instead of today's.
 
 - [x] Rate-limit bypass via X-Forwarded-For spoofing — *added 8/19, done 8/18, from codebase audit*
   - Fixed by commit 5c231b5 ("Pin backend's trusted proxy IP to nginx's static compose address") — `--forwarded-allow-ips` now pinned to nginx's static IP on an internal compose network, instead of trusting `*`.
