@@ -27,6 +27,7 @@ from app.auth.security import PasswordHasher  # noqa: E402
 from app.postgresdb import (  # noqa: E402
     Gender,
     PatientRepository,
+    PhysicianProfileRepository,
     PhysicianType,
     RemunerationType,
     UserRepository,
@@ -81,13 +82,19 @@ async def main() -> None:
             hashed_password=hashed_password,
             full_name=ADMIN_FULL_NAME,
             role=UserRole.ADMIN,
-            physician_type=ADMIN_PHYSICIAN_TYPE,
-            number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
-            remuneration_type=ADMIN_REMUNERATION_TYPE,
         )
     except IntegrityError:
         print(f"A user with email {ADMIN_EMAIL!r} already exists — DB wasn't wiped?", file=sys.stderr)
         raise SystemExit(1)
+
+    # The practice facts live in their own dated table, so provisioning writes the
+    # account's first profile version rather than more columns on `users`.
+    await PhysicianProfileRepository().upsert_current(
+        admin.id,
+        physician_type=ADMIN_PHYSICIAN_TYPE,
+        number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
+        remuneration_type=ADMIN_REMUNERATION_TYPE,
+    )
 
     print(f"Created admin user {admin.email!r} (id={admin.id})")
 
