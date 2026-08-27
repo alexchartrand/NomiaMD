@@ -2,7 +2,10 @@
 FROM python:3.11-slim AS builder
 COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /uvx /bin/
 WORKDIR /build
-ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+# Build the venv directly at its final runtime path (rather than the default /build/.venv)
+# so the entry-point scripts uv writes (e.g. bin/uvicorn) get a shebang that still resolves
+# once /opt/venv is copied verbatim into the runtime stage below.
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PROJECT_ENVIRONMENT=/opt/venv
 COPY pyproject.toml uv.lock ./
 # Deps first (--no-install-project), then the local package, so the deps layer stays cached
 # across app/ changes. --frozen refuses to touch uv.lock, for a reproducible build
@@ -14,7 +17,7 @@ RUN uv sync --frozen --no-dev
 # --- runtime ---
 FROM python:3.11-slim AS runtime
 RUN useradd --create-home --uid 10001 appuser
-COPY --from=builder /build/.venv /opt/venv
+COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
