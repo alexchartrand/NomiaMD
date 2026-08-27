@@ -12,6 +12,7 @@ from sqlalchemy import (
     Enum,
     Float,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
     Integer,
     Numeric,
@@ -109,6 +110,12 @@ class Patient(Base):
     billing_codes needs but can never derive from a transcript (see CLAUDE.md)."""
 
     __tablename__ = "patients"
+    __table_args__ = (
+        # Lets claims reference (patient_id, physician_id) as a composite FK, so the DB
+        # itself rejects billing a patient onto a physician they aren't rostered under —
+        # not just ClaimService's application-level check.
+        UniqueConstraint("id", "physician_id"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
@@ -159,11 +166,17 @@ class Claim(Base):
     __table_args__ = (
         Index("ix_claims_physician_service_date", "physician_id", "service_date"),
         UniqueConstraint("billing_extraction_record_id"),
+        # Composite FK against patients(id, physician_id): the DB rejects a claim whose
+        # patient_id/physician_id pairing doesn't match an actual roster row, closing the
+        # gap where only ClaimService enforced "this patient belongs to this physician".
+        ForeignKeyConstraint(
+            ["patient_id", "physician_id"], ["patients.id", "patients.physician_id"]
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
-    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"), index=True)
+    patient_id: Mapped[int] = mapped_column(index=True)
     service_date: Mapped[date] = mapped_column(Date)
     status: Mapped[str] = mapped_column(String(16), default="brouillon")
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)

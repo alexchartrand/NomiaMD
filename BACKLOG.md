@@ -10,10 +10,6 @@
 
 ## 🐛 Bugs
 
-- [ ] 🟡 No DB-level guarantee that a claim's patient belongs to its physician — *added 8/27, from schema review*
-  - `claims.physician_id` and `claims.patient_id` are independent FKs; only `ClaimService` enforces that the patient is on that physician's roster. One bad code path bills the wrong doctor's patient — a Law 25 incident, not a bug report.
-  - Fix: `UniqueConstraint("id", "physician_id")` on `patients`, then make `claims` reference `(patient_id, physician_id)` as a composite FK so the DB rejects the pairing.
-
 - [ ] 🟡 No `ondelete` on any foreign key — *added 8/27, from schema review*
   - `ClaimRepository.delete_for_physician` deletes `ClaimCode` rows by hand (`repository.py:387`) and `BillRepository.delete_for_physician` does the same for `BillClaim`. Correct today, but nothing at the DB level stops a future path — or a psql session — from orphaning them.
   - Fix: `ondelete="CASCADE"` on `claim_codes.claim_id` and `bill_claims.*`, `ondelete="RESTRICT"` on `claims.patient_id`. (`physician_profiles.user_id` already has it.)
@@ -159,5 +155,9 @@
 - [x]  Money is a Python float end to end — *added 8/27, done 8/27, from schema review*
   - `ClaimCode.fee_amount` and `Bill.total_amount` are `Numeric(10, 2, asdecimal=False)`, so SQLAlchemy hands back `float`, and `bills/service.py:88` sums those floats into the invoice total. Postgres storage is exact; the arithmetic isn't, and the SQLite dev default has no exact numeric type at all. The output of this system is a dollar figure sent to RAMQ.
   - Fixed: dropped `asdecimal=False` on both `Numeric(10, 2)` columns (`app/postgresdb/models.py`) and threaded `Decimal` through `ClaimCodeInput`/`BillInput` (`postgresdb/repository.py`), `ClaimCodeOut`/`ClaimOut`/`BillOut` (`claims/models.py`, `bills/models.py`), `_total_amount`'s `sum()` (`claims/service.py`), the `total = 0.0` accumulator in `BillService.create` (`bills/service.py`), and `BillLineItem`/`BillDocument`/`_fmt_amount` in the PDF renderer (`bills/pdf.py`). The one float→Decimal conversion point is `claims/service.py`'s `_to_decimal`, right where a fee amount comes out of an extraction's stored JSON (`Decimal(str(amount))`, not `Decimal(amount)`, to avoid inheriting the binary float's imprecision). API responses still serialize `Decimal` as a JSON number via a `PlainSerializer` (`claims/models.py`'s `Money` type alias) — the frontend's `number` types and `.toFixed(2)` calls are unaffected; only backend storage and arithmetic changed. `CodeFee`/`ExtractedFee`/`CodeRowFee` (the LanceDB/LLM-schema boundary upstream of that conversion point) intentionally stay `float` — that data is float at the source and changing the LLM tool-call schema type is a separate concern. Added `test_bills.py::test_create_bill_total_is_exact_not_binary_float_drift` (two claims fee 0.10 + 0.20, asserts the bill total is exactly 0.30, not `0.30000000000000004`).
+
+- [x] No DB-level guarantee that a claim's patient belongs to its physician — *added 8/27, done 8/27, from schema review*
+  - `claims.physician_id` and `claims.patient_id` were independent FKs; only `ClaimService` enforced that the patient is on that physician's roster. One bad code path bills the wrong doctor's patient — a Law 25 incident, not a bug report.
+  - Fixed: `patients` gained `UniqueConstraint("id", "physician_id")`; `claims.patient_id` lost its own `ForeignKey("patients.id")` in favor of a `ForeignKeyConstraint(["patient_id", "physician_id"], ["patients.id", "patients.physician_id"])` on `Claim.__table_args__` (`app/postgresdb/models.py`), so a mismatched pairing is rejected at the DB level on Postgres — a real guarantee, not just `ClaimService.create`'s existing `get_for_physician` check. Same accepted SQLite-is-a-no-op caveat as the sibling `ondelete` backlog item: SQLite doesn't enforce FKs without `PRAGMA foreign_keys=ON` (not set here), so this constraint is live on Postgres only; all 208 existing tests still pass unchanged since every test already pairs the right patient with the right physician.
 
 ---
