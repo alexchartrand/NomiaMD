@@ -4,6 +4,7 @@ owning its own session/query handling."""
 import json
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
+from decimal import Decimal
 from typing import Sequence
 
 from sqlalchemy import delete, func, select, update
@@ -280,7 +281,7 @@ class ClaimCodeInput:
     description: str
     confidence: float
     explanation: str
-    fee_amount: float | None
+    fee_amount: Decimal | None
     fee_when_to_use: str | None
     majoration: str | None
 
@@ -465,7 +466,7 @@ class BillInput:
     start_date: date
     end_date: date
     claim_ids: Sequence[int]
-    total_amount: float | None
+    total_amount: Decimal | None
 
 
 @dataclass

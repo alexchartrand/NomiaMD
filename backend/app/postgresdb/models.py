@@ -3,6 +3,7 @@ ExtractionRepository), not here."""
 
 import enum
 from datetime import date, datetime, timezone
+from decimal import Decimal
 
 from sqlalchemy import (
     Boolean,
@@ -196,7 +197,7 @@ class ClaimCode(Base):
     description: Mapped[str] = mapped_column(Text)
     confidence: Mapped[float] = mapped_column(Float)
     explanation: Mapped[str] = mapped_column(Text)
-    fee_amount: Mapped[float | None] = mapped_column(Numeric(10, 2, asdecimal=False), nullable=True)
+    fee_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
     fee_when_to_use: Mapped[str | None] = mapped_column(Text, nullable=True)
     majoration: Mapped[str | None] = mapped_column(Text, nullable=True)
 
@@ -216,7 +217,7 @@ class Bill(Base):
     generated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
-    total_amount: Mapped[float | None] = mapped_column(Numeric(10, 2, asdecimal=False), nullable=True)
+    total_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
     record_count: Mapped[int] = mapped_column(Integer)
 
 

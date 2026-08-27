@@ -4,6 +4,7 @@ composed at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
 
 import json
 from datetime import date
+from decimal import Decimal
 
 from app.claims.models import ClaimCodeOut, ClaimOut
 from app.postgresdb import (
@@ -45,9 +46,15 @@ class ClaimOnBillError(Exception):
     pass
 
 
-def _total_amount(codes: list[ClaimCodeOut]) -> float | None:
+def _total_amount(codes: list[ClaimCodeOut]) -> Decimal | None:
     amounts = [c.fee_amount for c in codes if c.fee_amount is not None]
     return sum(amounts) if amounts else None
+
+
+def _to_decimal(amount: float | None) -> Decimal | None:
+    # str(amount) first: Decimal(33.15) keeps the binary float's imprecision
+    # (33.14999999999999857891...); Decimal(str(33.15)) gives the exact "33.15".
+    return None if amount is None else Decimal(str(amount))
 
 
 def _codes_out(codes) -> list[ClaimCodeOut]:
@@ -150,7 +157,7 @@ class ClaimService:
                 description=candidates_by_code[code]["description"],
                 confidence=candidates_by_code[code]["confidence"],
                 explanation=candidates_by_code[code]["explanation"],
-                fee_amount=(candidates_by_code[code].get("fee") or {}).get("amount"),
+                fee_amount=_to_decimal((candidates_by_code[code].get("fee") or {}).get("amount")),
                 fee_when_to_use=(candidates_by_code[code].get("fee") or {}).get("when_to_use"),
                 majoration=(candidates_by_code[code].get("fee") or {}).get("majoration"),
             )

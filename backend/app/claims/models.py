@@ -1,15 +1,20 @@
 """Claim request/response models — same style as app/patients/models.py."""
 
 from datetime import date, datetime
-from typing import Literal
+from decimal import Decimal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, PlainSerializer
 
 # "brouillon" -> "soumis" -> "facture". "soumis" is set only by BillService.create when a
 # claim is grouped onto a generated bill; "facture" is reserved for a future real RAMQ
 # submission response and nothing in this codebase sets it yet. Status is otherwise
 # read-only from the API's perspective — there is no PATCH endpoint for it.
 ClaimStatus = Literal["brouillon", "soumis", "facture"]
+
+# Decimal internally (exact storage/arithmetic), plain float on the JSON wire — the
+# frontend's `number` fields and its own display-only .toFixed(2) calls are unaffected.
+Money = Annotated[Decimal, PlainSerializer(float, return_type=float, when_used="json")]
 
 
 class ClaimCreate(BaseModel):
@@ -26,7 +31,7 @@ class ClaimCodeOut(BaseModel):
     description: str
     confidence: float
     explanation: str
-    fee_amount: float | None
+    fee_amount: Money | None
     fee_when_to_use: str | None
     majoration: str | None
 
@@ -41,6 +46,6 @@ class ClaimOut(BaseModel):
     status: ClaimStatus
     source_system: str | None
     codes: list[ClaimCodeOut]
-    total_amount: float | None
+    total_amount: Money | None
     created_at: datetime
     updated_at: datetime

@@ -3,6 +3,8 @@ Constructor-injected (BillRepository, ClaimRepository, PatientRepository,
 UserRepository, BillPdfRenderer) — composed at the module boundary by factory.py, no
 FastAPI/HTTP concerns here."""
 
+from decimal import Decimal
+
 from app.bills.models import BillDetailOut, BillOut
 from app.bills.pdf import BillDocument, BillLineItem, BillPatientGroup, BillPdfRenderer
 from app.claims.service import _codes_out, _detail_to_out
@@ -71,7 +73,7 @@ class BillService:
         # This loop also re-validates ownership/status before the repository's own
         # transactional re-check, so a stale/foreign id is rejected with a clear error
         # instead of the generic "some ids didn't match" the repository raises.
-        total = 0.0
+        total = Decimal("0")
         has_amount = False
         for claim_id in deduped:
             detail = await self._claim_repository.get_for_physician(claim_id, physician_id)

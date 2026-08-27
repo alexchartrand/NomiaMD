@@ -4,6 +4,7 @@ is covered by tests/test_claims.py once the claims router exists."""
 
 import itertools
 from datetime import date
+from decimal import Decimal
 
 import pytest
 
@@ -47,7 +48,7 @@ def _one_code_input(**overrides):
         description="Prise en charge d'une hypertension",
         confidence=0.9,
         explanation="hypertension artérielle depuis 10 ans",
-        fee_amount=33.15,
+        fee_amount=Decimal("33.15"),
         fee_when_to_use="Par visite de suivi",
         majoration=None,
     )

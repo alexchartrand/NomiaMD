@@ -10,10 +10,6 @@
 
 ## 🐛 Bugs
 
-- [ ] 🔴 Money is a Python float end to end — *added 8/27, from schema review*
-  - `ClaimCode.fee_amount` and `Bill.total_amount` are `Numeric(10, 2, asdecimal=False)`, so SQLAlchemy hands back `float`, and `bills/service.py:88` sums those floats into the invoice total. Postgres storage is exact; the arithmetic isn't, and the SQLite dev default has no exact numeric type at all. The output of this system is a dollar figure sent to RAMQ.
-  - Fix: `asdecimal=True` with `Decimal` through `ClaimCodeInput`/`BillInput`/the Pydantic models and the PDF renderer, or store integer cents.
-
 - [ ] 🟡 No DB-level guarantee that a claim's patient belongs to its physician — *added 8/27, from schema review*
   - `claims.physician_id` and `claims.patient_id` are independent FKs; only `ClaimService` enforces that the patient is on that physician's roster. One bad code path bills the wrong doctor's patient — a Law 25 incident, not a bug report.
   - Fix: `UniqueConstraint("id", "physician_id")` on `patients`, then make `claims` reference `(patient_id, physician_id)` as a composite FK so the DB rejects the pairing.
@@ -159,5 +155,9 @@
 
 - [x] Two sequential Postgres writes tail every extraction — *added 8/19, done 8/19, from codebase audit*
   - `ExtractionRepository.create` replaced with `create_many`, which opens a single session and does one `commit()` for both the `consultation_summary` and `billing_codes` rows. `extraction/router.py` now makes one `create_many([...])` call instead of two sequential `create(...)` calls — also closes a small atomicity gap where a mid-request failure could leave a summary row persisted with no matching billing_codes row.
+
+- [x]  Money is a Python float end to end — *added 8/27, done 8/27, from schema review*
+  - `ClaimCode.fee_amount` and `Bill.total_amount` are `Numeric(10, 2, asdecimal=False)`, so SQLAlchemy hands back `float`, and `bills/service.py:88` sums those floats into the invoice total. Postgres storage is exact; the arithmetic isn't, and the SQLite dev default has no exact numeric type at all. The output of this system is a dollar figure sent to RAMQ.
+  - Fixed: dropped `asdecimal=False` on both `Numeric(10, 2)` columns (`app/postgresdb/models.py`) and threaded `Decimal` through `ClaimCodeInput`/`BillInput` (`postgresdb/repository.py`), `ClaimCodeOut`/`ClaimOut`/`BillOut` (`claims/models.py`, `bills/models.py`), `_total_amount`'s `sum()` (`claims/service.py`), the `total = 0.0` accumulator in `BillService.create` (`bills/service.py`), and `BillLineItem`/`BillDocument`/`_fmt_amount` in the PDF renderer (`bills/pdf.py`). The one float→Decimal conversion point is `claims/service.py`'s `_to_decimal`, right where a fee amount comes out of an extraction's stored JSON (`Decimal(str(amount))`, not `Decimal(amount)`, to avoid inheriting the binary float's imprecision). API responses still serialize `Decimal` as a JSON number via a `PlainSerializer` (`claims/models.py`'s `Money` type alias) — the frontend's `number` types and `.toFixed(2)` calls are unaffected; only backend storage and arithmetic changed. `CodeFee`/`ExtractedFee`/`CodeRowFee` (the LanceDB/LLM-schema boundary upstream of that conversion point) intentionally stay `float` — that data is float at the source and changing the LLM tool-call schema type is a separate concern. Added `test_bills.py::test_create_bill_total_is_exact_not_binary_float_drift` (two claims fee 0.10 + 0.20, asserts the bill total is exactly 0.30, not `0.30000000000000004`).
 
 ---

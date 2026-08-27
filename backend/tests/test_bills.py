@@ -121,6 +121,59 @@ async def test_create_then_list_then_get_then_pdf_then_delete():
         assert {claim_a["id"], claim_b["id"]} <= {c["id"] for c in claims_after_delete}
 
 
+async def _seed_claim_with_fee(client, *, patient_id, service_date, fee_amount):
+    result = {
+        "codes": [
+            {
+                "code": "TEST-BP-MGMT",
+                "description": "Prise en charge d'une hypertension",
+                "confidence": 0.9,
+                "explanation": "hypertension artérielle depuis 10 ans",
+                "fee": {"amount": fee_amount, "when_to_use": "Par visite de suivi", "majoration": None},
+            }
+        ],
+        "notes": None,
+    }
+    extraction_record = await _seed_extraction_record(result=result)
+    response = client.post(
+        "/claims",
+        json={
+            "patient_id": patient_id,
+            "service_date": service_date,
+            "billing_extraction_record_id": extraction_record.id,
+            "selected_codes": ["TEST-BP-MGMT"],
+            "source_system": "simule",
+        },
+    )
+    assert response.status_code == 201
+    return response.json()
+
+
+async def test_create_bill_total_is_exact_not_binary_float_drift():
+    # 0.1 + 0.2 == 0.30000000000000004 in binary float — the bill total must be
+    # computed in Decimal (see app/bills/service.py's `total` accumulator) so this
+    # sums to exactly 0.30 rather than drifting by a fraction of a cent.
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        claim_a = await _seed_claim_with_fee(
+            client, patient_id=patient.id, service_date="2026-02-10", fee_amount=0.10
+        )
+        claim_b = await _seed_claim_with_fee(
+            client, patient_id=patient.id, service_date="2026-02-15", fee_amount=0.20
+        )
+
+        create_response = client.post(
+            "/bills",
+            json={
+                "start_date": "2026-02-01",
+                "end_date": "2026-02-28",
+                "claim_ids": [claim_a["id"], claim_b["id"]],
+            },
+        )
+        assert create_response.status_code == 201
+        assert create_response.json()["total_amount"] == 0.30
+
+
 async def test_empty_selection_is_422():
     with TestClient(app) as client:
         response = client.post(

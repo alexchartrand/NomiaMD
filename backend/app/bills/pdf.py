@@ -4,6 +4,7 @@ tested (or stubbed in BillService's tests) without a database."""
 
 from dataclasses import dataclass
 from datetime import date, datetime
+from decimal import Decimal
 from io import BytesIO
 
 from reportlab.lib import colors
@@ -18,7 +19,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 class BillLineItem:
     service_date: date
     code: str
-    fee_amount: float | None
+    fee_amount: Decimal | None
 
 
 @dataclass
@@ -37,7 +38,7 @@ class BillDocument:
     physician_name: str
     physician_type: str | None
     patient_groups: list[BillPatientGroup]
-    total_amount: float | None
+    total_amount: Decimal | None
     record_count: int
 
 
@@ -45,7 +46,7 @@ def _fmt_date(d: date) -> str:
     return d.strftime("%d/%m/%Y")
 
 
-def _fmt_amount(amount: float | None) -> str:
+def _fmt_amount(amount: Decimal | None) -> str:
     return f"{amount:.2f} $" if amount is not None else "—"
 
 

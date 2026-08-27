@@ -3,6 +3,7 @@ behavior (validation, PDF, ownership scoping) is covered by tests/test_bills.py.
 
 import itertools
 from datetime import date
+from decimal import Decimal
 
 import pytest
 
@@ -58,7 +59,7 @@ async def _seed_claim(physician_id, patient_id, *, status="brouillon", service_d
                     description="Prise en charge d'une hypertension",
                     confidence=0.9,
                     explanation="hypertension artérielle depuis 10 ans",
-                    fee_amount=33.15,
+                    fee_amount=Decimal("33.15"),
                     fee_when_to_use="Par visite de suivi",
                     majoration=None,
                 )
@@ -80,7 +81,7 @@ async def test_create_flips_claims_to_soumis_in_one_transaction(physician_id):
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
             claim_ids=[claim_a.id, claim_b.id],
-            total_amount=66.30,
+            total_amount=Decimal("66.30"),
         )
     )
 
@@ -106,7 +107,7 @@ async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
             claim_ids=[claim.id],
-            total_amount=33.15,
+            total_amount=Decimal("33.15"),
         )
     )
 
@@ -126,7 +127,7 @@ async def test_create_rejects_another_physicians_claim(physician_id):
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
             claim_ids=[foreign_claim.id],
-            total_amount=33.15,
+            total_amount=Decimal("33.15"),
         )
     )
 
@@ -144,7 +145,7 @@ async def test_delete_releases_claims_to_brouillon(physician_id):
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
             claim_ids=[claim.id],
-            total_amount=33.15,
+            total_amount=Decimal("33.15"),
         )
     )
     assert bill is not None
@@ -169,7 +170,7 @@ async def test_cross_physician_access_returns_none_or_false(physician_id):
             start_date=date(2026, 2, 1),
             end_date=date(2026, 2, 28),
             claim_ids=[claim.id],
-            total_amount=33.15,
+            total_amount=Decimal("33.15"),
         )
     )
     assert bill is not None
