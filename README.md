@@ -113,10 +113,9 @@ deterministically, not for judging extraction quality.
 
 ```bash
 cd backend
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+uv sync --extra dev
 cp .env.example .env   # fill in MISTRAL_API_KEY
-uvicorn app.main:app --reload
+uv run uvicorn app.main:app --reload
 ```
 
 The extraction engine (`backend/app/extraction/engine.py`) talks to the Mistral API
@@ -133,7 +132,7 @@ real model.
 Tests run against a mocked model response (no local server needed):
 
 ```bash
-pytest
+uv run pytest
 ```
 
 To try it against the real Mistral API once `MISTRAL_API_KEY` is configured,

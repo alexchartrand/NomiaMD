@@ -3,7 +3,7 @@
 dev:
 	@echo "Starting backend and frontend..."
 	@trap 'kill 0' EXIT; \
-	(cd backend && . .venv/bin/activate && uvicorn app.main:app --reload) & \
+	(cd backend && uv run uvicorn app.main:app --reload) & \
 	(cd frontend && npm run dev) & \
 	wait
 
@@ -12,16 +12,16 @@ dev:
 dev-fake:
 	@echo "Starting backend, frontend, and the fake LLM dev server..."
 	@trap 'kill 0' EXIT; \
-	(cd backend && . .venv/bin/activate && python scripts/fake_llm_server.py) & \
-	(cd backend && . .venv/bin/activate && MISTRAL_ENDPOINT=http://localhost:8080 uvicorn app.main:app --reload) & \
+	(cd backend && uv run python scripts/fake_llm_server.py) & \
+	(cd backend && MISTRAL_ENDPOINT=http://localhost:8080 uv run uvicorn app.main:app --reload) & \
 	(cd frontend && npm run dev) & \
 	wait
 
 backend:
-	cd backend && . .venv/bin/activate && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+	cd backend && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 frontend:
 	cd frontend && npm run dev -- --host 0.0.0.0 --port 5173
 
 fake-llm:
-	cd backend && . .venv/bin/activate && python scripts/fake_llm_server.py
+	cd backend && uv run python scripts/fake_llm_server.py

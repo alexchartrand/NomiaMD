@@ -1,20 +1,20 @@
 # --- builder ---
 FROM python:3.11-slim AS builder
+COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /uvx /bin/
 WORKDIR /build
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-COPY pyproject.toml requirements.lock.txt ./
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+COPY pyproject.toml uv.lock ./
+# Deps first (--no-install-project), then the local package, so the deps layer stays cached
+# across app/ changes. --frozen refuses to touch uv.lock, for a reproducible build
+# regardless of what's newly released upstream (lancedb/llama-index-* move fast).
+RUN uv sync --frozen --no-install-project --no-dev
 COPY app ./app
-# Pinned transitive versions from requirements.lock.txt first, for a reproducible build
-# regardless of what's newly released upstream (lancedb/llama-index-* move fast) — then the
-# local package itself with --no-deps since its deps are already satisfied by the lockfile.
-RUN pip install --no-cache-dir -r requirements.lock.txt && \
-    pip install --no-cache-dir --no-deps .
+RUN uv sync --frozen --no-dev
 
 # --- runtime ---
 FROM python:3.11-slim AS runtime
 RUN useradd --create-home --uid 10001 appuser
-COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /build/.venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1

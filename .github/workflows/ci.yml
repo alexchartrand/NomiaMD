@@ -13,11 +13,11 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v4
         with:
-          python-version: "3.11"
-      - run: pip install -r requirements.lock.txt && pip install -e .[dev]
-      - run: pytest -q
+          enable-cache: true
+      - run: uv sync --frozen --extra dev
+      - run: uv run pytest -q
         env:
           DB_PATH: ${{ runner.temp }}/ci-lancedb
           RAMQ_CHATBOT_DB_PATH: ${{ runner.temp }}/ci-lancedb-chatbot
