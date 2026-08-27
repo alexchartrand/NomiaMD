@@ -87,7 +87,7 @@ def test_consultation_summary_request_echoes_header_fields_as_valid_result():
 def test_billing_codes_request_is_not_misdetected_as_consultation_summary():
     from app.ramq_codes.task import SYSTEM_PROMPT as BILLING_SYSTEM_PROMPT
 
-    assert not fake_llm_server._is_consultation_summary_request(BILLING_SYSTEM_PROMPT)
+    assert fake_llm_server._classify_request(BILLING_SYSTEM_PROMPT, "") != "consultation_summary"
 
 
 def test_models_endpoint():
