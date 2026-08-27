@@ -178,6 +178,7 @@ def default_authenticated_user():
         role=UserRole.PHYSICIAN,
         physician_type=None,
         number_of_patients=None,
+        remuneration_type=None,
         is_active=True,
     )
     app.dependency_overrides[get_current_user] = lambda: fake_user

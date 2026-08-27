@@ -2,7 +2,7 @@
 operator running this script. From backend/, with the venv active:
 
     python scripts/create_user.py --email doc@example.com --full-name "Dr. X" --role physician \\
-        [--physician-type "GMF"] [--number-of-patients 850]
+        [--physician-type "GMF"] [--number-of-patients 850] [--remuneration-type "Mixte"]
 
 The password is never accepted as a CLI argument (it would end up in shell history and
 `ps` output) — it's prompted for interactively instead.
@@ -36,6 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--role", required=True, choices=[role.value for role in UserRole])
     parser.add_argument("--physician-type", default=None)
     parser.add_argument("--number-of-patients", type=int, default=None)
+    parser.add_argument("--remuneration-type", default=None)
     return parser.parse_args()
 
 
@@ -62,6 +63,7 @@ async def main() -> None:
             role=UserRole(args.role),
             physician_type=args.physician_type,
             number_of_patients=args.number_of_patients,
+            remuneration_type=args.remuneration_type,
         )
     except IntegrityError:
         print(f"A user with email {args.email!r} already exists.", file=sys.stderr)

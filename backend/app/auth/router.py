@@ -46,6 +46,7 @@ async def update_me(body: ProfileUpdateRequest, current_user: User = Depends(get
         full_name=body.full_name,
         physician_type=body.physician_type.value if body.physician_type else None,
         number_of_patients=body.number_of_patients,
+        remuneration_type=body.remuneration_type.value if body.remuneration_type else None,
     )
 
 

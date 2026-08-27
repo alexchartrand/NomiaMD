@@ -41,6 +41,7 @@ class UserRepository:
         role: UserRole,
         physician_type: str | None = None,
         number_of_patients: int | None = None,
+        remuneration_type: str | None = None,
         is_active: bool = True,
     ) -> User:
         async with async_session() as session:
@@ -51,6 +52,7 @@ class UserRepository:
                 role=role,
                 physician_type=physician_type,
                 number_of_patients=number_of_patients,
+                remuneration_type=remuneration_type,
                 is_active=is_active,
             )
             session.add(user)
@@ -72,6 +74,7 @@ class UserRepository:
         full_name: str,
         physician_type: str | None,
         number_of_patients: int | None,
+        remuneration_type: str | None,
     ) -> User | None:
         async with async_session() as session:
             user = await session.get(User, user_id)
@@ -80,6 +83,7 @@ class UserRepository:
             user.full_name = full_name
             user.physician_type = physician_type
             user.number_of_patients = number_of_patients
+            user.remuneration_type = remuneration_type
             await session.commit()
             await session.refresh(user)
             return user

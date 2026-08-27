@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 
-from app.postgresdb import PhysicianType, UserRole
+from app.postgresdb import PhysicianType, RemunerationType, UserRole
 
 
 class LoginRequest(BaseModel):
@@ -20,6 +20,7 @@ class UserOut(BaseModel):
     role: UserRole
     physician_type: str | None
     number_of_patients: int | None
+    remuneration_type: str | None
 
     model_config = {"from_attributes": True}
 
@@ -28,6 +29,7 @@ class ProfileUpdateRequest(BaseModel):
     full_name: str
     physician_type: PhysicianType | None = None
     number_of_patients: int | None = Field(default=None, ge=0)
+    remuneration_type: RemunerationType | None = None
 
 
 class PasswordChangeRequest(BaseModel):

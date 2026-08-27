@@ -24,12 +24,21 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from sqlalchemy.exc import IntegrityError  # noqa: E402
 
 from app.auth.security import PasswordHasher  # noqa: E402
-from app.postgresdb import Gender, PatientRepository, PhysicianType, UserRepository, UserRole, init_db  # noqa: E402
+from app.postgresdb import (  # noqa: E402
+    Gender,
+    PatientRepository,
+    PhysicianType,
+    RemunerationType,
+    UserRepository,
+    UserRole,
+    init_db,
+)
 
 ADMIN_EMAIL = "invite@nomiamd.com"
 ADMIN_FULL_NAME = "Alex Chartrand"
 ADMIN_PHYSICIAN_TYPE = PhysicianType.MED_FAM.value
 ADMIN_NUMBER_OF_PATIENTS = 800
+ADMIN_REMUNERATION_TYPE = RemunerationType.MIXTE.value
 
 # From consultations/01_hta_prise_en_charge.md and consultations/04_grossesse_suivi_t3.md.
 SEED_PATIENTS = [
@@ -74,6 +83,7 @@ async def main() -> None:
             role=UserRole.ADMIN,
             physician_type=ADMIN_PHYSICIAN_TYPE,
             number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
+            remuneration_type=ADMIN_REMUNERATION_TYPE,
         )
     except IntegrityError:
         print(f"A user with email {ADMIN_EMAIL!r} already exists — DB wasn't wiped?", file=sys.stderr)

@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.auth.security import PasswordHasher
-from app.postgresdb import PhysicianType, UserRepository, UserRole, init_db
+from app.postgresdb import PhysicianType, RemunerationType, UserRepository, UserRole, init_db
 from app.main import app
 
 PASSWORD = "correct horse battery staple"
@@ -203,6 +203,7 @@ async def test_update_profile_success():
                 "full_name": "Dr. Jane Doe",
                 "physician_type": PhysicianType.MED_FAM.value,
                 "number_of_patients": 500,
+                "remuneration_type": RemunerationType.MIXTE.value,
             },
         )
 
@@ -211,6 +212,7 @@ async def test_update_profile_success():
     assert body["full_name"] == "Dr. Jane Doe"
     assert body["physician_type"] == PhysicianType.MED_FAM.value
     assert body["number_of_patients"] == 500
+    assert body["remuneration_type"] == RemunerationType.MIXTE.value
 
 
 async def test_update_profile_negative_patient_count_returns_422():
@@ -236,6 +238,25 @@ async def test_update_profile_invalid_physician_type_returns_422():
         response = client.patch(
             "/auth/me",
             json={"full_name": "Dr. Doe", "physician_type": "Not a real type", "number_of_patients": None},
+        )
+
+    assert response.status_code == 422
+
+
+async def test_update_profile_invalid_remuneration_type_returns_422():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        response = client.patch(
+            "/auth/me",
+            json={
+                "full_name": "Dr. Doe",
+                "physician_type": None,
+                "number_of_patients": None,
+                "remuneration_type": "Not a real type",
+            },
         )
 
     assert response.status_code == 422

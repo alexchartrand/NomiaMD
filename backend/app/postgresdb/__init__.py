@@ -15,6 +15,7 @@ from app.postgresdb.models import (
     Gender,
     Patient,
     PhysicianType,
+    RemunerationType,
     User,
     UserRole,
 )
@@ -43,6 +44,7 @@ __all__ = [
     "Gender",
     "Patient",
     "PhysicianType",
+    "RemunerationType",
     "User",
     "UserRole",
     "BillDetail",

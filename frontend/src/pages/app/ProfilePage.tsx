@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
   PHYSICIAN_TYPES,
+  REMUNERATION_TYPES,
   describeError,
   updateProfile,
   changePassword,
   type PhysicianType,
+  type RemunerationType,
 } from "../../api";
 import {
   Banner,
@@ -24,6 +26,7 @@ export default function ProfilePage() {
   const [fullName, setFullName] = useState("");
   const [physicianType, setPhysicianType] = useState<PhysicianType | "">("");
   const [numberOfPatients, setNumberOfPatients] = useState("");
+  const [remunerationType, setRemunerationType] = useState<RemunerationType | "">("");
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState(false);
   const [profileSubmitting, setProfileSubmitting] = useState(false);
@@ -40,6 +43,7 @@ export default function ProfilePage() {
     setFullName(user.full_name);
     setPhysicianType((user.physician_type as PhysicianType | null) ?? "");
     setNumberOfPatients(user.number_of_patients != null ? String(user.number_of_patients) : "");
+    setRemunerationType((user.remuneration_type as RemunerationType | null) ?? "");
   }, [user]);
 
   async function handleProfileSubmit(event: FormEvent) {
@@ -59,6 +63,7 @@ export default function ProfilePage() {
         full_name: fullName,
         physician_type: physicianType === "" ? null : physicianType,
         number_of_patients: parsedCount,
+        remuneration_type: remunerationType === "" ? null : remunerationType,
       });
       refreshUser(updated);
       setProfileSuccess(true);
@@ -156,6 +161,24 @@ export default function ProfilePage() {
                 value={numberOfPatients}
                 onChange={(event) => setNumberOfPatients(event.target.value)}
               />
+            </div>
+
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-remuneration-type" className="text-sm text-muted-foreground">
+                Mode de rémunération
+              </label>
+              <Select
+                id="profile-remuneration-type"
+                value={remunerationType}
+                onChange={(event) => setRemunerationType(event.target.value as RemunerationType | "")}
+              >
+                <option value="">—</option>
+                {REMUNERATION_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Select>
             </div>
 
             {profileError && (

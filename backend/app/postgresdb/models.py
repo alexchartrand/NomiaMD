@@ -36,6 +36,11 @@ class PhysicianType(str, enum.Enum):
     AUTRE = "Autre"
 
 
+class RemunerationType(str, enum.Enum):
+    MIXTE = "Mixte"
+    A_L_ACTE = "À l'acte"
+
+
 class User(Base):
     """A manually-provisioned login (see scripts/create_user.py — there is no signup path).
     `is_active` lets an account be revoked instantly without deleting its history; it's
@@ -50,6 +55,7 @@ class User(Base):
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.PHYSICIAN)
     physician_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
     number_of_patients: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    remuneration_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)

@@ -13,16 +13,22 @@ export interface UserOut {
   role: "admin" | "physician";
   physician_type: string | null;
   number_of_patients: number | null;
+  remuneration_type: string | null;
 }
 
 // Kept in sync by hand with PhysicianType in backend/app/postgresdb/models.py.
 export const PHYSICIAN_TYPES = ["Médecin de famille", "Spécialiste", "Autre"] as const;
 export type PhysicianType = (typeof PHYSICIAN_TYPES)[number];
 
+// Kept in sync by hand with RemunerationType in backend/app/postgresdb/models.py.
+export const REMUNERATION_TYPES = ["Mixte", "À l'acte"] as const;
+export type RemunerationType = (typeof REMUNERATION_TYPES)[number];
+
 export interface ProfileUpdateRequest {
   full_name: string;
   physician_type: PhysicianType | null;
   number_of_patients: number | null;
+  remuneration_type: RemunerationType | null;
 }
 
 export interface PasswordChangeRequest {

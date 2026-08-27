@@ -26,6 +26,7 @@ def _other_physician():
         role=UserRole.PHYSICIAN,
         physician_type=None,
         number_of_patients=None,
+        remuneration_type=None,
         is_active=True,
     )
 

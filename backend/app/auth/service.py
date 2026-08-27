@@ -56,12 +56,14 @@ class AuthService:
         full_name: str,
         physician_type: str | None,
         number_of_patients: int | None,
+        remuneration_type: str | None,
     ) -> User:
         updated = await self._users.update_profile(
             user.id,
             full_name=full_name,
             physician_type=physician_type,
             number_of_patients=number_of_patients,
+            remuneration_type=remuneration_type,
         )
         if updated is None:
             raise RuntimeError(f"user {user.id} vanished mid-request")
