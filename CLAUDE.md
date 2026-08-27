@@ -70,6 +70,19 @@ across every Quebec resident and a name-based near-miss risks billing the wrong 
 the roster and its lookups, but any `claims` row referencing it keeps rendering the
 patient's name, and the id is never left dangling.
 
+**`app/auth/`** splits authentication from the physician's practice facts.
+`AuthService` owns credentials/tokens/sessions against `users`; `ProfileService`
+(`auth/profile.py`) owns `physician_profiles`, an append-only table keyed by
+`(user_id, effective_from)`. `physician_type`/`remuneration_type`/`number_of_patients`
+live there rather than as columns on `users` because they decide which RAMQ codes a
+physician may legally bill and they change over a career — read them with
+`PhysicianProfileRepository.get_effective_on(user_id, date)` so a past claim or invoice is
+interpreted under the values in effect on its own service date, never today's (same
+reasoning as `ClaimCode`'s fee snapshot). `get_current` is that call with today's date.
+`get_current_user` deliberately does *not* load a profile: every authenticated request
+pays for that dependency and only the profile screen needs it. `UserOut` flattens the two
+halves back into one object, so the split is invisible to the frontend.
+
 **`app/claims/`** turns a physician-confirmed `billing_codes` extraction into a persisted
 claim — not an LLM task itself, just the save step downstream of it.
 `ClaimService` hydrates each saved code's description/fee/quote from the extraction's own

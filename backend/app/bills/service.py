@@ -12,6 +12,7 @@ from app.postgresdb import (
     BillRepository,
     ClaimRepository,
     PatientRepository,
+    PhysicianProfileRepository,
     UserRepository,
 )
 
@@ -50,12 +51,14 @@ class BillService:
         claim_repository: ClaimRepository,
         patient_repository: PatientRepository,
         user_repository: UserRepository,
+        profile_repository: PhysicianProfileRepository,
         pdf_renderer: BillPdfRenderer,
     ):
         self._bill_repository = bill_repository
         self._claim_repository = claim_repository
         self._patient_repository = patient_repository
         self._user_repository = user_repository
+        self._profile_repository = profile_repository
         self._pdf_renderer = pdf_renderer
 
     async def create(self, *, physician_id: int, start_date, end_date, claim_ids: list[int]) -> BillOut:
@@ -116,6 +119,10 @@ class BillService:
             return None
 
         physician = await self._user_repository.get_by_id(physician_id)
+        # The profile as it stood at the end of the billed period, not today's — a
+        # physician who changed practice type since must not have last month's invoice
+        # reprinted under the new one.
+        profile = await self._profile_repository.get_effective_on(physician_id, bill.end_date)
         claim_ids = await self._bill_repository.claim_ids_for_bill(bill_id)
         details = []
         for claim_id in claim_ids:
@@ -152,7 +159,7 @@ class BillService:
             end_date=bill.end_date,
             generated_at=bill.generated_at,
             physician_name=physician.full_name if physician is not None else "",
-            physician_type=physician.physician_type if physician is not None else None,
+            physician_type=profile.physician_type if profile is not None else None,
             patient_groups=list(groups_by_patient.values()),
             total_amount=bill.total_amount,
             record_count=bill.record_count,

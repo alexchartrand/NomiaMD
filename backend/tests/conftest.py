@@ -176,9 +176,6 @@ def default_authenticated_user():
         email="physician@example.test",
         full_name="Dr. Test",
         role=UserRole.PHYSICIAN,
-        physician_type=None,
-        number_of_patients=None,
-        remuneration_type=None,
         is_active=True,
     )
     app.dependency_overrides[get_current_user] = lambda: fake_user

@@ -17,6 +17,7 @@ from app.postgresdb.models import (
     ExtractionRecord,
     Gender,
     Patient,
+    PhysicianProfile,
     User,
     UserRole,
 )
@@ -39,9 +40,6 @@ class UserRepository:
         hashed_password: str,
         full_name: str,
         role: UserRole,
-        physician_type: str | None = None,
-        number_of_patients: int | None = None,
-        remuneration_type: str | None = None,
         is_active: bool = True,
     ) -> User:
         async with async_session() as session:
@@ -50,9 +48,6 @@ class UserRepository:
                 hashed_password=hashed_password,
                 full_name=full_name,
                 role=role,
-                physician_type=physician_type,
-                number_of_patients=number_of_patients,
-                remuneration_type=remuneration_type,
                 is_active=is_active,
             )
             session.add(user)
@@ -67,23 +62,14 @@ class UserRepository:
                 user.last_login_at = datetime.now(timezone.utc)
                 await session.commit()
 
-    async def update_profile(
-        self,
-        user_id: int,
-        *,
-        full_name: str,
-        physician_type: str | None,
-        number_of_patients: int | None,
-        remuneration_type: str | None,
-    ) -> User | None:
+    async def update_full_name(self, user_id: int, full_name: str) -> User | None:
+        """The only user-editable field left on `users` — the practice facts moved to
+        PhysicianProfileRepository."""
         async with async_session() as session:
             user = await session.get(User, user_id)
             if user is None:
                 return None
             user.full_name = full_name
-            user.physician_type = physician_type
-            user.number_of_patients = number_of_patients
-            user.remuneration_type = remuneration_type
             await session.commit()
             await session.refresh(user)
             return user
@@ -94,6 +80,66 @@ class UserRepository:
             if user is not None:
                 user.hashed_password = hashed_password
                 await session.commit()
+
+
+class PhysicianProfileRepository:
+    """Append-only history of a physician's practice facts (see PhysicianProfile). Reads
+    are "which version applies on date D", never a plain column read."""
+
+    async def get_current(self, user_id: int) -> PhysicianProfile | None:
+        return await self.get_effective_on(user_id, date.today())
+
+    async def get_effective_on(self, user_id: int, on: date) -> PhysicianProfile | None:
+        """The version in effect on `on` — the latest row that had already taken effect by
+        then. Returns None when the physician had no profile yet at that date, which is
+        also the answer for a physician who has never filled one in.
+
+        Ties on effective_from break by id so a same-day backfill is deterministic."""
+        async with async_session() as session:
+            result = await session.execute(
+                select(PhysicianProfile)
+                .where(
+                    PhysicianProfile.user_id == user_id,
+                    PhysicianProfile.effective_from <= on,
+                )
+                .order_by(PhysicianProfile.effective_from.desc(), PhysicianProfile.id.desc())
+                .limit(1)
+            )
+            return result.scalar_one_or_none()
+
+    async def upsert_current(
+        self,
+        user_id: int,
+        *,
+        physician_type: str | None,
+        number_of_patients: int | None,
+        remuneration_type: str | None,
+        effective_from: date | None = None,
+    ) -> PhysicianProfile:
+        """Records today's values as the physician's current version.
+
+        Appends a new row, except when one already takes effect on the same date — that
+        one is overwritten in place. Two edits an hour apart are a correction, not two
+        versions of reality, and keeping both would grow the table without ever changing
+        the answer to `get_effective_on`."""
+        effective = effective_from or date.today()
+        async with async_session() as session:
+            result = await session.execute(
+                select(PhysicianProfile).where(
+                    PhysicianProfile.user_id == user_id,
+                    PhysicianProfile.effective_from == effective,
+                )
+            )
+            profile = result.scalars().first()
+            if profile is None:
+                profile = PhysicianProfile(user_id=user_id, effective_from=effective)
+                session.add(profile)
+            profile.physician_type = physician_type
+            profile.number_of_patients = number_of_patients
+            profile.remuneration_type = remuneration_type
+            await session.commit()
+            await session.refresh(profile)
+            return profile
 
 
 class PatientRepository:

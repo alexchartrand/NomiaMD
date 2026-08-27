@@ -14,6 +14,7 @@ from app.postgresdb.models import (
     ExtractionRecord,
     Gender,
     Patient,
+    PhysicianProfile,
     PhysicianType,
     RemunerationType,
     User,
@@ -31,6 +32,7 @@ from app.postgresdb.repository import (
     ExtractionRecordInput,
     ExtractionRepository,
     PatientRepository,
+    PhysicianProfileRepository,
     UserRepository,
 )
 
@@ -43,6 +45,7 @@ __all__ = [
     "ExtractionRecord",
     "Gender",
     "Patient",
+    "PhysicianProfile",
     "PhysicianType",
     "RemunerationType",
     "User",
@@ -58,5 +61,6 @@ __all__ = [
     "ExtractionRecordInput",
     "ExtractionRepository",
     "PatientRepository",
+    "PhysicianProfileRepository",
     "UserRepository",
 ]

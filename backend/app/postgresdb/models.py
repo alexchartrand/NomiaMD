@@ -43,8 +43,10 @@ class RemunerationType(str, enum.Enum):
 
 class User(Base):
     """A manually-provisioned login (see scripts/create_user.py — there is no signup path).
-    `is_active` lets an account be revoked instantly without deleting its history; it's
-    checked on every request (app/auth/dependencies.py), not just at login."""
+    Identity and credentials only: the physician's editable practice facts live in
+    PhysicianProfile, so this table stays small and rarely-written. `is_active` lets an
+    account be revoked instantly without deleting its history; it's checked on every
+    request (app/auth/dependencies.py), not just at login."""
 
     __tablename__ = "users"
 
@@ -53,14 +55,43 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String(255))
     full_name: Mapped[str] = mapped_column(String(255))
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.PHYSICIAN)
-    physician_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    number_of_patients: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    remuneration_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class PhysicianProfile(Base):
+    """A physician's practice facts, as of a date — append-only, one row per edit rather
+    than one row per physician.
+
+    These aren't user preferences: `remuneration_type` (mixte vs à l'acte),
+    `physician_type` and `number_of_patients` are administrative facts that decide which
+    RAMQ codes a physician may legally bill, and they change over a career. Keeping them
+    as mutable columns on `users` meant editing the profile silently rewrote the basis of
+    every past claim — the same failure ClaimCode's fee snapshot exists to prevent. A
+    claim must stay interpretable under the values in effect on its own service_date, so
+    read it with `get_effective_on(user_id, service_date)`, not `get_current`.
+
+    New editable fields are added here as nullable columns; `users` doesn't grow.
+    """
+
+    __tablename__ = "physician_profiles"
+    __table_args__ = (Index("ix_physician_profiles_user_effective", "user_id", "effective_from"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    # The date this version took effect. Rows are never updated except within the same
+    # day (see PhysicianProfileRepository.upsert_current) — there is no meaningful
+    # history between two edits made an hour apart.
+    effective_from: Mapped[date] = mapped_column(Date)
+    physician_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    number_of_patients: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    remuneration_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
 
 class Gender(str, enum.Enum):

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.auth.dependencies import COOKIE_NAME, get_current_user
-from app.auth.factory import get_auth_service
+from app.auth.factory import get_auth_service, get_profile_service
 from app.auth.models import LoginRequest, PasswordChangeRequest, ProfileUpdateRequest, UserOut
 from app.config import settings
 from app.postgresdb import User
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/login", response_model=UserOut)
 @limiter.limit("10/minute")
-async def login(request: Request, body: LoginRequest, response: Response) -> User:
+async def login(request: Request, body: LoginRequest, response: Response) -> UserOut:
     result = await get_auth_service().login(body.email, body.password, body.remember_me)
     if result is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
@@ -26,7 +26,7 @@ async def login(request: Request, body: LoginRequest, response: Response) -> Use
         secure=settings.cookie_secure,
         samesite="lax",
     )
-    return user
+    return UserOut.from_account(await get_profile_service().current(user))
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -35,19 +35,22 @@ async def logout(response: Response) -> None:
 
 
 @router.get("/me", response_model=UserOut)
-async def me(current_user: User = Depends(get_current_user)) -> User:
-    return current_user
+async def me(current_user: User = Depends(get_current_user)) -> UserOut:
+    # get_current_user deliberately doesn't load the profile — every authenticated
+    # request pays for that dependency, and only this screen needs the practice facts.
+    return UserOut.from_account(await get_profile_service().current(current_user))
 
 
 @router.patch("/me", response_model=UserOut)
-async def update_me(body: ProfileUpdateRequest, current_user: User = Depends(get_current_user)) -> User:
-    return await get_auth_service().update_profile(
+async def update_me(body: ProfileUpdateRequest, current_user: User = Depends(get_current_user)) -> UserOut:
+    account = await get_profile_service().update(
         current_user,
         full_name=body.full_name,
         physician_type=body.physician_type.value if body.physician_type else None,
         number_of_patients=body.number_of_patients,
         remuneration_type=body.remuneration_type.value if body.remuneration_type else None,
     )
+    return UserOut.from_account(account)
 
 
 @router.post("/me/password", status_code=status.HTTP_204_NO_CONTENT)

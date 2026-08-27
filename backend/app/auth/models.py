@@ -2,6 +2,7 @@
 
 from pydantic import BaseModel, Field
 
+from app.auth.profile import PhysicianAccount
 from app.postgresdb import PhysicianType, RemunerationType, UserRole
 
 
@@ -12,7 +13,11 @@ class LoginRequest(BaseModel):
 
 
 class UserOut(BaseModel):
-    """Never includes hashed_password."""
+    """Never includes hashed_password.
+
+    Flattens the two halves of a PhysicianAccount (`users` + the applicable
+    `physician_profiles` row) into the single object the frontend already consumes —
+    the storage split is a persistence concern, not an API change."""
 
     id: int
     email: str
@@ -22,7 +27,18 @@ class UserOut(BaseModel):
     number_of_patients: int | None
     remuneration_type: str | None
 
-    model_config = {"from_attributes": True}
+    @classmethod
+    def from_account(cls, account: "PhysicianAccount") -> "UserOut":
+        profile = account.profile
+        return cls(
+            id=account.user.id,
+            email=account.user.email,
+            full_name=account.user.full_name,
+            role=account.user.role,
+            physician_type=profile.physician_type if profile else None,
+            number_of_patients=profile.number_of_patients if profile else None,
+            remuneration_type=profile.remuneration_type if profile else None,
+        )
 
 
 class ProfileUpdateRequest(BaseModel):

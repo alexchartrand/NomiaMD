@@ -49,26 +49,6 @@ class AuthService:
             return None
         return user
 
-    async def update_profile(
-        self,
-        user: User,
-        *,
-        full_name: str,
-        physician_type: str | None,
-        number_of_patients: int | None,
-        remuneration_type: str | None,
-    ) -> User:
-        updated = await self._users.update_profile(
-            user.id,
-            full_name=full_name,
-            physician_type=physician_type,
-            number_of_patients=number_of_patients,
-            remuneration_type=remuneration_type,
-        )
-        if updated is None:
-            raise RuntimeError(f"user {user.id} vanished mid-request")
-        return updated
-
     async def change_password(self, user: User, *, current_password: str, new_password: str) -> bool:
         """Returns False on a wrong current password, True once the new one is persisted."""
         if not self._hasher.verify(current_password, user.hashed_password):

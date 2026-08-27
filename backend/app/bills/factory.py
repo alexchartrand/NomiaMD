@@ -2,7 +2,13 @@
 
 from app.bills.pdf import BillPdfRenderer
 from app.bills.service import BillService
-from app.postgresdb import BillRepository, ClaimRepository, PatientRepository, UserRepository
+from app.postgresdb import (
+    BillRepository,
+    ClaimRepository,
+    PatientRepository,
+    PhysicianProfileRepository,
+    UserRepository,
+)
 
 
 def get_bill_service() -> BillService:
@@ -11,5 +17,6 @@ def get_bill_service() -> BillService:
         ClaimRepository(),
         PatientRepository(),
         UserRepository(),
+        PhysicianProfileRepository(),
         BillPdfRenderer(),
     )

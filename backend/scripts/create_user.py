@@ -26,7 +26,12 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from sqlalchemy.exc import IntegrityError  # noqa: E402
 
 from app.auth.security import PasswordHasher  # noqa: E402
-from app.postgresdb import UserRepository, UserRole, init_db  # noqa: E402
+from app.postgresdb import (  # noqa: E402
+    PhysicianProfileRepository,
+    UserRepository,
+    UserRole,
+    init_db,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -61,13 +66,20 @@ async def main() -> None:
             hashed_password=hashed_password,
             full_name=args.full_name,
             role=UserRole(args.role),
-            physician_type=args.physician_type,
-            number_of_patients=args.number_of_patients,
-            remuneration_type=args.remuneration_type,
         )
     except IntegrityError:
         print(f"A user with email {args.email!r} already exists.", file=sys.stderr)
         raise SystemExit(1)
+
+    # The practice facts live in their own dated table, so provisioning writes the
+    # account's first profile version rather than more columns on `users`.
+    if any((args.physician_type, args.number_of_patients, args.remuneration_type)):
+        await PhysicianProfileRepository().upsert_current(
+            user.id,
+            physician_type=args.physician_type,
+            number_of_patients=args.number_of_patients,
+            remuneration_type=args.remuneration_type,
+        )
 
     print(f"Created user {user.email!r} (id={user.id}, role={user.role.value})")
 
