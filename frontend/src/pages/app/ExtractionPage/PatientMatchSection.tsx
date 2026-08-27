@@ -27,7 +27,7 @@ export function PatientMatchSection({
   createPatientForm,
 }: PatientMatchSectionProps) {
   return (
-    <div className="patient-match">
+    <div className="my-4 flex flex-col items-stretch gap-2">
       {matchedId != null ? (
         <Banner tone="success">
           Patient identifié par son NAM : {matchedPatientName ?? extracted?.suggested_full_name}
@@ -41,7 +41,9 @@ export function PatientMatchSection({
         <Banner tone="warning">Aucun NAM n&rsquo;a été trouvé dans la note — sélectionnez le patient</Banner>
       )}
 
-      <label htmlFor="roster-select">Patient</label>
+      <label htmlFor="roster-select" className="text-sm text-muted-foreground">
+        Patient
+      </label>
       <Select
         id="roster-select"
         value={selectedRosterId}
@@ -57,7 +59,7 @@ export function PatientMatchSection({
       {rosterError && <Banner tone="error">{rosterError}</Banner>}
 
       {matchedId == null && (
-        <Button type="button" variant="secondary" onClick={onStartCreatePatient}>
+        <Button type="button" variant="secondary" className="self-start" onClick={onStartCreatePatient}>
           Créer ce patient
         </Button>
       )}

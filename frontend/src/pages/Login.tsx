@@ -34,43 +34,57 @@ export default function Login() {
   }
 
   return (
-    <main className="login-shell">
-      <Card className="login-card">
-        <Link to="/" className="login-back-link">
+    <main className="flex min-h-screen items-center justify-center p-6">
+      <Card className="w-full max-w-[22rem] gap-[0.4rem] p-7">
+        <Link
+          to="/"
+          className="self-start text-sm text-muted-foreground no-underline hover:underline"
+        >
           ← Retour à l&rsquo;accueil
         </Link>
-        <Logo size={28} className="login-logo" />
+        <Logo size={28} className="mb-2" />
         {error && <Banner tone="error">{error}</Banner>}
-        <form onSubmit={handleSubmit} className="login-form">
-          <label htmlFor="login-email">Courriel</label>
-          <TextField
-            id="login-email"
-            type="email"
-            placeholder="vous@clinique.ca"
-            autoFocus
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
+        <form onSubmit={handleSubmit} className="flex flex-col items-start gap-4">
+          <div className="flex w-full flex-col gap-1.5">
+            <label htmlFor="login-email" className="text-sm text-muted-foreground">
+              Courriel
+            </label>
+            <TextField
+              id="login-email"
+              type="email"
+              placeholder="vous@clinique.ca"
+              autoFocus
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </div>
 
-          <label htmlFor="login-password">Mot de passe</label>
-          <TextField
-            id="login-password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
+          <div className="flex w-full flex-col gap-1.5">
+            <label htmlFor="login-password" className="text-sm text-muted-foreground">
+              Mot de passe
+            </label>
+            <TextField
+              id="login-password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </div>
 
-          <label className="login-remember-me" htmlFor="login-remember-me">
+          <label
+            className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground"
+            htmlFor="login-remember-me"
+          >
             <Checkbox
               id="login-remember-me"
               checked={rememberMe}
-              onChange={(event) => setRememberMe(event.target.checked)}
+              onCheckedChange={(checked) => setRememberMe(checked === true)}
             />
             Rester connecté
           </label>
 
-          <Button type="submit" disabled={submitting}>
+          <Button type="submit" disabled={submitting} className="w-full">
             Se connecter
           </Button>
         </form>

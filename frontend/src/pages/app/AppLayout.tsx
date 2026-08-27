@@ -12,7 +12,7 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="app-layout">
+    <div className="flex min-h-screen">
       <Sidebar>
         <NavItem to="/app/extraction">Réclamation</NavItem>
         <NavItem to="/app/facturation">Facturation</NavItem>
@@ -20,13 +20,21 @@ export default function AppLayout() {
         <NavItem to="/app/patients">Patients</NavItem>
         <NavItem to="/app/profile">Profil</NavItem>
         <SidebarFooter>
-          {user && <span className="sidebar-user">{user.full_name}</span>}
-          <button type="button" onClick={handleLogout} className="nav-item logout-link">
+          {user && (
+            <span className="block px-3 pt-1 pb-2 text-sm font-semibold text-muted-foreground">
+              {user.full_name}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="block w-full cursor-pointer rounded-lg border-none bg-transparent px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
             Se déconnecter
           </button>
         </SidebarFooter>
       </Sidebar>
-      <div className="app-content">
+      <div className="min-w-0 flex-1 overflow-y-auto py-10 px-12">
         <Outlet />
       </div>
     </div>

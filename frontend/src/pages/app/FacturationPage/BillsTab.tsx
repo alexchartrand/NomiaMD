@@ -8,7 +8,9 @@ import {
   type Bill,
   type BillDetail,
 } from "../../../api";
-import { Banner, Button, Table } from "../../../components";
+import { Banner, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { formatDate } from "../../../utils/date";
 
 interface BillsTabProps {
@@ -72,56 +74,62 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
     }
   }
 
-  if (loading) return <p className="status-inline">Chargement...</p>;
+  if (loading) return <p className="text-sm text-muted-foreground">Chargement...</p>;
   if (listError) return <Banner tone="error">{listError}</Banner>;
   if (bills.length === 0) return <p>Aucune facture générée.</p>;
 
   return (
     <Table>
-      <thead>
-        <tr>
-          <th>Numéro</th>
-          <th>Période</th>
-          <th>Générée le</th>
-          <th>Facturations</th>
-          <th>Total</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Numéro</TableHead>
+          <TableHead>Période</TableHead>
+          <TableHead>Générée le</TableHead>
+          <TableHead>Facturations</TableHead>
+          <TableHead>Total</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {bills.map((bill) => (
           <Fragment key={bill.id}>
-            <tr>
-              <td>{bill.number}</td>
-              <td>
+            <TableRow>
+              <TableCell>{bill.number}</TableCell>
+              <TableCell>
                 {formatDate(bill.start_date)} – {formatDate(bill.end_date)}
-              </td>
-              <td>{formatDate(bill.generated_at.slice(0, 10))}</td>
-              <td>
+              </TableCell>
+              <TableCell>{formatDate(bill.generated_at.slice(0, 10))}</TableCell>
+              <TableCell>
                 {bill.record_count}{" "}
                 <Button type="button" variant="link" onClick={() => toggleExpand(bill)}>
                   Détails
                 </Button>
-              </td>
-              <td>{bill.total_amount != null ? `${bill.total_amount.toFixed(2)} $` : "—"}</td>
-              <td>
-                <div className="table-actions">
-                  <a className="btn btn-secondary" href={billPdfUrl(bill.id)} download>
+              </TableCell>
+              <TableCell>{bill.total_amount != null ? `${bill.total_amount.toFixed(2)} $` : "—"}</TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <a
+                    className={cn(buttonVariants({ variant: "secondary" }), "border-border")}
+                    href={billPdfUrl(bill.id)}
+                    download
+                  >
                     Télécharger le PDF
                   </a>
                   <Button type="button" variant="danger" onClick={() => handleDelete(bill)}>
                     Supprimer
                   </Button>
                 </div>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
             {expandedId === bill.id && (
-              <tr className="billing-details-row">
-                <td colSpan={6}>
+              <TableRow className="bg-[color:var(--color-primary-tint)] hover:bg-[color:var(--color-primary-tint)]">
+                <TableCell colSpan={6}>
                   {detailError && <Banner tone="error">{detailError}</Banner>}
-                  {!detailError && !expandedDetail && <p className="status-inline">Chargement...</p>}
+                  {!detailError && !expandedDetail && (
+                    <p className="text-sm text-muted-foreground">Chargement...</p>
+                  )}
                   {expandedDetail && (
-                    <ul>
+                    <ul className="m-0 space-y-2 pl-5">
                       {expandedDetail.claims.map((c) => (
                         <li key={c.id}>
                           {formatDate(c.service_date)} — {c.patient_full_name} —{" "}
@@ -131,12 +139,12 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
                       ))}
                     </ul>
                   )}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
           </Fragment>
         ))}
-      </tbody>
+      </TableBody>
     </Table>
   );
 }

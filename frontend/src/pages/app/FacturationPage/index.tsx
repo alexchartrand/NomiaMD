@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Button } from "../../../components";
 import { RecordsTab } from "./RecordsTab";
 import { BillsTab } from "./BillsTab";
@@ -18,27 +19,31 @@ export default function FacturationPage() {
   }
 
   return (
-    <section className="page-panel">
-      <div className="page-header">
-        <h1>Facturation</h1>
-        <div className="page-header-actions">
-          <Button type="button" onClick={() => setModalOpen(true)}>
-            Créer une facture
-          </Button>
-        </div>
+    <section className="max-w-[860px]">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-heading text-2xl font-semibold">Facturation</h1>
+        <Button type="button" onClick={() => setModalOpen(true)}>
+          Créer une facture
+        </Button>
       </div>
 
-      <div className="page-tabs">
+      <div className="mt-6 mb-4 flex gap-1 border-b border-border">
         <button
           type="button"
-          className={`page-tab${tab === "records" ? " page-tab-active" : ""}`}
+          className={cn(
+            "cursor-pointer border-b-2 border-transparent px-[0.9rem] py-[0.6rem] text-sm text-muted-foreground hover:text-foreground",
+            tab === "records" && "border-primary font-semibold text-primary",
+          )}
           onClick={() => setTab("records")}
         >
           Facturations
         </button>
         <button
           type="button"
-          className={`page-tab${tab === "bills" ? " page-tab-active" : ""}`}
+          className={cn(
+            "cursor-pointer border-b-2 border-transparent px-[0.9rem] py-[0.6rem] text-sm text-muted-foreground hover:text-foreground",
+            tab === "bills" && "border-primary font-semibold text-primary",
+          )}
           onClick={() => setTab("bills")}
         >
           Factures générées

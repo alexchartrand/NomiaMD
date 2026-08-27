@@ -6,7 +6,16 @@ import {
   changePassword,
   type PhysicianType,
 } from "../../api";
-import { Banner, Button, Card, Select, TextField } from "../../components";
+import {
+  Banner,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Select,
+  TextField,
+} from "../../components";
 import { useAuth } from "../../AuthContext";
 
 export default function ProfilePage() {
@@ -91,88 +100,140 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <section className="page-panel">
-      <h1>Profil</h1>
+    <section className="max-w-3xl space-y-6">
+      <h1 className="font-heading text-2xl font-semibold">Profil</h1>
 
       <Card>
-        <h2>Renseignements</h2>
-        <form onSubmit={handleProfileSubmit} className="login-form">
-          <label htmlFor="profile-email">Courriel</label>
-          <TextField id="profile-email" value={user.email} disabled />
+        <CardHeader>
+          <CardTitle>Renseignements</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleProfileSubmit} className="flex flex-col items-start gap-4">
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-email" className="text-sm text-muted-foreground">
+                Courriel
+              </label>
+              <TextField id="profile-email" value={user.email} disabled />
+            </div>
 
-          <label htmlFor="profile-full-name">Nom complet</label>
-          <TextField
-            id="profile-full-name"
-            value={fullName}
-            onChange={(event) => setFullName(event.target.value)}
-          />
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-full-name" className="text-sm text-muted-foreground">
+                Nom complet
+              </label>
+              <TextField
+                id="profile-full-name"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+              />
+            </div>
 
-          <label htmlFor="profile-physician-type">Type de pratique</label>
-          <Select
-            id="profile-physician-type"
-            value={physicianType}
-            onChange={(event) => setPhysicianType(event.target.value as PhysicianType | "")}
-          >
-            <option value="">—</option>
-            {PHYSICIAN_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </Select>
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-physician-type" className="text-sm text-muted-foreground">
+                Type de pratique
+              </label>
+              <Select
+                id="profile-physician-type"
+                value={physicianType}
+                onChange={(event) => setPhysicianType(event.target.value as PhysicianType | "")}
+              >
+                <option value="">—</option>
+                {PHYSICIAN_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Select>
+            </div>
 
-          <label htmlFor="profile-patient-count">Nombre de patients</label>
-          <TextField
-            id="profile-patient-count"
-            type="number"
-            min={0}
-            value={numberOfPatients}
-            onChange={(event) => setNumberOfPatients(event.target.value)}
-          />
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-patient-count" className="text-sm text-muted-foreground">
+                Nombre de patients
+              </label>
+              <TextField
+                id="profile-patient-count"
+                type="number"
+                min={0}
+                value={numberOfPatients}
+                onChange={(event) => setNumberOfPatients(event.target.value)}
+              />
+            </div>
 
-          {profileError && <Banner tone="error">{profileError}</Banner>}
-          {profileSuccess && <Banner tone="success">Profil mis à jour.</Banner>}
+            {profileError && (
+              <Banner tone="error" className="w-full max-w-sm">
+                {profileError}
+              </Banner>
+            )}
+            {profileSuccess && (
+              <Banner tone="success" className="w-full max-w-sm">
+                Profil mis à jour.
+              </Banner>
+            )}
 
-          <Button type="submit" disabled={profileSubmitting}>
-            {profileSubmitting ? "Enregistrement..." : "Enregistrer"}
-          </Button>
-        </form>
+            <Button type="submit" disabled={profileSubmitting}>
+              {profileSubmitting ? "Enregistrement..." : "Enregistrer"}
+            </Button>
+          </form>
+        </CardContent>
       </Card>
 
       <Card>
-        <h2>Mot de passe</h2>
-        <form onSubmit={handlePasswordSubmit} className="login-form">
-          <label htmlFor="profile-current-password">Mot de passe actuel</label>
-          <TextField
-            id="profile-current-password"
-            type="password"
-            value={currentPassword}
-            onChange={(event) => setCurrentPassword(event.target.value)}
-          />
+        <CardHeader>
+          <CardTitle>Mot de passe</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handlePasswordSubmit} className="flex flex-col items-start gap-4">
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-current-password" className="text-sm text-muted-foreground">
+                Mot de passe actuel
+              </label>
+              <TextField
+                id="profile-current-password"
+                type="password"
+                value={currentPassword}
+                onChange={(event) => setCurrentPassword(event.target.value)}
+              />
+            </div>
 
-          <label htmlFor="profile-new-password">Nouveau mot de passe</label>
-          <TextField
-            id="profile-new-password"
-            type="password"
-            value={newPassword}
-            onChange={(event) => setNewPassword(event.target.value)}
-          />
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-new-password" className="text-sm text-muted-foreground">
+                Nouveau mot de passe
+              </label>
+              <TextField
+                id="profile-new-password"
+                type="password"
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+              />
+            </div>
 
-          <label htmlFor="profile-confirm-password">Confirmer le nouveau mot de passe</label>
-          <TextField
-            id="profile-confirm-password"
-            type="password"
-            value={confirmPassword}
-            onChange={(event) => setConfirmPassword(event.target.value)}
-          />
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-confirm-password" className="text-sm text-muted-foreground">
+                Confirmer le nouveau mot de passe
+              </label>
+              <TextField
+                id="profile-confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+              />
+            </div>
 
-          {passwordError && <Banner tone="error">{passwordError}</Banner>}
-          {passwordSuccess && <Banner tone="success">Mot de passe modifié.</Banner>}
+            {passwordError && (
+              <Banner tone="error" className="w-full max-w-sm">
+                {passwordError}
+              </Banner>
+            )}
+            {passwordSuccess && (
+              <Banner tone="success" className="w-full max-w-sm">
+                Mot de passe modifié.
+              </Banner>
+            )}
 
-          <Button type="submit" disabled={passwordSubmitting}>
-            {passwordSubmitting ? "Enregistrement..." : "Changer le mot de passe"}
-          </Button>
-        </form>
+            <Button type="submit" disabled={passwordSubmitting}>
+              {passwordSubmitting ? "Enregistrement..." : "Changer le mot de passe"}
+            </Button>
+          </form>
+        </CardContent>
       </Card>
     </section>
   );

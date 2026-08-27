@@ -1,6 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { createBill, describeError, listClaims, StaleBillSelectionError, type Claim } from "../../../api";
-import { Banner, Button, Checkbox, Modal, Table, TextField } from "../../../components";
+import {
+  Banner,
+  Button,
+  Checkbox,
+  Modal,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TextField,
+} from "../../../components";
 import { formatDate } from "../../../utils/date";
 
 interface CreateBillModalProps {
@@ -43,8 +55,6 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const selectAllRef = useRef<HTMLInputElement>(null);
-
   async function handleSearch() {
     setRangeError(null);
     setSubmitError(null);
@@ -83,11 +93,8 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
     setSelection((prev) => (prev.size === candidates.length ? new Set() : new Set(candidates.map((r) => r.id))));
   }
 
-  useEffect(() => {
-    if (selectAllRef.current && candidates) {
-      selectAllRef.current.indeterminate = selection.size > 0 && selection.size < candidates.length;
-    }
-  }, [selection, candidates]);
+  const allSelected = candidates != null && candidates.length > 0 && selection.size === candidates.length;
+  const someSelected = selection.size > 0 && !allSelected;
 
   const totalSelected = candidates
     ? candidates
@@ -134,7 +141,7 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
       footer={
         candidates && (
           <>
-            <span className="status-inline">
+            <span className="text-sm text-muted-foreground">
               {selection.size} facturation(s) sélectionnée(s) — total {totalSelected.toFixed(2)} $
             </span>
             <Button type="button" disabled={selection.size === 0 || submitting} onClick={handleSubmit}>
@@ -144,12 +151,28 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
         )
       }
     >
-      <div className="filters-row">
-        <label htmlFor="bill-date-from">Du</label>
-        <TextField id="bill-date-from" type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <label htmlFor="bill-date-from" className="text-sm text-muted-foreground">
+          Du
+        </label>
+        <TextField
+          id="bill-date-from"
+          type="date"
+          className="w-auto"
+          value={dateFrom}
+          onChange={(e) => setDateFrom(e.target.value)}
+        />
 
-        <label htmlFor="bill-date-to">Au</label>
-        <TextField id="bill-date-to" type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+        <label htmlFor="bill-date-to" className="text-sm text-muted-foreground">
+          Au
+        </label>
+        <TextField
+          id="bill-date-to"
+          type="date"
+          className="w-auto"
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+        />
 
         <Button type="button" variant="secondary" onClick={handleSearch} disabled={loadingCandidates}>
           {loadingCandidates ? "Recherche..." : "Rechercher"}
@@ -165,39 +188,38 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
 
       {candidates && candidates.length > 0 && (
         <Table>
-          <thead>
-            <tr>
-              <th>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
                 <Checkbox
-                  ref={selectAllRef}
-                  checked={selection.size === candidates.length}
-                  onChange={toggleAll}
+                  checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                  onCheckedChange={toggleAll}
                   aria-label="Tout sélectionner"
                 />
-              </th>
-              <th>Date</th>
-              <th>Patient</th>
-              <th>Codes</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Patient</TableHead>
+              <TableHead>Codes</TableHead>
+              <TableHead>Total</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {candidates.map((claim) => (
-              <tr key={claim.id}>
-                <td>
+              <TableRow key={claim.id}>
+                <TableCell>
                   <Checkbox
                     checked={selection.has(claim.id)}
-                    onChange={() => toggle(claim.id)}
+                    onCheckedChange={() => toggle(claim.id)}
                     aria-label={`Sélectionner la facturation de ${claim.patient_full_name}`}
                   />
-                </td>
-                <td>{formatDate(claim.service_date)}</td>
-                <td>{claim.patient_full_name}</td>
-                <td>{claim.codes.map((c) => c.code).join(", ")}</td>
-                <td>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</td>
-              </tr>
+                </TableCell>
+                <TableCell>{formatDate(claim.service_date)}</TableCell>
+                <TableCell>{claim.patient_full_name}</TableCell>
+                <TableCell>{claim.codes.map((c) => c.code).join(", ")}</TableCell>
+                <TableCell>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
+          </TableBody>
         </Table>
       )}
     </Modal>

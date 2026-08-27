@@ -10,7 +10,23 @@ import {
   type Patient,
   type PatientInput,
 } from "../../api";
-import { Banner, Button, Card, Checkbox, Select, TextField, Table } from "../../components";
+import {
+  Banner,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
+  Select,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components";
 import { formatDate } from "../../utils/date";
 
 const BLANK_FORM: PatientInput = {
@@ -112,8 +128,8 @@ export default function PatientsPage() {
   }
 
   return (
-    <section className="page-panel">
-      <h1>Patients</h1>
+    <section className="max-w-[860px] space-y-6">
+      <h1 className="font-heading text-2xl font-semibold">Patients</h1>
 
       {editing === null && (
         <Button type="button" onClick={startCreate}>
@@ -123,105 +139,132 @@ export default function PatientsPage() {
 
       {editing !== null && (
         <Card>
-          <h2>{editing === "new" ? "Nouveau patient" : "Modifier le patient"}</h2>
-          <form onSubmit={handleSubmit} className="login-form">
-            <label htmlFor="patient-full-name">Nom complet</label>
-            <TextField
-              id="patient-full-name"
-              value={form.full_name}
-              onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-            />
+          <CardHeader>
+            <CardTitle>{editing === "new" ? "Nouveau patient" : "Modifier le patient"}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="flex flex-col items-start gap-4">
+              <div className="flex w-full max-w-sm flex-col gap-1.5">
+                <label htmlFor="patient-full-name" className="text-sm text-muted-foreground">
+                  Nom complet
+                </label>
+                <TextField
+                  id="patient-full-name"
+                  value={form.full_name}
+                  onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+                />
+              </div>
 
-            <label htmlFor="patient-ramq-number">Numéro RAMQ (NAM)</label>
-            <TextField
-              id="patient-ramq-number"
-              value={form.ramq_number ?? ""}
-              onChange={(e) => setForm({ ...form, ramq_number: e.target.value })}
-              placeholder="ABCD 1234 5678"
-            />
+              <div className="flex w-full max-w-sm flex-col gap-1.5">
+                <label htmlFor="patient-ramq-number" className="text-sm text-muted-foreground">
+                  Numéro RAMQ (NAM)
+                </label>
+                <TextField
+                  id="patient-ramq-number"
+                  value={form.ramq_number ?? ""}
+                  onChange={(e) => setForm({ ...form, ramq_number: e.target.value })}
+                  placeholder="ABCD 1234 5678"
+                />
+              </div>
 
-            <label htmlFor="patient-dob">Date de naissance</label>
-            <TextField
-              id="patient-dob"
-              type="date"
-              value={form.date_of_birth}
-              onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
-            />
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="patient-dob" className="text-sm text-muted-foreground">
+                  Date de naissance
+                </label>
+                <TextField
+                  id="patient-dob"
+                  type="date"
+                  className="w-auto"
+                  value={form.date_of_birth}
+                  onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
+                />
+              </div>
 
-            <label htmlFor="patient-gender">Genre</label>
-            <Select
-              id="patient-gender"
-              value={form.gender ?? ""}
-              onChange={(e) => setForm({ ...form, gender: (e.target.value || null) as Gender | null })}
-            >
-              <option value="">—</option>
-              {GENDERS.map((g) => (
-                <option key={g} value={g}>
-                  {g}
-                </option>
-              ))}
-            </Select>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="patient-gender" className="text-sm text-muted-foreground">
+                  Genre
+                </label>
+                <Select
+                  id="patient-gender"
+                  value={form.gender ?? ""}
+                  onChange={(e) => setForm({ ...form, gender: (e.target.value || null) as Gender | null })}
+                >
+                  <option value="">—</option>
+                  {GENDERS.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
+                </Select>
+              </div>
 
-            <label>
-              <Checkbox
-                checked={form.is_registered_with_physician}
-                onChange={(e) => setForm({ ...form, is_registered_with_physician: e.target.checked })}
-              />{" "}
-              Inscrit auprès de moi comme médecin de famille
-            </label>
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Checkbox
+                  checked={form.is_registered_with_physician}
+                  onCheckedChange={(checked) =>
+                    setForm({ ...form, is_registered_with_physician: checked === true })
+                  }
+                />
+                Inscrit auprès de moi comme médecin de famille
+              </label>
 
-            <label>
-              <Checkbox
-                checked={form.is_vulnerable}
-                onChange={(e) => setForm({ ...form, is_vulnerable: e.target.checked })}
-              />{" "}
-              Clientèle vulnérable
-            </label>
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Checkbox
+                  checked={form.is_vulnerable}
+                  onCheckedChange={(checked) => setForm({ ...form, is_vulnerable: checked === true })}
+                />
+                Clientèle vulnérable
+              </label>
 
-            {formError && <Banner tone="error">{formError}</Banner>}
+              {formError && (
+                <Banner tone="error" className="w-full max-w-sm">
+                  {formError}
+                </Banner>
+              )}
 
-            <div className="table-actions">
-              <Button type="submit" disabled={submitting}>
-                {submitting ? "Enregistrement..." : "Enregistrer"}
-              </Button>
-              <Button type="button" variant="secondary" onClick={cancelForm} disabled={submitting}>
-                Annuler
-              </Button>
-            </div>
-          </form>
+              <div className="flex gap-2">
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                </Button>
+                <Button type="button" variant="secondary" onClick={cancelForm} disabled={submitting}>
+                  Annuler
+                </Button>
+              </div>
+            </form>
+          </CardContent>
         </Card>
       )}
 
       {listError && <Banner tone="error">{listError}</Banner>}
 
       {loading ? (
-        <p className="status-inline">Chargement...</p>
+        <p className="text-sm text-muted-foreground">Chargement...</p>
       ) : patients.length === 0 ? (
         <p>Aucun patient enregistré.</p>
       ) : (
         <Table>
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>NAM</th>
-              <th>Date de naissance</th>
-              <th>Genre</th>
-              <th>Inscrit</th>
-              <th>Vulnérable</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nom</TableHead>
+              <TableHead>NAM</TableHead>
+              <TableHead>Date de naissance</TableHead>
+              <TableHead>Genre</TableHead>
+              <TableHead>Inscrit</TableHead>
+              <TableHead>Vulnérable</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {patients.map((patient) => (
-              <tr key={patient.id}>
-                <td>{patient.full_name}</td>
-                <td>{patient.ramq_number ?? "—"}</td>
-                <td>{formatDate(patient.date_of_birth)}</td>
-                <td>{patient.gender ?? "—"}</td>
-                <td>{patient.is_registered_with_physician ? "Oui" : "Non"}</td>
-                <td>{patient.is_vulnerable ? "Oui" : "Non"}</td>
-                <td>
-                  <div className="table-actions">
+              <TableRow key={patient.id}>
+                <TableCell>{patient.full_name}</TableCell>
+                <TableCell>{patient.ramq_number ?? "—"}</TableCell>
+                <TableCell>{formatDate(patient.date_of_birth)}</TableCell>
+                <TableCell>{patient.gender ?? "—"}</TableCell>
+                <TableCell>{patient.is_registered_with_physician ? "Oui" : "Non"}</TableCell>
+                <TableCell>{patient.is_vulnerable ? "Oui" : "Non"}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
                     <Button type="button" variant="secondary" onClick={() => startEdit(patient)}>
                       Modifier
                     </Button>
@@ -229,10 +272,10 @@ export default function PatientsPage() {
                       Supprimer
                     </Button>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
+          </TableBody>
         </Table>
       )}
     </section>

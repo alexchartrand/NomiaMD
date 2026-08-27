@@ -10,7 +10,19 @@ import {
   type ClaimStatus,
   type Patient,
 } from "../../../api";
-import { Banner, Button, Select, Table, TextField } from "../../../components";
+import {
+  Banner,
+  Button,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TextField,
+} from "../../../components";
+import { cn } from "@/lib/utils";
 import { formatDate } from "../../../utils/date";
 import { STATUS_LABELS } from "./constants";
 
@@ -69,8 +81,10 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
 
   return (
     <>
-      <div className="filters-row">
-        <label htmlFor="filter-patient">Patient</label>
+      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <label htmlFor="filter-patient" className="text-sm text-muted-foreground">
+          Patient
+        </label>
         <Select id="filter-patient" value={patientFilter} onChange={(e) => setPatientFilter(e.target.value)}>
           <option value="">Tous les patients</option>
           {patients.map((p) => (
@@ -80,18 +94,31 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
           ))}
         </Select>
 
-        <label htmlFor="filter-date-from">Du</label>
+        <label htmlFor="filter-date-from" className="text-sm text-muted-foreground">
+          Du
+        </label>
         <TextField
           id="filter-date-from"
           type="date"
+          className="w-auto"
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
         />
 
-        <label htmlFor="filter-date-to">Au</label>
-        <TextField id="filter-date-to" type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+        <label htmlFor="filter-date-to" className="text-sm text-muted-foreground">
+          Au
+        </label>
+        <TextField
+          id="filter-date-to"
+          type="date"
+          className="w-auto"
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+        />
 
-        <label htmlFor="filter-status">Statut</label>
+        <label htmlFor="filter-status" className="text-sm text-muted-foreground">
+          Statut
+        </label>
         <Select
           id="filter-status"
           value={statusFilter}
@@ -109,30 +136,30 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
       {listError && <Banner tone="error">{listError}</Banner>}
 
       {loading ? (
-        <p className="status-inline">Chargement...</p>
+        <p className="text-sm text-muted-foreground">Chargement...</p>
       ) : claims.length === 0 ? (
         <p>Aucune facturation enregistrée.</p>
       ) : (
         <Table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Patient</th>
-              <th>Codes</th>
-              <th>Total</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Patient</TableHead>
+              <TableHead>Codes</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Statut</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {claims.map((claim) => {
               const deletable = claim.status === "brouillon";
               return (
                 <Fragment key={claim.id}>
-                  <tr>
-                    <td>{formatDate(claim.service_date)}</td>
-                    <td>{claim.patient_full_name}</td>
-                    <td>
+                  <TableRow>
+                    <TableCell>{formatDate(claim.service_date)}</TableCell>
+                    <TableCell>{claim.patient_full_name}</TableCell>
+                    <TableCell>
                       {claim.codes.map((c) => c.code).join(", ")}{" "}
                       <Button
                         type="button"
@@ -141,17 +168,22 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                       >
                         Détails
                       </Button>
-                    </td>
-                    <td>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</td>
-                    <td>
+                    </TableCell>
+                    <TableCell>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</TableCell>
+                    <TableCell>
                       <span
-                        className={`status-badge${claim.status === "facture" ? " status-badge-facture" : ""}`}
+                        className={cn(
+                          "inline-block rounded-full px-[0.6rem] py-[0.15rem] text-[0.85rem]",
+                          claim.status === "facture"
+                            ? "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]"
+                            : "bg-[color:var(--color-primary-tint)] text-primary",
+                        )}
                       >
                         {STATUS_LABELS[claim.status]}
                       </span>
-                    </td>
-                    <td>
-                      <div className="table-actions">
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
                         <Button
                           type="button"
                           variant="danger"
@@ -162,15 +194,16 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                           Supprimer
                         </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                   {expandedId === claim.id && (
-                    <tr className="billing-details-row">
-                      <td colSpan={6}>
-                        <ul>
+                    <TableRow className="bg-[color:var(--color-primary-tint)] hover:bg-[color:var(--color-primary-tint)]">
+                      <TableCell colSpan={6}>
+                        <ul className="m-0 space-y-2 pl-5">
                           {claim.codes.map((c) => (
                             <li key={c.code}>
-                              <span className="code-chip">{c.code}</span> {c.description}
+                              <span className="font-mono text-[0.85rem] text-primary">{c.code}</span>{" "}
+                              {c.description}
                               {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}
                               {c.fee_when_to_use && <> — {c.fee_when_to_use}</>}
                               <br />
@@ -178,13 +211,13 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                             </li>
                           ))}
                         </ul>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )}
                 </Fragment>
               );
             })}
-          </tbody>
+          </TableBody>
         </Table>
       )}
     </>

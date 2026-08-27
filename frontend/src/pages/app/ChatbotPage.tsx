@@ -39,11 +39,11 @@ export default function ChatbotPage() {
   }
 
   return (
-    <section className="page-panel chat-panel">
-      <div className="chat-header">
+    <section className="mx-auto flex h-[calc(100vh-5rem)] max-w-[860px] flex-col">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1>Clavardage de facturation</h1>
-          <p className="lede">
+          <h1 className="font-heading text-2xl font-semibold">Clavardage de facturation</h1>
+          <p className="mt-1 max-w-lg text-sm text-muted-foreground">
             Posez des questions générales de facturation RAMQ — sans lien avec une consultation
             précise.
           </p>
@@ -53,41 +53,48 @@ export default function ChatbotPage() {
         </Button>
       </div>
 
-      <div className="chat-thread">
-        {messages.length === 0 && !loading && (
-          <p className="chat-empty">Posez une question pour commencer.</p>
-        )}
-        {messages.map((message, i) => (
-          <ChatBubble key={i} role={message.role} content={message.content} />
-        ))}
-        {loading && (
-          <div className="chat-bubble-row chat-bubble-row-assistant">
-            <div className="chat-bubble chat-bubble-assistant">
-              <Spinner label="Réflexion…" />
+      <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card">
+        <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-5 py-4">
+          {messages.length === 0 && !loading && (
+            <p className="text-sm text-muted-foreground">Posez une question pour commencer.</p>
+          )}
+          {messages.map((message, i) => (
+            <ChatBubble key={i} role={message.role} content={message.content} />
+          ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="rounded-xl rounded-bl-[3px] border border-border bg-card px-4 py-2.5">
+                <Spinner label="Réflexion…" />
+              </div>
             </div>
+          )}
+        </div>
+
+        {error && (
+          <div className="px-5 pb-2">
+            <Banner tone="error">{error}</Banner>
           </div>
         )}
+
+        <form onSubmit={handleSend} className="flex items-end gap-3 border-t border-border px-5 py-4">
+          <TextArea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            rows={2}
+            className="flex-1"
+            placeholder="Posez une question de facturation..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend(e);
+              }
+            }}
+          />
+          <Button type="submit" disabled={loading || !input.trim()}>
+            Envoyer
+          </Button>
+        </form>
       </div>
-
-      {error && <Banner tone="error">{error}</Banner>}
-
-      <form onSubmit={handleSend} className="chat-composer">
-        <TextArea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={2}
-          placeholder="Posez une question de facturation..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend(e);
-            }
-          }}
-        />
-        <Button type="submit" disabled={loading || !input.trim()}>
-          Envoyer
-        </Button>
-      </form>
     </section>
   );
 }

@@ -1,4 +1,5 @@
 import { useMemo, useReducer, useState, type FormEvent } from "react";
+import { cn } from "@/lib/utils";
 import { createClaim, describeError, DuplicateClaimError, extractBillingCodes } from "../../../api";
 import { Banner } from "../../../components";
 import { SourceStep } from "./SourceStep";
@@ -127,17 +128,49 @@ export default function ExtractionPage() {
   }
 
   return (
-    <section className="page-panel">
-      <h1>Réclamation</h1>
+    <section className="max-w-[860px]">
+      <h1 className="font-heading text-2xl font-semibold">Réclamation</h1>
 
-      <ol className="stepper">
-        <li className={`stepper-item${step === 1 ? " active" : " done"}`}>
-          <span className="stepper-marker">{step > 1 ? "✓" : 1}</span>
-          <span className="stepper-label">Source</span>
+      <ol className="my-6 flex items-center p-0 text-[0.88rem] text-muted-foreground">
+        <li
+          className={cn(
+            "flex flex-1 items-center gap-[0.55rem] after:mx-[0.9rem] after:h-px after:min-w-[1.5rem] after:flex-1 after:bg-border after:content-['']",
+            step > 1 && "after:bg-primary after:opacity-40",
+          )}
+        >
+          <span
+            className={cn(
+              "flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[0.76rem] font-[650] text-muted-foreground",
+              step === 1 && "border-primary bg-primary text-white",
+              step > 1 && "border-primary bg-[color:var(--color-primary-tint)] text-primary",
+            )}
+          >
+            {step > 1 ? "✓" : 1}
+          </span>
+          <span
+            className={cn(
+              "whitespace-nowrap max-[620px]:hidden",
+              step === 1 && "font-[650] text-primary",
+              step > 1 && "text-foreground",
+            )}
+          >
+            Source
+          </span>
         </li>
-        <li className={`stepper-item${step === 2 ? " active" : ""}`}>
-          <span className="stepper-marker">2</span>
-          <span className="stepper-label">Révision</span>
+        <li className="flex items-center gap-[0.55rem]">
+          <span
+            className={cn(
+              "flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card text-[0.76rem] font-[650] text-muted-foreground",
+              step === 2 && "border-primary bg-primary text-white",
+            )}
+          >
+            2
+          </span>
+          <span
+            className={cn("whitespace-nowrap max-[620px]:hidden", step === 2 && "font-[650] text-primary")}
+          >
+            Révision
+          </span>
         </li>
       </ol>
 

@@ -59,7 +59,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 
   if (loading) {
     return (
-      <div className="auth-loading">
+      <div className="flex min-h-screen items-center justify-center">
         <Spinner label="Chargement..." />
       </div>
     );

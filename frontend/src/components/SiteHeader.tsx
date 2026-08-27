@@ -4,8 +4,8 @@ import { PageHeader } from "./PageHeader";
 
 export function SiteHeader() {
   return (
-    <div className="site-header">
-      <div className="landing-inner">
+    <div className="sticky top-0 z-50 border-b border-border bg-[color-mix(in_srgb,var(--background)_97%,transparent)] backdrop-blur-[14px]">
+      <div className="mx-auto max-w-[1080px] px-6 py-4">
         <PageHeader
           logoSize={40}
           nav={
