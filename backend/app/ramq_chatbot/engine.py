@@ -86,16 +86,16 @@ def _extract_content(response: ChatResponse) -> str:
 
 
 class RAMQManualQueryEngine(CustomQueryEngine):
+    """RAMQManualRetriever is async-only (see retriever.py), so this engine is too.
+    app/ramq_chatbot/router.py's POST /query is the only real caller and already only calls
+    acustom_query() — custom_query() is a required override of CustomQueryEngine's abstract
+    method, kept only to raise rather than to actually run a sync query."""
 
     retriever: BaseRetriever
     llm: LLM
 
     def custom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
-        nodes = self.retriever.retrieve(query_str)
-        context_str = "\n\n".join(_format_context_entry(n) for n in nodes)
-        messages = _build_messages(query_str, context_str, chat_history)
-        response = self.llm.chat(messages)
-        return _extract_content(response)
+        raise NotImplementedError("RAMQManualQueryEngine is async-only — use acustom_query()")
 
     async def acustom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
         nodes = await self.retriever.aretrieve(query_str)

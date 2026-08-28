@@ -1,83 +1,64 @@
-"""Unit tests for app/ramq_chatbot/manual_references.py — ManualSectionLookup is a thin
-wrapper around BasePydanticVectorStore.get_nodes(filters=...), pinned here against a small
-in-memory fake store rather than a real LanceDB table."""
+"""Unit tests for app/ramq_chatbot/manual_references.py — ManualSectionLookup is a thin,
+async wrapper around IDocumentRepository.get_by_section_number + IConverter.convert, pinned
+here against an in-memory fake repository (no real LanceDB table)."""
 
-from typing import Any, Optional
-
-from llama_index.core.bridge.pydantic import PrivateAttr
-from llama_index.core.schema import BaseNode, TextNode
-from llama_index.core.vector_stores.types import BasePydanticVectorStore, MetadataFilters
-
+from app.lancedb.converter import DocumentRowConverter
+from app.lancedb.models import DocumentRow
+from app.lancedb.repository import IDocumentRepository
 from app.ramq_chatbot.manual_references import ManualSectionLookup
 
 
-class _FakeVectorStore(BasePydanticVectorStore):
-    """Only implements what ManualSectionLookup actually calls: get_nodes(filters=...) with a
-    single equality filter — enough to stand in for LanceDBVectorStore here without a real
-    LanceDB table (LanceDBVectorStore._to_lance_filter's `metadata.<key>` prefixing is
-    LanceDB-specific plumbing, not something ManualSectionLookup itself depends on)."""
+class _FakeDocumentRepository(IDocumentRepository):
+    def __init__(self, rows: list[DocumentRow]):
+        self._rows = rows
 
-    stores_text: bool = True
-    _nodes: list[BaseNode] = PrivateAttr(default_factory=list)
+    async def get_by_section_number(self, section_number: str) -> list[DocumentRow]:
+        return [r for r in self._rows if r.section_number == section_number]
 
-    def __init__(self, nodes: list[BaseNode]):
-        super().__init__()
-        self._nodes = list(nodes)
-
-    @property
-    def client(self) -> None:
-        return None
-
-    def add(self, nodes: list[BaseNode], **kwargs: Any) -> list[str]:
+    async def get_by_code_reference(self, code: str) -> list[DocumentRow]:
         raise NotImplementedError
 
-    def delete(self, ref_doc_id: str, **kwargs: Any) -> None:
+    async def hybrid_search(self, text: str, vector: list[float], k: int):
         raise NotImplementedError
 
-    def query(self, *args: Any, **kwargs: Any):
-        raise NotImplementedError
 
-    def get_nodes(
-        self, node_ids: Optional[list[str]] = None, filters: Optional[MetadataFilters] = None
-    ) -> list[BaseNode]:
-        assert filters is not None and len(filters.filters) == 1
-        key, value = filters.filters[0].key, filters.filters[0].value
-        return [n for n in self._nodes if n.metadata.get(key) == value]
+def _row(row_id: str, section_number: str | None) -> DocumentRow:
+    return DocumentRow(id=row_id, text=f"text {row_id}", title="Guide", section_number=section_number)
 
 
-def _node(node_id: str, metadata: dict) -> TextNode:
-    return TextNode(text="", id_=node_id, metadata=metadata)
+def _lookup(rows: list[DocumentRow]) -> ManualSectionLookup:
+    return ManualSectionLookup(_FakeDocumentRepository(rows), DocumentRowConverter())
 
 
-def test_returns_the_node_with_a_matching_section_number():
-    match = _node("A", {"section_number": "2.2.6"})
-    other = _node("B", {"section_number": "2.2.1"})
-    lookup = ManualSectionLookup(_FakeVectorStore([match, other]))
+async def test_returns_the_node_with_a_matching_section_number():
+    match = _row("A", "2.2.6")
+    other = _row("B", "2.2.1")
+    lookup = _lookup([match, other])
 
-    results = lookup.get_by_section_number("2.2.6")
+    results = await lookup.aget_by_section_number("2.2.6")
 
     assert [n.node_id for n in results] == ["A"]
 
 
-def test_returns_empty_list_when_no_node_matches():
-    lookup = ManualSectionLookup(_FakeVectorStore([_node("A", {"section_number": "2.2.1"})]))
+async def test_returns_empty_list_when_no_node_matches():
+    lookup = _lookup([_row("A", "2.2.1")])
 
-    assert lookup.get_by_section_number("9.9") == []
+    assert await lookup.aget_by_section_number("9.9") == []
 
 
-def test_returns_every_node_sharing_a_section_number():
-    # OversizedNodeSplitter (ramq-ingestion) splits an oversized section into multiple nodes
+async def test_returns_every_node_sharing_a_section_number():
+    # OversizedNodeSplitter (ramq-ingestion) splits an oversized section into multiple rows
     # that all inherit the same section_number verbatim — section_number is not unique.
-    first_half = _node("A", {"section_number": "2.2.6"})
-    second_half = _node("B", {"section_number": "2.2.6"})
-    lookup = ManualSectionLookup(_FakeVectorStore([first_half, second_half]))
+    first_half = _row("A", "2.2.6")
+    second_half = _row("B", "2.2.6")
+    lookup = _lookup([first_half, second_half])
 
-    results = lookup.get_by_section_number("2.2.6")
+    results = await lookup.aget_by_section_number("2.2.6")
 
     assert {n.node_id for n in results} == {"A", "B"}
 
 
-def test_a_node_with_no_section_number_metadata_is_never_matched():
-    lookup = ManualSectionLookup(_FakeVectorStore([_node("A", {})]))
+async def test_a_row_with_no_section_number_is_never_matched():
+    lookup = _lookup([_row("A", None)])
 
-    assert lookup.get_by_section_number("2.2.6") == []
+    assert await lookup.aget_by_section_number("2.2.6") == []

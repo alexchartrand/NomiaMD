@@ -4,13 +4,30 @@ the connection wiring lives in database.py."""
 
 import logging
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple
 
 from lancedb import AsyncTable
 
-from app.lancedb.models import CodeRow
+from app.lancedb.models import CodeRow, DocumentRow
 
 logger = logging.getLogger(__name__)
+
+# DocumentRow's fields, minus `vector` — every DocumentRepository query selects exactly
+# these columns so the embedding never crosses the wire for a hit about to become a TextNode.
+_DOCUMENT_ROW_COLUMNS = [
+    "id",
+    "text",
+    "title",
+    "section_number",
+    "page_start",
+    "page_end",
+    "section_references",
+    "code_references",
+]
+
+
+def _quote(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
 
 
 class ICodeRepository(ABC):
@@ -55,3 +72,66 @@ class CodeRepository(ICodeRepository):
             )
 
         return results
+
+
+class IDocumentRepository(ABC):
+    @abstractmethod
+    async def get_by_section_number(self, section_number: str) -> List[DocumentRow]:
+        pass
+
+    @abstractmethod
+    async def get_by_code_reference(self, code: str) -> List[DocumentRow]:
+        pass
+
+    @abstractmethod
+    async def hybrid_search(self, text: str, vector: List[float], k: int) -> List[Tuple[DocumentRow, float]]:
+        pass
+
+
+class DocumentRepository(IDocumentRepository):
+    """Handed an already-open `documents-embeddings` table by LanceDB.open() (database.py).
+    Mirrors CodeRepository's connection-ownership contract, over the flat columns
+    ramq-ingestion's document_table_schema.py writes (see CLAUDE.md's `documents-embeddings`
+    note) instead of LlamaIndex's nested `metadata` struct."""
+
+    def __init__(self, table: AsyncTable):
+        self._table = table
+
+    async def get_by_section_number(self, section_number: str) -> List[DocumentRow]:
+        rows = (
+            await self._table.query()
+            .where(f"section_number = {_quote(section_number)}")
+            .select(_DOCUMENT_ROW_COLUMNS)
+            .to_list()
+        )
+        return [DocumentRow.model_validate(row) for row in rows]
+
+    async def get_by_code_reference(self, code: str) -> List[DocumentRow]:
+        rows = (
+            await self._table.query()
+            .where(f"array_has(code_references, {_quote(code)})")
+            .select(_DOCUMENT_ROW_COLUMNS)
+            .to_list()
+        )
+        return [DocumentRow.model_validate(row) for row in rows]
+
+    async def hybrid_search(self, text: str, vector: List[float], k: int) -> List[Tuple[DocumentRow, float]]:
+        # nearest_to(...) + nearest_to_text(...) rather than table.search(query_type="hybrid"):
+        # the latter needs a registered embedding function to vectorize `text` itself, but
+        # this backend brings its own precomputed mistral-embed vector (see retriever.py) —
+        # there is no registered function to call. Note this specific chain does NOT raise
+        # when the `text` FTS index is missing (unlike table.search(query_type="fts")): it
+        # silently falls back to an unindexed scan, same as vector search does without an ANN
+        # index. Harmless as long as the index is actually built at ingestion time (it is —
+        # see LanceDocumentIndexBuilder in ramq-ingestion), but a missing index degrades
+        # ranking quality silently here rather than failing loudly.
+        rows = (
+            await self._table.query()
+            .nearest_to(vector)
+            .distance_type("cosine")
+            .nearest_to_text(text, columns=["text"])
+            .limit(k)
+            .select(_DOCUMENT_ROW_COLUMNS)
+            .to_list()
+        )
+        return [(DocumentRow.model_validate(row), row["_relevance_score"]) for row in rows]

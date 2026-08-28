@@ -1,25 +1,19 @@
-from llama_index.core.schema import BaseNode
-from llama_index.core.vector_stores.types import (
-    BasePydanticVectorStore,
-    FilterOperator,
-    MetadataFilter,
-    MetadataFilters,
-)
+from llama_index.core.schema import TextNode
+
+from app.lancedb.converter import IConverter
+from app.lancedb.repository import IDocumentRepository
 
 
 class ManualSectionLookup:
     """Resolves a manual section number (e.g. "2.2.6", parsed by ramq-ingestion out of a
-    chunk's own prose as `section_references` metadata) to the documents-embeddings node(s)
-    whose own `section_number` metadata matches it. Reuses RAMQManualRetriever's own
-    LanceDBVectorStore rather than opening a second connection."""
+    chunk's own prose as `section_references` metadata) to the documents-embeddings row(s)
+    whose own `section_number` column matches it, converted to a TextNode. Async-only:
+    IDocumentRepository has no sync query path (see app/lancedb/repository.py)."""
 
-    def __init__(self, vector_store: BasePydanticVectorStore):
-        self._vector_store = vector_store
+    def __init__(self, documents: IDocumentRepository, converter: IConverter):
+        self._documents = documents
+        self._converter = converter
 
-    def get_by_section_number(self, section_number: str) -> list[BaseNode]:
-        filters = MetadataFilters(
-            filters=[
-                MetadataFilter(key="section_number", value=section_number, operator=FilterOperator.EQ)
-            ]
-        )
-        return self._vector_store.get_nodes(filters=filters)
+    async def aget_by_section_number(self, section_number: str) -> list[TextNode]:
+        rows = await self._documents.get_by_section_number(section_number)
+        return [self._converter.convert(row) for row in rows]

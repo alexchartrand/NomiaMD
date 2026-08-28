@@ -26,7 +26,7 @@ async def application_services() -> AsyncIterator[LanceDB]:
     db = await LanceDB.open()
     try:
         init_tasks(db)
-        init_ramq_query_engine(db.codes)
+        init_ramq_query_engine(db.codes, db.documents)
         yield db
     finally:
         db.close()

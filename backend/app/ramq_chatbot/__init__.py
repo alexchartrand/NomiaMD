@@ -1,8 +1,9 @@
 """Free-form Q&A over the RAMQ omnipraticien manual (RAMQManualQueryEngine, backed by
-RAMQManualRetriever's BM25+vector fusion search over the `documents-embeddings` LanceDB
-table) — distinct from the transcript -> structured-output extraction pipeline in
-app/ramq_codes and app/summary. Answers a physician's direct billing question, sourced
-from the manual text itself, rather than proposing codes for a specific encounter.
+RAMQManualRetriever's native hybrid (vector + FTS) search, fanned out across generated
+queries and RRF-fused, over the `documents-embeddings` LanceDB table) — distinct from the
+transcript -> structured-output extraction pipeline in app/ramq_codes and app/summary.
+Answers a physician's direct billing question, sourced from the manual text itself, rather
+than proposing codes for a specific encounter.
 
 Public interface — everything else that needs this imports it from here rather than
 reaching into .engine/.retriever/.factory/.models/.router directly."""
@@ -11,7 +12,7 @@ from app.ramq_chatbot.factory import get_ramq_query_engine, init_ramq_query_engi
 from app.ramq_chatbot.models import RAMQChatMessage, RAMQQueryRequest, RAMQQueryResult
 from app.ramq_chatbot.router import router as ramq_chatbot_router
 
-# init_ramq_query_engine() builds the BM25+vector engine and must run once before any
+# init_ramq_query_engine() builds the hybrid-search engine and must run once before any
 # /query request — called by app/bootstrap.py's application_services(), not here at import
 # time: building it needs a running event loop and an already-open LanceDB connection,
 # neither of which exist yet when this module is first imported.

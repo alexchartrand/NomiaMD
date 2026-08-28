@@ -60,6 +60,18 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    generic billing questions — not tied to any specific encounter/transcript, unlike
    `billing_codes`. Wired at `POST /query` (`app/main.py`). History is stateless: the
    client resends prior turns each request; nothing is persisted server-side.
+   `RAMQManualRetriever` fans one user query out into several via `LLMQueryGenerator`
+   (`query_generator.py`), runs each through `DocumentRepository.hybrid_search`
+   (`app/lancedb/repository.py`) — native LanceDB vector+FTS fusion over the flat
+   `documents-embeddings` table at `RAMQ_CHATBOT_DB_PATH` (a *different* directory from
+   `DB_PATH`; both connections are opened by `LanceDB.open()`) — then RRF-fuses the
+   per-query hit lists across queries (`fusion.py`; LanceDB's own hybrid search already
+   fuses vector+FTS *within* one query). `ReferenceExpander` (`reference_expansion.py`)
+   pulls in one hop of `section_references`/`code_references` the hits' own prose points
+   at, same convention as `billing_codes`' fee data: never invented, always joined from the
+   table. Everything here is async-only — `IDocumentRepository` has no sync query path.
+
+
 
 **`app/patients/`** owns a physician's own patient roster (`Patient` in
 `app/postgresdb/models.py`, CRUD at `/patients`) and NAM-based identification of that
