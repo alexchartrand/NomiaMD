@@ -45,13 +45,21 @@ class LanceDB:
     @classmethod
     async def open(cls) -> "LanceDB":
         connection = await lancedb.connect_async(settings.db_path)
-        codes = CodeRepository(await connection.open_table(CODES_TABLE_NAME))
-        vector_store = LanceDBVectorStore(
-            uri=settings.db_path, table_name=EMBEDDINGS_TABLE_NAME, flat_metadata=False
-        )
+        try:
+            codes = CodeRepository(await connection.open_table(CODES_TABLE_NAME))
+            vector_store = LanceDBVectorStore(
+                uri=settings.db_path, table_name=EMBEDDINGS_TABLE_NAME, flat_metadata=False
+            )
 
-        documents_connection = await lancedb.connect_async(settings.ramq_chatbot_db_path)
-        documents = DocumentRepository(await documents_connection.open_table(DOCUMENTS_TABLE_NAME))
+            documents_connection = await lancedb.connect_async(settings.ramq_chatbot_db_path)
+            try:
+                documents = DocumentRepository(await documents_connection.open_table(DOCUMENTS_TABLE_NAME))
+            except Exception:
+                documents_connection.close()
+                raise
+        except Exception:
+            connection.close()
+            raise
 
         return cls(connection, codes, vector_store, documents_connection, documents)
 

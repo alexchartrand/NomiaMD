@@ -48,8 +48,7 @@ class CodeRepository(ICodeRepository):
         self._table = table
 
     async def get_by_number(self, number: str) -> CodeRow:
-        quoted = "'" + number.replace("'", "''") + "'"
-        rows = await self._table.query().where(f"number = {quoted}").to_list()
+        rows = await self._table.query().where(f"number = {_quote(number)}").to_list()
 
         if len(rows) != 1:
             raise ValueError(f"Expected exactly one code row for number={number!r}, found {len(rows)}")
@@ -59,7 +58,7 @@ class CodeRepository(ICodeRepository):
     async def list_by_numbers(self, numbers: List[str]) -> List[CodeRow]:
         # Quote-escape rather than trust code numbers are always digit-only, since they come
         # from a retrieved embedding hit rather than a hardcoded source.
-        quoted = ", ".join("'" + n.replace("'", "''") + "'" for n in numbers)
+        quoted = ", ".join(_quote(n) for n in numbers)
         rows = await self._table.query().where(f"number IN ({quoted})").to_list()
         results = [CodeRow.model_validate(row) for row in rows]
 
