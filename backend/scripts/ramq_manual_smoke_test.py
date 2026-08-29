@@ -26,7 +26,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from app.lancedb import LanceDB  # noqa: E402
+from app.lancedb import CodeRepository, DocumentRepository, LanceDB  # noqa: E402
 from app.ramq_chatbot.factory import init_ramq_query_engine, get_ramq_query_engine  # noqa: E402
 
 # A handful of unambiguous cases from the real manual/table (see ramq-ingestion's
@@ -41,8 +41,11 @@ async def main() -> None:
     db = await LanceDB.open()
     all_passed = True
     try:
+        codes = CodeRepository(db.codes_table)
+        documents = DocumentRepository(db.documents_table)
+
         # -- get_by_section_number ------------------------------------------------------
-        section_rows = await db.documents.get_by_section_number(KNOWN_SECTION_NUMBER)
+        section_rows = await documents.get_by_section_number(KNOWN_SECTION_NUMBER)
         print(f"--- get_by_section_number({KNOWN_SECTION_NUMBER!r}): {len(section_rows)} row(s)")
         if not section_rows:
             print("    FAIL: expected at least one row")
@@ -51,7 +54,7 @@ async def main() -> None:
             print("    OK")
 
         # -- get_by_code_reference --------------------------------------------------------
-        code_rows = await db.documents.get_by_code_reference(KNOWN_CODE_REFERENCE)
+        code_rows = await documents.get_by_code_reference(KNOWN_CODE_REFERENCE)
         print(f"--- get_by_code_reference({KNOWN_CODE_REFERENCE!r}): {len(code_rows)} row(s)")
         if not code_rows:
             print("    FAIL: expected at least one row")
@@ -64,7 +67,7 @@ async def main() -> None:
 
         embed_model = get_embeding_model()
         vector = await embed_model.aget_query_embedding(KNOWN_QUERY)
-        hits = await db.documents.hybrid_search(text=KNOWN_QUERY, vector=vector, k=5)
+        hits = await documents.hybrid_search(text=KNOWN_QUERY, vector=vector, k=5)
         print(f"--- hybrid_search({KNOWN_QUERY!r}): {len(hits)} hit(s)")
         if not hits:
             print("    FAIL: expected at least one hit")
@@ -73,7 +76,7 @@ async def main() -> None:
             print("    OK")
 
         # -- one full /query round trip -----------------------------------------------------
-        init_ramq_query_engine(db.codes, db.documents)
+        init_ramq_query_engine(codes, documents)
         engine = get_ramq_query_engine()
         question = "Quelle est la majoration de nuit?"
         answer = await engine.acustom_query(question)

@@ -5,11 +5,10 @@ event loop — so this is opened explicitly by the app lifespan (app/bootstrap.p
 """
 
 import lancedb
-from lancedb import AsyncConnection
+from lancedb import AsyncConnection, AsyncTable
 from llama_index.vector_stores.lancedb import LanceDBVectorStore
 
 from app.config import settings
-from app.lancedb.repository import CodeRepository, DocumentRepository
 
 CODES_TABLE_NAME = "codes"
 EMBEDDINGS_TABLE_NAME = "code-embeddings"
@@ -18,8 +17,10 @@ DOCUMENTS_TABLE_NAME = "documents-embeddings"
 
 class LanceDB:
     """Open handle on the RAMQ LanceDB. Opened once by the app lifespan
-    (app/bootstrap.py's application_services()), closed on shutdown; hands out the
-    repositories and the llama_index vector store built over the same database(s).
+    (app/bootstrap.py's application_services()), closed on shutdown; hands out the raw
+    tables and the llama_index vector store built over the same database(s). Connection
+    wiring only — has no notion of app/lancedb/repository.py's repository classes; those
+    are built by the composition root (app/bootstrap.py) from the tables exposed here.
 
     `documents-embeddings` lives at RAMQ_CHATBOT_DB_PATH — a directory distinct from
     `codes`/`code-embeddings`'s DB_PATH in deployment (see ramq-ingestion's
@@ -31,29 +32,29 @@ class LanceDB:
     def __init__(
         self,
         connection: AsyncConnection,
-        codes: CodeRepository,
+        codes_table: AsyncTable,
         vector_store: LanceDBVectorStore,
         documents_connection: AsyncConnection,
-        documents: DocumentRepository,
+        documents_table: AsyncTable,
     ) -> None:
         self._connection = connection
-        self._codes = codes
+        self._codes_table = codes_table
         self._vector_store = vector_store
         self._documents_connection = documents_connection
-        self._documents = documents
+        self._documents_table = documents_table
 
     @classmethod
     async def open(cls) -> "LanceDB":
         connection = await lancedb.connect_async(settings.db_path)
         try:
-            codes = CodeRepository(await connection.open_table(CODES_TABLE_NAME))
+            codes_table = await connection.open_table(CODES_TABLE_NAME)
             vector_store = LanceDBVectorStore(
                 uri=settings.db_path, table_name=EMBEDDINGS_TABLE_NAME, flat_metadata=False
             )
 
             documents_connection = await lancedb.connect_async(settings.ramq_chatbot_db_path)
             try:
-                documents = DocumentRepository(await documents_connection.open_table(DOCUMENTS_TABLE_NAME))
+                documents_table = await documents_connection.open_table(DOCUMENTS_TABLE_NAME)
             except Exception:
                 documents_connection.close()
                 raise
@@ -61,19 +62,19 @@ class LanceDB:
             connection.close()
             raise
 
-        return cls(connection, codes, vector_store, documents_connection, documents)
+        return cls(connection, codes_table, vector_store, documents_connection, documents_table)
 
     @property
-    def codes(self) -> CodeRepository:
-        return self._codes
+    def codes_table(self) -> AsyncTable:
+        return self._codes_table
 
     @property
     def vector_store(self) -> LanceDBVectorStore:
         return self._vector_store
 
     @property
-    def documents(self) -> DocumentRepository:
-        return self._documents
+    def documents_table(self) -> AsyncTable:
+        return self._documents_table
 
     def close(self) -> None:
         # lancedb 0.37's AsyncConnection.close() is sync, not a coroutine.

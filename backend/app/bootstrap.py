@@ -9,7 +9,7 @@ running event loop — see app/lancedb/database.py's LanceDB.open()."""
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
-from app.lancedb import LanceDB
+from app.lancedb import CodeRepository, DocumentRepository, LanceDB
 
 # app.tasks.registry must be imported before app.ramq_chatbot: both eventually import
 # app.lancedb.converter, which itself imports app.ramq_codes.models — importing
@@ -25,8 +25,10 @@ from app.ramq_chatbot import init_ramq_query_engine
 async def application_services() -> AsyncIterator[LanceDB]:
     db = await LanceDB.open()
     try:
-        init_tasks(db)
-        init_ramq_query_engine(db.codes, db.documents)
+        codes = CodeRepository(db.codes_table)
+        documents = DocumentRepository(db.documents_table)
+        init_tasks(vector_store=db.vector_store, codes=codes)
+        init_ramq_query_engine(codes, documents)
         yield db
     finally:
         db.close()
