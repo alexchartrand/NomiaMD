@@ -1,49 +1,45 @@
-
+from abc import ABC, abstractmethod
 from typing import List
 
-from llama_index.core import VectorStoreIndex
-from llama_index.core.retrievers import BaseRetriever, QueryFusionRetriever
-from llama_index.core.retrievers.fusion_retriever import FUSION_MODES
-from llama_index.core.schema import NodeWithScore, QueryBundle
-from llama_index.core.llms import LLM
 from llama_index.core.base.embeddings.base import BaseEmbedding
-from llama_index.core.vector_stores.types import BasePydanticVectorStore
-from llama_index.retrievers.bm25 import BM25Retriever
 
-__all__ = ["RAMQCodesRetriever"]
+from app.lancedb.converter import IConverter
+from app.lancedb.repository import ICodeRepository
+from app.ramq_codes.models import Code
 
-class RAMQCodesRetriever(BaseRetriever):
+__all__ = ["ICodesRetriever", "RAMQCodesRetriever"]
+
+
+class ICodesRetriever(ABC):
+    @abstractmethod
+    async def aretrieve(self, query: str) -> List[Code]:
+        pass
+
+
+class RAMQCodesRetriever(ICodesRetriever):
+    """Hybrid (vector + native FTS) search over the flat `codes` LanceDB table, via
+    CodeRepository.hybrid_search — replaces the old VectorStoreIndex/BM25Retriever/
+    QueryFusionRetriever stack (that in-memory BM25 corpus scan and English stemmer only
+    existed because the previous `code-embeddings` table had no native FTS index; the flat
+    `codes` table does — see ramq-ingestion's docs/plans/flat-lancedb-codes-table.md).
+
+    Returns fully-hydrated Code objects directly: unlike the old code-embeddings hit (which
+    carried nothing but a bare `number`), a hybrid_search hit already has the full row, so
+    there's no separate hydrate-by-number step for BillingCodesTask to make."""
+
     def __init__(
         self,
-        vector_store: BasePydanticVectorStore,
+        codes: ICodeRepository,
         embed_model: BaseEmbedding,
-        llm: LLM,
-        debug: bool = False,
+        converter: IConverter,
+        similarity_top_k: int = 20,
     ):
-        index = VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
-        vector_retriever = index.as_retriever(similarity_top_k=20)
-        nodes = vector_store.get_nodes()
-        bm25_retriever = BM25Retriever.from_defaults(
-            nodes=nodes, similarity_top_k=20)
+        self._codes = codes
+        self._embed_model = embed_model
+        self._converter = converter
+        self._similarity_top_k = similarity_top_k
 
-        self.retriever = QueryFusionRetriever(
-            [vector_retriever, bm25_retriever],
-            llm=llm,
-            similarity_top_k=20,
-            num_queries=1,  # set this to 1 to disable query generation
-            mode= FUSION_MODES.RELATIVE_SCORE,
-            use_async=False,
-            verbose=debug,)
-        
-        super().__init__()
-
-    def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        hits = self.retriever.retrieve(query_bundle)
-
-        return hits
-
-    async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        hits = await self.retriever.aretrieve(query_bundle)
-        return hits
-
-
+    async def aretrieve(self, query: str) -> List[Code]:
+        vector = await self._embed_model.aget_query_embedding(query)
+        hits = await self._codes.hybrid_search(text=query, vector=vector, k=self._similarity_top_k)
+        return [self._converter.convert(row) for row, _score in hits]

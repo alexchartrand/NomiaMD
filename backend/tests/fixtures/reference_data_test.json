@@ -6,14 +6,16 @@
   "codes": [
     {
       "code": "TEST-BP-MGMT",
+      "libelle": "Prise en charge d'une maladie chronique",
       "description": "Prise en charge d'une maladie chronique, hypertension artérielle",
       "when_to_use": ["Suivi d'un patient déjà traité pour hypertension artérielle"],
       "rules": [],
-      "fees": [{"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": null}],
+      "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": null, "majoration": null}],
       "keywords": ["hypertension", "tension artérielle", "antihypertenseur"]
     },
     {
       "code": "TEST-BLOODWORK-ORDER",
+      "libelle": "Demande et révision d'un bilan sanguin",
       "description": "Demande et révision d'un bilan sanguin de routine",
       "when_to_use": ["Demande ou révision d'analyses de laboratoire de routine"],
       "rules": [],
@@ -21,6 +23,7 @@
     },
     {
       "code": "TEST-CONSULT-NEW",
+      "libelle": "Ouverture de dossier",
       "description": "Ouverture de dossier pour une personne non inscrite à la clinique",
       "when_to_use": ["Première visite d'un patient non inscrit"],
       "rules": ["Ne peut être réclamé pour un patient déjà inscrit à la clinique"],

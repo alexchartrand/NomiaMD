@@ -7,10 +7,22 @@ from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from lancedb import AsyncTable
+from lancedb.query import MultiMatchQuery
 
 from app.lancedb.models import CodeRow, DocumentRow
 
 logger = logging.getLogger(__name__)
+
+# CodeRow's fields — every CodeRepository query selects exactly these columns. Excludes
+# `vector` (never crosses the wire for a hit about to become a Code) and the
+# header_path/lexical_terms/expansion_terms/needs_review/review_reason columns, which exist
+# for MultiMatchQuery to search over below, not for the app to consume.
+_CODE_ROW_COLUMNS = ["number", "libelle", "description", "when_to_use", "rules", "fees"]
+
+# Columns ramq-ingestion's LanceCodeIndexBuilder builds a French FTS index over — mirrored
+# here rather than imported, same "the two repos share no code" convention as
+# tests/test_lancedb_document_repository.py's hand-duplicated schema.
+_CODE_FTS_COLUMNS = ["number", "libelle", "description", "lexical_terms", "expansion_terms"]
 
 # DocumentRow's fields, minus `vector` — every DocumentRepository query selects exactly
 # these columns so the embedding never crosses the wire for a hit about to become a TextNode.
@@ -39,6 +51,10 @@ class ICodeRepository(ABC):
     async def list_by_numbers(self, numbers: List[str]) -> List[CodeRow]:
         pass
 
+    @abstractmethod
+    async def hybrid_search(self, text: str, vector: List[float], k: int) -> List[Tuple[CodeRow, float]]:
+        pass
+
 
 class CodeRepository(ICodeRepository):
     """Handed an already-open table by LanceDB.open() (database.py) — the async lancedb
@@ -48,7 +64,12 @@ class CodeRepository(ICodeRepository):
         self._table = table
 
     async def get_by_number(self, number: str) -> CodeRow:
-        rows = await self._table.query().where(f"number = {_quote(number)}").to_list()
+        rows = (
+            await self._table.query()
+            .where(f"number = {_quote(number)}")
+            .select(_CODE_ROW_COLUMNS)
+            .to_list()
+        )
 
         if len(rows) != 1:
             raise ValueError(f"Expected exactly one code row for number={number!r}, found {len(rows)}")
@@ -59,7 +80,12 @@ class CodeRepository(ICodeRepository):
         # Quote-escape rather than trust code numbers are always digit-only, since they come
         # from a retrieved embedding hit rather than a hardcoded source.
         quoted = ", ".join(_quote(n) for n in numbers)
-        rows = await self._table.query().where(f"number IN ({quoted})").to_list()
+        rows = (
+            await self._table.query()
+            .where(f"number IN ({quoted})")
+            .select(_CODE_ROW_COLUMNS)
+            .to_list()
+        )
         results = [CodeRow.model_validate(row) for row in rows]
 
         missing = sorted(set(numbers) - {r.number for r in results})
@@ -71,6 +97,25 @@ class CodeRepository(ICodeRepository):
             )
 
         return results
+
+    async def hybrid_search(self, text: str, vector: List[float], k: int) -> List[Tuple[CodeRow, float]]:
+        # Same nearest_to(...) + nearest_to_text(...) chain as DocumentRepository.hybrid_search
+        # below, with a MultiMatchQuery in place of a bare string: nearest_to_text takes
+        # `str | FullTextQuery`, and MultiMatchQuery (a FullTextQuery) is what lets one call
+        # search all five FTS columns at once instead of just one. Like the plain-string case,
+        # this does NOT raise when the FTS indices are missing — it silently falls back to an
+        # unindexed scan (verified empirically), harmless as long as ramq-ingestion's
+        # LanceCodeIndexBuilder actually built them, which it does at ingestion time.
+        rows = (
+            await self._table.query()
+            .nearest_to(vector)
+            .distance_type("cosine")
+            .nearest_to_text(MultiMatchQuery(text, columns=_CODE_FTS_COLUMNS))
+            .limit(k)
+            .select(_CODE_ROW_COLUMNS)
+            .to_list()
+        )
+        return [(CodeRow.model_validate(row), row["_relevance_score"]) for row in rows]
 
 
 class IDocumentRepository(ABC):

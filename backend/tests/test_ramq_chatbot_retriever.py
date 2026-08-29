@@ -117,6 +117,9 @@ class _EmptyCodesTableReader(ICodeRepository):
     async def list_by_numbers(self, numbers: list[str]) -> list:
         return []
 
+    async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+        raise NotImplementedError
+
 
 def _row(row_id: str, text: str, metadata: dict | None = None) -> DocumentRow:
     metadata = metadata or {}

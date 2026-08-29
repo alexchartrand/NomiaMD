@@ -1,7 +1,5 @@
-from llama_index.vector_stores.lancedb import LanceDBVectorStore
-
 from app.lancedb import ICodeRepository
-from app.ramq_codes import BillingCodesTask, build_codes_data, build_ramq_retriever
+from app.ramq_codes import BillingCodesTask, build_ramq_retriever
 from app.summary import ConsultationSummaryTask
 from app.tasks.base import ExtractionTask
 
@@ -16,13 +14,12 @@ def register_tasks(tasks: list[ExtractionTask]) -> None:
     _TASKS.update({task.name: task for task in tasks})
 
 
-def init_tasks(vector_store: LanceDBVectorStore, codes: ICodeRepository) -> None:
+def init_tasks(codes: ICodeRepository) -> None:
     """Builds and registers every extraction task. Called once by the app lifespan
     (app/bootstrap.py's application_services()) — not at import time, since
-    BillingCodesTask's retriever needs an already-open LanceDB connection (and building it
-    scans the whole `code-embeddings` table)."""
+    BillingCodesTask's retriever needs an already-open LanceDB connection."""
     register_tasks([
-        BillingCodesTask(build_ramq_retriever(vector_store), build_codes_data(codes)),
+        BillingCodesTask(build_ramq_retriever(codes)),
         ConsultationSummaryTask(),
         # Future tasks (PrescriptionTask, ...) get added here — nothing else in the
         # pipeline needs to change.

@@ -2,22 +2,27 @@ from pydantic import BaseModel
 
 class CodeRowFee(BaseModel):
     amount: float | None = None
-    when_to_use: str | None = None
+    amount_text: str | None = None
+    context: str | None = None
+    lieu: str | None = None
     majoration: str | None = None
 
 
 class CodeRow(BaseModel):
     """A raw row from the `codes` LanceDB table, validated at the point it crosses into this
-    backend — mirrors ramq-ingestion's src/embedding/code_table_schema.py column-for-column,
-    which is itself written from that repo's Code/Fee (src/models.py). Kept separate from
-    RamqCandidate, which is this backend's own internal shape built from a validated CodeRow."""
+    backend — a projection of ramq-ingestion's src/embedding/codes_embedding/
+    code_table_schema.py, selecting only the columns the read side actually uses (mirrors
+    DocumentRow's own vector/header_path/lexical_terms/expansion_terms/needs_review/
+    review_reason omission below: those exist for MultiMatchQuery to search over, not for the
+    app to consume). Kept separate from Code (app/ramq_codes/models.py), this backend's own
+    internal shape built from a validated CodeRow."""
 
     number: str
+    libelle: str
     description: str
     when_to_use: list[str] = []
     rules: list[str] = []
     fees: list[CodeRowFee] = []
-    confidence: float
 
 
 class DocumentRow(BaseModel):

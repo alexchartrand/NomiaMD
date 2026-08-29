@@ -58,12 +58,13 @@ prompt, a JSON schema for structured extraction, and a parser into a typed Pydan
 new task is added. `backend/app/tasks/registry.py` is where new tasks get wired in.
 
 Today there's one task, `billing_codes` (`backend/app/ramq_codes/task.py`), which:
-1. Narrows the RAMQ corpus down to a small candidate list for the transcript via semantic
-   similarity (`backend/app/ramq_codes/retriever.py`, a direct LanceDB vector search over the
-   `codes` table at `DB_PATH`, embedded with Mistral's `mistral-embed`) — this keeps the
-   model choosing from a known list instead of relying on its own recall of RAMQ codes, and
-   keeps the candidate set small enough to fit in the prompt regardless of corpus size.
-   Currently returns the top 20 hits unconditionally — there's no relevance floor, so an
+1. Narrows the RAMQ corpus down to a small candidate list for the transcript via hybrid
+   (vector + native French full-text) search (`backend/app/ramq_codes/retriever.py`, a
+   direct LanceDB `hybrid_search` over the flat `codes` table at `DB_PATH`, embedded with
+   Mistral's `mistral-embed`) — this keeps the model choosing from a known list instead of
+   relying on its own recall of RAMQ codes, and keeps the candidate set small enough to fit
+   in the prompt regardless of corpus size. Currently returns the top 20 hits
+   unconditionally — there's no relevance floor, so an
    unrelated transcript still gets 20 candidates back rather than an empty or short list; a
    prior `MIN_SIMILARITY` cosine-similarity floor (and per-code dedup) was dropped during an
    earlier retriever rewrite and hasn't been reinstated, and there's no test pinning this
@@ -79,7 +80,7 @@ Adding `prescriptions` or `consultation_notes` later: write a new class implemen
 ## RAMQ data ingestion
 
 The LanceDB `codes` table at `DB_PATH` is generated, not hand-written. Ingestion (raw RAMQ
-manual export → per-code `number`/`description`/`when_to_use`/`rules`/`fees`/`confidence`
+manual export → per-code `number`/`libelle`/`description`/`when_to_use`/`rules`/`fees`
 → embedded into LanceDB) lives in its own repo, `ramq-ingestion`
 (`~/Software/ramq-ingestion` — no remote host set up yet), decoupled on purpose: this
 backend consumes the LanceDB directory as a plain data artifact, with no code dependency on

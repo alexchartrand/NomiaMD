@@ -14,7 +14,6 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import pytest
-from llama_index.core.schema import NodeWithScore, TextNode
 
 from app.auth import get_current_user  # noqa: E402
 from app.postgresdb import User, UserRole  # noqa: E402
@@ -29,47 +28,24 @@ SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test
 
 
 class _KeywordStubRetriever:
-    """Deterministic, dependency-free stand-in for the real llama_index-backed retriever
-    used in tests: ranks fixture candidates by how many of their fixture "keywords" appear
-    in the query text. Only ever used here — the real pipeline always goes through
-    RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics BaseRetriever's `.aretrieve()`
-    (list[NodeWithScore] out), since that's the interface BillingCodesTask._retriever
-    is used through (app/ramq_codes/task.py's build_prompt). Node metadata carries only
-    `number`, mirroring the real `code-embeddings` table's node shape — BillingCodesTask
-    joins full candidate data (description/when_to_use/rules/fees) in via `_codes_data`,
-    not off retriever node metadata, so that's all the stub needs to provide."""
+    """Deterministic, dependency-free stand-in for the real LanceDB-hybrid-search-backed
+    retriever used in tests: ranks fixture candidates by how many of their fixture
+    "keywords" appear in the query text. Only ever used here — the real pipeline always
+    goes through RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics ICodesRetriever's
+    `.aretrieve()` (list[Code] out, already fully hydrated — a real hybrid_search hit
+    carries the full row, not just a number, so there's no separate join step to stub)."""
 
-    def __init__(self, entries: list[tuple[str, list[str]]]):
+    def __init__(self, entries: list[tuple[Code, list[str]]]):
         self._entries = entries
 
-    def retrieve(self, query: str) -> list[NodeWithScore]:
+    async def aretrieve(self, query: str) -> list[Code]:
         query_lower = query.lower()
         scored = [
-            (number, sum(1 for kw in keywords if kw.lower() in query_lower))
-            for number, keywords in self._entries
+            (code, sum(1 for kw in keywords if kw.lower() in query_lower))
+            for code, keywords in self._entries
         ]
         ranked = sorted((pair for pair in scored if pair[1] > 0), key=lambda pair: pair[1], reverse=True)
-        return [
-            NodeWithScore(node=TextNode(text="", metadata={"number": number}), score=float(score))
-            for number, score in ranked
-        ]
-
-    async def aretrieve(self, query: str) -> list[NodeWithScore]:
-        return self.retrieve(query)
-
-
-class _StubCodesData:
-    """Deterministic, dependency-free stand-in for CodesData (app/ramq_codes/codes_data.py):
-    looks candidate numbers up in a fixed in-memory table instead of joining against the
-    real (large, network-embedding-backed) LanceDB `codes` table. Mimics CodesData's
-    `.get()` (list[Code] out, silently dropping numbers with no matching row), since that's
-    the interface BillingCodesTask._codes_data is used through."""
-
-    def __init__(self, codes_by_number: dict[str, Code]):
-        self._codes_by_number = codes_by_number
-
-    async def get(self, numbers: list[str]) -> list[Code]:
-        return [self._codes_by_number[n] for n in numbers if n in self._codes_by_number]
+        return [code for code, _score in ranked]
 
 
 @pytest.fixture(autouse=True)
@@ -86,27 +62,33 @@ def small_reference_table():
     singleton for this fixture to reach into until it makes one itself.
     """
     data = json.loads(SMALL_REFERENCE_PATH.read_text())
-    entries = [(entry["code"], entry.get("keywords", [])) for entry in data["codes"]]
-    stub_retriever = _KeywordStubRetriever(entries)
-
-    codes_by_number = {
-        entry["code"]: Code(
-            number=entry["code"],
-            description=entry["description"],
-            confidence=1.0,
-            when_to_use=tuple(entry.get("when_to_use", [])),
-            rules=tuple(entry.get("rules", [])),
-            fees=tuple(
-                CodeFee(amount=f.get("amount"), when_to_use=f.get("when_to_use"), majoration=f.get("majoration"))
-                for f in entry.get("fees", [])
+    entries = [
+        (
+            Code(
+                number=entry["code"],
+                libelle=entry.get("libelle", entry["code"]),
+                description=entry["description"],
+                when_to_use=tuple(entry.get("when_to_use", [])),
+                rules=tuple(entry.get("rules", [])),
+                fees=tuple(
+                    CodeFee(
+                        amount=f.get("amount"),
+                        amount_text=f.get("amount_text"),
+                        context=f.get("context"),
+                        lieu=f.get("lieu"),
+                        majoration=f.get("majoration"),
+                    )
+                    for f in entry.get("fees", [])
+                ),
             ),
+            entry.get("keywords", []),
         )
         for entry in data["codes"]
-    }
-    stub_codes_data = _StubCodesData(codes_by_number)
+    ]
+    stub_retriever = _KeywordStubRetriever(entries)
 
     register_tasks([
-        BillingCodesTask(stub_retriever, stub_codes_data),
+        BillingCodesTask(stub_retriever),
         ConsultationSummaryTask(),
     ])
     yield

@@ -31,27 +31,29 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    history) aren't derivable from a transcript.
 2. `billing_codes` task (`backend/app/ramq_codes/`) takes the *rendered summary text*, not
    the raw transcript, and:
-   - retrieves candidate *numbers* via `RAMQCodesRetriever` (`ramq_codes/retriever.py`), a
-     llama_index `BaseRetriever` built on a `VectorStoreIndex` over the `code-embeddings`
-     LanceDB table at `DB_PATH` (a `LanceDBVectorStore`, held by `LanceDB`,
-     `app/lancedb/database.py`), embedded with Mistral's `mistral-embed`. `code-embeddings`
-     node metadata carries only `number` (see ramq-ingestion's
-     `src/embedding/code_node_builder.py`) — nothing else.
-   - joins those numbers against the flat `codes` table (same `DB_PATH`) for the full
-     candidate row (`description`, `when_to_use`, `rules`, `fees`, `confidence`; see
-     ramq-ingestion's `src/embedding/code_table_schema.py`) — this join is `task.py`'s job,
-     not the retriever's: `BillingCodesTask.build_prompt` calls `await CodesData.get(numbers)`
-     (`ramq_codes/codes_data.py`), which does a direct async LanceDB query
-     (`table.query().where("number IN (...)")` against an `AsyncTable` opened once by the
-     app's `lifespan`, not per-request) via `CodeRepository` (`app/lancedb/repository.py`)
-     and converts each raw row into this backend's own `Code` shape via `CodesRowConverter`
-     (`app/lancedb/converter.py`). A candidate number with no matching `codes` row (stale
-     index) is silently dropped rather than surfaced with missing data. `app/lancedb/`
-     mirrors `app/postgresdb/`'s `database.py`/`models.py`/`repository.py` split; unlike
-     Postgres, LanceDB has no migration/session story, and its connection can only be
-     opened once an event loop is running, so `LanceDB.open()` is called from
-     `app/bootstrap.py`'s `application_services()` — the process's single composition root,
-     used by `app/main.py`'s `lifespan` and by the real-API scripts.
+   - retrieves fully-hydrated candidates via `RAMQCodesRetriever`
+     (`ramq_codes/retriever.py`), which calls `CodeRepository.hybrid_search`
+     (`app/lancedb/repository.py`) — native LanceDB vector+FTS fusion (`MultiMatchQuery`
+     over `number`/`libelle`/`description`/`lexical_terms`/`expansion_terms`) over the flat
+     `codes` table at `DB_PATH` (an `AsyncTable`, held by `LanceDB`,
+     `app/lancedb/database.py`), embedded with Mistral's `mistral-embed`. Unlike the old
+     `code-embeddings` vector-store hit (metadata-only, just a bare `number`), a
+     `hybrid_search` hit already carries the full row (`libelle`, `description`,
+     `when_to_use`, `rules`, `fees`; see ramq-ingestion's
+     `src/embedding/codes_embedding/code_table_schema.py`), so there's no separate
+     hydrate-by-number join any more — `RAMQCodesRetriever.aretrieve` converts each hit
+     straight into this backend's own `Code` shape via `CodesRowConverter`
+     (`app/lancedb/converter.py`). `app/lancedb/` mirrors `app/postgresdb/`'s
+     `database.py`/`models.py`/`repository.py` split; unlike Postgres, LanceDB has no
+     migration/session story, and its connection can only be opened once an event loop is
+     running, so `LanceDB.open()` is called from `app/bootstrap.py`'s
+     `application_services()` — the process's single composition root, used by
+     `app/main.py`'s `lifespan` and by the real-API scripts. `CodeRepository.
+     list_by_numbers`/`get_by_number` (a genuine by-key lookup, not retrieval) still exist
+     for `ramq_chatbot`'s `ReferenceExpander`, which resolves RAMQ code numbers referenced
+     in manual prose via `CodesData` (`ramq_codes/codes_data.py`) — a candidate number with
+     no matching `codes` row there is silently dropped rather than surfaced with missing
+     data.
    - asks the model to pick only from those candidates, attaching a fee (from the
      candidate's own fee list, never invented) and a verbatim `supporting_quote` from the
      summary per code, for physician review. Empty output is correct/expected when nothing
@@ -63,13 +65,13 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    `RAMQManualRetriever` fans one user query out into several via `LLMQueryGenerator`
    (`query_generator.py`), runs each through `DocumentRepository.hybrid_search`
    (`app/lancedb/repository.py`) — native LanceDB vector+FTS fusion over the flat
-   `documents-embeddings` table at `RAMQ_CHATBOT_DB_PATH` (a *different* directory from
-   `DB_PATH`; both connections are opened by `LanceDB.open()`) — then RRF-fuses the
-   per-query hit lists across queries (`fusion.py`; LanceDB's own hybrid search already
-   fuses vector+FTS *within* one query). `ReferenceExpander` (`reference_expansion.py`)
-   pulls in one hop of `section_references`/`code_references` the hits' own prose points
-   at, same convention as `billing_codes`' fee data: never invented, always joined from the
-   table. Everything here is async-only — `IDocumentRepository` has no sync query path.
+   `documents-embeddings` table, in the same `DB_PATH` directory as `codes` (one
+   `AsyncConnection`, opened by `LanceDB.open()`) — then RRF-fuses the per-query hit lists
+   across queries (`fusion.py`; LanceDB's own hybrid search already fuses vector+FTS
+   *within* one query). `ReferenceExpander` (`reference_expansion.py`) pulls in one hop of
+   `section_references`/`code_references` the hits' own prose points at, same convention as
+   `billing_codes`' fee data: never invented, always joined from the table. Everything here
+   is async-only — `IDocumentRepository` has no sync query path.
 
 
 
@@ -103,10 +105,11 @@ stored result (never trusted from the request body) and snapshots them onto
 regenerated independently and re-deriving fees later would silently rewrite billing history.
 Wired at `POST/GET/PATCH/DELETE /claims` (`app/main.py`).
 
-**RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH`
-(`code-embeddings` for retrieval, `codes` for full row data) are produced by a separate
-sibling repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this backend has no code
-dependency on it, only on those tables' shapes.
+**RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` (`codes`
+for `billing_codes`, `documents-embeddings` for `ramq_chatbot` — one directory, both flat
+tables carrying their own row data and embedding vector) are produced by a separate sibling
+repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this backend has no code dependency
+on it, only on those tables' shapes.
 
 **Frontend** (`frontend/`, React + TypeScript + Vite): a router (`src/AppRouter.tsx`) over
 `src/pages/app/*` — extraction (a 3-step source/transcript/review-and-bill flow), patients,

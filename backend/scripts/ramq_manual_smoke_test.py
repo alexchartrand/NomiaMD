@@ -1,5 +1,5 @@
 """Live smoke test for the RAMQ manual chatbot (app/ramq_chatbot/), modeled on
-scripts/ramq_vector_smoke_test.py. Requires a real MISTRAL_API_KEY and RAMQ_CHATBOT_DB_PATH
+scripts/ramq_vector_smoke_test.py. Requires a real MISTRAL_API_KEY and DB_PATH
 (see .env) — this makes real network calls against Mistral's completion/embedding APIs plus
 a real read of the local `documents-embeddings` LanceDB table, run manually rather than as
 part of the pytest suite. From backend/, with the venv active:

@@ -6,6 +6,6 @@ reaching into .models/.task directly."""
 
 from app.ramq_codes.models import BillingCodesResult, ExtractedCode, ExtractedFee
 from app.ramq_codes.task import BillingCodesTask
-from app.ramq_codes.factory import build_ramq_retriever, build_codes_data
+from app.ramq_codes.factory import build_ramq_retriever
 
-__all__ = ["BillingCodesResult", "build_ramq_retriever", "build_codes_data", "BillingCodesTask", "ExtractedCode", "ExtractedFee"]
+__all__ = ["BillingCodesResult", "build_ramq_retriever", "BillingCodesTask", "ExtractedCode", "ExtractedFee"]

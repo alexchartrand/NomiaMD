@@ -39,11 +39,11 @@ scripts/deploy_db.sh --dry-run user@nomiamd-server   # preview the diff first
 scripts/deploy_db.sh user@nomiamd-server              # ship it
 ```
 
-Syncs both LanceDB stores (`codes`/`code-embeddings` for `billing_codes`, and
-`documents-embeddings` for `ramq_chatbot`) to `/opt/nomiamd/data/` on the
-server by default — pass a different remote base path as a second argument
-if the server's `RAMQ_LANCEDB_PATH`/`RAMQ_CHATBOT_LANCEDB_PATH` (in its
-`.env`) point somewhere else. Skip this step entirely if only application
+Syncs the one LanceDB directory (holding both the `codes` table for
+`billing_codes` and the `documents-embeddings` table for `ramq_chatbot`) to
+`/opt/nomiamd/data/` on the server by default — pass a different remote base
+path as a second argument if the server's `RAMQ_LANCEDB_PATH` (in its
+`.env`) points somewhere else. Skip this step entirely if only application
 code changed, not the RAMQ data.
 
 ## 3. Deploy the new version to the server

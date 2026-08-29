@@ -27,7 +27,7 @@ async def application_services() -> AsyncIterator[LanceDB]:
     try:
         codes = CodeRepository(db.codes_table)
         documents = DocumentRepository(db.documents_table)
-        init_tasks(vector_store=db.vector_store, codes=codes)
+        init_tasks(codes=codes)
         init_ramq_query_engine(codes, documents)
         yield db
     finally:

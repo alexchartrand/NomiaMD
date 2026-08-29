@@ -21,6 +21,9 @@ class _FakeCodeRepository(ICodeRepository):
         self.list_by_numbers_calls.append(list(numbers))
         return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
 
+    async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+        raise NotImplementedError("not exercised by CodesData")
+
 
 class _FakeConverter(IConverter):
     """Converts a raw "row" (here, just a dict) into a Code by copying number/description
@@ -32,7 +35,7 @@ class _FakeConverter(IConverter):
 
     def convert(self, data: dict) -> Code:
         self.converted.append(data)
-        return Code(number=data["number"], description=data["description"], confidence=1.0)
+        return Code(number=data["number"], libelle="", description=data["description"])
 
 
 async def test_get_converts_every_row_the_table_returns():

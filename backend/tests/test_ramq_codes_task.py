@@ -1,39 +1,22 @@
 """Unit tests for BillingCodesTask (app/ramq_codes/task.py), isolated from the real
-retriever/CodesData via small fakes — the full pipeline (real prompt -> mocked model call ->
-parse) is covered end to end in tests/test_extraction.py; these pin build_prompt's
-candidate-formatting/joining logic and parse()'s malformed-output handling directly."""
-
-from llama_index.core.schema import NodeWithScore, TextNode
+retriever via a small fake — the full pipeline (real prompt -> mocked model call -> parse)
+is covered end to end in tests/test_extraction.py; these pin build_prompt's
+candidate-formatting logic and parse()'s malformed-output handling directly."""
 
 from app.ramq_codes.models import BillingCodesResult, Code, CodeFee
 from app.ramq_codes.task import SYSTEM_PROMPT, BillingCodesTask
 
 
 class _FakeRetriever:
-    def __init__(self, hits: list[NodeWithScore | None]):
-        self._hits = hits
+    def __init__(self, candidates: list[Code]):
+        self._candidates = candidates
 
-    async def aretrieve(self, query: str) -> list[NodeWithScore | None]:
-        return self._hits
-
-
-class _FakeCodesData:
-    def __init__(self, codes_by_number: dict[str, Code]):
-        self._codes_by_number = codes_by_number
-        self.requested: list[str] | None = None
-
-    async def get(self, numbers: list[str]) -> list[Code]:
-        self.requested = list(numbers)
-        return [self._codes_by_number[n] for n in numbers if n in self._codes_by_number]
+    async def aretrieve(self, query: str) -> list[Code]:
+        return self._candidates
 
 
-def _hit(number: str) -> NodeWithScore:
-    return NodeWithScore(node=TextNode(text="", metadata={"number": number}), score=1.0)
-
-
-def _task(codes: list[Code], hits: list[NodeWithScore | None] | None = None) -> BillingCodesTask:
-    hits = hits if hits is not None else [_hit(c.number) for c in codes]
-    return BillingCodesTask(_FakeRetriever(hits), _FakeCodesData({c.number: c for c in codes}))
+def _task(codes: list[Code]) -> BillingCodesTask:
+    return BillingCodesTask(_FakeRetriever(codes))
 
 
 # -- build_prompt -------------------------------------------------------------------------
@@ -55,50 +38,32 @@ async def test_build_prompt_includes_the_summary_text_verbatim():
     assert "Patiente de 58 ans, suivi diabète." in user_message
 
 
-async def test_build_prompt_looks_up_codes_data_with_retrieved_numbers():
-    codes_data = _FakeCodesData({})
-    task = BillingCodesTask(_FakeRetriever([_hit("A"), _hit("B")]), codes_data)
-
-    await task.build_prompt("résumé")
-
-    assert codes_data.requested == ["A", "B"]
-
-
-async def test_build_prompt_skips_none_hits_before_looking_up_codes_data():
-    codes_data = _FakeCodesData({"A": Code(number="A", description="", confidence=1.0)})
-    task = BillingCodesTask(_FakeRetriever([_hit("A"), None]), codes_data)
-
-    await task.build_prompt("résumé")
-
-    assert codes_data.requested == ["A"]
-
-
 async def test_build_prompt_formats_full_candidate_line():
     code = Code(
         number="15801",
-        description="Visite de prise en charge",
-        confidence=0.9,
+        libelle="Visite de prise en charge",
+        description="Visite de prise en charge d'une maladie chronique",
         when_to_use=("Nouveau patient",),
         rules=("Clientele < 500 patients inscrits",),
-        fees=(CodeFee(amount=33.15, when_to_use="Par visite", majoration="20%"),),
+        fees=(CodeFee(amount=33.15, amount_text="33,15", context="Par visite", lieu=None, majoration="20%"),),
     )
     task = _task([code])
 
     _, user_message = await task.build_prompt("résumé")
 
-    assert "- 15801: Visite de prise en charge" in user_message
+    assert "- 15801 (Visite de prise en charge): Visite de prise en charge d'une maladie chronique" in user_message
     assert "[when to use: Nouveau patient]" in user_message
     assert "[conditions: Clientele < 500 patients inscrits]" in user_message
     assert "[fees: 33.15 — Par visite — majoration: 20%]" in user_message
 
 
 async def test_build_prompt_omits_optional_sections_when_absent():
-    code = Code(number="15801", description="Visite de prise en charge", confidence=0.9)
+    code = Code(number="15801", libelle="Visite", description="Visite de prise en charge")
     task = _task([code])
 
     _, user_message = await task.build_prompt("résumé")
 
-    assert "- 15801: Visite de prise en charge" in user_message
+    assert "- 15801 (Visite): Visite de prise en charge" in user_message
     assert "[when to use:" not in user_message
     assert "[conditions:" not in user_message
     assert "[fees:" not in user_message
@@ -107,9 +72,9 @@ async def test_build_prompt_omits_optional_sections_when_absent():
 async def test_build_prompt_formats_unknown_fee_amount_as_question_mark():
     code = Code(
         number="15801",
+        libelle="Visite",
         description="",
-        confidence=0.9,
-        fees=(CodeFee(amount=None, when_to_use=None, majoration=None),),
+        fees=(CodeFee(amount=None, amount_text=None, context=None, lieu=None, majoration=None),),
     )
     task = _task([code])
 

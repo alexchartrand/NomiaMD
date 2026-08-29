@@ -16,29 +16,31 @@ def test_cannot_instantiate_interface_directly():
 def test_convert_maps_every_field_onto_code():
     row = CodeRow(
         number="15801",
-        description="Visite de prise en charge",
+        libelle="Visite de prise en charge",
+        description="Visite de prise en charge d'une maladie chronique",
         when_to_use=["Nouveau patient"],
         rules=["Clientele < 500 patients inscrits"],
-        fees=[CodeRowFee(amount=33.15, when_to_use="Par visite", majoration=None)],
-        confidence=0.9,
+        fees=[CodeRowFee(amount=33.15, amount_text="33,15", context="Par visite", lieu=None, majoration=None)],
     )
 
     code = CodesRowConverter().convert(row)
 
     assert isinstance(code, Code)
     assert code.number == "15801"
-    assert code.description == "Visite de prise en charge"
-    assert code.confidence == 0.9
+    assert code.libelle == "Visite de prise en charge"
+    assert code.description == "Visite de prise en charge d'une maladie chronique"
     assert code.when_to_use == ("Nouveau patient",)
     assert code.rules == ("Clientele < 500 patients inscrits",)
     assert len(code.fees) == 1
     assert code.fees[0].amount == 33.15
-    assert code.fees[0].when_to_use == "Par visite"
+    assert code.fees[0].amount_text == "33,15"
+    assert code.fees[0].context == "Par visite"
+    assert code.fees[0].lieu is None
     assert code.fees[0].majoration is None
 
 
 def test_convert_defaults_missing_optional_fields_to_empty():
-    row = CodeRow(number="15801", description="", confidence=1.0)
+    row = CodeRow(number="15801", libelle="", description="")
 
     code = CodesRowConverter().convert(row)
 
@@ -50,17 +52,17 @@ def test_convert_defaults_missing_optional_fields_to_empty():
 def test_convert_maps_every_fee_in_a_multi_fee_row():
     row = CodeRow(
         number="15801",
+        libelle="",
         description="",
-        confidence=1.0,
         fees=[
-            CodeRowFee(amount=33.15, when_to_use="Jour", majoration=None),
-            CodeRowFee(amount=50.00, when_to_use="Soir", majoration="20%"),
+            CodeRowFee(amount=33.15, amount_text="33,15", context="Jour", lieu="Cabinet", majoration=None),
+            CodeRowFee(amount=50.00, amount_text="50,00", context="Soir", lieu="Domicile", majoration="20%"),
         ],
     )
 
     code = CodesRowConverter().convert(row)
 
-    assert [(f.amount, f.when_to_use, f.majoration) for f in code.fees] == [
-        (33.15, "Jour", None),
-        (50.00, "Soir", "20%"),
+    assert [(f.amount, f.context, f.lieu, f.majoration) for f in code.fees] == [
+        (33.15, "Jour", "Cabinet", None),
+        (50.00, "Soir", "Domicile", "20%"),
     ]

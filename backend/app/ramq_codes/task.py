@@ -1,11 +1,9 @@
 from typing import Any
 
 from app.ramq_codes.models import BillingCodesResult, Code, CodeFee
+from app.ramq_codes.retriever import ICodesRetriever
 from app.tasks.base import ExtractionTask
 from app.tasks.schema import to_strict_schema
-from app.ramq_codes.codes_data import CodesData
-
-from llama_index.core.retrievers import BaseRetriever
 
 SYSTEM_PROMPT = """\
 You extract RAMQ billing codes from a structured consultation summary — a set of clinical
@@ -52,15 +50,17 @@ Rules:
 def _format_fee(f: CodeFee) -> str:
     amount = f"{f.amount:.2f}" if f.amount is not None else "?"
     parts = [amount]
-    if f.when_to_use:
-        parts.append(f.when_to_use)
+    if f.context:
+        parts.append(f.context)
+    if f.lieu:
+        parts.append(f"lieu: {f.lieu}")
     if f.majoration:
         parts.append(f"majoration: {f.majoration}")
     return " — ".join(parts)
 
 
 def _format_candidate(c: Code) -> str:
-    line = f"- {c.number}: {c.description}"
+    line = f"- {c.number} ({c.libelle}): {c.description}"
     if c.when_to_use:
         line += f" [when to use: {'; '.join(c.when_to_use)}]"
     if c.rules:
@@ -73,14 +73,11 @@ def _format_candidate(c: Code) -> str:
 class BillingCodesTask(ExtractionTask):
     name = "billing_codes"
 
-    def __init__(self, retriever: BaseRetriever, codes_data: CodesData):
+    def __init__(self, retriever: ICodesRetriever):
         self._retriever = retriever
-        self._codes_data = codes_data
 
     async def build_prompt(self, consultation_summary_text: str) -> tuple[str, str]:
-        nodes = await self._retriever.aretrieve(consultation_summary_text)
-        nodes_number = [node.node.metadata.get('number') for node in nodes if node is not None]
-        candidates = await self._codes_data.get(nodes_number)
+        candidates = await self._retriever.aretrieve(consultation_summary_text)
         candidate_lines = [_format_candidate(c) for c in candidates]
 
         prompt_sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]

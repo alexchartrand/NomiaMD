@@ -20,7 +20,6 @@ jobs:
       - run: uv run pytest -q
         env:
           DB_PATH: ${{ runner.temp }}/ci-lancedb
-          RAMQ_CHATBOT_DB_PATH: ${{ runner.temp }}/ci-lancedb-chatbot
           MISTRAL_API_KEY: fake-key-not-used-tests-are-fully-mocked
           MISTRAL_EMBEDDING_MODEL: mistral-embed
           JWT_SECRET_KEY: test-secret-not-for-production

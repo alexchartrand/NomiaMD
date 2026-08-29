@@ -43,7 +43,7 @@ def _plain_node(node_id: str, metadata: dict | None = None) -> TextNode:
 
 
 def _code(number: str) -> Code:
-    return Code(number=number, description=f"description {number}", confidence=1.0)
+    return Code(number=number, libelle=f"libelle {number}", description=f"description {number}")
 
 
 async def test_aexpand_pulls_in_a_referenced_section():

@@ -27,6 +27,9 @@ class _FakeSearchQuery:
         self._rows = [row for row in self._rows if row["number"] in wanted]
         return self
 
+    def select(self, columns: list[str]) -> "_FakeSearchQuery":
+        return self
+
     async def to_list(self) -> list[dict]:
         return self._rows
 
@@ -53,11 +56,11 @@ def _reader(table: _FakeTable) -> CodeRepository:
 def _row(number: str, **fields) -> dict:
     return {
         "number": number,
+        "libelle": "",
         "description": "",
         "when_to_use": [],
         "rules": [],
         "fees": [],
-        "confidence": 1.0,
         **fields,
     }
 
@@ -68,7 +71,7 @@ def test_cannot_instantiate_interface_directly():
 
 
 async def test_get_by_number_returns_validated_code_row():
-    table = _FakeTable([_row("15801", description="Visite de prise en charge", confidence=0.9)])
+    table = _FakeTable([_row("15801", description="Visite de prise en charge", libelle="Visite")])
     reader = _reader(table)
 
     row = await reader.get_by_number("15801")
@@ -76,7 +79,7 @@ async def test_get_by_number_returns_validated_code_row():
     assert isinstance(row, CodeRow)
     assert row.number == "15801"
     assert row.description == "Visite de prise en charge"
-    assert row.confidence == 0.9
+    assert row.libelle == "Visite"
 
 
 async def test_get_by_number_filters_by_quoted_number():

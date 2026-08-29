@@ -59,7 +59,6 @@ services:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
-      RAMQ_CHATBOT_DB_PATH: /data/ramq-chatbot-lancedb
       SAMPLE_PATIENTS_DIR: /consultations
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
@@ -70,15 +69,12 @@ services:
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
     volumes:
-      # Both produced by the separate ramq-ingestion repo, not by this compose file — must
-      # already be populated at RAMQ_LANCEDB_PATH/RAMQ_CHATBOT_LANCEDB_PATH before `backend`
-      # can even start (it reads DB_PATH/RAMQ_CHATBOT_DB_PATH at import time, before /health
-      # can respond). Two separate databases: DB_PATH backs billing_codes'
-      # `codes`/`code-embeddings` tables, RAMQ_CHATBOT_DB_PATH backs ramq_chatbot's own
-      # `documents-embeddings` table. See docker-compose.yml.example note in the root
-      # .env.example.
+      # Produced by the separate ramq-ingestion repo, not by this compose file — must
+      # already be populated at RAMQ_LANCEDB_PATH before `backend` can even start (it reads
+      # DB_PATH at import time, before /health can respond). One directory holds both
+      # billing_codes' `codes` table and ramq_chatbot's `documents-embeddings` table. See
+      # the root .env.example.
       - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
-      - ${RAMQ_CHATBOT_LANCEDB_PATH}:/data/ramq-chatbot-lancedb:ro
       # consultations/ is a repo-root directory, outside this service's build context
       # (./backend), so it can't be baked into the image via COPY — bind-mounted instead.
       # See SAMPLE_PATIENTS_DIR in app/sample_patients.py.

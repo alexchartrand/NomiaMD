@@ -13,12 +13,18 @@ class CodesRowConverter(IConverter):
     def convert(self, data: CodeRow) -> Code:
         return Code(
             number=data.number,
+            libelle=data.libelle,
             description=data.description,
-            confidence=data.confidence,
             when_to_use=tuple(data.when_to_use),
             rules=tuple(data.rules),
             fees=tuple(
-                CodeFee(amount=fee.amount, when_to_use=fee.when_to_use, majoration=fee.majoration)
+                CodeFee(
+                    amount=fee.amount,
+                    amount_text=fee.amount_text,
+                    context=fee.context,
+                    lieu=fee.lieu,
+                    majoration=fee.majoration,
+                )
                 for fee in data.fees
             ),
         )
