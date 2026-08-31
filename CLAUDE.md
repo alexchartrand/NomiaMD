@@ -8,7 +8,38 @@ Extracts RAMQ billing codes from clinical encounter transcripts (sourced from Ep
 ambient scribe tools like Plume AI), with a mandatory physician review step before
 anything is submitted. **Scope: family doctors (omnipraticiens) only** — the RAMQ code
 corpus is ingested from the *omnipraticien* remuneration manual specifically. Ingestion is
-done by a different repo: ramq-ingestion wich produce a LanceDB.
+done by a different repo: ramq-ingestion, which produces a LanceDB.
+
+**PHI caution**: everything in this repo is developed/tested against synthetic data only
+(`consultations/`). Confirm with the clinic whether transcripts may be sent to a
+third-party LLM API at all (Quebec's Law 25 governs this) before real, non-synthetic
+patient data ever touches this system.
+
+## Commands
+
+Backend (`backend/`, from that directory):
+```bash
+uv sync --extra dev              # install deps (see .env.example for required env vars)
+uv run uvicorn app.main:app --reload   # run the API alone, http://localhost:8000
+uv run pytest                    # full suite — mocked model + stubbed retriever, no network/API key/LanceDB needed
+uv run pytest tests/test_patients.py            # one file
+uv run pytest tests/test_patients.py::test_name -v   # one test
+```
+Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY`
+and `DB_PATH`, or `MISTRAL_ENDPOINT` pointed at `scripts/fake_llm_server.py` (`make
+fake-llm`) to avoid spending real API calls. There's no lint/typecheck config on the
+backend (no ruff/mypy in `pyproject.toml`).
+
+Frontend (`frontend/`, from that directory):
+```bash
+npm install
+npm run dev       # http://localhost:5173, proxies /api to the backend on :8000
+npm run build     # tsc -b (type-check) + vite build — the closest thing to a typecheck/lint step; no eslint config exists
+```
+
+From the repo root, `make dev` runs backend + frontend together; `make dev-fake` also
+starts `scripts/fake_llm_server.py` and points the backend at it, so nothing burns a real
+Mistral API call.
 
 ## Git Guidelines
 
@@ -33,15 +64,26 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    (`ramq_codes/task.py`) — the *structured* `consultation_summary` result, the raw
    transcript, and a resolved `BillingContext` (`ramq_codes/context.py`) — not the rendered
    summary text alone: any clinical detail the summarizer dropped would otherwise be an
-   unrecoverable recall loss at selection time. `app/extraction/pipeline.py`'s
-   `run_billing_codes_pipeline` is three stages, not two: `consultation_summary`, then the
-   patient is NAM-matched (`PatientSuggestionService`) and `BillingContextBuilder`
-   (`ramq_codes/context_builder.py`) resolves the billing physician's own practice facts
-   (`ProfileService.as_of`, not `.current` — the encounter date's panel size/remuneration
-   type, not today's; falls back to `ProfileService.earliest` when the encounter predates
-   the physician's first profile version, a deliberate best-effort trade-off flagged in
-   BACKLOG.md for revalidation) and the matched patient's registration/vulnerability/exact age, then
-   `billing_codes` runs with all of that.
+   unrecoverable recall loss at selection time. The patient is no longer matched from the
+   transcript after the fact — the physician picks one from a global search (`app/
+   patients/`, see below) *before* calling `POST /extract`, which now requires a
+   `patient_id` (`extraction/models.py`); `extraction/router.py` 404s upfront if it doesn't
+   resolve. `app/extraction/pipeline.py`'s `run_billing_codes_pipeline` runs
+   `consultation_summary` first, then two independent, best-effort steps that each degrade
+   silently (log and continue) rather than block extraction on failure: `_verify_patient`
+   compares what the transcript actually states against the chosen patient
+   (`verify_patient_identity`, `app/patients/verification.py` — a pure comparison, never a
+   gate, surfaced on the response only as a post-hoc warning) and `BillingContextBuilder.
+   build` (`ramq_codes/context_builder.py`, now called with the required `patient_id`
+   directly rather than a suggestion match) resolves the billing physician's own practice
+   facts (`ProfileService.as_of`, not `.current` — the encounter date's panel
+   size/remuneration type, not today's; falls back to `ProfileService.earliest` when the
+   encounter predates the physician's first profile version, a deliberate best-effort
+   trade-off flagged in BACKLOG.md for revalidation) and the chosen patient's
+   registration/vulnerability/exact age, then `billing_codes` runs with all of that. Nothing
+   links `SourceStep.tsx`'s "Patient simulé" transcript-loader dropdown to the real
+   `PatientSearchSelect` picker below it — they're independent, so a mismatched pair is only
+   caught by the post-hoc verification warning, after the LLM call already ran.
    - `RAMQCodesRetriever` (`ramq_codes/retriever.py`) fans one encounter out into several
      retrieval queries via `SummaryQueryPlanner` (`ramq_codes/query_planner.py`) — one for
      the visit as a whole plus one per `procedures_performed`/`possible_billable_add_ons`
@@ -70,7 +112,7 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
      that share a `header_path` (the manual's own taxonomy path — most of the `codes` table
      is family variants differing only on panel size, patient vulnerability, registration
      status, or an age threshold) down to whichever variant `BillingContext` actually
-     supports, dropping the rest; an axis neither the physician's profile nor the matched
+     supports, dropping the rest; an axis neither the physician's profile nor the chosen
      patient could resolve leaves every variant in place and gets surfaced back to
      `BillingCodesTask`'s prompt as something the physician must confirm.
    - `BillingCodesTask` (`model = "mistral-medium-latest"`, stronger than
@@ -104,14 +146,34 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
 
 
 
-**`app/patients/`** owns a physician's own patient roster (`Patient` in
-`app/postgresdb/models.py`, CRUD at `/patients`) and NAM-based identification of that
-roster from an extraction's identified patient (`PatientSuggestionService`, `app/patients/
-nam.py`/`suggestion.py`) — matched by exact NAM only, never by name, since a NAM is unique
-across every Quebec resident and a name-based near-miss risks billing the wrong person.
-`Patient.is_deleted` makes patient deletion a soft delete: a deleted patient disappears from
-the roster and its lookups, but any `claims` row referencing it keeps rendering the
-patient's name, and the id is never left dangling.
+**`app/patients/`** — `Patient` (`app/postgresdb/models.py`) is a single global identity per
+real person, unique by NAM across *all* physicians (a partial unique index scoped to
+`deleted_at IS NULL`), not a per-physician roster row: any physician may look up or bill any
+known patient. `PhysicianPatient` (`physician_patients`) is a separate, optional "my
+patients" join table (`physician_id`, `patient_id`, `notes`) with no registration flag on
+it — registration is derived, not stored. Routes split accordingly (`patients/router.py`):
+`GET /patients` lists the caller's own roster; `GET /patients/search?q=` is a NAM/name
+typeahead over *every* patient in the system (`PatientRepository.search`), powering
+`PatientSearchSelect.tsx` (used both in extraction's source step and to add an existing
+patient to one's roster from `PatientsPage.tsx`); `POST /patients` creates a new global
+identity; `PATCH /patients/{id}` edits that shared record and is admin-only, since any
+physician editing another physician's patient has no ownership check left to gate it; roster
+membership itself is `POST/PATCH/DELETE /patients/roster...`. There is no endpoint that
+deletes a global `Patient` — `deleted_at` is read everywhere (soft-delete semantics: gone
+from search/roster, but a `claims` row referencing it keeps rendering the patient's name)
+but nothing currently writes it.
+
+`resolve_registration` (`app/patients/registration.py`) is the single shared definition of
+"registered": an exact match between the patient's stored `family_doctor_practice_number`
+and the physician's own `User.practice_number` (`app/auth/`, see below), returning `None`
+(never a guess) when either side has no number on file — used identically by the API's
+`is_registered_with_current_physician` and by `BillingContextBuilder`.
+`verify_patient_identity` (`app/patients/verification.py`) is a separate, pure comparison
+run once per extraction (see the `billing_codes` pipeline above) between what the
+transcript states and the physician's already-chosen patient — three independent tri-state
+mismatch flags (NAM, name via `name_format.py`, age within a 1-year tolerance), `None`
+always meaning "transcript didn't say enough to compare," never a guess; it's a post-hoc
+warning surfaced to the physician, never a gate.
 
 **`app/auth/`** splits authentication from the physician's practice facts.
 `AuthService` owns credentials/tokens/sessions against `users`; `ProfileService`
@@ -123,8 +185,13 @@ physician may legally bill and they change over a career — read them with
 interpreted under the values in effect on its own service date, never today's (same
 reasoning as `ClaimCode`'s fee snapshot). `get_current` is that call with today's date.
 `get_current_user` deliberately does *not* load a profile: every authenticated request
-pays for that dependency and only the profile screen needs it. `UserOut` flattens the two
-halves back into one object, so the split is invisible to the frontend.
+pays for that dependency and only the profile screen needs it. `User.practice_number`
+(`postgresdb/models.py`) is the one practice fact that stays a plain column on `users`
+rather than moving into the profile table — a RAMQ practice number essentially never
+changes over a career, and it's exactly the value `resolve_registration` (see
+`app/patients/` above) compares against a patient's stored `family_doctor_practice_number`
+to derive registration. `UserOut` flattens the two halves back into one object, so the
+split is invisible to the frontend.
 
 **`app/claims/`** turns a physician-confirmed `billing_codes` extraction into a persisted
 claim — not an LLM task itself, just the save step downstream of it.
@@ -132,7 +199,10 @@ claim — not an LLM task itself, just the save step downstream of it.
 stored result (never trusted from the request body) and snapshots them onto
 `claim_codes`, since the LanceDB `codes` table they originally came from is
 regenerated independently and re-deriving fees later would silently rewrite billing history.
-Wired at `POST/GET/PATCH/DELETE /claims` (`app/main.py`).
+A claim's patient is looked up globally (`PatientRepository.get`), not against the billing
+physician's own roster — any physician may bill any known patient now that `Patient` isn't
+roster-scoped (see `app/patients/` above). Wired at `POST/GET/PATCH/DELETE /claims`
+(`app/main.py`).
 
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` (`codes`
 for `billing_codes`, `documents-embeddings` for `ramq_chatbot` — one directory, both flat
@@ -151,9 +221,11 @@ codegen).
 one per file — served as "simulated patients" (`GET /sample-patients`, `GET
 /sample-patients/{id}`, parsed by `backend/app/sample_patients/service.py`) for demoing/testing
 without hand-typing a transcript. Every note's header carries a `**NAM :**` line (alongside
-`**Patient :**`/`**Dossier :**`/`**Date/heure :**`) so the NAM-matching path is exercisable
-against real fixtures. `README.md` and `all_notes.md` in that directory are not patient
-files and are skipped.
+`**Patient :**`/`**Dossier :**`/`**Date/heure :**`) so patient verification (`app/patients/
+verification.py`) is exercisable against real fixtures; `scripts/seed_db.py` seeds each note
+as a matching global `Patient` row so the search/registration paths have something real to
+find in a freshly-seeded dev DB. `README.md` and `all_notes.md` in that directory are not
+patient files and are skipped.
 
 ## Working in this codebase
 - Always use OOP, with best parctice principles. A class should has only one task and do it well.
