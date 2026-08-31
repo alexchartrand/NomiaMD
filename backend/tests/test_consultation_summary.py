@@ -110,7 +110,7 @@ def test_extract_endpoint_rejects_consultation_summary_task():
     with TestClient(app) as client:
         response = client.post(
             "/extract",
-            json={"transcript": SAMPLE_TRANSCRIPT, "task": "consultation_summary"},
+            json={"transcript": SAMPLE_TRANSCRIPT, "task": "consultation_summary", "patient_id": 1},
         )
 
     assert response.status_code == 400
