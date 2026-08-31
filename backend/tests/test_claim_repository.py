@@ -46,7 +46,7 @@ def _one_code_input(**overrides):
     defaults = dict(
         code="TEST-BP-MGMT",
         description="Prise en charge d'une hypertension",
-        confidence=0.9,
+        confidence="high",
         explanation="hypertension artérielle depuis 10 ans",
         fee_amount=Decimal("33.15"),
         fee_when_to_use="Par visite de suivi",

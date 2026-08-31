@@ -47,6 +47,13 @@ class ProfileService:
         remuneration type and panel size at the time of service, not today's."""
         return PhysicianAccount(user=user, profile=await self._profiles.get_effective_on(user.id, on))
 
+    async def earliest(self, user: User) -> PhysicianAccount:
+        """The physician's very first profile version on file, regardless of date. Not a
+        substitute for `as_of` — only app/ramq_codes/context_builder.py's best-effort
+        fallback should call this, for an encounter dated before any version had taken
+        effect (see PhysicianProfileRepository.get_earliest's docstring)."""
+        return PhysicianAccount(user=user, profile=await self._profiles.get_earliest(user.id))
+
     async def update(
         self,
         user: User,

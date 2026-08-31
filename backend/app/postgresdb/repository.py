@@ -108,6 +108,24 @@ class PhysicianProfileRepository:
             )
             return result.scalar_one_or_none()
 
+    async def get_earliest(self, user_id: int) -> PhysicianProfile | None:
+        """The physician's very first profile version, regardless of date — a best-effort
+        fallback for an encounter dated before any version had taken effect (e.g. a demo
+        transcript predating a freshly-onboarded physician's own profile entry), used only
+        by app/ramq_codes/context_builder.py's BillingContext resolution. Never used for fee
+        calculation (app/bills/service.py keeps calling get_effective_on directly), since a
+        bill's fee snapshot must stay strictly historically accurate — this method exists so
+        billing_codes has *something* to suggest from instead of leaving the panel-size axis
+        unresolved purely because the physician's account is newer than the encounter."""
+        async with async_session() as session:
+            result = await session.execute(
+                select(PhysicianProfile)
+                .where(PhysicianProfile.user_id == user_id)
+                .order_by(PhysicianProfile.effective_from.asc(), PhysicianProfile.id.asc())
+                .limit(1)
+            )
+            return result.scalar_one_or_none()
+
     async def upsert_current(
         self,
         user_id: int,
@@ -320,7 +338,7 @@ class ExtractionRepository:
 class ClaimCodeInput:
     code: str
     description: str
-    confidence: float
+    confidence: str
     explanation: str
     fee_amount: Decimal | None
     fee_when_to_use: str | None

@@ -17,6 +17,8 @@ from fastapi.testclient import TestClient
 from app.extraction.engine import run_extraction
 from app.main import app
 from app.postgresdb import Gender, PatientRepository
+from app.ramq_codes import BillingCodesInput, BillingContext
+from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
 
 # default_authenticated_user (conftest.py, autouse) injects a fake physician with this id.
@@ -84,7 +86,7 @@ MOCK_SUMMARY_RESULT = {
         "rationale": "Suivi documenté d'un patient déjà pris en charge pour diabète et hypertension.",
     },
     "possible_billable_add_ons": [],
-    "notes_uncertain_items": [],
+    "notes_uncertain_items": ["Bilan sanguin de contrôle demandé (HbA1c, fonction rénale) dans 3 mois"],
 }
 
 MOCK_RESULT = {
@@ -92,20 +94,37 @@ MOCK_RESULT = {
         {
             "code": "TEST-BP-MGMT",
             "description": "Prise en charge d'une maladie chronique, hypertension artérielle",
-            "confidence": 0.9,
+            "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
+            "supporting_quote": "hypertension artérielle depuis 10 ans",
+            "needs_confirmation": [],
             "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
         },
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",
-            "confidence": 0.85,
+            "confidence": "medium",
             "explanation": "Bilan sanguin de contrôle demandé",
+            "supporting_quote": "Bilan sanguin de contrôle demandé",
+            "needs_confirmation": [],
             "fee": {"amount": None, "when_to_use": None, "majoration": None},
         },
     ],
     "notes": None,
 }
+
+
+def _billing_codes_input() -> BillingCodesInput:
+    # run_extraction(task, task_input) now takes BillingCodesTask's own input bundle
+    # (see app/ramq_codes/task.py's BillingCodesInput) rather than a bare transcript string
+    # — the retriever needs the structured summary to plan retrieval queries from, and the
+    # rendered text of MOCK_SUMMARY_RESULT is what the small_reference_table stub retriever
+    # (conftest.py) keyword-matches against.
+    return BillingCodesInput(
+        summary=ConsultationSummaryResult.model_validate(MOCK_SUMMARY_RESULT),
+        transcript=SAMPLE_TRANSCRIPT,
+        context=BillingContext(),
+    )
 
 
 def _mock_response(payload=MOCK_RESULT):
@@ -122,7 +141,7 @@ async def test_run_extraction_parses_mocked_response():
     task = get_task("billing_codes")
     with patch("app.extraction.engine.get_client") as mock_get_client:
         mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response())
-        result = await run_extraction(task, SAMPLE_TRANSCRIPT)
+        result = await run_extraction(task, _billing_codes_input())
 
     assert result.task == "billing_codes"
     assert [c.code for c in result.result.codes] == [
@@ -149,8 +168,10 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
             {
                 "code": "TEST-BLOODWORK-ORDER",
                 "description": "Demande et révision d'un bilan sanguin de routine",
-                "confidence": 0.85,
+                "confidence": "medium",
                 "explanation": "Bilan sanguin de contrôle demandé",
+                "supporting_quote": "Bilan sanguin de contrôle demandé",
+                "needs_confirmation": [],
                 "fee": {"amount": None, "when_to_use": None, "majoration": None},
             },
         ],
@@ -158,7 +179,7 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
     }
     with patch("app.extraction.engine.get_client") as mock_get_client:
         mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response(mock_result))
-        result = await run_extraction(task, SAMPLE_TRANSCRIPT)
+        result = await run_extraction(task, _billing_codes_input())
 
     assert [c.code for c in result.result.codes] == ["TEST-BLOODWORK-ORDER"]
     assert result.result.notes is not None

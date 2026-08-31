@@ -15,6 +15,7 @@ class CodesRowConverter(IConverter):
             number=data.number,
             libelle=data.libelle,
             description=data.description,
+            header_path=data.header_path,
             when_to_use=tuple(data.when_to_use),
             rules=tuple(data.rules),
             fees=tuple(

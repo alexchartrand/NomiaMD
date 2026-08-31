@@ -58,6 +58,7 @@ def _row(number: str, **fields) -> dict:
         "number": number,
         "libelle": "",
         "description": "",
+        "header_path": "",
         "when_to_use": [],
         "rules": [],
         "fees": [],

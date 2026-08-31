@@ -1,7 +1,7 @@
 from typing import Any
 
 from app.summary.models import ConsultationSummaryResult
-from app.tasks.base import ExtractionTask
+from app.tasks.base import ExtractionTask, PreparedPrompt
 from app.tasks.schema import render_instance, render_schema_block, to_strict_schema
 
 _RULES = """\
@@ -92,14 +92,17 @@ def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
     )
 
 
-class ConsultationSummaryTask(ExtractionTask):
+class ConsultationSummaryTask(ExtractionTask[str]):
     name = "consultation_summary"
 
-    async def build_prompt(self, transcript: str) -> tuple[str, str]:
-        return SYSTEM_PROMPT, f"Transcript:\n{transcript}\n\nExtract the structured facts per your instructions."
+    async def build_prompt(self, transcript: str) -> PreparedPrompt:
+        return PreparedPrompt(
+            system_prompt=SYSTEM_PROMPT,
+            user_message=f"Transcript:\n{transcript}\n\nExtract the structured facts per your instructions.",
+        )
 
     def json_schema(self) -> dict[str, Any]:
         return to_strict_schema(ConsultationSummaryResult)
 
-    def parse(self, raw: dict[str, Any]) -> ConsultationSummaryResult:
+    def parse(self, raw: dict[str, Any], prepared: PreparedPrompt) -> ConsultationSummaryResult:
         return ConsultationSummaryResult.model_validate(raw)

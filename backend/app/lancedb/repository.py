@@ -15,14 +15,22 @@ logger = logging.getLogger(__name__)
 
 # CodeRow's fields — every CodeRepository query selects exactly these columns. Excludes
 # `vector` (never crosses the wire for a hit about to become a Code) and the
-# header_path/lexical_terms/expansion_terms/needs_review/review_reason columns, which exist
-# for MultiMatchQuery to search over below, not for the app to consume.
-_CODE_ROW_COLUMNS = ["number", "libelle", "description", "when_to_use", "rules", "fees"]
+# lexical_terms/expansion_terms/needs_review/review_reason columns, which exist for
+# MultiMatchQuery to search over below, not for the app to consume. `header_path` is the
+# exception among the search-oriented columns: the app does consume it (see CodeRow).
+_CODE_ROW_COLUMNS = ["number", "libelle", "description", "header_path", "when_to_use", "rules", "fees"]
 
 # Columns ramq-ingestion's LanceCodeIndexBuilder builds a French FTS index over — mirrored
 # here rather than imported, same "the two repos share no code" convention as
 # tests/test_lancedb_document_repository.py's hand-duplicated schema.
-_CODE_FTS_COLUMNS = ["number", "libelle", "description", "lexical_terms", "expansion_terms"]
+_CODE_FTS_COLUMNS = [
+    "number",
+    "libelle",
+    "description",
+    "header_path",
+    "lexical_terms",
+    "expansion_terms",
+]
 
 # DocumentRow's fields, minus `vector` — every DocumentRepository query selects exactly
 # these columns so the embedding never crosses the wire for a hit about to become a TextNode.

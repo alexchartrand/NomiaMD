@@ -18,6 +18,7 @@ def test_convert_maps_every_field_onto_code():
         number="15801",
         libelle="Visite de prise en charge",
         description="Visite de prise en charge d'une maladie chronique",
+        header_path="B — Consultation, examen et visite > Visite de prise en charge",
         when_to_use=["Nouveau patient"],
         rules=["Clientele < 500 patients inscrits"],
         fees=[CodeRowFee(amount=33.15, amount_text="33,15", context="Par visite", lieu=None, majoration=None)],
@@ -29,6 +30,7 @@ def test_convert_maps_every_field_onto_code():
     assert code.number == "15801"
     assert code.libelle == "Visite de prise en charge"
     assert code.description == "Visite de prise en charge d'une maladie chronique"
+    assert code.header_path == "B — Consultation, examen et visite > Visite de prise en charge"
     assert code.when_to_use == ("Nouveau patient",)
     assert code.rules == ("Clientele < 500 patients inscrits",)
     assert len(code.fees) == 1
@@ -40,7 +42,7 @@ def test_convert_maps_every_field_onto_code():
 
 
 def test_convert_defaults_missing_optional_fields_to_empty():
-    row = CodeRow(number="15801", libelle="", description="")
+    row = CodeRow(number="15801", libelle="", description="", header_path="")
 
     code = CodesRowConverter().convert(row)
 
@@ -54,6 +56,7 @@ def test_convert_maps_every_fee_in_a_multi_fee_row():
         number="15801",
         libelle="",
         description="",
+        header_path="",
         fees=[
             CodeRowFee(amount=33.15, amount_text="33,15", context="Jour", lieu="Cabinet", majoration=None),
             CodeRowFee(amount=50.00, amount_text="50,00", context="Soir", lieu="Domicile", majoration="20%"),

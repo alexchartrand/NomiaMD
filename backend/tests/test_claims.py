@@ -25,14 +25,14 @@ BILLING_RESULT = {
         {
             "code": "TEST-BP-MGMT",
             "description": "Prise en charge d'une hypertension",
-            "confidence": 0.9,
+            "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
             "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
         },
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",
-            "confidence": 0.85,
+            "confidence": "medium",
             "explanation": "Bilan sanguin de contrôle demandé",
             "fee": {"amount": None, "when_to_use": None, "majoration": None},
         },
@@ -319,7 +319,7 @@ async def test_deleting_a_claim_removes_its_code_rows_and_total_is_null_when_no_
                 {
                     "code": "TEST-BLOODWORK-ORDER",
                     "description": "Demande et révision d'un bilan sanguin de routine",
-                    "confidence": 0.85,
+                    "confidence": "medium",
                     "explanation": "Bilan sanguin de contrôle demandé",
                     "fee": {"amount": None, "when_to_use": None, "majoration": None},
                 }

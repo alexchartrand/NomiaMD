@@ -7,11 +7,15 @@ export interface ExtractedFee {
   majoration: string | null;
 }
 
+export type ConfidenceLevel = "high" | "medium" | "low";
+
 export interface ExtractedCode {
   code: string;
   description: string;
-  confidence: number;
+  confidence: ConfidenceLevel;
   explanation: string;
+  supporting_quote: string;
+  needs_confirmation: string[];
   fee: ExtractedFee;
 }
 

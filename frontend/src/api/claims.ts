@@ -1,4 +1,5 @@
 import { unwrap, unwrapVoid } from "./http";
+import type { ConfidenceLevel } from "./extraction";
 
 // Kept in sync by hand with app/claims/models.py's ClaimStatus Literal. Read-only from
 // this API — a claim only leaves "brouillon" via POST /bills (see api/bills.ts), and
@@ -9,7 +10,7 @@ export type ClaimStatus = (typeof CLAIM_STATUSES)[number];
 export interface ClaimCodeLine {
   code: string;
   description: string;
-  confidence: number;
+  confidence: ConfidenceLevel;
   explanation: string;
   fee_amount: number | null;
   fee_when_to_use: string | null;

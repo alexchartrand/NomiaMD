@@ -22,7 +22,7 @@ BILLING_RESULT = {
         {
             "code": "TEST-BP-MGMT",
             "description": "Prise en charge d'une hypertension",
-            "confidence": 0.9,
+            "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
             "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
         }
@@ -136,7 +136,7 @@ async def _seed_claim_with_fee(client, *, patient_id, service_date, fee_amount):
             {
                 "code": "TEST-BP-MGMT",
                 "description": "Prise en charge d'une hypertension",
-                "confidence": 0.9,
+                "confidence": "high",
                 "explanation": "hypertension artérielle depuis 10 ans",
                 "fee": {"amount": fee_amount, "when_to_use": "Par visite de suivi", "majoration": None},
             }

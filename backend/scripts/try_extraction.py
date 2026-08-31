@@ -20,7 +20,13 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.bootstrap import application_services  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
+from app.postgresdb import User, UserRole, init_db  # noqa: E402
 from app.sample_patients import get_sample_patients  # noqa: E402
+
+# Not a real logged-in physician — this script has no login flow, so BillingContextBuilder
+# and PatientSuggestionService just find no profile/roster rows for this id and degrade
+# gracefully (see app/ramq_codes/context_builder.py), same as a brand-new account would.
+_SCRIPT_USER = User(id=0, email="script@example.test", hashed_password="", full_name="Script", role=UserRole.PHYSICIAN)
 
 
 def load_sample_transcript() -> str:
@@ -32,13 +38,18 @@ async def main() -> None:
     print("--- transcript ---")
     print(transcript)
 
+    await init_db()
     async with application_services():
-        summary_result, billing_result = await run_billing_codes_pipeline(transcript)
+        summary_result, billing_result, patient_suggestion = await run_billing_codes_pipeline(
+            transcript, user=_SCRIPT_USER
+        )
 
     print("--- consultation summary ---")
     print(summary_result.model_dump_json(indent=2))
     print("--- billing codes result ---")
     print(billing_result.model_dump_json(indent=2))
+    print("--- patient suggestion ---")
+    print(patient_suggestion)
 
 
 if __name__ == "__main__":

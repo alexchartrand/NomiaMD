@@ -29,20 +29,32 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
    structured, French-language clinical facts. It explicitly does *not* decide a billing
    code — administrative facts a code depends on (registration status, panel size, billing
    history) aren't derivable from a transcript.
-2. `billing_codes` task (`backend/app/ramq_codes/`) takes the *rendered summary text*, not
-   the raw transcript, and:
-   - retrieves fully-hydrated candidates via `RAMQCodesRetriever`
-     (`ramq_codes/retriever.py`), which calls `CodeRepository.hybrid_search`
-     (`app/lancedb/repository.py`) — native LanceDB vector+FTS fusion (`MultiMatchQuery`
-     over `number`/`libelle`/`description`/`lexical_terms`/`expansion_terms`) over the flat
-     `codes` table at `DB_PATH` (an `AsyncTable`, held by `LanceDB`,
-     `app/lancedb/database.py`), embedded with Mistral's `mistral-embed`. Unlike the old
-     `code-embeddings` vector-store hit (metadata-only, just a bare `number`), a
-     `hybrid_search` hit already carries the full row (`libelle`, `description`,
-     `when_to_use`, `rules`, `fees`; see ramq-ingestion's
-     `src/embedding/codes_embedding/code_table_schema.py`), so there's no separate
-     hydrate-by-number join any more — `RAMQCodesRetriever.aretrieve` converts each hit
-     straight into this backend's own `Code` shape via `CodesRowConverter`
+2. `billing_codes` task (`backend/app/ramq_codes/`) runs off a `BillingCodesInput`
+   (`ramq_codes/task.py`) — the *structured* `consultation_summary` result, the raw
+   transcript, and a resolved `BillingContext` (`ramq_codes/context.py`) — not the rendered
+   summary text alone: any clinical detail the summarizer dropped would otherwise be an
+   unrecoverable recall loss at selection time. `app/extraction/pipeline.py`'s
+   `run_billing_codes_pipeline` is three stages, not two: `consultation_summary`, then the
+   patient is NAM-matched (`PatientSuggestionService`) and `BillingContextBuilder`
+   (`ramq_codes/context_builder.py`) resolves the billing physician's own practice facts
+   (`ProfileService.as_of`, not `.current` — the encounter date's panel size/remuneration
+   type, not today's; falls back to `ProfileService.earliest` when the encounter predates
+   the physician's first profile version, a deliberate best-effort trade-off flagged in
+   BACKLOG.md for revalidation) and the matched patient's registration/vulnerability/exact age, then
+   `billing_codes` runs with all of that.
+   - `RAMQCodesRetriever` (`ramq_codes/retriever.py`) fans one encounter out into several
+     retrieval queries via `SummaryQueryPlanner` (`ramq_codes/query_planner.py`) — one for
+     the visit as a whole plus one per `procedures_performed`/`possible_billable_add_ons`
+     entry, since a single blended query under-retrieves both a routine visit and a minor
+     procedure documented in the same note — embeds each with Mistral's `mistral-embed`,
+     runs `CodeRepository.hybrid_search` (`app/lancedb/repository.py`, native LanceDB
+     vector+FTS fusion via `MultiMatchQuery` over `number`/`libelle`/`description`/
+     `header_path`/`lexical_terms`/`expansion_terms`) over the flat `codes` table at
+     `DB_PATH`, and fuses the per-query hit lists with `ReciprocalRankFuser`
+     (`app/lancedb/fusion.py` — shared with `ramq_chatbot`, keyed on `Code.number` here vs.
+     `DocumentRow.id` there). A `hybrid_search` hit already carries the full row (`libelle`,
+     `description`, `header_path`, `when_to_use`, `rules`, `fees`; see ramq-ingestion's
+     `src/embedding/codes_embedding/code_table_schema.py`), converted via `CodesRowConverter`
      (`app/lancedb/converter.py`). `app/lancedb/` mirrors `app/postgresdb/`'s
      `database.py`/`models.py`/`repository.py` split; unlike Postgres, LanceDB has no
      migration/session story, and its connection can only be opened once an event loop is
@@ -54,10 +66,27 @@ done by a different repo: ramq-ingestion wich produce a LanceDB.
      in manual prose via `CodesData` (`ramq_codes/codes_data.py`) — a candidate number with
      no matching `codes` row there is silently dropped rather than surfaced with missing
      data.
-   - asks the model to pick only from those candidates, attaching a fee (from the
-     candidate's own fee list, never invented) and a verbatim `supporting_quote` from the
-     summary per code, for physician review. Empty output is correct/expected when nothing
-     is clearly supported — never picks a "closest" candidate just to return something.
+   - `CodeFamilySelector` (`ramq_codes/family.py`) then collapses near-duplicate variants
+     that share a `header_path` (the manual's own taxonomy path — most of the `codes` table
+     is family variants differing only on panel size, patient vulnerability, registration
+     status, or an age threshold) down to whichever variant `BillingContext` actually
+     supports, dropping the rest; an axis neither the physician's profile nor the matched
+     patient could resolve leaves every variant in place and gets surfaced back to
+     `BillingCodesTask`'s prompt as something the physician must confirm.
+   - `BillingCodesTask` (`model = "mistral-medium-latest"`, stronger than
+     `consultation_summary`'s default — see `app/tasks/base.py`'s per-task
+     `ExtractionTask.model` and `app/extraction/engine.py`'s per-model client cache, since
+     picking among near-identical tariff variants is harder than structural extraction) asks
+     the model to pick only from those candidates, recall-first (a plausible candidate is
+     included rather than dropped — mandatory physician review is the backstop, not the
+     model's certainty), attaching a fee (from the candidate's own fee list, never invented),
+     a `confidence` bucket (`high`/`medium`/`low`), a verbatim `supporting_quote` from the
+     summary or transcript, and a `needs_confirmation` list naming any axis
+     `CodeFamilySelector` couldn't resolve. Empty output is correct/expected when nothing is
+     clearly supported — never picks a "closest" candidate just to return something.
+     `BillingCodesTask.parse` also cross-checks every returned code against the candidate
+     set `build_prompt` actually offered (`PreparedPrompt.candidate_numbers`,
+     `app/tasks/base.py`), dropping and flagging anything the model invented outside it.
 3. `ramq_chatbot` task (`backend/app/ramq_chatbot/`): a free-form, multi-turn chatbot for
    generic billing questions — not tied to any specific encounter/transcript, unlike
    `billing_codes`. Wired at `POST /query` (`app/main.py`). History is stateless: the

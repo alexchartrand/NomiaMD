@@ -11,7 +11,6 @@ from sqlalchemy import (
     Date,
     DateTime,
     Enum,
-    Float,
     ForeignKey,
     ForeignKeyConstraint,
     Index,
@@ -235,7 +234,11 @@ class ClaimCode(Base):
     claim_id: Mapped[int] = mapped_column(ForeignKey("claims.id", ondelete="CASCADE"), index=True)
     code: Mapped[str] = mapped_column(String(16))
     description: Mapped[str] = mapped_column(Text)
-    confidence: Mapped[float] = mapped_column(Float)
+    # "high"/"medium"/"low" (see app/ramq_codes/models.py's ExtractedCode.confidence) —
+    # String + boundary validation rather than a native Enum, same convention as
+    # Claim.status just above: this vocabulary is controlled by the LLM prompt, not owned
+    # by this codebase (see BACKLOG.md's item on the enum-strategy split).
+    confidence: Mapped[str] = mapped_column(String(16))
     explanation: Mapped[str] = mapped_column(Text)
     fee_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
     fee_when_to_use: Mapped[str | None] = mapped_column(Text, nullable=True)

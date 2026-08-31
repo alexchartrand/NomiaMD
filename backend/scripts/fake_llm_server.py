@@ -17,7 +17,7 @@ endpoint was hit, since they all share this one.
 - billing_codes: the default/fallback bucket. Parses the candidate RAMQ codes out of the
   prompt (built by app/ramq_codes/task.py::build_prompt) and picks a fixed number of them
   back, with a placeholder confidence/quote and a real fee parsed out of that same
-  candidate's own [fees: ...] bracket (never invented, mirrors what the real model is
+  candidate's own "Tarifs :" line (never invented, mirrors what the real model is
   instructed to do). Returns JSON matching that task's schema.
 - ramq_chatbot_answer: matched on a fixed line from app/ramq_chatbot/engine.py's
   SYSTEM_PROMPT. Returns plain markdown text (not JSON — RAMQManualQueryEngine reads the
@@ -46,29 +46,45 @@ from fastapi import FastAPI, Request
 
 app = FastAPI(title="fake-llm")
 
-# Matches the "- CODE: description" prefix _format_candidate() always emits (see
-# app/ramq_codes/task.py) — when-to-use/conditions brackets are ignored, not part of
-# this fake's stub output. The fees bracket is pulled separately below, so the fake fee
-# is the candidate's own real fee (never invented) same as the real model is instructed to.
-_CANDIDATE_RE = re.compile(r"^- (?P<code>\S+): (?P<description>[^\[]+?)(?: \[|$)", re.MULTILINE)
+# Matches the "- CODE | header_path" header line plus its indented description line,
+# exactly as _format_candidate() emits them (see app/ramq_codes/task.py) — the optional
+# "  Utilisation :"/"  Conditions :"/"  Tarifs :" lines that may follow are ignored here,
+# not part of this fake's stub output (the fee line is pulled separately below, so the fake
+# fee is the candidate's own real fee — never invented — same as the real model is
+# instructed to).
+_CANDIDATE_RE = re.compile(r"^- (?P<code>\S+) \| .*\n {2}(?P<description>.*)$", re.MULTILINE)
 
-# _format_candidate()/_format_fee() (app/ramq_codes/task.py) always render a line's fees
-# as "[fees: AMOUNT — when_to_use — majoration: X; AMOUNT2 — ...]", AMOUNT being "?" when
-# the candidate's own fee amount is null.
-_LINE_RE = re.compile(r"^- \S+: .*$", re.MULTILINE)
-_FEES_BRACKET_RE = re.compile(r"\[fees: (?P<fees>[^\]]*)\]")
+# _format_fee() (app/ramq_codes/task.py) always renders a candidate's "  Tarifs :" line as
+# "AMOUNT — context — majoration: X; AMOUNT2 — ...", AMOUNT being "?" when the candidate's
+# own fee amount is null.
+_TARIFS_LINE_RE = re.compile(r"^ {2}Tarifs : (?P<fees>.*)$")
 _FEE_AMOUNT_RE = re.compile(r"^(\d+(?:\.\d+)?)$")
 
 
+def _block_lines_for_code(user_message: str, code: str) -> list[str]:
+    """Every line belonging to one candidate's block: from its "- CODE | ..." header line up
+    to (not including) the next candidate's header line. Candidate blocks aren't separated
+    by a blank line (see build_prompt's chr(10).join(candidate_lines)), so the boundary is
+    "next line starting a new candidate", not an empty line."""
+    lines = user_message.splitlines()
+    start = next((i for i, line in enumerate(lines) if line.startswith(f"- {code} |")), None)
+    if start is None:
+        return []
+    block = [lines[start]]
+    for line in lines[start + 1 :]:
+        if re.match(r"^- \S+ \| ", line):
+            break
+        block.append(line)
+    return block
+
+
 def _fake_fee_for_code(user_message: str, code: str) -> dict:
-    line_match = next(
-        (m for m in _LINE_RE.finditer(user_message) if m.group(0).startswith(f"- {code}:")), None
-    )
-    fees_match = _FEES_BRACKET_RE.search(line_match.group(0)) if line_match else None
-    if not fees_match:
+    block = _block_lines_for_code(user_message, code)
+    tarifs_match = next((_TARIFS_LINE_RE.match(line) for line in block if _TARIFS_LINE_RE.match(line)), None)
+    if tarifs_match is None:
         return {"amount": None, "when_to_use": None, "majoration": None}
 
-    first_fee = fees_match.group("fees").split(";")[0].strip()
+    first_fee = tarifs_match.group("fees").split(";")[0].strip()
     parts = [p.strip() for p in first_fee.split(" — ")]
     amount_match = _FEE_AMOUNT_RE.match(parts[0])
     majoration = next((p.removeprefix("majoration:").strip() for p in parts[1:] if p.startswith("majoration:")), None)
@@ -203,8 +219,10 @@ def _fake_billing_codes_content(user_message: str) -> str:
         {
             "code": code,
             "description": description,
-            "confidence": 0.5,
+            "confidence": "medium",
             "explanation": "(stub explanation — fake LLM, not a real extraction)",
+            "supporting_quote": description,
+            "needs_confirmation": [],
             "fee": _fake_fee_for_code(user_message, code),
         }
         for code, description in chosen

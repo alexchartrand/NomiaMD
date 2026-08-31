@@ -162,8 +162,8 @@ async def test_hybrid_search_never_returns_the_vector_column():
 
 
 async def test_hybrid_search_matches_on_lexical_terms_alone():
-    # The whole point of MultiMatchQuery over five columns: a synonym that only lives in
-    # lexical_terms (never in libelle/description) still surfaces its row.
+    # The whole point of MultiMatchQuery over several columns: a synonym that only lives in
+    # lexical_terms (never in libelle/description/header_path) still surfaces its row.
     with tempfile.TemporaryDirectory() as persist_dir:
         records = [
             _record("A", description="quelque chose d'autre", lexical_terms=["hypertension arterielle"]),

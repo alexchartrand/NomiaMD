@@ -165,7 +165,7 @@ async def test_deleted_patient_name_still_shows_on_an_existing_claim():
             {
                 "code": "TEST-BP-MGMT",
                 "description": "Prise en charge d'une hypertension",
-                "confidence": 0.9,
+                "confidence": "high",
                 "explanation": "hypertension artérielle depuis 10 ans",
                 "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
             }

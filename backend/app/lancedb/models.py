@@ -20,6 +20,14 @@ class CodeRow(BaseModel):
     number: str
     libelle: str
     description: str
+    # The manual's own taxonomy path, e.g. "B — Consultation, examen et visite > Visites sur
+    # rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de
+    # prise en charge". Selected (unlike lexical_terms/expansion_terms) because the app
+    # consumes it directly: CodeFamilySelector groups near-duplicate variants by it, and it
+    # goes into the billing prompt verbatim — it's the only place the axes distinguishing
+    # one family member from another (vulnerability, registration, age band) are named as a
+    # structure rather than buried in prose.
+    header_path: str
     when_to_use: list[str] = []
     rules: list[str] = []
     fees: list[CodeRowFee] = []

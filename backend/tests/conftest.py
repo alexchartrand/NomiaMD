@@ -18,9 +18,11 @@ import pytest
 from app.auth import get_current_user  # noqa: E402
 from app.postgresdb import User, UserRole  # noqa: E402
 from app.main import app  # noqa: E402
-from app.ramq_codes import BillingCodesTask  # noqa: E402
+from app.ramq_codes import BillingCodesTask, BillingContext  # noqa: E402
+from app.ramq_codes.family import FamilyCollapseResult  # noqa: E402
 from app.ramq_codes.models import Code, CodeFee  # noqa: E402
 from app.rate_limit import limiter  # noqa: E402
+from app.summary import ConsultationSummaryResult, render_for_billing_codes  # noqa: E402
 from app.summary import ConsultationSummaryTask  # noqa: E402
 from app.tasks.registry import register_tasks  # noqa: E402
 
@@ -30,22 +32,26 @@ SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test
 class _KeywordStubRetriever:
     """Deterministic, dependency-free stand-in for the real LanceDB-hybrid-search-backed
     retriever used in tests: ranks fixture candidates by how many of their fixture
-    "keywords" appear in the query text. Only ever used here — the real pipeline always
-    goes through RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics ICodesRetriever's
-    `.aretrieve()` (list[Code] out, already fully hydrated — a real hybrid_search hit
-    carries the full row, not just a number, so there's no separate join step to stub)."""
+    "keywords" appear in the rendered summary text. Only ever used here — the real
+    pipeline always goes through RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics
+    ICodesRetriever's `.aretrieve()` (a hybrid_search hit already carries the full row, not
+    just a number, so there's no separate join step to stub), but skips family
+    collapse — CodeFamilySelector has its own dedicated unit tests
+    (test_ramq_codes_family.py) against real corpus phrasing; this fixture's tiny made-up
+    descriptions aren't representative of that phrasing and would only make matching
+    behavior here harder to predict."""
 
     def __init__(self, entries: list[tuple[Code, list[str]]]):
         self._entries = entries
 
-    async def aretrieve(self, query: str) -> list[Code]:
-        query_lower = query.lower()
+    async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> FamilyCollapseResult:
+        query_lower = render_for_billing_codes(summary).lower()
         scored = [
             (code, sum(1 for kw in keywords if kw.lower() in query_lower))
             for code, keywords in self._entries
         ]
         ranked = sorted((pair for pair in scored if pair[1] > 0), key=lambda pair: pair[1], reverse=True)
-        return [code for code, _score in ranked]
+        return FamilyCollapseResult(candidates=[code for code, _score in ranked], unresolved_axes=())
 
 
 @pytest.fixture(autouse=True)

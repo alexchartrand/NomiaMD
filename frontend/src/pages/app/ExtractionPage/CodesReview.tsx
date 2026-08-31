@@ -1,17 +1,17 @@
 import { cn } from "@/lib/utils";
 import { Checkbox } from "../../../components";
-import type { ExtractedCode } from "../../../api";
+import type { ConfidenceLevel, ExtractedCode } from "../../../api";
 
-function confidenceBucket(confidence: number): "high" | "medium" | "low" {
-  if (confidence >= 0.85) return "high";
-  if (confidence >= 0.6) return "medium";
-  return "low";
-}
-
-const CONFIDENCE_CLASSES: Record<"high" | "medium" | "low", string> = {
+const CONFIDENCE_CLASSES: Record<ConfidenceLevel, string> = {
   high: "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]",
   medium: "bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-text)]",
   low: "bg-[color:var(--color-danger-bg)] text-destructive",
+};
+
+const CONFIDENCE_LABELS: Record<ConfidenceLevel, string> = {
+  high: "Confiance élevée",
+  medium: "Confiance moyenne",
+  low: "Confiance faible",
 };
 
 interface CodesReviewProps {
@@ -29,7 +29,7 @@ export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
     <ul className="m-0 flex flex-col gap-3 p-0">
       {codes.map((c, i) => {
         const checked = selection.has(i);
-        const bucket = confidenceBucket(c.confidence);
+        const bucket = c.confidence;
         return (
           <li
             key={i}
@@ -63,14 +63,30 @@ export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
 
               <p className="m-0 text-[0.92rem] text-muted-foreground italic">{c.explanation}</p>
 
+              {c.supporting_quote && (
+                <p className="m-0 border-l-2 border-border pl-[0.6rem] text-[0.85rem] text-muted-foreground italic">
+                  &laquo;&nbsp;{c.supporting_quote}&nbsp;&raquo;
+                </p>
+              )}
+
+              {c.needs_confirmation.length > 0 && (
+                <ul className="m-0 flex flex-col gap-1 pl-0 text-[0.85rem] text-[color:var(--color-warning-text)]">
+                  {c.needs_confirmation.map((note, noteIndex) => (
+                    <li key={noteIndex} className="list-none">
+                      ⚠ {note}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               <div className="flex justify-end">
                 <span
                   className={cn(
-                    "inline-flex items-center rounded-full px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650] tabular-nums",
+                    "inline-flex items-center rounded-full px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650]",
                     CONFIDENCE_CLASSES[bucket],
                   )}
                 >
-                  {(c.confidence * 100).toFixed(0)}%
+                  {CONFIDENCE_LABELS[bucket]}
                 </span>
               </div>
             </div>

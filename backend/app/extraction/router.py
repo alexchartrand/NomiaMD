@@ -1,5 +1,4 @@
 import logging
-from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
@@ -12,10 +11,9 @@ from app.extraction.models import (
     PatientSuggestionOut,
 )
 from app.extraction.pipeline import run_billing_codes_pipeline
-from app.patients import ExtractedIdentity, PatientSuggestionService
+from app.patients import PatientSuggestion
 from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User
 from app.rate_limit import limiter
-from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
 
 logger = logging.getLogger(__name__)
@@ -23,27 +21,11 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def _extracted_identity_from_summary(summary: ConsultationSummaryResult) -> ExtractedIdentity:
-    info = summary.patient_information
-    return ExtractedIdentity(
-        ramq_number=info.ramq_number_as_stated,
-        name_as_stated=info.name_as_stated,
-        age_years=info.age_years,
-        age_months=info.age_months_if_infant,
-        sex=info.sex_if_stated,
-    )
-
-
-async def _build_patient_suggestion(
-    summary: ConsultationSummaryResult, *, physician_id: int, on_date: date
-) -> PatientSuggestionOut | None:
-    # A matcher bug must never throw away a completed (paid-for) extraction — this is
-    # best-effort, and any failure just means no suggestion in the response.
-    try:
-        extracted = _extracted_identity_from_summary(summary)
-        suggestion = await PatientSuggestionService().suggest(extracted, physician_id=physician_id, on_date=on_date)
-    except Exception:
-        logger.exception("Patient suggestion failed; returning the extraction without one")
+def _to_patient_suggestion_out(suggestion: PatientSuggestion | None) -> PatientSuggestionOut | None:
+    # The pipeline already ran the matcher best-effort (app/extraction/pipeline.py's
+    # _suggest_patient) — this is a pure data conversion from the domain shape
+    # (app.patients.PatientSuggestion) to the API wire shape, no matcher logic left here.
+    if suggestion is None:
         return None
 
     return PatientSuggestionOut(
@@ -84,7 +66,9 @@ async def extract(
 
     source_system = body.source.system if body.source else None
 
-    summary_result, result = await run_billing_codes_pipeline(body.transcript)
+    summary_result, result, patient_suggestion = await run_billing_codes_pipeline(
+        body.transcript, user=current_user
+    )
     extraction_repository = ExtractionRepository()
     summary_record, billing_record = await extraction_repository.create_many(
         [
@@ -110,15 +94,11 @@ async def extract(
     encounter_date_raw = summary_result.result.encounter_setting.date
     encounter_date = parse_encounter_date(encounter_date_raw)
 
-    patient_suggestion = await _build_patient_suggestion(
-        summary_result.result, physician_id=current_user.id, on_date=encounter_date or date.today()
-    )
-
     return BillingExtractionResponse(
         billing=result,
         summary_extraction_record_id=summary_record.id,
         billing_extraction_record_id=billing_record.id,
         encounter_date=encounter_date,
         encounter_date_raw=encounter_date_raw,
-        patient_suggestion=patient_suggestion,
+        patient_suggestion=_to_patient_suggestion_out(patient_suggestion),
     )
