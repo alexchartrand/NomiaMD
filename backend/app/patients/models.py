@@ -2,9 +2,11 @@
 
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.postgresdb import Gender
+
+_PRACTICE_NUMBER_PATTERN = r"^\d{5,6}$"
 
 
 class PatientBase(BaseModel):
@@ -12,8 +14,9 @@ class PatientBase(BaseModel):
     ramq_number: str | None = None
     date_of_birth: date
     gender: Gender | None = None
-    is_registered_with_physician: bool = False
     is_vulnerable: bool = False
+    family_doctor_name: str | None = None
+    family_doctor_practice_number: str | None = Field(default=None, pattern=_PRACTICE_NUMBER_PATTERN)
 
 
 class PatientCreate(PatientBase):
@@ -26,5 +29,21 @@ class PatientUpdate(PatientBase):
 
 class PatientOut(PatientBase):
     id: int
+    # Read-only and request-relative: computed by the router from the requesting
+    # physician's own practice_number, never stored — see app/patients/registration.py.
+    is_registered_with_current_physician: bool | None = None
 
     model_config = {"from_attributes": True}
+
+
+class RosterEntryCreate(BaseModel):
+    patient_id: int
+    notes: str | None = None
+
+
+class RosterEntryUpdate(BaseModel):
+    notes: str | None = None
+
+
+class RosterEntryOut(PatientOut):
+    notes: str | None = None

@@ -215,6 +215,39 @@ async def test_update_profile_success():
     assert body["remuneration_type"] == RemunerationType.MIXTE.value
 
 
+async def test_update_profile_practice_number_persists():
+    # practice_number lives directly on `users` (not versioned like the rest of the
+    # profile) — see the User model's docstring for why.
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        update_response = client.patch(
+            "/auth/me",
+            json={"full_name": "Dr. Jane Doe", "practice_number": "123456"},
+        )
+        me_response = client.get("/auth/me")
+
+    assert update_response.status_code == 200
+    assert update_response.json()["practice_number"] == "123456"
+    assert me_response.json()["practice_number"] == "123456"
+
+
+async def test_update_profile_invalid_practice_number_shape_returns_422():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        response = client.patch(
+            "/auth/me",
+            json={"full_name": "Dr. Doe", "practice_number": "12"},
+        )
+
+    assert response.status_code == 422
+
+
 async def test_update_profile_negative_patient_count_returns_422():
     _drop_auth_override()
     user = await _create_user()

@@ -12,7 +12,6 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
-    ForeignKeyConstraint,
     Index,
     Integer,
     Numeric,
@@ -51,7 +50,14 @@ class User(Base):
     Identity and credentials only: the physician's editable practice facts live in
     PhysicianProfile, so this table stays small and rarely-written. `is_active` lets an
     account be revoked instantly without deleting its history; it's checked on every
-    request (app/auth/dependencies.py), not just at login."""
+    request (app/auth/dependencies.py), not just at login.
+
+    `practice_number` is the one exception to "practice facts live in PhysicianProfile":
+    unlike panel size or remuneration type, a RAMQ practice number essentially never
+    changes over a career, so it doesn't need PhysicianProfile's append-only history — a
+    plain column here is enough. It's also the join key `Patient.family_doctor_practice_number`
+    is compared against to derive whether a patient is registered with this physician (see
+    app/patients/registration.py)."""
 
     __tablename__ = "users"
 
@@ -61,6 +67,7 @@ class User(Base):
     full_name: Mapped[str] = mapped_column(String(255))
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.PHYSICIAN)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    practice_number: Mapped[str | None] = mapped_column(String(6), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
@@ -108,24 +115,24 @@ class Gender(str, enum.Enum):
 
 
 class Patient(Base):
-    """A physician's own patient roster — distinct from app/sample_patients/'s synthetic
-    demo transcripts. Holds administrative facts (registration status, vulnerability) that
-    billing_codes needs but can never derive from a transcript (see CLAUDE.md)."""
+    """A single identity per real person, unique by NAM across the whole app — not owned
+    by any one physician. Holds administrative facts (vulnerability, the patient's family
+    doctor and their practice number) that billing_codes needs but can never derive from a
+    transcript (see CLAUDE.md). A physician's own relationship to a patient (an optional
+    personal list + notes) lives separately in PhysicianPatient; whether a patient is
+    *registered* with a given physician is derived, not stored here — see
+    app/patients/registration.py, which compares `family_doctor_practice_number` against
+    that physician's own `User.practice_number`."""
 
     __tablename__ = "patients"
     __table_args__ = (
-        # Lets claims reference (patient_id, physician_id) as a composite FK, so the DB
-        # itself rejects billing a patient onto a physician they aren't rostered under —
-        # not just ClaimService's application-level check.
-        UniqueConstraint("id", "physician_id"),
         # Partial (not table-wide) so a soft-deleted patient never blocks re-adding the
         # same NAM, or a later correction of a duplicate. NULL ramq_number never
         # collides either way — both dialects already treat NULLs as distinct in a
         # unique index. Live on both dialects (unlike the FK ondelete/composite-FK
         # items) since SQLite enforces unique indexes unconditionally, no PRAGMA needed.
         Index(
-            "ix_patients_physician_ramq_number_active",
-            "physician_id",
+            "ix_patients_ramq_number_active",
             "ramq_number",
             unique=True,
             postgresql_where=text("deleted_at IS NULL"),
@@ -134,17 +141,45 @@ class Patient(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     full_name: Mapped[str] = mapped_column(String(255))
     ramq_number: Mapped[str | None] = mapped_column(String(20), nullable=True)
     date_of_birth: Mapped[date] = mapped_column(Date)
     gender: Mapped[Gender | None] = mapped_column(Enum(Gender), nullable=True)
-    is_registered_with_physician: Mapped[bool] = mapped_column(Boolean, default=False)
     is_vulnerable: Mapped[bool] = mapped_column(Boolean, default=False)
+    family_doctor_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    family_doctor_practice_number: Mapped[str | None] = mapped_column(String(6), nullable=True)
     # Nullable timestamp rather than a bool: under Law 25 the deletion date is the thing
     # an audit asks for, not just whether the patient is gone. `IS NULL`/`IS NOT NULL`
     # filters identically to the old is_deleted flag.
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
+    )
+
+
+class PhysicianPatient(Base):
+    """A physician's own, optional "my patients" list layered on top of the shared global
+    Patient identity — membership plus a free-text personal note, nothing more.
+    Deliberately does not carry a registration flag: whether a patient is registered with
+    this physician is derived (see app/patients/registration.py), independent of whether
+    the physician bothered to add them here. `ondelete="CASCADE"` on patient_id (unlike
+    Claim's RESTRICT below) because this row is disposable per-physician metadata, not
+    billing history — if the shared Patient identity is ever removed, every physician's
+    roster annotation for them should disappear too."""
+
+    __tablename__ = "physician_patients"
+    __table_args__ = (UniqueConstraint("physician_id", "patient_id"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="CASCADE"), index=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
@@ -189,19 +224,17 @@ class Claim(Base):
     __table_args__ = (
         Index("ix_claims_physician_service_date", "physician_id", "service_date"),
         UniqueConstraint("billing_extraction_record_id"),
-        # Composite FK against patients(id, physician_id): the DB rejects a claim whose
-        # patient_id/physician_id pairing doesn't match an actual roster row, closing the
-        # gap where only ClaimService enforced "this patient belongs to this physician".
-        ForeignKeyConstraint(
-            ["patient_id", "physician_id"],
-            ["patients.id", "patients.physician_id"],
-            ondelete="RESTRICT",
-        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
-    patient_id: Mapped[int] = mapped_column(index=True)
+    # Plain FK against the shared, global Patient identity — not scoped to this physician.
+    # Any physician may bill any known patient regardless of "my patients list" membership
+    # (that list is optional personal metadata, not a billing gate; see PhysicianPatient).
+    # RESTRICT so a Patient can never be hard-deleted while any physician's claim still
+    # references them — stricter than before, since it now protects every physician's
+    # billing history, not just the one who happened to roster them.
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="RESTRICT"), index=True)
     service_date: Mapped[date] = mapped_column(Date)
     status: Mapped[str] = mapped_column(String(16), default="brouillon")
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)

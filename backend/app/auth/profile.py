@@ -62,10 +62,13 @@ class ProfileService:
         physician_type: str | None,
         number_of_patients: int | None,
         remuneration_type: str | None,
+        practice_number: str | None,
     ) -> PhysicianAccount:
-        """Writes both halves: the name onto `users`, the practice facts as a new
-        profile version taking effect today."""
-        updated = await self._users.update_full_name(user.id, full_name)
+        """Writes both halves: the name and practice_number onto `users`, the rest of the
+        practice facts as a new profile version taking effect today."""
+        updated = await self._users.update_editable_fields(
+            user.id, full_name=full_name, practice_number=practice_number
+        )
         if updated is None:
             raise RuntimeError(f"user {user.id} vanished mid-request")
         profile = await self._profiles.upsert_current(

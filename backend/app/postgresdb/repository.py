@@ -1,12 +1,14 @@
 """Persistence for the ORM models in models.py — one repository class per model, each
 owning its own session/query handling."""
 
+import re
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from decimal import Decimal
 from typing import Sequence
 
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import delete, func, or_, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.postgresdb.database import async_session
@@ -18,6 +20,7 @@ from app.postgresdb.models import (
     ExtractionRecord,
     Gender,
     Patient,
+    PhysicianPatient,
     PhysicianProfile,
     User,
     UserRole,
@@ -42,6 +45,7 @@ class UserRepository:
         full_name: str,
         role: UserRole,
         is_active: bool = True,
+        practice_number: str | None = None,
     ) -> User:
         async with async_session() as session:
             user = User(
@@ -50,6 +54,7 @@ class UserRepository:
                 full_name=full_name,
                 role=role,
                 is_active=is_active,
+                practice_number=practice_number,
             )
             session.add(user)
             await session.commit()
@@ -63,14 +68,19 @@ class UserRepository:
                 user.last_login_at = datetime.now(timezone.utc)
                 await session.commit()
 
-    async def update_full_name(self, user_id: int, full_name: str) -> User | None:
-        """The only user-editable field left on `users` — the practice facts moved to
-        PhysicianProfileRepository."""
+    async def update_editable_fields(
+        self, user_id: int, *, full_name: str, practice_number: str | None
+    ) -> User | None:
+        """The only user-editable fields left on `users` — the rest of the practice facts
+        moved to PhysicianProfileRepository. `practice_number` stays here rather than
+        joining them: it doesn't change over a career the way panel size does, so it
+        doesn't need their append-only history."""
         async with async_session() as session:
             user = await session.get(User, user_id)
             if user is None:
                 return None
             user.full_name = full_name
+            user.practice_number = practice_number
             await session.commit()
             await session.refresh(user)
             return user
@@ -162,38 +172,48 @@ class PhysicianProfileRepository:
 
 
 class DuplicatePatientRamqNumberError(Exception):
-    """Raised on a create/update that would leave two active (non-deleted) patients on
-    the same physician's roster sharing a NAM. Checked in Python first — same reasoning
-    as ClaimService's billing_extraction_record_id pre-check — so the caller gets a clean
-    409 instead of a raw IntegrityError; ix_patients_physician_ramq_number_active
-    (models.py) is the DB-level backstop for a raw insert/psql session."""
+    """Raised on a create/update that would leave two active (non-deleted) patients
+    sharing a NAM — patients are globally unique by NAM now, not scoped per physician.
+    Checked in Python first — same reasoning as ClaimService's billing_extraction_record_id
+    pre-check — so the caller gets a clean 409 instead of a raw IntegrityError;
+    ix_patients_ramq_number_active (models.py) is the DB-level backstop. The commit itself
+    is also wrapped in try/except IntegrityError (see create/update below): the pre-check
+    alone leaves a TOCTOU race that's now reachable across *any two physicians* racing to
+    create the same real-world patient concurrently, not just one physician double-clicking."""
 
     def __init__(self, ramq_number: str) -> None:
         self.ramq_number = ramq_number
 
 
+class DuplicateRosterEntryError(Exception):
+    """Raised when a physician tries to add a patient already on their own list."""
+
+    def __init__(self, patient_id: int) -> None:
+        self.patient_id = patient_id
+
+
+_NOT_ALNUM_RE = re.compile(r"[^A-Za-z0-9]")
+
+
 class PatientRepository:
-    async def list_for_physician(self, physician_id: int) -> Sequence[Patient]:
-        async with async_session() as session:
-            result = await session.execute(
-                select(Patient)
-                .where(Patient.physician_id == physician_id, Patient.deleted_at.is_(None))
-                .order_by(Patient.full_name)
-            )
-            return result.scalars().all()
+    """Global — a Patient is a single identity per NAM, not owned by any physician. See
+    PhysicianPatientRepository for a physician's own optional "my patients" list.
+
+    Deliberately has no dependency on app.patients.nam (its richer NAM value object,
+    including shape validation) to avoid a circular import — app.patients already depends
+    on app.postgresdb, so the reverse dependency isn't available here. `search` below only
+    needs simple case/spacing-insensitive comparison, not full NAM validation."""
 
     async def _raise_if_duplicate_ramq_number(
         self,
         session: AsyncSession,
         *,
-        physician_id: int,
         ramq_number: str | None,
         exclude_patient_id: int | None = None,
     ) -> None:
         if ramq_number is None:
             return
         query = select(Patient.id).where(
-            Patient.physician_id == physician_id,
             Patient.ramq_number == ramq_number,
             Patient.deleted_at.is_(None),
         )
@@ -206,92 +226,210 @@ class PatientRepository:
     async def create(
         self,
         *,
-        physician_id: int,
         full_name: str,
         ramq_number: str | None,
         date_of_birth: date,
         gender: Gender | None,
-        is_registered_with_physician: bool,
         is_vulnerable: bool,
+        family_doctor_name: str | None = None,
+        family_doctor_practice_number: str | None = None,
     ) -> Patient:
         async with async_session() as session:
-            await self._raise_if_duplicate_ramq_number(
-                session, physician_id=physician_id, ramq_number=ramq_number
-            )
+            await self._raise_if_duplicate_ramq_number(session, ramq_number=ramq_number)
             patient = Patient(
-                physician_id=physician_id,
                 full_name=full_name,
                 ramq_number=ramq_number,
                 date_of_birth=date_of_birth,
                 gender=gender,
-                is_registered_with_physician=is_registered_with_physician,
                 is_vulnerable=is_vulnerable,
+                family_doctor_name=family_doctor_name,
+                family_doctor_practice_number=family_doctor_practice_number,
             )
             session.add(patient)
-            await session.commit()
+            try:
+                await session.commit()
+            except IntegrityError as exc:
+                await session.rollback()
+                raise DuplicatePatientRamqNumberError(ramq_number) from exc
             await session.refresh(patient)
             return patient
 
-    async def get_for_physician(self, patient_id: int, physician_id: int) -> Patient | None:
+    async def get(self, patient_id: int) -> Patient | None:
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id or patient.deleted_at is not None:
+            if patient is None or patient.deleted_at is not None:
                 return None
             return patient
 
-    async def update_for_physician(
+    async def get_or_create_by_ramq_number(
+        self,
+        *,
+        ramq_number: str,
+        full_name: str,
+        date_of_birth: date,
+        gender: Gender | None,
+        is_vulnerable: bool = False,
+        family_doctor_name: str | None = None,
+        family_doctor_practice_number: str | None = None,
+    ) -> Patient:
+        """For scripts/seed_db.py: idempotent across re-runs against a not-quite-empty DB,
+        and safe if two consultation notes ever shared a NAM."""
+        async with async_session() as session:
+            result = await session.execute(
+                select(Patient).where(Patient.ramq_number == ramq_number, Patient.deleted_at.is_(None))
+            )
+            existing = result.scalars().first()
+            if existing is not None:
+                return existing
+
+        return await self.create(
+            full_name=full_name,
+            ramq_number=ramq_number,
+            date_of_birth=date_of_birth,
+            gender=gender,
+            is_vulnerable=is_vulnerable,
+            family_doctor_name=family_doctor_name,
+            family_doctor_practice_number=family_doctor_practice_number,
+        )
+
+    async def search(self, query: str, *, limit: int = 20) -> list[Patient]:
+        """Backs the frontend's patient picker: matches a NAM (case/spacing-insensitive) or
+        a substring of the full name. Requires at least 2 characters so a stray keystroke
+        doesn't fan out into a live full-table scan."""
+        trimmed = query.strip()
+        if len(trimmed) < 2:
+            return []
+        compact_upper = _NOT_ALNUM_RE.sub("", trimmed).upper()
+        capped_limit = min(limit, 50)
+        async with async_session() as session:
+            filters = [func.lower(Patient.full_name).like(f"%{trimmed.lower()}%")]
+            if compact_upper:
+                filters.append(func.upper(Patient.ramq_number) == compact_upper)
+            result = await session.execute(
+                select(Patient)
+                .where(Patient.deleted_at.is_(None), or_(*filters))
+                .order_by(Patient.full_name)
+                .limit(capped_limit)
+            )
+            return list(result.scalars().all())
+
+    async def update(
         self,
         patient_id: int,
-        physician_id: int,
         *,
         full_name: str,
         ramq_number: str | None,
         date_of_birth: date,
         gender: Gender | None,
-        is_registered_with_physician: bool,
         is_vulnerable: bool,
+        family_doctor_name: str | None = None,
+        family_doctor_practice_number: str | None = None,
     ) -> Patient | None:
         async with async_session() as session:
             patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id or patient.deleted_at is not None:
+            if patient is None or patient.deleted_at is not None:
                 return None
             await self._raise_if_duplicate_ramq_number(
-                session,
-                physician_id=physician_id,
-                ramq_number=ramq_number,
-                exclude_patient_id=patient_id,
+                session, ramq_number=ramq_number, exclude_patient_id=patient_id
             )
             patient.full_name = full_name
             patient.ramq_number = ramq_number
             patient.date_of_birth = date_of_birth
             patient.gender = gender
-            patient.is_registered_with_physician = is_registered_with_physician
             patient.is_vulnerable = is_vulnerable
-            await session.commit()
+            patient.family_doctor_name = family_doctor_name
+            patient.family_doctor_practice_number = family_doctor_practice_number
+            try:
+                await session.commit()
+            except IntegrityError as exc:
+                await session.rollback()
+                raise DuplicatePatientRamqNumberError(ramq_number) from exc
             await session.refresh(patient)
             return patient
 
-    async def delete_for_physician(self, patient_id: int, physician_id: int) -> bool:
-        # Soft delete: claim history must stay readable (name intact) after a patient
-        # leaves the roster, and this also guarantees claims.patient_id is never
-        # dangling — see docs/plans/billing-workflow.md, Part 4.
-        async with async_session() as session:
-            patient = await session.get(Patient, patient_id)
-            if patient is None or patient.physician_id != physician_id or patient.deleted_at is not None:
-                return False
-            patient.deleted_at = datetime.now(timezone.utc)
-            await session.commit()
-            return True
-
-    async def get_many_for_physician(self, patient_ids: Sequence[int], physician_id: int) -> list[Patient]:
+    async def get_many(self, patient_ids: Sequence[int]) -> list[Patient]:
         # Deliberately not filtered on deleted_at — same reasoning as
         # ClaimRepository.list_for_physician's join: a bill's patient details (NAM
-        # included) must stay renderable after the patient leaves the roster.
+        # included) must stay renderable after the patient is gone.
+        async with async_session() as session:
+            result = await session.execute(select(Patient).where(Patient.id.in_(patient_ids)))
+            return list(result.scalars().all())
+
+
+class PhysicianPatientRepository:
+    """A physician's own, optional "my patients" list — membership plus a personal note,
+    layered on top of the shared global Patient identity. Not a billing gate: see Claim's
+    plain FK against Patient and ClaimService.create's use of PatientRepository.get, not
+    this class."""
+
+    async def list_roster(self, physician_id: int) -> Sequence[tuple[PhysicianPatient, Patient]]:
         async with async_session() as session:
             result = await session.execute(
-                select(Patient).where(Patient.id.in_(patient_ids), Patient.physician_id == physician_id)
+                select(PhysicianPatient, Patient)
+                .join(Patient, Patient.id == PhysicianPatient.patient_id)
+                .where(PhysicianPatient.physician_id == physician_id, Patient.deleted_at.is_(None))
+                .order_by(Patient.full_name)
             )
-            return list(result.scalars().all())
+            return result.all()
+
+    async def get_for_physician_and_patient(
+        self, physician_id: int, patient_id: int
+    ) -> PhysicianPatient | None:
+        async with async_session() as session:
+            result = await session.execute(
+                select(PhysicianPatient).where(
+                    PhysicianPatient.physician_id == physician_id,
+                    PhysicianPatient.patient_id == patient_id,
+                )
+            )
+            return result.scalars().first()
+
+    async def add(
+        self, physician_id: int, patient_id: int, *, notes: str | None = None
+    ) -> PhysicianPatient:
+        async with async_session() as session:
+            existing = await session.execute(
+                select(PhysicianPatient.id).where(
+                    PhysicianPatient.physician_id == physician_id,
+                    PhysicianPatient.patient_id == patient_id,
+                )
+            )
+            if existing.scalars().first() is not None:
+                raise DuplicateRosterEntryError(patient_id)
+            entry = PhysicianPatient(physician_id=physician_id, patient_id=patient_id, notes=notes)
+            session.add(entry)
+            await session.commit()
+            await session.refresh(entry)
+            return entry
+
+    async def update(
+        self, physician_id: int, patient_id: int, *, notes: str | None
+    ) -> PhysicianPatient | None:
+        async with async_session() as session:
+            result = await session.execute(
+                select(PhysicianPatient).where(
+                    PhysicianPatient.physician_id == physician_id,
+                    PhysicianPatient.patient_id == patient_id,
+                )
+            )
+            entry = result.scalars().first()
+            if entry is None:
+                return None
+            entry.notes = notes
+            await session.commit()
+            await session.refresh(entry)
+            return entry
+
+    async def remove(self, physician_id: int, patient_id: int) -> bool:
+        async with async_session() as session:
+            result = await session.execute(
+                delete(PhysicianPatient).where(
+                    PhysicianPatient.physician_id == physician_id,
+                    PhysicianPatient.patient_id == patient_id,
+                )
+            )
+            await session.commit()
+            return result.rowcount > 0
 
 
 @dataclass
