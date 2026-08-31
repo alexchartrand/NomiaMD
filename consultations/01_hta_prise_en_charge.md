@@ -1,6 +1,3 @@
-# Consultation 01 — Prise en charge, médecine familiale
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Louis-Philippe Gagné, MD, médecine familiale
 **Patient :** Desjardins, Roch — 45 ans (H)

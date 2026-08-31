@@ -1,6 +1,3 @@
-# Consultation 08 — Visite de suivi, problème musculo-squelettique
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Louis-Philippe Gagné, MD, médecine familiale
 **Patient :** Paquette, Nathalie — 45 ans (F)

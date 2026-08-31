@@ -1,6 +1,3 @@
-# Consultation 22 — Urgence (avec procédure)
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Service :** Urgence, CHU fictif
 **Médecin :** Dr. Samuel Boucher, MD, urgentologue
 **Patient :** Lavoie, Chloé — 24 ans (F)

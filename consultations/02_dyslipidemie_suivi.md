@@ -1,6 +1,3 @@
-# Consultation 02 — Visite de suivi, médecine familiale
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Isabelle Roy, MD, médecine familiale
 **Patient :** Beaulieu, Francine — 61 ans (F)

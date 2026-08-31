@@ -1,6 +1,3 @@
-# Consultation 09 — Visite d'évaluation, opinion sur problème musculo-squelettique
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Karim El-Amrani, MD, médecine familiale
 **Patient :** Lachance, Réjean — 63 ans (H)

@@ -1,6 +1,3 @@
-# Consultation 18 — Note de communication interprofessionnelle
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Isabelle Roy, MD, médecine familiale
 **Patient :** Fontaine, Diane — 54 ans (F)
