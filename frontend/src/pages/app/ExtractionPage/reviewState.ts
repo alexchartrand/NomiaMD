@@ -1,11 +1,13 @@
 import type { BillingExtractionResponse } from "../../../api";
 
 // Everything derived from a single extraction result, from the moment it comes back
-// through patient/date selection to the save outcome — grouped so a fresh extraction or a
-// cleared transcript resets all of it atomically instead of via a scattered list of setters.
+// through the save outcome — grouped so a fresh extraction or a cleared transcript resets
+// all of it atomically instead of via a scattered list of setters. The patient itself is
+// NOT here: it's chosen before extraction runs (SourceStep.tsx) and owned by
+// ExtractionPage/index.tsx's own state, since it's fixed for the whole flow rather than
+// derived from a particular extraction result.
 export interface ReviewState {
   result: BillingExtractionResponse | null;
-  selectedRosterId: number | "";
   serviceDate: string;
   selection: Set<number>;
   saving: boolean;
@@ -15,7 +17,6 @@ export interface ReviewState {
 
 export const initialReviewState: ReviewState = {
   result: null,
-  selectedRosterId: "",
   serviceDate: "",
   selection: new Set(),
   saving: false,
@@ -26,7 +27,6 @@ export const initialReviewState: ReviewState = {
 export type ReviewAction =
   | { type: "extracted"; result: BillingExtractionResponse }
   | { type: "cleared" }
-  | { type: "roster-selected"; id: number | "" }
   | { type: "service-date-changed"; date: string }
   | { type: "code-toggled"; index: number }
   | { type: "save-started" }
@@ -40,13 +40,10 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
       return {
         ...initialReviewState,
         result: action.result,
-        selectedRosterId: action.result.patient_suggestion?.matched_patient_id ?? "",
         serviceDate: action.result.encounter_date ?? "",
       };
     case "cleared":
       return initialReviewState;
-    case "roster-selected":
-      return { ...state, selectedRosterId: action.id };
     case "service-date-changed":
       return { ...state, serviceDate: action.date };
     case "code-toggled": {

@@ -1,13 +1,12 @@
-import { Banner, Button, Card, CardContent, CardHeader, CardTitle, Select, TextField } from "../../../components";
+import { Banner, Button, Card, CardContent, CardHeader, CardTitle, Checkbox, Select, TextField } from "../../../components";
 import { GENDERS, type Gender } from "../../../api";
 import type { useCreatePatientForm } from "./useCreatePatientForm";
 
 interface CreatePatientFormProps {
   form: ReturnType<typeof useCreatePatientForm>;
-  dateOfBirthIsEstimated: boolean;
 }
 
-export function CreatePatientForm({ form, dateOfBirthIsEstimated }: CreatePatientFormProps) {
+export function CreatePatientForm({ form }: CreatePatientFormProps) {
   return (
     <Card>
       <CardHeader>
@@ -48,9 +47,6 @@ export function CreatePatientForm({ form, dateOfBirthIsEstimated }: CreatePatien
               value={form.form.date_of_birth}
               onChange={(e) => form.update({ date_of_birth: e.target.value })}
             />
-            {dateOfBirthIsEstimated && (
-              <span className="text-sm text-muted-foreground">estimée d&rsquo;après l&rsquo;âge — à confirmer</span>
-            )}
           </div>
 
           <div className="flex w-full max-w-sm flex-col gap-1.5">
@@ -70,6 +66,37 @@ export function CreatePatientForm({ form, dateOfBirthIsEstimated }: CreatePatien
               ))}
             </Select>
           </div>
+
+          <div className="flex w-full max-w-sm flex-col gap-1.5">
+            <label htmlFor="create-family-doctor-name" className="text-sm text-muted-foreground">
+              Médecin de famille
+            </label>
+            <TextField
+              id="create-family-doctor-name"
+              value={form.form.family_doctor_name}
+              onChange={(e) => form.update({ family_doctor_name: e.target.value })}
+            />
+          </div>
+
+          <div className="flex w-full max-w-sm flex-col gap-1.5">
+            <label htmlFor="create-family-doctor-practice-number" className="text-sm text-muted-foreground">
+              Numéro de pratique du médecin de famille
+            </label>
+            <TextField
+              id="create-family-doctor-practice-number"
+              value={form.form.family_doctor_practice_number}
+              onChange={(e) => form.update({ family_doctor_practice_number: e.target.value })}
+              placeholder="12345"
+            />
+          </div>
+
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Checkbox
+              checked={form.form.is_vulnerable}
+              onCheckedChange={(checked) => form.update({ is_vulnerable: checked === true })}
+            />
+            Clientèle vulnérable
+          </label>
 
           {form.error && (
             <Banner tone="error" className="w-full max-w-sm">

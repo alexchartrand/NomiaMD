@@ -12,6 +12,7 @@ export { Checkbox } from "./Checkbox";
 export { TextArea } from "./TextArea";
 export { TextField } from "./TextField";
 export { Select } from "./Select";
+export { PatientSearchSelect } from "./PatientSearchSelect";
 export { Banner } from "./Banner";
 export { Modal } from "./Modal";
 export { Spinner } from "./Spinner";

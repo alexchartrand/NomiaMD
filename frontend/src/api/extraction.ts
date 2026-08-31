@@ -1,5 +1,4 @@
 import { unwrap } from "./http";
-import type { Gender } from "./patients";
 
 export interface ExtractedFee {
   amount: number | null;
@@ -31,20 +30,23 @@ export interface ExtractionResult {
   created_at: string;
 }
 
-export interface PatientSuggestionExtracted {
+// What the transcript itself said about the patient — for display alongside the mismatch
+// flags below, never used to prefill anything now that the patient is chosen before
+// extraction runs.
+export interface ExtractedIdentitySummary {
   name_as_stated: string | null;
   ramq_number_as_stated: string | null;
-  suggested_full_name: string | null;
-  suggested_ramq_number: string | null;
-  suggested_date_of_birth: string | null; // ISO date (YYYY-MM-DD)
-  date_of_birth_is_estimated: boolean;
-  suggested_gender: Gender | null;
   age_years: number | null;
 }
 
-export interface PatientSuggestion {
-  extracted: PatientSuggestionExtracted | null;
-  matched_patient_id: number | null;
+// Each `*_mismatch` is null when the transcript didn't state enough to compare, and a
+// bool otherwise — a safety-net warning, not a gate: the physician already chose this
+// patient before extraction ran (see extractBillingCodes' patientId param).
+export interface PatientVerification {
+  extracted: ExtractedIdentitySummary;
+  nam_mismatch: boolean | null;
+  name_mismatch: boolean | null;
+  age_mismatch: boolean | null;
 }
 
 export interface BillingExtractionResponse {
@@ -53,15 +55,19 @@ export interface BillingExtractionResponse {
   billing_extraction_record_id: number;
   encounter_date: string | null; // ISO date (YYYY-MM-DD)
   encounter_date_raw: string | null;
-  patient_suggestion: PatientSuggestion | null;
+  patient_verification: PatientVerification | null;
 }
 
-export async function extractBillingCodes(transcript: string, source: string): Promise<BillingExtractionResponse> {
+export async function extractBillingCodes(
+  transcript: string,
+  source: string,
+  patientId: number,
+): Promise<BillingExtractionResponse> {
   const response = await fetch("/api/extract", {
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ transcript, task: "billing_codes", source: { system: source } }),
+    body: JSON.stringify({ transcript, task: "billing_codes", patient_id: patientId, source: { system: source } }),
   });
   return unwrap<BillingExtractionResponse>(response);
 }

@@ -27,6 +27,7 @@ export default function ProfilePage() {
   const [physicianType, setPhysicianType] = useState<PhysicianType | "">("");
   const [numberOfPatients, setNumberOfPatients] = useState("");
   const [remunerationType, setRemunerationType] = useState<RemunerationType | "">("");
+  const [practiceNumber, setPracticeNumber] = useState("");
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState(false);
   const [profileSubmitting, setProfileSubmitting] = useState(false);
@@ -44,6 +45,7 @@ export default function ProfilePage() {
     setPhysicianType((user.physician_type as PhysicianType | null) ?? "");
     setNumberOfPatients(user.number_of_patients != null ? String(user.number_of_patients) : "");
     setRemunerationType((user.remuneration_type as RemunerationType | null) ?? "");
+    setPracticeNumber(user.practice_number ?? "");
   }, [user]);
 
   async function handleProfileSubmit(event: FormEvent) {
@@ -57,6 +59,12 @@ export default function ProfilePage() {
       return;
     }
 
+    const trimmedPracticeNumber = practiceNumber.trim();
+    if (trimmedPracticeNumber !== "" && !/^\d{5,6}$/.test(trimmedPracticeNumber)) {
+      setProfileError("Le numéro de pratique doit contenir 5 ou 6 chiffres.");
+      return;
+    }
+
     setProfileSubmitting(true);
     try {
       const updated = await updateProfile({
@@ -64,6 +72,7 @@ export default function ProfilePage() {
         physician_type: physicianType === "" ? null : physicianType,
         number_of_patients: parsedCount,
         remuneration_type: remunerationType === "" ? null : remunerationType,
+        practice_number: trimmedPracticeNumber === "" ? null : trimmedPracticeNumber,
       });
       refreshUser(updated);
       setProfileSuccess(true);
@@ -179,6 +188,18 @@ export default function ProfilePage() {
                   </option>
                 ))}
               </Select>
+            </div>
+
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-practice-number" className="text-sm text-muted-foreground">
+                Numéro de pratique
+              </label>
+              <TextField
+                id="profile-practice-number"
+                value={practiceNumber}
+                onChange={(event) => setPracticeNumber(event.target.value)}
+                placeholder="12345"
+              />
             </div>
 
             {profileError && (

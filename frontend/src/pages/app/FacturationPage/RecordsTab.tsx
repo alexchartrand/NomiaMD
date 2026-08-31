@@ -4,7 +4,7 @@ import {
   deleteClaim,
   describeError,
   listClaims,
-  listPatients,
+  listRoster,
   type Claim,
   type ClaimFilters,
   type ClaimStatus,
@@ -44,7 +44,10 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {
-    listPatients()
+    // Roster-scoped, not every known patient: claims are no longer roster-gated (see
+    // app/postgresdb/models.py's Patient), so a patient billed here but never added to
+    // "my patients" won't appear in this filter dropdown yet — a known minor gap.
+    listRoster()
       .then(setPatients)
       .catch((err) => setListError(describeError(err)));
   }, []);

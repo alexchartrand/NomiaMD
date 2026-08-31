@@ -1,12 +1,11 @@
 import { useMemo, useReducer, useState, type FormEvent } from "react";
 import { cn } from "@/lib/utils";
-import { createClaim, describeError, DuplicateClaimError, extractBillingCodes } from "../../../api";
+import { createClaim, describeError, DuplicateClaimError, extractBillingCodes, type Patient } from "../../../api";
 import { Banner } from "../../../components";
 import { SourceStep } from "./SourceStep";
 import { ReviewStep } from "./ReviewStep";
 import { useSamplePatients } from "./useSamplePatients";
-import { useRoster } from "./useRoster";
-import { useCreatePatientForm } from "./useCreatePatientForm";
+import { useCreatePatientForm } from "../patients/useCreatePatientForm";
 import { initialReviewState, reviewReducer } from "./reviewState";
 
 export default function ExtractionPage() {
@@ -14,11 +13,12 @@ export default function ExtractionPage() {
   const [transcript, setTranscript] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // Chosen before extraction runs (SourceStep.tsx) and fixed for the rest of the flow —
+  // not part of the review reducer below, which is scoped to a single extraction result.
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   const [review, dispatch] = useReducer(reviewReducer, initialReviewState);
   const step: 1 | 2 = !review.result ? 1 : 2;
-
-  const { roster, error: rosterError, reload: loadRoster } = useRoster();
 
   // Editing the transcript or changing the sample patient after an extraction (including
   // via the review page's "back" link) must clear everything derived from it — otherwise
@@ -39,8 +39,7 @@ export default function ExtractionPage() {
 
   const createPatientForm = useCreatePatientForm({
     onCreated: (patient) => {
-      loadRoster();
-      dispatch({ type: "roster-selected", id: patient.id });
+      setSelectedPatient(patient);
     },
   });
 
@@ -56,12 +55,12 @@ export default function ExtractionPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!source) return;
+    if (!source || !selectedPatient) return;
     setLoading(true);
     setError(null);
     clearResult();
     try {
-      const response = await extractBillingCodes(transcript, source);
+      const response = await extractBillingCodes(transcript, source, selectedPatient.id);
       dispatch({ type: "extracted", result: response });
     } catch (err) {
       setError(describeError(err));
@@ -75,13 +74,7 @@ export default function ExtractionPage() {
   }
 
   function startCreatePatient() {
-    const extracted = review.result?.patient_suggestion?.extracted;
-    createPatientForm.open({
-      full_name: extracted?.suggested_full_name ?? "",
-      ramq_number: extracted?.suggested_ramq_number ?? "",
-      date_of_birth: extracted?.suggested_date_of_birth ?? "",
-      gender: extracted?.suggested_gender ?? null,
-    });
+    createPatientForm.open();
   }
 
   const selectedCodes = useMemo(() => {
@@ -94,13 +87,13 @@ export default function ExtractionPage() {
   const codesMissingFee = selectedCodes.filter((c) => c.fee.amount == null).length;
 
   async function handleSave(confirmDuplicate: boolean) {
-    const { result, selectedRosterId, serviceDate, selection } = review;
-    if (!result || !selectedRosterId || !serviceDate || selection.size === 0) return;
+    const { result, serviceDate, selection } = review;
+    if (!result || !selectedPatient || !serviceDate || selection.size === 0) return;
     dispatch({ type: "save-started" });
     try {
       await createClaim(
         {
-          patient_id: selectedRosterId,
+          patient_id: selectedPatient.id,
           service_date: serviceDate,
           billing_extraction_record_id: result.billing_extraction_record_id,
           summary_extraction_record_id: result.summary_extraction_record_id,
@@ -187,21 +180,20 @@ export default function ExtractionPage() {
           onTranscriptChange={handleTranscriptChange}
           onSubmit={handleSubmit}
           loading={loading}
+          selectedPatient={selectedPatient}
+          onSelectPatient={setSelectedPatient}
+          createPatientForm={createPatientForm}
+          onStartCreatePatient={startCreatePatient}
         />
       )}
 
       {error && <Banner tone="error">{error}</Banner>}
 
-      {step === 2 && review.result && (
+      {step === 2 && review.result && selectedPatient && (
         <ReviewStep
           result={review.result}
+          patient={selectedPatient}
           onBack={clearResult}
-          roster={roster}
-          rosterError={rosterError}
-          selectedRosterId={review.selectedRosterId}
-          onSelectRoster={(id) => dispatch({ type: "roster-selected", id })}
-          onStartCreatePatient={startCreatePatient}
-          createPatientForm={createPatientForm}
           serviceDate={review.serviceDate}
           onServiceDateChange={(date) => dispatch({ type: "service-date-changed", date })}
           selection={review.selection}
@@ -211,7 +203,7 @@ export default function ExtractionPage() {
           saving={review.saving}
           saveError={review.saveError}
           saved={review.saved}
-          canSave={Boolean(review.selectedRosterId) && Boolean(review.serviceDate) && review.selection.size > 0}
+          canSave={Boolean(review.serviceDate) && review.selection.size > 0}
           onSave={() => handleSave(false)}
         />
       )}

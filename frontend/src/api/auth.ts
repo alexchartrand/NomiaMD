@@ -14,6 +14,8 @@ export interface UserOut {
   physician_type: string | null;
   number_of_patients: number | null;
   remuneration_type: string | null;
+  // Unlike the fields above, not versioned — see the User model's docstring for why.
+  practice_number: string | null;
 }
 
 // Kept in sync by hand with PhysicianType in backend/app/postgresdb/models.py.
@@ -29,6 +31,7 @@ export interface ProfileUpdateRequest {
   physician_type: PhysicianType | null;
   number_of_patients: number | null;
   remuneration_type: RemunerationType | null;
+  practice_number: string | null;
 }
 
 export interface PasswordChangeRequest {

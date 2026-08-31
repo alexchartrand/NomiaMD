@@ -1,72 +1,42 @@
-import { Banner, Button, Select } from "../../../components";
-import type { Patient, PatientSuggestionExtracted } from "../../../api";
-import { CreatePatientForm } from "./CreatePatientForm";
-import type { useCreatePatientForm } from "./useCreatePatientForm";
+import { Banner } from "../../../components";
+import type { Patient, PatientVerification } from "../../../api";
 
 interface PatientMatchSectionProps {
-  matchedId: number | null;
-  matchedPatientName: string | null | undefined;
-  extracted: PatientSuggestionExtracted | null;
-  roster: Patient[];
-  rosterError: string | null;
-  selectedRosterId: number | "";
-  onSelectRoster: (id: number | "") => void;
-  onStartCreatePatient: () => void;
-  createPatientForm: ReturnType<typeof useCreatePatientForm>;
+  patient: Patient;
+  verification: PatientVerification | null;
 }
 
-export function PatientMatchSection({
-  matchedId,
-  matchedPatientName,
-  extracted,
-  roster,
-  rosterError,
-  selectedRosterId,
-  onSelectRoster,
-  onStartCreatePatient,
-  createPatientForm,
-}: PatientMatchSectionProps) {
+// The patient was fixed before extraction ran (SourceStep.tsx) — this just shows who was
+// chosen and, if the transcript itself describes a different identity, a mismatch
+// warning. Never a picker any more: to change the patient, the physician goes back to the
+// source step.
+export function PatientMatchSection({ patient, verification }: PatientMatchSectionProps) {
+  const warnings: string[] = [];
+  if (verification?.nam_mismatch) {
+    warnings.push(
+      `Le NAM mentionné dans la transcription (${verification.extracted.ramq_number_as_stated ?? "inconnu"}) ne correspond pas au patient sélectionné.`,
+    );
+  }
+  if (verification?.name_mismatch) {
+    warnings.push(
+      `Le nom mentionné dans la transcription (${verification.extracted.name_as_stated ?? "inconnu"}) ne correspond pas au patient sélectionné.`,
+    );
+  }
+  if (verification?.age_mismatch) {
+    warnings.push("L'âge mentionné dans la transcription ne correspond pas au patient sélectionné.");
+  }
+
   return (
     <div className="my-4 flex flex-col items-stretch gap-2">
-      {matchedId != null ? (
-        <Banner tone="success">
-          Patient identifié par son NAM : {matchedPatientName ?? extracted?.suggested_full_name}
+      <Banner tone={warnings.length > 0 ? "warning" : "success"}>
+        Patient : {patient.full_name}
+        {patient.ramq_number ? ` (${patient.ramq_number})` : ""}
+      </Banner>
+      {warnings.map((warning) => (
+        <Banner key={warning} tone="warning">
+          ⚠ {warning}
         </Banner>
-      ) : extracted?.suggested_ramq_number ? (
-        <Banner tone="warning">
-          Aucun patient de votre liste ne correspond au NAM &laquo; {extracted.suggested_ramq_number} &raquo;
-          {extracted.suggested_full_name ? ` (${extracted.suggested_full_name})` : ""}
-        </Banner>
-      ) : (
-        <Banner tone="warning">Aucun NAM n&rsquo;a été trouvé dans la note — sélectionnez le patient</Banner>
-      )}
-
-      <label htmlFor="roster-select" className="text-sm text-muted-foreground">
-        Patient
-      </label>
-      <Select
-        id="roster-select"
-        value={selectedRosterId}
-        onChange={(e) => onSelectRoster(e.target.value ? Number(e.target.value) : "")}
-      >
-        <option value="">Sélectionnez un patient...</option>
-        {roster.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.full_name}
-          </option>
-        ))}
-      </Select>
-      {rosterError && <Banner tone="error">{rosterError}</Banner>}
-
-      {matchedId == null && (
-        <Button type="button" variant="secondary" className="self-start" onClick={onStartCreatePatient}>
-          Créer ce patient
-        </Button>
-      )}
-
-      {createPatientForm.visible && (
-        <CreatePatientForm form={createPatientForm} dateOfBirthIsEstimated={extracted?.date_of_birth_is_estimated ?? false} />
-      )}
+      ))}
     </div>
   );
 }
