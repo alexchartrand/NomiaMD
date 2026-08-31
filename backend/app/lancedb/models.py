@@ -44,6 +44,10 @@ class DocumentRow(BaseModel):
     id: str
     text: str
     title: str
+    # The source document's own URL (e.g. the RAMQ manual page/PDF this chunk was cut from)
+    # — propagated into citation metadata so the model can cite a real link, not just a
+    # section/page label (see engine.py's _citation_prefix).
+    url: str
     section_number: str | None = None
     page_start: int | None = None
     page_end: int | None = None

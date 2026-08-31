@@ -38,6 +38,7 @@ _DOCUMENT_ROW_COLUMNS = [
     "id",
     "text",
     "title",
+    "url",
     "section_number",
     "page_start",
     "page_end",

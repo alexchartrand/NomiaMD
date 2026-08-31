@@ -8,7 +8,7 @@ from app.ramq_chatbot.fusion import ReciprocalRankFuser
 
 
 def _row(row_id: str) -> DocumentRow:
-    return DocumentRow(id=row_id, text=f"text {row_id}", title="Guide")
+    return DocumentRow(id=row_id, text=f"text {row_id}", title="Guide", url="https://example.test")
 
 
 def test_a_row_appearing_first_in_every_query_ranks_first():

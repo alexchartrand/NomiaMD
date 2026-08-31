@@ -42,6 +42,7 @@ class DocumentRowConverter(IConverter):
     def convert(self, data: DocumentRow) -> TextNode:
         metadata: dict = {
             "title": data.title,
+            "url": data.url,
             "section_references": data.section_references or [],
             "code_references": data.code_references or [],
         }

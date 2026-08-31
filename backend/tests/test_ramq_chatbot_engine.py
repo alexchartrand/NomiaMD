@@ -215,6 +215,30 @@ async def test_expansion_node_gets_a_distinct_citation_label():
     assert "[Section référencée 2.2.6] Texte" in spy.message_lists[0][-1].content
 
 
+async def test_context_entry_includes_url_alongside_section_and_page():
+    spy = _SpyLLM()
+    node = _node_with_metadata(
+        "Texte",
+        {"section_number": "2.2.6", "page_start": 14, "url": "https://ramq.example/manuel#2.2.6"},
+    )
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([node]), llm=spy)
+
+    await engine.acustom_query("Ma question")
+
+    context = spy.message_lists[0][-1].content
+    assert "[Section 2.2.6, p.14, https://ramq.example/manuel#2.2.6] Texte" in context
+
+
+async def test_context_entry_falls_back_to_url_only_when_no_section_is_tagged():
+    spy = _SpyLLM()
+    node = _node_with_metadata("Texte", {"url": "https://ramq.example/manuel"})
+    engine = RAMQManualQueryEngine(retriever=_StubRetriever([node]), llm=spy)
+
+    await engine.acustom_query("Ma question")
+
+    assert "[https://ramq.example/manuel] Texte" in spy.message_lists[0][-1].content
+
+
 async def test_context_entry_with_no_metadata_falls_back_to_bare_text():
     # Regression guard: test_acustom_query_joins_retrieved_node_texts_into_context (above)
     # asserts the exact substring "Texte A\n\nTexte B" — a node with no citation metadata

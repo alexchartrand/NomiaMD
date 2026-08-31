@@ -23,7 +23,9 @@ class _FakeDocumentRepository(IDocumentRepository):
 
 
 def _row(row_id: str, section_number: str | None) -> DocumentRow:
-    return DocumentRow(id=row_id, text=f"text {row_id}", title="Guide", section_number=section_number)
+    return DocumentRow(
+        id=row_id, text=f"text {row_id}", title="Guide", url="https://example.test", section_number=section_number
+    )
 
 
 def _lookup(rows: list[DocumentRow]) -> ManualSectionLookup:

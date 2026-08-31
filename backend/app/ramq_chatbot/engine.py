@@ -56,20 +56,30 @@ def _build_messages(
 
 
 def _citation_prefix(metadata: dict) -> str:
-    """Builds a "[Section 2.2.6, p.14-16]"-style prefix from a node's metadata, so the model
-    can follow the system prompt's "cite source" instruction. All fields optional. Nodes
-    ReferenceExpander pulled in (metadata["is_expansion"]) get a distinct label."""
+    """Builds a "[Section 2.2.6, p.14-16, https://...]"-style prefix from a node's metadata,
+    so the model can follow the system prompt's "cite source" instruction. All fields
+    optional. Nodes ReferenceExpander pulled in (metadata["is_expansion"]) get a distinct
+    label. `url` (the source document's own link) is appended whenever present — unlike
+    section/page, it isn't gated on section_number, since it's the only citation available
+    for a chunk ramq-ingestion didn't tag with a section."""
+    parts = []
+
     section = metadata.get("section_number")
-    if not section:
+    if section:
+        label = "Section référencée" if metadata.get("is_expansion") else "Section"
+        parts.append(f"{label} {section}")
+
+        page_start = metadata.get("page_start")
+        page_end = metadata.get("page_end")
+        if page_start is not None:
+            parts.append(f"p.{page_start}" if page_end in (None, page_start) else f"p.{page_start}-{page_end}")
+
+    url = metadata.get("url")
+    if url:
+        parts.append(url)
+
+    if not parts:
         return ""
-
-    label = "Section référencée" if metadata.get("is_expansion") else "Section"
-    parts = [f"{label} {section}"]
-
-    page_start = metadata.get("page_start")
-    page_end = metadata.get("page_end")
-    if page_start is not None:
-        parts.append(f"p.{page_start}" if page_end in (None, page_start) else f"p.{page_start}-{page_end}")
 
     return f"[{', '.join(parts)}] "
 

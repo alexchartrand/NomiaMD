@@ -3,8 +3,8 @@ mapping from the raw LanceDB row shape (CodeRow) to this backend's own internal 
 
 import pytest
 
-from app.lancedb.converter import CodesRowConverter, IConverter
-from app.lancedb.models import CodeRow, CodeRowFee
+from app.lancedb.converter import CodesRowConverter, DocumentRowConverter, IConverter
+from app.lancedb.models import CodeRow, CodeRowFee, DocumentRow
 from app.ramq_codes.models import Code
 
 
@@ -69,3 +69,11 @@ def test_convert_maps_every_fee_in_a_multi_fee_row():
         (33.15, "Jour", "Cabinet", None),
         (50.00, "Soir", "Domicile", "20%"),
     ]
+
+
+def test_document_row_converter_carries_the_source_url_into_metadata():
+    row = DocumentRow(id="A", text="texte", title="Guide", url="https://ramq.example/manuel#2.2.6")
+
+    node = DocumentRowConverter().convert(row)
+
+    assert node.metadata["url"] == "https://ramq.example/manuel#2.2.6"

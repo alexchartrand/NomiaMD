@@ -102,6 +102,7 @@ def _row(row_id: str, text: str, metadata: dict | None = None) -> DocumentRow:
         id=row_id,
         text=text,
         title="Guide",
+        url="https://example.test",
         section_number=metadata.get("section_number"),
         section_references=metadata.get("section_references"),
         code_references=metadata.get("code_references"),
