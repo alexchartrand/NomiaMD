@@ -21,10 +21,14 @@ TRANSCRIPT = (
 )
 
 USER = User(id=1, email="doc@example.test", hashed_password="x", full_name="Dr. Doe", role=UserRole.PHYSICIAN)
+PATIENT_ID = 42
 
 
-class _NoopPatientSuggestionService:
-    async def suggest(self, extracted, *, physician_id, on_date):
+class _NoopPatientRepository:
+    """No patient row exists for PATIENT_ID — _verify_patient degrades to None, same as a
+    transcript with nothing to compare."""
+
+    async def get(self, patient_id):
         return None
 
 
@@ -33,10 +37,8 @@ class _FakeContextBuilder:
         self._context = context
         self.build_calls: list[dict] = []
 
-    async def build(self, *, user, matched_patient_id, encounter_date):
-        self.build_calls.append(
-            {"user": user, "matched_patient_id": matched_patient_id, "encounter_date": encounter_date}
-        )
+    async def build(self, *, user, patient_id, encounter_date):
+        self.build_calls.append({"user": user, "patient_id": patient_id, "encounter_date": encounter_date})
         return self._context
 
 
@@ -57,21 +59,22 @@ async def _run_pipeline(context: BillingContext = BillingContext()):
             _response(MOCK_SUMMARY_RESULT),
             _response(MOCK_BILLING_RESULT),
         ])
-        summary_result, billing_result, patient_suggestion = await run_billing_codes_pipeline(
+        summary_result, billing_result, patient_verification = await run_billing_codes_pipeline(
             TRANSCRIPT,
             user=USER,
+            patient_id=PATIENT_ID,
             context_builder=context_builder,
-            patient_suggestion_service=_NoopPatientSuggestionService(),
+            patient_repository=_NoopPatientRepository(),
         )
-    return summary_result, billing_result, patient_suggestion, mock_get_client, context_builder
+    return summary_result, billing_result, patient_verification, mock_get_client, context_builder
 
 
 async def test_pipeline_runs_all_three_stages():
-    summary_result, billing_result, patient_suggestion, mock_get_client, _ = await _run_pipeline()
+    summary_result, billing_result, patient_verification, mock_get_client, _ = await _run_pipeline()
 
     assert summary_result.task == "consultation_summary"
     assert billing_result.task == "billing_codes"
-    assert patient_suggestion is None
+    assert patient_verification is None
     assert mock_get_client.return_value.achat.call_count == 2
 
 
@@ -109,5 +112,5 @@ async def test_context_builder_receives_the_encounter_date_parsed_from_the_summa
     _s, _b, _p, _client, context_builder = await _run_pipeline()
 
     assert context_builder.build_calls == [
-        {"user": USER, "matched_patient_id": None, "encounter_date": None}
+        {"user": USER, "patient_id": PATIENT_ID, "encounter_date": None}
     ]

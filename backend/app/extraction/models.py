@@ -7,7 +7,6 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel, Field
 
-from app.postgresdb import Gender
 from app.ramq_codes import BillingCodesResult
 
 
@@ -21,6 +20,10 @@ class TranscriptSource(BaseModel):
 class ExtractionRequest(BaseModel):
     transcript: str
     task: str = Field(description="Registered task name — /extract only accepts 'billing_codes'")
+    # The physician now picks the patient before extraction runs (see CLAUDE.md's
+    # billing_codes pipeline description) rather than the pipeline suggesting a roster
+    # match afterward — required so BillingContextBuilder always has a patient to resolve.
+    patient_id: int
     source: TranscriptSource | None = None
 
 
@@ -37,27 +40,25 @@ class ExtractionResult(BaseModel, Generic[ResultT]):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
-class PatientSuggestionExtracted(BaseModel):
-    """What the note said (name_as_stated/ramq_number_as_stated/age_years, as extracted)
-    plus what's derived from it (the suggested_* prefill fields) — flattened into one wire
-    shape since the UI's inline create form consumes them together."""
+class ExtractedIdentitySummary(BaseModel):
+    """What the transcript itself said about the patient (name_as_stated/
+    ramq_number_as_stated/age_years, as extracted) — for display alongside the mismatch
+    flags below, never used to prefill anything now that the patient is chosen up front."""
 
     name_as_stated: str | None
     ramq_number_as_stated: str | None
-    suggested_full_name: str | None
-    suggested_ramq_number: str | None
-    suggested_date_of_birth: date | None
-    date_of_birth_is_estimated: bool
-    suggested_gender: Gender | None
     age_years: float | None
 
 
-class PatientSuggestionOut(BaseModel):
-    """`extracted` is routinely present while `matched_patient_id` is null — that *is* the
-    create-inline case, since the only way to get a match is an exact NAM hit."""
+class PatientVerificationOut(BaseModel):
+    """Each `*_mismatch` is null when the transcript didn't state enough to compare, and a
+    bool otherwise — a safety-net warning, not a gate: the physician already chose this
+    patient before extraction ran (see ExtractionRequest.patient_id)."""
 
-    extracted: PatientSuggestionExtracted | None
-    matched_patient_id: int | None
+    extracted: ExtractedIdentitySummary
+    nam_mismatch: bool | None
+    name_mismatch: bool | None
+    age_mismatch: bool | None
 
 
 class BillingExtractionResponse(BaseModel):
@@ -71,4 +72,4 @@ class BillingExtractionResponse(BaseModel):
     billing_extraction_record_id: int
     encounter_date: date | None
     encounter_date_raw: str | None
-    patient_suggestion: PatientSuggestionOut | None
+    patient_verification: PatientVerificationOut | None

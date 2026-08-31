@@ -7,6 +7,7 @@ Uses the small tests/fixtures/reference_data_test.json table (via the small_refe
 fixture in conftest.py) rather than the real llama_index vector store, so these tests don't
 depend on its size, network access, or exact content."""
 
+import itertools
 import json
 from datetime import date
 from types import SimpleNamespace
@@ -20,9 +21,6 @@ from app.postgresdb import Gender, PatientRepository
 from app.ramq_codes import BillingCodesInput, BillingContext
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
-
-# default_authenticated_user (conftest.py, autouse) injects a fake physician with this id.
-PHYSICIAN_ID = 1
 
 SAMPLE_TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "
@@ -186,7 +184,7 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
     assert "1 candidate code" in result.result.notes
 
 
-def _extract(client: TestClient, *, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT):
+def _extract(client: TestClient, *, patient_id: int, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT):
     with patch("app.extraction.engine.get_client") as mock_get_client:
         mock_get_client.return_value.achat = AsyncMock(
             side_effect=[_mock_response(summary), _mock_response(billing)]
@@ -196,17 +194,35 @@ def _extract(client: TestClient, *, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RE
             json={
                 "transcript": SAMPLE_TRANSCRIPT,
                 "task": "billing_codes",
+                "patient_id": patient_id,
                 "source": {"system": "plume_ai", "encounter_id": "enc-123"},
             },
         )
 
 
-def test_extract_endpoint_end_to_end():
+# Patients are globally unique by NAM now, and the test DB is shared across the whole
+# session (see conftest.py) — a default of None generates a fresh NAM per call so tests
+# that don't care about the exact value never collide with each other.
+_ramq_numbers = itertools.count(1)
+
+
+async def _seed_patient(*, ramq_number=None, full_name="Louise Tremblay"):
+    return await PatientRepository().create(
+        full_name=full_name,
+        ramq_number=ramq_number or f"EXTR{next(_ramq_numbers):08d}",
+        date_of_birth=date(1958, 2, 15),
+        gender=Gender.FEMALE,
+        is_vulnerable=False,
+    )
+
+
+async def test_extract_endpoint_end_to_end():
     # Using TestClient as a context manager triggers the FastAPI lifespan (init_db()).
     # billing_codes is now a two-stage pipeline (consultation_summary, then billing_codes
     # off that summary) — two chat-completion calls happen, so mock two responses in order.
     with TestClient(app) as client:
-        response = _extract(client)
+        patient = await _seed_patient()
+        response = _extract(client, patient_id=patient.id)
 
     assert response.status_code == 200
     body = response.json()
@@ -219,46 +235,56 @@ def test_extract_endpoint_end_to_end():
     assert body["encounter_date_raw"] is None
 
 
-async def test_extract_endpoint_matches_roster_patient_by_nam():
+async def test_extract_endpoint_requires_a_known_patient_id():
     with TestClient(app) as client:
-        # Entering the TestClient context triggers the lifespan's init_db() first, so the
-        # patients table is guaranteed to exist before this direct repository seed.
-        patient = await PatientRepository().create(
-            physician_id=PHYSICIAN_ID,
-            full_name="Louise Tremblay",
-            ramq_number="TREL58021501",
-            date_of_birth=date(1958, 2, 15),
-            gender=Gender.FEMALE,
-            is_registered_with_physician=True,
-            is_vulnerable=False,
-        )
-        response = _extract(client)
+        response = _extract(client, patient_id=999999)
+
+    assert response.status_code == 404
+
+
+async def test_extract_endpoint_reports_no_mismatch_when_transcript_agrees_with_the_chosen_patient():
+    with TestClient(app) as client:
+        patient = await _seed_patient(ramq_number="TREL58021501", full_name="Louise Tremblay")
+        response = _extract(client, patient_id=patient.id)
 
     assert response.status_code == 200
-    suggestion = response.json()["patient_suggestion"]
-    assert suggestion["matched_patient_id"] == patient.id
-    assert suggestion["extracted"]["name_as_stated"] == "Tremblay, Louise"
+    verification = response.json()["patient_verification"]
+    assert verification["nam_mismatch"] is False
+    assert verification["name_mismatch"] is False
+    assert verification["extracted"]["name_as_stated"] == "Tremblay, Louise"
 
 
-async def test_extract_endpoint_no_nam_in_note_no_match_but_extracted_present():
+async def test_extract_endpoint_reports_nam_mismatch_when_transcript_disagrees():
+    with TestClient(app) as client:
+        # Chosen patient's NAM differs from what the (mocked) transcript extraction states.
+        patient = await _seed_patient(ramq_number="AUTR00000000", full_name="Quelqu'un Dautre")
+        response = _extract(client, patient_id=patient.id)
+
+    assert response.status_code == 200
+    verification = response.json()["patient_verification"]
+    assert verification["nam_mismatch"] is True
+    assert verification["name_mismatch"] is True
+
+
+async def test_extract_endpoint_no_nam_in_transcript_leaves_nam_mismatch_unknown():
     summary_without_nam = {
         **MOCK_SUMMARY_RESULT,
         "patient_information": {**MOCK_SUMMARY_RESULT["patient_information"], "ramq_number_as_stated": None},
     }
 
     with TestClient(app) as client:
-        response = _extract(client, summary=summary_without_nam)
+        patient = await _seed_patient()
+        response = _extract(client, patient_id=patient.id, summary=summary_without_nam)
 
     assert response.status_code == 200
-    suggestion = response.json()["patient_suggestion"]
-    assert suggestion["matched_patient_id"] is None
-    assert suggestion["extracted"]["name_as_stated"] == "Tremblay, Louise"
-    assert suggestion["extracted"]["suggested_full_name"] == "Louise Tremblay"
+    verification = response.json()["patient_verification"]
+    assert verification["nam_mismatch"] is None
+    assert verification["extracted"]["name_as_stated"] == "Tremblay, Louise"
 
 
 def test_unknown_task_returns_400():
     with TestClient(app) as client:
         response = client.post(
-            "/extract", json={"transcript": "hello", "task": "not_a_real_task"}
+            "/extract", json={"transcript": "hello", "task": "not_a_real_task", "patient_id": 1}
         )
     assert response.status_code == 400

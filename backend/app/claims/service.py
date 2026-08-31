@@ -103,7 +103,10 @@ class ClaimService:
         if not deduped_selected:
             raise EmptySelectionError()
 
-        patient = await self._patient_repository.get_for_physician(patient_id, physician_id)
+        # Patient is a shared, global identity now — any physician may claim any known
+        # patient regardless of "my patients list" membership (that list is optional
+        # personal metadata, not a billing gate; see app/postgresdb/models.py's Patient).
+        patient = await self._patient_repository.get(patient_id)
         if patient is None:
             raise PatientNotFoundError()
 

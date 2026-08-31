@@ -23,10 +23,12 @@ from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.postgresdb import User, UserRole, init_db  # noqa: E402
 from app.sample_patients import get_sample_patients  # noqa: E402
 
-# Not a real logged-in physician — this script has no login flow, so BillingContextBuilder
-# and PatientSuggestionService just find no profile/roster rows for this id and degrade
-# gracefully (see app/ramq_codes/context_builder.py), same as a brand-new account would.
+# Not a real logged-in physician, and not a real chosen patient — this script has no login
+# or patient-picker flow, so BillingContextBuilder just finds no profile/patient rows for
+# these ids and degrades gracefully (see app/ramq_codes/context_builder.py), same as a
+# brand-new account/patient would.
 _SCRIPT_USER = User(id=0, email="script@example.test", hashed_password="", full_name="Script", role=UserRole.PHYSICIAN)
+_SCRIPT_PATIENT_ID = 0
 
 
 def load_sample_transcript() -> str:
@@ -40,16 +42,16 @@ async def main() -> None:
 
     await init_db()
     async with application_services():
-        summary_result, billing_result, patient_suggestion = await run_billing_codes_pipeline(
-            transcript, user=_SCRIPT_USER
+        summary_result, billing_result, patient_verification = await run_billing_codes_pipeline(
+            transcript, user=_SCRIPT_USER, patient_id=_SCRIPT_PATIENT_ID
         )
 
     print("--- consultation summary ---")
     print(summary_result.model_dump_json(indent=2))
     print("--- billing codes result ---")
     print(billing_result.model_dump_json(indent=2))
-    print("--- patient suggestion ---")
-    print(patient_suggestion)
+    print("--- patient verification ---")
+    print(patient_verification)
 
 
 if __name__ == "__main__":

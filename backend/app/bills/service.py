@@ -133,7 +133,7 @@ class BillService:
                 details.append(detail)
 
         patient_ids = {d.record.patient_id for d in details}
-        patients = await self._patient_repository.get_many_for_physician(list(patient_ids), physician_id)
+        patients = await self._patient_repository.get_many(list(patient_ids))
         ramq_by_patient_id = {p.id: p.ramq_number for p in patients}
 
         groups_by_patient: dict[int, BillPatientGroup] = {}

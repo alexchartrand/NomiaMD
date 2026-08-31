@@ -15,8 +15,8 @@ from app.main import app
 from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
-# most tests here reuse physician_id=1 — so each seeded patient needs its own NAM to avoid
-# tripping ix_patients_physician_ramq_number_active (models.py) against an earlier test's
+# patients are globally unique by NAM now — so each seeded patient needs its own NAM to
+# avoid tripping ix_patients_ramq_number_active (models.py) against an earlier test's
 # still-active patient.
 _ramq_numbers = itertools.count(1)
 
@@ -51,14 +51,12 @@ def _other_physician():
     )
 
 
-async def _seed_patient(physician_id=1):
+async def _seed_patient():
     return await PatientRepository().create(
-        physician_id=physician_id,
         full_name="Roch Desjardins",
         ramq_number=f"DESR{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
         gender=Gender.MALE,
-        is_registered_with_physician=True,
         is_vulnerable=False,
     )
 
@@ -174,16 +172,28 @@ async def test_cross_physician_access_is_404():
     assert delete_response.status_code == 404
 
 
-async def test_creating_against_another_physicians_patient_is_404():
+async def test_creating_a_claim_for_a_patient_not_on_the_billing_physicians_roster_succeeds():
+    # Patients are a shared, global identity now — claiming one no longer requires having
+    # added them to "my patients list" first (see app/postgresdb/models.py's Patient).
     with TestClient(app) as client:
-        other_physicians_patient = await _seed_patient(physician_id=99)
+        patient = await _seed_patient()
         extraction_record = await _seed_extraction_record()
 
         response = client.post(
             "/claims",
-            json=_valid_payload(
-                patient_id=other_physicians_patient.id, billing_extraction_record_id=extraction_record.id
-            ),
+            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id),
+        )
+
+    assert response.status_code == 201
+
+
+async def test_creating_against_an_unknown_patient_is_404():
+    with TestClient(app) as client:
+        extraction_record = await _seed_extraction_record()
+
+        response = client.post(
+            "/claims",
+            json=_valid_payload(patient_id=999999, billing_extraction_record_id=extraction_record.id),
         )
 
     assert response.status_code == 404

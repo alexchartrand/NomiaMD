@@ -1,21 +1,22 @@
-"""Assembles a BillingContext (context.py) from the physician's profile and the identified
-patient's roster record — the business logic of "which administrative facts apply on this
+"""Assembles a BillingContext (context.py) from the physician's profile and the chosen
+patient's own facts — the business logic of "which administrative facts apply on this
 encounter date", split from app/extraction/pipeline.py's orchestration and from
 app/extraction/router.py's HTTP concerns, per this repo's one-class-one-job convention.
 
 Constructor-injected with ProfileService and PatientRepository, not global lookups — makes
-this class trivially fakeable in tests, same convention as PatientSuggestionService."""
+this class trivially fakeable in tests, same convention as app/patients/verification.py."""
 
 from datetime import date
 
 from app.auth.profile import ProfileService
+from app.patients.registration import resolve_registration
 from app.postgresdb import PatientRepository, User
 from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
 
 
 def _age_years_on(date_of_birth: date, on_date: date) -> float:
     # Whole years is enough precision for the age-band axis (<70/<80/>=80) this feeds —
-    # matches PatientSuggestionService/nam.py's own age-in-years granularity.
+    # matches app/patients/verification.py/nam.py's own age-in-years granularity.
     years = on_date.year - date_of_birth.year
     if (on_date.month, on_date.day) < (date_of_birth.month, date_of_birth.day):
         years -= 1
@@ -31,13 +32,15 @@ class BillingContextBuilder:
         self,
         *,
         user: User,
-        matched_patient_id: int | None,
+        patient_id: int,
         encounter_date: date | None,
     ) -> BillingContext:
-        """Best-effort: a missing profile or an unmatched patient degrades that half to
-        all-null rather than raising, mirroring extraction/router.py's existing "a matcher
+        """Best-effort: a missing profile or a since-deleted patient degrades that half to
+        all-null rather than raising, mirroring extraction/router.py's existing "a lookup
         bug must never throw away a completed extraction" stance for the patient side, and
-        extending it to the physician-profile side for the same reason."""
+        extending it to the physician-profile side for the same reason. `patient_id` is
+        required — the physician now picks the patient before extraction runs, so there's
+        no "no patient chosen yet" case to model here any more."""
         on_date = encounter_date or date.today()
 
         account = await self._profiles.as_of(user, on_date)
@@ -63,13 +66,12 @@ class BillingContextBuilder:
         )
 
         patient = PatientContext()
-        if matched_patient_id is not None:
-            record = await self._patients.get_for_physician(matched_patient_id, user.id)
-            if record is not None:
-                patient = PatientContext(
-                    age_years=_age_years_on(record.date_of_birth, on_date),
-                    is_registered=record.is_registered_with_physician,
-                    is_vulnerable=record.is_vulnerable,
-                )
+        record = await self._patients.get(patient_id)
+        if record is not None:
+            patient = PatientContext(
+                age_years=_age_years_on(record.date_of_birth, on_date),
+                is_registered=resolve_registration(record.family_doctor_practice_number, user.practice_number),
+                is_vulnerable=record.is_vulnerable,
+            )
 
         return BillingContext(physician=physician, patient=patient, encounter_date=encounter_date)

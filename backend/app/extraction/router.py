@@ -6,13 +6,13 @@ from app.auth import get_current_user
 from app.extraction.encounter_date import parse_encounter_date
 from app.extraction.models import (
     BillingExtractionResponse,
+    ExtractedIdentitySummary,
     ExtractionRequest,
-    PatientSuggestionExtracted,
-    PatientSuggestionOut,
+    PatientVerificationOut,
 )
 from app.extraction.pipeline import run_billing_codes_pipeline
-from app.patients import PatientSuggestion
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User
+from app.patients import PatientVerification
+from app.postgresdb import ExtractionRecordInput, ExtractionRepository, PatientRepository, User
 from app.rate_limit import limiter
 from app.tasks.registry import get_task
 
@@ -21,33 +21,31 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def _to_patient_suggestion_out(suggestion: PatientSuggestion | None) -> PatientSuggestionOut | None:
-    # The pipeline already ran the matcher best-effort (app/extraction/pipeline.py's
-    # _suggest_patient) — this is a pure data conversion from the domain shape
-    # (app.patients.PatientSuggestion) to the API wire shape, no matcher logic left here.
-    if suggestion is None:
+def _to_patient_verification_out(verification: PatientVerification | None) -> PatientVerificationOut | None:
+    # The pipeline already ran the comparison best-effort (app/extraction/pipeline.py's
+    # _verify_patient) — this is a pure data conversion from the domain shape
+    # (app.patients.PatientVerification) to the API wire shape, no comparison logic here.
+    if verification is None:
         return None
 
-    return PatientSuggestionOut(
-        extracted=PatientSuggestionExtracted(
-            name_as_stated=suggestion.extracted.name_as_stated,
-            ramq_number_as_stated=suggestion.extracted.ramq_number,
-            suggested_full_name=suggestion.prefill.suggested_full_name,
-            suggested_ramq_number=suggestion.prefill.suggested_ramq_number,
-            suggested_date_of_birth=suggestion.prefill.suggested_date_of_birth,
-            date_of_birth_is_estimated=suggestion.prefill.date_of_birth_is_estimated,
-            suggested_gender=suggestion.prefill.suggested_gender,
-            age_years=suggestion.extracted.age_years,
+    return PatientVerificationOut(
+        extracted=ExtractedIdentitySummary(
+            name_as_stated=verification.extracted.name_as_stated,
+            ramq_number_as_stated=verification.extracted.ramq_number,
+            age_years=verification.extracted.age_years,
         ),
-        matched_patient_id=suggestion.matched_patient_id,
+        nam_mismatch=verification.nam_mismatch,
+        name_mismatch=verification.name_mismatch,
+        age_mismatch=verification.age_mismatch,
     )
 
 
 @router.post("/extract", response_model=BillingExtractionResponse)
 @limiter.limit("10/minute")
 # Runs a transcript through the billing_codes pipeline (consultation_summary -> billing_codes)
-# and persists both stages. POST a transcript + task="billing_codes"; returns the candidate RAMQ
-# codes for physician review, plus the encounter date and a NAM-based patient suggestion.
+# and persists both stages. POST a transcript + task="billing_codes" + patient_id (the
+# physician must choose the patient before extraction runs); returns the candidate RAMQ
+# codes for physician review, plus the encounter date and an identity mismatch warning.
 async def extract(
     request: Request,
     body: ExtractionRequest,
@@ -64,10 +62,14 @@ async def extract(
             detail="Only 'billing_codes' is available via /extract",
         )
 
+    patient = await PatientRepository().get(body.patient_id)
+    if patient is None:
+        raise HTTPException(status_code=404, detail="Patient introuvable")
+
     source_system = body.source.system if body.source else None
 
-    summary_result, result, patient_suggestion = await run_billing_codes_pipeline(
-        body.transcript, user=current_user
+    summary_result, result, patient_verification = await run_billing_codes_pipeline(
+        body.transcript, user=current_user, patient_id=body.patient_id
     )
     extraction_repository = ExtractionRepository()
     summary_record, billing_record = await extraction_repository.create_many(
@@ -100,5 +102,5 @@ async def extract(
         billing_extraction_record_id=billing_record.id,
         encounter_date=encounter_date,
         encounter_date_raw=encounter_date_raw,
-        patient_suggestion=_to_patient_suggestion_out(patient_suggestion),
+        patient_verification=_to_patient_verification_out(patient_verification),
     )

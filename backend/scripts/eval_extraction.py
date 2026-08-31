@@ -74,8 +74,8 @@ DEFAULT_EVAL_PATH = Path(__file__).parent.parent / "tests" / "fixtures" / "eval_
 
 # This script builds BillingContext directly from each fixture entry's physician_context/
 # patient_context (see _context_from_entry) rather than going through
-# BillingContextBuilder/PatientSuggestionService — deterministic and fixture-driven, with no
-# dependency on a real physician login or patient roster.
+# BillingContextBuilder/app.patients.verification — deterministic and fixture-driven, with
+# no dependency on a real physician login or patient record.
 
 
 def load_eval_set(path: Path) -> list[dict]:

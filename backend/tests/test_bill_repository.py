@@ -19,9 +19,8 @@ from app.postgresdb import (
 )
 
 _physician_ids = itertools.count(3000)
-# other_physician_id = physician_id + 1 (below) can land on a value the counter above
-# hands to a later test, so each seeded patient still needs its own NAM to avoid
-# tripping ix_patients_physician_ramq_number_active (models.py) for that reused id.
+# Patients are globally unique by NAM now, so each seeded patient still needs its own NAM
+# regardless of which physician_id it's seeded under.
 _ramq_numbers = itertools.count(1)
 
 
@@ -35,14 +34,15 @@ def physician_id():
     return next(_physician_ids)
 
 
-async def _seed_patient(physician_id):
+async def _seed_patient():
+    # "BLRP" prefix (not "DESR") to stay distinct from test_claims.py's/
+    # test_claim_repository.py's own counters — patients are globally unique by NAM now,
+    # and the test DB is shared across the whole session (see conftest.py).
     return await PatientRepository().create(
-        physician_id=physician_id,
         full_name="Roch Desjardins",
-        ramq_number=f"DESR{next(_ramq_numbers):08d}",
+        ramq_number=f"BLRP{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
         gender=Gender.MALE,
-        is_registered_with_physician=True,
         is_vulnerable=False,
     )
 
@@ -74,7 +74,7 @@ async def _seed_claim(physician_id, patient_id, *, status="brouillon", service_d
 
 
 async def test_create_flips_claims_to_soumis_in_one_transaction(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     claim_a = await _seed_claim(physician_id, patient.id)
     claim_b = await _seed_claim(physician_id, patient.id, service_date=date(2026, 2, 15))
 
@@ -101,7 +101,7 @@ async def test_create_flips_claims_to_soumis_in_one_transaction(physician_id):
 
 
 async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     claim = await _seed_claim(physician_id, patient.id, status="soumis")
 
     repo = BillRepository()
@@ -121,7 +121,7 @@ async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician
 
 async def test_create_rejects_another_physicians_claim(physician_id):
     other_physician_id = physician_id + 1
-    other_patient = await _seed_patient(other_physician_id)
+    other_patient = await _seed_patient()
     foreign_claim = await _seed_claim(other_physician_id, other_patient.id)
 
     repo = BillRepository()
@@ -139,7 +139,7 @@ async def test_create_rejects_another_physicians_claim(physician_id):
 
 
 async def test_delete_releases_claims_to_brouillon(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     claim = await _seed_claim(physician_id, patient.id)
 
     repo = BillRepository()
@@ -164,7 +164,7 @@ async def test_delete_releases_claims_to_brouillon(physician_id):
 
 
 async def test_cross_physician_access_returns_none_or_false(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     claim = await _seed_claim(physician_id, patient.id)
 
     repo = BillRepository()

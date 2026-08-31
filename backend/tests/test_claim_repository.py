@@ -18,6 +18,10 @@ from app.postgresdb import (
 )
 
 _physician_ids = itertools.count(2000)
+# Patients are globally unique by NAM now, so each seeded patient still needs its own NAM
+# even though every test here used to reuse the same literal NAM under a distinct
+# physician_id.
+_ramq_numbers = itertools.count(1)
 
 
 @pytest.fixture(autouse=True)
@@ -30,14 +34,15 @@ def physician_id():
     return next(_physician_ids)
 
 
-async def _seed_patient(physician_id):
+async def _seed_patient():
+    # "CLRP" prefix (not "DESR") to stay distinct from test_claims.py's/
+    # test_bill_repository.py's own counters — patients are globally unique by NAM now, and
+    # the test DB is shared across the whole session (see conftest.py).
     return await PatientRepository().create(
-        physician_id=physician_id,
         full_name="Roch Desjardins",
-        ramq_number="DESR81021001",
+        ramq_number=f"CLRP{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
         gender=Gender.MALE,
-        is_registered_with_physician=True,
         is_vulnerable=False,
     )
 
@@ -57,7 +62,7 @@ def _one_code_input(**overrides):
 
 
 async def test_create_then_get_then_list(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     repo = ClaimRepository()
 
     created = await repo.create(
@@ -86,7 +91,7 @@ async def test_create_then_get_then_list(physician_id):
 
 
 async def test_list_filters_and_ordering(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     repo = ClaimRepository()
     older = await repo.create(
         ClaimInput(
@@ -124,7 +129,7 @@ async def test_list_filters_and_ordering(physician_id):
 
 
 async def test_delete(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     repo = ClaimRepository()
     created = await repo.create(
         ClaimInput(
@@ -146,7 +151,7 @@ async def test_delete(physician_id):
 
 
 async def test_cross_physician_access_returns_none_or_false(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     repo = ClaimRepository()
     created = await repo.create(
         ClaimInput(
@@ -167,7 +172,7 @@ async def test_cross_physician_access_returns_none_or_false(physician_id):
 
 
 async def test_count_for_patient_on_date(physician_id):
-    patient = await _seed_patient(physician_id)
+    patient = await _seed_patient()
     repo = ClaimRepository()
 
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 10)) == 0
