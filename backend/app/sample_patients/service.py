@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
+from app.patients import nam as nam_module
+
 SAMPLE_PATIENTS_DIR = (
     Path(os.environ["SAMPLE_PATIENTS_DIR"])
     if os.environ.get("SAMPLE_PATIENTS_DIR")
@@ -31,6 +33,10 @@ class SamplePatient:
     id: str
     label: str
     transcript: str
+    # Normalized NAM from the note's `**NAM :**` header, or None if missing/malformed —
+    # lets the frontend auto-match this sample to the real Patient row seed_db.py creates
+    # for it (same normalization, see scripts/seed_db.py).
+    nam: str | None
 
 
 _FIELD_RE = re.compile(r"^\*\*(.+?)\s*:\*\*\s*(.*)$", re.MULTILINE)
@@ -80,6 +86,7 @@ def _load_note(path: Path, index: int) -> SamplePatient:
         id=dossier or f"note-{index}",
         label=_build_label(note, fields),
         transcript=note,
+        nam=nam_module.normalize(fields.get("NAM")),
     )
 
 

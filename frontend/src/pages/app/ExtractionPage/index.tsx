@@ -1,6 +1,13 @@
 import { useMemo, useReducer, useState, type FormEvent } from "react";
 import { cn } from "@/lib/utils";
-import { createClaim, describeError, DuplicateClaimError, extractBillingCodes, type Patient } from "../../../api";
+import {
+  createClaim,
+  describeError,
+  DuplicateClaimError,
+  extractBillingCodes,
+  searchPatients,
+  type Patient,
+} from "../../../api";
 import { Banner } from "../../../components";
 import { SourceStep } from "./SourceStep";
 import { ReviewStep } from "./ReviewStep";
@@ -28,12 +35,29 @@ export default function ExtractionPage() {
     createPatientForm.close();
   }
 
+  // Auto-fills the real patient picker from the sample consultation's own NAM, so the two
+  // pickers (which are otherwise independent — see CLAUDE.md) default to a matching pair.
+  // Best-effort: if nothing matches (e.g. the dev DB hasn't been seeded from
+  // consultations/) the field is simply left empty for the physician to fill in manually.
+  async function handleSampleNamLoaded(nam: string | null) {
+    if (!nam) return;
+    try {
+      const matches = await searchPatients(nam);
+      const match = matches.find((p) => p.ramq_number === nam);
+      if (match) setSelectedPatient(match);
+    } catch {
+      // ignore — leave the patient field for the physician to fill in manually
+    }
+  }
+
   const samplePatientPicker = useSamplePatients({
     onBeforeSelect: () => {
       clearResult();
       setError(null);
+      setSelectedPatient(null);
     },
     onTranscriptLoaded: setTranscript,
+    onNamLoaded: handleSampleNamLoaded,
     onError: setError,
   });
 
