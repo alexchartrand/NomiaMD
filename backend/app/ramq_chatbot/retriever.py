@@ -30,7 +30,7 @@ class RAMQManualRetriever(BaseRetriever):
         embed_model: BaseEmbedding,
         converter: IConverter,
         reference_expander: ReferenceExpander,
-        similarity_top_k: int = 20,
+        similarity_top_k: int = 30,
     ):
         self._documents = documents
         self._embed_model = embed_model
