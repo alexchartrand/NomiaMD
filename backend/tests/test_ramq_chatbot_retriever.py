@@ -1,15 +1,12 @@
-"""Unit tests for RAMQManualRetriever (app/ramq_chatbot/retriever.py) — hybrid (vector+FTS)
-search fanned out across IQueryGenerator's generated queries and RRF-fused via
-ReciprocalRankFuser, over `IDocumentRepository`.
+"""Unit tests for RAMQManualRetriever (app/ramq_chatbot/retriever.py) — a single hybrid
+(vector+FTS) search over `IDocumentRepository`. No query fan-out and no RRF fusion step
+(that's billing_codes' retriever now — see app/lancedb/fusion.py's docstring).
 
 No network calls / real API keys: DocumentRepository is an in-memory fake whose
-hybrid_search ranks by cosine similarity against precomputed row vectors (real FTS/RRF
-fusion-within-a-query is LanceDB's own job — see tests/test_lancedb_document_repository.py —
-not something this retriever does or needs to fake); the injected embed_model is a
-deterministic exact-text-lookup fake (mirrors tests/test_vector_retrieval.py's
-_LookupEmbedding). Query generation (test_ramq_chatbot_query_generator.py) and RRF fusion
-(test_ramq_chatbot_fusion.py) have their own dedicated unit tests — most tests here use a
-single-query IQueryGenerator stand-in so they aren't incidentally testing fan-out too."""
+hybrid_search ranks by cosine similarity against precomputed row vectors (real FTS ranking
+is LanceDB's own job — see tests/test_lancedb_document_repository.py — not something this
+retriever does or needs to fake); the injected embed_model is a deterministic
+exact-text-lookup fake (mirrors tests/test_vector_retrieval.py's _LookupEmbedding)."""
 
 from typing import Any, List, Tuple
 
@@ -20,9 +17,7 @@ from llama_index.core.schema import NodeWithScore
 from app.lancedb.converter import CodesRowConverter, DocumentRowConverter
 from app.lancedb.models import DocumentRow
 from app.lancedb.repository import ICodeRepository, IDocumentRepository
-from app.ramq_chatbot.fusion import ReciprocalRankFuser
 from app.ramq_chatbot.manual_references import ManualSectionLookup
-from app.ramq_chatbot.query_generator import IQueryGenerator
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
 from app.ramq_chatbot.retriever import RAMQManualRetriever
 from app.ramq_codes.codes_data import CodesData
@@ -38,9 +33,8 @@ def _cosine(a: list[float], b: list[float]) -> float:
 class _FakeDocumentRepository(IDocumentRepository):
     """In-memory stand-in for DocumentRepository: hybrid_search ranks rows by cosine
     similarity between the query vector and each row's own precomputed vector (looked up by
-    its text, mirroring TextNode.embedding in the old vector-store-based fixtures) —
-    RAMQManualRetriever's own job is fanning out + RRF-fusing across queries, not per-query
-    ranking, which real DocumentRepository/LanceDB already owns."""
+    its text, mirroring TextNode.embedding in the old vector-store-based fixtures) — actual
+    per-query ranking is real DocumentRepository/LanceDB's job, not this retriever's."""
 
     def __init__(self, rows: list[DocumentRow], vectors: dict[str, list[float]]):
         self._rows = rows
@@ -86,25 +80,6 @@ class _LookupEmbedding(BaseEmbedding):
         return self.vectors[text]
 
 
-class _SingleQueryGenerator(IQueryGenerator):
-    """Fan-out-free stand-in: always returns exactly the original query untouched, no LLM
-    call — keeps ranking/reference-expansion tests from needing query-fan-out fixtures
-    they aren't about."""
-
-    async def agenerate(self, query: str, num_queries: int) -> list[str]:
-        return [query]
-
-
-class _SpyQueryGenerator(IQueryGenerator):
-    def __init__(self, queries_by_input: dict[str, list[str]]):
-        self._queries_by_input = queries_by_input
-        self.calls: list[tuple[str, int]] = []
-
-    async def agenerate(self, query: str, num_queries: int) -> list[str]:
-        self.calls.append((query, num_queries))
-        return self._queries_by_input[query]
-
-
 class _NoOpReferenceExpander:
     async def aexpand(self, nodes: list[NodeWithScore]) -> list[NodeWithScore]:
         return nodes
@@ -136,7 +111,6 @@ def _row(row_id: str, text: str, metadata: dict | None = None) -> DocumentRow:
 def _build_retriever(
     vectors: dict[str, list[float]],
     rows: list[DocumentRow],
-    query_generator: IQueryGenerator | None = None,
     reference_expander=None,
     similarity_top_k: int = 20,
 ) -> tuple[RAMQManualRetriever, _FakeDocumentRepository]:
@@ -144,8 +118,6 @@ def _build_retriever(
     retriever = RAMQManualRetriever(
         documents=documents,
         embed_model=_LookupEmbedding(vectors),
-        query_generator=query_generator or _SingleQueryGenerator(),
-        fuser=ReciprocalRankFuser(),
         converter=DocumentRowConverter(),
         reference_expander=reference_expander or _NoOpReferenceExpander(),
         similarity_top_k=similarity_top_k,
@@ -203,18 +175,15 @@ async def test_aretrieve_passes_similarity_top_k_through_to_hybrid_search():
     assert documents.hybrid_search_calls[0][2] == 20
 
 
-async def test_aretrieve_calls_hybrid_search_once_per_generated_query():
-    vectors = {"original": [1.0, 0.0], "generated": [0.0, 1.0]}
+async def test_aretrieve_calls_hybrid_search_once_with_the_original_query():
+    vectors = {"original": [1.0, 0.0]}
     rows = [_row("A", "original")]
-    query_generator = _SpyQueryGenerator({"original": ["original", "generated"]})
 
-    retriever, documents = _build_retriever(vectors, rows, query_generator=query_generator)
+    retriever, documents = _build_retriever(vectors, rows)
     await retriever.aretrieve("original")
 
-    assert query_generator.calls == [("original", 3)]  # default num_queries=3
-    assert [call[0] for call in documents.hybrid_search_calls] == ["original", "generated"]
+    assert [call[0] for call in documents.hybrid_search_calls] == ["original"]
     assert documents.hybrid_search_calls[0][1] == vectors["original"]
-    assert documents.hybrid_search_calls[1][1] == vectors["generated"]
 
 
 async def test_aretrieve_delegates_final_nodes_to_reference_expander():
@@ -265,8 +234,6 @@ async def test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ra
     retriever = RAMQManualRetriever(
         documents=documents,
         embed_model=_LookupEmbedding(vectors),
-        query_generator=_SingleQueryGenerator(),
-        fuser=ReciprocalRankFuser(),
         converter=DocumentRowConverter(),
         reference_expander=reference_expander,
     )

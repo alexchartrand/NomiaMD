@@ -1,11 +1,13 @@
 """Reciprocal Rank Fusion (RRF), k=60 — the same constant/formula as llama_index's
 QueryFusionRetriever._reciprocal_rerank_fusion (FUSION_MODES.RECIPROCAL_RANK). Lives here
-(rather than under app/ramq_chatbot/, where it originated) because both LanceDB-backed
-retrievers fuse the same way now: LanceDB's own hybrid_search already fuses vector+FTS
-*within* one query (its own RRF, see app/lancedb/repository.py); this fuses the ranked
-results *across* the several queries a multi-query planner produced for one user input —
-app/ramq_chatbot/query_generator.py's LLMQueryGenerator for the chatbot,
-app/ramq_codes/query_planner.py's SummaryQueryPlanner for billing_codes.
+(rather than under app/ramq_chatbot/, where it originated) because it's shared plumbing:
+LanceDB's own hybrid_search already fuses vector+FTS *within* one query (its own RRF, see
+app/lancedb/repository.py); this fuses the ranked results *across* the several queries a
+multi-query planner produces for one user input — currently only
+app/ramq_codes/query_planner.py's SummaryQueryPlanner for billing_codes. app/ramq_chatbot/
+retriever.py used to be a second consumer (fusing across an LLM query-expander's fan-out)
+but no longer fans a query out at all — see app/ramq_chatbot/retriever.py's docstring —
+and dropped its dependency on this class accordingly.
 
 Generic over the row type and its identity key: DocumentRow keys on `.id`, CodeRow/Code key
 on `.number` — neither is called `id`, so the key is a constructor-injected callable rather

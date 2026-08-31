@@ -5,7 +5,7 @@ Mistral API.
 Speaks the same wire protocol app/extraction/engine.py's and app/ramq_chatbot/factory.py's
 MistralAI clients use (POST /v1/chat/completions, Mistral's own request/response shape).
 Point the app at it by setting MISTRAL_ENDPOINT=http://localhost:8080 before starting the
-backend. It's deliberately "dumb": every request is routed to one of four fake responses by
+backend. It's deliberately "dumb": every request is routed to one of three fake responses by
 a marker unique to that caller's fixed prompt text (see _classify_request) — never by which
 endpoint was hit, since they all share this one.
 
@@ -23,11 +23,6 @@ endpoint was hit, since they all share this one.
   SYSTEM_PROMPT. Returns plain markdown text (not JSON — RAMQManualQueryEngine reads the
   chat response verbatim) that echoes back the query text pulled from the current turn's
   "Query: ..." line.
-- ramq_chatbot_query_gen: app/ramq_chatbot/query_generator.py's LLMQueryGenerator generates
-  search-fanout queries via a bare completion call with no system message at all, so this
-  bucket is matched on a fixed line from its QUERY_GEN_PROMPT found in the user message
-  instead. Returns a couple of plain text lines (no JSON) derived from the real query, which
-  LLMQueryGenerator splits on newlines into fake sub-queries.
 
 This exercises each pipeline (retrieval -> prompt -> parse -> API -> frontend)
 deterministically, without depending on any real model's behavior or making a real API call
@@ -103,15 +98,12 @@ _AGE_SEX_RE = re.compile(r"(\d+)\s*(ans|mois)\s*\((\w)\)")
 PICK = 2  # overridden by --pick at startup
 
 # Fixed, non-templated first line of each prompt (see module docstring) — used to tell the
-# four request shapes apart. ramq_chatbot's query-gen call carries no system message at all
-# (see module docstring), so it's matched on the user message instead of the other two.
+# three request shapes apart.
 _RAMQ_CHATBOT_SYSTEM_MARKER = "RAMQ billing specialist chatbot"  # app/ramq_chatbot/engine.py SYSTEM_PROMPT
-_RAMQ_CHATBOT_QUERY_GEN_MARKER = "generates multiple search queries based on a single input query"  # app/ramq_chatbot/query_generator.py QUERY_GEN_PROMPT
 
-# Matches the trailing "Query: {query_str}" line both engine.py's USER_MESSAGE_TEMPLATE and
-# query_generator.py's QUERY_GEN_PROMPT render. Context/instruction text always precedes it
-# in both templates, so taking the LAST match is always the real query, never a coincidental
-# "Query:" elsewhere in the message.
+# Matches the trailing "Query: {query_str}" line engine.py's USER_MESSAGE_TEMPLATE renders.
+# Context/instruction text always precedes it, so taking the LAST match is always the real
+# query, never a coincidental "Query:" elsewhere in the message.
 _QUERY_LINE_RE = re.compile(r"^\s*Query:\s*(?P<query>.*)$", re.MULTILINE)
 
 
@@ -127,8 +119,6 @@ def _classify_request(system_message: str, user_message: str) -> str:
         return "consultation_summary"
     if _RAMQ_CHATBOT_SYSTEM_MARKER in system_message:
         return "ramq_chatbot_answer"
-    if _RAMQ_CHATBOT_QUERY_GEN_MARKER in user_message:
-        return "ramq_chatbot_query_gen"
     return "billing_codes"
 
 
@@ -244,18 +234,9 @@ def _fake_ramq_chatbot_answer_content(user_message: str) -> str:
     )
 
 
-def _fake_query_gen_content(user_message: str) -> str:
-    query = _extract_query_text(user_message)
-    return (
-        f"Recherche RAMQ (faux LLM) — variante 1 pour : {query}\n"
-        f"Recherche RAMQ (faux LLM) — variante 2 pour : {query}"
-    )
-
-
 _FAKE_CONTENT_BY_BUCKET = {
     "consultation_summary": _fake_consultation_summary_content,
     "ramq_chatbot_answer": _fake_ramq_chatbot_answer_content,
-    "ramq_chatbot_query_gen": _fake_query_gen_content,
     "billing_codes": _fake_billing_codes_content,
 }
 

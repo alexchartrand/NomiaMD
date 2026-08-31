@@ -1,11 +1,11 @@
 """Fans a consultation summary out into several retrieval queries instead of one blended
 query for the whole encounter. A structural planner over ConsultationSummaryResult's own
-fields, not an LLM one: unlike app/ramq_chatbot/query_generator.py's LLMQueryGenerator
-(which paraphrases a free-form user question because there's no structure to read), the
-summary is already structured — a visit, and separately zero or more procedures and
-possible add-ons — so building one query per concept is deterministic, adds no LLM latency
-or cost, and is strictly better than asking a model to paraphrase data that's already
-explicit.
+fields, not an LLM one: the summary is already structured — a visit, and separately zero or
+more procedures and possible add-ons — so building one query per concept is deterministic,
+adds no LLM latency or cost, and is strictly better than asking a model to paraphrase data
+that's already explicit. (ramq_chatbot's retriever handled its own, free-form-question fan-
+out with an LLM paraphraser, app/ramq_chatbot/query_generator.py's LLMQueryGenerator — since
+removed; that retriever now runs a single query.)
 
 Without this, a note describing both a routine visit and a minor procedure gets one blended
 embedding query that retrieves neither the visit family nor the procedure family well —
