@@ -14,6 +14,12 @@ const CONFIDENCE_LABELS: Record<ConfidenceLevel, string> = {
   low: "Confiance faible",
 };
 
+const CONFIDENCE_ORDER: Record<ConfidenceLevel, number> = {
+  high: 0,
+  medium: 1,
+  low: 2,
+};
+
 interface CodesReviewProps {
   codes: ExtractedCode[];
   selection: Set<number>;
@@ -25,9 +31,13 @@ export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
     return <p>Aucun code candidat n&rsquo;est clairement appuyé par cette transcription.</p>;
   }
 
+  const sorted = codes
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => CONFIDENCE_ORDER[a.c.confidence] - CONFIDENCE_ORDER[b.c.confidence]);
+
   return (
     <ul className="m-0 flex flex-col gap-3 p-0">
-      {codes.map((c, i) => {
+      {sorted.map(({ c, i }) => {
         const checked = selection.has(i);
         const bucket = c.confidence;
         return (
@@ -62,12 +72,6 @@ export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
               </div>
 
               <p className="m-0 text-[0.92rem] text-muted-foreground italic">{c.explanation}</p>
-
-              {c.supporting_quote && (
-                <p className="m-0 border-l-2 border-border pl-[0.6rem] text-[0.85rem] text-muted-foreground italic">
-                  &laquo;&nbsp;{c.supporting_quote}&nbsp;&raquo;
-                </p>
-              )}
 
               {c.needs_confirmation.length > 0 && (
                 <ul className="m-0 flex flex-col gap-1 pl-0 text-[0.85rem] text-[color:var(--color-warning-text)]">
