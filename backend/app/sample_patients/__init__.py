@@ -5,6 +5,17 @@ Public interface — everything else that needs this imports it from here rather
 reaching into .router/.models/.service directly."""
 
 from app.sample_patients.router import router as sample_patients_router
-from app.sample_patients.service import get_sample_patient, get_sample_patients
+from app.sample_patients.service import (
+    get_sample_patient,
+    get_sample_patients,
+    parse_age_hint_years,
+    parse_header_fields,
+)
 
-__all__ = ["sample_patients_router", "get_sample_patient", "get_sample_patients"]
+__all__ = [
+    "sample_patients_router",
+    "get_sample_patient",
+    "get_sample_patients",
+    "parse_age_hint_years",
+    "parse_header_fields",
+]
