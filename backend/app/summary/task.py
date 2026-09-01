@@ -33,26 +33,20 @@ OUTPUT SCHEMA
 ============================================================
 RULES
 ============================================================
-1. Never guess administrative facts not derivable from clinical content:
-   patient registration/"inscrit" status with a specific physician,
-   vulnerability designation (this is a formal RAMQ status, not a clinical
-   impression), physician panel size, prior billing history this calendar
-   year. Extract only what the transcript actually documents or states, and
-   leave everything else null/false for the downstream rules engine.
-2. "encounter_category_hint" is a hint only, to help route the note to the
-   right section of the tariff manual. It is explicitly NOT a billing code
-   and must never be treated as one downstream.
-3. Distinguish clearly between things the transcript explicitly states
+1. Never guess anything not derivable from clinical content — extract only what the
+   transcript actually documents or states, and leave everything else null/false for the
+   downstream rules engine.
+2. Distinguish clearly between things the transcript explicitly states
    (set the field) and things you would need to infer or assume (leave null
    and add a note instead).
-4. If duration is not explicitly stated, you may estimate it from context
+3. If duration is not explicitly stated, you may estimate it from context
    in duration_minutes, but duration_explicitly_stated must be false, and add
    a note.
-5. procedures_performed should be an empty list if no procedure beyond
+4. procedures_performed should be an empty list if no procedure beyond
    history-taking/examination occurred.
-6. Output valid JSON only, matching the schema exactly. No text before or
+5. Output valid JSON only, matching the schema exactly. No text before or
    after the JSON object.
-7. Write all free-text field values in French (Québécois medical French is
+6. Write all free-text field values in French (Québécois medical French is
    fine). Do not translate JSON field names or the fixed enum values defined
    in the schema."""
 
@@ -72,24 +66,11 @@ def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
     ConsultationSummaryResult's fields in app/summary/models.py, so a schema change
     here doesn't require touching this function.
 
-    Strips the patient's name and NAM first: this rendering is both the retrieval query and
-    the grounding text for billing_codes' explanation, so the identity fields must never
-    reach that prompt — sanitized here at the boundary rather than via a generic opt-out flag
-    on the shared schema renderer, since the rule is "billing_codes must not see identity",
-    not "these fields are never renderable" (a future "voir le résumé extrait" view still
-    should). Stripping the NAM matters most: it's a direct patient identifier that would
-    otherwise be sent to the embedding endpoint as part of the retrieval query on every
-    extraction.
+    No identity stripping needed here: ConsultationSummaryResult carries no patient-identity
+    fields at all (the physician picks the patient before extraction runs), so there's
+    nothing for this rendering to leak into the retrieval query or the billing prompt.
     """
-    return render_instance(
-        result.model_copy(
-            update={
-                "patient_information": result.patient_information.model_copy(
-                    update={"name_as_stated": None, "ramq_number_as_stated": None}
-                )
-            }
-        )
-    )
+    return render_instance(result)
 
 
 class ConsultationSummaryTask(ExtractionTask[str]):

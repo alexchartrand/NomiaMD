@@ -69,21 +69,20 @@ Mistral API call.
    patients/`, see below) *before* calling `POST /extract`, which now requires a
    `patient_id` (`extraction/models.py`); `extraction/router.py` 404s upfront if it doesn't
    resolve. `app/extraction/pipeline.py`'s `run_billing_codes_pipeline` runs
-   `consultation_summary` first, then two independent, best-effort steps that each degrade
-   silently (log and continue) rather than block extraction on failure: `_verify_patient`
-   compares what the transcript actually states against the chosen patient
-   (`verify_patient_identity`, `app/patients/verification.py` — a pure comparison, never a
-   gate, surfaced on the response only as a post-hoc warning) and `BillingContextBuilder.
-   build` (`ramq_codes/context_builder.py`, now called with the required `patient_id`
-   directly rather than a suggestion match) resolves the billing physician's own practice
-   facts (`ProfileService.as_of`, not `.current` — the encounter date's panel
-   size/remuneration type, not today's; falls back to `ProfileService.earliest` when the
-   encounter predates the physician's first profile version, a deliberate best-effort
-   trade-off flagged in BACKLOG.md for revalidation) and the chosen patient's
-   registration/vulnerability/exact age, then `billing_codes` runs with all of that. Nothing
+   `consultation_summary` first, then a best-effort step that degrades silently (log and
+   continue) rather than block extraction on failure: `BillingContextBuilder.build`
+   (`ramq_codes/context_builder.py`, called with the required `patient_id` directly rather
+   than a suggestion match) resolves the billing physician's own practice facts
+   (`ProfileService.as_of`, not `.current` — the encounter date's panel size/remuneration
+   type, not today's; falls back to `ProfileService.earliest` when the encounter predates the
+   physician's first profile version, a deliberate best-effort trade-off flagged in
+   BACKLOG.md for revalidation) and the chosen patient's registration/vulnerability/exact
+   age, then `billing_codes` runs with all of that. `ConsultationSummaryResult` carries no
+   patient-identity fields at all — those administrative facts reach `billing_codes`
+   exclusively through `BillingContext`, never re-extracted from the transcript. Nothing
    links `SourceStep.tsx`'s "Patient simulé" transcript-loader dropdown to the real
-   `PatientSearchSelect` picker below it — they're independent, so a mismatched pair is only
-   caught by the post-hoc verification warning, after the LLM call already ran.
+   `PatientSearchSelect` picker below it — they're independent, and a mismatched pair is
+   not caught at all (there is no transcript-vs-chosen-patient identity check any more).
    - `RAMQCodesRetriever` (`ramq_codes/retriever.py`) fans one encounter out into several
      retrieval queries via `SummaryQueryPlanner` (`ramq_codes/query_planner.py`) — one for
      the visit as a whole plus one per `procedures_performed`/`possible_billable_add_ons`
@@ -175,12 +174,6 @@ but nothing currently writes it.
 and the physician's own `User.practice_number` (`app/auth/`, see below), returning `None`
 (never a guess) when either side has no number on file — used identically by the API's
 `is_registered_with_current_physician` and by `BillingContextBuilder`.
-`verify_patient_identity` (`app/patients/verification.py`) is a separate, pure comparison
-run once per extraction (see the `billing_codes` pipeline above) between what the
-transcript states and the physician's already-chosen patient — three independent tri-state
-mismatch flags (NAM, name via `name_format.py`, age within a 1-year tolerance), `None`
-always meaning "transcript didn't say enough to compare," never a guess; it's a post-hoc
-warning surfaced to the physician, never a gate.
 
 **`app/auth/`** splits authentication from the physician's practice facts.
 `AuthService` owns credentials/tokens/sessions against `users`; `ProfileService`
@@ -228,11 +221,10 @@ codegen).
 one per file — served as "simulated patients" (`GET /sample-patients`, `GET
 /sample-patients/{id}`, parsed by `backend/app/sample_patients/service.py`) for demoing/testing
 without hand-typing a transcript. Every note's header carries a `**NAM :**` line (alongside
-`**Patient :**`/`**Dossier :**`/`**Date/heure :**`) so patient verification (`app/patients/
-verification.py`) is exercisable against real fixtures; `scripts/seed_db.py` seeds each note
-as a matching global `Patient` row so the search/registration paths have something real to
-find in a freshly-seeded dev DB. `README.md` and `all_notes.md` in that directory are not
-patient files and are skipped.
+`**Patient :**`/`**Dossier :**`/`**Date/heure :**`); `scripts/seed_db.py` seeds each note as
+a matching global `Patient` row so the search/registration paths have something real to find
+in a freshly-seeded dev DB. `README.md` and `all_notes.md` in that directory are not patient
+files and are skipped.
 
 ## Working in this codebase
 - Always use OOP, with best parctice principles. A class should has only one task and do it well.

@@ -26,14 +26,14 @@ def test_each_procedure_becomes_its_own_query():
                 "body_site": None,
                 "technique_or_approach_mentioned": None,
                 "anesthesia_used": "local",
-                "diagnostic_or_therapeutic": "therapeutique",
+                "diagnostic_or_therapeutic": "thérapeutique",
             },
             {
                 "procedure_description": "ECG réalisé et interprété",
                 "body_site": None,
                 "technique_or_approach_mentioned": None,
-                "anesthesia_used": "none",
-                "diagnostic_or_therapeutic": "diagnostic",
+                "anesthesia_used": "aucun",
+                "diagnostic_or_therapeutic": "diagnostique",
             },
         ]
     )

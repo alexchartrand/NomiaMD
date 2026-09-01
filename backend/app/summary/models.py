@@ -9,31 +9,6 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-LocationType = Literal[
-    "cabinet",
-    "domicile",
-    "urgence",
-    "clsc",
-    "chsld",
-    "centre_readaptation",
-    "hopital_soins_courte_duree",
-    "hopital_soins_longue_duree",
-    "telemedecine",
-    "inconnu",
-]
-
-AppointmentType = Literal["sur_rendez_vous", "sans_rendez_vous_acces_adapte", "inconnu"]
-
-Trimester = Literal["first", "beyond_first", "unclear"]
-
-ReferralType = Literal[
-    "consultation_ecrite",
-    "reference_traitement",
-    "demande_opinion_verbale",
-    "aucune",
-    "inconnu",
-]
-
 RequesterRole = Literal[
     "medecin_omnipraticien",
     "medecin_specialiste",
@@ -43,36 +18,13 @@ RequesterRole = Literal[
     "autre_professionnel",
 ]
 
-SingleVsMultiSystem = Literal["single", "multi", "unclear"]
+SingleVsMultiSystem = Literal["single", "multi", "incertain"]
 
-SpecialExamType = Literal[
-    "gynecologique",
-    "ophtalmologique",
-    "articulaire_avec_evaluation_fonction",
-    "psychiatrique_semiologique",
-    "evaluation_fonctions_mentales_superieures",
-    "autre",
-]
+AnesthesiaUsed = Literal["local", "régional", "général", "aucun", "pas_mentionné"]
 
-AnesthesiaUsed = Literal["local", "regional", "general", "none", "not_stated"]
+DiagnosticOrTherapeutic = Literal["diagnostique", "thérapeutique", "les_deux", "incertain"]
 
-DiagnosticOrTherapeutic = Literal["diagnostic", "therapeutique", "both", "unclear"]
-
-BestGuessCategory = Literal[
-    "visite_suivi_ou_prise_en_charge",
-    "visite_ponctuelle",
-    "consultation_formelle",
-    "examen_complet_ou_majeur",
-    "intervention_clinique_longue",
-    "acte_diagnostique_ou_therapeutique",
-    "chirurgie",
-    "psychotherapie",
-    "constatation_deces",
-    "communication_professionnelle_seule",
-    "autre_ou_indetermine",
-]
-
-ConfidenceLevel = Literal["high", "medium", "low"]
+Trimester = Literal["premier", "deuxième", "troisième", "incertain"]
 
 
 class PregnancyContext(BaseModel):
@@ -81,7 +33,6 @@ class PregnancyContext(BaseModel):
 
 
 class EncounterSetting(BaseModel):
-    location_type: LocationType = Field(json_schema_extra={"fr_label": "Lieu"})
     location_detail: str | None = Field(
         default=None,
         description="Free text if stated, e.g. clinic name, ward, 'patient's home' — else null",
@@ -113,56 +64,15 @@ class EncounterSetting(BaseModel):
         description="Whether duration_minutes was explicitly stated by the transcript vs. estimated from context",
         json_schema_extra={"fr_label": "Durée déclarée explicitement"},
     )
-    appointment_type: AppointmentType = Field(json_schema_extra={"fr_label": "Rendez-vous"})
-
-
-class PatientInformation(BaseModel):
-    age_years: float | None = Field(default=None, json_schema_extra={"fr_label": "Âge (années)"})
-    age_months_if_infant: float | None = Field(default=None, json_schema_extra={"fr_label": "Âge (mois)"})
-    sex_if_stated: str | None = Field(
-        default=None, description="Free text or null", json_schema_extra={"fr_label": "Sexe"}
-    )
-    name_as_stated: str | None = Field(
-        default=None,
+    appointment_type: str | None = Field(       
         description=(
-            "The patient's full name exactly as written in the note, in the order it appears "
-            "(e.g. 'Desjardins, Roch'). Do not reorder, expand, or clean it. null if the note "
-            "never names the patient."
+            "Type of appointment if stated. e.g.: sans rendez-vous, avec rendez-vous, urgence "
         ),
-        json_schema_extra={"fr_label": "Nom du patient"},
-    )
-    ramq_number_as_stated: str | None = Field(
-        default=None,
-        description=(
-            "The patient's RAMQ health insurance number (NAM / numéro d'assurance maladie) "
-            "exactly as written, e.g. 'DESR 8102 1001' — 4 letters followed by 8 digits, "
-            "sometimes spaced or hyphenated. null if the note does not state one. Never infer "
-            "it from the name or from a chart/dossier number."
-        ),
-        json_schema_extra={"fr_label": "NAM"},
-    )
-    pregnancy_context: PregnancyContext
-    relevant_vulnerability_or_context_mentioned: list[str] = Field(
-        default_factory=list,
-        description=(
-            "e.g. perte_severe_autonomie, soins_palliatifs, sante_mentale, toxicomanie — only "
-            "if explicitly evidenced, not inferred"
-        ),
-        json_schema_extra={"fr_label": "Contexte/vulnérabilité mentionnée"},
-    )
-    new_or_established_patient_language: str | None = Field(
-        default=None,
-        description=(
-            "Verbatim or paraphrase of anything transcript says about whether patient is "
-            "new/registered/followed by this physician — else null"
-        ),
-        json_schema_extra={"fr_label": "Statut patient (nouveau/inscrit)"},
-    )
+        json_schema_extra={"fr_label": "Rendez-vous"})
 
 
 class ReferralInformation(BaseModel):
     present: bool = Field(json_schema_extra={"fr_label": "Référence"})
-    referral_type: ReferralType = Field(json_schema_extra={"fr_label": "Type de référence"})
     requester_role: RequesterRole | None = Field(
         default=None, json_schema_extra={"fr_label": "Demandeur (rôle)"}
     )
@@ -217,13 +127,8 @@ class PhysicalExamination(BaseModel):
     performed: bool | None = Field(default=None, json_schema_extra={"fr_label": "Examen physique effectué"})
     regions_or_systems_examined: list[str] = Field(
         default_factory=list,
-        description="e.g. cou, thorax, abdomen, fond_oeil",
+        description="e.g. cou, thorax, abdomen, fond_oeil, gynécologique, psychiatrique",
         json_schema_extra={"fr_label": "Régions examinées"},
-    )
-    special_exam_type: list[SpecialExamType] = Field(
-        default_factory=list,
-        description="List all that apply, empty list if none",
-        json_schema_extra={"fr_label": "Type d'examen spécial"},
     )
     notable_findings: str | None = Field(
         default=None,
@@ -249,20 +154,15 @@ class ProcedurePerformed(BaseModel):
     )
 
 
-class EncounterCategoryHint(BaseModel):
-    best_guess_category: BestGuessCategory = Field(json_schema_extra={"fr_label": "Catégorie probable"})
-    confidence: ConfidenceLevel = Field(json_schema_extra={"fr_label": "Confiance"})
-    rationale: str = Field(
-        description="One sentence explaining why, referencing what's in the transcript",
-        json_schema_extra={"fr_label": "Justification"},
-    )
-
-
 class ConsultationSummaryResult(BaseModel):
-    """A structured summary of a clinical encounter's RAMQ-relevant facts (setting, patient
-    context, referral, clinical/exam content, a category hint) for physician review — never
-    a billing code itself; that's resolved downstream by the rules engine against
-    administrative facts not present in the transcript."""
+    """A structured summary of a clinical encounter's RAMQ-relevant facts (setting,
+    pregnancy context, referral, clinical/exam content) for physician review — never a
+    billing code itself;
+    that's resolved downstream by the rules engine against administrative facts not present
+    in the transcript. Carries no patient-identity fields: the physician picks the patient
+    before extraction runs (see app/extraction/pipeline.py), and that patient's
+    administrative facts (registration/vulnerability/age) reach billing_codes separately via
+    BillingContext, never re-extracted from the transcript here."""
 
     short_description: str = Field(
         description=(
@@ -272,14 +172,13 @@ class ConsultationSummaryResult(BaseModel):
         json_schema_extra={"fr_label": "Résumé"},
     )
     encounter_setting: EncounterSetting
-    patient_information: PatientInformation
+    pregnancy_context: PregnancyContext
     referral_information: ReferralInformation
     clinical_summary: ClinicalSummary
     physical_examination: PhysicalExamination
     procedures_performed: list[ProcedurePerformed] = Field(
         default_factory=list, json_schema_extra={"fr_label": "Acte réalisé"}
     )
-    encounter_category_hint: EncounterCategoryHint
     possible_billable_add_ons: list[str] = Field(
         default_factory=list,
         description=(

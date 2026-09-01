@@ -24,14 +24,6 @@ USER = User(id=1, email="doc@example.test", hashed_password="x", full_name="Dr. 
 PATIENT_ID = 42
 
 
-class _NoopPatientRepository:
-    """No patient row exists for PATIENT_ID — _verify_patient degrades to None, same as a
-    transcript with nothing to compare."""
-
-    async def get(self, patient_id):
-        return None
-
-
 class _FakeContextBuilder:
     def __init__(self, context: BillingContext):
         self._context = context
@@ -59,34 +51,32 @@ async def _run_pipeline(context: BillingContext = BillingContext()):
             _response(MOCK_SUMMARY_RESULT),
             _response(MOCK_BILLING_RESULT),
         ])
-        summary_result, billing_result, patient_verification = await run_billing_codes_pipeline(
+        summary_result, billing_result = await run_billing_codes_pipeline(
             TRANSCRIPT,
             user=USER,
             patient_id=PATIENT_ID,
             context_builder=context_builder,
-            patient_repository=_NoopPatientRepository(),
         )
-    return summary_result, billing_result, patient_verification, mock_get_client, context_builder
+    return summary_result, billing_result, mock_get_client, context_builder
 
 
 async def test_pipeline_runs_all_three_stages():
-    summary_result, billing_result, patient_verification, mock_get_client, _ = await _run_pipeline()
+    summary_result, billing_result, mock_get_client, _ = await _run_pipeline()
 
     assert summary_result.task == "consultation_summary"
     assert billing_result.task == "billing_codes"
-    assert patient_verification is None
     assert mock_get_client.return_value.achat.call_count == 2
 
 
 async def test_consultation_summary_stage_sees_the_raw_transcript():
-    summary_result, _billing_result, _p, mock_get_client, _ = await _run_pipeline()
+    summary_result, _billing_result, mock_get_client, _ = await _run_pipeline()
 
     first_user_message = mock_get_client.return_value.achat.call_args_list[0].kwargs["messages"][1].content
     assert TRANSCRIPT in first_user_message
 
 
 async def test_billing_codes_stage_sees_both_the_rendered_summary_and_the_raw_transcript():
-    summary_result, _billing_result, _p, mock_get_client, _ = await _run_pipeline()
+    summary_result, _billing_result, mock_get_client, _ = await _run_pipeline()
 
     second_user_message = mock_get_client.return_value.achat.call_args_list[1].kwargs["messages"][1].content
     rendered_summary = render_for_billing_codes(summary_result.result)
@@ -99,7 +89,7 @@ async def test_billing_codes_stage_sees_both_the_rendered_summary_and_the_raw_tr
 async def test_billing_codes_stage_states_known_context_facts():
     context = BillingContext(physician=PhysicianContext(number_of_patients=320))
 
-    _s, _b, _p, mock_get_client, _ = await _run_pipeline(context)
+    _s, _b, mock_get_client, _ = await _run_pipeline(context)
 
     second_user_message = mock_get_client.return_value.achat.call_args_list[1].kwargs["messages"][1].content
     assert "320 patients" in second_user_message
@@ -109,7 +99,7 @@ async def test_context_builder_receives_the_encounter_date_parsed_from_the_summa
     # MOCK_SUMMARY_RESULT's encounter_setting.date is null in this fixture, so the pipeline
     # must fall back to passing None through rather than substituting today's date onto the
     # context builder call — see app/extraction/encounter_date.py's "never guess" stance.
-    _s, _b, _p, _client, context_builder = await _run_pipeline()
+    _s, _b, _client, context_builder = await _run_pipeline()
 
     assert context_builder.build_calls == [
         {"user": USER, "patient_id": PATIENT_ID, "encounter_date": None}

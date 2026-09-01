@@ -33,28 +33,17 @@ SAMPLE_TRANSCRIPT = (
 MOCK_SUMMARY_RESULT = {
     "short_description": "Suivi trimestriel de diabète de type 2 et d'hypertension artérielle.",
     "encounter_setting": {
-        "location_type": "cabinet",
         "location_detail": None,
         "date": None,
         "time_start": None,
         "time_end": None,
         "duration_minutes": None,
         "duration_explicitly_stated": False,
-        "appointment_type": "inconnu",
+        "appointment_type": None,
     },
-    "patient_information": {
-        "age_years": 58,
-        "age_months_if_infant": None,
-        "sex_if_stated": "F",
-        "name_as_stated": "Tremblay, Louise",
-        "ramq_number_as_stated": "TREL58021501",
-        "pregnancy_context": {"present": False, "trimester": None},
-        "relevant_vulnerability_or_context_mentioned": [],
-        "new_or_established_patient_language": None,
-    },
+    "pregnancy_context": {"present": False, "trimester": None},
     "referral_information": {
         "present": False,
-        "referral_type": "aucune",
         "requester_role": None,
         "requester_identifier_mentioned": None,
         "reason_for_referral": None,
@@ -74,15 +63,9 @@ MOCK_SUMMARY_RESULT = {
     "physical_examination": {
         "performed": True,
         "regions_or_systems_examined": ["tension artérielle"],
-        "special_exam_type": [],
         "notable_findings": "Tension artérielle mesurée à 138/86",
     },
     "procedures_performed": [],
-    "encounter_category_hint": {
-        "best_guess_category": "visite_suivi_ou_prise_en_charge",
-        "confidence": "high",
-        "rationale": "Suivi documenté d'un patient déjà pris en charge pour diabète et hypertension.",
-    },
     "possible_billable_add_ons": [],
     "notes_uncertain_items": ["Bilan sanguin de contrôle demandé (HbA1c, fonction rénale) dans 3 mois"],
 }
@@ -255,46 +238,6 @@ async def test_extract_endpoint_requires_a_known_patient_id():
         response = _extract(client, patient_id=999999)
 
     assert response.status_code == 404
-
-
-async def test_extract_endpoint_reports_no_mismatch_when_transcript_agrees_with_the_chosen_patient():
-    with TestClient(app) as client:
-        patient = await _seed_patient(ramq_number="TREL58021501", full_name="Louise Tremblay")
-        response = _extract(client, patient_id=patient.id)
-
-    assert response.status_code == 200
-    verification = response.json()["patient_verification"]
-    assert verification["nam_mismatch"] is False
-    assert verification["name_mismatch"] is False
-    assert verification["extracted"]["name_as_stated"] == "Tremblay, Louise"
-
-
-async def test_extract_endpoint_reports_nam_mismatch_when_transcript_disagrees():
-    with TestClient(app) as client:
-        # Chosen patient's NAM differs from what the (mocked) transcript extraction states.
-        patient = await _seed_patient(ramq_number="AUTR00000000", full_name="Quelqu'un Dautre")
-        response = _extract(client, patient_id=patient.id)
-
-    assert response.status_code == 200
-    verification = response.json()["patient_verification"]
-    assert verification["nam_mismatch"] is True
-    assert verification["name_mismatch"] is True
-
-
-async def test_extract_endpoint_no_nam_in_transcript_leaves_nam_mismatch_unknown():
-    summary_without_nam = {
-        **MOCK_SUMMARY_RESULT,
-        "patient_information": {**MOCK_SUMMARY_RESULT["patient_information"], "ramq_number_as_stated": None},
-    }
-
-    with TestClient(app) as client:
-        patient = await _seed_patient()
-        response = _extract(client, patient_id=patient.id, summary=summary_without_nam)
-
-    assert response.status_code == 200
-    verification = response.json()["patient_verification"]
-    assert verification["nam_mismatch"] is None
-    assert verification["extracted"]["name_as_stated"] == "Tremblay, Louise"
 
 
 def test_unknown_task_returns_400():

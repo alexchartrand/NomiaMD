@@ -40,27 +40,6 @@ class ExtractionResult(BaseModel, Generic[ResultT]):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
-class ExtractedIdentitySummary(BaseModel):
-    """What the transcript itself said about the patient (name_as_stated/
-    ramq_number_as_stated/age_years, as extracted) — for display alongside the mismatch
-    flags below, never used to prefill anything now that the patient is chosen up front."""
-
-    name_as_stated: str | None
-    ramq_number_as_stated: str | None
-    age_years: float | None
-
-
-class PatientVerificationOut(BaseModel):
-    """Each `*_mismatch` is null when the transcript didn't state enough to compare, and a
-    bool otherwise — a safety-net warning, not a gate: the physician already chose this
-    patient before extraction ran (see ExtractionRequest.patient_id)."""
-
-    extracted: ExtractedIdentitySummary
-    nam_mismatch: bool | None
-    name_mismatch: bool | None
-    age_mismatch: bool | None
-
-
 class BillingExtractionResponse(BaseModel):
     """/extract's response — a wrapper around the generic ExtractionResult rather than
     extra sibling fields on it directly, since that envelope is documented as generic over
@@ -72,4 +51,3 @@ class BillingExtractionResponse(BaseModel):
     billing_extraction_record_id: int
     encounter_date: date | None
     encounter_date_raw: str | None
-    patient_verification: PatientVerificationOut | None

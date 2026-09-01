@@ -9,11 +9,10 @@ backend. It's deliberately "dumb": every request is routed to one of three fake 
 a marker unique to that caller's fixed prompt text (see _classify_request) — never by which
 endpoint was hit, since they all share this one.
 
-- consultation_summary: matched on "encounter_category_hint", only ever present in that
-  task's rendered schema. Echoes the transcript's own **Patient :**/**NAM :**/
-  **Date/heure :** header fields back as the extracted identity/date (real fixtures under
-  consultations/ all carry these — see CLAUDE.md), so the NAM-matching UI path is
-  exercisable without a real model. Returns JSON matching that task's schema.
+- consultation_summary: matched on a fixed line from app/summary/task.py's _RULES. Echoes
+  the transcript's own **Date/heure :** header field back as the extracted encounter date
+  (real fixtures under consultations/ all carry these — see CLAUDE.md). Returns JSON
+  matching that task's schema.
 - billing_codes: the default/fallback bucket. Parses the candidate RAMQ codes out of the
   prompt (built by app/ramq_codes/task.py::build_prompt) and picks a fixed number of them
   back, with a placeholder confidence/quote. Fee data is NOT part of this response — the
@@ -50,15 +49,15 @@ app = FastAPI(title="fake-llm")
 # module docstring's billing_codes bullet.
 _CANDIDATE_RE = re.compile(r"^- (?P<code>\S+) \| .*\n {2}(?P<description>.*)$", re.MULTILINE)
 
-# Same field format app/sample_patients/service.py parses (**Field :** value), used to echo identity
-# back out of the transcript embedded in consultation_summary's user message.
+# Same field format app/sample_patients/service.py parses (**Field :** value), used to echo the
+# encounter date back out of the transcript embedded in consultation_summary's user message.
 _FIELD_RE = re.compile(r"^\*\*(.+?)\s*:\*\*\s*(.*)$", re.MULTILINE)
-_AGE_SEX_RE = re.compile(r"(\d+)\s*(ans|mois)\s*\((\w)\)")
 
 PICK = 2  # overridden by --pick at startup
 
-# Fixed, non-templated first line of each prompt (see module docstring) — used to tell the
+# Fixed, non-templated markers from each prompt (see module docstring) — used to tell the
 # three request shapes apart.
+_CONSULTATION_SUMMARY_SYSTEM_MARKER = "clinical documentation parser"  # app/summary/task.py _RULES
 _RAMQ_CHATBOT_SYSTEM_MARKER = "RAMQ billing specialist chatbot"  # app/ramq_chatbot/engine.py SYSTEM_PROMPT
 
 # Matches the trailing "Query: {query_str}" line engine.py's USER_MESSAGE_TEMPLATE renders.
@@ -73,9 +72,7 @@ def _extract_query_text(user_message: str) -> str:
 
 
 def _classify_request(system_message: str, user_message: str) -> str:
-    # "encounter_category_hint" only ever appears in consultation_summary's rendered
-    # schema (app/summary/models.py) — no other caller's system prompt mentions it.
-    if "encounter_category_hint" in system_message:
+    if _CONSULTATION_SUMMARY_SYSTEM_MARKER in system_message:
         return "consultation_summary"
     if _RAMQ_CHATBOT_SYSTEM_MARKER in system_message:
         return "ramq_chatbot_answer"
@@ -85,49 +82,23 @@ def _classify_request(system_message: str, user_message: str) -> str:
 def _fake_consultation_summary_content(user_message: str) -> str:
     fields = dict(_FIELD_RE.findall(user_message))
 
-    patient_field = fields.get("Patient", "")
-    name_as_stated = patient_field.split("—")[0].strip() or None
-
-    age_years = age_months = None
-    sex = None
-    age_match = _AGE_SEX_RE.search(patient_field)
-    if age_match:
-        value, unit, sex_letter = age_match.groups()
-        sex = sex_letter
-        if unit == "ans":
-            age_years = float(value)
-        else:
-            age_months = float(value)
-
-    ramq_number_as_stated = fields.get("NAM") or None
     date_raw = fields.get("Date/heure")
     date_value = date_raw.split(",")[0].strip() if date_raw else None
 
     result = {
         "short_description": "Résumé généré par le faux LLM (fake_llm_server.py) — aucune analyse réelle.",
         "encounter_setting": {
-            "location_type": "cabinet",
             "location_detail": None,
             "date": date_value,
             "time_start": None,
             "time_end": None,
             "duration_minutes": None,
             "duration_explicitly_stated": False,
-            "appointment_type": "inconnu",
+            "appointment_type": None,
         },
-        "patient_information": {
-            "age_years": age_years,
-            "age_months_if_infant": age_months,
-            "sex_if_stated": sex,
-            "name_as_stated": name_as_stated,
-            "ramq_number_as_stated": ramq_number_as_stated,
-            "pregnancy_context": {"present": False, "trimester": None},
-            "relevant_vulnerability_or_context_mentioned": [],
-            "new_or_established_patient_language": None,
-        },
+        "pregnancy_context": {"present": False, "trimester": None},
         "referral_information": {
             "present": False,
-            "referral_type": "aucune",
             "requester_role": None,
             "requester_identifier_mentioned": None,
             "reason_for_referral": None,
@@ -136,7 +107,7 @@ def _fake_consultation_summary_content(user_message: str) -> str:
         "clinical_summary": {
             "chief_complaint_or_reason_for_visit": "Motif non déterminé (faux LLM).",
             "systems_or_body_regions_involved": [],
-            "single_vs_multi_system": "unclear",
+            "single_vs_multi_system": "incertain",
             "history_taken": None,
             "new_treatment_initiated": None,
             "existing_treatment_reviewed_or_adjusted": None,
@@ -147,15 +118,9 @@ def _fake_consultation_summary_content(user_message: str) -> str:
         "physical_examination": {
             "performed": None,
             "regions_or_systems_examined": [],
-            "special_exam_type": [],
             "notable_findings": None,
         },
         "procedures_performed": [],
-        "encounter_category_hint": {
-            "best_guess_category": "autre_ou_indetermine",
-            "confidence": "low",
-            "rationale": "Faux LLM (fake_llm_server.py) — aucune analyse réelle effectuée.",
-        },
         "possible_billable_add_ons": [],
         "notes_uncertain_items": [],
     }

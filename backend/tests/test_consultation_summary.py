@@ -24,26 +24,17 @@ SAMPLE_TRANSCRIPT = (
 MOCK_RESULT = {
     "short_description": "Suivi trimestriel de diabète de type 2 et d'hypertension artérielle, ajustement de la médication envisagé.",
     "encounter_setting": {
-        "location_type": "cabinet",
         "location_detail": None,
         "date": None,
         "time_start": None,
         "time_end": None,
         "duration_minutes": 15,
         "duration_explicitly_stated": False,
-        "appointment_type": "sur_rendez_vous",
+        "appointment_type": "avec rendez-vous",
     },
-    "patient_information": {
-        "age_years": 58,
-        "age_months_if_infant": None,
-        "sex_if_stated": None,
-        "pregnancy_context": {"present": False, "trimester": None},
-        "relevant_vulnerability_or_context_mentioned": [],
-        "new_or_established_patient_language": "Patiente inscrite",
-    },
+    "pregnancy_context": {"present": False, "trimester": None},
     "referral_information": {
         "present": False,
-        "referral_type": "aucune",
         "requester_role": None,
         "requester_identifier_mentioned": None,
         "reason_for_referral": None,
@@ -63,15 +54,9 @@ MOCK_RESULT = {
     "physical_examination": {
         "performed": True,
         "regions_or_systems_examined": ["tension artérielle"],
-        "special_exam_type": [],
         "notable_findings": "Tension artérielle mesurée à 138/86",
     },
     "procedures_performed": [],
-    "encounter_category_hint": {
-        "best_guess_category": "visite_suivi_ou_prise_en_charge",
-        "confidence": "high",
-        "rationale": "Suivi trimestriel documenté d'un patient déjà pris en charge pour diabète et hypertension.",
-    },
     "possible_billable_add_ons": [],
     "notes_uncertain_items": [],
 }
@@ -94,8 +79,6 @@ async def test_run_extraction_parses_mocked_response():
         result = await run_extraction(task, SAMPLE_TRANSCRIPT)
 
     assert result.task == "consultation_summary"
-    assert result.result.encounter_category_hint.best_guess_category == "visite_suivi_ou_prise_en_charge"
-    assert result.result.encounter_category_hint.confidence == "high"
     assert result.result.clinical_summary.single_vs_multi_system == "multi"
     assert result.result.clinical_summary.systems_or_body_regions_involved == [
         "endocrinien",
@@ -125,7 +108,6 @@ def test_render_for_billing_codes_surfaces_quotable_facts():
     assert MOCK_RESULT["short_description"] in rendered
     assert MOCK_RESULT["clinical_summary"]["chief_complaint_or_reason_for_visit"] in rendered
     assert MOCK_RESULT["physical_examination"]["notable_findings"] in rendered
-    assert MOCK_RESULT["patient_information"]["new_or_established_patient_language"] in rendered
     # Null/empty fields (no referral, no procedures, no notes here) must not leak in as
     # literal "None"/"null" text — a missing line is how absence is represented.
     assert "None" not in rendered
@@ -135,42 +117,19 @@ def test_render_for_billing_codes_surfaces_quotable_facts():
 def test_render_for_billing_codes_includes_procedure_and_pregnancy_lines():
     data = {
         **MOCK_RESULT,
-        "patient_information": {
-            **MOCK_RESULT["patient_information"],
-            "pregnancy_context": {"present": True, "trimester": "beyond_first"},
-        },
+        "pregnancy_context": {"present": True, "trimester": "deuxième"},
         "procedures_performed": [
             {
                 "procedure_description": "Suture d'une plaie de 3 cm",
                 "body_site": "avant-bras gauche",
                 "technique_or_approach_mentioned": None,
                 "anesthesia_used": "local",
-                "diagnostic_or_therapeutic": "therapeutique",
+                "diagnostic_or_therapeutic": "thérapeutique",
             }
         ],
     }
     rendered = render_for_billing_codes(ConsultationSummaryResult.model_validate(data))
 
-    assert "Grossesse" in rendered and "beyond_first" in rendered
+    assert "Grossesse" in rendered and "deuxième" in rendered
     assert "Suture d'une plaie de 3 cm" in rendered
     assert "avant-bras gauche" in rendered
-
-
-def test_name_and_nam_present_on_parsed_result_but_stripped_from_billing_rendering():
-    data = {
-        **MOCK_RESULT,
-        "patient_information": {
-            **MOCK_RESULT["patient_information"],
-            "name_as_stated": "Desjardins, Roch",
-            "ramq_number_as_stated": "DESR 8102 1001",
-        },
-    }
-    summary = ConsultationSummaryResult.model_validate(data)
-
-    assert summary.patient_information.name_as_stated == "Desjardins, Roch"
-    assert summary.patient_information.ramq_number_as_stated == "DESR 8102 1001"
-
-    rendered = render_for_billing_codes(summary)
-    assert "Desjardins" not in rendered
-    assert "DESR" not in rendered
-    assert "8102" not in rendered

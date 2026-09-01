@@ -68,7 +68,7 @@ def test_no_candidates_returns_empty_codes_with_note():
     assert content["notes"]
 
 
-def test_consultation_summary_request_echoes_header_fields_as_valid_result():
+def test_consultation_summary_request_echoes_the_date_header_as_valid_result():
     transcript = (
         "**Patient :** Desjardins, Roch — 45 ans (H)\n"
         "**NAM :** DESR81021001\n"
@@ -87,9 +87,6 @@ def test_consultation_summary_request_echoes_header_fields_as_valid_result():
     # ConsultationSummaryTask.parse() with.
     result = ConsultationSummaryResult.model_validate(content)
 
-    assert result.patient_information.name_as_stated == "Desjardins, Roch"
-    assert result.patient_information.ramq_number_as_stated == "DESR81021001"
-    assert result.patient_information.age_years == 45
     assert result.encounter_setting.date == "10 février 2026"
 
 

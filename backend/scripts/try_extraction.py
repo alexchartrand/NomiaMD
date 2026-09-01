@@ -42,7 +42,7 @@ async def main() -> None:
 
     await init_db()
     async with application_services():
-        summary_result, billing_result, patient_verification = await run_billing_codes_pipeline(
+        summary_result, billing_result = await run_billing_codes_pipeline(
             transcript, user=_SCRIPT_USER, patient_id=_SCRIPT_PATIENT_ID
         )
 
@@ -50,8 +50,6 @@ async def main() -> None:
     print(summary_result.model_dump_json(indent=2))
     print("--- billing codes result ---")
     print(billing_result.model_dump_json(indent=2))
-    print("--- patient verification ---")
-    print(patient_verification)
 
 
 if __name__ == "__main__":

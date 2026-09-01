@@ -35,32 +35,12 @@ export interface ExtractionResult {
   created_at: string;
 }
 
-// What the transcript itself said about the patient — for display alongside the mismatch
-// flags below, never used to prefill anything now that the patient is chosen before
-// extraction runs.
-export interface ExtractedIdentitySummary {
-  name_as_stated: string | null;
-  ramq_number_as_stated: string | null;
-  age_years: number | null;
-}
-
-// Each `*_mismatch` is null when the transcript didn't state enough to compare, and a
-// bool otherwise — a safety-net warning, not a gate: the physician already chose this
-// patient before extraction ran (see extractBillingCodes' patientId param).
-export interface PatientVerification {
-  extracted: ExtractedIdentitySummary;
-  nam_mismatch: boolean | null;
-  name_mismatch: boolean | null;
-  age_mismatch: boolean | null;
-}
-
 export interface BillingExtractionResponse {
   billing: ExtractionResult;
   summary_extraction_record_id: number;
   billing_extraction_record_id: number;
   encounter_date: string | null; // ISO date (YYYY-MM-DD)
   encounter_date_raw: string | null;
-  patient_verification: PatientVerification | null;
 }
 
 export async function extractBillingCodes(

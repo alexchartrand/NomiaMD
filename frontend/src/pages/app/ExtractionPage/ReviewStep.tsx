@@ -55,7 +55,7 @@ export function ReviewStep({
         <CardContent className="flex flex-col gap-[0.85rem]">
           {result.billing.result.notes && <Banner tone="warning">⚠ {result.billing.result.notes}</Banner>}
 
-          <PatientMatchSection patient={patient} verification={result.patient_verification} />
+          <PatientMatchSection patient={patient} />
 
           <div className="flex flex-col gap-[0.35rem]">
             <label htmlFor="service-date" className="text-sm text-muted-foreground">

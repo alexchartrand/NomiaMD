@@ -5,8 +5,7 @@
    guessed from the transcript — so this stage resolves the administrative facts
    billing_codes needs but can never derive from a transcript (the physician's own
    practice facts, the chosen patient's registration/vulnerability status) into a
-   BillingContext, and separately verifies the transcript's own stated identity against
-   that chosen patient as a safety-net mismatch check (never a gate).
+   BillingContext.
 3. billing_codes runs off the structured summary, the raw transcript, and that context.
 
 Both the summary and the raw transcript reach stage 3 (not just the summary's rendered
@@ -15,52 +14,18 @@ selection it's a lossy bottleneck — any clinical detail the summarizer dropped
 unrecoverable downstream. See app/ramq_codes/task.py's BillingCodesInput docstring."""
 
 import logging
-from datetime import date
 from typing import cast
 
 from app.auth.factory import get_profile_service
 from app.extraction.encounter_date import parse_encounter_date
 from app.extraction.engine import run_extraction
 from app.extraction.models import ExtractionResult
-from app.patients import ExtractedIdentity, PatientVerification, verify_patient_identity
 from app.postgresdb import PatientRepository, User
 from app.ramq_codes import BillingCodesInput, BillingCodesResult, BillingContext, BillingContextBuilder, BillingCodesTask
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
 
 logger = logging.getLogger(__name__)
-
-
-def _extracted_identity_from_summary(summary: ConsultationSummaryResult) -> ExtractedIdentity:
-    info = summary.patient_information
-    return ExtractedIdentity(
-        ramq_number=info.ramq_number_as_stated,
-        name_as_stated=info.name_as_stated,
-        age_years=info.age_years,
-        age_months=info.age_months_if_infant,
-        sex=info.sex_if_stated,
-    )
-
-
-async def _verify_patient(
-    summary: ConsultationSummaryResult,
-    *,
-    patient_id: int,
-    on_date: date,
-    patient_repository: PatientRepository,
-) -> PatientVerification | None:
-    # Best-effort: a lookup/comparison bug must never throw away a completed (paid-for)
-    # extraction — a failure here just means no mismatch warning is shown, same as if the
-    # transcript stated nothing to compare.
-    try:
-        patient = await patient_repository.get(patient_id)
-        if patient is None:
-            return None
-        extracted = _extracted_identity_from_summary(summary)
-        return verify_patient_identity(extracted, patient=patient, on_date=on_date)
-    except Exception:
-        logger.exception("Patient verification failed; billing_codes proceeds with no mismatch warning")
-        return None
 
 
 async def _build_context(
@@ -78,9 +43,9 @@ async def _build_context(
 
 
 async def _resolve_fees(result: BillingCodesResult) -> None:
-    # Same best-effort stance as _verify_patient/_build_context above: a LanceDB lookup
-    # failure here must never discard a completed (paid-for) extraction — codes just keep
-    # their already-empty fee list, identical to today's "no fee data" case.
+    # Same best-effort stance as _build_context above: a LanceDB lookup failure here must
+    # never discard a completed (paid-for) extraction — codes just keep their already-empty
+    # fee list, identical to today's "no fee data" case.
     try:
         task = cast(BillingCodesTask, get_task("billing_codes"))
         await task.resolve_fees(result)
@@ -98,12 +63,10 @@ async def run_billing_codes_pipeline(
 ) -> tuple[
     ExtractionResult[ConsultationSummaryResult],
     ExtractionResult[BillingCodesResult],
-    PatientVerification | None,
 ]:
-    """Runs all three stages and returns both extraction results plus the identity
-    verification — callers that only need the final billing codes still get the
-    intermediate summary (e.g. to store it for traceability) and the verification (e.g. to
-    show a mismatch warning in the review UI)."""
+    """Runs all three stages and returns both extraction results — callers that only need
+    the final billing codes still get the intermediate summary (e.g. to store it for
+    traceability)."""
     patient_repository = patient_repository or PatientRepository()
     context_builder = context_builder or BillingContextBuilder(get_profile_service(), patient_repository)
 
@@ -111,11 +74,6 @@ async def run_billing_codes_pipeline(
     summary = summary_result.result
 
     encounter_date = parse_encounter_date(summary.encounter_setting.date)
-    on_date = encounter_date or date.today()
-
-    patient_verification = await _verify_patient(
-        summary, patient_id=patient_id, on_date=on_date, patient_repository=patient_repository
-    )
 
     context = await _build_context(
         user=user, patient_id=patient_id, encounter_date=encounter_date, context_builder=context_builder
@@ -125,4 +83,4 @@ async def run_billing_codes_pipeline(
     billing_result = await run_extraction(get_task("billing_codes"), billing_input)
     await _resolve_fees(billing_result.result)
 
-    return summary_result, billing_result, patient_verification
+    return summary_result, billing_result
