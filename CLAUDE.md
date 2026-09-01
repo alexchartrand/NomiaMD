@@ -121,14 +121,21 @@ Mistral API call.
      picking among near-identical tariff variants is harder than structural extraction) asks
      the model to pick only from those candidates, recall-first (a plausible candidate is
      included rather than dropped — mandatory physician review is the backstop, not the
-     model's certainty), attaching a fee (from the candidate's own fee list, never invented),
-     a `confidence` bucket (`high`/`medium`/`low`), a verbatim `supporting_quote` from the
-     summary or transcript, and a `needs_confirmation` list naming any axis
-     `CodeFamilySelector` couldn't resolve. Empty output is correct/expected when nothing is
-     clearly supported — never picks a "closest" candidate just to return something.
-     `BillingCodesTask.parse` also cross-checks every returned code against the candidate
-     set `build_prompt` actually offered (`PreparedPrompt.candidate_numbers`,
-     `app/tasks/base.py`), dropping and flagging anything the model invented outside it.
+     model's certainty), a `confidence` bucket (`high`/`medium`/`low`), a verbatim
+     `supporting_quote` from the summary or transcript, and a `needs_confirmation` list
+     naming any axis `CodeFamilySelector` couldn't resolve. Empty output is correct/expected
+     when nothing is clearly supported — never picks a "closest" candidate just to return
+     something. `BillingCodesTask.parse` also cross-checks every returned code against the
+     candidate set `build_prompt` actually offered (`PreparedPrompt.candidate_numbers`,
+     `app/tasks/base.py`), dropping and flagging anything the model invented outside it. The
+     model never picks a fee — `ExtractedCode.fees` is excluded from the LLM-facing schema
+     entirely (`json_schema_extra={"server_only": True}`, honored by `app/tasks/schema.py`'s
+     `to_strict_schema`) and instead resolved after the LLM call, by exact code number
+     (`BillingCodesTask.resolve_fees`, called from `app/extraction/pipeline.py`) straight off
+     the candidate's real fee list — the physician picks among several variants in the review
+     UI when a code has more than one; `POST /claims` (`app/claims/models.py`'s
+     `SelectedCode.fee_index`) carries that choice back to `ClaimService`, which validates it
+     against the same list before snapshotting it onto `claim_codes`.
 3. `ramq_chatbot` task (`backend/app/ramq_chatbot/`): a free-form, multi-turn chatbot for
    generic billing questions — not tied to any specific encounter/transcript, unlike
    `billing_codes`. Wired at `POST /query` (`app/main.py`). History is stateless: the

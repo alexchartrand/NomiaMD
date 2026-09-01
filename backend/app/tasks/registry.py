@@ -19,7 +19,7 @@ def init_tasks(codes: ICodeRepository) -> None:
     (app/bootstrap.py's application_services()) — not at import time, since
     BillingCodesTask's retriever needs an already-open LanceDB connection."""
     register_tasks([
-        BillingCodesTask(build_ramq_retriever(codes)),
+        BillingCodesTask(build_ramq_retriever(codes), codes),
         ConsultationSummaryTask(),
         # Future tasks (PrescriptionTask, ...) get added here — nothing else in the
         # pipeline needs to change.

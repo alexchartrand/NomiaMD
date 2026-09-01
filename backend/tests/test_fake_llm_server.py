@@ -40,7 +40,7 @@ def test_picks_candidates_from_prompt():
         "  Révision d'un examen\n"
         "- 00260 | B > Blocage du ganglion stellaire\n"
         "  Blocage du ganglion stellaire\n"
-        "  Tarifs : 174.90 — Pour un déplacement entre 8h et 18h\n\n"
+        "  Conditions : Pour un déplacement entre 8h et 18h\n\n"
         "Consultation summary (normalized view):\nRésumé.\n\n"
         "Raw transcript (detail-of-record):\nPatient exemple."
     )
@@ -57,29 +57,7 @@ def test_picks_candidates_from_prompt():
     assert content["codes"][0]["confidence"] == "medium"
     assert "supporting_quote" in content["codes"][0]
     assert content["codes"][0]["needs_confirmation"] == []
-    assert content["codes"][0]["fee"] == {"amount": None, "when_to_use": None, "majoration": None}
-
-
-def test_picks_up_the_real_fee_from_the_tarifs_line():
-    user_message = (
-        "Candidate RAMQ codes:\n"
-        "- 15801 | B > Visite\n"
-        "  Visite\n"
-        "- 00260 | B > Blocage du ganglion stellaire\n"
-        "  Blocage du ganglion stellaire\n"
-        "  Tarifs : 174.90 — Pour un déplacement entre 8h et 18h\n\n"
-        "Consultation summary (normalized view):\nRésumé.\n\n"
-        "Raw transcript (detail-of-record):\nPatient exemple."
-    )
-    response = client.post("/v1/chat/completions", json=_request_body(user_message))
-    content = json.loads(response.json()["choices"][0]["message"]["content"])
-
-    by_code = {c["code"]: c for c in content["codes"]}
-    assert by_code["00260"]["fee"] == {
-        "amount": 174.90,
-        "when_to_use": "Pour un déplacement entre 8h et 18h",
-        "majoration": None,
-    }
+    assert "fee" not in content["codes"][0]
 
 
 def test_no_candidates_returns_empty_codes_with_note():

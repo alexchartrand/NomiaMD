@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
+from app.lancedb.repository import ICodeRepository
 from app.patients import nam
 from app.ramq_codes.context import (
     AXIS_AGE_BAND,
@@ -9,7 +10,7 @@ from app.ramq_codes.context import (
     AXIS_VULNERABILITY,
     BillingContext,
 )
-from app.ramq_codes.models import BillingCodesResult, Code, CodeFee
+from app.ramq_codes.models import BillingCodesResult, Code, CodeFeeOut
 from app.ramq_codes.retriever import ICodesRetriever
 from app.summary.models import ConsultationSummaryResult
 from app.summary.task import render_for_billing_codes
@@ -68,10 +69,10 @@ list relates to this encounter at all.
 
 Reading the candidate list:
 - Each candidate carries its manual taxonomy path, its description, and may carry "when to
-  use" guidance, "conditions" (billing restrictions), and a fee list. Its taxonomy path
-  groups it with near-identical variants (e.g. differing only on panel size, patient
-  vulnerability, registration status, or an age threshold) — read it to understand what
-  distinguishes this candidate from its siblings, if any appear in the list.
+  use" guidance and "conditions" (billing restrictions). Its taxonomy path groups it with
+  near-identical variants (e.g. differing only on panel size, patient vulnerability,
+  registration status, or an age threshold) — read it to understand what distinguishes this
+  candidate from its siblings, if any appear in the list.
 - Only choose codes from the candidate list. Never invent a code that isn't in it.
 
 Established facts and open questions for this encounter:
@@ -101,12 +102,6 @@ For every code you return:
 - `supporting_quote`: a verbatim quote from the summary or transcript that grounds it. Never
   paraphrase this field or invent a quote that isn't actually present in either text.
 - `needs_confirmation`: as described above; empty list when nothing needs confirming.
-- `fee`: filled in from that candidate's own fee list, never invented:
-    - One fee on the candidate → use it.
-    - Several fees tied to different conditions (time of day, practice setting) → pick the
-      one the summary/transcript establishes; if you can't tell, pick the most defensible
-      one and say so in `notes`, naming the other fee.
-    - No fee data at all → return `fee` with every sub-field null.
 
 Use `notes` for anything ambiguous that isn't already captured per-code in
 `needs_confirmation` — e.g. two candidates that could both apply for a reason other than an
@@ -114,18 +109,6 @@ unresolved axis, or a service mentioned but not clearly performed.
 
 Rules:
 - Everything in your answer must be in french"""
-
-
-def _format_fee(f: CodeFee) -> str:
-    amount = f"{f.amount:.2f}" if f.amount is not None else "?"
-    parts = [amount]
-    if f.context:
-        parts.append(f.context)
-    if f.lieu:
-        parts.append(f"lieu: {f.lieu}")
-    if f.majoration:
-        parts.append(f"majoration: {f.majoration}")
-    return " — ".join(parts)
 
 
 def _format_candidate(c: Code) -> str:
@@ -138,8 +121,10 @@ def _format_candidate(c: Code) -> str:
         lines.append(f"  Utilisation : {'; '.join(extra_when_to_use)}")
     if c.rules:
         lines.append(f"  Conditions : {'; '.join(c.rules)}")
-    if c.fees:
-        lines.append(f"  Tarifs : {'; '.join(_format_fee(f) for f in c.fees)}")
+    # Fee data is deliberately never shown here — the model doesn't pick a fee (see
+    # ExtractedCode.fees' server_only marker); resolve_fees fetches the real list afterward,
+    # straight from the candidate's own data, so there's nothing for the prompt to gain by
+    # including it.
     return "\n".join(lines)
 
 
@@ -181,8 +166,9 @@ class BillingCodesTask(ExtractionTask[BillingCodesInput]):
     name = "billing_codes"
     model = MODEL
 
-    def __init__(self, retriever: ICodesRetriever):
+    def __init__(self, retriever: ICodesRetriever, codes: ICodeRepository):
         self._retriever = retriever
+        self._codes = codes
 
     async def build_prompt(self, task_input: BillingCodesInput) -> PreparedPrompt:
         collapse_result = await self._retriever.aretrieve(task_input.summary, task_input.context)
@@ -254,3 +240,22 @@ class BillingCodesTask(ExtractionTask[BillingCodesInput]):
             result.notes = f"{result.notes} {combined}".strip() if result.notes else combined
 
         return result
+
+    async def resolve_fees(self, result: BillingCodesResult) -> None:
+        """Attaches each returned code's real fee list, in place — the model never picks a
+        fee (see SYSTEM_PROMPT and ExtractedCode.fees' server_only marker); the physician
+        picks among these in the review UI when there's more than one. A by-key lookup, same
+        convention as ramq_chatbot's ReferenceExpander: a code with no matching row is left
+        with an empty fee list rather than surfaced as missing data."""
+        if not result.codes:
+            return  # list_by_numbers([]) would build a malformed "IN ()" query
+
+        rows = await self._codes.list_by_numbers([c.code for c in result.codes])
+        fees_by_code = {row.number: row.fees for row in rows}
+        for code in result.codes:
+            code.fees = [
+                CodeFeeOut(
+                    amount=f.amount, amount_text=f.amount_text, context=f.context, lieu=f.lieu, majoration=f.majoration
+                )
+                for f in fees_by_code.get(code.code, [])
+            ]

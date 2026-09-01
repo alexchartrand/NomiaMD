@@ -18,6 +18,8 @@ import pytest
 from app.auth import get_current_user  # noqa: E402
 from app.postgresdb import User, UserRole  # noqa: E402
 from app.main import app  # noqa: E402
+from app.lancedb.models import CodeRow, CodeRowFee  # noqa: E402
+from app.lancedb.repository import ICodeRepository  # noqa: E402
 from app.ramq_codes import BillingCodesTask, BillingContext  # noqa: E402
 from app.ramq_codes.family import FamilyCollapseResult  # noqa: E402
 from app.ramq_codes.models import Code, CodeFee  # noqa: E402
@@ -52,6 +54,25 @@ class _KeywordStubRetriever:
         ]
         ranked = sorted((pair for pair in scored if pair[1] > 0), key=lambda pair: pair[1], reverse=True)
         return FamilyCollapseResult(candidates=[code for code, _score in ranked], unresolved_axes=())
+
+
+class _StubCodeRepository(ICodeRepository):
+    """Deterministic by-key lookup over the same fixture rows _KeywordStubRetriever ranks —
+    stands in for the real LanceDB-backed CodeRepository so BillingCodesTask.resolve_fees can
+    be exercised (see app/extraction/pipeline.py's post-extraction fee resolution) without a
+    real LanceDB connection."""
+
+    def __init__(self, rows: list[CodeRow]):
+        self._rows_by_number = {row.number: row for row in rows}
+
+    async def get_by_number(self, number: str) -> CodeRow:
+        return self._rows_by_number[number]
+
+    async def list_by_numbers(self, numbers: list[str]) -> list[CodeRow]:
+        return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
+
+    async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+        raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
 
 
 @pytest.fixture(autouse=True)
@@ -93,8 +114,22 @@ def small_reference_table():
     ]
     stub_retriever = _KeywordStubRetriever(entries)
 
+    rows = [
+        CodeRow(
+            number=entry["code"],
+            libelle=entry.get("libelle", entry["code"]),
+            description=entry["description"],
+            header_path=entry.get("header_path", ""),
+            when_to_use=entry.get("when_to_use", []),
+            rules=entry.get("rules", []),
+            fees=[CodeRowFee(**f) for f in entry.get("fees", [])],
+        )
+        for entry in data["codes"]
+    ]
+    stub_codes = _StubCodeRepository(rows)
+
     register_tasks([
-        BillingCodesTask(stub_retriever),
+        BillingCodesTask(stub_retriever, stub_codes),
         ConsultationSummaryTask(),
     ])
     yield

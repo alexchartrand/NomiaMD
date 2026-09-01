@@ -4,7 +4,7 @@ directly from a `codes`-table hybrid_search hit — see RAMQCodesRetriever); ram
 owns the write-side (Code, the extraction/embedding schema, and the single flat `codes`
 LanceDB table).
 
-Also holds BillingCodesTask's own output schema (ExtractedFee/ExtractedCode/
+Also holds BillingCodesTask's own output schema (CodeFeeOut/ExtractedCode/
 BillingCodesResult), which is a distinct, model-facing shape rather than a mirror of the
 candidate data above."""
 
@@ -42,14 +42,16 @@ class Code:
     fees: tuple[CodeFee, ...] = ()
 
 
-class ExtractedFee(BaseModel):
-    amount: float | None = Field(
-        default=None, description="Fee amount in CAD, or null if none could be determined"
-    )
-    when_to_use: str | None = Field(
-        default=None, description="The situation this fee applies to, or null if not applicable"
-    )
-    majoration: str | None = Field(default=None, description="Majoration detail, if any, else null")
+class CodeFeeOut(BaseModel):
+    """A candidate's real fee entry, resolved server-side (see BillingCodesTask.resolve_fees)
+    — mirrors CodeFee/CodeRowFee field-for-field. Never populated by the model; the physician
+    picks among these in the review UI when a code has more than one."""
+
+    amount: float | None = None
+    amount_text: str | None = None
+    context: str | None = None
+    lieu: str | None = None
+    majoration: str | None = None
 
 
 class ExtractedCode(BaseModel):
@@ -74,11 +76,13 @@ class ExtractedCode(BaseModel):
             "when every relevant fact was already known."
         ),
     )
-    fee: ExtractedFee = Field(
+    fees: list[CodeFeeOut] = Field(
+        default_factory=list,
+        json_schema_extra={"server_only": True},
         description=(
-            "The fee selected from this code's candidate fee list based on the consultation "
-            "summary; all sub-fields null if no fee data was available or none could be determined"
-        )
+            "The candidate's real fee list, resolved server-side after the LLM call — never "
+            "populated by the model. Empty when no fee data was available."
+        ),
     )
 
 

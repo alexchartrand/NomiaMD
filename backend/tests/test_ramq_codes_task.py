@@ -4,6 +4,8 @@ is covered end to end in tests/test_extraction.py; these pin build_prompt's
 candidate-formatting/context-rendering logic and parse()'s malformed-/uncandidated-output
 handling directly."""
 
+from app.lancedb.models import CodeRow, CodeRowFee
+from app.lancedb.repository import ICodeRepository
 from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
 from app.ramq_codes.family import FamilyCollapseResult
 from app.ramq_codes.models import BillingCodesResult, Code, CodeFee
@@ -26,8 +28,26 @@ class _FakeRetriever:
         return self._result
 
 
-def _task(codes: list[Code], unresolved_axes: tuple[str, ...] = ()) -> BillingCodesTask:
-    return BillingCodesTask(_FakeRetriever(codes, unresolved_axes))
+class _FakeCodeRepository(ICodeRepository):
+    def __init__(self, rows: list[CodeRow] | None = None):
+        self._rows_by_number = {row.number: row for row in (rows or [])}
+        self.list_by_numbers_calls: list[list[str]] = []
+
+    async def get_by_number(self, number: str) -> CodeRow:
+        return self._rows_by_number[number]
+
+    async def list_by_numbers(self, numbers: list[str]) -> list[CodeRow]:
+        self.list_by_numbers_calls.append(list(numbers))
+        return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
+
+    async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+        raise NotImplementedError("not exercised by BillingCodesTask")
+
+
+def _task(
+    codes: list[Code], unresolved_axes: tuple[str, ...] = (), code_repository: ICodeRepository | None = None
+) -> BillingCodesTask:
+    return BillingCodesTask(_FakeRetriever(codes, unresolved_axes), code_repository or _FakeCodeRepository())
 
 
 def _input(context: BillingContext | None = None) -> BillingCodesInput:
@@ -83,7 +103,24 @@ async def test_build_prompt_formats_full_candidate_block():
     assert "Visite de prise en charge d'une maladie chronique" in prepared.user_message
     assert "Utilisation : Nouveau patient" in prepared.user_message
     assert "Conditions : Clientele < 500 patients inscrits" in prepared.user_message
-    assert "Tarifs : 33.15 — Par visite — majoration: 20%" in prepared.user_message
+
+
+async def test_build_prompt_never_shows_fee_data_even_when_the_candidate_has_it():
+    # The model doesn't pick a fee any more (see ExtractedCode.fees' server_only marker) —
+    # fee data must never reach the prompt at all, even for a candidate that carries it.
+    code = Code(
+        number="15801",
+        libelle="",
+        description="Visite de prise en charge",
+        header_path="x",
+        fees=(CodeFee(amount=33.15, amount_text="33,15", context="Par visite", lieu=None, majoration="20%"),),
+    )
+    task = _task([code])
+
+    prepared = await task.build_prompt(_input())
+
+    assert "Tarifs" not in prepared.user_message
+    assert "33.15" not in prepared.user_message
 
 
 async def test_build_prompt_omits_when_to_use_entries_already_in_the_description():
@@ -110,22 +147,6 @@ async def test_build_prompt_omits_optional_sections_when_absent():
     assert "- 15801 | x" in prepared.user_message
     assert "Utilisation :" not in prepared.user_message
     assert "Conditions :" not in prepared.user_message
-    assert "Tarifs :" not in prepared.user_message
-
-
-async def test_build_prompt_formats_unknown_fee_amount_as_question_mark():
-    code = Code(
-        number="15801",
-        libelle="",
-        description="",
-        header_path="x",
-        fees=(CodeFee(amount=None, amount_text=None, context=None, lieu=None, majoration=None),),
-    )
-    task = _task([code])
-
-    prepared = await task.build_prompt(_input())
-
-    assert "Tarifs : ?" in prepared.user_message
 
 
 async def test_build_prompt_with_no_candidates_lists_none():
@@ -181,7 +202,7 @@ async def test_build_prompt_names_unresolved_axes_from_the_retriever():
 async def test_build_prompt_passes_the_summary_and_context_to_the_retriever():
     context = BillingContext(physician=PhysicianContext(number_of_patients=320))
     retriever = _FakeRetriever([])
-    task = BillingCodesTask(retriever)
+    task = BillingCodesTask(retriever, _FakeCodeRepository())
 
     await task.build_prompt(BillingCodesInput(summary=SUMMARY, transcript=TRANSCRIPT, context=context))
 
@@ -200,6 +221,19 @@ def test_json_schema_describes_billing_codes_result():
     assert "codes" in schema["required"]
 
 
+def test_json_schema_never_asks_the_model_for_a_fee():
+    # The model never picks a fee (ExtractedCode.fees is resolved server-side after the LLM
+    # call, see resolve_fees below) — its server_only marker must keep it out of the schema
+    # entirely, at every nesting depth, not just make it optional.
+    task = _task([])
+
+    schema = task.json_schema()
+    code_schema = schema["properties"]["codes"]["items"]
+
+    assert "fees" not in code_schema["properties"]
+    assert "fees" not in code_schema["required"]
+
+
 # -- parse ------------------------------------------------------------------------------
 
 
@@ -211,7 +245,6 @@ def _extracted_code(code: str = "15801") -> dict:
         "explanation": "quote",
         "supporting_quote": "suivi diabète",
         "needs_confirmation": [],
-        "fee": {"amount": 33.15, "when_to_use": None, "majoration": None},
     }
 
 
@@ -287,3 +320,50 @@ def test_parse_keeps_every_code_when_all_are_in_the_candidate_set():
 
     assert [c.code for c in result.codes] == ["15801"]
     assert result.notes is None
+
+
+# -- resolve_fees -------------------------------------------------------------------------
+
+
+def _row(number: str, *fees: CodeRowFee) -> CodeRow:
+    return CodeRow(number=number, libelle="", description="", header_path="", fees=list(fees))
+
+
+async def test_resolve_fees_attaches_every_fee_for_each_code_in_order():
+    repository = _FakeCodeRepository(
+        [
+            _row(
+                "15801",
+                CodeRowFee(amount=33.15, context="Jour", lieu="Cabinet"),
+                CodeRowFee(amount=40.0, context="Soir", lieu="Domicile", majoration="20%"),
+            )
+        ]
+    )
+    task = _task([], code_repository=repository)
+    result = task.parse({"codes": [_extracted_code("15801")], "notes": None}, _prepared(frozenset({"15801"})))
+
+    await task.resolve_fees(result)
+
+    [code] = result.codes
+    assert [f.amount for f in code.fees] == [33.15, 40.0]
+    assert code.fees[1].lieu == "Domicile"
+    assert code.fees[1].majoration == "20%"
+
+
+async def test_resolve_fees_leaves_a_code_with_no_matching_row_with_an_empty_list():
+    task = _task([], code_repository=_FakeCodeRepository([]))
+    result = task.parse({"codes": [_extracted_code("15801")], "notes": None}, _prepared(frozenset({"15801"})))
+
+    await task.resolve_fees(result)
+
+    assert result.codes[0].fees == []
+
+
+async def test_resolve_fees_does_not_query_the_repository_for_an_empty_codes_list():
+    repository = _FakeCodeRepository([])
+    task = _task([], code_repository=repository)
+    result = task.parse({"codes": [], "notes": None}, _prepared(frozenset()))
+
+    await task.resolve_fees(result)
+
+    assert repository.list_by_numbers_calls == []

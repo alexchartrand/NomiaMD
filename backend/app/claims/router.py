@@ -11,6 +11,7 @@ from app.claims.service import (
     DuplicateClaimError,
     EmptySelectionError,
     ExtractionRecordNotFoundError,
+    InvalidFeeSelectionError,
     PatientNotFoundError,
     UnknownCodesError,
 )
@@ -47,6 +48,14 @@ async def create_claim(
         raise HTTPException(
             status_code=422,
             detail=f"Code(s) absent(s) de cette extraction : {', '.join(exc.codes)}",
+        ) from exc
+    except InvalidFeeSelectionError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"Choix de tarif invalide pour le code {exc.code} "
+                f"(indice {exc.fee_index}, {exc.available} tarif(s) disponible(s))"
+            ),
         ) from exc
     except DuplicateClaimError as exc:
         raise HTTPException(

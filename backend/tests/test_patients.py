@@ -329,7 +329,7 @@ async def test_a_patient_not_on_the_billing_physicians_roster_can_still_be_claim
                 "description": "Prise en charge d'une hypertension",
                 "confidence": "high",
                 "explanation": "hypertension artérielle depuis 10 ans",
-                "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
+                "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": None, "majoration": None}],
             }
         ],
         "notes": None,
@@ -355,7 +355,7 @@ async def test_a_patient_not_on_the_billing_physicians_roster_can_still_be_claim
                 "patient_id": created["id"],
                 "service_date": "2026-02-10",
                 "billing_extraction_record_id": extraction_record.id,
-                "selected_codes": ["TEST-BP-MGMT"],
+                "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
                 "source_system": "simule",
             },
         )

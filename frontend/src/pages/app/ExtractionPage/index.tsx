@@ -97,31 +97,43 @@ export default function ExtractionPage() {
     dispatch({ type: "code-toggled", index });
   }
 
+  function selectFee(index: number, feeIndex: number) {
+    dispatch({ type: "fee-selected", index, feeIndex });
+  }
+
   function startCreatePatient() {
     createPatientForm.open();
   }
 
-  const selectedCodes = useMemo(() => {
-    const { result, selection } = review;
+  const selectedEntries = useMemo(() => {
+    const { result, selection, feeSelection } = review;
     if (!result) return [];
-    return [...selection].sort((a, b) => a - b).map((i) => result.billing.result.codes[i]);
+    return [...selection].sort((a, b) => a - b).map((i) => {
+      const code = result.billing.result.codes[i];
+      const feeIndex = code.fees.length > 0 ? (feeSelection.get(i) ?? 0) : null;
+      const fee = feeIndex != null ? code.fees[feeIndex] : null;
+      return { code, feeIndex, fee };
+    });
   }, [review]);
 
-  const totalAmount = selectedCodes.reduce((sum, c) => sum + (c.fee.amount ?? 0), 0);
-  const codesMissingFee = selectedCodes.filter((c) => c.fee.amount == null).length;
+  const totalAmount = selectedEntries.reduce((sum, e) => sum + (e.fee?.amount ?? 0), 0);
+  const codesMissingFee = selectedEntries.filter((e) => e.fee?.amount == null).length;
 
   async function handleSave(confirmDuplicate: boolean) {
     const { result, serviceDate, selection } = review;
     if (!result || !selectedPatient || !serviceDate || selection.size === 0) return;
     dispatch({ type: "save-started" });
     try {
+      const selectedCodes = new Map(
+        selectedEntries.map((e) => [e.code.code, { code: e.code.code, fee_index: e.feeIndex }]),
+      );
       await createClaim(
         {
           patient_id: selectedPatient.id,
           service_date: serviceDate,
           billing_extraction_record_id: result.billing_extraction_record_id,
           summary_extraction_record_id: result.summary_extraction_record_id,
-          selected_codes: [...new Set(selectedCodes.map((c) => c.code))],
+          selected_codes: [...selectedCodes.values()],
           source_system: source,
         },
         confirmDuplicate,
@@ -222,6 +234,8 @@ export default function ExtractionPage() {
           onServiceDateChange={(date) => dispatch({ type: "service-date-changed", date })}
           selection={review.selection}
           onToggleCode={toggleCode}
+          feeSelection={review.feeSelection}
+          onFeeSelected={selectFee}
           totalAmount={totalAmount}
           codesMissingFee={codesMissingFee}
           saving={review.saving}

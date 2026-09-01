@@ -30,12 +30,19 @@ export interface Claim {
   updated_at: string;
 }
 
+export interface SelectedCode {
+  code: string;
+  // Index into that code's resolved ExtractedFee[] (see api/extraction.ts) — null defaults
+  // to the first (and, for a single-fee code, only) entry server-side.
+  fee_index: number | null;
+}
+
 export interface ClaimInput {
   patient_id: number;
   service_date: string;
   billing_extraction_record_id: number;
   summary_extraction_record_id: number | null;
-  selected_codes: string[];
+  selected_codes: SelectedCode[];
   source_system: string | null;
 }
 

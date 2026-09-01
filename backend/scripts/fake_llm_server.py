@@ -16,9 +16,10 @@ endpoint was hit, since they all share this one.
   exercisable without a real model. Returns JSON matching that task's schema.
 - billing_codes: the default/fallback bucket. Parses the candidate RAMQ codes out of the
   prompt (built by app/ramq_codes/task.py::build_prompt) and picks a fixed number of them
-  back, with a placeholder confidence/quote and a real fee parsed out of that same
-  candidate's own "Tarifs :" line (never invented, mirrors what the real model is
-  instructed to do). Returns JSON matching that task's schema.
+  back, with a placeholder confidence/quote. Fee data is NOT part of this response — the
+  real model never sees a fee field either (see app/ramq_codes/models.py's ExtractedCode.fees
+  server_only marker); fees are resolved server-side afterward, straight off the candidates'
+  own real data. Returns JSON matching that task's schema.
 - ramq_chatbot_answer: matched on a fixed line from app/ramq_chatbot/engine.py's
   SYSTEM_PROMPT. Returns plain markdown text (not JSON — RAMQManualQueryEngine reads the
   chat response verbatim) that echoes back the query text pulled from the current turn's
@@ -43,52 +44,11 @@ app = FastAPI(title="fake-llm")
 
 # Matches the "- CODE | header_path" header line plus its indented description line,
 # exactly as _format_candidate() emits them (see app/ramq_codes/task.py) — the optional
-# "  Utilisation :"/"  Conditions :"/"  Tarifs :" lines that may follow are ignored here,
-# not part of this fake's stub output (the fee line is pulled separately below, so the fake
-# fee is the candidate's own real fee — never invented — same as the real model is
-# instructed to).
+# "  Utilisation :"/"  Conditions :" lines that may follow are ignored here, not part of
+# this fake's stub output. Candidates never carry a "  Tarifs :" line at all any more — fee
+# data is resolved server-side, never shown to (or expected back from) the model — see the
+# module docstring's billing_codes bullet.
 _CANDIDATE_RE = re.compile(r"^- (?P<code>\S+) \| .*\n {2}(?P<description>.*)$", re.MULTILINE)
-
-# _format_fee() (app/ramq_codes/task.py) always renders a candidate's "  Tarifs :" line as
-# "AMOUNT — context — majoration: X; AMOUNT2 — ...", AMOUNT being "?" when the candidate's
-# own fee amount is null.
-_TARIFS_LINE_RE = re.compile(r"^ {2}Tarifs : (?P<fees>.*)$")
-_FEE_AMOUNT_RE = re.compile(r"^(\d+(?:\.\d+)?)$")
-
-
-def _block_lines_for_code(user_message: str, code: str) -> list[str]:
-    """Every line belonging to one candidate's block: from its "- CODE | ..." header line up
-    to (not including) the next candidate's header line. Candidate blocks aren't separated
-    by a blank line (see build_prompt's chr(10).join(candidate_lines)), so the boundary is
-    "next line starting a new candidate", not an empty line."""
-    lines = user_message.splitlines()
-    start = next((i for i, line in enumerate(lines) if line.startswith(f"- {code} |")), None)
-    if start is None:
-        return []
-    block = [lines[start]]
-    for line in lines[start + 1 :]:
-        if re.match(r"^- \S+ \| ", line):
-            break
-        block.append(line)
-    return block
-
-
-def _fake_fee_for_code(user_message: str, code: str) -> dict:
-    block = _block_lines_for_code(user_message, code)
-    tarifs_match = next((_TARIFS_LINE_RE.match(line) for line in block if _TARIFS_LINE_RE.match(line)), None)
-    if tarifs_match is None:
-        return {"amount": None, "when_to_use": None, "majoration": None}
-
-    first_fee = tarifs_match.group("fees").split(";")[0].strip()
-    parts = [p.strip() for p in first_fee.split(" — ")]
-    amount_match = _FEE_AMOUNT_RE.match(parts[0])
-    majoration = next((p.removeprefix("majoration:").strip() for p in parts[1:] if p.startswith("majoration:")), None)
-    when_to_use = next((p for p in parts[1:] if not p.startswith("majoration:")), None)
-    return {
-        "amount": float(amount_match.group(1)) if amount_match else None,
-        "when_to_use": when_to_use,
-        "majoration": majoration,
-    }
 
 # Same field format app/sample_patients/service.py parses (**Field :** value), used to echo identity
 # back out of the transcript embedded in consultation_summary's user message.
@@ -213,7 +173,6 @@ def _fake_billing_codes_content(user_message: str) -> str:
             "explanation": "(stub explanation — fake LLM, not a real extraction)",
             "supporting_quote": description,
             "needs_confirmation": [],
-            "fee": _fake_fee_for_code(user_message, code),
         }
         for code, description in chosen
     ]

@@ -16,6 +16,7 @@ unrecoverable downstream. See app/ramq_codes/task.py's BillingCodesInput docstri
 
 import logging
 from datetime import date
+from typing import cast
 
 from app.auth.factory import get_profile_service
 from app.extraction.encounter_date import parse_encounter_date
@@ -23,7 +24,7 @@ from app.extraction.engine import run_extraction
 from app.extraction.models import ExtractionResult
 from app.patients import ExtractedIdentity, PatientVerification, verify_patient_identity
 from app.postgresdb import PatientRepository, User
-from app.ramq_codes import BillingCodesInput, BillingCodesResult, BillingContext, BillingContextBuilder
+from app.ramq_codes import BillingCodesInput, BillingCodesResult, BillingContext, BillingContextBuilder, BillingCodesTask
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
 
@@ -76,6 +77,17 @@ async def _build_context(
         return BillingContext()
 
 
+async def _resolve_fees(result: BillingCodesResult) -> None:
+    # Same best-effort stance as _verify_patient/_build_context above: a LanceDB lookup
+    # failure here must never discard a completed (paid-for) extraction — codes just keep
+    # their already-empty fee list, identical to today's "no fee data" case.
+    try:
+        task = cast(BillingCodesTask, get_task("billing_codes"))
+        await task.resolve_fees(result)
+    except Exception:
+        logger.exception("Fee resolution failed; billing_codes proceeds with no resolved fees")
+
+
 async def run_billing_codes_pipeline(
     transcript: str,
     *,
@@ -111,5 +123,6 @@ async def run_billing_codes_pipeline(
 
     billing_input = BillingCodesInput(summary=summary, transcript=transcript, context=context)
     billing_result = await run_extraction(get_task("billing_codes"), billing_input)
+    await _resolve_fees(billing_result.result)
 
     return summary_result, billing_result, patient_verification

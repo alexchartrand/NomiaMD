@@ -24,7 +24,7 @@ BILLING_RESULT = {
             "description": "Prise en charge d'une hypertension",
             "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
-            "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
+            "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": None, "majoration": None}],
         }
     ],
     "notes": None,
@@ -77,7 +77,7 @@ async def _seed_claim(client, *, patient_id, service_date="2026-02-10"):
             "patient_id": patient_id,
             "service_date": service_date,
             "billing_extraction_record_id": extraction_record.id,
-            "selected_codes": ["TEST-BP-MGMT"],
+            "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
             "source_system": "simule",
         },
     )
@@ -136,7 +136,7 @@ async def _seed_claim_with_fee(client, *, patient_id, service_date, fee_amount):
                 "description": "Prise en charge d'une hypertension",
                 "confidence": "high",
                 "explanation": "hypertension artérielle depuis 10 ans",
-                "fee": {"amount": fee_amount, "when_to_use": "Par visite de suivi", "majoration": None},
+                "fees": [{"amount": fee_amount, "amount_text": None, "context": "Par visite de suivi", "lieu": None, "majoration": None}],
             }
         ],
         "notes": None,
@@ -148,7 +148,7 @@ async def _seed_claim_with_fee(client, *, patient_id, service_date, fee_amount):
             "patient_id": patient_id,
             "service_date": service_date,
             "billing_extraction_record_id": extraction_record.id,
-            "selected_codes": ["TEST-BP-MGMT"],
+            "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
             "source_system": "simule",
         },
     )

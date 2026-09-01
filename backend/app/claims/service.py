@@ -5,7 +5,7 @@ composed at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
 from datetime import date
 from decimal import Decimal
 
-from app.claims.models import ClaimCodeOut, ClaimOut
+from app.claims.models import ClaimCodeOut, ClaimOut, SelectedCode
 from app.postgresdb import (
     ClaimCodeInput,
     ClaimDetail,
@@ -31,6 +31,14 @@ class UnknownCodesError(Exception):
         super().__init__(f"Unknown codes: {', '.join(codes)}")
 
 
+class InvalidFeeSelectionError(Exception):
+    def __init__(self, code: str, fee_index: int, available: int):
+        self.code = code
+        self.fee_index = fee_index
+        self.available = available
+        super().__init__(f"fee_index {fee_index} out of range for code {code} ({available} available)")
+
+
 class EmptySelectionError(Exception):
     pass
 
@@ -54,6 +62,28 @@ def _to_decimal(amount: float | None) -> Decimal | None:
     # str(amount) first: Decimal(33.15) keeps the binary float's imprecision
     # (33.14999999999999857891...); Decimal(str(33.15)) gives the exact "33.15".
     return None if amount is None else Decimal(str(amount))
+
+
+def _resolve_fee(candidate: dict, fee_index: int | None) -> dict | None:
+    fees = candidate.get("fees") or []
+    if not fees:
+        return None
+    index = fee_index if fee_index is not None else 0
+    if index < 0 or index >= len(fees):
+        raise InvalidFeeSelectionError(candidate["code"], index, len(fees))
+    return fees[index]
+
+
+def _fee_when_to_use(fee: dict | None) -> str | None:
+    # lieu is folded into this free-text column rather than given its own claim_codes
+    # column — no Alembic in this repo, see ClaimCode's/BillClaim's docstrings
+    # (app/postgresdb/models.py) for why a new column on an existing table is avoided.
+    if fee is None:
+        return None
+    context, lieu = fee.get("context"), fee.get("lieu")
+    if context and lieu:
+        return f"{context} — {lieu}"
+    return context or lieu
 
 
 def _codes_out(codes) -> list[ClaimCodeOut]:
@@ -95,11 +125,17 @@ class ClaimService:
         service_date: date,
         billing_extraction_record_id: int,
         summary_extraction_record_id: int | None,
-        selected_codes: list[str],
+        selected_codes: list[SelectedCode],
         source_system: str | None,
         confirm_duplicate: bool,
     ) -> ClaimOut:
-        deduped_selected = list(dict.fromkeys(selected_codes))
+        seen_codes: set[str] = set()
+        deduped_selected: list[SelectedCode] = []
+        for selected in selected_codes:
+            if selected.code in seen_codes:
+                continue
+            seen_codes.add(selected.code)
+            deduped_selected.append(selected)
         if not deduped_selected:
             raise EmptySelectionError()
 
@@ -138,7 +174,7 @@ class ClaimService:
         for entry in result.get("codes", []):
             candidates_by_code.setdefault(entry["code"], entry)
 
-        unknown = [c for c in deduped_selected if c not in candidates_by_code]
+        unknown = [sc.code for sc in deduped_selected if sc.code not in candidates_by_code]
         if unknown:
             raise UnknownCodesError(unknown)
 
@@ -153,18 +189,21 @@ class ClaimService:
                     "Une facturation existe déjà pour ce patient à cette date."
                 )
 
-        code_inputs = [
-            ClaimCodeInput(
-                code=code,
-                description=candidates_by_code[code]["description"],
-                confidence=candidates_by_code[code]["confidence"],
-                explanation=candidates_by_code[code]["explanation"],
-                fee_amount=_to_decimal((candidates_by_code[code].get("fee") or {}).get("amount")),
-                fee_when_to_use=(candidates_by_code[code].get("fee") or {}).get("when_to_use"),
-                majoration=(candidates_by_code[code].get("fee") or {}).get("majoration"),
+        code_inputs = []
+        for selected in deduped_selected:
+            candidate = candidates_by_code[selected.code]
+            chosen_fee = _resolve_fee(candidate, selected.fee_index)
+            code_inputs.append(
+                ClaimCodeInput(
+                    code=selected.code,
+                    description=candidate["description"],
+                    confidence=candidate["confidence"],
+                    explanation=candidate["explanation"],
+                    fee_amount=_to_decimal(chosen_fee.get("amount")) if chosen_fee else None,
+                    fee_when_to_use=_fee_when_to_use(chosen_fee),
+                    majoration=chosen_fee.get("majoration") if chosen_fee else None,
+                )
             )
-            for code in deduped_selected
-        ]
 
         created: ClaimWithCodes = await self._claim_repository.create(
             ClaimInput(

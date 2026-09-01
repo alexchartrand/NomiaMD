@@ -27,14 +27,14 @@ BILLING_RESULT = {
             "description": "Prise en charge d'une hypertension",
             "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
-            "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
+            "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": None, "majoration": None}],
         },
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",
             "confidence": "medium",
             "explanation": "Bilan sanguin de contrôle demandé",
-            "fee": {"amount": None, "when_to_use": None, "majoration": None},
+            "fees": [],
         },
     ],
     "notes": None,
@@ -82,7 +82,7 @@ def _valid_payload(*, patient_id, billing_extraction_record_id, service_date="20
         "patient_id": patient_id,
         "service_date": service_date,
         "billing_extraction_record_id": billing_extraction_record_id,
-        "selected_codes": ["TEST-BP-MGMT"],
+        "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
         "source_system": "simule",
     }
 
@@ -261,7 +261,50 @@ async def test_code_absent_from_extraction_is_422():
         extraction_record = await _seed_extraction_record()
 
         payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
-        payload["selected_codes"] = ["NOT-A-CANDIDATE"]
+        payload["selected_codes"] = [{"code": "NOT-A-CANDIDATE", "fee_index": 0}]
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 422
+
+
+async def test_selecting_a_fee_index_lands_that_variant_on_the_claim():
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        multi_fee_result = {
+            "codes": [
+                {
+                    "code": "TEST-BP-MGMT",
+                    "description": "Prise en charge d'une hypertension",
+                    "confidence": "high",
+                    "explanation": "hypertension artérielle depuis 10 ans",
+                    "fees": [
+                        {"amount": 33.15, "amount_text": "33,15", "context": "Jour", "lieu": "Cabinet", "majoration": None},
+                        {"amount": 40.0, "amount_text": "40,00", "context": "Soir", "lieu": "Domicile", "majoration": "20%"},
+                    ],
+                }
+            ],
+            "notes": None,
+        }
+        extraction_record = await _seed_extraction_record(result=multi_fee_result)
+        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 1}]
+
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 201
+    [code] = response.json()["codes"]
+    assert code["fee_amount"] == 40.0
+    assert code["fee_when_to_use"] == "Soir — Domicile"
+    assert code["majoration"] == "20%"
+
+
+async def test_out_of_range_fee_index_is_422():
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        extraction_record = await _seed_extraction_record()
+        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 5}]
+
         response = client.post("/claims", json=payload)
 
     assert response.status_code == 422
@@ -331,14 +374,14 @@ async def test_deleting_a_claim_removes_its_code_rows_and_total_is_null_when_no_
                     "description": "Demande et révision d'un bilan sanguin de routine",
                     "confidence": "medium",
                     "explanation": "Bilan sanguin de contrôle demandé",
-                    "fee": {"amount": None, "when_to_use": None, "majoration": None},
+                    "fees": [],
                 }
             ],
             "notes": None,
         }
         extraction_record = await _seed_extraction_record(result=no_fee_result)
         payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
-        payload["selected_codes"] = ["TEST-BLOODWORK-ORDER"]
+        payload["selected_codes"] = [{"code": "TEST-BLOODWORK-ORDER", "fee_index": None}]
 
         created = client.post("/claims", json=payload).json()
         assert created["total_amount"] is None

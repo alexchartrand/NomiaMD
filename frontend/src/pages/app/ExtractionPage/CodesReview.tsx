@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Checkbox } from "../../../components";
-import type { ConfidenceLevel, ExtractedCode } from "../../../api";
+import { Checkbox, Select } from "../../../components";
+import type { ConfidenceLevel, ExtractedCode, ExtractedFee } from "../../../api";
 
 const CONFIDENCE_CLASSES: Record<ConfidenceLevel, string> = {
   high: "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]",
@@ -20,13 +20,21 @@ const CONFIDENCE_ORDER: Record<ConfidenceLevel, number> = {
   low: 2,
 };
 
+function formatFee(fee: ExtractedFee): string {
+  const amount = fee.amount != null ? `${fee.amount.toFixed(2)} $` : (fee.amount_text ?? "?");
+  const parts = [amount, fee.context, fee.lieu, fee.majoration ? `majoration ${fee.majoration}` : null];
+  return parts.filter(Boolean).join(" — ");
+}
+
 interface CodesReviewProps {
   codes: ExtractedCode[];
   selection: Set<number>;
   onToggle: (index: number) => void;
+  feeSelection: Map<number, number>;
+  onFeeSelected: (index: number, feeIndex: number) => void;
 }
 
-export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
+export function CodesReview({ codes, selection, onToggle, feeSelection, onFeeSelected }: CodesReviewProps) {
   if (codes.length === 0) {
     return <p>Aucun code candidat n&rsquo;est clairement appuyé par cette transcription.</p>;
   }
@@ -66,9 +74,23 @@ export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
                   {c.code}
                 </span>
                 <span className="min-w-0 flex-1 font-heading font-semibold">{c.description}</span>
-                <span className="font-heading font-bold whitespace-nowrap">
-                  {c.fee.amount != null ? `${c.fee.amount.toFixed(2)} $` : "—"}
-                </span>
+                {c.fees.length > 1 ? (
+                  <Select
+                    value={feeSelection.get(i) ?? 0}
+                    onChange={(event) => onFeeSelected(i, Number(event.target.value))}
+                    aria-label={`Tarif pour le code ${c.code}`}
+                  >
+                    {c.fees.map((fee, feeIndex) => (
+                      <option key={feeIndex} value={feeIndex}>
+                        {formatFee(fee)}
+                      </option>
+                    ))}
+                  </Select>
+                ) : (
+                  <span className="font-heading font-bold whitespace-nowrap">
+                    {c.fees.length === 1 ? formatFee(c.fees[0]) : "—"}
+                  </span>
+                )}
               </div>
 
               <p className="m-0 text-[0.92rem] text-muted-foreground italic">{c.explanation}</p>

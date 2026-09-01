@@ -96,7 +96,6 @@ MOCK_RESULT = {
             "explanation": "hypertension artérielle depuis 10 ans",
             "supporting_quote": "hypertension artérielle depuis 10 ans",
             "needs_confirmation": [],
-            "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
         },
         {
             "code": "TEST-BLOODWORK-ORDER",
@@ -105,7 +104,6 @@ MOCK_RESULT = {
             "explanation": "Bilan sanguin de contrôle demandé",
             "supporting_quote": "Bilan sanguin de contrôle demandé",
             "needs_confirmation": [],
-            "fee": {"amount": None, "when_to_use": None, "majoration": None},
         },
     ],
     "notes": None,
@@ -170,7 +168,6 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
                 "explanation": "Bilan sanguin de contrôle demandé",
                 "supporting_quote": "Bilan sanguin de contrôle demandé",
                 "needs_confirmation": [],
-                "fee": {"amount": None, "when_to_use": None, "majoration": None},
             },
         ],
         "notes": None,
@@ -233,6 +230,24 @@ async def test_extract_endpoint_end_to_end():
     # MOCK_SUMMARY_RESULT's encounter_setting.date is null -> must stay null, never "today".
     assert body["encounter_date"] is None
     assert body["encounter_date_raw"] is None
+
+
+async def test_extract_endpoint_resolves_fees_from_the_real_candidate_data():
+    # The mocked model response above carries no fee data at all (the model is never asked
+    # for one — see app/ramq_codes/models.py's ExtractedCode.fees server_only marker); fees
+    # must come from the pipeline's post-extraction resolution step
+    # (BillingCodesTask.resolve_fees) reading the real fixture data
+    # (tests/fixtures/reference_data_test.json), not from the mock.
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        response = _extract(client, patient_id=patient.id)
+
+    assert response.status_code == 200
+    codes = {c["code"]: c for c in response.json()["billing"]["result"]["codes"]}
+    assert codes["TEST-BP-MGMT"]["fees"] == [
+        {"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": None, "majoration": None}
+    ]
+    assert codes["TEST-BLOODWORK-ORDER"]["fees"] == []
 
 
 async def test_extract_endpoint_requires_a_known_patient_id():

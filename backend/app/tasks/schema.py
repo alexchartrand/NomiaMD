@@ -4,8 +4,12 @@ hand across a task's json_schema(), its prompt's schema description, and any ren
 turns a parsed result back into text.
 
 Each model field carries its own metadata for this: `description=` is extraction guidance
-shown to the LLM in the prompt's schema block, and `json_schema_extra={"fr_label": ...}` is
-the French label used when rendering a parsed result back into text (see render_instance).
+shown to the LLM in the prompt's schema block, `json_schema_extra={"fr_label": ...}` is
+the French label used when rendering a parsed result back into text (see render_instance),
+and `json_schema_extra={"server_only": True}` marks a field that's populated after the LLM
+call rather than asked of the model — skipped by to_strict_schema/render_schema_block/
+render_instance alike (see app/ramq_codes/models.py's ExtractedCode.fees for the case this
+was added for: a field the model must never see or fill in).
 Supports exactly the shapes these extraction result models use: str/float/bool leaves,
 Literal enums, list[str], list[Literal], nested BaseModel, list[BaseModel], and `X | None`
 around any of those — anything else raises rather than guessing.
@@ -33,6 +37,11 @@ def _fr_label(field: FieldInfo, name: str) -> str:
     if isinstance(extra, dict) and extra.get("fr_label"):
         return extra["fr_label"]
     return name
+
+
+def _is_server_only(field: FieldInfo) -> bool:
+    extra = field.json_schema_extra
+    return isinstance(extra, dict) and bool(extra.get("server_only"))
 
 
 def _is_model(annotation: Any) -> bool:
@@ -74,8 +83,15 @@ def _field_schema(annotation: Any) -> dict[str, Any]:
 def to_strict_schema(model: type[BaseModel]) -> dict[str, Any]:
     """Recursively builds the additionalProperties:false / all-fields-required JSON schema
     shape OpenAI-compatible structured-output APIs expect, straight from a Pydantic model —
-    no hand-maintained duplicate of the model's shape."""
-    properties = {name: _field_schema(field.annotation) for name, field in model.model_fields.items()}
+    no hand-maintained duplicate of the model's shape. A server_only field (see module
+    docstring) is skipped entirely rather than marked optional: this builder always puts
+    every property it sees into `required`, so "optional" isn't expressible here — only
+    "never offered to the model" is."""
+    properties = {
+        name: _field_schema(field.annotation)
+        for name, field in model.model_fields.items()
+        if not _is_server_only(field)
+    }
     return {
         "type": "object",
         "properties": properties,
@@ -109,7 +125,7 @@ def _render_block(model: type[BaseModel], indent: int) -> str:
     pad = "  " * indent
     inner_pad = "  " * (indent + 1)
     lines = ["{"]
-    field_items = list(model.model_fields.items())
+    field_items = [(name, field) for name, field in model.model_fields.items() if not _is_server_only(field)]
     for i, (name, field) in enumerate(field_items):
         annotation, optional = _unwrap_optional(field.annotation)
         comma = "," if i < len(field_items) - 1 else ""
@@ -149,6 +165,8 @@ def render_schema_block(model: type[BaseModel]) -> str:
 
 def _render_fields(instance: BaseModel, lines: list[str]) -> None:
     for name, field in type(instance).model_fields.items():
+        if _is_server_only(field):
+            continue
         value = getattr(instance, name)
         label = _fr_label(field, name)
         annotation, _optional = _unwrap_optional(field.annotation)

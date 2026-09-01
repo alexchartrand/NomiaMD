@@ -22,12 +22,22 @@ ConfidenceLevel = Literal["high", "medium", "low"]
 Money = Annotated[Decimal, PlainSerializer(float, return_type=float, when_used="json")]
 
 
+class SelectedCode(BaseModel):
+    """One code the physician chose to bill, plus which of that code's resolved fee
+    variants applies — an index into ExtractedCode.fees rather than a fee ID, since a
+    resolved fee has no stable identity of its own. None defaults to the first (and, for a
+    single-fee code, only) entry server-side."""
+
+    code: str
+    fee_index: int | None = None
+
+
 class ClaimCreate(BaseModel):
     patient_id: int
     service_date: date
     billing_extraction_record_id: int
     summary_extraction_record_id: int | None = None
-    selected_codes: list[str]
+    selected_codes: list[SelectedCode]
     source_system: str | None = None
 
 

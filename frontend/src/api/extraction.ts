@@ -1,8 +1,13 @@
 import { unwrap } from "./http";
 
+// A candidate's real fee entry, resolved server-side after the LLM call — the model never
+// picks a fee (see CLAUDE.md's billing_codes architecture note); the physician picks among
+// these in the review UI when a code has more than one.
 export interface ExtractedFee {
   amount: number | null;
-  when_to_use: string | null;
+  amount_text: string | null;
+  context: string | null;
+  lieu: string | null;
   majoration: string | null;
 }
 
@@ -15,7 +20,7 @@ export interface ExtractedCode {
   explanation: string;
   supporting_quote: string;
   needs_confirmation: string[];
-  fee: ExtractedFee;
+  fees: ExtractedFee[];
 }
 
 export interface BillingCodesResult {

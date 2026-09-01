@@ -6,7 +6,7 @@ reaching into .models/.task directly."""
 
 from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
 from app.ramq_codes.context_builder import BillingContextBuilder
-from app.ramq_codes.models import BillingCodesResult, ExtractedCode, ExtractedFee
+from app.ramq_codes.models import BillingCodesResult, CodeFeeOut, ExtractedCode
 from app.ramq_codes.task import BillingCodesInput, BillingCodesTask
 from app.ramq_codes.factory import build_ramq_retriever
 
@@ -20,5 +20,5 @@ __all__ = [
     "PatientContext",
     "PhysicianContext",
     "ExtractedCode",
-    "ExtractedFee",
+    "CodeFeeOut",
 ]

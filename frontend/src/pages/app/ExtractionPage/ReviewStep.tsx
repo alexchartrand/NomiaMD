@@ -12,6 +12,8 @@ interface ReviewStepProps {
   onServiceDateChange: (value: string) => void;
   selection: Set<number>;
   onToggleCode: (index: number) => void;
+  feeSelection: Map<number, number>;
+  onFeeSelected: (index: number, feeIndex: number) => void;
   totalAmount: number;
   codesMissingFee: number;
   saving: boolean;
@@ -29,6 +31,8 @@ export function ReviewStep({
   onServiceDateChange,
   selection,
   onToggleCode,
+  feeSelection,
+  onFeeSelected,
   totalAmount,
   codesMissingFee,
   saving,
@@ -71,7 +75,13 @@ export function ReviewStep({
             )}
           </div>
 
-          <CodesReview codes={result.billing.result.codes} selection={selection} onToggle={onToggleCode} />
+          <CodesReview
+            codes={result.billing.result.codes}
+            selection={selection}
+            onToggle={onToggleCode}
+            feeSelection={feeSelection}
+            onFeeSelected={onFeeSelected}
+          />
 
           <SaveSummary
             totalAmount={totalAmount}
