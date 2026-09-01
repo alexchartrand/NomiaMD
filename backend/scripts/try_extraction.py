@@ -27,7 +27,9 @@ from app.sample_patients import get_sample_patients  # noqa: E402
 # Always DEBUG here (unlike app/main.py's settings.log_level-driven call) — this script
 # exists purely for manual inspection of the pipeline, so it should always surface the
 # retriever/LLM debug logs (app/ramq_codes/retriever.py, app/extraction/engine.py).
-configure_logging("DEBUG")
+# pretty=True: human-readable console output instead of the server's one-JSON-line-per-record
+# format, since this script is read by a person in a terminal, not collected by an orchestrator.
+configure_logging("DEBUG", pretty=True)
 
 # Not a real logged-in physician, and not a real chosen patient — this script has no login
 # or patient-picker flow, so BillingContextBuilder just finds no profile/patient rows for

@@ -29,9 +29,59 @@ class _JSONFormatter(logging.Formatter):
         return json.dumps(payload)
 
 
-def configure_logging(level: str) -> None:
+_LEVEL_COLORS = {
+    "DEBUG": "\033[36m",  # cyan
+    "INFO": "\033[32m",  # green
+    "WARNING": "\033[33m",  # yellow
+    "ERROR": "\033[31m",  # red
+    "CRITICAL": "\033[41m",  # red background
+}
+_DIM = "\033[2m"
+_RESET = "\033[0m"
+
+
+class _PrettyFormatter(logging.Formatter):
+    """Human-readable, multi-line console formatter for local debugging (try_extraction.py
+    and friends) — never used by the real server, which always wants one JSON line per
+    record for its container-native log collection (see _JSONFormatter above). Opt in via
+    configure_logging(level, pretty=True)."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._use_color = sys.stdout.isatty()
+
+    def _color(self, code: str, text: str) -> str:
+        return f"{code}{text}{_RESET}" if self._use_color else text
+
+    def format(self, record: logging.LogRecord) -> str:
+        timestamp = self._color(_DIM, self.formatTime(record, "%H:%M:%S"))
+        level = self._color(_LEVEL_COLORS.get(record.levelname, ""), f"{record.levelname:<8}")
+        name = self._color(_DIM, record.name)
+        lines = [f"{timestamp} {level} {name}  {record.getMessage()}"]
+
+        extra = {k: v for k, v in record.__dict__.items() if k not in _RESERVED_RECORD_ATTRS}
+        for key, value in extra.items():
+            lines.append(self._format_field(key, value))
+        if record.exc_info:
+            lines.append(self.formatException(record.exc_info))
+        return "\n".join(lines)
+
+    def _format_field(self, key: str, value: object) -> str:
+        if isinstance(value, list) and value and isinstance(value[0], dict):
+            items = "\n".join(f"    - {self._format_dict_item(item)}" for item in value)
+            return f"  {key} ({len(value)}):\n{items}"
+        if isinstance(value, str) and (len(value) > 100 or "\n" in value):
+            indented = "\n".join(f"    {line}" for line in value.splitlines())
+            return f"  {key}:\n{indented}"
+        return f"  {key}: {value}"
+
+    def _format_dict_item(self, item: dict) -> str:
+        return " | ".join(str(v) for v in item.values() if v not in (None, "", False))
+
+
+def configure_logging(level: str, pretty: bool = False) -> None:
     handler = logging.StreamHandler(stream=sys.stdout)
-    handler.setFormatter(_JSONFormatter())
+    handler.setFormatter(_PrettyFormatter() if pretty else _JSONFormatter())
 
     root = logging.getLogger()
     root.handlers = [handler]
