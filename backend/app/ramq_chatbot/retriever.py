@@ -1,3 +1,5 @@
+import logging
+import time
 from typing import List
 
 from llama_index.core.base.embeddings.base import BaseEmbedding
@@ -7,6 +9,8 @@ from llama_index.core.schema import NodeWithScore, QueryBundle
 from app.lancedb.converter import IConverter
 from app.lancedb.repository import IDocumentRepository
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
+
+logger = logging.getLogger(__name__)
 
 
 class RAMQManualRetriever(BaseRetriever):
@@ -43,10 +47,42 @@ class RAMQManualRetriever(BaseRetriever):
         raise NotImplementedError("RAMQManualRetriever is async-only — use aretrieve()")
 
     async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+        retriever_start = time.perf_counter()
+
         vector = await self._embed_model.aget_query_embedding(query_bundle.query_str)
+
+        db_start = time.perf_counter()
         hits = await self._documents.hybrid_search(
             text=query_bundle.query_str, vector=vector, k=self._similarity_top_k
         )
-        nodes = [NodeWithScore(node=self._converter.convert(row), score=None) for row, _score in hits]
+        db_duration_ms = (time.perf_counter() - db_start) * 1000
 
-        return await self._reference_expander.aexpand(nodes)
+        nodes = [NodeWithScore(node=self._converter.convert(row), score=None) for row, _score in hits]
+        expanded = await self._reference_expander.aexpand(nodes)
+
+        retriever_duration_ms = (time.perf_counter() - retriever_start) * 1000
+        logger.debug(
+            "RAMQManualRetriever.aretrieve timing",
+            extra={
+                "retriever_duration_ms": round(retriever_duration_ms, 1),
+                "db_duration_ms": round(db_duration_ms, 1),
+            },
+        )
+        logger.debug(
+            "RAMQManualRetriever.aretrieve result",
+            extra={
+                "nodes": [
+                    {
+                        "node_id": n.node.node_id,
+                        "title": n.node.metadata.get("title"),
+                        "section_number": n.node.metadata.get("section_number"),
+                        "is_expansion": n.node.metadata.get("is_expansion", False),
+                        "text": n.node.text[:200],
+                    }
+                    for n in expanded
+                ],
+                "node_count": len(expanded),
+            },
+        )
+
+        return expanded

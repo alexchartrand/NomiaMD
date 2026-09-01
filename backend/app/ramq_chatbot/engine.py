@@ -1,4 +1,7 @@
 
+import logging
+import time
+
 from llama_index.core.base.llms.types import ChatMessage, ChatResponse, MessageRole
 from llama_index.core.llms import LLM
 from llama_index.core.retrievers import BaseRetriever
@@ -6,6 +9,8 @@ from llama_index.core.query_engine import CustomQueryEngine
 from llama_index.core.schema import MetadataMode, NodeWithScore
 
 from app.ramq_chatbot.models import RAMQChatMessage
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """\
 You are a RAMQ billing specialist chatbot.
@@ -111,5 +116,14 @@ class RAMQManualQueryEngine(CustomQueryEngine):
         nodes = await self.retriever.aretrieve(query_str)
         context_str = "\n\n".join(_format_context_entry(n) for n in nodes)
         messages = _build_messages(query_str, context_str, chat_history)
+
+        logger.debug("RAMQManualQueryEngine final query", extra={"user_message": messages[-1].content})
+
+        llm_start = time.perf_counter()
         response = await self.llm.achat(messages)
+        llm_duration_ms = (time.perf_counter() - llm_start) * 1000
+        logger.debug(
+            "RAMQManualQueryEngine llm call timing", extra={"llm_duration_ms": round(llm_duration_ms, 1)}
+        )
+
         return _extract_content(response)

@@ -3,6 +3,8 @@ Task-specific logic lives entirely in app/tasks/* — adding a new output type n
 requires touching this file."""
 
 import json
+import logging
+import time
 from functools import lru_cache
 from typing import TypeVar
 
@@ -14,6 +16,8 @@ from app.extraction.models import ExtractionResult
 from app.tasks.base import ExtractionTask
 
 TInput = TypeVar("TInput")
+
+logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=None)
@@ -43,12 +47,23 @@ async def run_extraction(task: ExtractionTask[TInput], task_input: TInput) -> Ex
         "json_schema": {"name": task.name, "strict": True, "schema": schema},
     }
 
+    logger.debug(
+        "run_extraction final query",
+        extra={"task": task.name, "model": task.model, "user_message": prepared.user_message},
+    )
+
+    llm_start = time.perf_counter()
     response = await client.achat(
         messages=[
             ChatMessage(role=MessageRole.SYSTEM, content=prepared.system_prompt),
             ChatMessage(role=MessageRole.USER, content=prepared.user_message),
         ],
         response_format=response_format,
+    )
+    llm_duration_ms = (time.perf_counter() - llm_start) * 1000
+    logger.debug(
+        "run_extraction llm call timing",
+        extra={"task": task.name, "model": task.model, "llm_duration_ms": round(llm_duration_ms, 1)},
     )
 
     choice = response.raw["choices"][0]

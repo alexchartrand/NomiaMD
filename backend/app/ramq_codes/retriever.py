@@ -1,4 +1,6 @@
 import asyncio
+import logging
+import time
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -14,6 +16,8 @@ from app.ramq_codes.query_planner import SummaryQueryPlanner
 from app.summary.models import ConsultationSummaryResult
 
 __all__ = ["ICodesRetriever", "RAMQCodesRetriever"]
+
+logger = logging.getLogger(__name__)
 
 
 class ICodesRetriever(ABC):
@@ -57,16 +61,44 @@ class RAMQCodesRetriever(ICodesRetriever):
         self._fused_top_k = fused_top_k
 
     async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> FamilyCollapseResult:
+        retriever_start = time.perf_counter()
+
         queries = self._query_planner.plan(summary)
         vectors = await asyncio.gather(*(self._embed_model.aget_query_embedding(q) for q in queries))
 
+        db_start = time.perf_counter()
         per_query_hits = await asyncio.gather(
             *(
                 self._codes.hybrid_search(text=query, vector=vector, k=self._similarity_top_k)
                 for query, vector in zip(queries, vectors)
             )
         )
+        db_duration_ms = (time.perf_counter() - db_start) * 1000
+
         per_query_codes = [[self._converter.convert(row) for row, _score in hits] for hits in per_query_hits]
 
         fused = self._fuser.fuse(per_query_codes, top_k=self._fused_top_k)
-        return self._family_selector.select(fused, context)
+        result = self._family_selector.select(fused, context)
+
+        retriever_duration_ms = (time.perf_counter() - retriever_start) * 1000
+        logger.debug(
+            "RAMQCodesRetriever.aretrieve timing",
+            extra={
+                "retriever_duration_ms": round(retriever_duration_ms, 1),
+                "db_duration_ms": round(db_duration_ms, 1),
+                "query_count": len(queries),
+            },
+        )
+        logger.debug(
+            "RAMQCodesRetriever.aretrieve result",
+            extra={
+                "candidates": [
+                    {"number": code.number, "libelle": code.libelle, "description": code.description}
+                    for code in result.candidates
+                ],
+                "candidate_count": len(result.candidates),
+                "unresolved_axes": list(result.unresolved_axes),
+            },
+        )
+
+        return result
