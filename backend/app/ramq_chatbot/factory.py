@@ -21,7 +21,7 @@ def init_ramq_query_engine(codes: ICodeRepository, documents: IDocumentRepositor
     llm = MistralAI(
         model="mistral-medium-latest",
         api_key=settings.mistral_api_key,
-        temperature=0,
+        temperature=0.5,
         max_tokens=4096,
     )
     reference_expander = ReferenceExpander(
