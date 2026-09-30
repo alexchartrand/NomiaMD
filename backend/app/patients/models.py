@@ -2,8 +2,9 @@
 
 from datetime import date
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
+from app.patients import nam
 from app.postgresdb import Gender
 
 _PRACTICE_NUMBER_PATTERN = r"^\d{5,6}$"
@@ -17,6 +18,19 @@ class PatientBase(BaseModel):
     is_vulnerable: bool = False
     family_doctor_name: str | None = None
     family_doctor_practice_number: str | None = Field(default=None, pattern=_PRACTICE_NUMBER_PATTERN)
+
+    @field_validator("ramq_number", mode="before")
+    @classmethod
+    def _canonical_nam(cls, value: str | None) -> str | None:
+        # Stored canonical (4 uppercase letters + 8 digits, no spacing) so the global
+        # one-patient-per-NAM unique index sees "desr 8102 1001" and "DESR81021001" as the
+        # same person. Blank means "no NAM on file", same as null.
+        if value is None or not value.strip():
+            return None
+        normalized = nam.normalize(value)
+        if normalized is None:
+            raise ValueError("NAM invalide : 4 lettres suivies de 8 chiffres attendues")
+        return normalized
 
 
 class PatientCreate(PatientBase):

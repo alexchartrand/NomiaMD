@@ -129,8 +129,8 @@ class Patient(Base):
         # Partial (not table-wide) so a soft-deleted patient never blocks re-adding the
         # same NAM, or a later correction of a duplicate. NULL ramq_number never
         # collides either way — both dialects already treat NULLs as distinct in a
-        # unique index. Live on both dialects (unlike the FK ondelete/composite-FK
-        # items) since SQLite enforces unique indexes unconditionally, no PRAGMA needed.
+        # unique index. Only as strong as the NAM's canonical form: PatientBase
+        # (app/patients/models.py) normalizes it before it ever reaches this table.
         Index(
             "ix_patients_ramq_number_active",
             "ramq_number",

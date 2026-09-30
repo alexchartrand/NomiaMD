@@ -188,6 +188,49 @@ def test_creating_two_patients_with_no_nam_does_not_collide():
     assert second_response.status_code == 201
 
 
+def _spaced_lowercase(nam: str) -> str:
+    return f"{nam[:4].lower()} {nam[4:8]}-{nam[8:]}"
+
+
+def test_nam_is_stored_in_canonical_form():
+    payload = _valid_patient()
+    canonical = payload["ramq_number"]
+
+    with TestClient(app) as client:
+        response = client.post("/patients", json={**payload, "ramq_number": _spaced_lowercase(canonical)})
+
+    assert response.status_code == 201
+    assert response.json()["ramq_number"] == canonical
+
+
+def test_same_nam_written_differently_is_a_duplicate():
+    payload = _valid_patient()
+
+    with TestClient(app) as client:
+        first_response = client.post("/patients", json=payload)
+        second_response = client.post(
+            "/patients", json={**payload, "ramq_number": _spaced_lowercase(payload["ramq_number"])}
+        )
+
+    assert first_response.status_code == 201
+    assert second_response.status_code == 409
+
+
+def test_malformed_nam_is_rejected():
+    with TestClient(app) as client:
+        response = client.post("/patients", json=_valid_patient(ramq_number="TREJ123"))
+
+    assert response.status_code == 422
+
+
+def test_blank_nam_is_stored_as_no_nam():
+    with TestClient(app) as client:
+        response = client.post("/patients", json=_valid_patient(ramq_number="   "))
+
+    assert response.status_code == 201
+    assert response.json()["ramq_number"] is None
+
+
 def test_update_patient_requires_admin():
     with TestClient(app) as client:
         created = client.post("/patients", json=_valid_patient()).json()
