@@ -16,7 +16,8 @@ from pathlib import Path
 import pytest
 
 from app.auth import get_current_user  # noqa: E402
-from app.postgresdb import User, UserRole  # noqa: E402
+from app.postgresdb import User, UserRole, init_db  # noqa: E402
+from app.postgresdb.database import async_session  # noqa: E402
 from app.main import app  # noqa: E402
 from app.lancedb.models import CodeRow, CodeRowFee  # noqa: E402
 from app.lancedb.repository import ICodeRepository  # noqa: E402
@@ -176,6 +177,19 @@ def reset_rate_limits():
 
 def pytest_sessionfinish(session, exitstatus):
     shutil.rmtree(_TEST_DB_DIR, ignore_errors=True)
+
+
+@pytest.fixture
+async def db_session():
+    """One session for a repository-level test, never committed: closing it at teardown
+    rolls back everything the test wrote, so repository tests don't leak rows into each
+    other. Tests that go through the API instead seed with session_scope (committed), since
+    the app reads in its own sessions. SQLite holds its write lock until this session ends,
+    so nothing else may write to the DB during a test using it — ensure_user_row in a
+    fixture or before the first write is fine."""
+    await init_db()
+    async with async_session() as session:
+        yield session
 
 
 @pytest.fixture(autouse=True)

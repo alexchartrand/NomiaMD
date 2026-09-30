@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User, UserRole
+from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User, UserRole, session_scope
 
 VALID_PATIENT = {
     "full_name": "Jean Tremblay",
@@ -380,18 +380,19 @@ async def test_a_patient_not_on_the_billing_physicians_roster_can_still_be_claim
 
     with TestClient(app) as client:
         created = client.post("/patients", json=_valid_patient()).json()
-        [extraction_record] = await ExtractionRepository().create_many(
-            [
-                ExtractionRecordInput(
-                    task="billing_codes",
-                    transcript="transcript de test",
-                    result=billing_result,
-                    model="mistral-small-latest",
-                    source_system="simule",
-                    user_id=1,
-                )
-            ]
-        )
+        async with session_scope() as session:
+            [extraction_record] = await ExtractionRepository(session).create_many(
+                [
+                    ExtractionRecordInput(
+                        task="billing_codes",
+                        transcript="transcript de test",
+                        result=billing_result,
+                        model="mistral-small-latest",
+                        source_system="simule",
+                        user_id=1,
+                    )
+                ]
+            )
         claim_response = client.post(
             "/claims",
             json={

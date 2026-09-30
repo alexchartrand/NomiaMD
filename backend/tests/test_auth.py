@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.auth.security import PasswordHasher
-from app.postgresdb import PhysicianType, RemunerationType, UserRepository, UserRole, init_db
+from app.postgresdb import PhysicianType, RemunerationType, UserRepository, UserRole, init_db, session_scope
 from app.main import app
 
 PASSWORD = "correct horse battery staple"
@@ -23,7 +23,8 @@ async def _create_user(**overrides):
         "full_name": "Dr. Doe",
         "role": UserRole.PHYSICIAN,
     }
-    return await UserRepository().create(**{**defaults, **overrides})
+    async with session_scope() as session:
+        return await UserRepository(session).create(**{**defaults, **overrides})
 
 
 def _drop_auth_override():

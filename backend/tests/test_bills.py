@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
+from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole, session_scope
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
 # patients are globally unique by NAM now — so each seeded patient needs its own NAM to
@@ -42,30 +42,32 @@ def _other_physician():
 
 
 async def _seed_patient(full_name="Roch Desjardins", ramq_number=None):
-    return await PatientRepository().create(
-        full_name=full_name,
-        # Distinct prefix from test_claims.py's own _seed_patient — a shared prefix would
-        # let their counters collide across files, since patients are globally unique by NAM.
-        ramq_number=ramq_number or f"BILP{next(_ramq_numbers):08d}",
-        date_of_birth=date(1981, 2, 10),
-        gender=Gender.MALE,
-        is_vulnerable=False,
-    )
+    async with session_scope() as session:
+        return await PatientRepository(session).create(
+            full_name=full_name,
+            # Distinct prefix from test_claims.py's own _seed_patient — a shared prefix would
+            # let their counters collide across files, since patients are globally unique by NAM.
+            ramq_number=ramq_number or f"BILP{next(_ramq_numbers):08d}",
+            date_of_birth=date(1981, 2, 10),
+            gender=Gender.MALE,
+            is_vulnerable=False,
+        )
 
 
 async def _seed_extraction_record(*, user_id=1, result=None):
-    [record] = await ExtractionRepository().create_many(
-        [
-            ExtractionRecordInput(
-                task="billing_codes",
-                transcript="transcript de test",
-                result=result if result is not None else BILLING_RESULT,
-                model="mistral-small-latest",
-                source_system="simule",
-                user_id=user_id,
-            )
-        ]
-    )
+    async with session_scope() as session:
+        [record] = await ExtractionRepository(session).create_many(
+            [
+                ExtractionRecordInput(
+                    task="billing_codes",
+                    transcript="transcript de test",
+                    result=result if result is not None else BILLING_RESULT,
+                    model="mistral-small-latest",
+                    source_system="simule",
+                    user_id=user_id,
+                )
+            ]
+        )
     return record
 
 

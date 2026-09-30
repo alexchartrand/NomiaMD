@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.auth import get_current_user
+from app.patients.factory import get_patient_repository, get_roster_repository
 from app.patients.models import (
     PatientCreate,
     PatientOut,
@@ -49,31 +50,44 @@ def _require_admin(current_user: User) -> None:
 
 
 @router.get("", response_model=list[RosterEntryOut])
-async def list_roster(current_user: User = Depends(get_current_user)) -> list[RosterEntryOut]:
-    rows = await PhysicianPatientRepository().list_roster(current_user.id)
+async def list_roster(
+    current_user: User = Depends(get_current_user),
+    roster: PhysicianPatientRepository = Depends(get_roster_repository),
+) -> list[RosterEntryOut]:
+    rows = await roster.list_roster(current_user.id)
     return [_to_roster_entry_out(entry, patient, current_user=current_user) for entry, patient in rows]
 
 
 @router.get("/search", response_model=list[PatientOut])
 async def search_patients(
-    q: str = Query(min_length=1), current_user: User = Depends(get_current_user)
+    q: str = Query(min_length=1),
+    current_user: User = Depends(get_current_user),
+    patients: PatientRepository = Depends(get_patient_repository),
 ) -> list[PatientOut]:
-    patients = await PatientRepository().search(q)
-    return [_to_patient_out(p, current_user=current_user) for p in patients]
+    matches = await patients.search(q)
+    return [_to_patient_out(p, current_user=current_user) for p in matches]
 
 
 @router.post("", response_model=PatientOut, status_code=status.HTTP_201_CREATED)
-async def create_patient(body: PatientCreate, current_user: User = Depends(get_current_user)) -> PatientOut:
+async def create_patient(
+    body: PatientCreate,
+    current_user: User = Depends(get_current_user),
+    patients: PatientRepository = Depends(get_patient_repository),
+) -> PatientOut:
     try:
-        patient = await PatientRepository().create(**body.model_dump())
+        patient = await patients.create(**body.model_dump())
     except DuplicatePatientRamqNumberError as exc:
         raise HTTPException(status_code=409, detail=_duplicate_ramq_number_detail(exc)) from exc
     return _to_patient_out(patient, current_user=current_user)
 
 
 @router.get("/{patient_id}", response_model=PatientOut)
-async def get_patient(patient_id: int, current_user: User = Depends(get_current_user)) -> PatientOut:
-    patient = await PatientRepository().get(patient_id)
+async def get_patient(
+    patient_id: int,
+    current_user: User = Depends(get_current_user),
+    patients: PatientRepository = Depends(get_patient_repository),
+) -> PatientOut:
+    patient = await patients.get(patient_id)
     if patient is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient introuvable")
     return _to_patient_out(patient, current_user=current_user)
@@ -81,14 +95,17 @@ async def get_patient(patient_id: int, current_user: User = Depends(get_current_
 
 @router.patch("/{patient_id}", response_model=PatientOut)
 async def update_patient(
-    patient_id: int, body: PatientUpdate, current_user: User = Depends(get_current_user)
+    patient_id: int,
+    body: PatientUpdate,
+    current_user: User = Depends(get_current_user),
+    patients: PatientRepository = Depends(get_patient_repository),
 ) -> PatientOut:
     # Patient is a shared, global record now — only admins may edit its demographic/
     # administrative fields, since any physician editing another physician's patient's
     # data has no ownership check left to gate it (see the plan's edit-authorization note).
     _require_admin(current_user)
     try:
-        patient = await PatientRepository().update(patient_id, **body.model_dump())
+        patient = await patients.update(patient_id, **body.model_dump())
     except DuplicatePatientRamqNumberError as exc:
         raise HTTPException(status_code=409, detail=_duplicate_ramq_number_detail(exc)) from exc
     if patient is None:
@@ -97,12 +114,17 @@ async def update_patient(
 
 
 @router.post("/roster", response_model=RosterEntryOut, status_code=status.HTTP_201_CREATED)
-async def add_to_roster(body: RosterEntryCreate, current_user: User = Depends(get_current_user)) -> RosterEntryOut:
-    patient = await PatientRepository().get(body.patient_id)
+async def add_to_roster(
+    body: RosterEntryCreate,
+    current_user: User = Depends(get_current_user),
+    patients: PatientRepository = Depends(get_patient_repository),
+    roster: PhysicianPatientRepository = Depends(get_roster_repository),
+) -> RosterEntryOut:
+    patient = await patients.get(body.patient_id)
     if patient is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient introuvable")
     try:
-        entry = await PhysicianPatientRepository().add(current_user.id, body.patient_id, notes=body.notes)
+        entry = await roster.add(current_user.id, body.patient_id, notes=body.notes)
     except DuplicateRosterEntryError as exc:
         raise HTTPException(
             status_code=409, detail="Ce patient est déjà dans votre liste"
@@ -112,19 +134,27 @@ async def add_to_roster(body: RosterEntryCreate, current_user: User = Depends(ge
 
 @router.patch("/roster/{patient_id}", response_model=RosterEntryOut)
 async def update_roster_entry(
-    patient_id: int, body: RosterEntryUpdate, current_user: User = Depends(get_current_user)
+    patient_id: int,
+    body: RosterEntryUpdate,
+    current_user: User = Depends(get_current_user),
+    patients: PatientRepository = Depends(get_patient_repository),
+    roster: PhysicianPatientRepository = Depends(get_roster_repository),
 ) -> RosterEntryOut:
-    entry = await PhysicianPatientRepository().update(current_user.id, patient_id, notes=body.notes)
+    entry = await roster.update(current_user.id, patient_id, notes=body.notes)
     if entry is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient absent de votre liste")
-    patient = await PatientRepository().get(patient_id)
+    patient = await patients.get(patient_id)
     if patient is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient introuvable")
     return _to_roster_entry_out(entry, patient, current_user=current_user)
 
 
 @router.delete("/roster/{patient_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def remove_from_roster(patient_id: int, current_user: User = Depends(get_current_user)) -> None:
-    removed = await PhysicianPatientRepository().remove(current_user.id, patient_id)
+async def remove_from_roster(
+    patient_id: int,
+    current_user: User = Depends(get_current_user),
+    roster: PhysicianPatientRepository = Depends(get_roster_repository),
+) -> None:
+    removed = await roster.remove(current_user.id, patient_id)
     if not removed:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient absent de votre liste")

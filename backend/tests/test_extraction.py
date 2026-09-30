@@ -17,7 +17,7 @@ from fastapi.testclient import TestClient
 
 from app.extraction.engine import run_extraction
 from app.main import app
-from app.postgresdb import Gender, PatientRepository
+from app.postgresdb import Gender, PatientRepository, session_scope
 from app.ramq_codes import BillingCodesInput, BillingContext
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
@@ -187,13 +187,14 @@ _ramq_numbers = itertools.count(1)
 
 
 async def _seed_patient(*, ramq_number=None, full_name="Louise Tremblay"):
-    return await PatientRepository().create(
-        full_name=full_name,
-        ramq_number=ramq_number or f"EXTR{next(_ramq_numbers):08d}",
-        date_of_birth=date(1958, 2, 15),
-        gender=Gender.FEMALE,
-        is_vulnerable=False,
-    )
+    async with session_scope() as session:
+        return await PatientRepository(session).create(
+            full_name=full_name,
+            ramq_number=ramq_number or f"EXTR{next(_ramq_numbers):08d}",
+            date_of_birth=date(1958, 2, 15),
+            gender=Gender.FEMALE,
+            is_vulnerable=False,
+        )
 
 
 async def test_extract_endpoint_end_to_end():

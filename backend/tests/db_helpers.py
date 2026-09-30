@@ -2,8 +2,7 @@
 a fixed-id in-memory User handed to a route or repository must also exist as a real `users`
 row before anything referencing it (claims, extraction records, roster entries) is written."""
 
-from app.postgresdb import User, UserRole, init_db
-from app.postgresdb.database import async_session
+from app.postgresdb import User, UserRole, init_db, session_scope
 
 
 async def ensure_user_row(user: User) -> None:
@@ -11,7 +10,7 @@ async def ensure_user_row(user: User) -> None:
     idempotent, since the test DB is shared across the whole session (see conftest.py) and
     tests/test_auth.py also creates autoincremented users in it."""
     await init_db()
-    async with async_session() as session:
+    async with session_scope() as session:
         if await session.get(User, user.id) is not None:
             return
         session.add(
@@ -25,7 +24,6 @@ async def ensure_user_row(user: User) -> None:
                 practice_number=user.practice_number,
             )
         )
-        await session.commit()
 
 
 def physician(user_id: int) -> User:

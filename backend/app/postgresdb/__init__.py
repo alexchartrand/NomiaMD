@@ -1,11 +1,13 @@
 """Relational storage (SQLite locally, Postgres in prod — see database.py) for user
 accounts and extraction run history. ORM shapes live in models.py, persistence in
-repository.py, engine/session wiring in database.py.
+repository.py, engine wiring in database.py, transaction boundaries in session.py (and
+their per-request FastAPI dependency in dependencies.py).
 
 Public interface — everything else that needs this imports it from here rather than
 reaching into .database/.models/.repository directly."""
 
 from app.postgresdb.database import init_db
+from app.postgresdb.dependencies import DbSession, get_db_session
 from app.postgresdb.models import (
     Bill,
     BillClaim,
@@ -39,9 +41,13 @@ from app.postgresdb.repository import (
     PhysicianProfileRepository,
     UserRepository,
 )
+from app.postgresdb.session import session_scope
 
 __all__ = [
     "init_db",
+    "session_scope",
+    "DbSession",
+    "get_db_session",
     "Bill",
     "BillClaim",
     "Claim",

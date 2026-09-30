@@ -31,6 +31,7 @@ from app.postgresdb import (  # noqa: E402
     UserRepository,
     UserRole,
     init_db,
+    session_scope,
 )
 
 
@@ -60,26 +61,27 @@ async def main() -> None:
 
     await init_db()  # a fresh DB (e.g. first run) has no `users` table yet
     hashed_password = PasswordHasher().hash(password)
-    try:
-        user = await UserRepository().create(
-            email=args.email,
-            hashed_password=hashed_password,
-            full_name=args.full_name,
-            role=UserRole(args.role),
-        )
-    except IntegrityError:
-        print(f"A user with email {args.email!r} already exists.", file=sys.stderr)
-        raise SystemExit(1)
+    async with session_scope() as session:
+        try:
+            user = await UserRepository(session).create(
+                email=args.email,
+                hashed_password=hashed_password,
+                full_name=args.full_name,
+                role=UserRole(args.role),
+            )
+        except IntegrityError:
+            print(f"A user with email {args.email!r} already exists.", file=sys.stderr)
+            raise SystemExit(1)
 
-    # The practice facts live in their own dated table, so provisioning writes the
-    # account's first profile version rather than more columns on `users`.
-    if any((args.physician_type, args.number_of_patients, args.remuneration_type)):
-        await PhysicianProfileRepository().upsert_current(
-            user.id,
-            physician_type=args.physician_type,
-            number_of_patients=args.number_of_patients,
-            remuneration_type=args.remuneration_type,
-        )
+        # The practice facts live in their own dated table, so provisioning writes the
+        # account's first profile version rather than more columns on `users`.
+        if any((args.physician_type, args.number_of_patients, args.remuneration_type)):
+            await PhysicianProfileRepository(session).upsert_current(
+                user.id,
+                physician_type=args.physician_type,
+                number_of_patients=args.number_of_patients,
+                remuneration_type=args.remuneration_type,
+            )
 
     print(f"Created user {user.email!r} (id={user.id}, role={user.role.value})")
 

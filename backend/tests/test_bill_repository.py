@@ -37,11 +37,11 @@ async def physician_id():
     return user_id
 
 
-async def _seed_patient():
+async def _seed_patient(session):
     # "BLRP" prefix (not "DESR") to stay distinct from test_claims.py's/
     # test_claim_repository.py's own counters — patients are globally unique by NAM now,
     # and the test DB is shared across the whole session (see conftest.py).
-    return await PatientRepository().create(
+    return await PatientRepository(session).create(
         full_name="Roch Desjardins",
         ramq_number=f"BLRP{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
@@ -50,8 +50,8 @@ async def _seed_patient():
     )
 
 
-async def _seed_claim(physician_id, patient_id, *, status="brouillon", service_date=date(2026, 2, 10)):
-    created = await ClaimRepository().create(
+async def _seed_claim(session, physician_id, patient_id, *, status="brouillon", service_date=date(2026, 2, 10)):
+    created = await ClaimRepository(session).create(
         ClaimInput(
             physician_id=physician_id,
             patient_id=patient_id,
@@ -76,12 +76,12 @@ async def _seed_claim(physician_id, patient_id, *, status="brouillon", service_d
     return created.record
 
 
-async def test_create_flips_claims_to_soumis_in_one_transaction(physician_id):
-    patient = await _seed_patient()
-    claim_a = await _seed_claim(physician_id, patient.id)
-    claim_b = await _seed_claim(physician_id, patient.id, service_date=date(2026, 2, 15))
+async def test_create_flips_claims_to_soumis_in_one_transaction(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim_a = await _seed_claim(db_session, physician_id, patient.id)
+    claim_b = await _seed_claim(db_session, physician_id, patient.id, service_date=date(2026, 2, 15))
 
-    repo = BillRepository()
+    repo = BillRepository(db_session)
     bill = await repo.create(
         BillInput(
             physician_id=physician_id,
@@ -96,18 +96,18 @@ async def test_create_flips_claims_to_soumis_in_one_transaction(physician_id):
     assert bill.record_count == 2
     assert set(await repo.claim_ids_for_bill(bill.id)) == {claim_a.id, claim_b.id}
 
-    claim_repo = ClaimRepository()
+    claim_repo = ClaimRepository(db_session)
     refreshed_a = await claim_repo.get_for_physician(claim_a.id, physician_id)
     refreshed_b = await claim_repo.get_for_physician(claim_b.id, physician_id)
     assert refreshed_a.record.status == "soumis"
     assert refreshed_b.record.status == "soumis"
 
 
-async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician_id):
-    patient = await _seed_patient()
-    claim = await _seed_claim(physician_id, patient.id, status="soumis")
+async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim = await _seed_claim(db_session, physician_id, patient.id, status="soumis")
 
-    repo = BillRepository()
+    repo = BillRepository(db_session)
     bill = await repo.create(
         BillInput(
             physician_id=physician_id,
@@ -122,13 +122,13 @@ async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician
     assert await repo.list_for_physician(physician_id) == []
 
 
-async def test_create_rejects_another_physicians_claim(physician_id):
+async def test_create_rejects_another_physicians_claim(db_session, physician_id):
     other_physician_id = physician_id + 1
     await ensure_user_row(physician(other_physician_id))
-    other_patient = await _seed_patient()
-    foreign_claim = await _seed_claim(other_physician_id, other_patient.id)
+    other_patient = await _seed_patient(db_session)
+    foreign_claim = await _seed_claim(db_session, other_physician_id, other_patient.id)
 
-    repo = BillRepository()
+    repo = BillRepository(db_session)
     bill = await repo.create(
         BillInput(
             physician_id=physician_id,
@@ -142,11 +142,11 @@ async def test_create_rejects_another_physicians_claim(physician_id):
     assert bill is None
 
 
-async def test_delete_releases_claims_to_brouillon(physician_id):
-    patient = await _seed_patient()
-    claim = await _seed_claim(physician_id, patient.id)
+async def test_delete_releases_claims_to_brouillon(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim = await _seed_claim(db_session, physician_id, patient.id)
 
-    repo = BillRepository()
+    repo = BillRepository(db_session)
     bill = await repo.create(
         BillInput(
             physician_id=physician_id,
@@ -162,16 +162,16 @@ async def test_delete_releases_claims_to_brouillon(physician_id):
     assert deleted is True
     assert await repo.get_for_physician(bill.id, physician_id) is None
 
-    claim_repo = ClaimRepository()
+    claim_repo = ClaimRepository(db_session)
     refreshed = await claim_repo.get_for_physician(claim.id, physician_id)
     assert refreshed.record.status == "brouillon"
 
 
-async def test_cross_physician_access_returns_none_or_false(physician_id):
-    patient = await _seed_patient()
-    claim = await _seed_claim(physician_id, patient.id)
+async def test_cross_physician_access_returns_none_or_false(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim = await _seed_claim(db_session, physician_id, patient.id)
 
-    repo = BillRepository()
+    repo = BillRepository(db_session)
     bill = await repo.create(
         BillInput(
             physician_id=physician_id,

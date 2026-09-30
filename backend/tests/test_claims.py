@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
+from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole, session_scope
 from tests.db_helpers import ensure_user_row, physician
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
@@ -53,29 +53,31 @@ def _other_physician():
 
 
 async def _seed_patient():
-    return await PatientRepository().create(
-        full_name="Roch Desjardins",
-        ramq_number=f"DESR{next(_ramq_numbers):08d}",
-        date_of_birth=date(1981, 2, 10),
-        gender=Gender.MALE,
-        is_vulnerable=False,
-    )
+    async with session_scope() as session:
+        return await PatientRepository(session).create(
+            full_name="Roch Desjardins",
+            ramq_number=f"DESR{next(_ramq_numbers):08d}",
+            date_of_birth=date(1981, 2, 10),
+            gender=Gender.MALE,
+            is_vulnerable=False,
+        )
 
 
 async def _seed_extraction_record(*, user_id=1, result=None, task="billing_codes"):
     await ensure_user_row(physician(user_id))
-    [record] = await ExtractionRepository().create_many(
-        [
-            ExtractionRecordInput(
-                task=task,
-                transcript="transcript de test",
-                result=result if result is not None else BILLING_RESULT,
-                model="mistral-small-latest",
-                source_system="simule",
-                user_id=user_id,
-            )
-        ]
-    )
+    async with session_scope() as session:
+        [record] = await ExtractionRepository(session).create_many(
+            [
+                ExtractionRecordInput(
+                    task=task,
+                    transcript="transcript de test",
+                    result=result if result is not None else BILLING_RESULT,
+                    model="mistral-small-latest",
+                    source_system="simule",
+                    user_id=user_id,
+                )
+            ]
+        )
     return record
 
 
