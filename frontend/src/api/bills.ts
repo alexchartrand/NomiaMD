@@ -8,7 +8,7 @@ export interface Bill {
   end_date: string;
   generated_at: string;
   total_amount: number | null;
-  record_count: number;
+  claim_count: number;
 }
 
 export interface BillDetail extends Bill {

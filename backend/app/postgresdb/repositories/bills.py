@@ -39,7 +39,7 @@ class BillRepository(SessionRepository):
             start_date=data.start_date,
             end_date=data.end_date,
             total_amount=data.total_amount,
-            record_count=len(data.claim_ids),
+            claim_count=len(data.claim_ids),
         )
         self._session.add(bill)
         await self._session.flush()  # populate bill.id for the link rows' FK

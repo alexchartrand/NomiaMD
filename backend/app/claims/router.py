@@ -87,14 +87,14 @@ async def list_claims(
     )
 
 
-@router.delete("/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{claim_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_claim(
-    record_id: int,
+    claim_id: int,
     current_user: User = Depends(get_current_user),
     service: ClaimService = Depends(get_claim_service),
 ) -> None:
     try:
-        deleted = await service.delete(record_id, current_user.id)
+        deleted = await service.delete(claim_id, current_user.id)
     except ClaimOnBillError as exc:
         raise HTTPException(
             status_code=409,

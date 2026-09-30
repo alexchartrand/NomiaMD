@@ -79,16 +79,16 @@ async def test_create_then_get_then_list(db_session, physician_id):
             codes=[_one_code_input(), _one_code_input(code="TEST-BLOODWORK-ORDER", fee_amount=None)],
         )
     )
-    assert created.record.id is not None
+    assert created.claim.id is not None
     assert len(created.codes) == 2
 
-    fetched = await repo.get_for_physician(created.record.id, physician_id)
+    fetched = await repo.get_for_physician(created.claim.id, physician_id)
     assert fetched is not None
     assert fetched.patient_full_name == "Roch Desjardins"
     assert {c.code for c in fetched.codes} == {"TEST-BP-MGMT", "TEST-BLOODWORK-ORDER"}
 
     listed = await repo.list_for_physician(physician_id)
-    assert [r.record.id for r in listed] == [created.record.id]
+    assert [r.claim.id for r in listed] == [created.claim.id]
     assert listed[0].patient_full_name == "Roch Desjardins"
 
 
@@ -121,13 +121,13 @@ async def test_list_filters_and_ordering(db_session, physician_id):
     )
 
     all_records = await repo.list_for_physician(physician_id)
-    assert [r.record.id for r in all_records] == [newer.record.id, older.record.id]
+    assert [r.claim.id for r in all_records] == [newer.claim.id, older.claim.id]
 
     only_facture = await repo.list_for_physician(physician_id, status="facture")
-    assert [r.record.id for r in only_facture] == [newer.record.id]
+    assert [r.claim.id for r in only_facture] == [newer.claim.id]
 
     date_ranged = await repo.list_for_physician(physician_id, date_from=date(2026, 2, 1))
-    assert [r.record.id for r in date_ranged] == [newer.record.id]
+    assert [r.claim.id for r in date_ranged] == [newer.claim.id]
 
 
 async def test_delete(db_session, physician_id):
@@ -146,9 +146,9 @@ async def test_delete(db_session, physician_id):
         )
     )
 
-    deleted = await repo.delete_for_physician(created.record.id, physician_id)
+    deleted = await repo.delete_for_physician(created.claim.id, physician_id)
     assert deleted is True
-    assert await repo.get_for_physician(created.record.id, physician_id) is None
+    assert await repo.get_for_physician(created.claim.id, physician_id) is None
     assert await repo.list_for_physician(physician_id) == []
 
 
@@ -169,8 +169,8 @@ async def test_cross_physician_access_returns_none_or_false(db_session, physicia
     )
     other_physician_id = physician_id + 1
 
-    assert await repo.get_for_physician(created.record.id, other_physician_id) is None
-    assert await repo.delete_for_physician(created.record.id, other_physician_id) is False
+    assert await repo.get_for_physician(created.claim.id, other_physician_id) is None
+    assert await repo.delete_for_physician(created.claim.id, other_physician_id) is False
 
 
 async def test_count_for_patient_on_date(db_session, physician_id):
@@ -241,9 +241,9 @@ async def test_purging_the_source_extraction_keeps_the_claim(db_session, physici
     # The DB applied SET NULL, not the ORM — reload the claim instead of reading the cached one.
     db_session.expunge_all()
 
-    detail = await repo.get_for_physician(created.record.id, physician_id)
+    detail = await repo.get_for_physician(created.claim.id, physician_id)
     assert detail is not None
-    assert detail.record.billing_extraction_record_id is None
+    assert detail.claim.billing_extraction_record_id is None
     assert [c.code for c in detail.codes] == ["TEST-BP-MGMT"]
 
 
@@ -255,8 +255,8 @@ async def test_list_by_ids_returns_only_the_physicians_own_claims_with_their_cod
     mine = await repo.create(_claim_input(physician_id, patient.id))
     theirs = await repo.create(_claim_input(other_physician_id, patient.id))
 
-    details = await repo.list_by_ids(physician_id, [mine.record.id, theirs.record.id, 999_999])
+    details = await repo.list_by_ids(physician_id, [mine.claim.id, theirs.claim.id, 999_999])
 
-    assert [d.record.id for d in details] == [mine.record.id]
+    assert [d.claim.id for d in details] == [mine.claim.id]
     assert details[0].patient_full_name == "Roch Desjardins"
     assert [c.code for c in details[0].codes] == ["TEST-BP-MGMT"]

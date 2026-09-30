@@ -36,13 +36,13 @@ class ClaimInput:
 
 @dataclass
 class ClaimWithCodes:
-    record: Claim
+    claim: Claim
     codes: list[ClaimCode]
 
 
 @dataclass
 class ClaimDetail:
-    record: Claim
+    claim: Claim
     patient_full_name: str
     codes: list[ClaimCode]
 
@@ -53,7 +53,7 @@ class ClaimRepository(SessionRepository):
     CASCADE, so the delete path reads the same whichever dialect is underneath."""
 
     async def create(self, data: ClaimInput) -> ClaimWithCodes:
-        record = Claim(
+        claim = Claim(
             physician_id=data.physician_id,
             patient_id=data.patient_id,
             service_date=data.service_date,
@@ -62,11 +62,11 @@ class ClaimRepository(SessionRepository):
             summary_extraction_record_id=data.summary_extraction_record_id,
             billing_extraction_record_id=data.billing_extraction_record_id,
         )
-        self._session.add(record)
-        await self._session.flush()  # populate record.id for the code rows' FK
+        self._session.add(claim)
+        await self._session.flush()  # populate claim.id for the code rows' FK
         code_rows = [
             ClaimCode(
-                claim_id=record.id,
+                claim_id=claim.id,
                 code=c.code,
                 description=c.description,
                 confidence=c.confidence,
@@ -79,10 +79,10 @@ class ClaimRepository(SessionRepository):
         ]
         self._session.add_all(code_rows)
         await self._session.flush()
-        await self._session.refresh(record)
+        await self._session.refresh(claim)
         for row in code_rows:
             await self._session.refresh(row)
-        return ClaimWithCodes(record=record, codes=code_rows)
+        return ClaimWithCodes(claim=claim, codes=code_rows)
 
     def _details_query(self, physician_id: int) -> Select:
         # Joins Patient for the name without filtering deleted_at — a soft-deleted
@@ -100,24 +100,24 @@ class ClaimRepository(SessionRepository):
         rows = (await self._session.execute(query)).all()
         if not rows:
             return []
-        names_by_id = {record.id: full_name for record, full_name in rows}
+        names_by_id = {claim.id: full_name for claim, full_name in rows}
 
         code_rows = (
             await self._session.execute(
                 select(ClaimCode).where(ClaimCode.claim_id.in_(names_by_id.keys()))
             )
         ).scalars().all()
-        codes_by_record: dict[int, list[ClaimCode]] = {}
+        codes_by_claim: dict[int, list[ClaimCode]] = {}
         for code_row in code_rows:
-            codes_by_record.setdefault(code_row.claim_id, []).append(code_row)
+            codes_by_claim.setdefault(code_row.claim_id, []).append(code_row)
 
         return [
             ClaimDetail(
-                record=record,
-                patient_full_name=names_by_id[record.id],
-                codes=codes_by_record.get(record.id, []),
+                claim=claim,
+                patient_full_name=names_by_id[claim.id],
+                codes=codes_by_claim.get(claim.id, []),
             )
-            for record, _ in rows
+            for claim, _ in rows
         ]
 
     async def list_for_physician(
@@ -149,26 +149,26 @@ class ClaimRepository(SessionRepository):
             return []
         return await self._load_details(self._details_query(physician_id).where(Claim.id.in_(claim_ids)))
 
-    async def get_for_physician(self, record_id: int, physician_id: int) -> ClaimDetail | None:
-        record = await self._session.get(Claim, record_id)
-        if record is None or record.physician_id != physician_id:
+    async def get_for_physician(self, claim_id: int, physician_id: int) -> ClaimDetail | None:
+        claim = await self._session.get(Claim, claim_id)
+        if claim is None or claim.physician_id != physician_id:
             return None
-        patient = await self._session.get(Patient, record.patient_id)
+        patient = await self._session.get(Patient, claim.patient_id)
         code_rows = (
-            await self._session.execute(select(ClaimCode).where(ClaimCode.claim_id == record_id))
+            await self._session.execute(select(ClaimCode).where(ClaimCode.claim_id == claim_id))
         ).scalars().all()
         return ClaimDetail(
-            record=record,
+            claim=claim,
             patient_full_name=patient.full_name if patient is not None else "",
             codes=list(code_rows),
         )
 
-    async def delete_for_physician(self, record_id: int, physician_id: int) -> bool:
-        record = await self._session.get(Claim, record_id)
-        if record is None or record.physician_id != physician_id:
+    async def delete_for_physician(self, claim_id: int, physician_id: int) -> bool:
+        claim = await self._session.get(Claim, claim_id)
+        if claim is None or claim.physician_id != physician_id:
             return False
-        await self._session.execute(delete(ClaimCode).where(ClaimCode.claim_id == record_id))
-        await self._session.delete(record)
+        await self._session.execute(delete(ClaimCode).where(ClaimCode.claim_id == claim_id))
+        await self._session.delete(claim)
         await self._session.flush()
         return True
 

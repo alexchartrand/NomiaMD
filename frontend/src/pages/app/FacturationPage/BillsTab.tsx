@@ -57,7 +57,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
   async function handleDelete(bill: Bill) {
     if (
       !window.confirm(
-        `Supprimer la facture ${bill.number} ? Les ${bill.record_count} réclamation(s) qu'elle contient redeviendront des brouillons.`,
+        `Supprimer la facture ${bill.number} ? Les ${bill.claim_count} réclamation(s) qu'elle contient redeviendront des brouillons.`,
       )
     )
       return;
@@ -100,7 +100,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
               </TableCell>
               <TableCell>{formatDate(bill.generated_at.slice(0, 10))}</TableCell>
               <TableCell>
-                {bill.record_count}{" "}
+                {bill.claim_count}{" "}
                 <Button type="button" variant="link" onClick={() => toggleExpand(bill)}>
                   Détails
                 </Button>

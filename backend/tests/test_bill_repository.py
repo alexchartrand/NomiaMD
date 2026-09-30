@@ -68,7 +68,7 @@ async def _seed_claim(session, physician_id, patient_id, *, status="brouillon", 
             ],
         )
     )
-    return created.record
+    return created.claim
 
 
 def _bill_input(physician_id, claim_ids, total="33.15"):
@@ -89,7 +89,7 @@ async def test_create_links_every_requested_claim(db_session, physician_id):
     repo = BillRepository(db_session)
     bill = await repo.create(_bill_input(physician_id, [claim_a.id, claim_b.id], total="66.30"))
 
-    assert bill.record_count == 2
+    assert bill.claim_count == 2
     assert bill.total_amount == Decimal("66.30")
     assert set(await repo.claim_ids_for_bill(bill.id)) == {claim_a.id, claim_b.id}
 
@@ -135,4 +135,4 @@ async def test_claim_set_status_stores_the_given_status(db_session, physician_id
     await claims.set_status([claim.id], "soumis")
 
     refreshed = await claims.get_for_physician(claim.id, physician_id)
-    assert refreshed.record.status == "soumis"
+    assert refreshed.claim.status == "soumis"

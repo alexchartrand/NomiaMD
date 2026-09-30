@@ -283,7 +283,7 @@ class ClaimCode(Base):
 class Bill(Base):
     """One generated invoice grouping many claims over a date range. The PDF is
     rendered on demand from the linked claims (which are themselves already snapshots —
-    see ClaimCode), so nothing is stored as bytes; total_amount/record_count are
+    see ClaimCode), so nothing is stored as bytes; total_amount/claim_count are
     snapshotted anyway so listing bills never has to re-sum every claim's codes."""
 
     __tablename__ = "bills"
@@ -297,7 +297,7 @@ class Bill(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
     total_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
-    record_count: Mapped[int] = mapped_column(Integer)
+    claim_count: Mapped[int] = mapped_column(Integer)
 
 
 class BillClaim(Base):

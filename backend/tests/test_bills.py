@@ -104,7 +104,7 @@ async def test_create_then_list_then_get_then_pdf_then_delete():
         assert create_response.status_code == 201
         bill = create_response.json()
         assert bill["number"] == f"FACT-{bill['id']:06d}"
-        assert bill["record_count"] == 2
+        assert bill["claim_count"] == 2
         assert bill["total_amount"] == 66.30
 
         list_response = client.get("/bills")

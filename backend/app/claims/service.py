@@ -114,16 +114,16 @@ def _codes_out(codes) -> list[ClaimCodeOut]:
 def _detail_to_out(detail: ClaimDetail) -> ClaimOut:
     codes = _codes_out(detail.codes)
     return ClaimOut(
-        id=detail.record.id,
-        patient_id=detail.record.patient_id,
+        id=detail.claim.id,
+        patient_id=detail.claim.patient_id,
         patient_full_name=detail.patient_full_name,
-        service_date=detail.record.service_date,
-        status=detail.record.status,
-        source_system=detail.record.source_system,
+        service_date=detail.claim.service_date,
+        status=detail.claim.status,
+        source_system=detail.claim.source_system,
         codes=codes,
         total_amount=_total_amount(codes),
-        created_at=detail.record.created_at,
-        updated_at=detail.record.updated_at,
+        created_at=detail.claim.created_at,
+        updated_at=detail.claim.updated_at,
     )
 
 
@@ -241,16 +241,16 @@ class ClaimService:
 
         codes_out = _codes_out(created.codes)
         return ClaimOut(
-            id=created.record.id,
-            patient_id=created.record.patient_id,
+            id=created.claim.id,
+            patient_id=created.claim.patient_id,
             patient_full_name=patient.full_name,
-            service_date=created.record.service_date,
-            status=created.record.status,
-            source_system=created.record.source_system,
+            service_date=created.claim.service_date,
+            status=created.claim.status,
+            source_system=created.claim.source_system,
             codes=codes_out,
             total_amount=_total_amount(codes_out),
-            created_at=created.record.created_at,
-            updated_at=created.record.updated_at,
+            created_at=created.claim.created_at,
+            updated_at=created.claim.updated_at,
         )
 
     async def list_for_physician(
@@ -275,13 +275,13 @@ class ClaimService:
         )
         return [_detail_to_out(d) for d in details]
 
-    async def delete(self, record_id: int, physician_id: int) -> bool:
+    async def delete(self, claim_id: int, physician_id: int) -> bool:
         # Once a claim is on a generated bill, it can only be freed by deleting that bill —
         # otherwise a hard delete here would leave a dangling link row and silently shrink a
         # bill's total behind the physician's back.
-        detail = await self._claim_repository.get_for_physician(record_id, physician_id)
+        detail = await self._claim_repository.get_for_physician(claim_id, physician_id)
         if detail is None:
             return False
-        if not ClaimLifecycle.can_be_deleted(detail.record.status):
+        if not ClaimLifecycle.can_be_deleted(detail.claim.status):
             raise ClaimOnBillError()
-        return await self._claim_repository.delete_for_physician(record_id, physician_id)
+        return await self._claim_repository.delete_for_physician(claim_id, physician_id)

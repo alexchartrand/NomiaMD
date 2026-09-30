@@ -46,7 +46,7 @@ def _bill_to_out(bill: Bill) -> BillOut:
         end_date=bill.end_date,
         generated_at=bill.generated_at,
         total_amount=bill.total_amount,
-        record_count=bill.record_count,
+        claim_count=bill.claim_count,
     )
 
 
@@ -79,7 +79,7 @@ class BillService:
         # claim_id instead (ClaimAlreadyBilledError below).
         details = await self._claim_repository.list_by_ids(physician_id, deduped)
         if len(details) != len(deduped) or not all(
-            ClaimLifecycle.can_be_billed(d.record.status) for d in details
+            ClaimLifecycle.can_be_billed(d.claim.status) for d in details
         ):
             raise StaleSelectionError()
 
@@ -129,24 +129,24 @@ class BillService:
         profile = await self._profile_repository.get_effective_on(physician_id, bill.end_date)
         details = await self._bill_claims(bill_id, physician_id)
 
-        patient_ids = {d.record.patient_id for d in details}
+        patient_ids = {d.claim.patient_id for d in details}
         patients = await self._patient_repository.get_many(list(patient_ids))
         ramq_by_patient_id = {p.id: p.ramq_number for p in patients}
 
         groups_by_patient: dict[int, BillPatientGroup] = {}
-        for detail in sorted(details, key=lambda d: (d.patient_full_name, d.record.service_date)):
+        for detail in sorted(details, key=lambda d: (d.patient_full_name, d.claim.service_date)):
             group = groups_by_patient.setdefault(
-                detail.record.patient_id,
+                detail.claim.patient_id,
                 BillPatientGroup(
                     patient_name=detail.patient_full_name,
-                    ramq_number=ramq_by_patient_id.get(detail.record.patient_id),
+                    ramq_number=ramq_by_patient_id.get(detail.claim.patient_id),
                     lines=[],
                 ),
             )
             for code in _codes_out(detail.codes):
                 group.lines.append(
                     BillLineItem(
-                        service_date=detail.record.service_date,
+                        service_date=detail.claim.service_date,
                         code=code.code,
                         fee_amount=code.fee_amount,
                     )
@@ -161,7 +161,7 @@ class BillService:
             physician_type=profile.physician_type if profile is not None else None,
             patient_groups=list(groups_by_patient.values()),
             total_amount=bill.total_amount,
-            record_count=bill.record_count,
+            claim_count=bill.claim_count,
         )
         return self._pdf_renderer.render(document)
 

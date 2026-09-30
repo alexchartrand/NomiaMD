@@ -20,7 +20,7 @@ class BillOut(BaseModel):
     end_date: date
     generated_at: datetime
     total_amount: Money | None
-    record_count: int
+    claim_count: int
 
 
 class BillDetailOut(BillOut):
