@@ -251,3 +251,18 @@ async def test_purging_the_source_extraction_keeps_the_claim(db_session, physici
     assert detail is not None
     assert detail.record.billing_extraction_record_id is None
     assert [c.code for c in detail.codes] == ["TEST-BP-MGMT"]
+
+
+async def test_list_by_ids_returns_only_the_physicians_own_claims_with_their_codes(db_session, physician_id):
+    other_physician_id = physician_id + 1
+    await ensure_user_row(physician(other_physician_id))
+    patient = await _seed_patient(db_session)
+    repo = ClaimRepository(db_session)
+    mine = await repo.create(_claim_input(physician_id, patient.id))
+    theirs = await repo.create(_claim_input(other_physician_id, patient.id))
+
+    details = await repo.list_by_ids(physician_id, [mine.record.id, theirs.record.id, 999_999])
+
+    assert [d.record.id for d in details] == [mine.record.id]
+    assert details[0].patient_full_name == "Roch Desjardins"
+    assert [c.code for c in details[0].codes] == ["TEST-BP-MGMT"]

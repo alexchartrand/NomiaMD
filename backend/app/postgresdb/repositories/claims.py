@@ -5,7 +5,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Sequence
 
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import Select, delete, func, select, update
 
 from app.postgresdb.models import Claim, ClaimCode, Patient
 from app.postgresdb.repositories.base import SessionRepository
@@ -84,38 +84,19 @@ class ClaimRepository(SessionRepository):
             await self._session.refresh(row)
         return ClaimWithCodes(record=record, codes=code_rows)
 
-    async def list_for_physician(
-        self,
-        physician_id: int,
-        *,
-        patient_id: int | None = None,
-        date_from: date | None = None,
-        date_to: date | None = None,
-        status: str | None = None,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> list[ClaimDetail]:
+    def _details_query(self, physician_id: int) -> Select:
         # Joins Patient for the name without filtering deleted_at — a soft-deleted
         # patient's name must still render on an existing claim.
-        query = (
+        return (
             select(Claim, Patient.full_name)
             .join(Patient, Patient.id == Claim.patient_id)
             .where(Claim.physician_id == physician_id)
-        )
-        if patient_id is not None:
-            query = query.where(Claim.patient_id == patient_id)
-        if date_from is not None:
-            query = query.where(Claim.service_date >= date_from)
-        if date_to is not None:
-            query = query.where(Claim.service_date <= date_to)
-        if status is not None:
-            query = query.where(Claim.status == status)
-        query = (
-            query.order_by(Claim.service_date.desc(), Claim.created_at.desc())
-            .limit(limit)
-            .offset(offset)
+            .order_by(Claim.service_date.desc(), Claim.created_at.desc())
         )
 
+    async def _load_details(self, query: Select) -> list[ClaimDetail]:
+        """Two round trips whatever the number of claims: the claims (with their patient's
+        name), then every code row of those claims at once."""
         rows = (await self._session.execute(query)).all()
         if not rows:
             return []
@@ -138,6 +119,35 @@ class ClaimRepository(SessionRepository):
             )
             for record, _ in rows
         ]
+
+    async def list_for_physician(
+        self,
+        physician_id: int,
+        *,
+        patient_id: int | None = None,
+        date_from: date | None = None,
+        date_to: date | None = None,
+        status: str | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[ClaimDetail]:
+        query = self._details_query(physician_id)
+        if patient_id is not None:
+            query = query.where(Claim.patient_id == patient_id)
+        if date_from is not None:
+            query = query.where(Claim.service_date >= date_from)
+        if date_to is not None:
+            query = query.where(Claim.service_date <= date_to)
+        if status is not None:
+            query = query.where(Claim.status == status)
+        return await self._load_details(query.limit(limit).offset(offset))
+
+    async def list_by_ids(self, physician_id: int, claim_ids: Sequence[int]) -> list[ClaimDetail]:
+        """The requested claims this physician owns — ids that don't exist or belong to
+        another physician are simply absent from the result, so callers compare lengths."""
+        if not claim_ids:
+            return []
+        return await self._load_details(self._details_query(physician_id).where(Claim.id.in_(claim_ids)))
 
     async def get_for_physician(self, record_id: int, physician_id: int) -> ClaimDetail | None:
         record = await self._session.get(Claim, record_id)
