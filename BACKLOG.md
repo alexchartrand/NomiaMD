@@ -15,7 +15,7 @@
   - The failure mode on this side is safe (a unit fee is never billed as dollars, the physician sees the label), but a mis-tagged dollar fee shows as units and drops out of the total.
 
 - [ ] 🟢 `test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ranks_last` fails with `KeyError: 'is_expansion'` — *added 9/30*
-  - `tests/test_ramq_chatbot_retriever.py`. Fails identically on `dev` before the versioned-codes-table change, so it's unrelated to it. Looks like the test still expects expansion metadata the chatbot retriever no longer sets.
+  - `tests/test_ramq_chatbot_retriever.py`. Still failing on 9/30 (the other 8 tests in that file pass). Fails identically on `dev` before the versioned-codes-table change, so it's unrelated to it. Looks like the test still expects expansion metadata the chatbot retriever no longer sets.
 
 - [ ] 🟡 Physician-profile cold-start fallback needs revalidation once real profile history exists — *added 8/31, from billing_codes context propagation bug report*
   - Root cause, confirmed against a real local run (`extraction_records` #9/#10): the physician's only `physician_profiles` row has `effective_from=2026-08-27`; the tested encounter is dated `2026-05-26`. `ProfileService.as_of` correctly (by its own "interpret a past encounter under the facts in effect then" contract) returns no profile for a date before any version existed, so `PhysicianContext` came back all-null and the model couldn't pick between codes 15839/15840 on panel size — exactly the "physician info should have been sent but wasn't" symptom reported.
@@ -28,44 +28,28 @@
   - Fix once Alembic lands: native `Enum` for vocabularies this codebase owns (role, gender), `String` + boundary validation for anything RAMQ's vocabulary controls (status, physician/remuneration type).
 
 - [ ] 🟢 NAM stored in plaintext — *added 8/27, from schema review*
-  - `patients.ramq_number` and the NAM inside `extraction_records.result_json` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
-
-- [ ] 🟡 NAM matching scans the whole roster instead of an indexed lookup — *added 8/24, from billing-workflow code review*
-  - `PatientSuggestionService._match` (`app/patients/suggestion.py`) calls `list_for_physician` and filters for a NAM match in Python, on every `/extract` call. `PatientRepository` has no `find_by_ramq(physician_id, nam)`. Fine at demo scale; a physician with hundreds of roster patients pays for the full roster transfer/deserialization just to find at most one match, on a rate-limited hot path.
+  - `patients.ramq_number` and the NAM inside `extraction_records.transcript` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
 
 - [ ] 🟢 Slash-date parsing assumes `DD/MM/YYYY`, would misparse an Epic-style `MM/DD/YYYY` note — *added 8/24, from billing-workflow code review*
   - `app/extraction/encounter_date.py`'s `_SLASH_DATE_RE` always reads `d/m/y`. Harmless today (Epic/Plume AI sources are still disabled buttons in the UI, and Quebec notes use `DD/MM/YYYY`), but once a US-market EHR source is wired up, a date like "03/04/2026" would silently parse as March 4 instead of April 3 for any day/month both ≤ 12 — no error, just a silently wrong `encounter_date`. Revisit once a real `source.system` other than `simule` sends dates.
 
-- [ ] 🟢 Facturation's patient filter can't select a soft-deleted patient — *added 8/24, from billing-workflow code review*
-  - `ClaimRepository.list_for_physician` deliberately doesn't filter `is_deleted` (a deleted patient's past claims must keep showing their name), but `FacturationPage.tsx`'s patient filter dropdown is populated from `listPatients()`, which does filter it out — so there's no way to filter the list down to just that patient's claims once they've left the roster. Minor; the "all patients" view still shows them.
+- [ ] 🟢 Facturation's patient filter only lists the physician's own roster — *added 8/24, from billing-workflow code review, reworded 9/30*
+  - `ClaimRepository.list_for_physician` deliberately doesn't filter `deleted_at` (a deleted patient's past claims keep showing their name), but `FacturationPage/RecordsTab.tsx`'s patient filter dropdown is filled from the physician's roster (`GET /patients`). Since the 8/31 global-patient refactor, claims aren't roster-gated, so any patient billed but never added to (or removed from) "my patients" can't be picked in the filter. Minor; the "all patients" view still shows their claims. Could be filled from the distinct patients on the physician's own claims instead.
 
 - [ ] 🔴 No purge/retention policy on `extraction_records` — *added 8/21, moved from DEPLOY.md, escalated 8/24, escalated 8/29*
   - Stores each transcript + result indefinitely. Acceptable while demoing with the synthetic notes in `consultations/`; must revisit before this ever touches real patient data (Law 25).
-  - Escalated: `extraction_records.result_json` now holds the patient's name **and NAM** as discrete, greppable fields (`patient_information.name_as_stated`/`ramq_number_as_stated`, billing-workflow plan Part 1) — a NAM is a direct government identifier, which makes this materially more pressing than before.
+  - Escalated: `extraction_records.result_json` used to hold the patient's name **and NAM** as discrete, greppable fields (`patient_information.name_as_stated`/`ramq_number_as_stated`). Those fields were removed on 9/01 with the patient-verification step, but the stored `transcript` column still carries the name and NAM verbatim for both the `consultation_summary` and `billing_codes` rows, so this stays 🔴.
   - Escalated 8/29: `billing_codes` now also grounds its selection in the raw transcript (`app/ramq_codes/task.py`'s `BillingCodesInput`), not just the NAM-stripped rendered summary — the `billing_codes` extraction record's stored result no longer excludes identity the way the summary-only prompt did. A NAM embedded in the transcript is scrubbed before it reaches the *prompt* (`app/patients/nam.py`'s `redact`), but the stored `extraction_records` row still carries the untouched original transcript, same as it always has for the `consultation_summary` stage.
 
 - [ ] 🔴 No Alembic — schema changes require a DB wipe or a hand-run `ALTER TABLE` — *added 8/24, escalated 8/27*
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one. `patients.is_deleted` (billing-workflow plan Part 4) is the first column added to an existing table since this app went live; the next one needs the same manual `ALTER TABLE` step on prod, or a wipe locally. Adopt Alembic before billing data is real.
   - Escalated 8/27: this is the blocker for every other schema item in this section — none of them are applicable to a live DB without migrations. It's also the stated cause of two existing workarounds (`Claim.status` as a bare `String` instead of an enum; `BillClaim` existing as a table because "a new column on an existing table isn't free"), so adopting Alembic removes the constraint those were designed around. Not urgent while there's no production DB — the local SQLite file is disposable — but it gates going live.
 
-- [ ] 🟡 Hard-deleting a `facturé` billing record destroys audit trail — *added 8/24*
-  - `DELETE /claims/{id}` (`app/claims/router.py`) hard-deletes regardless of `status` — there's no soft-delete equivalent to `patients.is_deleted` for claims. Fine for a `brouillon` mistake; loses the audit trail for anything already marked `facturé`.
+- [ ] 🟡 Deleting a bill, then its claims, destroys the audit trail — *added 8/24, reworded 9/30*
+  - Partly fixed: `ClaimService.delete` (`app/claims/service.py`) now refuses any claim that isn't `brouillon` (`ClaimOnBillError`). But `DELETE /bills/{id}` (`BillRepository.delete_for_physician`) hard-deletes the bill and resets its claims to `brouillon`, after which they can be hard-deleted too. Two clicks still erase a claim that was `soumis`. No soft delete exists for either `bills` or `claims` (`patients` has `deleted_at`).
 
 - [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
   - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
-
-- [x] 🟢 Docker's default `json-file` log driver has no rotation — *added 8/21, moved from DEPLOY.md, done 8/24*
-  - Not a concern at demo traffic/duration. Add `logging: driver: json-file, options: {max-size: 10m, max-file: "3"}` per service in `docker-compose.yml` if this runs long enough to matter.
-  - Fixed: all five services in `docker-compose.yml` now set `logging: driver: json-file, options: {max-size: "10m", max-file: "3"}`.
-
-- [ ] 🔴 Vector search blocks the event loop — *added 8/19, from codebase audit*
-  - `LanceDBVectorStore` has no `aquery` override, so both retrievers' `_aretrieve` (`ramq_codes/retriever.py`, `ramq_chatbot/retriever.py`) fall back to the sync `.retrieve()` call under the hood. Every concurrent physician's request stalls the single event loop for the duration of the native call.
-  - Fix: wrap the sync query in `run_in_threadpool`, or move to an async-native vector store call path.
-
-- [x] 🟡 No server-side check that returned billing codes are from the candidate set — *added 8/19, from codebase audit, note added 8/24, done 8/29*
-  - `ramq_codes/task.py`'s `parse()` only validates JSON shape, never cross-checks returned `number`s against the candidates built in `build_prompt`. The "only choose from candidates" constraint lives in the prompt only. Mandatory physician review is the only backstop today — no defense in depth.
-  - Note: `POST /claims` (`app/claims/service.py`) *does* validate its `selected_codes` against the referenced extraction's own stored candidates (422 on an unknown code) — but that's checking the physician's selection against what the model already returned, not checking what the model returned against what it was offered. This item is still open.
-  - Fixed: `ExtractionTask.build_prompt` now returns a `PreparedPrompt` (`app/tasks/base.py`) carrying the offered `candidate_numbers`, and `BillingCodesTask.parse` (`app/ramq_codes/task.py`) drops any returned code not in that set, appending a note — same "drop and flag, don't fabricate" handling as the existing malformed-shape case.
 
 - [ ] 🟡 Login timing side-channel enables user enumeration — *added 8/19, from codebase audit*
   - `auth/service.py` `login()` returns immediately on `user is None`, but runs the deliberately slow Argon2 `verify()` when the email exists — response time distinguishes valid from invalid emails.
@@ -79,9 +63,6 @@
 
 - [ ] 🟢 Non-backend containers run with image-default privileges — *added 8/19, from codebase audit*
   - Postgres/redis/caddy/frontend don't set an explicit non-root `user:` in `docker-compose.yml`. Backend (the real attack surface) already drops to `appuser`.
-
-- [ ] 🟢 DEPLOY.md and nginx's allowlist behavior disagree — *added 8/19, from codebase audit*
-  - `DEPLOY.md:65-67` says leaving `ALLOWED_CIDRS` unset makes the demo fully public; `frontend/docker-entrypoint.sh` actually `deny all`s everything but `127.0.0.1` in that case. Fails safe, but will send an operator chasing a bogus CIDR issue.
 
 - [ ] 🟢 Prompt injection surface is unhardened — *added 8/19, from codebase audit*
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
@@ -106,35 +87,32 @@
   - Decide between: (a) self-hosted Langfuse, using its `llama_index` instrumentor (`LlamaIndexInstrumentor` from `langfuse.llama_index`, started once in `bootstrap.py`) for full traces/dashboards/cost aggregation, vs (b) lightweight DB logging — wrap the `achat` call with `time.perf_counter()`, read `response.raw["usage"]` (Mistral's API is OpenAI-compatible), and persist onto the existing `ExtractionRecord` row (`app/postgresdb/models.py`).
   - Self-hosted Langfuse means another service to run/maintain but gets a UI, prompt diffing, and cost views; DB logging is zero new infra and keeps prompt/response content off any third-party system (relevant here since transcripts carry patient name + NAM), but you build your own queries/views to look at it.
 
-- [x] 🟡 Add a data logger for production — *added 8/21, done 8/24*
-  - Fixed: `app/logging_config.py` configures stdlib `logging` to emit one JSON line per event to stdout (same shape as `app/request_logging.py`'s existing per-request access log), wired at startup in `app/main.py`. Added `logger` calls at the silent-failure spots worth surfacing: `CodeTable.get_all` (`app/lancedb/db.py`) now warns on candidate numbers with no matching `codes` row (stale index), `AuthService.login` (`app/auth/service.py`) now logs failed/successful login attempts, and `RequestLoggingMiddleware` now logs unhandled exceptions with the same `request_id` as its access-log line before re-raising.
-
 ## 🧹 Cleanup / Dead code
 
-- [ ] 🟢 Ownership/soft-delete guard copy-pasted across repository methods — *added 8/24, from billing-workflow code review*
-  - `if patient is None or patient.physician_id != physician_id or patient.is_deleted: return None/False` is typed out identically in `PatientRepository.get_for_physician`/`update_for_physician`/`delete_for_physician`, and the analogous `record is None or record.physician_id != physician_id` check appears three more times in `ClaimRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means finding and updating all six copies by hand.
+- [ ] 🟢 Ownership guard copy-pasted across repository methods — *added 8/24, from billing-workflow code review, reworded 9/30*
+  - The patient copies are gone (patients are global since 8/31, no per-physician ownership). What's left: `record is None or record.physician_id != physician_id` twice in `ClaimRepository` and the same check on `bill` twice in `BillRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means updating all four by hand.
 
-- [ ] 🟢 `patients/router.py` and `PatientSuggestionService`'s construction skip the factory/`Depends` DI pattern — *added 8/24, from billing-workflow code review*
-  - `billing/factory.py` and `auth/factory.py` both expose a `get_*_service()` wired via FastAPI `Depends`, but `patients/router.py` instantiates `PatientRepository()` inline in every handler (no `patients/factory.py`), and `extraction/router.py` does the same for `PatientSuggestionService()`. Not a bug, just an inconsistent seam — swapping or mocking either at the dependency layer (the way tests already do for `BillingService`) isn't possible without editing the router directly.
+- [ ] 🟢 `patients/router.py` and `extraction/router.py` skip the factory/`Depends` DI pattern — *added 8/24, from billing-workflow code review, reworded 9/30*
+  - `claims/factory.py` and `auth/factory.py` both expose a `get_*_service()` wired via FastAPI `Depends`, but `patients/router.py` instantiates `PatientRepository()`/`PhysicianPatientRepository()` inline in every handler (no `patients/factory.py`), and `extraction/router.py` does the same for `PatientRepository()` and `ExtractionRepository()`. Not a bug, just an inconsistent seam: swapping or mocking them at the dependency layer (the way tests already do for `ClaimService`) isn't possible without editing the router.
 
 - [ ] 🟢 A few independent DB round trips are awaited sequentially instead of concurrently — *added 8/24, from billing-workflow code review*
-  - `ClaimService.create` (`app/claims/service.py`) awaits the patient/extraction/duplicate-check lookups one at a time even though none depends on another's result; `extraction/router.py`'s `create_many(...)` and `_build_patient_suggestion(...)` are similarly independent. `asyncio.gather` would roughly halve the added latency on both the extraction and claim-save hot paths. Not measured against real Postgres latency — worth profiling before spending effort here.
-  - Related: `BillingService.update_status` re-fetches the record it just updated via a second full query (`update_status_for_physician` + `get_for_physician`) instead of having the update return the same detail shape directly.
+  - `ClaimService.create` (`app/claims/service.py`) awaits the patient/extraction/duplicate-check lookups one at a time even though none depends on another's result. `asyncio.gather` would cut the added latency on the claim-save path. Not measured against real Postgres latency, so profile before spending effort here.
+  - (The `extraction/router.py` half of this item and the `update_status` re-fetch are gone: patient suggestion was removed on 8/31, and claims no longer have a status-update route.)
 
 - [ ] 🟢 Remove `MISTRAL_EMBEDDING_MODEL` from `.env` — *added 8/21*
-  - `config.py`'s `mistral_embedding_model` reads it from env and `embedings.py` passes it straight to `MistralAIEmbedding`, but it must always match whatever model ramq-ingestion used to embed the `codes`/`documents-embeddings` LanceDB tables (`mistral-embed`) — changing it doesn't degrade gracefully, it silently breaks retrieval (embedding-space mismatch). Extraction's model name is already hardcoded as `MODEL` in `app/extraction/engine.py`; this should be too, rather than exposed as an operator-configurable env var.
+  - `config.py`'s `mistral_embedding_model` reads it from env and `embedings.py` passes it straight to `MistralAIEmbedding`, but it must always match whatever model ramq-ingestion used to embed the `codes_<rev>`/`documents-embeddings` LanceDB tables (`mistral-embed`) — changing it doesn't degrade gracefully, it silently breaks retrieval (embedding-space mismatch). Extraction's model names are already hardcoded per task (`ExtractionTask.model`, `app/tasks/base.py`); this should be too, rather than exposed as an operator-configurable env var.
 
 - [ ] 🟢 Unused dependency: pandas — *added 8/19, from codebase audit*
   - Declared in `backend/pyproject.toml`; zero imports anywhere in `app/`, `scripts/`, or `tests/`.
 
-- [ ] 🟢 Unused "ghost" button variant — *added 8/19, from codebase audit*
-  - `components/Button.tsx` + `styles.css:135-140` — defined with matching CSS, no call site anywhere passes `variant="ghost"`.
+- [ ] 🟢 Unused "ghost" button variant — *added 8/19, from codebase audit, reworded 9/30*
+  - `components/Button.tsx` still declares a `ghost` variant (mapped to shadcn's `ui/button.tsx`), but no call site of `components/Button` passes it. The only `variant="ghost"` in the app is in `ui/dialog.tsx`, which uses the shadcn button directly.
 
 - [ ] 🟢 Unused `tagline` prop — *added 8/19, from codebase audit*
   - `components/PageHeader.tsx` renders it, but its only call site `SiteHeader.tsx` never supplies it.
 
 - [ ] 🟢 `encounter_id` accepted, validated, then discarded — *added 8/19, from codebase audit, needs confirmation*
-  - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend doesn't send a `source` object today. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
+  - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
 
@@ -173,6 +151,15 @@
   - If `ramq-ingestion` emitted these axes as typed columns on the `codes` row (e.g. `min_panel_size`/`max_panel_size`, `requires_vulnerable`, `requires_registered`, `min_age`/`max_age`) instead of leaving them embedded only in prose, family disambiguation could become a LanceDB `WHERE` pre-filter — no regex to maintain on this side, and no risk of silent drift when the source manual's wording changes. Not blocking (the text-parsing approach works today), but worth raising with that repo.
   - Fixed 9/30: ramq-ingestion now emits `min_age`/`max_age`/`min_panel_size`/`max_panel_size`/`requires_registered`/`requires_vulnerable` (inclusive, null = no restriction). `family.py` and its regexes are deleted; `EligibilityFilterFactory` (`app/ramq_codes/eligibility.py`) + `CodeEligibilityWhereBuilder` (`app/lancedb/eligibility.py`) prefilter every `hybrid_search` with a null-safe `WHERE`, and `UnresolvedAxisDetector` only flags an unknown axis when a surviving candidate is actually bounded on it (previously every unknown axis was always flagged). Patient age is floored, not rounded, to match the whole-year bounds — the prompt used to print 79.6 as "80 ans".
 
+- [x] 🟡 NAM matching scans the whole roster instead of an indexed lookup — *added 8/24, from billing-workflow code review, obsolete 8/31*
+  - `PatientSuggestionService._match` (`app/patients/suggestion.py`) calls `list_for_physician` and filters for a NAM match in Python, on every `/extract` call. `PatientRepository` has no `find_by_ramq(physician_id, nam)`. Fine at demo scale; a physician with hundreds of roster patients pays for the full roster transfer/deserialization just to find at most one match, on a rate-limited hot path.
+  - Obsolete: `PatientSuggestionService` was deleted by the global-patient-identity refactor (332385f/f2f7cde). The physician now picks the patient before `/extract`, which looks it up by id (`PatientRepository.get`), and the global NAM search (`PatientRepository.search`) is a SQL query, not a Python scan.
+
+- [x] 🟡 No server-side check that returned billing codes are from the candidate set — *added 8/19, from codebase audit, note added 8/24, done 8/29*
+  - `ramq_codes/task.py`'s `parse()` only validates JSON shape, never cross-checks returned `number`s against the candidates built in `build_prompt`. The "only choose from candidates" constraint lives in the prompt only. Mandatory physician review is the only backstop today — no defense in depth.
+  - Note: `POST /claims` (`app/claims/service.py`) *does* validate its `selected_codes` against the referenced extraction's own stored candidates (422 on an unknown code) — but that's checking the physician's selection against what the model already returned, not checking what the model returned against what it was offered. This item is still open.
+  - Fixed: `ExtractionTask.build_prompt` now returns a `PreparedPrompt` (`app/tasks/base.py`) carrying the offered `candidate_numbers`, and `BillingCodesTask.parse` (`app/ramq_codes/task.py`) drops any returned code not in that set, appending a note — same "drop and flag, don't fabricate" handling as the existing malformed-shape case.
+
 - [x] 🟢 No unique constraint on `(physician_id, ramq_number)` on `patients` — *added 8/24, done 8/27, from billing-workflow code review*
   - Soft-deleting a patient and re-adding the same NAM (or a data-entry duplicate) created two roster rows sharing a NAM. `PatientSuggestionService._match` already degraded gracefully (logs a warning, treats it as no match) rather than crashing or guessing, but the duplicate itself was never surfaced to the physician as a data-integrity problem.
   - Fixed: `ix_patients_physician_ramq_number_active` (`app/postgresdb/models.py`) — a **partial** unique index on `(physician_id, ramq_number)`, scoped to `deleted_at IS NULL` (`postgresql_where`/`sqlite_where`) so a soft-deleted patient never blocks re-adding the same NAM. Unlike the FK `ondelete`/composite-FK schema-review items, this is live on both dialects: SQLite enforces unique indexes unconditionally (no `PRAGMA foreign_keys` gate involved), confirmed with a standalone in-memory-SQLite repro. `PatientRepository.create`/`update_for_physician` (`app/postgresdb/repository.py`) also pre-check for an active NAM collision and raise `DuplicatePatientRamqNumberError` (excluding the patient's own row on update) — same "clean error over a raw IntegrityError, DB constraint as the backstop" shape as `ClaimService`'s duplicate-extraction check — which `patients/router.py` maps to a 409. Doesn't cover a NAM that's merely `nam.normalize()`-equivalent under different literal formatting (e.g. `"DESR81021001"` vs `"desr 8102-1001"`) — that gap is real and intentionally left to `PatientSuggestionService._match`'s existing multi-match fallback, now the only remaining code path that can still see two active rows sharing a NAM; `test_patient_suggestion.py`'s `test_duplicate_nam_across_roster_rows_is_no_match_not_a_coin_flip` was rewritten around exactly that case (its old exact-literal-duplicate setup no longer round-trips through `PatientRepository.create`). Added `test_patients.py` coverage: re-adding the same NAM after a soft delete succeeds, a second active create/update onto the same NAM is 409, and two patients with no NAM at all don't collide. Several fixture helpers across `test_patients.py`/`test_claims.py`/`test_bills.py`/`test_bill_repository.py` previously reused one hardcoded NAM per physician across many tests against the same never-reset session-scoped test DB (see conftest.py) — harmless before this constraint, a 409 after — so each now mints a fresh NAM per seeded patient.
@@ -204,6 +191,22 @@
 - [x] Split `users` into credentials + dated physician profile — *added and done 8/27, from schema review*
   - `physician_type`/`number_of_patients`/`remuneration_type` moved off `users` into a new append-only `physician_profiles` table keyed by `(user_id, effective_from)`. They aren't preferences — they decide which RAMQ codes a physician may legally bill, and editing them used to silently rewrite the basis of every past claim (the failure `ClaimCode`'s fee snapshot already exists to prevent). Reads go through `PhysicianProfileRepository.get_effective_on(user_id, date)`; `get_current` is the same call with today's date. Same-day edits overwrite in place rather than appending.
   - `AuthService` kept authentication only; the new `ProfileService` (`app/auth/profile.py`) owns the profile read/write and returns a `PhysicianAccount` (user + applicable profile) that `UserOut` flattens — the API shape is unchanged, so no frontend change. `BillService.render_pdf` now prints the profile in effect at `bill.end_date` instead of today's.
+
+- [x] 🔴 Vector search blocks the event loop — *added 8/19, from codebase audit, done 8/25*
+  - `LanceDBVectorStore` has no `aquery` override, so both retrievers' `_aretrieve` (`ramq_codes/retriever.py`, `ramq_chatbot/retriever.py`) fall back to the sync `.retrieve()` call under the hood. Every concurrent physician's request stalls the single event loop for the duration of the native call.
+  - Fix: wrap the sync query in `run_in_threadpool`, or move to an async-native vector store call path.
+  - Fixed by the LanceDB repository refactor (29980f2): both retrievers now go through `app/lancedb/repository.py`'s `async def hybrid_search` on a native `lancedb.AsyncConnection`/`AsyncTable` — no `LanceDBVectorStore`, no sync `.retrieve()` fallback left.
+
+- [x] 🟢 Docker's default `json-file` log driver has no rotation — *added 8/21, moved from DEPLOY.md, done 8/24*
+  - Not a concern at demo traffic/duration. Add `logging: driver: json-file, options: {max-size: 10m, max-file: "3"}` per service in `docker-compose.yml` if this runs long enough to matter.
+  - Fixed: all five services in `docker-compose.yml` now set `logging: driver: json-file, options: {max-size: "10m", max-file: "3"}`.
+
+- [x] 🟡 Add a data logger for production — *added 8/21, done 8/24*
+  - Fixed: `app/logging_config.py` configures stdlib `logging` to emit one JSON line per event to stdout (same shape as `app/request_logging.py`'s existing per-request access log), wired at startup in `app/main.py`. Added `logger` calls at the silent-failure spots worth surfacing: `CodeTable.get_all` (`app/lancedb/db.py`) now warns on candidate numbers with no matching `codes` row (stale index), `AuthService.login` (`app/auth/service.py`) now logs failed/successful login attempts, and `RequestLoggingMiddleware` now logs unhandled exceptions with the same `request_id` as its access-log line before re-raising.
+
+- [x] 🟢 DEPLOY.md and nginx's allowlist behavior disagree — *added 8/19, from codebase audit, done 8/21*
+  - `DEPLOY.md:65-67` says leaving `ALLOWED_CIDRS` unset makes the demo fully public; `frontend/docker-entrypoint.sh` actually `deny all`s everything but `127.0.0.1` in that case. Fails safe, but will send an operator chasing a bogus CIDR issue.
+  - Fixed: the "leave `ALLOWED_CIDRS` unset — this deploy is open to the internet" line was dropped from `DEPLOY.md` (448c448). `.env.example` now documents `ALLOWED_CIDRS` as the allowlist in front of the app; `frontend/nginx.conf` still `deny all`s everything else.
 
 - [x] Rate-limit bypass via X-Forwarded-For spoofing — *added 8/19, done 8/18, from codebase audit*
   - Fixed by commit 5c231b5 ("Pin backend's trusted proxy IP to nginx's static compose address") — `--forwarded-allow-ips` now pinned to nginx's static IP on an internal compose network, instead of trusting `*`.

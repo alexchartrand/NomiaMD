@@ -211,8 +211,10 @@ stored result (never trusted from the request body) and snapshots them onto
 regenerated independently and re-deriving fees later would silently rewrite billing history.
 A claim's patient is looked up globally (`PatientRepository.get`), not against the billing
 physician's own roster — any physician may bill any known patient now that `Patient` isn't
-roster-scoped (see `app/patients/` above). Wired at `POST/GET/PATCH/DELETE /claims`
-(`app/main.py`).
+roster-scoped (see `app/patients/` above). Wired at `POST/GET/DELETE /claims`
+(`app/main.py`). There's no endpoint to change a claim's status: `BillService.create` moves
+a claim from `brouillon` to `soumis` when it's grouped onto a bill, and deleting that bill
+moves it back. `ClaimService.delete` refuses any claim that isn't `brouillon`.
 
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` are
 produced by a separate sibling repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this
