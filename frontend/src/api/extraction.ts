@@ -6,8 +6,12 @@ import { unwrap } from "./http";
 export interface ExtractedFee {
   amount: number | null;
   amount_text: string | null;
+  // The manual's raw role column (R = 1, R = 2, R = 7...), null for a single-amount table.
+  role: number | null;
+  // "unités" means `amount` counts anesthesia base units, not dollars — never billed as $.
+  unit: "dollars" | "unités";
   context: string | null;
-  lieu: string | null;
+  lieux: string[];
   majoration: string | null;
 }
 

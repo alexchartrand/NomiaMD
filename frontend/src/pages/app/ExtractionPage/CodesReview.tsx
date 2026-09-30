@@ -20,9 +20,19 @@ const CONFIDENCE_ORDER: Record<ConfidenceLevel, number> = {
   low: 2,
 };
 
+function formatAmount(fee: ExtractedFee): string {
+  if (fee.unit === "unités") return `${fee.amount_text ?? fee.amount ?? "?"} unités`;
+  return fee.amount != null ? `${fee.amount.toFixed(2)} $` : (fee.amount_text ?? "?");
+}
+
 function formatFee(fee: ExtractedFee): string {
-  const amount = fee.amount != null ? `${fee.amount.toFixed(2)} $` : (fee.amount_text ?? "?");
-  const parts = [amount, fee.context, fee.lieu, fee.majoration ? `majoration ${fee.majoration}` : null];
+  const parts = [
+    formatAmount(fee),
+    fee.role != null ? `R = ${fee.role}` : null,
+    fee.context,
+    fee.lieux.length > 0 ? fee.lieux.join(", ") : null,
+    fee.majoration ? `majoration ${fee.majoration}` : null,
+  ];
   return parts.filter(Boolean).join(" — ");
 }
 

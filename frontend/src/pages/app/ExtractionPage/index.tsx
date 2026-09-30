@@ -6,6 +6,7 @@ import {
   DuplicateClaimError,
   extractBillingCodes,
   searchPatients,
+  type ExtractedFee,
   type Patient,
 } from "../../../api";
 import { Banner } from "../../../components";
@@ -116,8 +117,11 @@ export default function ExtractionPage() {
     });
   }, [review]);
 
-  const totalAmount = selectedEntries.reduce((sum, e) => sum + (e.fee?.amount ?? 0), 0);
-  const codesMissingFee = selectedEntries.filter((e) => e.fee?.amount == null).length;
+  // A fee in "unités" is a count of anesthesia base units, not a price — it never adds to
+  // the dollar total, and counts as a code without a dollar amount.
+  const dollarAmount = (fee: ExtractedFee | null) => (fee?.unit === "dollars" ? fee.amount : null);
+  const totalAmount = selectedEntries.reduce((sum, e) => sum + (dollarAmount(e.fee) ?? 0), 0);
+  const codesMissingFee = selectedEntries.filter((e) => dollarAmount(e.fee) == null).length;
 
   async function handleSave(confirmDuplicate: boolean) {
     const { result, serviceDate, selection } = review;
