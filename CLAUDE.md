@@ -97,7 +97,8 @@ Mistral API call.
      `hybrid_search` hit already carries the full row (`description`, `header_path`,
      `when_to_use`, `rules`, `fees`, and the typed eligibility bounds; see ramq-ingestion's
      `src/ramq_ingestion/codes/storage/code_table_schema.py`), converted via
-     `CodesRowConverter` (`app/lancedb/converter.py`). `app/lancedb/` mirrors `app/postgresdb/`'s
+     `CodesRowConverter` (`app/ramq_codes/converter.py`, implementing `app/lancedb/converter.py`'s
+     generic `IConverter` — `app/lancedb/` never imports a domain package). `app/lancedb/` mirrors `app/postgresdb/`'s
      `database.py`/`models.py`/repository split; unlike Postgres, LanceDB has no
      migration/session story, and its connection can only be opened once an event loop is
      running, so `LanceDB.open()` is called from `app/bootstrap.py`'s

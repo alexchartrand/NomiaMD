@@ -1,12 +1,13 @@
 from typing import List
 
 from app.lancedb.converter import IConverter
+from app.lancedb.models import CodeRow
 from app.lancedb.repository import ICodeRepository
 from app.ramq_codes.models import Code
 
 class CodesData:
 
-    def __init__(self, repository: ICodeRepository, converter: IConverter) -> None:
+    def __init__(self, repository: ICodeRepository, converter: IConverter[CodeRow, Code]) -> None:
         self._repository = repository
         self._converter = converter
 

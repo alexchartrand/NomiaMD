@@ -54,6 +54,12 @@ _DOCUMENT_ROW_COLUMNS = [
 ]
 
 
+class CodeRowLookupError(LookupError):
+    """A by-number lookup that didn't find exactly one row in the current codes table —
+    either the number isn't in this manual revision, or (a data problem upstream in
+    ramq-ingestion) it appears more than once."""
+
+
 def _quote(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
@@ -95,7 +101,7 @@ class CodeRepository(ICodeRepository):
         )
 
         if len(rows) != 1:
-            raise ValueError(f"Expected exactly one code row for number={number!r}, found {len(rows)}")
+            raise CodeRowLookupError(f"Expected exactly one code row for number={number!r}, found {len(rows)}")
 
         return CodeRow.model_validate(rows[0])
 

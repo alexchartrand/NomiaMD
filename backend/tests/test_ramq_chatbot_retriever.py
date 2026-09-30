@@ -14,7 +14,8 @@ import pytest
 from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.schema import NodeWithScore
 
-from app.lancedb.converter import CodesRowConverter, DocumentRowConverter
+from app.ramq_chatbot.converter import DocumentRowConverter
+from app.ramq_codes.converter import CodesRowConverter
 from app.lancedb.models import DocumentRow
 from app.lancedb.repository import ICodeRepository, IDocumentRepository
 from app.ramq_chatbot.manual_references import ManualSectionLookup
@@ -229,7 +230,7 @@ async def test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ra
         section_lookup=ManualSectionLookup(documents, DocumentRowConverter()),
         codes_data=CodesData(
             _EmptyCodesTableReader(),
-            __import__("app.lancedb.converter", fromlist=["CodesRowConverter"]).CodesRowConverter(),
+            CodesRowConverter(),
         ),
     )
     retriever = RAMQManualRetriever(

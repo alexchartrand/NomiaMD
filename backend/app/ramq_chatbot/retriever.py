@@ -4,9 +4,10 @@ from typing import List
 
 from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.retrievers import BaseRetriever
-from llama_index.core.schema import NodeWithScore, QueryBundle
+from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
 
 from app.lancedb.converter import IConverter
+from app.lancedb.models import DocumentRow
 from app.lancedb.repository import IDocumentRepository
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
 
@@ -32,7 +33,7 @@ class RAMQManualRetriever(BaseRetriever):
         self,
         documents: IDocumentRepository,
         embed_model: BaseEmbedding,
-        converter: IConverter,
+        converter: IConverter[DocumentRow, TextNode],
         reference_expander: ReferenceExpander,
         similarity_top_k: int = 30,
     ):

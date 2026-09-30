@@ -3,7 +3,8 @@ from llama_index.llms.mistralai import MistralAI
 from app.config import settings
 from app.embedings import get_embeding_model
 from app.lancedb import ICodeRepository, IDocumentRepository
-from app.lancedb.converter import CodesRowConverter, DocumentRowConverter
+from app.ramq_chatbot.converter import DocumentRowConverter
+from app.ramq_codes.converter import CodesRowConverter
 from app.ramq_chatbot.engine import RAMQManualQueryEngine
 from app.ramq_chatbot.manual_references import ManualSectionLookup
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
