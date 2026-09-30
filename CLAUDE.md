@@ -89,14 +89,15 @@ Mistral API call.
      entry, since a single blended query under-retrieves both a routine visit and a minor
      procedure documented in the same note — embeds each with Mistral's `mistral-embed`,
      runs `CodeRepository.hybrid_search` (`app/lancedb/repository.py`, native LanceDB
-     vector+FTS fusion via `MultiMatchQuery` over `number`/`libelle`/`description`/
-     `header_path`/`lexical_terms`/`expansion_terms`) over the flat `codes` table at
-     `DB_PATH`, and fuses the per-query hit lists with `ReciprocalRankFuser`
-     (`app/lancedb/fusion.py` — shared with `ramq_chatbot`, keyed on `Code.number` here vs.
-     `DocumentRow.id` there). A `hybrid_search` hit already carries the full row (`libelle`,
-     `description`, `header_path`, `when_to_use`, `rules`, `fees`; see ramq-ingestion's
-     `src/embedding/codes_embedding/code_table_schema.py`), converted via `CodesRowConverter`
-     (`app/lancedb/converter.py`). `app/lancedb/` mirrors `app/postgresdb/`'s
+     vector+FTS fusion via `MultiMatchQuery` over `number`/`description`/`lexical_terms`/
+     `expansion_terms` — exactly the columns ramq-ingestion builds an FTS index on) over the
+     current `codes_<rev>` table at `DB_PATH` (see "RAMQ data" below), and fuses the
+     per-query hit lists with `ReciprocalRankFuser` (`app/lancedb/fusion.py` — shared with
+     `ramq_chatbot`, keyed on `Code.number` here vs. `DocumentRow.id` there). A
+     `hybrid_search` hit already carries the full row (`description`, `header_path`,
+     `when_to_use`, `rules`, `fees`, and the typed eligibility bounds; see ramq-ingestion's
+     `src/ramq_ingestion/codes/storage/code_table_schema.py`), converted via
+     `CodesRowConverter` (`app/lancedb/converter.py`). `app/lancedb/` mirrors `app/postgresdb/`'s
      `database.py`/`models.py`/`repository.py` split; unlike Postgres, LanceDB has no
      migration/session story, and its connection can only be opened once an event loop is
      running, so `LanceDB.open()` is called from `app/bootstrap.py`'s
@@ -105,15 +106,20 @@ Mistral API call.
      list_by_numbers`/`get_by_number` (a genuine by-key lookup, not retrieval) still exist
      for `ramq_chatbot`'s `ReferenceExpander`, which resolves RAMQ code numbers referenced
      in manual prose via `CodesData` (`ramq_codes/codes_data.py`) — a candidate number with
-     no matching `codes` row there is silently dropped rather than surfaced with missing
+     no matching codes row there is silently dropped rather than surfaced with missing
      data.
-   - `CodeFamilySelector` (`ramq_codes/family.py`) then collapses near-duplicate variants
-     that share a `header_path` (the manual's own taxonomy path — most of the `codes` table
-     is family variants differing only on panel size, patient vulnerability, registration
-     status, or an age threshold) down to whichever variant `BillingContext` actually
-     supports, dropping the rest; an axis neither the physician's profile nor the chosen
-     patient could resolve leaves every variant in place and gets surfaced back to
-     `BillingCodesTask`'s prompt as something the physician must confirm.
+   - Near-duplicate variants (same act, differing only on panel size, patient
+     vulnerability, registration status, or an age band) are disambiguated deterministically,
+     not by the model: every code row carries typed, inclusive eligibility bounds
+     (`min_age`/`max_age`/`min_panel_size`/`max_panel_size`/`requires_registered`/
+     `requires_vulnerable`, null = no restriction). `EligibilityFilterFactory`
+     (`ramq_codes/eligibility.py`) turns whatever `BillingContext` resolves into a
+     `CodeEligibilityFilter`, which `CodeEligibilityWhereBuilder` (`app/lancedb/
+     eligibility.py`) renders as a null-safe LanceDB `WHERE` on every `hybrid_search` — a
+     variant contradicting a known fact never takes a retrieval slot, and a code with no
+     bound on an axis always survives it. `UnresolvedAxisDetector` then names the axes the
+     context couldn't resolve *and* at least one surviving candidate is bounded on, surfaced
+     back to `BillingCodesTask`'s prompt as something the physician must confirm.
    - `BillingCodesTask` (`model = "mistral-medium-latest"`, stronger than
      `consultation_summary`'s default — see `app/tasks/base.py`'s per-task
      `ExtractionTask.model` and `app/extraction/engine.py`'s per-model client cache, since
@@ -122,7 +128,7 @@ Mistral API call.
      included rather than dropped — mandatory physician review is the backstop, not the
      model's certainty), a `confidence` bucket (`high`/`medium`/`low`), a verbatim
      `supporting_quote` from the summary or transcript, and a `needs_confirmation` list
-     naming any axis `CodeFamilySelector` couldn't resolve. Empty output is correct/expected
+     naming any axis `UnresolvedAxisDetector` flagged. Empty output is correct/expected
      when nothing is clearly supported — never picks a "closest" candidate just to return
      something. `BillingCodesTask.parse` also cross-checks every returned code against the
      candidate set `build_prompt` actually offered (`PreparedPrompt.candidate_numbers`,
@@ -134,7 +140,11 @@ Mistral API call.
      the candidate's real fee list — the physician picks among several variants in the review
      UI when a code has more than one; `POST /claims` (`app/claims/models.py`'s
      `SelectedCode.fee_index`) carries that choice back to `ClaimService`, which validates it
-     against the same list before snapshotting it onto `claim_codes`.
+     against the same list before snapshotting it onto `claim_codes`. A fee carries the
+     manual's raw `role` (R = 1, R = 2, R = 7…, section-specific meaning) and a `unit`: a
+     `"unités"` fee (anesthesia base units, typically R = 2) is shown in the review UI but
+     never billed as dollars — `ClaimService` snapshots `fee_amount = NULL` for it and
+     records the units in `fee_when_to_use`.
 3. `ramq_chatbot` task (`backend/app/ramq_chatbot/`): a free-form, multi-turn chatbot for
    generic billing questions — not tied to any specific encounter/transcript, unlike
    `billing_codes`. Wired at `POST /query` (`app/main.py`). History is stateless: the
@@ -142,7 +152,7 @@ Mistral API call.
    `RAMQManualRetriever` fans one user query out into several via `LLMQueryGenerator`
    (`query_generator.py`), runs each through `DocumentRepository.hybrid_search`
    (`app/lancedb/repository.py`) — native LanceDB vector+FTS fusion over the flat
-   `documents-embeddings` table, in the same `DB_PATH` directory as `codes` (one
+   `documents-embeddings` table, in the same `DB_PATH` directory as the codes tables (one
    `AsyncConnection`, opened by `LanceDB.open()`) — then RRF-fuses the per-query hit lists
    across queries (`fusion.py`; LanceDB's own hybrid search already fuses vector+FTS
    *within* one query). `ReferenceExpander` (`reference_expansion.py`) pulls in one hop of
@@ -197,18 +207,24 @@ split is invisible to the frontend.
 claim — not an LLM task itself, just the save step downstream of it.
 `ClaimService` hydrates each saved code's description/fee/quote from the extraction's own
 stored result (never trusted from the request body) and snapshots them onto
-`claim_codes`, since the LanceDB `codes` table they originally came from is
+`claim_codes`, since the LanceDB codes table they originally came from is
 regenerated independently and re-deriving fees later would silently rewrite billing history.
 A claim's patient is looked up globally (`PatientRepository.get`), not against the billing
 physician's own roster — any physician may bill any known patient now that `Patient` isn't
 roster-scoped (see `app/patients/` above). Wired at `POST/GET/PATCH/DELETE /claims`
 (`app/main.py`).
 
-**RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` (`codes`
-for `billing_codes`, `documents-embeddings` for `ramq_chatbot` — one directory, both flat
-tables carrying their own row data and embedding vector) are produced by a separate sibling
-repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this backend has no code dependency
-on it, only on those tables' shapes.
+**RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` are
+produced by a separate sibling repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this
+backend has no code dependency on it, only on those tables' shapes. Codes are versioned:
+one `codes_<rev>` table per manual revision (e.g. `codes_2026-06-05`), plus a
+`code_versions` registry whose single `is_current` row names the table to retrieve from.
+`CurrentCodeTableProvider` (`app/lancedb/code_versions.py`) re-reads that registry on every
+`CodeRepository` call, so a promote takes effect without a restart (bounded by the
+connection's `READ_CONSISTENCY_INTERVAL`, `app/lancedb/database.py`), and raises
+`NoCurrentCodesTableError` — checked once at startup by `LanceDB.open()` — rather than fall
+back to any other table. `documents-embeddings` (for `ramq_chatbot`) lives in the same
+directory; every table is flat and carries its own row data and embedding vector.
 
 **Frontend** (`frontend/`, React + TypeScript + Vite): a router (`src/AppRouter.tsx`) over
 `src/pages/app/*` — extraction (a 3-step source/transcript/review-and-bill flow), patients,
