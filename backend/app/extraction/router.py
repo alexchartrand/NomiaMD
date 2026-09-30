@@ -6,7 +6,8 @@ from app.auth import get_current_user
 from app.extraction.encounter_date import parse_encounter_date
 from app.extraction.models import BillingExtractionResponse, ExtractionRequest
 from app.extraction.pipeline import run_billing_codes_pipeline
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, PatientRepository, User
+from app.extraction.recorder import ExtractionRecorder, get_extraction_recorder
+from app.postgresdb import PatientRepository, User, session_scope
 from app.rate_limit import limiter
 from app.tasks.registry import get_task
 
@@ -21,10 +22,17 @@ router = APIRouter()
 # and persists both stages. POST a transcript + task="billing_codes" + patient_id (the
 # physician must choose the patient before extraction runs); returns the candidate RAMQ
 # codes for physician review, plus the encounter date.
+#
+# Deliberately not on the per-request DbSession (app/postgresdb/dependencies.py): the
+# pipeline makes two multi-second LLM calls, and a request-scoped session would hold a pooled
+# connection and an open transaction across both. Each DB step below (the patient lookup, the
+# pipeline's own context lookup in app/extraction/scoped_context.py, and ExtractionRecorder)
+# opens its own short session_scope instead.
 async def extract(
     request: Request,
     body: ExtractionRequest,
     current_user: User = Depends(get_current_user),
+    recorder: ExtractionRecorder = Depends(get_extraction_recorder),
 ) -> BillingExtractionResponse:
     try:
         task = get_task(body.task)
@@ -37,7 +45,8 @@ async def extract(
             detail="Only 'billing_codes' is available via /extract",
         )
 
-    patient = await PatientRepository().get(body.patient_id)
+    async with session_scope() as session:
+        patient = await PatientRepository(session).get(body.patient_id)
     if patient is None:
         raise HTTPException(status_code=404, detail="Patient introuvable")
 
@@ -46,26 +55,12 @@ async def extract(
     summary_result, result = await run_billing_codes_pipeline(
         body.transcript, user=current_user, patient_id=body.patient_id
     )
-    extraction_repository = ExtractionRepository()
-    summary_record, billing_record = await extraction_repository.create_many(
-        [
-            ExtractionRecordInput(
-                task=summary_result.task,
-                transcript=body.transcript,
-                result=summary_result.result.model_dump(),
-                model=summary_result.model,
-                source_system=source_system,
-                user_id=current_user.id,
-            ),
-            ExtractionRecordInput(
-                task=result.task,
-                transcript=body.transcript,
-                result=result.result.model_dump(),
-                model=result.model,
-                source_system=source_system,
-                user_id=current_user.id,
-            ),
-        ]
+    summary_record, billing_record = await recorder.save(
+        transcript=body.transcript,
+        source_system=source_system,
+        user_id=current_user.id,
+        summary=summary_result,
+        billing=result,
     )
 
     encounter_date_raw = summary_result.result.encounter_setting.date

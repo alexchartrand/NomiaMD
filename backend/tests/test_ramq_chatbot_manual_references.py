@@ -2,7 +2,7 @@
 async wrapper around IDocumentRepository.get_by_section_number + IConverter.convert, pinned
 here against an in-memory fake repository (no real LanceDB table)."""
 
-from app.lancedb.converter import DocumentRowConverter
+from app.ramq_chatbot.converter import DocumentRowConverter
 from app.lancedb.models import DocumentRow
 from app.lancedb.repository import IDocumentRepository
 from app.ramq_chatbot.manual_references import ManualSectionLookup

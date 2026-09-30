@@ -4,10 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.auth import get_current_user
 from app.claims.factory import get_claim_service
-from app.claims.models import ClaimCreate, ClaimOut, ClaimStatus
-from app.claims.service import (
+from app.claims.models import ClaimCreate, ClaimOut
+from app.claims.errors import (
     ClaimOnBillError,
-    ClaimService,
     DuplicateClaimError,
     EmptySelectionError,
     ExtractionRecordNotFoundError,
@@ -15,6 +14,8 @@ from app.claims.service import (
     PatientNotFoundError,
     UnknownCodesError,
 )
+from app.claims.service import ClaimService
+from app.claims.status import ClaimStatus
 from app.postgresdb import User
 
 router = APIRouter(prefix="/claims", tags=["claims"])
@@ -70,8 +71,8 @@ async def list_claims(
     date_from: date | None = None,
     date_to: date | None = None,
     status_filter: ClaimStatus | None = Query(default=None, alias="status"),
-    limit: int = 100,
-    offset: int = 0,
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
     current_user: User = Depends(get_current_user),
     service: ClaimService = Depends(get_claim_service),
 ) -> list[ClaimOut]:
@@ -86,18 +87,18 @@ async def list_claims(
     )
 
 
-@router.delete("/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{claim_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_claim(
-    record_id: int,
+    claim_id: int,
     current_user: User = Depends(get_current_user),
     service: ClaimService = Depends(get_claim_service),
 ) -> None:
     try:
-        deleted = await service.delete(record_id, current_user.id)
+        deleted = await service.delete(claim_id, current_user.id)
     except ClaimOnBillError as exc:
         raise HTTPException(
             status_code=409,
             detail="Cette facturation fait partie d'une facture générée. Supprimez d'abord la facture.",
         ) from exc
     if not deleted:
-        raise HTTPException(status_code=404, detail="Facture introuvable")
+        raise HTTPException(status_code=404, detail="Facturation introuvable")

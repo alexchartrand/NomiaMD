@@ -64,8 +64,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.bootstrap import application_services  # noqa: E402
 from app.extraction.engine import run_extraction  # noqa: E402
-from app.lancedb import CodeRepository  # noqa: E402
-from app.postgresdb import init_db  # noqa: E402
+from app.lancedb import CodeRepository, CodeRowLookupError  # noqa: E402
 from app.ramq_codes import BillingCodesInput, BillingContext, PatientContext, PhysicianContext, build_ramq_retriever  # noqa: E402
 from app.sample_patients import get_sample_patient  # noqa: E402
 from app.tasks.registry import get_task  # noqa: E402
@@ -123,7 +122,7 @@ async def _classify_candidates(
             continue
         try:
             row = await codes_repo.get_by_number(code)
-        except ValueError:
+        except CodeRowLookupError:
             # Not in the codes table at all — a corpus gap (e.g. procedure codes the
             # ingested manual section doesn't cover yet), not a retrieval failure.
             missing.add(code)
@@ -153,7 +152,6 @@ async def main() -> None:
     total_recall = 0.0
     model = None
 
-    await init_db()
     async with application_services() as db:
         codes_repo = CodeRepository(db.code_tables)
         retriever = build_ramq_retriever(codes_repo)

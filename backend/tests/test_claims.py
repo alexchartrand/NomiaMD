@@ -12,7 +12,8 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
+from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole, session_scope
+from tests.db_helpers import ensure_user_row, physician
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
 # patients are globally unique by NAM now — so each seeded patient needs its own NAM to
@@ -52,28 +53,31 @@ def _other_physician():
 
 
 async def _seed_patient():
-    return await PatientRepository().create(
-        full_name="Roch Desjardins",
-        ramq_number=f"DESR{next(_ramq_numbers):08d}",
-        date_of_birth=date(1981, 2, 10),
-        gender=Gender.MALE,
-        is_vulnerable=False,
-    )
+    async with session_scope() as session:
+        return await PatientRepository(session).create(
+            full_name="Roch Desjardins",
+            ramq_number=f"DESR{next(_ramq_numbers):08d}",
+            date_of_birth=date(1981, 2, 10),
+            gender=Gender.MALE,
+            is_vulnerable=False,
+        )
 
 
 async def _seed_extraction_record(*, user_id=1, result=None, task="billing_codes"):
-    [record] = await ExtractionRepository().create_many(
-        [
-            ExtractionRecordInput(
-                task=task,
-                transcript="transcript de test",
-                result=result if result is not None else BILLING_RESULT,
-                model="mistral-small-latest",
-                source_system="simule",
-                user_id=user_id,
-            )
-        ]
-    )
+    await ensure_user_row(physician(user_id))
+    async with session_scope() as session:
+        [record] = await ExtractionRepository(session).create_many(
+            [
+                ExtractionRecordInput(
+                    task=task,
+                    transcript="transcript de test",
+                    result=result if result is not None else BILLING_RESULT,
+                    model="mistral-small-latest",
+                    source_system="simule",
+                    user_id=user_id,
+                )
+            ]
+        )
     return record
 
 
@@ -425,3 +429,32 @@ async def test_deleting_a_claim_removes_its_code_rows_and_total_is_null_when_no_
         list_response = client.get("/claims")
 
     assert created["id"] not in [r["id"] for r in list_response.json()]
+
+
+def test_list_limit_above_the_maximum_is_422_not_silently_capped():
+    with TestClient(app) as client:
+        response = client.get("/claims", params={"limit": 500})
+
+    assert response.status_code == 422
+
+
+async def test_same_extraction_racing_past_the_pre_check_is_409_not_500(monkeypatch):
+    # Two saves of one extraction can both pass ClaimDuplicateGuard's read before either
+    # commits; the unique constraint must then surface as the same 409 as the pre-check.
+    async def _nothing_saved_yet(self, billing_extraction_record_id):
+        return None
+
+    monkeypatch.setattr(
+        "app.postgresdb.ClaimRepository.get_by_billing_extraction_record_id", _nothing_saved_yet
+    )
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        extraction_record = await _seed_extraction_record()
+        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+
+        first = client.post("/claims", json=payload)
+        second = client.post("/claims?confirm_duplicate=true", json=payload)
+
+    assert first.status_code == 201
+    assert second.status_code == 409
+    assert second.json()["detail"]["code"] == "duplicate_claim"

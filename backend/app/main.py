@@ -12,7 +12,6 @@ from app.config import settings
 from app.extraction import extraction_router
 from app.logging_config import configure_logging
 from app.patients import patients_router
-from app.postgresdb import init_db
 from app.ramq_chatbot import ramq_chatbot_router
 from app.rate_limit import limiter
 from app.request_logging import RequestLoggingMiddleware
@@ -24,7 +23,6 @@ configure_logging(settings.log_level)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
     async with application_services() as db:
         app.state.lancedb = db
         yield

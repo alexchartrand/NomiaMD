@@ -14,22 +14,34 @@ selection it's a lossy bottleneck — any clinical detail the summarizer dropped
 unrecoverable downstream. See app/ramq_codes/task.py's BillingCodesInput docstring."""
 
 import logging
-from typing import cast
+from datetime import date
+from typing import Protocol, cast
 
-from app.auth.factory import get_profile_service
 from app.extraction.encounter_date import parse_encounter_date
 from app.extraction.engine import run_extraction
 from app.extraction.models import ExtractionResult
-from app.postgresdb import PatientRepository, User
-from app.ramq_codes import BillingCodesInput, BillingCodesResult, BillingContext, BillingContextBuilder, BillingCodesTask
+from app.extraction.scoped_context import ScopedBillingContextBuilder
+from app.postgresdb import User
+from app.ramq_codes import BillingCodesInput, BillingCodesResult, BillingContext, BillingCodesTask
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
 
 logger = logging.getLogger(__name__)
 
 
+class ContextBuilder(Protocol):
+    """What stage 2 needs: BillingContextBuilder's `build` signature. The default,
+    ScopedBillingContextBuilder, wraps it in its own short DB transaction."""
+
+    async def build(self, *, user: User, patient_id: int, encounter_date: date | None) -> BillingContext: ...
+
+
 async def _build_context(
-    *, user: User, patient_id: int, encounter_date: date | None, context_builder: BillingContextBuilder
+    *,
+    user: User,
+    patient_id: int,
+    encounter_date: date | None,
+    context_builder: ContextBuilder,
 ) -> BillingContext:
     # Same best-effort stance as _verify_patient above, extended to the physician-profile
     # half: a profile-lookup failure must degrade to an all-null BillingContext (billing_codes
@@ -58,8 +70,7 @@ async def run_billing_codes_pipeline(
     *,
     user: User,
     patient_id: int,
-    context_builder: BillingContextBuilder | None = None,
-    patient_repository: PatientRepository | None = None,
+    context_builder: ContextBuilder | None = None,
 ) -> tuple[
     ExtractionResult[ConsultationSummaryResult],
     ExtractionResult[BillingCodesResult],
@@ -67,8 +78,7 @@ async def run_billing_codes_pipeline(
     """Runs all three stages and returns both extraction results — callers that only need
     the final billing codes still get the intermediate summary (e.g. to store it for
     traceability)."""
-    patient_repository = patient_repository or PatientRepository()
-    context_builder = context_builder or BillingContextBuilder(get_profile_service(), patient_repository)
+    context_builder = context_builder or ScopedBillingContextBuilder()
 
     summary_result = await run_extraction(get_task("consultation_summary"), transcript)
     summary = summary_result.result

@@ -6,7 +6,7 @@ import re
 
 import pytest
 
-from app.lancedb.repository import CodeRepository, ICodeRepository
+from app.lancedb.repository import CodeRepository, CodeRowLookupError, ICodeRepository
 from app.lancedb.models import CodeRow
 
 
@@ -118,7 +118,7 @@ async def test_get_by_number_raises_when_no_row_matches():
     table = _FakeTable([])
     reader = _reader(table)
 
-    with pytest.raises(ValueError, match="found 0"):
+    with pytest.raises(CodeRowLookupError, match="found 0"):
         await reader.get_by_number("missing")
 
 
@@ -126,7 +126,7 @@ async def test_get_by_number_raises_when_more_than_one_row_matches():
     table = _FakeTable([_row("15801"), _row("15801")])
     reader = _reader(table)
 
-    with pytest.raises(ValueError, match="found 2"):
+    with pytest.raises(CodeRowLookupError, match="found 2"):
         await reader.get_by_number("15801")
 
 

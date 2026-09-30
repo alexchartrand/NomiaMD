@@ -10,13 +10,14 @@ import pytest
 from app.postgresdb import (
     BillInput,
     BillRepository,
+    ClaimAlreadyBilledError,
     ClaimCodeInput,
     ClaimInput,
     ClaimRepository,
     Gender,
     PatientRepository,
-    init_db,
 )
+from tests.db_helpers import ensure_user_row, physician
 
 _physician_ids = itertools.count(3000)
 # Patients are globally unique by NAM now, so each seeded patient still needs its own NAM
@@ -24,21 +25,18 @@ _physician_ids = itertools.count(3000)
 _ramq_numbers = itertools.count(1)
 
 
-@pytest.fixture(autouse=True)
-async def _init_db():
-    await init_db()
-
-
 @pytest.fixture
-def physician_id():
-    return next(_physician_ids)
+async def physician_id():
+    user_id = next(_physician_ids)
+    await ensure_user_row(physician(user_id))
+    return user_id
 
 
-async def _seed_patient():
+async def _seed_patient(session):
     # "BLRP" prefix (not "DESR") to stay distinct from test_claims.py's/
     # test_claim_repository.py's own counters — patients are globally unique by NAM now,
     # and the test DB is shared across the whole session (see conftest.py).
-    return await PatientRepository().create(
+    return await PatientRepository(session).create(
         full_name="Roch Desjardins",
         ramq_number=f"BLRP{next(_ramq_numbers):08d}",
         date_of_birth=date(1981, 2, 10),
@@ -47,8 +45,8 @@ async def _seed_patient():
     )
 
 
-async def _seed_claim(physician_id, patient_id, *, status="brouillon", service_date=date(2026, 2, 10)):
-    created = await ClaimRepository().create(
+async def _seed_claim(session, physician_id, patient_id, *, status="brouillon", service_date=date(2026, 2, 10)):
+    created = await ClaimRepository(session).create(
         ClaimInput(
             physician_id=physician_id,
             patient_id=patient_id,
@@ -70,115 +68,71 @@ async def _seed_claim(physician_id, patient_id, *, status="brouillon", service_d
             ],
         )
     )
-    return created.record
+    return created.claim
 
 
-async def test_create_flips_claims_to_soumis_in_one_transaction(physician_id):
-    patient = await _seed_patient()
-    claim_a = await _seed_claim(physician_id, patient.id)
-    claim_b = await _seed_claim(physician_id, patient.id, service_date=date(2026, 2, 15))
-
-    repo = BillRepository()
-    bill = await repo.create(
-        BillInput(
-            physician_id=physician_id,
-            start_date=date(2026, 2, 1),
-            end_date=date(2026, 2, 28),
-            claim_ids=[claim_a.id, claim_b.id],
-            total_amount=Decimal("66.30"),
-        )
+def _bill_input(physician_id, claim_ids, total="33.15"):
+    return BillInput(
+        physician_id=physician_id,
+        start_date=date(2026, 2, 1),
+        end_date=date(2026, 2, 28),
+        claim_ids=claim_ids,
+        total_amount=Decimal(total),
     )
 
-    assert bill is not None
-    assert bill.record_count == 2
+
+async def test_create_links_every_requested_claim(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim_a = await _seed_claim(db_session, physician_id, patient.id)
+    claim_b = await _seed_claim(db_session, physician_id, patient.id, service_date=date(2026, 2, 15))
+
+    repo = BillRepository(db_session)
+    bill = await repo.create(_bill_input(physician_id, [claim_a.id, claim_b.id], total="66.30"))
+
+    assert bill.claim_count == 2
+    assert bill.total_amount == Decimal("66.30")
     assert set(await repo.claim_ids_for_bill(bill.id)) == {claim_a.id, claim_b.id}
 
-    claim_repo = ClaimRepository()
-    refreshed_a = await claim_repo.get_for_physician(claim_a.id, physician_id)
-    refreshed_b = await claim_repo.get_for_physician(claim_b.id, physician_id)
-    assert refreshed_a.record.status == "soumis"
-    assert refreshed_b.record.status == "soumis"
+
+async def test_linking_a_claim_already_on_another_bill_is_rejected(db_session, physician_id):
+    # bill_claims' unique claim_id is the backstop for two bills racing over the same claim;
+    # which claims may be billed at all is BillService's (and ClaimLifecycle's) call.
+    patient = await _seed_patient(db_session)
+    claim = await _seed_claim(db_session, physician_id, patient.id)
+    repo = BillRepository(db_session)
+    await repo.create(_bill_input(physician_id, [claim.id]))
+
+    with pytest.raises(ClaimAlreadyBilledError):
+        await repo.create(_bill_input(physician_id, [claim.id]))
 
 
-async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician_id):
-    patient = await _seed_patient()
-    claim = await _seed_claim(physician_id, patient.id, status="soumis")
+async def test_delete_removes_the_bill_and_its_links(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim = await _seed_claim(db_session, physician_id, patient.id)
+    repo = BillRepository(db_session)
+    bill = await repo.create(_bill_input(physician_id, [claim.id]))
 
-    repo = BillRepository()
-    bill = await repo.create(
-        BillInput(
-            physician_id=physician_id,
-            start_date=date(2026, 2, 1),
-            end_date=date(2026, 2, 28),
-            claim_ids=[claim.id],
-            total_amount=Decimal("33.15"),
-        )
-    )
+    await repo.delete(bill)
 
-    assert bill is None
-    assert await repo.list_for_physician(physician_id) == []
-
-
-async def test_create_rejects_another_physicians_claim(physician_id):
-    other_physician_id = physician_id + 1
-    other_patient = await _seed_patient()
-    foreign_claim = await _seed_claim(other_physician_id, other_patient.id)
-
-    repo = BillRepository()
-    bill = await repo.create(
-        BillInput(
-            physician_id=physician_id,
-            start_date=date(2026, 2, 1),
-            end_date=date(2026, 2, 28),
-            claim_ids=[foreign_claim.id],
-            total_amount=Decimal("33.15"),
-        )
-    )
-
-    assert bill is None
-
-
-async def test_delete_releases_claims_to_brouillon(physician_id):
-    patient = await _seed_patient()
-    claim = await _seed_claim(physician_id, patient.id)
-
-    repo = BillRepository()
-    bill = await repo.create(
-        BillInput(
-            physician_id=physician_id,
-            start_date=date(2026, 2, 1),
-            end_date=date(2026, 2, 28),
-            claim_ids=[claim.id],
-            total_amount=Decimal("33.15"),
-        )
-    )
-    assert bill is not None
-
-    deleted = await repo.delete_for_physician(bill.id, physician_id)
-    assert deleted is True
     assert await repo.get_for_physician(bill.id, physician_id) is None
-
-    claim_repo = ClaimRepository()
-    refreshed = await claim_repo.get_for_physician(claim.id, physician_id)
-    assert refreshed.record.status == "brouillon"
+    assert await repo.claim_ids_for_bill(bill.id) == []
 
 
-async def test_cross_physician_access_returns_none_or_false(physician_id):
-    patient = await _seed_patient()
-    claim = await _seed_claim(physician_id, patient.id)
+async def test_cross_physician_get_returns_none(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim = await _seed_claim(db_session, physician_id, patient.id)
+    repo = BillRepository(db_session)
+    bill = await repo.create(_bill_input(physician_id, [claim.id]))
 
-    repo = BillRepository()
-    bill = await repo.create(
-        BillInput(
-            physician_id=physician_id,
-            start_date=date(2026, 2, 1),
-            end_date=date(2026, 2, 28),
-            claim_ids=[claim.id],
-            total_amount=Decimal("33.15"),
-        )
-    )
-    assert bill is not None
-    other_physician_id = physician_id + 1
+    assert await repo.get_for_physician(bill.id, physician_id + 1) is None
 
-    assert await repo.get_for_physician(bill.id, other_physician_id) is None
-    assert await repo.delete_for_physician(bill.id, other_physician_id) is False
+
+async def test_claim_set_status_stores_the_given_status(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    claim = await _seed_claim(db_session, physician_id, patient.id)
+    claims = ClaimRepository(db_session)
+
+    await claims.set_status([claim.id], "soumis")
+
+    refreshed = await claims.get_for_physician(claim.id, physician_id)
+    assert refreshed.claim.status == "soumis"

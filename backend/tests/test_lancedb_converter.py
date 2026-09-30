@@ -1,9 +1,12 @@
-"""Tests for app/lancedb/converter.py — IConverter's ABC contract, and CodesRowConverter's
-mapping from the raw LanceDB row shape (CodeRow) to this backend's own internal Code shape."""
+"""Tests for the LanceDB row converters — app/lancedb/converter.py's IConverter ABC contract,
+app/ramq_codes/converter.py's CodesRowConverter (CodeRow -> this backend's own Code) and
+app/ramq_chatbot/converter.py's DocumentRowConverter (DocumentRow -> TextNode)."""
 
 import pytest
 
-from app.lancedb.converter import CodesRowConverter, DocumentRowConverter, IConverter
+from app.lancedb.converter import IConverter
+from app.ramq_chatbot.converter import DocumentRowConverter
+from app.ramq_codes.converter import CodesRowConverter
 from app.lancedb.models import CodeRow, CodeRowFee, DocumentRow
 from app.ramq_codes.models import Code, CodeEligibility
 

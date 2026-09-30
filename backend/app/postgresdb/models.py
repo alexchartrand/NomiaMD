@@ -1,5 +1,4 @@
-"""ORM shapes only — persistence lives in repository.py (UserRepository/
-ExtractionRepository), not here."""
+"""ORM shapes only — persistence lives in repositories/, not here."""
 
 import enum
 from datetime import date, datetime, timezone
@@ -95,7 +94,7 @@ class PhysicianProfile(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     # The date this version took effect. Rows are never updated except within the same
-    # day (see PhysicianProfileRepository.upsert_current) — there is no meaningful
+    # day (see ProfileService.record_practice_facts) — there is no meaningful
     # history between two edits made an hour apart.
     effective_from: Mapped[date] = mapped_column(Date)
     physician_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -129,8 +128,8 @@ class Patient(Base):
         # Partial (not table-wide) so a soft-deleted patient never blocks re-adding the
         # same NAM, or a later correction of a duplicate. NULL ramq_number never
         # collides either way — both dialects already treat NULLs as distinct in a
-        # unique index. Live on both dialects (unlike the FK ondelete/composite-FK
-        # items) since SQLite enforces unique indexes unconditionally, no PRAGMA needed.
+        # unique index. Only as strong as the NAM's canonical form: PatientBase
+        # (app/patients/models.py) normalizes it before it ever reaches this table.
         Index(
             "ix_patients_ramq_number_active",
             "ramq_number",
@@ -238,11 +237,14 @@ class Claim(Base):
     service_date: Mapped[date] = mapped_column(Date)
     status: Mapped[str] = mapped_column(String(16), default="brouillon")
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # SET NULL so the extraction_records retention purge (see ExtractionRecord) never fails
+    # on a claim: once saved, a claim's codes/fees are already snapshotted onto claim_codes,
+    # so it doesn't need its source extraction to stay renderable.
     summary_extraction_record_id: Mapped[int | None] = mapped_column(
-        ForeignKey("extraction_records.id"), nullable=True
+        ForeignKey("extraction_records.id", ondelete="SET NULL"), nullable=True
     )
     billing_extraction_record_id: Mapped[int | None] = mapped_column(
-        ForeignKey("extraction_records.id"), nullable=True
+        ForeignKey("extraction_records.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
@@ -281,7 +283,7 @@ class ClaimCode(Base):
 class Bill(Base):
     """One generated invoice grouping many claims over a date range. The PDF is
     rendered on demand from the linked claims (which are themselves already snapshots —
-    see ClaimCode), so nothing is stored as bytes; total_amount/record_count are
+    see ClaimCode), so nothing is stored as bytes; total_amount/claim_count are
     snapshotted anyway so listing bills never has to re-sum every claim's codes."""
 
     __tablename__ = "bills"
@@ -295,7 +297,7 @@ class Bill(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
     )
     total_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
-    record_count: Mapped[int] = mapped_column(Integer)
+    claim_count: Mapped[int] = mapped_column(Integer)
 
 
 class BillClaim(Base):

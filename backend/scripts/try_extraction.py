@@ -21,7 +21,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from app.bootstrap import application_services  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
 from app.logging_config import configure_logging  # noqa: E402
-from app.postgresdb import User, UserRole, init_db  # noqa: E402
+from app.postgresdb import User, UserRole  # noqa: E402
 from app.sample_patients import get_sample_patients  # noqa: E402
 
 # Always DEBUG here (unlike app/main.py's settings.log_level-driven call) — this script
@@ -48,7 +48,6 @@ async def main() -> None:
     print("--- transcript ---")
     print(transcript)
 
-    await init_db()
     async with application_services():
         summary_result, billing_result = await run_billing_codes_pipeline(
             transcript, user=_SCRIPT_USER, patient_id=_SCRIPT_PATIENT_ID

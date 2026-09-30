@@ -6,11 +6,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, PlainSerializer
 
-# "brouillon" -> "soumis" -> "facture". "soumis" is set only by BillService.create when a
-# claim is grouped onto a generated bill; "facture" is reserved for a future real RAMQ
-# submission response and nothing in this codebase sets it yet. Status is otherwise
-# read-only from the API's perspective — there is no PATCH endpoint for it.
-ClaimStatus = Literal["brouillon", "soumis", "facture"]
+from app.claims.status import ClaimStatus
+
 
 # Mirrors app/ramq_codes/models.py's ExtractedCode.confidence — defined locally rather than
 # imported, same "claims reads the extraction's own stored JSON blob, it doesn't share types

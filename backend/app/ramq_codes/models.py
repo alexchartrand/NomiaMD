@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 ConfidenceLevel = Literal["high", "medium", "low"]
 
 # "unités" means `amount` counts anesthesia base units, not dollars (typically an R = 2
-# column) — never billed as a dollar amount, see app/claims/service.py's _fee_amount.
+# column) — never billed as a dollar amount, see app/claims/fees.py's FeeSnapshotter.
 FeeUnit = Literal["dollars", "unités"]
 
 

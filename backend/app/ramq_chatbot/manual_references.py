@@ -1,6 +1,7 @@
 from llama_index.core.schema import TextNode
 
 from app.lancedb.converter import IConverter
+from app.lancedb.models import DocumentRow
 from app.lancedb.repository import IDocumentRepository
 
 
@@ -10,7 +11,7 @@ class ManualSectionLookup:
     whose own `section_number` column matches it, converted to a TextNode. Async-only:
     IDocumentRepository has no sync query path (see app/lancedb/repository.py)."""
 
-    def __init__(self, documents: IDocumentRepository, converter: IConverter):
+    def __init__(self, documents: IDocumentRepository, converter: IConverter[DocumentRow, TextNode]):
         self._documents = documents
         self._converter = converter
 

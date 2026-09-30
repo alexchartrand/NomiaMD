@@ -97,8 +97,9 @@ Mistral API call.
      `hybrid_search` hit already carries the full row (`description`, `header_path`,
      `when_to_use`, `rules`, `fees`, and the typed eligibility bounds; see ramq-ingestion's
      `src/ramq_ingestion/codes/storage/code_table_schema.py`), converted via
-     `CodesRowConverter` (`app/lancedb/converter.py`). `app/lancedb/` mirrors `app/postgresdb/`'s
-     `database.py`/`models.py`/`repository.py` split; unlike Postgres, LanceDB has no
+     `CodesRowConverter` (`app/ramq_codes/converter.py`, implementing `app/lancedb/converter.py`'s
+     generic `IConverter` — `app/lancedb/` never imports a domain package). `app/lancedb/` mirrors `app/postgresdb/`'s
+     `database.py`/`models.py`/repository split; unlike Postgres, LanceDB has no
      migration/session story, and its connection can only be opened once an event loop is
      running, so `LanceDB.open()` is called from `app/bootstrap.py`'s
      `application_services()` — the process's single composition root, used by
@@ -164,12 +165,14 @@ Mistral API call.
 
 **`app/patients/`** — `Patient` (`app/postgresdb/models.py`) is a single global identity per
 real person, unique by NAM across *all* physicians (a partial unique index scoped to
-`deleted_at IS NULL`), not a per-physician roster row: any physician may look up or bill any
+`deleted_at IS NULL`; `PatientBase` in `patients/models.py` stores the NAM in canonical
+`AAAA99999999` form so differently-spaced entries collide), not a per-physician roster row: any physician may look up or bill any
 known patient. `PhysicianPatient` (`physician_patients`) is a separate, optional "my
 patients" join table (`physician_id`, `patient_id`, `notes`) with no registration flag on
 it — registration is derived, not stored. Routes split accordingly (`patients/router.py`):
 `GET /patients` lists the caller's own roster; `GET /patients/search?q=` is a NAM/name
-typeahead over *every* patient in the system (`PatientRepository.search`), powering
+typeahead over *every* patient in the system (`PatientSearch`, `patients/search.py`, which
+decides min length/NAM detection before `PatientRepository.search` runs the query), powering
 `PatientSearchSelect.tsx` (used both in extraction's source step and to add an existing
 patient to one's roster from `PatientsPage.tsx`); `POST /patients` creates a new global
 identity; `PATCH /patients/{id}` edits that shared record and is admin-only, since any
@@ -191,9 +194,12 @@ and the physician's own `User.practice_number` (`app/auth/`, see below), returni
 `(user_id, effective_from)`. `physician_type`/`remuneration_type`/`number_of_patients`
 live there rather than as columns on `users` because they decide which RAMQ codes a
 physician may legally bill and they change over a career — read them with
-`PhysicianProfileRepository.get_effective_on(user_id, date)` so a past claim or invoice is
-interpreted under the values in effect on its own service date, never today's (same
-reasoning as `ClaimCode`'s fee snapshot). `get_current` is that call with today's date.
+`ProfileService.as_of(user, date)` (`PhysicianProfileRepository.get_effective_on`) so a past
+claim or invoice is interpreted under the values in effect on its own service date, never
+today's (same reasoning as `ClaimCode`'s fee snapshot). `ProfileService.current` is that call
+with today's date, and `record_practice_facts` owns the "a same-day edit overwrites, a later
+one appends" rule. "Today" always comes from an injected `Clock` (`app/clock.py`'s
+`ClinicClock`, America/Montreal) — never `date.today()`, which is UTC in the container.
 `get_current_user` deliberately does *not* load a profile: every authenticated request
 pays for that dependency and only the profile screen needs it. `User.practice_number`
 (`postgresdb/models.py`) is the one practice fact that stays a plain column on `users`
@@ -206,15 +212,19 @@ split is invisible to the frontend.
 **`app/claims/`** turns a physician-confirmed `billing_codes` extraction into a persisted
 claim — not an LLM task itself, just the save step downstream of it.
 `ClaimService` hydrates each saved code's description/fee/quote from the extraction's own
-stored result (never trusted from the request body) and snapshots them onto
-`claim_codes`, since the LanceDB codes table they originally came from is
+stored result (never trusted from the request body — `ExtractionCandidates`,
+`app/claims/candidates.py`) and snapshots them onto `claim_codes` (`FeeSnapshotter`,
+`fees.py`; duplicate rules in `duplicates.py`, `ClaimOut` built by `mapper.py`'s
+`ClaimMapper`, which `BillService` reuses), since the LanceDB codes table they originally came from is
 regenerated independently and re-deriving fees later would silently rewrite billing history.
 A claim's patient is looked up globally (`PatientRepository.get`), not against the billing
 physician's own roster — any physician may bill any known patient now that `Patient` isn't
 roster-scoped (see `app/patients/` above). Wired at `POST/GET/DELETE /claims`
 (`app/main.py`). There's no endpoint to change a claim's status: `BillService.create` moves
 a claim from `brouillon` to `soumis` when it's grouped onto a bill, and deleting that bill
-moves it back. `ClaimService.delete` refuses any claim that isn't `brouillon`.
+moves it back. `ClaimService.delete` refuses any claim that isn't `brouillon`. Those rules
+live in `app/claims/status.py` (`ClaimStatus`, `ClaimLifecycle`); the repositories only store
+the status they're given (`ClaimRepository.set_status`).
 
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` are
 produced by a separate sibling repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this
@@ -251,6 +261,27 @@ files and are skipped.
   (`backend/tests/conftest.py`'s `small_reference_table`/`no_real_api_keys` fixtures,
   autouse) — no network, no API key, no real LanceDB needed. Never rely on
   `MISTRAL_API_KEY`/real retrieval being present in a test.
+- Postgres/SQLite transactions: repositories (`app/postgresdb/repositories/`, one module per aggregate) take an
+  `AsyncSession` in their constructor and only `flush()` — they never commit. Whoever opens
+  the session owns the outcome: `session_scope()` (`app/postgresdb/session.py`) commits on a
+  normal exit and rolls back on an exception. A route gets one per request by depending on
+  `DbSession` (`app/postgresdb/dependencies.py`, `scope="function"` so the commit lands
+  before the response is sent); factories (`claims/factory.py`, `bills/factory.py`,
+  `patients/factory.py`, `auth/factory.py`) build their repositories on it. Two deliberate
+  exceptions open short `session_scope()`s instead, so no pooled connection is held across
+  LLM calls: `get_current_user` and `POST /extract` (incl. the pipeline's
+  `ScopedBillingContextBuilder`). Scripts use `session_scope()` directly. Nothing is built at
+  import time: `PostgresDB.open()` (`app/postgresdb/database.py`, mirroring `LanceDB.open()`)
+  creates the engine and missing tables, and `app/bootstrap.py`'s `postgres_database()` binds
+  it for `session_scope()` — called by `application_services()`, the DB-only scripts, and
+  conftest's session-wide `postgres_db` fixture (a throwaway SQLite file). A `session_scope()`
+  with nothing bound raises `DatabaseNotOpenError`.
+- SQLite enforces foreign keys (`PRAGMA foreign_keys=ON`, `app/postgresdb/database.py`), in
+  dev and in tests. A test that hands a route or repository a fixed-id in-memory `User` must
+  seed its row first with `tests/db_helpers.py`'s `ensure_user_row` (conftest's default
+  `User(id=1)` already does). Repository-level tests use conftest's `db_session` (rolled
+  back at teardown); tests that seed data and then call the API seed through
+  `session_scope()` so the app's own sessions can see it.
 - Real-API scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY` and
   `DB_PATH`, or `MISTRAL_ENDPOINT` pointed at `scripts/fake_llm_server.py` (`make fake-llm`)
   to avoid spending real API calls.

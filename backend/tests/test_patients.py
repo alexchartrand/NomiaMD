@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User, UserRole
+from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User, UserRole, session_scope
 
 VALID_PATIENT = {
     "full_name": "Jean Tremblay",
@@ -188,6 +188,49 @@ def test_creating_two_patients_with_no_nam_does_not_collide():
     assert second_response.status_code == 201
 
 
+def _spaced_lowercase(nam: str) -> str:
+    return f"{nam[:4].lower()} {nam[4:8]}-{nam[8:]}"
+
+
+def test_nam_is_stored_in_canonical_form():
+    payload = _valid_patient()
+    canonical = payload["ramq_number"]
+
+    with TestClient(app) as client:
+        response = client.post("/patients", json={**payload, "ramq_number": _spaced_lowercase(canonical)})
+
+    assert response.status_code == 201
+    assert response.json()["ramq_number"] == canonical
+
+
+def test_same_nam_written_differently_is_a_duplicate():
+    payload = _valid_patient()
+
+    with TestClient(app) as client:
+        first_response = client.post("/patients", json=payload)
+        second_response = client.post(
+            "/patients", json={**payload, "ramq_number": _spaced_lowercase(payload["ramq_number"])}
+        )
+
+    assert first_response.status_code == 201
+    assert second_response.status_code == 409
+
+
+def test_malformed_nam_is_rejected():
+    with TestClient(app) as client:
+        response = client.post("/patients", json=_valid_patient(ramq_number="TREJ123"))
+
+    assert response.status_code == 422
+
+
+def test_blank_nam_is_stored_as_no_nam():
+    with TestClient(app) as client:
+        response = client.post("/patients", json=_valid_patient(ramq_number="   "))
+
+    assert response.status_code == 201
+    assert response.json()["ramq_number"] is None
+
+
 def test_update_patient_requires_admin():
     with TestClient(app) as client:
         created = client.post("/patients", json=_valid_patient()).json()
@@ -337,18 +380,19 @@ async def test_a_patient_not_on_the_billing_physicians_roster_can_still_be_claim
 
     with TestClient(app) as client:
         created = client.post("/patients", json=_valid_patient()).json()
-        [extraction_record] = await ExtractionRepository().create_many(
-            [
-                ExtractionRecordInput(
-                    task="billing_codes",
-                    transcript="transcript de test",
-                    result=billing_result,
-                    model="mistral-small-latest",
-                    source_system="simule",
-                    user_id=1,
-                )
-            ]
-        )
+        async with session_scope() as session:
+            [extraction_record] = await ExtractionRepository(session).create_many(
+                [
+                    ExtractionRecordInput(
+                        task="billing_codes",
+                        transcript="transcript de test",
+                        result=billing_result,
+                        model="mistral-small-latest",
+                        source_system="simule",
+                        user_id=1,
+                    )
+                ]
+            )
         claim_response = client.post(
             "/claims",
             json={
@@ -375,3 +419,21 @@ def test_patients_routes_require_authentication():
         assert client.post("/patients/roster", json={"patient_id": 1}).status_code == 401
         assert client.patch("/patients/roster/1", json={"notes": "x"}).status_code == 401
         assert client.delete("/patients/roster/1").status_code == 401
+
+
+def test_search_by_nam_matches_any_spacing_or_case():
+    with TestClient(app) as client:
+        payload = _valid_patient()
+        created = client.post("/patients", json=payload).json()
+        nam = payload["ramq_number"]
+        response = client.get("/patients/search", params={"q": f"{nam[:4].lower()} {nam[4:8]} {nam[8:]}"})
+
+    assert [p["id"] for p in response.json()] == [created["id"]]
+
+
+def test_search_treats_like_wildcards_literally():
+    with TestClient(app) as client:
+        client.post("/patients", json=_valid_patient(full_name="Wildcard Target"))
+        response = client.get("/patients/search", params={"q": "%%"})
+
+    assert response.json() == []

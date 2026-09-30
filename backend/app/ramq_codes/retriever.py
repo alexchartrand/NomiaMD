@@ -8,6 +8,7 @@ from typing import List
 from llama_index.core.base.embeddings.base import BaseEmbedding
 
 from app.lancedb.converter import IConverter
+from app.lancedb.models import CodeRow
 from app.lancedb.fusion import ReciprocalRankFuser
 from app.lancedb.repository import ICodeRepository
 from app.ramq_codes.context import BillingContext
@@ -46,7 +47,7 @@ class RAMQCodesRetriever(ICodesRetriever):
         self,
         codes: ICodeRepository,
         embed_model: BaseEmbedding,
-        converter: IConverter,
+        converter: IConverter[CodeRow, Code],
         query_planner: SummaryQueryPlanner | None = None,
         fuser: ReciprocalRankFuser[Code] | None = None,
         filter_factory: EligibilityFilterFactory | None = None,
