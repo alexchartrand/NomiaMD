@@ -5,9 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.auth import get_current_user
 from app.claims.factory import get_claim_service
 from app.claims.models import ClaimCreate, ClaimOut
-from app.claims.service import (
+from app.claims.errors import (
     ClaimOnBillError,
-    ClaimService,
     DuplicateClaimError,
     EmptySelectionError,
     ExtractionRecordNotFoundError,
@@ -15,6 +14,7 @@ from app.claims.service import (
     PatientNotFoundError,
     UnknownCodesError,
 )
+from app.claims.service import ClaimService
 from app.claims.status import ClaimStatus
 from app.postgresdb import User
 

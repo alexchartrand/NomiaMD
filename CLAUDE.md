@@ -212,8 +212,10 @@ split is invisible to the frontend.
 **`app/claims/`** turns a physician-confirmed `billing_codes` extraction into a persisted
 claim — not an LLM task itself, just the save step downstream of it.
 `ClaimService` hydrates each saved code's description/fee/quote from the extraction's own
-stored result (never trusted from the request body) and snapshots them onto
-`claim_codes`, since the LanceDB codes table they originally came from is
+stored result (never trusted from the request body — `ExtractionCandidates`,
+`app/claims/candidates.py`) and snapshots them onto `claim_codes` (`FeeSnapshotter`,
+`fees.py`; duplicate rules in `duplicates.py`, `ClaimOut` built by `mapper.py`'s
+`ClaimMapper`, which `BillService` reuses), since the LanceDB codes table they originally came from is
 regenerated independently and re-deriving fees later would silently rewrite billing history.
 A claim's patient is looked up globally (`PatientRepository.get`), not against the billing
 physician's own roster — any physician may bill any known patient now that `Patient` isn't

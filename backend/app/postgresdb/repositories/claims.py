@@ -6,6 +6,7 @@ from decimal import Decimal
 from typing import Sequence
 
 from sqlalchemy import Select, delete, func, select, update
+from sqlalchemy.exc import IntegrityError
 
 from app.postgresdb.models import Claim, ClaimCode, Patient
 from app.postgresdb.repositories.base import SessionRepository
@@ -32,6 +33,23 @@ class ClaimInput:
     summary_extraction_record_id: int | None
     billing_extraction_record_id: int | None
     codes: Sequence[ClaimCodeInput]
+
+
+class ExtractionAlreadyClaimedError(Exception):
+    """The claim's billing_extraction_record_id is already on another claim — its unique
+    constraint is the backstop for two saves of one extraction racing past ClaimService's
+    pre-check (app/claims/duplicates.py). The session can only be rolled back afterwards,
+    which its owner does as this propagates (see session.py)."""
+
+
+def _violates_extraction_unique(exc: IntegrityError) -> bool:
+    # No portable error code across drivers: SQLite says "UNIQUE constraint failed:
+    # claims.billing_extraction_record_id", Postgres "duplicate key value violates unique
+    # constraint "claims_billing_extraction_record_id_key"". An FK violation (e.g. an
+    # unknown physician_id) mentions neither "unique constraint" and must stay an
+    # IntegrityError rather than pass for a duplicate claim.
+    message = str(exc.orig).lower()
+    return "unique constraint" in message and "billing_extraction_record_id" in message
 
 
 @dataclass
@@ -63,7 +81,12 @@ class ClaimRepository(SessionRepository):
             billing_extraction_record_id=data.billing_extraction_record_id,
         )
         self._session.add(claim)
-        await self._session.flush()  # populate claim.id for the code rows' FK
+        try:
+            await self._session.flush()  # populate claim.id for the code rows' FK
+        except IntegrityError as exc:
+            if _violates_extraction_unique(exc):
+                raise ExtractionAlreadyClaimedError() from exc
+            raise
         code_rows = [
             ClaimCode(
                 claim_id=claim.id,

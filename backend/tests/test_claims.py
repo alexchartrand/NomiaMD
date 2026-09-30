@@ -436,3 +436,25 @@ def test_list_limit_above_the_maximum_is_422_not_silently_capped():
         response = client.get("/claims", params={"limit": 500})
 
     assert response.status_code == 422
+
+
+async def test_same_extraction_racing_past_the_pre_check_is_409_not_500(monkeypatch):
+    # Two saves of one extraction can both pass ClaimDuplicateGuard's read before either
+    # commits; the unique constraint must then surface as the same 409 as the pre-check.
+    async def _nothing_saved_yet(self, billing_extraction_record_id):
+        return None
+
+    monkeypatch.setattr(
+        "app.postgresdb.ClaimRepository.get_by_billing_extraction_record_id", _nothing_saved_yet
+    )
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        extraction_record = await _seed_extraction_record()
+        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+
+        first = client.post("/claims", json=payload)
+        second = client.post("/claims?confirm_duplicate=true", json=payload)
+
+    assert first.status_code == 201
+    assert second.status_code == 409
+    assert second.json()["detail"]["code"] == "duplicate_claim"

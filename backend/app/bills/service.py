@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from app.bills.models import BillDetailOut, BillOut
 from app.bills.pdf import BillDocument, BillLineItem, BillPatientGroup, BillPdfRenderer
-from app.claims.service import _codes_out, _detail_to_out
+from app.claims.mapper import ClaimMapper
 from app.claims.status import ClaimLifecycle
 from app.postgresdb import (
     Bill,
@@ -86,7 +86,7 @@ class BillService:
         total = Decimal("0")
         has_amount = False
         for detail in details:
-            claim_amount = _detail_to_out(detail).total_amount
+            claim_amount = ClaimMapper.from_detail(detail).total_amount
             if claim_amount is not None:
                 total += claim_amount
                 has_amount = True
@@ -115,7 +115,7 @@ class BillService:
         if bill is None:
             return None
         details = await self._bill_claims(bill_id, physician_id)
-        return BillDetailOut(**_bill_to_out(bill).model_dump(), claims=[_detail_to_out(d) for d in details])
+        return BillDetailOut(**_bill_to_out(bill).model_dump(), claims=[ClaimMapper.from_detail(d) for d in details])
 
     async def render_pdf(self, bill_id: int, physician_id: int) -> bytes | None:
         bill = await self._bill_repository.get_for_physician(bill_id, physician_id)
@@ -143,7 +143,7 @@ class BillService:
                     lines=[],
                 ),
             )
-            for code in _codes_out(detail.codes):
+            for code in ClaimMapper.codes_out(detail.codes):
                 group.lines.append(
                     BillLineItem(
                         service_date=detail.claim.service_date,

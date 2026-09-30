@@ -13,7 +13,7 @@ class CodeRowFee(BaseModel):
     # rather than mapped to one meaning per number.
     role: int | None = None
     # `amount` counts anesthesia base units, not dollars, when this is "unités" (typically
-    # R = 2). Never bill such an amount as dollars — see app/claims/service.py's _fee_amount.
+    # R = 2). Never bill such an amount as dollars — see app/claims/fees.py's FeeSnapshotter.
     unit: FeeUnit = "dollars"
     context: str | None = None
     lieux: list[str] = []

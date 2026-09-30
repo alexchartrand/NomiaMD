@@ -13,6 +13,7 @@ from app.postgresdb.repositories.claims import (
     ClaimInput,
     ClaimRepository,
     ClaimWithCodes,
+    ExtractionAlreadyClaimedError,
 )
 from app.postgresdb.repositories.extractions import ExtractionRecordInput, ExtractionRepository
 from app.postgresdb.repositories.patients import DuplicatePatientRamqNumberError, PatientRepository
@@ -29,6 +30,7 @@ __all__ = [
     "ClaimInput",
     "ClaimRepository",
     "ClaimWithCodes",
+    "ExtractionAlreadyClaimedError",
     "DuplicatePatientRamqNumberError",
     "DuplicateRosterEntryError",
     "ExtractionRecordInput",

@@ -14,6 +14,7 @@ from app.postgresdb import (
     ClaimCodeInput,
     ClaimInput,
     ClaimRepository,
+    ExtractionAlreadyClaimedError,
     ExtractionRecord,
     ExtractionRecordInput,
     ExtractionRepository,
@@ -260,3 +261,24 @@ async def test_list_by_ids_returns_only_the_physicians_own_claims_with_their_cod
     assert [d.claim.id for d in details] == [mine.claim.id]
     assert details[0].patient_full_name == "Roch Desjardins"
     assert [c.code for c in details[0].codes] == ["TEST-BP-MGMT"]
+
+
+async def test_a_second_claim_on_the_same_extraction_is_rejected(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    [extraction] = await ExtractionRepository(db_session).create_many(
+        [
+            ExtractionRecordInput(
+                task="billing_codes",
+                transcript="transcript de test",
+                result={"codes": []},
+                model="mistral-small-latest",
+                source_system=None,
+                user_id=physician_id,
+            )
+        ]
+    )
+    repo = ClaimRepository(db_session)
+    await repo.create(_claim_input(physician_id, patient.id, billing_extraction_record_id=extraction.id))
+
+    with pytest.raises(ExtractionAlreadyClaimedError):
+        await repo.create(_claim_input(physician_id, patient.id, billing_extraction_record_id=extraction.id))
