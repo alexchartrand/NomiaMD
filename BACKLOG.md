@@ -28,7 +28,8 @@
 - [ ] 🟡 One extraction can mix two manual revisions — *added 9/30, from database review*
   - `CurrentCodeTableProvider.current()` is re-resolved on every `CodeRepository` call: once per planned query in `RAMQCodesRetriever`, then again in `BillingCodesTask.resolve_fees` after the LLM call. A promote landing mid-extraction gives candidates from one `codes_<rev>` and fees from another (or an empty fee list for a code dropped from the new manual). Fix: resolve the table once per extraction and pass it through — also the natural carrier for the `manual_rev` item in Features.
 
-- [ ] 🟡 `ProfileService.update` writes its two halves in separate transactions — *added 9/30, from database review*
+- [x] 🟡 `ProfileService.update` writes its two halves in separate transactions — *added 9/30, from database review, fixed 9/30*
+  - Fixed by the session-per-request refactor: both halves share the request transaction. Covered by `test_profile_edit_is_all_or_nothing`.
   - `UserRepository.update_editable_fields` and `PhysicianProfileRepository.upsert_current` each open their own session (`app/auth/profile.py`); a failure between them leaves the name/practice number updated but the profile not. Fixed by the session-per-request refactor (Cleanup).
 
 - [ ] 🟢 "Today" is the container's UTC date — *added 9/30, from database review*
@@ -127,7 +128,7 @@
 ## 🧹 Cleanup / Dead code
 
 - [ ] 🟡 Database layer refactor — *added 9/30, from database review*
-  - **Session per request** (decided 9/30): a FastAPI `Depends` yields one `AsyncSession`; factories pass it into repository constructors; services own `commit`. Removes the session-per-method pattern in `app/postgresdb/repository.py` that makes every check-then-insert (NAM, roster, duplicate claim) and multi-table write (`ProfileService.update`) non-atomic.
+  - ~~**Session per request**~~ — done 9/30: `DbSession` (`app/postgresdb/dependencies.py`) yields one session per request, committed by the dependency (not by services — nothing needed finer-grained control), repositories take it in their constructor and only flush. `get_current_user` and `/extract` use short `session_scope()`s instead so no connection is held across LLM calls. Patient/roster duplicate checks now also catch the flush-time `IntegrityError`. Still racy: `PhysicianProfileRepository.upsert_current` (needs the unique constraint in the schema batch) and `ClaimService`'s duplicate-claim pre-check (backstopped by the `billing_extraction_record_id` unique constraint, but surfaces as a 500, not a 409).
   - **`PostgresDB.open()`** in `app/bootstrap.py`, mirroring `LanceDB.open()`, instead of building the engine at import time (why `tests/conftest.py` must set `DATABASE_URL` before any app import).
   - **Split `repository.py`** (766 lines, 7 repositories + DTOs + errors) into a `repositories/` package, one module per aggregate.
   - **Business rules out of repositories**: claim status transitions (`"brouillon"`/`"soumis"` hardcoded in `BillRepository`) → a `ClaimStatus` StrEnum + lifecycle class in `app/claims/`; patient search rules (min length, cap, NAM compaction) → a `PatientSearch`/`PatientService`; the same-day-overwrite rule → `ProfileService`; `min(limit, 200)` caps → `Query(le=200)`.
@@ -140,7 +141,8 @@
 - [ ] 🟢 Ownership guard copy-pasted across repository methods — *added 8/24, from billing-workflow code review, reworded 9/30*
   - The patient copies are gone (patients are global since 8/31, no per-physician ownership). What's left: `record is None or record.physician_id != physician_id` twice in `ClaimRepository` and the same check on `bill` twice in `BillRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means updating all four by hand.
 
-- [ ] 🟢 `patients/router.py` and `extraction/router.py` skip the factory/`Depends` DI pattern — *added 8/24, from billing-workflow code review, reworded 9/30*
+- [ ] 🟢 `patients/router.py` and `extraction/router.py` skip the factory/`Depends` DI pattern — *added 8/24, from billing-workflow code review, reworded 9/30, partly fixed 9/30*
+  - 9/30: `patients/router.py` now gets its repositories from `patients/factory.py` via `Depends`. `extraction/router.py` still builds `PatientRepository`/`ExtractionRepository` inline — on purpose now, inside short `session_scope()`s so no connection is held across the LLM calls; moving that into an injectable `ExtractionRecorder` is the remaining bit (see the database-layer refactor item).
   - `claims/factory.py` and `auth/factory.py` both expose a `get_*_service()` wired via FastAPI `Depends`, but `patients/router.py` instantiates `PatientRepository()`/`PhysicianPatientRepository()` inline in every handler (no `patients/factory.py`), and `extraction/router.py` does the same for `PatientRepository()` and `ExtractionRepository()`. Not a bug, just an inconsistent seam: swapping or mocking them at the dependency layer (the way tests already do for `ClaimService`) isn't possible without editing the router.
 
 - [ ] 🟢 A few independent DB round trips are awaited sequentially instead of concurrently — *added 8/24, from billing-workflow code review*

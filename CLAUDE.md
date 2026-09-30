@@ -252,10 +252,22 @@ files and are skipped.
   (`backend/tests/conftest.py`'s `small_reference_table`/`no_real_api_keys` fixtures,
   autouse) — no network, no API key, no real LanceDB needed. Never rely on
   `MISTRAL_API_KEY`/real retrieval being present in a test.
+- Postgres/SQLite transactions: repositories (`app/postgresdb/repository.py`) take an
+  `AsyncSession` in their constructor and only `flush()` — they never commit. Whoever opens
+  the session owns the outcome: `session_scope()` (`app/postgresdb/session.py`) commits on a
+  normal exit and rolls back on an exception. A route gets one per request by depending on
+  `DbSession` (`app/postgresdb/dependencies.py`, `scope="function"` so the commit lands
+  before the response is sent); factories (`claims/factory.py`, `bills/factory.py`,
+  `patients/factory.py`, `auth/factory.py`) build their repositories on it. Two deliberate
+  exceptions open short `session_scope()`s instead, so no pooled connection is held across
+  LLM calls: `get_current_user` and `POST /extract` (incl. the pipeline's
+  `ScopedBillingContextBuilder`). Scripts use `session_scope()` directly.
 - SQLite enforces foreign keys (`PRAGMA foreign_keys=ON`, `app/postgresdb/database.py`), in
   dev and in tests. A test that hands a route or repository a fixed-id in-memory `User` must
   seed its row first with `tests/db_helpers.py`'s `ensure_user_row` (conftest's default
-  `User(id=1)` already does).
+  `User(id=1)` already does). Repository-level tests use conftest's `db_session` (rolled
+  back at teardown); tests that seed data and then call the API seed through
+  `session_scope()` so the app's own sessions can see it.
 - Real-API scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY` and
   `DB_PATH`, or `MISTRAL_ENDPOINT` pointed at `scripts/fake_llm_server.py` (`make fake-llm`)
   to avoid spending real API calls.
