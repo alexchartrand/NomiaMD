@@ -9,6 +9,7 @@ this class trivially fakeable in tests, same convention as app/patients/verifica
 from datetime import date
 
 from app.auth.profile import ProfileService
+from app.clock import ClinicClock, Clock
 from app.patients.registration import resolve_registration
 from app.postgresdb import PatientRepository, User
 from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
@@ -24,9 +25,12 @@ def _age_years_on(date_of_birth: date, on_date: date) -> float:
 
 
 class BillingContextBuilder:
-    def __init__(self, profile_service: ProfileService, patient_repository: PatientRepository):
+    def __init__(
+        self, profile_service: ProfileService, patient_repository: PatientRepository, clock: Clock | None = None
+    ):
         self._profiles = profile_service
         self._patients = patient_repository
+        self._clock = clock or ClinicClock()
 
     async def build(
         self,
@@ -41,7 +45,7 @@ class BillingContextBuilder:
         extending it to the physician-profile side for the same reason. `patient_id` is
         required — the physician now picks the patient before extraction runs, so there's
         no "no patient chosen yet" case to model here any more."""
-        on_date = encounter_date or date.today()
+        on_date = encounter_date or self._clock.today()
 
         account = await self._profiles.as_of(user, on_date)
         profile = account.profile

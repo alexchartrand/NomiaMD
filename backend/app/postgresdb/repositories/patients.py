@@ -1,6 +1,5 @@
 """`patients` — the global, NAM-unique patient identity."""
 
-import re
 from datetime import date
 from typing import Sequence
 
@@ -27,17 +26,11 @@ class DuplicatePatientRamqNumberError(Exception):
         self.ramq_number = ramq_number
 
 
-_NOT_ALNUM_RE = re.compile(r"[^A-Za-z0-9]")
-
-
 class PatientRepository(SessionRepository):
     """Global — a Patient is a single identity per NAM, not owned by any physician. See
-    PhysicianPatientRepository for a physician's own optional "my patients" list.
-
-    Deliberately has no dependency on app.patients.nam (its richer NAM value object,
-    including shape validation) to avoid a circular import — app.patients already depends
-    on app.postgresdb, so the reverse dependency isn't available here. `search` below only
-    needs simple case/spacing-insensitive comparison, not full NAM validation."""
+    PhysicianPatientRepository for a physician's own optional "my patients" list. NAMs
+    arrive here already canonical (app/patients/models.py's PatientBase), so every NAM
+    comparison is exact."""
 
     async def _raise_if_duplicate_ramq_number(
         self,
@@ -125,23 +118,18 @@ class PatientRepository(SessionRepository):
             family_doctor_practice_number=family_doctor_practice_number,
         )
 
-    async def search(self, query: str, *, limit: int = 20) -> list[Patient]:
-        """Backs the frontend's patient picker: matches a NAM (case/spacing-insensitive) or
-        a substring of the full name. Requires at least 2 characters so a stray keystroke
-        doesn't fan out into a live full-table scan."""
-        trimmed = query.strip()
-        if len(trimmed) < 2:
-            return []
-        compact_upper = _NOT_ALNUM_RE.sub("", trimmed).upper()
-        capped_limit = min(limit, 50)
-        filters = [func.lower(Patient.full_name).like(f"%{trimmed.lower()}%")]
-        if compact_upper:
-            filters.append(func.upper(Patient.ramq_number) == compact_upper)
+    async def search(self, *, name_fragment: str, ramq_number: str | None, limit: int) -> list[Patient]:
+        """Active patients whose full name contains `name_fragment` (case-insensitive,
+        LIKE wildcards in it escaped), or whose NAM is exactly `ramq_number`. What counts as
+        a searchable query is app/patients/search.py's PatientSearch's call."""
+        filters = [func.lower(Patient.full_name).contains(name_fragment.lower(), autoescape=True)]
+        if ramq_number is not None:
+            filters.append(Patient.ramq_number == ramq_number)
         result = await self._session.execute(
             select(Patient)
             .where(Patient.deleted_at.is_(None), or_(*filters))
             .order_by(Patient.full_name)
-            .limit(capped_limit)
+            .limit(limit)
         )
         return list(result.scalars().all())
 

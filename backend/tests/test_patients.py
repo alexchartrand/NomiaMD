@@ -419,3 +419,21 @@ def test_patients_routes_require_authentication():
         assert client.post("/patients/roster", json={"patient_id": 1}).status_code == 401
         assert client.patch("/patients/roster/1", json={"notes": "x"}).status_code == 401
         assert client.delete("/patients/roster/1").status_code == 401
+
+
+def test_search_by_nam_matches_any_spacing_or_case():
+    with TestClient(app) as client:
+        payload = _valid_patient()
+        created = client.post("/patients", json=payload).json()
+        nam = payload["ramq_number"]
+        response = client.get("/patients/search", params={"q": f"{nam[:4].lower()} {nam[4:8]} {nam[8:]}"})
+
+    assert [p["id"] for p in response.json()] == [created["id"]]
+
+
+def test_search_treats_like_wildcards_literally():
+    with TestClient(app) as client:
+        client.post("/patients", json=_valid_patient(full_name="Wildcard Target"))
+        response = client.get("/patients/search", params={"q": "%%"})
+
+    assert response.json() == []

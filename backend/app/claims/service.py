@@ -6,6 +6,7 @@ from datetime import date
 from decimal import Decimal
 
 from app.claims.models import ClaimCodeOut, ClaimOut, SelectedCode
+from app.claims.status import ClaimLifecycle
 from app.postgresdb import (
     ClaimCodeInput,
     ClaimDetail,
@@ -230,7 +231,7 @@ class ClaimService:
                 physician_id=physician_id,
                 patient_id=patient_id,
                 service_date=service_date,
-                status="brouillon",
+                status=ClaimLifecycle.INITIAL,
                 source_system=source_system,
                 summary_extraction_record_id=summary_extraction_record_id,
                 billing_extraction_record_id=billing_extraction_record_id,
@@ -275,12 +276,12 @@ class ClaimService:
         return [_detail_to_out(d) for d in details]
 
     async def delete(self, record_id: int, physician_id: int) -> bool:
-        # Once a claim is on a generated bill (status != "brouillon"), it can only be freed
-        # by deleting that bill — otherwise a hard delete here would leave a dangling link
-        # row and silently shrink a bill's total behind the physician's back.
+        # Once a claim is on a generated bill, it can only be freed by deleting that bill —
+        # otherwise a hard delete here would leave a dangling link row and silently shrink a
+        # bill's total behind the physician's back.
         detail = await self._claim_repository.get_for_physician(record_id, physician_id)
         if detail is None:
             return False
-        if detail.record.status != "brouillon":
+        if not ClaimLifecycle.can_be_deleted(detail.record.status):
             raise ClaimOnBillError()
         return await self._claim_repository.delete_for_physician(record_id, physician_id)

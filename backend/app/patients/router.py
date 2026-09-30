@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.auth import get_current_user
-from app.patients.factory import get_patient_repository, get_roster_repository
+from app.patients.factory import get_patient_repository, get_patient_search, get_roster_repository
 from app.patients.models import (
     PatientCreate,
     PatientOut,
@@ -11,6 +11,7 @@ from app.patients.models import (
     RosterEntryUpdate,
 )
 from app.patients.registration import resolve_registration
+from app.patients.search import PatientSearch
 from app.postgresdb import (
     DuplicatePatientRamqNumberError,
     DuplicateRosterEntryError,
@@ -62,9 +63,9 @@ async def list_roster(
 async def search_patients(
     q: str = Query(min_length=1),
     current_user: User = Depends(get_current_user),
-    patients: PatientRepository = Depends(get_patient_repository),
+    patient_search: PatientSearch = Depends(get_patient_search),
 ) -> list[PatientOut]:
-    matches = await patients.search(q)
+    matches = await patient_search.search(q)
     return [_to_patient_out(p, current_user=current_user) for p in matches]
 
 

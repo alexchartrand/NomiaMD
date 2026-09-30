@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.auth.dependencies import COOKIE_NAME, get_current_user
 from app.auth.factory import get_auth_service, get_profile_service
-from app.auth.profile import ProfileService
+from app.auth.profile import PracticeFacts, ProfileService
 from app.auth.service import AuthService
 from app.auth.models import LoginRequest, PasswordChangeRequest, ProfileUpdateRequest, UserOut
 from app.config import settings
@@ -63,10 +63,12 @@ async def update_me(
     account = await profiles.update(
         current_user,
         full_name=body.full_name,
-        physician_type=body.physician_type.value if body.physician_type else None,
-        number_of_patients=body.number_of_patients,
-        remuneration_type=body.remuneration_type.value if body.remuneration_type else None,
         practice_number=body.practice_number,
+        facts=PracticeFacts(
+            physician_type=body.physician_type.value if body.physician_type else None,
+            number_of_patients=body.number_of_patients,
+            remuneration_type=body.remuneration_type.value if body.remuneration_type else None,
+        ),
     )
     return UserOut.from_account(account)
 

@@ -10,10 +10,9 @@ from app.postgresdb.repositories.base import SessionRepository
 
 class PhysicianProfileRepository(SessionRepository):
     """Append-only history of a physician's practice facts (see PhysicianProfile). Reads
-    are "which version applies on date D", never a plain column read."""
-
-    async def get_current(self, user_id: int) -> PhysicianProfile | None:
-        return await self.get_effective_on(user_id, date.today())
+    are "which version applies on date D", never a plain column read. What "today" is, and
+    when an edit overwrites a version instead of adding one, is ProfileService's call
+    (app/auth/profile.py)."""
 
     async def get_effective_on(self, user_id: int, on: date) -> PhysicianProfile | None:
         """The version in effect on `on` — the latest row that had already taken effect by
@@ -49,32 +48,45 @@ class PhysicianProfileRepository(SessionRepository):
         )
         return result.scalar_one_or_none()
 
-    async def upsert_current(
+    async def get_starting_on(self, user_id: int, effective_from: date) -> PhysicianProfile | None:
+        """The version that takes effect exactly on `effective_from`, if any."""
+        result = await self._session.execute(
+            select(PhysicianProfile).where(
+                PhysicianProfile.user_id == user_id,
+                PhysicianProfile.effective_from == effective_from,
+            )
+        )
+        return result.scalars().first()
+
+    async def add(
         self,
         user_id: int,
+        *,
+        effective_from: date,
+        physician_type: str | None,
+        number_of_patients: int | None,
+        remuneration_type: str | None,
+    ) -> PhysicianProfile:
+        profile = PhysicianProfile(
+            user_id=user_id,
+            effective_from=effective_from,
+            physician_type=physician_type,
+            number_of_patients=number_of_patients,
+            remuneration_type=remuneration_type,
+        )
+        self._session.add(profile)
+        await self._session.flush()
+        await self._session.refresh(profile)
+        return profile
+
+    async def overwrite(
+        self,
+        profile: PhysicianProfile,
         *,
         physician_type: str | None,
         number_of_patients: int | None,
         remuneration_type: str | None,
-        effective_from: date | None = None,
     ) -> PhysicianProfile:
-        """Records today's values as the physician's current version.
-
-        Appends a new row, except when one already takes effect on the same date — that
-        one is overwritten in place. Two edits an hour apart are a correction, not two
-        versions of reality, and keeping both would grow the table without ever changing
-        the answer to `get_effective_on`."""
-        effective = effective_from or date.today()
-        result = await self._session.execute(
-            select(PhysicianProfile).where(
-                PhysicianProfile.user_id == user_id,
-                PhysicianProfile.effective_from == effective,
-            )
-        )
-        profile = result.scalars().first()
-        if profile is None:
-            profile = PhysicianProfile(user_id=user_id, effective_from=effective)
-            self._session.add(profile)
         profile.physician_type = physician_type
         profile.number_of_patients = number_of_patients
         profile.remuneration_type = remuneration_type

@@ -8,10 +8,12 @@ from decimal import Decimal
 from app.bills.models import BillDetailOut, BillOut
 from app.bills.pdf import BillDocument, BillLineItem, BillPatientGroup, BillPdfRenderer
 from app.claims.service import _codes_out, _detail_to_out
+from app.claims.status import ClaimLifecycle
 from app.postgresdb import (
     Bill,
     BillInput,
     BillRepository,
+    ClaimAlreadyBilledError,
     ClaimRepository,
     PatientRepository,
     PhysicianProfileRepository,
@@ -24,8 +26,9 @@ class EmptySelectionError(Exception):
 
 
 class StaleSelectionError(Exception):
-    """A requested claim_id is missing, owned by another physician, or no longer
-    "brouillon" — the candidate list the physician acted on has gone stale since it loaded."""
+    """A requested claim_id is missing, owned by another physician, or can no longer be
+    billed (ClaimLifecycle) — the candidate list the physician acted on has gone stale since
+    it loaded."""
 
     pass
 
@@ -70,36 +73,36 @@ class BillService:
 
         # Total is computed from each claim's own snapshotted code rows (never invented,
         # never re-derived from LanceDB) — same reasoning as ClaimCode's docstring.
-        # This loop also re-validates ownership/status before the repository's own
-        # transactional re-check, so a stale/foreign id is rejected with a clear error
-        # instead of the generic "some ids didn't match" the repository raises.
+        # Ownership and status are checked in the same transaction the bill is written in;
+        # a concurrent bill racing over the same claim is caught by bill_claims' unique
+        # claim_id instead (ClaimAlreadyBilledError below).
         total = Decimal("0")
         has_amount = False
         for claim_id in deduped:
             detail = await self._claim_repository.get_for_physician(claim_id, physician_id)
-            if detail is None or detail.record.status != "brouillon":
+            if detail is None or not ClaimLifecycle.can_be_billed(detail.record.status):
                 raise StaleSelectionError()
             claim_amount = _detail_to_out(detail).total_amount
             if claim_amount is not None:
                 total += claim_amount
                 has_amount = True
 
-        bill = await self._bill_repository.create(
-            BillInput(
-                physician_id=physician_id,
-                start_date=start_date,
-                end_date=end_date,
-                claim_ids=deduped,
-                total_amount=total if has_amount else None,
+        try:
+            bill = await self._bill_repository.create(
+                BillInput(
+                    physician_id=physician_id,
+                    start_date=start_date,
+                    end_date=end_date,
+                    claim_ids=deduped,
+                    total_amount=total if has_amount else None,
+                )
             )
-        )
-        if bill is None:
-            # Something changed between the validation loop above and the repository's own
-            # atomic re-check (e.g. a racing second submission of an overlapping range).
-            raise StaleSelectionError()
+        except ClaimAlreadyBilledError as exc:
+            raise StaleSelectionError() from exc
+        await self._claim_repository.set_status(deduped, ClaimLifecycle.ON_BILLED)
         return _bill_to_out(bill)
 
-    async def list_for_physician(self, physician_id: int, *, limit: int = 100, offset: int = 0) -> list[BillOut]:
+    async def list_for_physician(self, physician_id: int, *, limit: int, offset: int) -> list[BillOut]:
         bills = await self._bill_repository.list_for_physician(physician_id, limit=limit, offset=offset)
         return [_bill_to_out(b) for b in bills]
 
@@ -169,4 +172,12 @@ class BillService:
         return self._pdf_renderer.render(document)
 
     async def delete(self, bill_id: int, physician_id: int) -> bool:
-        return await self._bill_repository.delete_for_physician(bill_id, physician_id)
+        """Deleting a bill releases its claims back to their pre-bill status, in the same
+        transaction — never a bill gone with its claims still frozen."""
+        bill = await self._bill_repository.get_for_physician(bill_id, physician_id)
+        if bill is None:
+            return False
+        claim_ids = await self._bill_repository.claim_ids_for_bill(bill.id)
+        await self._bill_repository.delete(bill)
+        await self._claim_repository.set_status(claim_ids, ClaimLifecycle.ON_BILL_DELETED)
+        return True

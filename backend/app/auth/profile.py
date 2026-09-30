@@ -7,9 +7,10 @@ different tables with different lifecycles: `users` is credentials, `physician_p
 is an append-only history (see the model's docstring for why).
 """
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import date
 
+from app.clock import ClinicClock, Clock
 from app.postgresdb import (
     PhysicianProfile,
     PhysicianProfileRepository,
@@ -28,18 +29,29 @@ class PhysicianAccount:
     profile: PhysicianProfile | None
 
 
+@dataclass(frozen=True)
+class PracticeFacts:
+    """The editable practice facts one physician_profiles version records."""
+
+    physician_type: str | None
+    number_of_patients: int | None
+    remuneration_type: str | None
+
+
 class ProfileService:
     def __init__(
         self,
         user_repository: UserRepository,
         profile_repository: PhysicianProfileRepository,
+        clock: Clock | None = None,
     ) -> None:
         self._users = user_repository
         self._profiles = profile_repository
+        self._clock = clock or ClinicClock()
 
     async def current(self, user: User) -> PhysicianAccount:
         """The account as of today — what the profile screen shows."""
-        return PhysicianAccount(user=user, profile=await self._profiles.get_current(user.id))
+        return await self.as_of(user, self._clock.today())
 
     async def as_of(self, user: User, on: date) -> PhysicianAccount:
         """The account as it stood on `on`. Use this, not `current`, when interpreting a
@@ -54,27 +66,37 @@ class ProfileService:
         effect (see PhysicianProfileRepository.get_earliest's docstring)."""
         return PhysicianAccount(user=user, profile=await self._profiles.get_earliest(user.id))
 
+    async def record_practice_facts(
+        self, user_id: int, facts: PracticeFacts, *, effective_from: date | None = None
+    ) -> PhysicianProfile:
+        """Records `facts` as the version taking effect on `effective_from` (default: today,
+        in the clinic's timezone).
+
+        Appends a new version, except when one already takes effect on that same date —
+        that one is overwritten in place. Two edits an hour apart are a correction, not two
+        versions of reality, and keeping both would grow the table without ever changing
+        the answer to `as_of`."""
+        effective = effective_from or self._clock.today()
+        existing = await self._profiles.get_starting_on(user_id, effective)
+        if existing is None:
+            return await self._profiles.add(user_id, effective_from=effective, **asdict(facts))
+        return await self._profiles.overwrite(existing, **asdict(facts))
+
     async def update(
         self,
         user: User,
         *,
         full_name: str,
-        physician_type: str | None,
-        number_of_patients: int | None,
-        remuneration_type: str | None,
         practice_number: str | None,
+        facts: PracticeFacts,
     ) -> PhysicianAccount:
-        """Writes both halves: the name and practice_number onto `users`, the rest of the
-        practice facts as a new profile version taking effect today."""
+        """Writes both halves: the name and practice_number onto `users`, the practice facts
+        as a new profile version taking effect today. Both land in the caller's one
+        transaction, so neither half is ever saved without the other."""
         updated = await self._users.update_editable_fields(
             user.id, full_name=full_name, practice_number=practice_number
         )
         if updated is None:
             raise RuntimeError(f"user {user.id} vanished mid-request")
-        profile = await self._profiles.upsert_current(
-            user.id,
-            physician_type=physician_type,
-            number_of_patients=number_of_patients,
-            remuneration_type=remuneration_type,
-        )
+        profile = await self.record_practice_facts(user.id, facts)
         return PhysicianAccount(user=updated, profile=profile)

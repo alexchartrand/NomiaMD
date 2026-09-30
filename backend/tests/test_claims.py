@@ -429,3 +429,10 @@ async def test_deleting_a_claim_removes_its_code_rows_and_total_is_null_when_no_
         list_response = client.get("/claims")
 
     assert created["id"] not in [r["id"] for r in list_response.json()]
+
+
+def test_list_limit_above_the_maximum_is_422_not_silently_capped():
+    with TestClient(app) as client:
+        response = client.get("/claims", params={"limit": 500})
+
+    assert response.status_code == 422

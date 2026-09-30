@@ -9,8 +9,9 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.auth.factory import get_profile_service
-from app.auth.profile import ProfileService
+from app.auth.profile import PracticeFacts, ProfileService
 from app.auth.security import PasswordHasher
+from app.clock import ClinicClock
 from app.main import app
 from app.postgresdb import (
     DbSession,
@@ -37,38 +38,64 @@ async def _create_user():
         )
 
 
-async def test_no_profile_yet_reads_as_none():
+TODAY = date(2026, 3, 15)
+
+
+class _FixedClock:
+    def __init__(self, today: date) -> None:
+        self._today = today
+
+    def today(self) -> date:
+        return self._today
+
+
+def _profile_service(session, today: date = TODAY) -> ProfileService:
+    return ProfileService(UserRepository(session), PhysicianProfileRepository(session), _FixedClock(today))
+
+
+def _facts(*, number_of_patients=None, remuneration_type=None, physician_type=None) -> PracticeFacts:
+    return PracticeFacts(
+        physician_type=physician_type, number_of_patients=number_of_patients, remuneration_type=remuneration_type
+    )
+
+
+async def test_no_profile_yet_reads_as_none(db_session):
     user = await _create_user()
 
-    async with session_scope() as session:
-        assert await PhysicianProfileRepository(session).get_current(user.id) is None
+    account = await _profile_service(db_session).current(user)
+
+    assert account.profile is None
 
 
 async def test_past_date_reads_the_version_in_effect_then(db_session):
     user = await _create_user()
-    profiles = PhysicianProfileRepository(db_session)
-    last_year = date.today() - timedelta(days=365)
+    profiles = _profile_service(db_session)
+    last_year = TODAY - timedelta(days=365)
 
-    await profiles.upsert_current(
+    await profiles.record_practice_facts(
         user.id,
-        physician_type=PhysicianType.MED_FAM.value,
-        number_of_patients=500,
-        remuneration_type=RemunerationType.A_L_ACTE.value,
+        _facts(
+            physician_type=PhysicianType.MED_FAM.value,
+            number_of_patients=500,
+            remuneration_type=RemunerationType.A_L_ACTE.value,
+        ),
         effective_from=last_year,
     )
-    await profiles.upsert_current(
+    await profiles.record_practice_facts(
         user.id,
-        physician_type=PhysicianType.MED_FAM.value,
-        number_of_patients=1200,
-        remuneration_type=RemunerationType.MIXTE.value,
+        _facts(
+            physician_type=PhysicianType.MED_FAM.value,
+            number_of_patients=1200,
+            remuneration_type=RemunerationType.MIXTE.value,
+        ),
     )
 
-    back_then = await profiles.get_effective_on(user.id, last_year + timedelta(days=30))
+    back_then = (await profiles.as_of(user, last_year + timedelta(days=30))).profile
     assert back_then is not None
     assert back_then.number_of_patients == 500
     assert back_then.remuneration_type == RemunerationType.A_L_ACTE.value
 
-    today = await profiles.get_current(user.id)
+    today = (await profiles.current(user)).profile
     assert today is not None
     assert today.number_of_patients == 1200
     assert today.remuneration_type == RemunerationType.MIXTE.value
@@ -76,48 +103,48 @@ async def test_past_date_reads_the_version_in_effect_then(db_session):
 
 async def test_date_before_the_first_version_reads_as_none(db_session):
     user = await _create_user()
-    profiles = PhysicianProfileRepository(db_session)
-    await profiles.upsert_current(
-        user.id,
-        physician_type=PhysicianType.MED_FAM.value,
-        number_of_patients=500,
-        remuneration_type=None,
-        effective_from=date.today() - timedelta(days=10),
+    profiles = _profile_service(db_session)
+    await profiles.record_practice_facts(
+        user.id, _facts(number_of_patients=500), effective_from=TODAY - timedelta(days=10)
     )
 
-    assert await profiles.get_effective_on(user.id, date.today() - timedelta(days=30)) is None
+    assert (await profiles.as_of(user, TODAY - timedelta(days=30))).profile is None
 
 
 async def test_same_day_edits_overwrite_instead_of_piling_up(db_session):
     user = await _create_user()
-    profiles = PhysicianProfileRepository(db_session)
+    profiles = _profile_service(db_session)
 
-    first = await profiles.upsert_current(
-        user.id, physician_type=None, number_of_patients=100, remuneration_type=None
-    )
-    second = await profiles.upsert_current(
-        user.id, physician_type=None, number_of_patients=200, remuneration_type=None
-    )
+    first = await profiles.record_practice_facts(user.id, _facts(number_of_patients=100))
+    second = await profiles.record_practice_facts(user.id, _facts(number_of_patients=200))
 
     assert first.id == second.id
-    current = await profiles.get_current(user.id)
+    current = (await profiles.current(user)).profile
     assert current is not None
     assert current.number_of_patients == 200
+
+
+async def test_a_new_version_takes_effect_on_the_clocks_today(db_session):
+    user = await _create_user()
+
+    profile = await _profile_service(db_session, today=TODAY).record_practice_facts(
+        user.id, _facts(number_of_patients=100)
+    )
+
+    assert profile.effective_from == TODAY
 
 
 async def test_profile_edit_does_not_rewrite_an_earlier_version():
     """The regression the split prevents: before it, this edit mutated the single row
     every past claim's eligibility would be judged against."""
     user = await _create_user()
-    yesterday = date.today() - timedelta(days=1)
+    # The real route uses ClinicClock, so "yesterday" must be the clinic's yesterday too —
+    # the host's date.today() is already tomorrow in the evening, Montréal time.
+    yesterday = ClinicClock().today() - timedelta(days=1)
 
     async with session_scope() as session:
-        await PhysicianProfileRepository(session).upsert_current(
-            user.id,
-            physician_type=None,
-            number_of_patients=None,
-            remuneration_type=RemunerationType.A_L_ACTE.value,
-            effective_from=yesterday,
+        await _profile_service(session, today=yesterday).record_practice_facts(
+            user.id, _facts(remuneration_type=RemunerationType.A_L_ACTE.value)
         )
 
     app.dependency_overrides.pop(get_current_user, None)
@@ -159,7 +186,7 @@ async def test_me_returns_nulls_for_a_physician_with_no_profile():
 
 
 class _FailingProfileRepository(PhysicianProfileRepository):
-    async def upsert_current(self, *args, **kwargs):
+    async def add(self, *args, **kwargs):
         raise RuntimeError("profile write failed")
 
 

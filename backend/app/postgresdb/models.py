@@ -94,7 +94,7 @@ class PhysicianProfile(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     # The date this version took effect. Rows are never updated except within the same
-    # day (see PhysicianProfileRepository.upsert_current) — there is no meaningful
+    # day (see ProfileService.record_practice_facts) — there is no meaningful
     # history between two edits made an hour apart.
     effective_from: Mapped[date] = mapped_column(Date)
     physician_type: Mapped[str | None] = mapped_column(String(255), nullable=True)

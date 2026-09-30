@@ -5,7 +5,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Sequence
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 
 from app.postgresdb.models import Claim, ClaimCode, Patient
 from app.postgresdb.repositories.base import SessionRepository
@@ -95,7 +95,6 @@ class ClaimRepository(SessionRepository):
         limit: int = 100,
         offset: int = 0,
     ) -> list[ClaimDetail]:
-        limit = min(limit, 200)
         # Joins Patient for the name without filtering deleted_at — a soft-deleted
         # patient's name must still render on an existing claim.
         query = (
@@ -162,6 +161,13 @@ class ClaimRepository(SessionRepository):
         await self._session.delete(record)
         await self._session.flush()
         return True
+
+    async def set_status(self, claim_ids: Sequence[int], status: str) -> None:
+        """Stores `status` as given — which transitions are allowed is
+        app/claims/status.py's ClaimLifecycle's call, not this repository's."""
+        if not claim_ids:
+            return
+        await self._session.execute(update(Claim).where(Claim.id.in_(claim_ids)).values(status=status))
 
     async def get_by_billing_extraction_record_id(self, billing_extraction_record_id: int) -> Claim | None:
         result = await self._session.execute(

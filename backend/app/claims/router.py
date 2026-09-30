@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.auth import get_current_user
 from app.claims.factory import get_claim_service
-from app.claims.models import ClaimCreate, ClaimOut, ClaimStatus
+from app.claims.models import ClaimCreate, ClaimOut
 from app.claims.service import (
     ClaimOnBillError,
     ClaimService,
@@ -15,6 +15,7 @@ from app.claims.service import (
     PatientNotFoundError,
     UnknownCodesError,
 )
+from app.claims.status import ClaimStatus
 from app.postgresdb import User
 
 router = APIRouter(prefix="/claims", tags=["claims"])
@@ -70,8 +71,8 @@ async def list_claims(
     date_from: date | None = None,
     date_to: date | None = None,
     status_filter: ClaimStatus | None = Query(default=None, alias="status"),
-    limit: int = 100,
-    offset: int = 0,
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
     current_user: User = Depends(get_current_user),
     service: ClaimService = Depends(get_claim_service),
 ) -> list[ClaimOut]:

@@ -25,9 +25,10 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from sqlalchemy.exc import IntegrityError  # noqa: E402
 
+from app.auth.factory import build_profile_service  # noqa: E402
+from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
 from app.postgresdb import (  # noqa: E402
-    PhysicianProfileRepository,
     UserRepository,
     UserRole,
     init_db,
@@ -76,11 +77,13 @@ async def main() -> None:
         # The practice facts live in their own dated table, so provisioning writes the
         # account's first profile version rather than more columns on `users`.
         if any((args.physician_type, args.number_of_patients, args.remuneration_type)):
-            await PhysicianProfileRepository(session).upsert_current(
+            await build_profile_service(session).record_practice_facts(
                 user.id,
-                physician_type=args.physician_type,
-                number_of_patients=args.number_of_patients,
-                remuneration_type=args.remuneration_type,
+                PracticeFacts(
+                    physician_type=args.physician_type,
+                    number_of_patients=args.number_of_patients,
+                    remuneration_type=args.remuneration_type,
+                ),
             )
 
     print(f"Created user {user.email!r} (id={user.id}, role={user.role.value})")

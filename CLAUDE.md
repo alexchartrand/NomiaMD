@@ -170,7 +170,8 @@ known patient. `PhysicianPatient` (`physician_patients`) is a separate, optional
 patients" join table (`physician_id`, `patient_id`, `notes`) with no registration flag on
 it — registration is derived, not stored. Routes split accordingly (`patients/router.py`):
 `GET /patients` lists the caller's own roster; `GET /patients/search?q=` is a NAM/name
-typeahead over *every* patient in the system (`PatientRepository.search`), powering
+typeahead over *every* patient in the system (`PatientSearch`, `patients/search.py`, which
+decides min length/NAM detection before `PatientRepository.search` runs the query), powering
 `PatientSearchSelect.tsx` (used both in extraction's source step and to add an existing
 patient to one's roster from `PatientsPage.tsx`); `POST /patients` creates a new global
 identity; `PATCH /patients/{id}` edits that shared record and is admin-only, since any
@@ -192,9 +193,12 @@ and the physician's own `User.practice_number` (`app/auth/`, see below), returni
 `(user_id, effective_from)`. `physician_type`/`remuneration_type`/`number_of_patients`
 live there rather than as columns on `users` because they decide which RAMQ codes a
 physician may legally bill and they change over a career — read them with
-`PhysicianProfileRepository.get_effective_on(user_id, date)` so a past claim or invoice is
-interpreted under the values in effect on its own service date, never today's (same
-reasoning as `ClaimCode`'s fee snapshot). `get_current` is that call with today's date.
+`ProfileService.as_of(user, date)` (`PhysicianProfileRepository.get_effective_on`) so a past
+claim or invoice is interpreted under the values in effect on its own service date, never
+today's (same reasoning as `ClaimCode`'s fee snapshot). `ProfileService.current` is that call
+with today's date, and `record_practice_facts` owns the "a same-day edit overwrites, a later
+one appends" rule. "Today" always comes from an injected `Clock` (`app/clock.py`'s
+`ClinicClock`, America/Montreal) — never `date.today()`, which is UTC in the container.
 `get_current_user` deliberately does *not* load a profile: every authenticated request
 pays for that dependency and only the profile screen needs it. `User.practice_number`
 (`postgresdb/models.py`) is the one practice fact that stays a plain column on `users`
@@ -215,7 +219,9 @@ physician's own roster — any physician may bill any known patient now that `Pa
 roster-scoped (see `app/patients/` above). Wired at `POST/GET/DELETE /claims`
 (`app/main.py`). There's no endpoint to change a claim's status: `BillService.create` moves
 a claim from `brouillon` to `soumis` when it's grouped onto a bill, and deleting that bill
-moves it back. `ClaimService.delete` refuses any claim that isn't `brouillon`.
+moves it back. `ClaimService.delete` refuses any claim that isn't `brouillon`. Those rules
+live in `app/claims/status.py` (`ClaimStatus`, `ClaimLifecycle`); the repositories only store
+the status they're given (`ClaimRepository.set_status`).
 
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` are
 produced by a separate sibling repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this

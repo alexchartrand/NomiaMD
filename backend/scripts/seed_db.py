@@ -24,12 +24,13 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from sqlalchemy.exc import IntegrityError  # noqa: E402
 
+from app.auth.factory import build_profile_service  # noqa: E402
+from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
 from app.patients import format_full_name, nam  # noqa: E402
 from app.postgresdb import (  # noqa: E402
     PatientRepository,
     PhysicianPatientRepository,
-    PhysicianProfileRepository,
     PhysicianType,
     RemunerationType,
     UserRepository,
@@ -106,11 +107,13 @@ async def main() -> None:
 
         # The practice facts live in their own dated table, so provisioning writes the
         # account's first profile version rather than more columns on `users`.
-        await PhysicianProfileRepository(session).upsert_current(
+        await build_profile_service(session).record_practice_facts(
             admin.id,
-            physician_type=ADMIN_PHYSICIAN_TYPE,
-            number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
-            remuneration_type=ADMIN_REMUNERATION_TYPE,
+            PracticeFacts(
+                physician_type=ADMIN_PHYSICIAN_TYPE,
+                number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
+                remuneration_type=ADMIN_REMUNERATION_TYPE,
+            ),
         )
 
         print(f"Created admin user {admin.email!r} (id={admin.id}, practice_number={SEED_PRACTICE_NUMBER!r})")
