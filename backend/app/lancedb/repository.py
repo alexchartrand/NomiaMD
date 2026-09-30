@@ -1,5 +1,5 @@
 """Read access to the LanceDB tables in models.py — one repository class per table, each
-owning its own query building and row validation. Mirrors app/postgresdb/repository.py;
+owning its own query building and row validation. Mirrors app/postgresdb/repositories/;
 the connection wiring lives in database.py."""
 
 import logging

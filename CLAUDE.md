@@ -98,7 +98,7 @@ Mistral API call.
      `when_to_use`, `rules`, `fees`, and the typed eligibility bounds; see ramq-ingestion's
      `src/ramq_ingestion/codes/storage/code_table_schema.py`), converted via
      `CodesRowConverter` (`app/lancedb/converter.py`). `app/lancedb/` mirrors `app/postgresdb/`'s
-     `database.py`/`models.py`/`repository.py` split; unlike Postgres, LanceDB has no
+     `database.py`/`models.py`/repository split; unlike Postgres, LanceDB has no
      migration/session story, and its connection can only be opened once an event loop is
      running, so `LanceDB.open()` is called from `app/bootstrap.py`'s
      `application_services()` — the process's single composition root, used by
@@ -252,7 +252,7 @@ files and are skipped.
   (`backend/tests/conftest.py`'s `small_reference_table`/`no_real_api_keys` fixtures,
   autouse) — no network, no API key, no real LanceDB needed. Never rely on
   `MISTRAL_API_KEY`/real retrieval being present in a test.
-- Postgres/SQLite transactions: repositories (`app/postgresdb/repository.py`) take an
+- Postgres/SQLite transactions: repositories (`app/postgresdb/repositories/`, one module per aggregate) take an
   `AsyncSession` in their constructor and only `flush()` — they never commit. Whoever opens
   the session owns the outcome: `session_scope()` (`app/postgresdb/session.py`) commits on a
   normal exit and rolls back on an exception. A route gets one per request by depending on

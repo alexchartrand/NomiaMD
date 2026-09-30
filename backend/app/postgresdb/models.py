@@ -1,5 +1,4 @@
-"""ORM shapes only — persistence lives in repository.py (UserRepository/
-ExtractionRepository), not here."""
+"""ORM shapes only — persistence lives in repositories/, not here."""
 
 import enum
 from datetime import date, datetime, timezone

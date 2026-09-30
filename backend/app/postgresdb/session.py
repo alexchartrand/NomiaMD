@@ -1,4 +1,4 @@
-"""Transaction boundaries. Repositories (repository.py) never open, commit or roll back a
+"""Transaction boundaries. Repositories (repositories/) never open, commit or roll back a
 session themselves — they're handed one and only `flush()`, so several repositories (and
 the service composing them) share one atomic unit of work. Whoever opens the session owns
 its outcome: `session_scope` commits when its block exits normally and rolls back when it
