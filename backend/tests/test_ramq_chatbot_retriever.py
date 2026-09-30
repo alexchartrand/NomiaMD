@@ -215,12 +215,15 @@ async def test_aretrieve_delegates_final_nodes_to_reference_expander():
 
 
 async def test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ranks_last():
-    # 21 filler rows plus a "target" whose vector is far outside the filler range: 22 rows
-    # total, one more than similarity_top_k=20, and target is the single farthest — the one
-    # direct retrieval cuts (see test_aretrieve_passes_similarity_top_k_through_to_hybrid_search).
-    vectors = {f"code {i}": [1.0, float(i)] for i in range(21)}
+    # top_k + 1 filler rows plus a "target" whose vector is far outside the filler range, so
+    # target is the single farthest — the one direct retrieval cuts (see
+    # test_aretrieve_passes_similarity_top_k_through_to_hybrid_search). top_k is pinned rather
+    # than left to the retriever's default, which would otherwise decide whether target is
+    # cut at all.
+    top_k = 20
+    vectors = {f"code {i}": [1.0, float(i)] for i in range(top_k + 1)}
     vectors["far"] = [1.0, 1000.0]
-    fillers = [_row(str(i), f"code {i}") for i in range(21)]
+    fillers = [_row(str(i), f"code {i}") for i in range(top_k + 1)]
     fillers[0] = _row("0", "code 0", metadata={"section_references": ["9.9"]})
     referenced = _row("target", "far", metadata={"section_number": "9.9"})
     rows = [*fillers, referenced]
@@ -238,6 +241,7 @@ async def test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ra
         embed_model=_LookupEmbedding(vectors),
         converter=DocumentRowConverter(),
         reference_expander=reference_expander,
+        similarity_top_k=top_k,
     )
 
     results = await retriever.aretrieve("code 0")
