@@ -145,7 +145,8 @@ Mistral API call.
      manual's raw `role` (R = 1, R = 2, R = 7…, section-specific meaning) and a `unit`: a
      `"unités"` fee (anesthesia base units, typically R = 2) is shown in the review UI but
      never billed as dollars — `ClaimService` snapshots `fee_amount = NULL` for it and
-     records the units in `fee_when_to_use`.
+     records the count in `fee_units` (`claim_codes` has a real column per fee field:
+     `fee_unit`, `fee_units`, `fee_role`, `fee_context`, `fee_lieux`, `manual_rev`).
 3. `ramq_chatbot` task (`backend/app/ramq_chatbot/`): a free-form, multi-turn chatbot for
    generic billing questions — not tied to any specific encounter/transcript, unlike
    `billing_codes`. Wired at `POST /query` (`app/main.py`). History is stateless: the
@@ -191,8 +192,10 @@ and the physician's own `User.practice_number` (`app/auth/`, see below), returni
 **`app/auth/`** splits authentication from the physician's practice facts.
 `AuthService` owns credentials/tokens/sessions against `users`; `ProfileService`
 (`auth/profile.py`) owns `physician_profiles`, an append-only table keyed by
-`(user_id, effective_from)`. `physician_type`/`remuneration_type`/`number_of_patients`
-live there rather than as columns on `users` because they decide which RAMQ codes a
+`(user_id, effective_from)` (a unique constraint — `PhysicianProfileRepository.upsert` is one
+`INSERT … ON CONFLICT DO UPDATE`). `physician_type`/`remuneration_type` (stored as codes like
+`med_fam`/`mixte`, validated by `PhysicianType`/`RemunerationType`; French labels are display
+only) and `panel_size` live there rather than as columns on `users` because they decide which RAMQ codes a
 physician may legally bill and they change over a career — read them with
 `ProfileService.as_of(user, date)` (`PhysicianProfileRepository.get_effective_on`) so a past
 claim or invoice is interpreted under the values in effect on its own service date, never
@@ -206,7 +209,7 @@ pays for that dependency and only the profile screen needs it. `User.practice_nu
 rather than moving into the profile table — a RAMQ practice number essentially never
 changes over a career, and it's exactly the value `resolve_registration` (see
 `app/patients/` above) compares against a patient's stored `family_doctor_practice_number`
-to derive registration. `UserOut` flattens the two halves back into one object, so the
+to derive registration — hence unique across `users` (`DuplicatePracticeNumberError` → 409). `UserOut` flattens the two halves back into one object, so the
 split is invisible to the frontend.
 
 **`app/claims/`** turns a physician-confirmed `billing_codes` extraction into a persisted
@@ -217,14 +220,22 @@ stored result (never trusted from the request body — `ExtractionCandidates`,
 `fees.py`; duplicate rules in `duplicates.py`, `ClaimOut` built by `mapper.py`'s
 `ClaimMapper`, which `BillService` reuses), since the LanceDB codes table they originally came from is
 regenerated independently and re-deriving fees later would silently rewrite billing history.
-A claim's patient is looked up globally (`PatientRepository.get`), not against the billing
-physician's own roster — any physician may bill any known patient now that `Patient` isn't
-roster-scoped (see `app/patients/` above). Wired at `POST/GET/DELETE /claims`
-(`app/main.py`). There's no endpoint to change a claim's status: `BillService.create` moves
-a claim from `brouillon` to `soumis` when it's grouped onto a bill, and deleting that bill
-moves it back. `ClaimService.delete` refuses any claim that isn't `brouillon`. Those rules
-live in `app/claims/status.py` (`ClaimStatus`, `ClaimLifecycle`); the repositories only store
-the status they're given (`ClaimRepository.set_status`).
+`POST /claims` takes an `extraction_run_id`, never a patient: `/extract` stores one
+`extraction_runs` row (transcript stored once, the chosen `patient_id`, `purge_after`) with an
+`extraction_results` row per stage, and the claim's patient and `source_system` are copied from
+that run — the codes were eligibility-filtered for that patient, so nothing may move them onto
+another. The patient is looked up globally (`PatientRepository.get`), not against the billing
+physician's own roster. `ClaimContextSnapshotter` (`app/claims/context.py`) also snapshots the
+billing context (`is_registered`, `is_vulnerable`, `patient_age_years`, `panel_size`) onto the
+claim at save time, via the same `BillingContextBuilder` the pipeline uses, for the fee
+snapshot's reason. Wired at `POST/GET/DELETE /claims` (`app/main.py`). A claim's status is
+derived, never stored: `soumis` exactly when `claims.bill_id` is set, `brouillon` otherwise
+(`app/claims/status.py`'s `ClaimLifecycle.status_of`). `BillService.create` attaches claims with
+one conditional `UPDATE` (`ClaimRepository.attach_to_bill`, which refuses a claim another bill
+got first); `DELETE /bills/{id}` sets the bill's `voided_at` and detaches its claims. Nothing is
+hard-deleted: `DELETE /claims/{id}` sets `voided_at` too, and only for a draft
+(`ClaimOnBillError` otherwise). Voided rows are invisible to every repository read; a voided
+claim frees its run (`ix_claims_extraction_run_active` is partial on `voided_at IS NULL`).
 
 **RAMQ data is a generated, external artifact.** The LanceDB tables at `DB_PATH` are
 produced by a separate sibling repo, `ramq-ingestion` (`~/Software/ramq-ingestion`) — this
@@ -276,6 +287,13 @@ files and are skipped.
   it for `session_scope()` — called by `application_services()`, the DB-only scripts, and
   conftest's session-wide `postgres_db` fixture (a throwaway SQLite file). A `session_scope()`
   with nothing bound raises `DatabaseNotOpenError`.
+- No Alembic until the first release: `create_all` only creates missing tables, so a schema
+  change means deleting the local DB (`backend/nomiamd.db`, or the Postgres volume) and
+  re-seeding. Timestamps are DB-stamped (`CreatedAtMixin`/`TimestampMixin`,
+  `server_default=func.now()`; `Base` sets `eager_defaults` so they're readable right after a
+  flush). SQLite's `CURRENT_TIMESTAMP` is second-precision, so any `ORDER BY` on a timestamp
+  needs an `id` tie-breaker. Postgres-only DDL (the `pg_trgm` name-search index, the regex NAM
+  CHECK) uses `.ddl_if(dialect="postgresql")`, with a SQLite equivalent where one exists.
 - SQLite enforces foreign keys (`PRAGMA foreign_keys=ON`, `app/postgresdb/database.py`), in
   dev and in tests. A test that hands a route or repository a fixed-id in-memory `User` must
   seed its row first with `tests/db_helpers.py`'s `ensure_user_row` (conftest's default
