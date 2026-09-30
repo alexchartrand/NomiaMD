@@ -164,7 +164,8 @@ Mistral API call.
 
 **`app/patients/`** — `Patient` (`app/postgresdb/models.py`) is a single global identity per
 real person, unique by NAM across *all* physicians (a partial unique index scoped to
-`deleted_at IS NULL`), not a per-physician roster row: any physician may look up or bill any
+`deleted_at IS NULL`; `PatientBase` in `patients/models.py` stores the NAM in canonical
+`AAAA99999999` form so differently-spaced entries collide), not a per-physician roster row: any physician may look up or bill any
 known patient. `PhysicianPatient` (`physician_patients`) is a separate, optional "my
 patients" join table (`physician_id`, `patient_id`, `notes`) with no registration flag on
 it — registration is derived, not stored. Routes split accordingly (`patients/router.py`):
@@ -251,6 +252,10 @@ files and are skipped.
   (`backend/tests/conftest.py`'s `small_reference_table`/`no_real_api_keys` fixtures,
   autouse) — no network, no API key, no real LanceDB needed. Never rely on
   `MISTRAL_API_KEY`/real retrieval being present in a test.
+- SQLite enforces foreign keys (`PRAGMA foreign_keys=ON`, `app/postgresdb/database.py`), in
+  dev and in tests. A test that hands a route or repository a fixed-id in-memory `User` must
+  seed its row first with `tests/db_helpers.py`'s `ensure_user_row` (conftest's default
+  `User(id=1)` already does).
 - Real-API scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY` and
   `DB_PATH`, or `MISTRAL_ENDPOINT` pointed at `scripts/fake_llm_server.py` (`make fake-llm`)
   to avoid spending real API calls.

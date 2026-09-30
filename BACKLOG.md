@@ -10,6 +10,33 @@
 
 ## 🐛 Bugs
 
+- [x] 🔴 NAM stored un-normalized — breaks global uniqueness — *added 9/30, from database review, fixed 9/30*
+  - Fixed: `PatientBase._canonical_nam` (`app/patients/models.py`) normalizes via `nam.normalize` on create/update, 422s on a malformed NAM, blank → null. `PatientRepository.search`'s own compaction left as-is (still needed for the *query* side). Rows already in an existing DB aren't rewritten.
+  - `POST/PATCH /patients` (`app/patients/router.py`) pass `body.model_dump()` straight to `PatientRepository.create/update`; `PatientBase` (`app/patients/models.py`) has no validator. `"desr 8102 1001"` and `"DESR81021001"` both insert, so `ix_patients_ramq_number_active` never sees a collision. Only `scripts/seed_db.py` calls `nam.normalize`. Fix: a Pydantic validator on `PatientBase.ramq_number` using `app.patients.nam.normalize` (422 on malformed), then `PatientRepository.search` can compare exactly instead of re-compacting with its own `_NOT_ALNUM_RE`.
+
+- [ ] 🔴 A claim can be saved against a different patient than its extraction was built for — *added 9/30, from database review*
+  - `extraction_records` has no `patient_id`, and `ClaimService.create` (`app/claims/service.py`) accepts any `patient_id` alongside any `billing_extraction_record_id`. The codes were eligibility-filtered for patient A's registration/vulnerability/age, then billed to patient B. Nor is the summary record checked to belong to the same run as the billing record. Fix lands with the `extraction_runs` split (Features) — a claim references one run, and its patient comes from it.
+
+- [x] 🟡 SQLite never enforces foreign keys — *added 9/30, from database review, fixed 9/30*
+  - Fixed: `PRAGMA foreign_keys=ON` on every SQLite connection (`app/postgresdb/database.py`). Tests that handed routes/repositories a fixed-id in-memory `User` now seed a real row via `tests/db_helpers.py`'s `ensure_user_row` (conftest's default user included).
+  - No `PRAGMA foreign_keys=ON` listener in `app/postgresdb/database.py`, so every `CASCADE`/`RESTRICT` is a no-op in dev and in the whole test suite (`ClaimRepository`'s docstring already works around it). Decided 9/30: turn the pragma on at connect for the SQLite dialect; no Postgres test pass for now.
+
+- [x] 🟡 `claims → extraction_records` FKs will block the retention purge — *added 9/30, from database review, fixed 9/30*
+  - Fixed in the model (`ondelete="SET NULL"`), but `create_all` never alters an existing table: an existing SQLite/Postgres DB keeps the old constraint until it's recreated or migrated (fold into the first Alembic revision).
+  - `Claim.summary_/billing_extraction_record_id` (`app/postgresdb/models.py`) have no `ondelete`, so on Postgres purging any extraction that became a claim fails. Should be `ON DELETE SET NULL` — `claim_codes` is already a self-contained snapshot. Needs to be settled before the 🔴 retention item below is implemented.
+
+- [ ] 🟡 One extraction can mix two manual revisions — *added 9/30, from database review*
+  - `CurrentCodeTableProvider.current()` is re-resolved on every `CodeRepository` call: once per planned query in `RAMQCodesRetriever`, then again in `BillingCodesTask.resolve_fees` after the LLM call. A promote landing mid-extraction gives candidates from one `codes_<rev>` and fees from another (or an empty fee list for a code dropped from the new manual). Fix: resolve the table once per extraction and pass it through — also the natural carrier for the `manual_rev` item in Features.
+
+- [ ] 🟡 `ProfileService.update` writes its two halves in separate transactions — *added 9/30, from database review*
+  - `UserRepository.update_editable_fields` and `PhysicianProfileRepository.upsert_current` each open their own session (`app/auth/profile.py`); a failure between them leaves the name/practice number updated but the profile not. Fixed by the session-per-request refactor (Cleanup).
+
+- [ ] 🟢 "Today" is the container's UTC date — *added 9/30, from database review*
+  - `PhysicianProfileRepository.get_current`/`upsert_current` use `date.today()`: a profile edited after ~20:00 Montréal time gets tomorrow's `effective_from`. Inject a `Clock` pinned to `America/Montreal`.
+
+- [x] 🟢 `DELETE /claims/{id}` 404s with "Facture introuvable" — *added 9/30, from database review, fixed 9/30*
+  - `app/claims/router.py` — that's the bill noun; a claim is a "facturation".
+
 - [ ] 🟡 Noisy `unit`/`role` tagging on some `codes_2026-06-05` fees — report to ramq-ingestion — *added 9/30, from the versioned-codes-table migration*
   - `15837` (a B-section visit, no anesthesia) carries a stray `94 unités` fee with `role=2`; `08118` (radiology) has `role=1, unit="unités"` on `4.55`, which has decimals and so reads like a dollar amount. Of the 6,948 fees, 101 are `role=1` in units and 11 are `role=2` in dollars — worth a spot check upstream.
   - The failure mode on this side is safe (a unit fee is never billed as dollars, the physician sees the label), but a mis-tagged dollar fee shows as units and drops out of the total.
@@ -69,6 +96,16 @@
 
 ## ✨ Features
 
+- [ ] 🟡 Schema upgrade batch, once Alembic lands — *added 9/30, from database review*
+  - **`extraction_runs` + `extraction_results`** replacing `extraction_records`: transcript stored once per run (today it's duplicated on the summary and billing rows), plus `patient_id`, non-null `user_id`, `source_system`, `purge_after`, and room for token/latency columns (see the LLM usage item below). A claim references one `run_id` — fixes the patient-mismatch bug and gives the retention purge a single target.
+  - **`claims.bill_id`** (nullable FK, `ON DELETE SET NULL`) replacing `bill_claims`; decided 9/30 that "soumis" is derived from `bill_id IS NOT NULL` rather than stored, and `status` keeps only states the link can't express. Add `voided_at` to `claims`/`bills` for the audit-trail bug.
+  - **Snapshot billing context on `claims`** — decided 9/30: `is_registered`, `is_vulnerable`, `patient_age_years`, `panel_size` captured at save time (same reasoning as `claim_codes`' fee snapshot), rather than a dated patient-facts history table.
+  - **`claim_codes`**: real columns for `fee_role`, `fee_unit`, `fee_units`, `fee_context`, `fee_lieux`, `manual_rev` instead of folding them into `fee_when_to_use`; `UNIQUE(claim_id, code)`; `created_at`.
+  - **`physician_profiles`**: `UNIQUE(user_id, effective_from)` + a real `ON CONFLICT` upsert (the current select-then-insert races); rename `number_of_patients` → `panel_size`; store enum codes, not French display labels (see the enum-strategy bug).
+  - **`users`**: partial unique index on `practice_number` — registration derivation is ambiguous if two accounts share one.
+  - **`patients`**: `pg_trgm` GIN index for name search (unindexed `LIKE '%x%'` today); CHECK constraint on canonical NAM shape.
+  - **Everywhere**: a `TimestampMixin` (`server_default`/`onupdate=func.now()` only — the Python `default` + `server_default` pair is copy-pasted 9×); drop indexes already covered by a composite (`physician_profiles.user_id`, `claims.physician_id`, `bills.physician_id`) and `bill_claims.claim_id`'s double `unique=True, index=True`; CHECK constraints on `claims.status`/`claim_codes.confidence`.
+
 - [ ] 🟡 Retune `similarity_top_k`/`fused_top_k` for the full-manual codes table — *added 9/30, from the versioned-codes-table migration*
   - `RAMQCodesRetriever` still uses `similarity_top_k=20`, `fused_top_k=40`, sized for the old 362-row, section-B-only table; `codes_2026-06-05` is 4,070 rows across B–V. The eligibility prefilter frees slots that ineligible variants used to take, but that's no substitute for measuring. Run `scripts/eval_extraction.py --retrieval-only` on 2+ cases (per the "a fix validated on one transcript can regress another" rule) before changing either number — `URG-2026-04512`'s `01320…` procedure codes can now appear at all.
 
@@ -88,6 +125,17 @@
   - Self-hosted Langfuse means another service to run/maintain but gets a UI, prompt diffing, and cost views; DB logging is zero new infra and keeps prompt/response content off any third-party system (relevant here since transcripts carry patient name + NAM), but you build your own queries/views to look at it.
 
 ## 🧹 Cleanup / Dead code
+
+- [ ] 🟡 Database layer refactor — *added 9/30, from database review*
+  - **Session per request** (decided 9/30): a FastAPI `Depends` yields one `AsyncSession`; factories pass it into repository constructors; services own `commit`. Removes the session-per-method pattern in `app/postgresdb/repository.py` that makes every check-then-insert (NAM, roster, duplicate claim) and multi-table write (`ProfileService.update`) non-atomic.
+  - **`PostgresDB.open()`** in `app/bootstrap.py`, mirroring `LanceDB.open()`, instead of building the engine at import time (why `tests/conftest.py` must set `DATABASE_URL` before any app import).
+  - **Split `repository.py`** (766 lines, 7 repositories + DTOs + errors) into a `repositories/` package, one module per aggregate.
+  - **Business rules out of repositories**: claim status transitions (`"brouillon"`/`"soumis"` hardcoded in `BillRepository`) → a `ClaimStatus` StrEnum + lifecycle class in `app/claims/`; patient search rules (min length, cap, NAM compaction) → a `PatientSearch`/`PatientService`; the same-day-overwrite rule → `ProfileService`; `min(limit, 200)` caps → `Query(le=200)`.
+  - **N+1 in `BillService`**: `create`, `get_for_physician` and `render_pdf` each call `ClaimRepository.get_for_physician` once per claim (two sessions per claim). Replace with a `list_by_ids(physician_id, ids)` or `relationship()` + `selectinload`.
+  - **Stale names**: `ClaimDetail.record`/`ClaimWithCodes.record` → `.claim`, `record_id` → `claim_id`, `Bill.record_count` → `claim_count`.
+  - **Services**: `app/bills/service.py` imports claims' private `_codes_out`/`_detail_to_out` → a public `ClaimMapper` (also used by `ClaimService.create`, which hand-builds `ClaimOut`); split `ClaimService.create` into `ExtractionCandidates` (Pydantic-validated `result_json` instead of `candidate["..."]`), `FeeSnapshotter` (the `_resolve_fee`/`_fee_*` helpers) and a duplicate guard; move extraction-record persistence out of `app/extraction/router.py`.
+  - **LanceDB**: move `app/lancedb/converter.py` into `app/ramq_codes/` so `lancedb` never imports the domain package (removes the circular import and `bootstrap.py`'s import-order workaround); make `IConverter` generic; typed error instead of `ValueError` in `CodeRepository.get_by_number`.
+  - ~~Minor: `app/extraction/pipeline.py` annotates with `date` without importing it~~ — fixed 9/30.
 
 - [ ] 🟢 Ownership guard copy-pasted across repository methods — *added 8/24, from billing-workflow code review, reworded 9/30*
   - The patient copies are gone (patients are global since 8/31, no per-physician ownership). What's left: `record is None or record.physician_id != physician_id` twice in `ClaimRepository` and the same check on `bill` twice in `BillRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means updating all four by hand.
