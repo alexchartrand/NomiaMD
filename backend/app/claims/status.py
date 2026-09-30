@@ -1,36 +1,40 @@
-"""A claim's status vocabulary and the rules for moving between them — owned here, not by
-the repositories, which only store whatever status they're given.
+"""A claim's status vocabulary and the rules that go with it — owned here, not by the
+repositories.
 
-"brouillon" -> "soumis" -> "facture". "soumis" is set only when a claim is grouped onto a
-generated bill (BillService.create) and reverts to "brouillon" when that bill is deleted;
-"facture" is reserved for a future real RAMQ submission response and nothing sets it yet.
-There's no endpoint that sets a status directly.
-
-`Claim.status` stays a plain String column rather than a native Enum (see the Claim model's
-docstring), so this StrEnum is the one place the allowed set is defined."""
+Status is derived, never stored: a claim is "soumis" exactly when it's on a bill
+(`Claim.bill_id IS NOT NULL`) and "brouillon" otherwise. It becomes "soumis" when
+BillService.create attaches it to a bill, and goes back to "brouillon" when that bill is
+voided. A future real RAMQ submission response would add its own state — with its own
+column, since the bill link can't express it."""
 
 from enum import StrEnum
+
+from app.postgresdb import Claim
 
 
 class ClaimStatus(StrEnum):
     BROUILLON = "brouillon"
     SOUMIS = "soumis"
-    FACTURE = "facture"
 
 
 class ClaimLifecycle:
-    """Which status a claim starts in, what a bill does to it, and what each status still
-    allows. Only a draft can be billed or deleted: once a claim is on a bill it's frozen
-    until that bill is deleted, so a bill's total can't shrink behind the physician's back."""
-
-    INITIAL = ClaimStatus.BROUILLON
-    ON_BILLED = ClaimStatus.SOUMIS
-    ON_BILL_DELETED = ClaimStatus.BROUILLON
+    """What each status is, and what it still allows. Only a draft can be billed or voided:
+    once a claim is on a bill it's frozen until that bill is voided, so a bill's total can't
+    shrink behind the physician's back."""
 
     @staticmethod
-    def can_be_billed(status: str) -> bool:
-        return status == ClaimStatus.BROUILLON
+    def status_of(claim: Claim) -> ClaimStatus:
+        return ClaimStatus.SOUMIS if claim.bill_id is not None else ClaimStatus.BROUILLON
 
     @staticmethod
-    def can_be_deleted(status: str) -> bool:
-        return status == ClaimStatus.BROUILLON
+    def is_billed(status: ClaimStatus) -> bool:
+        """The storage-level filter a status stands for — see ClaimRepository.list_for_physician."""
+        return status == ClaimStatus.SOUMIS
+
+    @classmethod
+    def can_be_billed(cls, claim: Claim) -> bool:
+        return cls.status_of(claim) == ClaimStatus.BROUILLON
+
+    @classmethod
+    def can_be_voided(cls, claim: Claim) -> bool:
+        return cls.status_of(claim) == ClaimStatus.BROUILLON

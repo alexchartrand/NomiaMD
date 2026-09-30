@@ -34,7 +34,7 @@ class PhysicianContext:
     this all-null — see its docstring and BACKLOG.md for why that's a deliberate, revisit-
     later trade-off rather than the "never guess" default this class otherwise holds to."""
 
-    number_of_patients: int | None = None
+    panel_size: int | None = None
     physician_type: str | None = None
     remuneration_type: str | None = None
 
@@ -66,8 +66,8 @@ class BillingContext:
         key is present only when the fact is actually known — an absent key means that axis
         filters nothing, and UnresolvedAxisDetector flags it if any candidate is bound on it."""
         axes: dict[str, bool | int | None] = {}
-        if self.physician.number_of_patients is not None:
-            axes[AXIS_PANEL_SIZE] = self.physician.number_of_patients
+        if self.physician.panel_size is not None:
+            axes[AXIS_PANEL_SIZE] = self.physician.panel_size
         if self.patient.is_registered is not None:
             axes[AXIS_REGISTRATION] = self.patient.is_registered
         if self.patient.is_vulnerable is not None:

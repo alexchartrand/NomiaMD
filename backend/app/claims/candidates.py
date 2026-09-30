@@ -17,6 +17,8 @@ class StoredCandidate(BaseModel):
     confidence: str
     explanation: str
     fees: list[CodeFeeOut] = []
+    # Not carried by extraction results yet (see BACKLOG.md's manual_rev item).
+    manual_rev: str | None = None
 
 
 class _StoredBillingResult(BaseModel):

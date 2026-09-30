@@ -6,12 +6,23 @@ by one physician is a *global* record — visible/searchable by anyone, not scop
 old per-physician roster was."""
 
 import itertools
+from datetime import date
 
+import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import IntegrityError
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, User, UserRole, session_scope
+from app.postgresdb import (
+    ExtractionRepository,
+    ExtractionRunInput,
+    ExtractionStageInput,
+    PatientRepository,
+    User,
+    UserRole,
+    session_scope,
+)
 
 VALID_PATIENT = {
     "full_name": "Jean Tremblay",
@@ -223,6 +234,19 @@ def test_malformed_nam_is_rejected():
     assert response.status_code == 422
 
 
+async def test_a_non_canonical_nam_is_refused_by_the_database_too(db_session):
+    # PatientBase normalizes at the API boundary; the CHECK constraint covers any other
+    # writer (a script, a future import) — and isn't mistaken for a duplicate.
+    with pytest.raises(IntegrityError):
+        await PatientRepository(db_session).create(
+            full_name="Nam Brute",
+            ramq_number="brut12345678",
+            date_of_birth=date(1981, 2, 10),
+            gender=None,
+            is_vulnerable=False,
+        )
+
+
 def test_blank_nam_is_stored_as_no_nam():
     with TestClient(app) as client:
         response = client.post("/patients", json=_valid_patient(ramq_number="   "))
@@ -381,26 +405,23 @@ async def test_a_patient_not_on_the_billing_physicians_roster_can_still_be_claim
     with TestClient(app) as client:
         created = client.post("/patients", json=_valid_patient()).json()
         async with session_scope() as session:
-            [extraction_record] = await ExtractionRepository(session).create_many(
-                [
-                    ExtractionRecordInput(
-                        task="billing_codes",
-                        transcript="transcript de test",
-                        result=billing_result,
-                        model="mistral-small-latest",
-                        source_system="simule",
-                        user_id=1,
-                    )
-                ]
+            run = await ExtractionRepository(session).create_run(
+                ExtractionRunInput(
+                    user_id=1,
+                    patient_id=created["id"],
+                    transcript="transcript de test",
+                    source_system="simule",
+                    stages=[
+                        ExtractionStageInput(task="billing_codes", model="mistral-small-latest", result=billing_result)
+                    ],
+                )
             )
         claim_response = client.post(
             "/claims",
             json={
-                "patient_id": created["id"],
+                "extraction_run_id": run.id,
                 "service_date": "2026-02-10",
-                "billing_extraction_record_id": extraction_record.id,
                 "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
-                "source_system": "simule",
             },
         )
 

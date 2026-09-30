@@ -87,7 +87,7 @@ async def test_billing_codes_stage_sees_both_the_rendered_summary_and_the_raw_tr
 
 
 async def test_billing_codes_stage_states_known_context_facts():
-    context = BillingContext(physician=PhysicianContext(number_of_patients=320))
+    context = BillingContext(physician=PhysicianContext(panel_size=320))
 
     _s, _b, mock_get_client, _ = await _run_pipeline(context)
 

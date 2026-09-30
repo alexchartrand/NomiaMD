@@ -166,7 +166,7 @@ async def test_build_prompt_candidate_numbers_matches_the_retrieved_candidates()
 
 async def test_build_prompt_states_known_facts_as_established():
     context = BillingContext(
-        physician=PhysicianContext(number_of_patients=320),
+        physician=PhysicianContext(panel_size=320),
         patient=PatientContext(age_years=58, is_registered=True, is_vulnerable=False),
     )
     task = _task([])
@@ -208,7 +208,7 @@ async def test_build_prompt_names_unresolved_axes_from_the_retriever():
 
 
 async def test_build_prompt_passes_the_summary_and_context_to_the_retriever():
-    context = BillingContext(physician=PhysicianContext(number_of_patients=320))
+    context = BillingContext(physician=PhysicianContext(panel_size=320))
     retriever = _FakeRetriever([])
     task = BillingCodesTask(retriever, _FakeCodeRepository())
 

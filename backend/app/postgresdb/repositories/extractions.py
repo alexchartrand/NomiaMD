@@ -1,45 +1,56 @@
-"""`extraction_records` — one stored LLM extraction run per task."""
+"""`extraction_runs` and their per-stage `extraction_results`."""
 
 from dataclasses import dataclass
 from typing import Sequence
 
-from app.postgresdb.models import ExtractionRecord
+from sqlalchemy import select
+
+from app.postgresdb.models import ExtractionRun, ExtractionRunResult
 from app.postgresdb.repositories.base import SessionRepository
 
 
 @dataclass
-class ExtractionRecordInput:
+class ExtractionStageInput:
     task: str
-    transcript: str
-    result: dict
     model: str
-    source_system: str | None
+    result: dict
+
+
+@dataclass
+class ExtractionRunInput:
     user_id: int
+    patient_id: int
+    transcript: str
+    source_system: str | None
+    stages: Sequence[ExtractionStageInput]
 
 
 class ExtractionRepository(SessionRepository):
-    async def create_many(
-        self, records: Sequence[ExtractionRecordInput]
-    ) -> list[ExtractionRecord]:
-        created = [
-            ExtractionRecord(
-                task=r.task,
-                transcript=r.transcript,
-                result_json=r.result,
-                model=r.model,
-                source_system=r.source_system,
-                user_id=r.user_id,
-            )
-            for r in records
-        ]
-        self._session.add_all(created)
+    async def create_run(self, data: ExtractionRunInput) -> ExtractionRun:
+        """The run and every stage's result, in the caller's one transaction."""
+        run = ExtractionRun(
+            user_id=data.user_id,
+            patient_id=data.patient_id,
+            transcript=data.transcript,
+            source_system=data.source_system,
+        )
+        self._session.add(run)
+        await self._session.flush()  # populate run.id for the result rows' FK
+        self._session.add_all(
+            ExtractionRunResult(run_id=run.id, task=s.task, model=s.model, result_json=s.result)
+            for s in data.stages
+        )
         await self._session.flush()
-        for record in created:
-            await self._session.refresh(record)
-        return created
+        return run
 
-    async def get_for_user(self, record_id: int, user_id: int) -> ExtractionRecord | None:
-        record = await self._session.get(ExtractionRecord, record_id)
-        if record is None or record.user_id != user_id:
+    async def get_run_for_user(self, run_id: int, user_id: int) -> ExtractionRun | None:
+        run = await self._session.get(ExtractionRun, run_id)
+        if run is None or run.user_id != user_id:
             return None
-        return record
+        return run
+
+    async def get_result(self, run_id: int, task: str) -> ExtractionRunResult | None:
+        result = await self._session.execute(
+            select(ExtractionRunResult).where(ExtractionRunResult.run_id == run_id, ExtractionRunResult.task == task)
+        )
+        return result.scalar_one_or_none()

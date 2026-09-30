@@ -6,7 +6,7 @@ from app.auth.profile import PracticeFacts, ProfileService
 from app.auth.service import AuthService
 from app.auth.models import LoginRequest, PasswordChangeRequest, ProfileUpdateRequest, UserOut
 from app.config import settings
-from app.postgresdb import User
+from app.postgresdb import DuplicatePracticeNumberError, User
 from app.rate_limit import limiter
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -60,16 +60,22 @@ async def update_me(
 ) -> UserOut:
     # One transaction for both halves (users + physician_profiles): a failure in either
     # rolls back the other, see app/postgresdb/dependencies.py.
-    account = await profiles.update(
-        current_user,
-        full_name=body.full_name,
-        practice_number=body.practice_number,
-        facts=PracticeFacts(
-            physician_type=body.physician_type.value if body.physician_type else None,
-            number_of_patients=body.number_of_patients,
-            remuneration_type=body.remuneration_type.value if body.remuneration_type else None,
-        ),
-    )
+    try:
+        account = await profiles.update(
+            current_user,
+            full_name=body.full_name,
+            practice_number=body.practice_number,
+            facts=PracticeFacts(
+                physician_type=body.physician_type.value if body.physician_type else None,
+                panel_size=body.panel_size,
+                remuneration_type=body.remuneration_type.value if body.remuneration_type else None,
+            ),
+        )
+    except DuplicatePracticeNumberError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Ce numéro de pratique est déjà associé à un autre compte.",
+        ) from exc
     return UserOut.from_account(account)
 
 

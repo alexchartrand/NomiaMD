@@ -34,7 +34,7 @@ class PracticeFacts:
     """The editable practice facts one physician_profiles version records."""
 
     physician_type: str | None
-    number_of_patients: int | None
+    panel_size: int | None
     remuneration_type: str | None
 
 
@@ -77,10 +77,7 @@ class ProfileService:
         versions of reality, and keeping both would grow the table without ever changing
         the answer to `as_of`."""
         effective = effective_from or self._clock.today()
-        existing = await self._profiles.get_starting_on(user_id, effective)
-        if existing is None:
-            return await self._profiles.add(user_id, effective_from=effective, **asdict(facts))
-        return await self._profiles.overwrite(existing, **asdict(facts))
+        return await self._profiles.upsert(user_id, effective_from=effective, **asdict(facts))
 
     async def update(
         self,

@@ -1,19 +1,24 @@
-"""Composition root for ClaimService — wires its three repositories (and the duplicate
-guard built on the claims one) together over the request's single session, so a claim and
-its code rows commit or roll back together."""
+"""Composition root for ClaimService — wires its repositories (and the helpers built on
+them) together over the request's single session, so a claim and its code rows commit or
+roll back together."""
 
+from app.auth.factory import build_profile_service
+from app.claims.context import ClaimContextSnapshotter
 from app.claims.duplicates import ClaimDuplicateGuard
 from app.claims.fees import FeeSnapshotter
 from app.claims.service import ClaimService
 from app.postgresdb import ClaimRepository, DbSession, ExtractionRepository, PatientRepository
+from app.ramq_codes import BillingContextBuilder
 
 
 def get_claim_service(session: DbSession) -> ClaimService:
     claims = ClaimRepository(session)
+    patients = PatientRepository(session)
     return ClaimService(
         claims,
-        PatientRepository(session),
+        patients,
         ExtractionRepository(session),
         ClaimDuplicateGuard(claims),
         FeeSnapshotter(),
+        ClaimContextSnapshotter(BillingContextBuilder(build_profile_service(session), patients)),
     )

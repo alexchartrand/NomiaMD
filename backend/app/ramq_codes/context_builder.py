@@ -61,7 +61,7 @@ class BillingContextBuilder:
 
         physician = (
             PhysicianContext(
-                number_of_patients=profile.number_of_patients,
+                panel_size=profile.panel_size,
                 physician_type=profile.physician_type,
                 remuneration_type=profile.remuneration_type,
             )

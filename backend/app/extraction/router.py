@@ -55,12 +55,12 @@ async def extract(
     summary_result, result = await run_billing_codes_pipeline(
         body.transcript, user=current_user, patient_id=body.patient_id
     )
-    summary_record, billing_record = await recorder.save(
+    run = await recorder.save(
         transcript=body.transcript,
         source_system=source_system,
         user_id=current_user.id,
-        summary=summary_result,
-        billing=result,
+        patient_id=body.patient_id,
+        stages=[summary_result, result],
     )
 
     encounter_date_raw = summary_result.result.encounter_setting.date
@@ -68,8 +68,7 @@ async def extract(
 
     return BillingExtractionResponse(
         billing=result,
-        summary_extraction_record_id=summary_record.id,
-        billing_extraction_record_id=billing_record.id,
+        extraction_run_id=run.id,
         encounter_date=encounter_date,
         encounter_date_raw=encounter_date_raw,
     )

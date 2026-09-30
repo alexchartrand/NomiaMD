@@ -25,9 +25,9 @@ class UserOut(BaseModel):
     email: str
     full_name: str
     role: UserRole
-    physician_type: str | None
-    number_of_patients: int | None
-    remuneration_type: str | None
+    physician_type: PhysicianType | None
+    panel_size: int | None
+    remuneration_type: RemunerationType | None
     practice_number: str | None
 
     @classmethod
@@ -39,7 +39,7 @@ class UserOut(BaseModel):
             full_name=account.user.full_name,
             role=account.user.role,
             physician_type=profile.physician_type if profile else None,
-            number_of_patients=profile.number_of_patients if profile else None,
+            panel_size=profile.panel_size if profile else None,
             remuneration_type=profile.remuneration_type if profile else None,
             # Unlike the rest of this method's fields, not sourced from `profile` — it
             # lives directly on `users` (see the User model's docstring for why).
@@ -50,7 +50,7 @@ class UserOut(BaseModel):
 class ProfileUpdateRequest(BaseModel):
     full_name: str
     physician_type: PhysicianType | None = None
-    number_of_patients: int | None = Field(default=None, ge=0)
+    panel_size: int | None = Field(default=None, ge=0)
     remuneration_type: RemunerationType | None = None
     practice_number: str | None = Field(default=None, pattern=_PRACTICE_NUMBER_PATTERN)
 

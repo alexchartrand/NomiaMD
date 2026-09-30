@@ -3,7 +3,7 @@
 from datetime import date
 from typing import Sequence
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
 
 from app.postgresdb.models import Gender, Patient
@@ -13,7 +13,7 @@ from app.postgresdb.repositories.base import SessionRepository
 class DuplicatePatientRamqNumberError(Exception):
     """Raised on a create/update that would leave two active (non-deleted) patients
     sharing a NAM — patients are globally unique by NAM now, not scoped per physician.
-    Checked in Python first — same reasoning as ClaimService's billing_extraction_record_id
+    Checked in Python first — same reasoning as ClaimDuplicateGuard's extraction-run
     pre-check — so the caller gets a clean 409 instead of a raw IntegrityError;
     ix_patients_ramq_number_active (models.py) is the DB-level backstop. The flush itself is
     also wrapped in try/except IntegrityError (see create/update below): the pre-check alone
@@ -54,7 +54,11 @@ class PatientRepository(SessionRepository):
         try:
             await self._session.flush()
         except IntegrityError as exc:
-            raise DuplicatePatientRamqNumberError(ramq_number) from exc
+            # Only the unique index means "duplicate" — a CHECK violation (a non-canonical
+            # NAM that bypassed PatientBase) must surface as the IntegrityError it is.
+            if "unique" in str(exc.orig).lower():
+                raise DuplicatePatientRamqNumberError(ramq_number) from exc
+            raise
 
     async def create(
         self,
@@ -79,7 +83,6 @@ class PatientRepository(SessionRepository):
         )
         self._session.add(patient)
         await self._flush_or_raise_duplicate(ramq_number)
-        await self._session.refresh(patient)
         return patient
 
     async def get(self, patient_id: int) -> Patient | None:
@@ -122,7 +125,8 @@ class PatientRepository(SessionRepository):
         """Active patients whose full name contains `name_fragment` (case-insensitive,
         LIKE wildcards in it escaped), or whose NAM is exactly `ramq_number`. What counts as
         a searchable query is app/patients/search.py's PatientSearch's call."""
-        filters = [func.lower(Patient.full_name).contains(name_fragment.lower(), autoescape=True)]
+        # icontains renders ILIKE on Postgres — the form ix_patients_full_name_trgm serves.
+        filters = [Patient.full_name.icontains(name_fragment, autoescape=True)]
         if ramq_number is not None:
             filters.append(Patient.ramq_number == ramq_number)
         result = await self._session.execute(
@@ -157,7 +161,6 @@ class PatientRepository(SessionRepository):
         patient.family_doctor_name = family_doctor_name
         patient.family_doctor_practice_number = family_doctor_practice_number
         await self._flush_or_raise_duplicate(ramq_number)
-        await self._session.refresh(patient)
         return patient
 
     async def get_many(self, patient_ids: Sequence[int]) -> list[Patient]:

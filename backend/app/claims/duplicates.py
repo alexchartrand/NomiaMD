@@ -13,12 +13,13 @@ class ClaimDuplicateGuard:
     def __init__(self, claim_repository: ClaimRepository):
         self._claim_repository = claim_repository
 
-    async def ensure_extraction_unclaimed(self, billing_extraction_record_id: int) -> None:
+    async def ensure_run_unclaimed(self, extraction_run_id: int) -> None:
         """Never overridable — resubmitting the exact same extraction as a second claim is
-        a client bug, not a legitimate re-bill. The billing_extraction_record_id unique
-        constraint is the backstop for two requests racing past this check
-        (ClaimRepository.create raises ExtractionAlreadyClaimedError)."""
-        if await self._claim_repository.get_by_billing_extraction_record_id(billing_extraction_record_id):
+        a client bug, not a legitimate re-bill. The partial unique index on
+        claims.extraction_run_id is the backstop for two requests racing past this check
+        (ClaimRepository.create raises ExtractionAlreadyClaimedError). A voided claim frees
+        its run."""
+        if await self._claim_repository.get_live_by_extraction_run_id(extraction_run_id):
             raise DuplicateClaimError(EXTRACTION_ALREADY_CLAIMED)
 
     async def ensure_first_on_date(self, physician_id: int, patient_id: int, service_date: date) -> None:

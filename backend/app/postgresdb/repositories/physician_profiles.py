@@ -2,31 +2,33 @@
 
 from datetime import date
 
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.dialects import postgresql, sqlite
 
 from app.postgresdb.models import PhysicianProfile
 from app.postgresdb.repositories.base import SessionRepository
 
+# Both dialects spell INSERT ... ON CONFLICT DO UPDATE the same way, but through their own
+# `insert` construct.
+_DIALECT_INSERTS = {"postgresql": postgresql.insert, "sqlite": sqlite.insert}
+
 
 class PhysicianProfileRepository(SessionRepository):
     """Append-only history of a physician's practice facts (see PhysicianProfile). Reads
-    are "which version applies on date D", never a plain column read. What "today" is, and
-    when an edit overwrites a version instead of adding one, is ProfileService's call
-    (app/auth/profile.py)."""
+    are "which version applies on date D", never a plain column read. What "today" is is
+    ProfileService's call (app/auth/profile.py)."""
 
     async def get_effective_on(self, user_id: int, on: date) -> PhysicianProfile | None:
         """The version in effect on `on` — the latest row that had already taken effect by
         then. Returns None when the physician had no profile yet at that date, which is
-        also the answer for a physician who has never filled one in.
-
-        Ties on effective_from break by id so a same-day backfill is deterministic."""
+        also the answer for a physician who has never filled one in."""
         result = await self._session.execute(
             select(PhysicianProfile)
             .where(
                 PhysicianProfile.user_id == user_id,
                 PhysicianProfile.effective_from <= on,
             )
-            .order_by(PhysicianProfile.effective_from.desc(), PhysicianProfile.id.desc())
+            .order_by(PhysicianProfile.effective_from.desc())
             .limit(1)
         )
         return result.scalar_one_or_none()
@@ -43,53 +45,38 @@ class PhysicianProfileRepository(SessionRepository):
         result = await self._session.execute(
             select(PhysicianProfile)
             .where(PhysicianProfile.user_id == user_id)
-            .order_by(PhysicianProfile.effective_from.asc(), PhysicianProfile.id.asc())
+            .order_by(PhysicianProfile.effective_from.asc())
             .limit(1)
         )
         return result.scalar_one_or_none()
 
-    async def get_starting_on(self, user_id: int, effective_from: date) -> PhysicianProfile | None:
-        """The version that takes effect exactly on `effective_from`, if any."""
-        result = await self._session.execute(
-            select(PhysicianProfile).where(
-                PhysicianProfile.user_id == user_id,
-                PhysicianProfile.effective_from == effective_from,
-            )
-        )
-        return result.scalars().first()
-
-    async def add(
+    async def upsert(
         self,
         user_id: int,
         *,
         effective_from: date,
         physician_type: str | None,
-        number_of_patients: int | None,
+        panel_size: int | None,
         remuneration_type: str | None,
     ) -> PhysicianProfile:
-        profile = PhysicianProfile(
-            user_id=user_id,
-            effective_from=effective_from,
-            physician_type=physician_type,
-            number_of_patients=number_of_patients,
-            remuneration_type=remuneration_type,
+        """Adds the version taking effect on `effective_from`, or overwrites the one already
+        there — one atomic statement, so two concurrent same-day saves can't both insert."""
+        facts = {
+            "physician_type": physician_type,
+            "panel_size": panel_size,
+            "remuneration_type": remuneration_type,
+        }
+        insert = _DIALECT_INSERTS[self._session.bind.dialect.name]
+        statement = (
+            insert(PhysicianProfile)
+            .values(user_id=user_id, effective_from=effective_from, **facts)
+            .on_conflict_do_update(
+                index_elements=[PhysicianProfile.user_id, PhysicianProfile.effective_from],
+                set_={**facts, "updated_at": func.now()},
+            )
+            .returning(PhysicianProfile)
         )
-        self._session.add(profile)
-        await self._session.flush()
-        await self._session.refresh(profile)
-        return profile
-
-    async def overwrite(
-        self,
-        profile: PhysicianProfile,
-        *,
-        physician_type: str | None,
-        number_of_patients: int | None,
-        remuneration_type: str | None,
-    ) -> PhysicianProfile:
-        profile.physician_type = physician_type
-        profile.number_of_patients = number_of_patients
-        profile.remuneration_type = remuneration_type
-        await self._session.flush()
-        await self._session.refresh(profile)
-        return profile
+        # populate_existing: an overwritten version already loaded in this session must pick
+        # up the new values rather than keep its stale ones from the identity map.
+        result = await self._session.scalars(statement, execution_options={"populate_existing": True})
+        return result.one()

@@ -5,7 +5,9 @@ physician's profile says today."""
 import uuid
 from datetime import date, timedelta
 
+import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import IntegrityError
 
 from app.auth import get_current_user
 from app.auth.factory import get_profile_service
@@ -15,6 +17,7 @@ from app.clock import ClinicClock
 from app.main import app
 from app.postgresdb import (
     DbSession,
+    PhysicianProfile,
     PhysicianProfileRepository,
     PhysicianType,
     RemunerationType,
@@ -51,9 +54,9 @@ def _profile_service(session, today: date = TODAY) -> ProfileService:
     return ProfileService(UserRepository(session), PhysicianProfileRepository(session), _FixedClock(today))
 
 
-def _facts(*, number_of_patients=None, remuneration_type=None, physician_type=None) -> PracticeFacts:
+def _facts(*, panel_size=None, remuneration_type=None, physician_type=None) -> PracticeFacts:
     return PracticeFacts(
-        physician_type=physician_type, number_of_patients=number_of_patients, remuneration_type=remuneration_type
+        physician_type=physician_type, panel_size=panel_size, remuneration_type=remuneration_type
     )
 
 
@@ -74,7 +77,7 @@ async def test_past_date_reads_the_version_in_effect_then(db_session):
         user.id,
         _facts(
             physician_type=PhysicianType.MED_FAM.value,
-            number_of_patients=500,
+            panel_size=500,
             remuneration_type=RemunerationType.A_L_ACTE.value,
         ),
         effective_from=last_year,
@@ -83,19 +86,19 @@ async def test_past_date_reads_the_version_in_effect_then(db_session):
         user.id,
         _facts(
             physician_type=PhysicianType.MED_FAM.value,
-            number_of_patients=1200,
+            panel_size=1200,
             remuneration_type=RemunerationType.MIXTE.value,
         ),
     )
 
     back_then = (await profiles.as_of(user, last_year + timedelta(days=30))).profile
     assert back_then is not None
-    assert back_then.number_of_patients == 500
+    assert back_then.panel_size == 500
     assert back_then.remuneration_type == RemunerationType.A_L_ACTE.value
 
     today = (await profiles.current(user)).profile
     assert today is not None
-    assert today.number_of_patients == 1200
+    assert today.panel_size == 1200
     assert today.remuneration_type == RemunerationType.MIXTE.value
 
 
@@ -103,7 +106,7 @@ async def test_date_before_the_first_version_reads_as_none(db_session):
     user = await _create_user()
     profiles = _profile_service(db_session)
     await profiles.record_practice_facts(
-        user.id, _facts(number_of_patients=500), effective_from=TODAY - timedelta(days=10)
+        user.id, _facts(panel_size=500), effective_from=TODAY - timedelta(days=10)
     )
 
     assert (await profiles.as_of(user, TODAY - timedelta(days=30))).profile is None
@@ -113,20 +116,30 @@ async def test_same_day_edits_overwrite_instead_of_piling_up(db_session):
     user = await _create_user()
     profiles = _profile_service(db_session)
 
-    first = await profiles.record_practice_facts(user.id, _facts(number_of_patients=100))
-    second = await profiles.record_practice_facts(user.id, _facts(number_of_patients=200))
+    first = await profiles.record_practice_facts(user.id, _facts(panel_size=100))
+    second = await profiles.record_practice_facts(user.id, _facts(panel_size=200))
 
     assert first.id == second.id
     current = (await profiles.current(user)).profile
     assert current is not None
-    assert current.number_of_patients == 200
+    assert current.panel_size == 200
+
+
+async def test_one_version_per_day_is_enforced_by_the_database(db_session):
+    user = await _create_user()
+    db_session.add_all(
+        PhysicianProfile(user_id=user.id, effective_from=TODAY, panel_size=size) for size in (100, 200)
+    )
+
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
 
 
 async def test_a_new_version_takes_effect_on_the_clocks_today(db_session):
     user = await _create_user()
 
     profile = await _profile_service(db_session, today=TODAY).record_practice_facts(
-        user.id, _facts(number_of_patients=100)
+        user.id, _facts(panel_size=100)
     )
 
     assert profile.effective_from == TODAY
@@ -153,7 +166,7 @@ async def test_profile_edit_does_not_rewrite_an_earlier_version():
             json={
                 "full_name": "Dr. Doe",
                 "physician_type": None,
-                "number_of_patients": None,
+                "panel_size": None,
                 "remuneration_type": RemunerationType.MIXTE.value,
             },
         )
@@ -179,12 +192,12 @@ async def test_me_returns_nulls_for_a_physician_with_no_profile():
     body = response.json()
     assert body["email"] == user.email
     assert body["physician_type"] is None
-    assert body["number_of_patients"] is None
+    assert body["panel_size"] is None
     assert body["remuneration_type"] is None
 
 
 class _FailingProfileRepository(PhysicianProfileRepository):
-    async def add(self, *args, **kwargs):
+    async def upsert(self, *args, **kwargs):
         raise RuntimeError("profile write failed")
 
 
@@ -205,7 +218,7 @@ async def test_profile_edit_is_all_or_nothing():
             client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
             response = client.patch(
                 "/auth/me",
-                json={"full_name": "Dr. Renamed", "physician_type": None, "number_of_patients": None},
+                json={"full_name": "Dr. Renamed", "physician_type": None, "panel_size": None},
             )
     finally:
         app.dependency_overrides.pop(get_profile_service, None)

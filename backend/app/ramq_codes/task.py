@@ -136,8 +136,8 @@ def _known_facts_text(context: BillingContext) -> str | None:
     physician = context.physician
     patient = context.patient
 
-    if physician.number_of_patients is not None:
-        lines.append(f"- Clientèle inscrite du médecin : {physician.number_of_patients} patients.")
+    if physician.panel_size is not None:
+        lines.append(f"- Clientèle inscrite du médecin : {physician.panel_size} patients.")
     if patient.is_registered is not None:
         state = "est inscrit" if patient.is_registered else "n'est pas inscrit"
         lines.append(f"- Le patient {state} auprès de ce médecin.")

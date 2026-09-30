@@ -14,10 +14,11 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
 from app.extraction.engine import run_extraction
 from app.main import app
-from app.postgresdb import Gender, PatientRepository, session_scope
+from app.postgresdb import ExtractionRun, ExtractionRunResult, Gender, PatientRepository, session_scope
 from app.ramq_codes import BillingCodesInput, BillingContext
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
@@ -208,8 +209,15 @@ async def test_extract_endpoint_end_to_end():
     body = response.json()
     assert body["billing"]["task"] == "billing_codes"
     assert len(body["billing"]["result"]["codes"]) == 2
-    assert isinstance(body["summary_extraction_record_id"], int)
-    assert isinstance(body["billing_extraction_record_id"], int)
+    # One run for the chosen patient, transcript stored once, a result row per stage.
+    async with session_scope() as session:
+        run = await session.get(ExtractionRun, body["extraction_run_id"])
+        tasks = (
+            await session.scalars(select(ExtractionRunResult.task).where(ExtractionRunResult.run_id == run.id))
+        ).all()
+    assert run.patient_id == patient.id
+    assert run.user_id == 1
+    assert sorted(tasks) == ["billing_codes", "consultation_summary"]
     # MOCK_SUMMARY_RESULT's encounter_setting.date is null -> must stay null, never "today".
     assert body["encounter_date"] is None
     assert body["encounter_date_raw"] is None

@@ -39,7 +39,7 @@ def test_empty_context_filters_nothing():
 
 def test_known_facts_are_carried_over():
     context = BillingContext(
-        physician=PhysicianContext(number_of_patients=320),
+        physician=PhysicianContext(panel_size=320),
         patient=PatientContext(age_years=58.0, is_registered=True, is_vulnerable=False),
     )
 
@@ -71,7 +71,7 @@ def test_every_axis_a_candidate_is_bounded_on_is_unresolved_when_nothing_is_know
 
 
 def test_a_known_axis_is_never_unresolved():
-    context = BillingContext(physician=PhysicianContext(number_of_patients=320))
+    context = BillingContext(physician=PhysicianContext(panel_size=320))
 
     unresolved = UnresolvedAxisDetector().detect([_15801], context)
 

@@ -43,7 +43,7 @@ from app.sample_patients import get_sample_patients, parse_age_hint_years, parse
 ADMIN_EMAIL = "invite@nomiamd.com"
 ADMIN_FULL_NAME = "Alex Chartrand"
 ADMIN_PHYSICIAN_TYPE = PhysicianType.MED_FAM.value
-ADMIN_NUMBER_OF_PATIENTS = 800
+ADMIN_PANEL_SIZE = 800
 ADMIN_REMUNERATION_TYPE = RemunerationType.MIXTE.value
 
 # A single fabricated placeholder, not a real RAMQ practice number — reused both as the
@@ -111,7 +111,7 @@ async def main() -> None:
                 admin.id,
                 PracticeFacts(
                     physician_type=ADMIN_PHYSICIAN_TYPE,
-                    number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
+                    panel_size=ADMIN_PANEL_SIZE,
                     remuneration_type=ADMIN_REMUNERATION_TYPE,
                 ),
             )
