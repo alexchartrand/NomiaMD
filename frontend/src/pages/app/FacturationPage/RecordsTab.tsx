@@ -24,7 +24,7 @@ import {
 } from "../../../components";
 import { cn } from "@/lib/utils";
 import { formatDate } from "../../../utils/date";
-import { STATUS_LABELS } from "./constants";
+import { STATUS_LABELS, describeFee } from "./constants";
 
 interface RecordsTabProps {
   reloadSignal: number;
@@ -177,7 +177,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                       <span
                         className={cn(
                           "inline-block rounded-full px-[0.6rem] py-[0.15rem] text-[0.85rem]",
-                          claim.status === "facture"
+                          claim.status === "soumis"
                             ? "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]"
                             : "bg-[color:var(--color-primary-tint)] text-primary",
                         )}
@@ -208,7 +208,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                               <span className="font-mono text-[0.85rem] text-primary">{c.code}</span>{" "}
                               {c.description}
                               {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}
-                              {c.fee_when_to_use && <> — {c.fee_when_to_use}</>}
+                              {describeFee(c) && <> — {describeFee(c)}</>}
                               <br />
                               <em>{c.explanation}</em>
                             </li>
