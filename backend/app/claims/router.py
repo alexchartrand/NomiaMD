@@ -100,4 +100,4 @@ async def delete_claim(
             detail="Cette facturation fait partie d'une facture générée. Supprimez d'abord la facture.",
         ) from exc
     if not deleted:
-        raise HTTPException(status_code=404, detail="Facture introuvable")
+        raise HTTPException(status_code=404, detail="Facturation introuvable")

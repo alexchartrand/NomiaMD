@@ -14,6 +14,7 @@ selection it's a lossy bottleneck — any clinical detail the summarizer dropped
 unrecoverable downstream. See app/ramq_codes/task.py's BillingCodesInput docstring."""
 
 import logging
+from datetime import date
 from typing import cast
 
 from app.auth.factory import get_profile_service
