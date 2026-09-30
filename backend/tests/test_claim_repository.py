@@ -19,7 +19,6 @@ from app.postgresdb import (
     ExtractionRepository,
     Gender,
     PatientRepository,
-    init_db,
 )
 from tests.db_helpers import ensure_user_row, physician
 
@@ -28,11 +27,6 @@ _physician_ids = itertools.count(2000)
 # even though every test here used to reuse the same literal NAM under a distinct
 # physician_id.
 _ramq_numbers = itertools.count(1)
-
-
-@pytest.fixture(autouse=True)
-async def _init_db():
-    await init_db()
 
 
 @pytest.fixture

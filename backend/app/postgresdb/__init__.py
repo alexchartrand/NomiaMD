@@ -6,7 +6,7 @@ their per-request FastAPI dependency in dependencies.py).
 Public interface — everything else that needs this imports it from here rather than
 reaching into .database/.models/.repositories directly."""
 
-from app.postgresdb.database import init_db
+from app.postgresdb.database import PostgresDB
 from app.postgresdb.dependencies import DbSession, get_db_session
 from app.postgresdb.models import (
     Bill,
@@ -41,10 +41,12 @@ from app.postgresdb.repositories import (
     PhysicianProfileRepository,
     UserRepository,
 )
-from app.postgresdb.session import session_scope
+from app.postgresdb.session import DatabaseNotOpenError, bind_database, session_scope
 
 __all__ = [
-    "init_db",
+    "PostgresDB",
+    "DatabaseNotOpenError",
+    "bind_database",
     "session_scope",
     "DbSession",
     "get_db_session",

@@ -27,6 +27,7 @@ from sqlalchemy.exc import IntegrityError  # noqa: E402
 from app.auth.factory import build_profile_service  # noqa: E402
 from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
+from app.bootstrap import postgres_database  # noqa: E402
 from app.patients import format_full_name, nam  # noqa: E402
 from app.postgresdb import (  # noqa: E402
     PatientRepository,
@@ -35,7 +36,6 @@ from app.postgresdb import (  # noqa: E402
     RemunerationType,
     UserRepository,
     UserRole,
-    init_db,
     session_scope,
 )
 from app.sample_patients import get_sample_patients, parse_age_hint_years, parse_header_fields  # noqa: E402
@@ -89,67 +89,67 @@ def _family_doctor_name(fields: dict[str, str]) -> str | None:
 async def main() -> None:
     password = prompt_for_password()
 
-    await init_db()  # a fresh DB (e.g. right after a wipe) has no tables yet
-    hashed_password = PasswordHasher().hash(password)
-    # One transaction for the whole seed: a failure part-way leaves the DB as it was.
-    async with session_scope() as session:
-        try:
-            admin = await UserRepository(session).create(
-                email=ADMIN_EMAIL,
-                hashed_password=hashed_password,
-                full_name=ADMIN_FULL_NAME,
-                role=UserRole.ADMIN,
-                practice_number=SEED_PRACTICE_NUMBER,
+    async with postgres_database():
+        hashed_password = PasswordHasher().hash(password)
+        # One transaction for the whole seed: a failure part-way leaves the DB as it was.
+        async with session_scope() as session:
+            try:
+                admin = await UserRepository(session).create(
+                    email=ADMIN_EMAIL,
+                    hashed_password=hashed_password,
+                    full_name=ADMIN_FULL_NAME,
+                    role=UserRole.ADMIN,
+                    practice_number=SEED_PRACTICE_NUMBER,
+                )
+            except IntegrityError:
+                print(f"A user with email {ADMIN_EMAIL!r} already exists — DB wasn't wiped?", file=sys.stderr)
+                raise SystemExit(1)
+
+            # The practice facts live in their own dated table, so provisioning writes the
+            # account's first profile version rather than more columns on `users`.
+            await build_profile_service(session).record_practice_facts(
+                admin.id,
+                PracticeFacts(
+                    physician_type=ADMIN_PHYSICIAN_TYPE,
+                    number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
+                    remuneration_type=ADMIN_REMUNERATION_TYPE,
+                ),
             )
-        except IntegrityError:
-            print(f"A user with email {ADMIN_EMAIL!r} already exists — DB wasn't wiped?", file=sys.stderr)
-            raise SystemExit(1)
 
-        # The practice facts live in their own dated table, so provisioning writes the
-        # account's first profile version rather than more columns on `users`.
-        await build_profile_service(session).record_practice_facts(
-            admin.id,
-            PracticeFacts(
-                physician_type=ADMIN_PHYSICIAN_TYPE,
-                number_of_patients=ADMIN_NUMBER_OF_PATIENTS,
-                remuneration_type=ADMIN_REMUNERATION_TYPE,
-            ),
-        )
+            print(f"Created admin user {admin.email!r} (id={admin.id}, practice_number={SEED_PRACTICE_NUMBER!r})")
 
-        print(f"Created admin user {admin.email!r} (id={admin.id}, practice_number={SEED_PRACTICE_NUMBER!r})")
+            patient_repository = PatientRepository(session)
+            roster_repository = PhysicianPatientRepository(session)
+            today = date.today()
 
-        patient_repository = PatientRepository(session)
-        roster_repository = PhysicianPatientRepository(session)
-        today = date.today()
+            for sample in get_sample_patients():
+                fields = parse_header_fields(sample.transcript)
+                patient_field = fields.get("Patient", "")
 
-        for sample in get_sample_patients():
-            fields = parse_header_fields(sample.transcript)
-            patient_field = fields.get("Patient", "")
+                normalized_nam = nam.normalize(fields.get("NAM"))
+                if normalized_nam is None:
+                    print(f"  ! skipping {sample.id!r}: no valid NAM in header", file=sys.stderr)
+                    continue
 
-            normalized_nam = nam.normalize(fields.get("NAM"))
-            if normalized_nam is None:
-                print(f"  ! skipping {sample.id!r}: no valid NAM in header", file=sys.stderr)
-                continue
+                decoded = nam.decode(normalized_nam, on_date=today, age_hint=parse_age_hint_years(patient_field))
+                if decoded is None:
+                    print(f"  ! skipping {sample.id!r}: could not decode NAM {normalized_nam!r}", file=sys.stderr)
+                    continue
 
-            decoded = nam.decode(normalized_nam, on_date=today, age_hint=parse_age_hint_years(patient_field))
-            if decoded is None:
-                print(f"  ! skipping {sample.id!r}: could not decode NAM {normalized_nam!r}", file=sys.stderr)
-                continue
+                full_name = format_full_name(_name_as_stated(patient_field)) or patient_field
+                is_vulnerable = bool(_VULNERABLE_RE.search(sample.transcript))
 
-            full_name = format_full_name(_name_as_stated(patient_field)) or patient_field
-            is_vulnerable = bool(_VULNERABLE_RE.search(sample.transcript))
-
-            patient = await patient_repository.get_or_create_by_ramq_number(
-                ramq_number=normalized_nam,
-                full_name=full_name,
-                date_of_birth=decoded.date_of_birth,
-                gender=decoded.gender,
-                is_vulnerable=is_vulnerable,
-                family_doctor_name=_family_doctor_name(fields),
-                family_doctor_practice_number=SEED_PRACTICE_NUMBER,
-            )
-            await roster_repository.add(admin.id, patient.id)
-            print(f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable})")
+                patient = await patient_repository.get_or_create_by_ramq_number(
+                    ramq_number=normalized_nam,
+                    full_name=full_name,
+                    date_of_birth=decoded.date_of_birth,
+                    gender=decoded.gender,
+                    is_vulnerable=is_vulnerable,
+                    family_doctor_name=_family_doctor_name(fields),
+                    family_doctor_practice_number=SEED_PRACTICE_NUMBER,
+                )
+                await roster_repository.add(admin.id, patient.id)
+                print(f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable})")
 
 
 if __name__ == "__main__":

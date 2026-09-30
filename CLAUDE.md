@@ -268,7 +268,12 @@ files and are skipped.
   `patients/factory.py`, `auth/factory.py`) build their repositories on it. Two deliberate
   exceptions open short `session_scope()`s instead, so no pooled connection is held across
   LLM calls: `get_current_user` and `POST /extract` (incl. the pipeline's
-  `ScopedBillingContextBuilder`). Scripts use `session_scope()` directly.
+  `ScopedBillingContextBuilder`). Scripts use `session_scope()` directly. Nothing is built at
+  import time: `PostgresDB.open()` (`app/postgresdb/database.py`, mirroring `LanceDB.open()`)
+  creates the engine and missing tables, and `app/bootstrap.py`'s `postgres_database()` binds
+  it for `session_scope()` — called by `application_services()`, the DB-only scripts, and
+  conftest's session-wide `postgres_db` fixture (a throwaway SQLite file). A `session_scope()`
+  with nothing bound raises `DatabaseNotOpenError`.
 - SQLite enforces foreign keys (`PRAGMA foreign_keys=ON`, `app/postgresdb/database.py`), in
   dev and in tests. A test that hands a route or repository a fixed-id in-memory `User` must
   seed its row first with `tests/db_helpers.py`'s `ensure_user_row` (conftest's default

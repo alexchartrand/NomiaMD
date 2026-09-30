@@ -20,7 +20,6 @@ from app.postgresdb import (
     RemunerationType,
     UserRepository,
     UserRole,
-    init_db,
     session_scope,
 )
 
@@ -28,7 +27,6 @@ PASSWORD = "correct horse battery staple"
 
 
 async def _create_user():
-    await init_db()
     async with session_scope() as session:
         return await UserRepository(session).create(
             email=f"doc-{uuid.uuid4().hex[:8]}@example.test",

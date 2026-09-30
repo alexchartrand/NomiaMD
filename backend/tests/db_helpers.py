@@ -2,14 +2,13 @@
 a fixed-id in-memory User handed to a route or repository must also exist as a real `users`
 row before anything referencing it (claims, extraction records, roster entries) is written."""
 
-from app.postgresdb import User, UserRole, init_db, session_scope
+from app.postgresdb import User, UserRole, session_scope
 
 
 async def ensure_user_row(user: User) -> None:
     """Inserts a `users` row mirroring `user` unless one with its id already exists —
     idempotent, since the test DB is shared across the whole session (see conftest.py) and
     tests/test_auth.py also creates autoincremented users in it."""
-    await init_db()
     async with session_scope() as session:
         if await session.get(User, user.id) is not None:
             return

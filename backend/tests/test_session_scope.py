@@ -5,7 +5,7 @@ import uuid
 
 import pytest
 
-from app.postgresdb import UserRepository, UserRole, init_db, session_scope
+from app.postgresdb import DatabaseNotOpenError, UserRepository, UserRole, bind_database, session_scope
 
 
 async def _find(email: str):
@@ -20,7 +20,6 @@ async def _create(session, email: str):
 
 
 async def test_block_that_exits_normally_is_committed():
-    await init_db()
     email = f"scope-{uuid.uuid4().hex[:8]}@example.test"
 
     async with session_scope() as session:
@@ -30,7 +29,6 @@ async def test_block_that_exits_normally_is_committed():
 
 
 async def test_block_that_raises_is_rolled_back():
-    await init_db()
     email = f"scope-{uuid.uuid4().hex[:8]}@example.test"
 
     with pytest.raises(RuntimeError):
@@ -39,3 +37,13 @@ async def test_block_that_raises_is_rolled_back():
             raise RuntimeError("fails after the write")
 
     assert await _find(email) is None
+
+
+async def test_scope_before_any_database_is_bound_raises(postgres_db):
+    bind_database(None)
+    try:
+        with pytest.raises(DatabaseNotOpenError):
+            async with session_scope():
+                pass
+    finally:
+        bind_database(postgres_db)

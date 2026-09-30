@@ -198,7 +198,6 @@ async def _seed_patient(*, ramq_number=None, full_name="Louise Tremblay"):
 
 
 async def test_extract_endpoint_end_to_end():
-    # Using TestClient as a context manager triggers the FastAPI lifespan (init_db()).
     # billing_codes is now a two-stage pipeline (consultation_summary, then billing_codes
     # off that summary) — two chat-completion calls happen, so mock two responses in order.
     with TestClient(app) as client:

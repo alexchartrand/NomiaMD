@@ -16,7 +16,6 @@ from app.postgresdb import (
     ClaimRepository,
     Gender,
     PatientRepository,
-    init_db,
 )
 from tests.db_helpers import ensure_user_row, physician
 
@@ -24,11 +23,6 @@ _physician_ids = itertools.count(3000)
 # Patients are globally unique by NAM now, so each seeded patient still needs its own NAM
 # regardless of which physician_id it's seeded under.
 _ramq_numbers = itertools.count(1)
-
-
-@pytest.fixture(autouse=True)
-async def _init_db():
-    await init_db()
 
 
 @pytest.fixture
