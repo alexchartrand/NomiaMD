@@ -27,6 +27,7 @@ from app.rate_limit import limiter  # noqa: E402
 from app.summary import ConsultationSummaryResult, render_for_billing_codes  # noqa: E402
 from app.summary import ConsultationSummaryTask  # noqa: E402
 from app.tasks.registry import register_tasks  # noqa: E402
+from tests.db_helpers import ensure_user_row  # noqa: E402
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
 
@@ -178,7 +179,7 @@ def pytest_sessionfinish(session, exitstatus):
 
 
 @pytest.fixture(autouse=True)
-def default_authenticated_user():
+async def default_authenticated_user():
     """Overrides the get_current_user FastAPI dependency with a fixed, in-memory user (no
     DB row) for every test by default — route tests (test_extraction.py,
     test_ramq_chatbot_endpoint.py, test_sample_patients.py) exercise extraction/retrieval/
@@ -188,9 +189,9 @@ def default_authenticated_user():
     of the individual test bodies that need the real dependency; it comes back for every
     other test since this fixture re-runs per test.
 
-    Pre-existing wart: this injects an in-memory User(id=1) with no DB row, so every test
-    row's physician_id=1 is a dangling FK — harmless only because SQLite doesn't enforce
-    foreign keys (see database.py)."""
+    The injected User(id=1) is also seeded as a real `users` row (tests/db_helpers.py):
+    SQLite enforces foreign keys now (see app/postgresdb/database.py), so every claim,
+    extraction record or roster entry written under physician_id=1 needs it to exist."""
     fake_user = User(
         id=1,
         email="physician@example.test",
@@ -198,6 +199,7 @@ def default_authenticated_user():
         role=UserRole.PHYSICIAN,
         is_active=True,
     )
+    await ensure_user_row(fake_user)
     app.dependency_overrides[get_current_user] = lambda: fake_user
     yield fake_user
     app.dependency_overrides.pop(get_current_user, None)

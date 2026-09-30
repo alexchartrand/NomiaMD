@@ -7,15 +7,22 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
+from sqlalchemy import delete
+from sqlalchemy.exc import IntegrityError
 
 from app.postgresdb import (
     ClaimCodeInput,
     ClaimInput,
     ClaimRepository,
+    ExtractionRecord,
+    ExtractionRecordInput,
+    ExtractionRepository,
     Gender,
     PatientRepository,
     init_db,
 )
+from app.postgresdb.database import async_session
+from tests.db_helpers import ensure_user_row, physician
 
 _physician_ids = itertools.count(2000)
 # Patients are globally unique by NAM now, so each seeded patient still needs its own NAM
@@ -30,8 +37,10 @@ async def _init_db():
 
 
 @pytest.fixture
-def physician_id():
-    return next(_physician_ids)
+async def physician_id():
+    user_id = next(_physician_ids)
+    await ensure_user_row(physician(user_id))
+    return user_id
 
 
 async def _seed_patient():
@@ -192,3 +201,54 @@ async def test_count_for_patient_on_date(physician_id):
 
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 10)) == 1
     assert await repo.count_for_patient_on_date(physician_id, patient.id, date(2026, 2, 11)) == 0
+
+
+def _claim_input(physician_id, patient_id, *, billing_extraction_record_id=None):
+    return ClaimInput(
+        physician_id=physician_id,
+        patient_id=patient_id,
+        service_date=date(2026, 2, 10),
+        status="brouillon",
+        source_system=None,
+        summary_extraction_record_id=None,
+        billing_extraction_record_id=billing_extraction_record_id,
+        codes=[_one_code_input()],
+    )
+
+
+async def test_claim_for_an_unknown_physician_is_rejected():
+    # Guards the SQLite foreign_keys pragma (app/postgresdb/database.py): without it, this
+    # dangling physician_id would be accepted silently in dev and tests.
+    patient = await _seed_patient()
+
+    with pytest.raises(IntegrityError):
+        await ClaimRepository().create(_claim_input(999_999, patient.id))
+
+
+async def test_purging_the_source_extraction_keeps_the_claim(physician_id):
+    patient = await _seed_patient()
+    [extraction] = await ExtractionRepository().create_many(
+        [
+            ExtractionRecordInput(
+                task="billing_codes",
+                transcript="transcript de test",
+                result={"codes": []},
+                model="mistral-small-latest",
+                source_system=None,
+                user_id=physician_id,
+            )
+        ]
+    )
+    repo = ClaimRepository()
+    created = await repo.create(
+        _claim_input(physician_id, patient.id, billing_extraction_record_id=extraction.id)
+    )
+
+    async with async_session() as session:
+        await session.execute(delete(ExtractionRecord).where(ExtractionRecord.id == extraction.id))
+        await session.commit()
+
+    detail = await repo.get_for_physician(created.record.id, physician_id)
+    assert detail is not None
+    assert detail.record.billing_extraction_record_id is None
+    assert [c.code for c in detail.codes] == ["TEST-BP-MGMT"]

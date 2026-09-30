@@ -17,6 +17,7 @@ from app.postgresdb import (
     PatientRepository,
     init_db,
 )
+from tests.db_helpers import ensure_user_row, physician
 
 _physician_ids = itertools.count(3000)
 # Patients are globally unique by NAM now, so each seeded patient still needs its own NAM
@@ -30,8 +31,10 @@ async def _init_db():
 
 
 @pytest.fixture
-def physician_id():
-    return next(_physician_ids)
+async def physician_id():
+    user_id = next(_physician_ids)
+    await ensure_user_row(physician(user_id))
+    return user_id
 
 
 async def _seed_patient():
@@ -121,6 +124,7 @@ async def test_create_rejects_a_non_brouillon_claim_and_writes_nothing(physician
 
 async def test_create_rejects_another_physicians_claim(physician_id):
     other_physician_id = physician_id + 1
+    await ensure_user_row(physician(other_physician_id))
     other_patient = await _seed_patient()
     foreign_claim = await _seed_claim(other_physician_id, other_patient.id)
 

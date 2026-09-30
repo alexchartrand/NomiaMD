@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from app.auth import get_current_user
 from app.main import app
 from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
+from tests.db_helpers import ensure_user_row, physician
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
 # patients are globally unique by NAM now — so each seeded patient needs its own NAM to
@@ -62,6 +63,7 @@ async def _seed_patient():
 
 
 async def _seed_extraction_record(*, user_id=1, result=None, task="billing_codes"):
+    await ensure_user_row(physician(user_id))
     [record] = await ExtractionRepository().create_many(
         [
             ExtractionRecordInput(

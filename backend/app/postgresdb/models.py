@@ -238,11 +238,14 @@ class Claim(Base):
     service_date: Mapped[date] = mapped_column(Date)
     status: Mapped[str] = mapped_column(String(16), default="brouillon")
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # SET NULL so the extraction_records retention purge (see ExtractionRecord) never fails
+    # on a claim: once saved, a claim's codes/fees are already snapshotted onto claim_codes,
+    # so it doesn't need its source extraction to stay renderable.
     summary_extraction_record_id: Mapped[int | None] = mapped_column(
-        ForeignKey("extraction_records.id"), nullable=True
+        ForeignKey("extraction_records.id", ondelete="SET NULL"), nullable=True
     )
     billing_extraction_record_id: Mapped[int | None] = mapped_column(
-        ForeignKey("extraction_records.id"), nullable=True
+        ForeignKey("extraction_records.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()

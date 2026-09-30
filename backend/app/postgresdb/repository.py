@@ -509,9 +509,9 @@ class ClaimDetail:
 
 
 class ClaimRepository:
-    """No relationship() — manual second queries, matching the existing house style.
-    DB-level cascade is a no-op on SQLite and live on Postgres (see database.py), so nothing
-    here may lean on it either way; code rows are always written/deleted explicitly."""
+    """No relationship() — manual second queries, matching the existing house style. Code
+    rows are always written/deleted explicitly rather than leaning on claim_codes' ondelete
+    CASCADE, so the delete path reads the same whichever dialect is underneath."""
 
     async def create(self, data: ClaimInput) -> ClaimWithCodes:
         async with async_session() as session:

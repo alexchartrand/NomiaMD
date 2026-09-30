@@ -39,3 +39,6 @@ include = ["app*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+# Lets test modules import each other and tests/db_helpers.py as `tests.*` even when a
+# single file is run on its own.
+pythonpath = ["."]

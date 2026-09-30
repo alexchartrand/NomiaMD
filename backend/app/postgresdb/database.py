@@ -7,6 +7,7 @@ implied by DATABASE_URL's `postgresql+psycopg://` convention) has native asyncio
 under that same dialect string, and aiosqlite backs the SQLite default.
 """
 
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -23,6 +24,19 @@ engine = create_async_engine(
     # Meaningless (and unsupported by aiosqlite's NullPool) on the SQLite dev path.
     **({} if _is_sqlite else {"pool_pre_ping": True, "pool_size": 10}),
 )
+
+if _is_sqlite:
+
+    @event.listens_for(engine.sync_engine, "connect")
+    def _enable_sqlite_foreign_keys(dbapi_connection, _connection_record) -> None:
+        # SQLite ignores every FK (and its ondelete CASCADE/RESTRICT/SET NULL) unless this
+        # is set on each new connection — without it, dev and the test suite would never
+        # exercise the constraints Postgres enforces in prod.
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
+
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
