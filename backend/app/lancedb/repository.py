@@ -9,28 +9,35 @@ from typing import List, Tuple
 from lancedb import AsyncTable
 from lancedb.query import MultiMatchQuery
 
+from app.lancedb.code_versions import ICodeTableProvider
+from app.lancedb.eligibility import CodeEligibilityFilter, CodeEligibilityWhereBuilder
 from app.lancedb.models import CodeRow, DocumentRow
 
 logger = logging.getLogger(__name__)
 
 # CodeRow's fields — every CodeRepository query selects exactly these columns. Excludes
-# `vector` (never crosses the wire for a hit about to become a Code) and the
-# lexical_terms/expansion_terms/needs_review/review_reason columns, which exist for
-# MultiMatchQuery to search over below, not for the app to consume. `header_path` is the
-# exception among the search-oriented columns: the app does consume it (see CodeRow).
-_CODE_ROW_COLUMNS = ["number", "libelle", "description", "header_path", "when_to_use", "rules", "fees"]
-
-# Columns ramq-ingestion's LanceCodeIndexBuilder builds a French FTS index over — mirrored
-# here rather than imported, same "the two repos share no code" convention as
-# tests/test_lancedb_document_repository.py's hand-duplicated schema.
-_CODE_FTS_COLUMNS = [
+# `vector` (never crosses the wire for a hit about to become a Code), the
+# lexical_terms/expansion_terms columns, which exist for MultiMatchQuery to search over
+# below, not for the app to consume, and needs_review/review_reason (not consumed yet).
+_CODE_ROW_COLUMNS = [
     "number",
-    "libelle",
     "description",
     "header_path",
-    "lexical_terms",
-    "expansion_terms",
+    "when_to_use",
+    "rules",
+    "fees",
+    "min_age",
+    "max_age",
+    "min_panel_size",
+    "max_panel_size",
+    "requires_registered",
+    "requires_vulnerable",
 ]
+
+# Columns ramq-ingestion's LanceCodeIndexBuilder builds a French FTS index over (its
+# FTS_COLUMNS) — mirrored here rather than imported, same "the two repos share no code"
+# convention as tests/test_lancedb_document_repository.py's hand-duplicated schema.
+_CODE_FTS_COLUMNS = ["number", "description", "lexical_terms", "expansion_terms"]
 
 # DocumentRow's fields, minus `vector` — every DocumentRepository query selects exactly
 # these columns so the embedding never crosses the wire for a hit about to become a TextNode.
@@ -61,20 +68,27 @@ class ICodeRepository(ABC):
         pass
 
     @abstractmethod
-    async def hybrid_search(self, text: str, vector: List[float], k: int) -> List[Tuple[CodeRow, float]]:
+    async def hybrid_search(
+        self, text: str, vector: List[float], k: int, eligibility: CodeEligibilityFilter | None = None
+    ) -> List[Tuple[CodeRow, float]]:
         pass
 
 
 class CodeRepository(ICodeRepository):
-    """Handed an already-open table by LanceDB.open() (database.py) — the async lancedb
-    connection is established once at startup, never on a query."""
+    """Queries whichever `codes_<rev>` table the `code_versions` registry currently marks as
+    current (code_versions.py), re-resolved on every call so a promote takes effect without
+    a restart. Each revision table has one row per `number`, so no revision filter is
+    needed. The async lancedb connection is established once at startup (database.py),
+    never on a query."""
 
-    def __init__(self, table: AsyncTable):
-        self._table = table
+    def __init__(self, tables: ICodeTableProvider, where_builder: CodeEligibilityWhereBuilder | None = None):
+        self._tables = tables
+        self._where_builder = where_builder or CodeEligibilityWhereBuilder()
 
     async def get_by_number(self, number: str) -> CodeRow:
+        table = await self._tables.current()
         rows = (
-            await self._table.query()
+            await table.query()
             .where(f"number = {_quote(number)}")
             .select(_CODE_ROW_COLUMNS)
             .to_list()
@@ -89,8 +103,9 @@ class CodeRepository(ICodeRepository):
         # Quote-escape rather than trust code numbers are always digit-only, since they come
         # from a retrieved embedding hit rather than a hardcoded source.
         quoted = ", ".join(_quote(n) for n in numbers)
+        table = await self._tables.current()
         rows = (
-            await self._table.query()
+            await table.query()
             .where(f"number IN ({quoted})")
             .select(_CODE_ROW_COLUMNS)
             .to_list()
@@ -107,23 +122,31 @@ class CodeRepository(ICodeRepository):
 
         return results
 
-    async def hybrid_search(self, text: str, vector: List[float], k: int) -> List[Tuple[CodeRow, float]]:
+    async def hybrid_search(
+        self, text: str, vector: List[float], k: int, eligibility: CodeEligibilityFilter | None = None
+    ) -> List[Tuple[CodeRow, float]]:
         # Same nearest_to(...) + nearest_to_text(...) chain as DocumentRepository.hybrid_search
         # below, with a MultiMatchQuery in place of a bare string: nearest_to_text takes
         # `str | FullTextQuery`, and MultiMatchQuery (a FullTextQuery) is what lets one call
-        # search all five FTS columns at once instead of just one. Like the plain-string case,
+        # search every FTS column at once instead of just one. Like the plain-string case,
         # this does NOT raise when the FTS indices are missing — it silently falls back to an
         # unindexed scan (verified empirically), harmless as long as ramq-ingestion's
         # LanceCodeIndexBuilder actually built them, which it does at ingestion time.
-        rows = (
-            await self._table.query()
+        #
+        # The eligibility WHERE applies to both halves of the hybrid query, so a variant that
+        # contradicts a known fact never takes one of the k slots (verified against the real
+        # table). Null bounds always pass — see eligibility.py.
+        table = await self._tables.current()
+        query = (
+            table.query()
             .nearest_to(vector)
             .distance_type("cosine")
             .nearest_to_text(MultiMatchQuery(text, columns=_CODE_FTS_COLUMNS))
-            .limit(k)
-            .select(_CODE_ROW_COLUMNS)
-            .to_list()
         )
+        where = self._where_builder.build(eligibility) if eligibility is not None else None
+        if where is not None:
+            query = query.where(where)
+        rows = await query.limit(k).select(_CODE_ROW_COLUMNS).to_list()
         return [(CodeRow.model_validate(row), row["_relevance_score"]) for row in rows]
 
 

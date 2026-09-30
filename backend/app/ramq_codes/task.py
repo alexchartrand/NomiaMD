@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass
 from typing import Any
 
@@ -23,15 +24,16 @@ from app.tasks.schema import to_strict_schema
 # ExtractionTask.model and app/extraction/engine.py's per-model client cache.
 MODEL = "mistral-medium-latest"
 
-# Shared vocabulary with app/ramq_codes/family.py — the axis names CodeFamilySelector
-# resolves or leaves unresolved, in the French wording shown to both the model (as an
-# established fact, or as something it must ask the physician to confirm) and, via
-# ExtractedCode.needs_confirmation, ultimately the physician.
+# Shared vocabulary with app/ramq_codes/eligibility.py — the axis names
+# UnresolvedAxisDetector leaves unresolved, in the French wording shown to both the model (as
+# something it must ask the physician to confirm) and, via ExtractedCode.needs_confirmation,
+# ultimately the physician. No thresholds are named here: they vary across the manual's
+# sections, and each candidate's own description states the one it's bound by.
 _AXIS_LABELS_FR = {
-    AXIS_PANEL_SIZE: "la taille de la clientèle inscrite du médecin (moins de 500 / 500 patients ou plus)",
+    AXIS_PANEL_SIZE: "la taille de la clientèle inscrite du médecin",
     AXIS_REGISTRATION: "le statut d'inscription du patient auprès de ce médecin (inscrit ou non)",
     AXIS_VULNERABILITY: "le statut de vulnérabilité du patient au sens de la RAMQ",
-    AXIS_AGE_BAND: "l'âge exact du patient (pertinent pour les seuils de 70 ans et 80 ans)",
+    AXIS_AGE_BAND: "l'âge exact du patient",
 }
 
 
@@ -69,10 +71,11 @@ list relates to this encounter at all.
 
 Reading the candidate list:
 - Each candidate carries its manual taxonomy path, its description, and may carry "when to
-  use" guidance and "conditions" (billing restrictions). Its taxonomy path groups it with
-  near-identical variants (e.g. differing only on panel size, patient vulnerability,
-  registration status, or an age threshold) — read it to understand what distinguishes this
-  candidate from its siblings, if any appear in the list.
+  use" guidance and "conditions" (billing restrictions). Candidates sharing a taxonomy path
+  are near-identical variants (e.g. differing only on panel size, patient vulnerability,
+  registration status, or an age threshold) — read the path and description to understand
+  what distinguishes this candidate from its siblings, if any appear in the list. Variants
+  contradicting an established fact below have already been removed.
 - Only choose codes from the candidate list. Never invent a code that isn't in it.
 
 Established facts and open questions for this encounter:
@@ -134,8 +137,7 @@ def _known_facts_text(context: BillingContext) -> str | None:
     patient = context.patient
 
     if physician.number_of_patients is not None:
-        band = "moins de 500" if physician.number_of_patients < 500 else "500 patients ou plus"
-        lines.append(f"- Clientèle inscrite du médecin : {physician.number_of_patients} patients ({band}).")
+        lines.append(f"- Clientèle inscrite du médecin : {physician.number_of_patients} patients.")
     if patient.is_registered is not None:
         state = "est inscrit" if patient.is_registered else "n'est pas inscrit"
         lines.append(f"- Le patient {state} auprès de ce médecin.")
@@ -143,7 +145,9 @@ def _known_facts_text(context: BillingContext) -> str | None:
         state = "est désigné vulnérable" if patient.is_vulnerable else "n'est pas désigné vulnérable"
         lines.append(f"- Le patient {state} au sens de la RAMQ.")
     if patient.age_years is not None:
-        lines.append(f"- Âge du patient au moment de la consultation : {patient.age_years:.0f} ans.")
+        # Floored, not rounded: the manual's age bands are in completed years, so a 79.6-year-
+        # old is 79 ("moins de 80 ans"), never 80.
+        lines.append(f"- Âge du patient au moment de la consultation : {math.floor(patient.age_years)} ans.")
 
     if not lines:
         return None
@@ -253,9 +257,4 @@ class BillingCodesTask(ExtractionTask[BillingCodesInput]):
         rows = await self._codes.list_by_numbers([c.code for c in result.codes])
         fees_by_code = {row.number: row.fees for row in rows}
         for code in result.codes:
-            code.fees = [
-                CodeFeeOut(
-                    amount=f.amount, amount_text=f.amount_text, context=f.context, lieu=f.lieu, majoration=f.majoration
-                )
-                for f in fees_by_code.get(code.code, [])
-            ]
+            code.fees = [CodeFeeOut.model_validate(f.model_dump()) for f in fees_by_code.get(code.code, [])]

@@ -1,36 +1,76 @@
-from pydantic import BaseModel
+from typing import Literal
+
+from pydantic import BaseModel, field_validator
+
+FeeUnit = Literal["dollars", "unités"]
+
 
 class CodeRowFee(BaseModel):
     amount: float | None = None
     amount_text: str | None = None
+    # The manual's role column (R = 1, R = 2, R = 7...), null for a single-amount table. Its
+    # meaning is section-specific (radiology's R = 7 is the laboratory fee), so it's kept raw
+    # rather than mapped to one meaning per number.
+    role: int | None = None
+    # `amount` counts anesthesia base units, not dollars, when this is "unités" (typically
+    # R = 2). Never bill such an amount as dollars — see app/claims/service.py's _fee_amount.
+    unit: FeeUnit = "dollars"
     context: str | None = None
-    lieu: str | None = None
+    lieux: list[str] = []
     majoration: str | None = None
+
+    @field_validator("lieux", mode="before")
+    @classmethod
+    def _null_lieux_as_empty(cls, value):
+        return [] if value is None else value
+
+    @field_validator("unit", mode="before")
+    @classmethod
+    def _null_unit_as_dollars(cls, value):
+        return "dollars" if value is None else value
 
 
 class CodeRow(BaseModel):
-    """A raw row from the `codes` LanceDB table, validated at the point it crosses into this
-    backend — a projection of ramq-ingestion's src/embedding/codes_embedding/
-    code_table_schema.py, selecting only the columns the read side actually uses (mirrors
-    DocumentRow's own vector/header_path/lexical_terms/expansion_terms/needs_review/
-    review_reason omission below: those exist for MultiMatchQuery to search over, not for the
-    app to consume). Kept separate from Code (app/ramq_codes/models.py), this backend's own
-    internal shape built from a validated CodeRow."""
+    """A raw row from the current `codes_<rev>` LanceDB table (see code_versions.py), validated
+    at the point it crosses into this backend — a projection of ramq-ingestion's
+    src/ramq_ingestion/codes/storage/code_table_schema.py, selecting only the columns the read
+    side actually uses (lexical_terms/expansion_terms exist for MultiMatchQuery to search
+    over; needs_review/review_reason aren't consumed yet — see BACKLOG.md). Kept separate from
+    Code (app/ramq_codes/models.py), this backend's own internal shape built from a validated
+    CodeRow."""
 
     number: str
-    libelle: str
     description: str
     # The manual's own taxonomy path, e.g. "B — Consultation, examen et visite > Visites sur
     # rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de
-    # prise en charge". Selected (unlike lexical_terms/expansion_terms) because the app
-    # consumes it directly: CodeFamilySelector groups near-duplicate variants by it, and it
-    # goes into the billing prompt verbatim — it's the only place the axes distinguishing
-    # one family member from another (vulnerability, registration, age band) are named as a
-    # structure rather than buried in prose.
+    # prise en charge". Goes into the billing prompt verbatim, so the model can see what
+    # distinguishes one candidate from a near-identical sibling.
     header_path: str
     when_to_use: list[str] = []
     rules: list[str] = []
     fees: list[CodeRowFee] = []
+    # Eligibility axes, typed by ramq-ingestion from the same qualifiers the description
+    # spells out in prose. Every bound is inclusive and in whole units ("moins de 80 ans" is
+    # max_age=79); null always means "no restriction on this axis", never "unknown" — see
+    # app/lancedb/eligibility.py, which filters on them.
+    min_age: int | None = None
+    max_age: int | None = None
+    min_panel_size: int | None = None
+    max_panel_size: int | None = None
+    requires_registered: bool | None = None
+    requires_vulnerable: bool | None = None
+
+
+class CodeVersionRow(BaseModel):
+    """A row of ramq-ingestion's `code_versions` registry: one promoted `codes_<rev>` table.
+    Exactly one row has is_current=True — the table this backend retrieves from (see
+    code_versions.py). The others point at older manual revisions."""
+
+    manual_rev: str
+    table_name: str
+    is_current: bool
+    promoted_at: str
+    code_count: int
 
 
 class DocumentRow(BaseModel):

@@ -8,11 +8,18 @@ from here rather than reaching into .database/.repository directly. .converter a
 imported directly by their own few callers instead — importing them here would create a
 cycle back through app.ramq_codes.models, which app.lancedb.converter itself depends on."""
 
+from app.lancedb.code_versions import CurrentCodeTableProvider, ICodeTableProvider, NoCurrentCodesTableError
 from app.lancedb.database import LanceDB
+from app.lancedb.eligibility import CodeEligibilityFilter, CodeEligibilityWhereBuilder
 from app.lancedb.repository import CodeRepository, DocumentRepository, ICodeRepository, IDocumentRepository
 
 __all__ = [
     "LanceDB",
+    "CurrentCodeTableProvider",
+    "ICodeTableProvider",
+    "NoCurrentCodesTableError",
+    "CodeEligibilityFilter",
+    "CodeEligibilityWhereBuilder",
     "CodeRepository",
     "ICodeRepository",
     "DocumentRepository",

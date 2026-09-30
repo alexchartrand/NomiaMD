@@ -1,8 +1,9 @@
 """Value objects for the administrative facts BillingCodesTask needs but can never derive
 from a transcript (see CLAUDE.md): the billing physician's own practice facts, and the
 identified patient's roster status. Pure data — no I/O, no dependency on postgresdb or
-auth — assembled by BillingContextBuilder (context_builder.py) and consumed by
-CodeFamilySelector (family.py) and BillingCodesTask's prompt (task.py).
+auth — assembled by BillingContextBuilder (context_builder.py) and consumed by the
+eligibility prefilter/UnresolvedAxisDetector (eligibility.py) and BillingCodesTask's prompt
+(task.py).
 
 Every field is nullable. An unresolved axis (no roster match, no profile on file) must
 degrade to "unknown", never to a guessed default — a wrong assumption here is worse than an
@@ -12,8 +13,8 @@ physician to confirm."""
 from dataclasses import dataclass, field
 from datetime import date
 
-# Names for the axes CodeFamilySelector resolves — shared vocabulary between
-# BillingContext.known_axes(), CodeFamilySelector's unresolved-axis reporting, and the
+# Names for the eligibility axes a code variant can be bound on — shared vocabulary between
+# BillingContext.known_axes(), UnresolvedAxisDetector's unresolved-axis reporting, and the
 # prompt's "please confirm" instructions, so all three always refer to the same thing.
 AXIS_PANEL_SIZE = "panel_size"
 AXIS_REGISTRATION = "registration"
@@ -61,10 +62,9 @@ class BillingContext:
     encounter_date: date | None = None
 
     def known_axes(self) -> dict[str, bool | int | None]:
-        """Which of the four family-disambiguating axes this context can resolve, and to
-        what value. A key is present only when the fact is actually known — CodeFamilySelector
-        treats an absent key exactly like `known_axes().get(axis)` returning None: keep every
-        variant and flag the axis unresolved."""
+        """Which of the four eligibility axes this context can resolve, and to what value. A
+        key is present only when the fact is actually known — an absent key means that axis
+        filters nothing, and UnresolvedAxisDetector flags it if any candidate is bound on it."""
         axes: dict[str, bool | int | None] = {}
         if self.physician.number_of_patients is not None:
             axes[AXIS_PANEL_SIZE] = self.physician.number_of_patients

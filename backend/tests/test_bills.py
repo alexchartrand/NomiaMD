@@ -24,7 +24,7 @@ BILLING_RESULT = {
             "description": "Prise en charge d'une hypertension",
             "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
-            "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": None, "majoration": None}],
+            "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieux": [], "majoration": None}],
         }
     ],
     "notes": None,
@@ -136,7 +136,7 @@ async def _seed_claim_with_fee(client, *, patient_id, service_date, fee_amount):
                 "description": "Prise en charge d'une hypertension",
                 "confidence": "high",
                 "explanation": "hypertension artérielle depuis 10 ans",
-                "fees": [{"amount": fee_amount, "amount_text": None, "context": "Par visite de suivi", "lieu": None, "majoration": None}],
+                "fees": [{"amount": fee_amount, "amount_text": None, "context": "Par visite de suivi", "lieux": [], "majoration": None}],
             }
         ],
         "notes": None,

@@ -74,16 +74,36 @@ def _resolve_fee(candidate: dict, fee_index: int | None) -> dict | None:
     return fees[index]
 
 
+def _is_dollar_fee(fee: dict) -> bool:
+    return fee.get("unit", "dollars") == "dollars"
+
+
+def _fee_amount(fee: dict | None) -> Decimal | None:
+    # A fee in "unités" (anesthesia base units, typically an R = 2 column) is a count, not a
+    # price: billing its `amount` would turn 17 units into $17. It's recorded in
+    # fee_when_to_use instead, and the claim line carries no dollar amount.
+    if fee is None or not _is_dollar_fee(fee):
+        return None
+    return _to_decimal(fee.get("amount"))
+
+
 def _fee_when_to_use(fee: dict | None) -> str | None:
-    # lieu is folded into this free-text column rather than given its own claim_codes
-    # column — no Alembic in this repo, see ClaimCode's/BillClaim's docstrings
-    # (app/postgresdb/models.py) for why a new column on an existing table is avoided.
+    # lieux, role and a unit amount are folded into this free-text column rather than given
+    # their own claim_codes columns — no Alembic in this repo, see ClaimCode's/BillClaim's
+    # docstrings (app/postgresdb/models.py) for why a new column on an existing table is
+    # avoided.
     if fee is None:
         return None
-    context, lieu = fee.get("context"), fee.get("lieu")
-    if context and lieu:
-        return f"{context} — {lieu}"
-    return context or lieu
+    parts: list[str] = []
+    if not _is_dollar_fee(fee):
+        parts.append(f"{fee.get('amount_text') or fee.get('amount')} {fee['unit']}")
+    if fee.get("role") is not None:
+        parts.append(f"R = {fee['role']}")
+    if fee.get("context"):
+        parts.append(fee["context"])
+    if fee.get("lieux"):
+        parts.append(", ".join(fee["lieux"]))
+    return " — ".join(parts) or None
 
 
 def _codes_out(codes) -> list[ClaimCodeOut]:
@@ -199,7 +219,7 @@ class ClaimService:
                     description=candidate["description"],
                     confidence=candidate["confidence"],
                     explanation=candidate["explanation"],
-                    fee_amount=_to_decimal(chosen_fee.get("amount")) if chosen_fee else None,
+                    fee_amount=_fee_amount(chosen_fee),
                     fee_when_to_use=_fee_when_to_use(chosen_fee),
                     majoration=chosen_fee.get("majoration") if chosen_fee else None,
                 )

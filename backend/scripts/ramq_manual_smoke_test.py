@@ -41,7 +41,7 @@ async def main() -> None:
     db = await LanceDB.open()
     all_passed = True
     try:
-        codes = CodeRepository(db.codes_table)
+        codes = CodeRepository(db.code_tables)
         documents = DocumentRepository(db.documents_table)
 
         # -- get_by_section_number ------------------------------------------------------

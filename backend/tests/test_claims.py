@@ -27,7 +27,7 @@ BILLING_RESULT = {
             "description": "Prise en charge d'une hypertension",
             "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
-            "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": None, "majoration": None}],
+            "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieux": [], "majoration": None}],
         },
         {
             "code": "TEST-BLOODWORK-ORDER",
@@ -278,8 +278,8 @@ async def test_selecting_a_fee_index_lands_that_variant_on_the_claim():
                     "confidence": "high",
                     "explanation": "hypertension artérielle depuis 10 ans",
                     "fees": [
-                        {"amount": 33.15, "amount_text": "33,15", "context": "Jour", "lieu": "Cabinet", "majoration": None},
-                        {"amount": 40.0, "amount_text": "40,00", "context": "Soir", "lieu": "Domicile", "majoration": "20%"},
+                        {"amount": 33.15, "amount_text": "33,15", "context": "Jour", "lieux": ["cabinet"], "majoration": None},
+                        {"amount": 40.0, "amount_text": "40,00", "context": "Soir", "lieux": ["cabinet", "domicile"], "majoration": "20%"},
                     ],
                 }
             ],
@@ -294,8 +294,43 @@ async def test_selecting_a_fee_index_lands_that_variant_on_the_claim():
     assert response.status_code == 201
     [code] = response.json()["codes"]
     assert code["fee_amount"] == 40.0
-    assert code["fee_when_to_use"] == "Soir — Domicile"
+    assert code["fee_when_to_use"] == "Soir — cabinet, domicile"
     assert code["majoration"] == "20%"
+
+
+async def test_a_fee_in_units_is_never_billed_as_dollars():
+    # An R = 2 column counts anesthesia base units: "17" must never become $17 on a claim.
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        unit_fee_result = {
+            "codes": [
+                {
+                    "code": "TEST-BP-MGMT",
+                    "description": "Acte avec rémunération de l'anesthésiste",
+                    "confidence": "high",
+                    "explanation": "acte réalisé",
+                    "fees": [
+                        {"amount": 1344.75, "amount_text": "1 344,75", "role": 1, "unit": "dollars",
+                         "context": None, "lieux": [], "majoration": None},
+                        {"amount": 17.0, "amount_text": "17", "role": 2, "unit": "unités",
+                         "context": None, "lieux": [], "majoration": None},
+                    ],
+                }
+            ],
+            "notes": None,
+        }
+        extraction_record = await _seed_extraction_record(result=unit_fee_result)
+        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 1}]
+
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 201
+    body = response.json()
+    [code] = body["codes"]
+    assert code["fee_amount"] is None
+    assert code["fee_when_to_use"] == "17 unités — R = 2"
+    assert body["total_amount"] is None
 
 
 async def test_out_of_range_fee_index_is_422():

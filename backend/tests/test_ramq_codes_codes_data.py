@@ -35,7 +35,7 @@ class _FakeConverter(IConverter):
 
     def convert(self, data: dict) -> Code:
         self.converted.append(data)
-        return Code(number=data["number"], libelle="", description=data["description"])
+        return Code(number=data["number"], description=data["description"])
 
 
 async def test_get_converts_every_row_the_table_returns():

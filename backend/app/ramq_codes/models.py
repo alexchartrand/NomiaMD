@@ -1,8 +1,8 @@
-"""Shared RAMQ code data shapes — mirrors ramq-ingestion's src/models.py, which is where
-this shape originates (Code.fees -> here). This module owns the read-side (Code, built
-directly from a `codes`-table hybrid_search hit — see RAMQCodesRetriever); ramq-ingestion
-owns the write-side (Code, the extraction/embedding schema, and the single flat `codes`
-LanceDB table).
+"""Shared RAMQ code data shapes — mirrors ramq-ingestion's src/ramq_ingestion/codes/schema/
+(code.py, fee.py), which is where this shape originates. This module owns the read-side
+(Code, built directly from a hybrid_search hit on the current `codes_<rev>` table — see
+RAMQCodesRetriever); ramq-ingestion owns the write-side (Code, the extraction/embedding
+schema, and one flat `codes_<rev>` LanceDB table per manual revision).
 
 Also holds BillingCodesTask's own output schema (CodeFeeOut/ExtractedCode/
 BillingCodesResult), which is a distinct, model-facing shape rather than a mirror of the
@@ -16,30 +16,48 @@ from pydantic import BaseModel, Field
 
 ConfidenceLevel = Literal["high", "medium", "low"]
 
+# "unités" means `amount` counts anesthesia base units, not dollars (typically an R = 2
+# column) — never billed as a dollar amount, see app/claims/service.py's _fee_amount.
+FeeUnit = Literal["dollars", "unités"]
+
 
 @dataclass(frozen=True)
 class CodeFee:
     amount: float | None
     amount_text: str | None
     context: str | None
-    lieu: str | None
     majoration: str | None
+    lieux: tuple[str, ...] = ()
+    # The manual's raw role column (R = 1, R = 2, R = 7...), None for a single-amount table.
+    # Section-specific meaning, so never mapped to one meaning per number.
+    role: int | None = None
+    unit: FeeUnit = "dollars"
+
+
+@dataclass(frozen=True)
+class CodeEligibility:
+    """The code's typed eligibility bounds. Inclusive, whole units; None means no restriction
+    on that axis (never "unknown") — see app/lancedb/models.py's CodeRow."""
+
+    min_age: int | None = None
+    max_age: int | None = None
+    min_panel_size: int | None = None
+    max_panel_size: int | None = None
+    requires_registered: bool | None = None
+    requires_vulnerable: bool | None = None
 
 
 @dataclass(frozen=True)
 class Code:
     number: str
-    libelle: str
     description: str
-    # The manual's taxonomy path in full (see app/lancedb/models.py's CodeRow.header_path
-    # for why it's kept whole rather than trimmed to a "meaningful" suffix). Used by
-    # CodeFamilySelector to group near-duplicate variants and by BillingCodesTask's prompt
-    # to show the axes (vulnerability, registration, age band, panel size) that distinguish
-    # one family member from another.
+    # The manual's taxonomy path in full. Shown in BillingCodesTask's prompt so the model
+    # can see what distinguishes this candidate from a near-identical sibling.
     header_path: str = ""
     when_to_use: tuple[str, ...] = ()
     rules: tuple[str, ...] = ()
     fees: tuple[CodeFee, ...] = ()
+    eligibility: CodeEligibility = CodeEligibility()
 
 
 class CodeFeeOut(BaseModel):
@@ -49,8 +67,10 @@ class CodeFeeOut(BaseModel):
 
     amount: float | None = None
     amount_text: str | None = None
+    role: int | None = None
+    unit: FeeUnit = "dollars"
     context: str | None = None
-    lieu: str | None = None
+    lieux: list[str] = []
     majoration: str | None = None
 
 

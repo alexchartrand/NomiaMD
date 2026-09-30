@@ -9,11 +9,11 @@ the right candidate and didn't pick it) or a retrieval miss (the candidate never
 the prompt at all) — those need different fixes. For every expected_codes entry this reports:
 
   - candidate recall: for each expected code, whether it was offered to the model exactly
-    (present in the family-collapsed candidate list RAMQCodesRetriever produced), offered
+    (present in the eligibility-filtered candidate list RAMQCodesRetriever produced), offered
     only as a same-family sibling (right taxonomy path, wrong variant — usually means an
-    axis CodeFamilySelector couldn't resolve, or resolved against the wrong fact), or missing
+    axis the context couldn't resolve, a wrong fact, or a wrong typed bound on the row), or missing
     entirely (a real retrieval gap: query planning/embedding/FTS never surfaced it).
-  - unresolved axes: whatever CodeFamilySelector flagged it couldn't disambiguate for this
+  - unresolved axes: whatever UnresolvedAxisDetector flagged it couldn't disambiguate for this
     entry's context, printed so a miss is attributable to "no physician/patient_context was
     given" vs. a genuine gap.
   - selection precision/recall: the model's returned codes vs expected_codes, as before.
@@ -22,20 +22,20 @@ Requires MISTRAL_API_KEY to be set — either for a real Mistral API call, or wi
 MISTRAL_ENDPOINT pointed at the fake dev server (`make fake-llm`) for the summary/selection
 calls. Retrieval always calls the real Mistral embeddings API regardless (no fake/override
 exists for it — see scripts/fake_llm_server.py's module docstring), so DB_PATH must point at
-a real `codes` table either way.
+a real LanceDB with a current `codes_<rev>` table (see its `code_versions` registry) either way.
 
     python scripts/eval_extraction.py [path/to/eval_set.jsonl] [--retrieval-only]
 
 --retrieval-only skips the billing_codes selection call (mistral-medium, the pricier of the
 two calls) and only scores candidate recall/family accuracy — cheap enough to iterate
-SummaryQueryPlanner/CodeFamilySelector against repeatedly. It still runs one
+SummaryQueryPlanner/the eligibility prefilter against repeatedly. It still runs one
 consultation_summary call per entry, since query planning needs the structured summary, not
 the raw transcript.
 
 Each eval_set.jsonl entry may carry optional `physician_context`/`patient_context` objects
 (number_of_patients/physician_type/remuneration_type; age_years/is_registered/is_vulnerable)
-— without them every axis stays unresolved and CodeFamilySelector keeps every family variant,
-same as today's behavior. This is what makes the panel-size-ambiguous entries in the default
+— without them every axis stays unresolved and the eligibility prefilter keeps every
+variant. This is what makes the panel-size-ambiguous entries in the default
 fixture (label_notes admitting "picked arbitrarily") actually gradeable: set the context and
 the right variant becomes the only one offered.
 
@@ -155,7 +155,7 @@ async def main() -> None:
 
     await init_db()
     async with application_services() as db:
-        codes_repo = CodeRepository(db.codes_table)
+        codes_repo = CodeRepository(db.code_tables)
         retriever = build_ramq_retriever(codes_repo)
 
         for entry in entries:

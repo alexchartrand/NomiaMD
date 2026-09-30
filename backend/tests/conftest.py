@@ -21,7 +21,7 @@ from app.main import app  # noqa: E402
 from app.lancedb.models import CodeRow, CodeRowFee  # noqa: E402
 from app.lancedb.repository import ICodeRepository  # noqa: E402
 from app.ramq_codes import BillingCodesTask, BillingContext  # noqa: E402
-from app.ramq_codes.family import FamilyCollapseResult  # noqa: E402
+from app.ramq_codes.eligibility import CandidateSet  # noqa: E402
 from app.ramq_codes.models import Code, CodeFee  # noqa: E402
 from app.rate_limit import limiter  # noqa: E402
 from app.summary import ConsultationSummaryResult, render_for_billing_codes  # noqa: E402
@@ -37,23 +37,22 @@ class _KeywordStubRetriever:
     "keywords" appear in the rendered summary text. Only ever used here — the real
     pipeline always goes through RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics
     ICodesRetriever's `.aretrieve()` (a hybrid_search hit already carries the full row, not
-    just a number, so there's no separate join step to stub), but skips family
-    collapse — CodeFamilySelector has its own dedicated unit tests
-    (test_ramq_codes_family.py) against real corpus phrasing; this fixture's tiny made-up
-    descriptions aren't representative of that phrasing and would only make matching
-    behavior here harder to predict."""
+    just a number, so there's no separate join step to stub), but skips eligibility
+    filtering — the WHERE builder and UnresolvedAxisDetector have their own dedicated unit
+    tests (test_lancedb_eligibility.py, test_ramq_codes_eligibility.py); this fixture's
+    tiny made-up codes carry no eligibility bounds anyway."""
 
     def __init__(self, entries: list[tuple[Code, list[str]]]):
         self._entries = entries
 
-    async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> FamilyCollapseResult:
+    async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> CandidateSet:
         query_lower = render_for_billing_codes(summary).lower()
         scored = [
             (code, sum(1 for kw in keywords if kw.lower() in query_lower))
             for code, keywords in self._entries
         ]
         ranked = sorted((pair for pair in scored if pair[1] > 0), key=lambda pair: pair[1], reverse=True)
-        return FamilyCollapseResult(candidates=[code for code, _score in ranked], unresolved_axes=())
+        return CandidateSet(candidates=[code for code, _score in ranked], unresolved_axes=())
 
 
 class _StubCodeRepository(ICodeRepository):
@@ -71,7 +70,7 @@ class _StubCodeRepository(ICodeRepository):
     async def list_by_numbers(self, numbers: list[str]) -> list[CodeRow]:
         return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
 
-    async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None) -> list:
         raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
 
 
@@ -93,7 +92,6 @@ def small_reference_table():
         (
             Code(
                 number=entry["code"],
-                libelle=entry.get("libelle", entry["code"]),
                 description=entry["description"],
                 when_to_use=tuple(entry.get("when_to_use", [])),
                 rules=tuple(entry.get("rules", [])),
@@ -102,8 +100,8 @@ def small_reference_table():
                         amount=f.get("amount"),
                         amount_text=f.get("amount_text"),
                         context=f.get("context"),
-                        lieu=f.get("lieu"),
                         majoration=f.get("majoration"),
+                        lieux=tuple(f.get("lieux", [])),
                     )
                     for f in entry.get("fees", [])
                 ),
@@ -117,7 +115,6 @@ def small_reference_table():
     rows = [
         CodeRow(
             number=entry["code"],
-            libelle=entry.get("libelle", entry["code"]),
             description=entry["description"],
             header_path=entry.get("header_path", ""),
             when_to_use=entry.get("when_to_use", []),

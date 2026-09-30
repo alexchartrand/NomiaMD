@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from llama_index.core.schema import TextNode
 from app.lancedb.models import CodeRow, DocumentRow
-from app.ramq_codes.models import Code, CodeFee
+from app.ramq_codes.models import Code, CodeEligibility, CodeFee
 
 class IConverter(ABC):
     @abstractmethod
@@ -13,7 +13,6 @@ class CodesRowConverter(IConverter):
     def convert(self, data: CodeRow) -> Code:
         return Code(
             number=data.number,
-            libelle=data.libelle,
             description=data.description,
             header_path=data.header_path,
             when_to_use=tuple(data.when_to_use),
@@ -23,10 +22,20 @@ class CodesRowConverter(IConverter):
                     amount=fee.amount,
                     amount_text=fee.amount_text,
                     context=fee.context,
-                    lieu=fee.lieu,
                     majoration=fee.majoration,
+                    lieux=tuple(fee.lieux),
+                    role=fee.role,
+                    unit=fee.unit,
                 )
                 for fee in data.fees
+            ),
+            eligibility=CodeEligibility(
+                min_age=data.min_age,
+                max_age=data.max_age,
+                min_panel_size=data.min_panel_size,
+                max_panel_size=data.max_panel_size,
+                requires_registered=data.requires_registered,
+                requires_vulnerable=data.requires_vulnerable,
             ),
         )
 

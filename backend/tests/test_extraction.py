@@ -228,7 +228,15 @@ async def test_extract_endpoint_resolves_fees_from_the_real_candidate_data():
     assert response.status_code == 200
     codes = {c["code"]: c for c in response.json()["billing"]["result"]["codes"]}
     assert codes["TEST-BP-MGMT"]["fees"] == [
-        {"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieu": None, "majoration": None}
+        {
+            "amount": 33.15,
+            "amount_text": "33,15",
+            "role": None,
+            "unit": "dollars",
+            "context": "Par visite de suivi",
+            "lieux": [],
+            "majoration": None,
+        }
     ]
     assert codes["TEST-BLOODWORK-ORDER"]["fees"] == []
 

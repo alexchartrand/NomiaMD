@@ -35,7 +35,7 @@ class _FakeSearchQuery:
 
 
 class _FakeTable:
-    """In-memory stand-in for the real `codes` lancedb AsyncTable: .query() returns a query
+    """In-memory stand-in for the current `codes_<rev>` lancedb AsyncTable: .query() returns a query
     object pre-loaded with whichever rows the test wants back, and records the filter
     string CodeRepository built so tests can assert on the actual escaping/quoting logic."""
 
@@ -49,14 +49,27 @@ class _FakeTable:
         return query
 
 
+class _FakeTableProvider:
+    """Always resolves to one fake table — which table is current is code_versions.py's job,
+    pinned against a real LanceDB in test_lancedb_code_repository.py."""
+
+    def __init__(self, table: _FakeTable):
+        self._table = table
+
+    async def current(self) -> _FakeTable:
+        return self._table
+
+    async def current_version(self):
+        raise NotImplementedError
+
+
 def _reader(table: _FakeTable) -> CodeRepository:
-    return CodeRepository(table)
+    return CodeRepository(_FakeTableProvider(table))
 
 
 def _row(number: str, **fields) -> dict:
     return {
         "number": number,
-        "libelle": "",
         "description": "",
         "header_path": "",
         "when_to_use": [],
@@ -72,7 +85,7 @@ def test_cannot_instantiate_interface_directly():
 
 
 async def test_get_by_number_returns_validated_code_row():
-    table = _FakeTable([_row("15801", description="Visite de prise en charge", libelle="Visite")])
+    table = _FakeTable([_row("15801", description="Visite de prise en charge", header_path="B > Visite")])
     reader = _reader(table)
 
     row = await reader.get_by_number("15801")
@@ -80,7 +93,7 @@ async def test_get_by_number_returns_validated_code_row():
     assert isinstance(row, CodeRow)
     assert row.number == "15801"
     assert row.description == "Visite de prise en charge"
-    assert row.libelle == "Visite"
+    assert row.header_path == "B > Visite"
 
 
 async def test_get_by_number_filters_by_quoted_number():

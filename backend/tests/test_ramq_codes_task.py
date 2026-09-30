@@ -7,7 +7,7 @@ handling directly."""
 from app.lancedb.models import CodeRow, CodeRowFee
 from app.lancedb.repository import ICodeRepository
 from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
-from app.ramq_codes.family import FamilyCollapseResult
+from app.ramq_codes.eligibility import CandidateSet
 from app.ramq_codes.models import BillingCodesResult, Code, CodeFee
 from app.ramq_codes.task import SYSTEM_PROMPT, BillingCodesInput, BillingCodesTask
 from app.tasks.base import PreparedPrompt
@@ -20,10 +20,10 @@ SUMMARY = ConsultationSummaryResult.model_validate(MOCK_RESULT)
 
 class _FakeRetriever:
     def __init__(self, candidates: list[Code], unresolved_axes: tuple[str, ...] = ()):
-        self._result = FamilyCollapseResult(candidates=candidates, unresolved_axes=unresolved_axes)
+        self._result = CandidateSet(candidates=candidates, unresolved_axes=unresolved_axes)
         self.last_call: tuple | None = None
 
-    async def aretrieve(self, summary, context) -> FamilyCollapseResult:
+    async def aretrieve(self, summary, context) -> CandidateSet:
         self.last_call = (summary, context)
         return self._result
 
@@ -40,7 +40,7 @@ class _FakeCodeRepository(ICodeRepository):
         self.list_by_numbers_calls.append(list(numbers))
         return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
 
-    async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None) -> list:
         raise NotImplementedError("not exercised by BillingCodesTask")
 
 
@@ -88,12 +88,11 @@ async def test_build_prompt_redacts_a_nam_embedded_in_the_transcript():
 async def test_build_prompt_formats_full_candidate_block():
     code = Code(
         number="15801",
-        libelle="ignored",
         description="Visite de prise en charge d'une maladie chronique",
         header_path="B > Visites sur rendez-vous > Visite de prise en charge",
         when_to_use=("Nouveau patient",),
         rules=("Clientele < 500 patients inscrits",),
-        fees=(CodeFee(amount=33.15, amount_text="33,15", context="Par visite", lieu=None, majoration="20%"),),
+        fees=(CodeFee(amount=33.15, amount_text="33,15", context="Par visite", majoration="20%"),),
     )
     task = _task([code])
 
@@ -110,10 +109,9 @@ async def test_build_prompt_never_shows_fee_data_even_when_the_candidate_has_it(
     # fee data must never reach the prompt at all, even for a candidate that carries it.
     code = Code(
         number="15801",
-        libelle="",
         description="Visite de prise en charge",
         header_path="x",
-        fees=(CodeFee(amount=33.15, amount_text="33,15", context="Par visite", lieu=None, majoration="20%"),),
+        fees=(CodeFee(amount=33.15, amount_text="33,15", context="Par visite", majoration="20%"),),
     )
     task = _task([code])
 
@@ -126,7 +124,6 @@ async def test_build_prompt_never_shows_fee_data_even_when_the_candidate_has_it(
 async def test_build_prompt_omits_when_to_use_entries_already_in_the_description():
     code = Code(
         number="15801",
-        libelle="",
         description="Visite de prise en charge d'une maladie chronique",
         header_path="x",
         when_to_use=("Visite de prise en charge d'une maladie chronique",),
@@ -139,7 +136,7 @@ async def test_build_prompt_omits_when_to_use_entries_already_in_the_description
 
 
 async def test_build_prompt_omits_optional_sections_when_absent():
-    code = Code(number="15801", libelle="", description="Visite de prise en charge", header_path="x")
+    code = Code(number="15801", description="Visite de prise en charge", header_path="x")
     task = _task([code])
 
     prepared = await task.build_prompt(_input())
@@ -158,8 +155,8 @@ async def test_build_prompt_with_no_candidates_lists_none():
 
 
 async def test_build_prompt_candidate_numbers_matches_the_retrieved_candidates():
-    code_a = Code(number="A", libelle="", description="", header_path="x")
-    code_b = Code(number="B", libelle="", description="", header_path="x")
+    code_a = Code(number="A", description="", header_path="x")
+    code_b = Code(number="B", description="", header_path="x")
     task = _task([code_a, code_b])
 
     prepared = await task.build_prompt(_input())
@@ -176,10 +173,21 @@ async def test_build_prompt_states_known_facts_as_established():
 
     prepared = await task.build_prompt(_input(context))
 
-    assert "320 patients (moins de 500)" in prepared.user_message
+    assert "Clientèle inscrite du médecin : 320 patients." in prepared.user_message
     assert "est inscrit auprès de ce médecin" in prepared.user_message
     assert "n'est pas désigné vulnérable" in prepared.user_message
     assert "58 ans" in prepared.user_message
+
+
+async def test_build_prompt_floors_the_patient_age_to_completed_years():
+    # The manual's age bands are in completed years: a 79.6-year-old is "moins de 80 ans",
+    # so the prompt must say 79, never round up to 80.
+    context = BillingContext(patient=PatientContext(age_years=79.6))
+    task = _task([])
+
+    prepared = await task.build_prompt(_input(context))
+
+    assert "consultation : 79 ans." in prepared.user_message
 
 
 async def test_build_prompt_omits_known_facts_section_when_context_is_empty():
@@ -326,7 +334,7 @@ def test_parse_keeps_every_code_when_all_are_in_the_candidate_set():
 
 
 def _row(number: str, *fees: CodeRowFee) -> CodeRow:
-    return CodeRow(number=number, libelle="", description="", header_path="", fees=list(fees))
+    return CodeRow(number=number, description="", header_path="", fees=list(fees))
 
 
 async def test_resolve_fees_attaches_every_fee_for_each_code_in_order():
@@ -334,8 +342,9 @@ async def test_resolve_fees_attaches_every_fee_for_each_code_in_order():
         [
             _row(
                 "15801",
-                CodeRowFee(amount=33.15, context="Jour", lieu="Cabinet"),
-                CodeRowFee(amount=40.0, context="Soir", lieu="Domicile", majoration="20%"),
+                CodeRowFee(amount=33.15, context="Jour", lieux=["cabinet"]),
+                CodeRowFee(amount=40.0, context="Soir", lieux=["domicile"], majoration="20%"),
+                CodeRowFee(amount=17, amount_text="17", role=2, unit="unités"),
             )
         ]
     )
@@ -345,9 +354,10 @@ async def test_resolve_fees_attaches_every_fee_for_each_code_in_order():
     await task.resolve_fees(result)
 
     [code] = result.codes
-    assert [f.amount for f in code.fees] == [33.15, 40.0]
-    assert code.fees[1].lieu == "Domicile"
+    assert [f.amount for f in code.fees] == [33.15, 40.0, 17]
+    assert code.fees[1].lieux == ["domicile"]
     assert code.fees[1].majoration == "20%"
+    assert (code.fees[2].role, code.fees[2].unit) == (2, "unités")
 
 
 async def test_resolve_fees_leaves_a_code_with_no_matching_row_with_an_empty_list():

@@ -25,7 +25,7 @@ from app.ramq_chatbot import init_ramq_query_engine
 async def application_services() -> AsyncIterator[LanceDB]:
     db = await LanceDB.open()
     try:
-        codes = CodeRepository(db.codes_table)
+        codes = CodeRepository(db.code_tables)
         documents = DocumentRepository(db.documents_table)
         init_tasks(codes=codes)
         init_ramq_query_engine(codes, documents)
