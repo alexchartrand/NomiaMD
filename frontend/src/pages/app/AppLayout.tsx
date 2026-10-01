@@ -14,7 +14,8 @@ export default function AppLayout() {
   return (
     <div className="flex min-h-screen">
       <Sidebar>
-        <NavItem to="/app/extraction">Réclamation</NavItem>
+        <NavItem to="/app/inbox">Rencontres</NavItem>
+        <NavItem to="/app/ajouter">Ajouter manuellement</NavItem>
         <NavItem to="/app/facturation">Facturation</NavItem>
         <NavItem to="/app/chat">Clavardage</NavItem>
         <NavItem to="/app/patients">Patients</NavItem>

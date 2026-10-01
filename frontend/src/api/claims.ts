@@ -1,4 +1,4 @@
-import { unwrap, unwrapVoid } from "./http";
+import { extractErrorDetail, unwrap, unwrapVoid } from "./http";
 import type { ConfidenceLevel, ExtractedFee } from "./extraction";
 
 // Kept in sync by hand with app/claims/status.py's ClaimStatus. Derived server-side, never
@@ -71,14 +71,17 @@ export async function createClaim(payload: ClaimInput, confirmDuplicate = false)
     body: JSON.stringify(payload),
   });
 
+  // Only a "duplicate_claim" 409 is a warning the physician may override; another 409 (an
+  // encounter confirmed as another's duplicate) is a plain refusal.
   if (response.status === 409) {
     const body = await response.json().catch(() => null);
-    const detail = (body as { detail?: { message?: unknown } } | null)?.detail;
-    const message =
-      detail && typeof detail === "object" && typeof detail.message === "string"
-        ? detail.message
-        : "Une facturation existe déjà pour ce patient à cette date.";
-    throw new DuplicateClaimError(message);
+    const detail = (body as { detail?: { code?: unknown; message?: unknown } } | null)?.detail;
+    if (detail && typeof detail === "object" && detail.code === "duplicate_claim") {
+      throw new DuplicateClaimError(
+        typeof detail.message === "string" ? detail.message : "Une facturation existe déjà pour ce patient à cette date.",
+      );
+    }
+    throw new Error(extractErrorDetail(body, "La facturation a été refusée."));
   }
 
   return unwrap<Claim>(response);

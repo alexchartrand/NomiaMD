@@ -25,8 +25,8 @@ interface UseCreatePatientFormOptions {
   onCreated: (patient: Patient) => void;
 }
 
-// Shared between ExtractionPage/SourceStep.tsx (the "not found, create inline" escape
-// hatch before extraction runs) and PatientsPage.tsx (the "brand new patient" flow) — a
+// Shared between InboxPage/AssociatePatient.tsx (the "not found, create inline" escape
+// hatch when a note's NAM matched no one) and PatientsPage.tsx (the "brand new patient" flow) — a
 // single global Patient identity is created either way, distinct from "add to my list"
 // (see api/patients.ts's addToRoster).
 export function useCreatePatientForm({ onCreated }: UseCreatePatientFormOptions) {

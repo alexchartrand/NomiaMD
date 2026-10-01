@@ -1,11 +1,9 @@
 import type { BillingExtractionResponse } from "../../../api";
 
-// Everything derived from a single extraction result, from the moment it comes back
-// through the save outcome — grouped so a fresh extraction or a cleared transcript resets
-// all of it atomically instead of via a scattered list of setters. The patient itself is
-// NOT here: it's chosen before extraction runs (SourceStep.tsx) and owned by
-// ExtractionPage/index.tsx's own state, since it's fixed for the whole flow rather than
-// derived from a particular extraction result.
+// Everything derived from a single extraction result, from the moment it's loaded through
+// the save outcome — grouped so a different result resets all of it atomically instead of
+// via a scattered list of setters (see useCodeReview.ts). The patient isn't here: it was
+// fixed before extraction ran, so it belongs to the encounter, not to this result.
 export interface ReviewState {
   result: BillingExtractionResponse | null;
   serviceDate: string;
