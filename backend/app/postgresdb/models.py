@@ -239,26 +239,90 @@ class PhysicianPatient(TimestampMixin, Base):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
-class ExtractionRun(CreatedAtMixin, Base):
-    """One /extract call: the transcript (stored once, not per stage), who ran it, and for
-    which patient. The physician picks the patient *before* extraction runs, and every code
-    it suggests was eligibility-filtered for that patient — so a claim takes its patient
-    from here (Claim.extraction_run_id), never from its own request body.
+class Encounter(TimestampMixin, Base):
+    """One signed clinical note from one source — the unit the physician works on. A note
+    arrives (pasted, pushed by the extension or a scribe, pulled from a DMÉ), gets a patient,
+    is extracted (ExtractionRun, possibly several times) and is reviewed into a claim.
 
-    Also the single target of the retention purge (see BACKLOG.md): deleting a run cascades
-    to its ExtractionRunResult rows and detaches any claim made from it (SET NULL — a claim's
-    codes are already snapshotted onto claim_codes). `purge_after` is when that may happen;
-    nothing sets or acts on it yet, since the retention period itself isn't decided."""
+    The single target of the retention purge: the note text lives here and nowhere else.
+    Deleting an encounter cascades to its runs and their results, and detaches any claim
+    made from them (SET NULL — claims already snapshot what they need, including the note's
+    hash and external id). `purge_after` is when that may happen; nothing sets or acts on it
+    yet, since the retention period itself isn't decided.
+
+    There is no stored status — see app/intake/status.py. `extraction_error` is stored only
+    because a failed extraction leaves no other trace to derive it from.
+
+    An amended note is a new row, not an update: the old version points at it through
+    `superseded_by_id`, so a claim made from the old version keeps the exact text it was
+    billed from."""
+
+    __tablename__ = "encounters"
+    __table_args__ = (
+        # One row per version of an external note. Partial so pasted notes (no external id)
+        # are never deduplicated here; a changed note has a new hash and is a new version.
+        Index(
+            "ix_encounters_external_version",
+            "user_id",
+            "source_system",
+            "external_note_id",
+            "content_hash",
+            unique=True,
+            postgresql_where=text("external_note_id IS NOT NULL"),
+            sqlite_where=text("external_note_id IS NOT NULL"),
+        ),
+        # The inbox's "my encounters on this day". id breaks ties: created_at comes from the
+        # DB clock, which SQLite only keeps to the second. Also serves user_id-only lookups.
+        Index("ix_encounters_user_service_date", "user_id", "service_date", "id"),
+        # String + CHECK rather than a native Enum, same as claim_codes.confidence: new
+        # channels are added as connectors land, without a type migration on Postgres.
+        CheckConstraint(
+            "channel IN ('paste', 'upload', 'extension', 'scribe_webhook', 'fhir_pull', 'partner_api', 'sample')",
+            name="ck_encounters_channel",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    # Null until the note is matched to a patient ("à associer"). RESTRICT, same as Claim.
+    patient_id: Mapped[int | None] = mapped_column(
+        ForeignKey("patients.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
+    source_system: Mapped[str] = mapped_column(String(64))
+    channel: Mapped[str] = mapped_column(String(32))
+    external_note_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    external_encounter_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # sha256 hex of note_text — see app/intake/hashing.py.
+    content_hash: Mapped[str] = mapped_column(String(64))
+    service_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    # Source-specific facts that don't drive any query: start/end times, location,
+    # établissement...
+    encounter_meta: Mapped[dict | None] = mapped_column(_JSON, nullable=True)
+    note_text: Mapped[str] = mapped_column(Text)
+    superseded_by_id: Mapped[int | None] = mapped_column(
+        ForeignKey("encounters.id", ondelete="SET NULL"), nullable=True
+    )
+    extraction_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    purge_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+
+
+class ExtractionRun(CreatedAtMixin, Base):
+    """One extraction of an encounter's note: who ran it, for which patient, and (through
+    ExtractionRunResult) each stage's output. The note text itself stays on the Encounter.
+    The physician picks the patient *before* extraction runs, and every code it suggests
+    was eligibility-filtered for that patient — so a claim takes its patient from here
+    (Claim.extraction_run_id), never from its own request body.
+
+    Deleted with its encounter (CASCADE), which cascades to its ExtractionRunResult rows and
+    detaches any claim made from it (SET NULL)."""
 
     __tablename__ = "extraction_runs"
     __table_args__ = (Index("ix_extraction_runs_user_created", "user_id", "created_at"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    encounter_id: Mapped[int] = mapped_column(ForeignKey("encounters.id", ondelete="CASCADE"), index=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="RESTRICT"), index=True)
-    transcript: Mapped[str] = mapped_column(Text)
-    source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    purge_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
 
 
 class ExtractionRunResult(CreatedAtMixin, Base):
@@ -332,8 +396,13 @@ class Claim(TimestampMixin, Base):
     # patient. RESTRICT so a Patient can never be hard-deleted while any claim references them.
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="RESTRICT"), index=True)
     service_date: Mapped[date] = mapped_column(Date)
+    # Snapshotted from the run's encounter at save time, like the billing context below:
+    # they outlive the encounter's purge, so a claim still says which exact note version
+    # it was billed from.
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    # SET NULL so the retention purge (see ExtractionRun) never fails on a claim.
+    source_note_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    external_note_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # SET NULL so the retention purge (see Encounter) never fails on a claim.
     extraction_run_id: Mapped[int | None] = mapped_column(
         ForeignKey("extraction_runs.id", ondelete="SET NULL"), nullable=True
     )

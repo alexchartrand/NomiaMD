@@ -19,14 +19,12 @@ from app.postgresdb import (
     ClaimInput,
     ClaimRepository,
     ExtractionAlreadyClaimedError,
-    ExtractionRepository,
     ExtractionRun,
-    ExtractionRunInput,
     ExtractionStageInput,
     Gender,
     PatientRepository,
 )
-from tests.db_helpers import ensure_user_row, physician
+from tests.db_helpers import ensure_user_row, physician, seed_run
 
 _physician_ids = itertools.count(2000)
 # Patients are globally unique by NAM, so each seeded patient needs its own NAM.
@@ -54,14 +52,12 @@ async def _seed_patient(session):
 
 
 async def _seed_run(session, physician_id, patient_id) -> ExtractionRun:
-    return await ExtractionRepository(session).create_run(
-        ExtractionRunInput(
-            user_id=physician_id,
-            patient_id=patient_id,
-            transcript="transcript de test",
-            source_system=None,
-            stages=[ExtractionStageInput(task="billing_codes", model="mistral-small-latest", result={"codes": []})],
-        )
+    return await seed_run(
+        session,
+        user_id=physician_id,
+        patient_id=patient_id,
+        source_system=None,
+        stages=[ExtractionStageInput(task="billing_codes", model="mistral-small-latest", result={"codes": []})],
     )
 
 
@@ -95,6 +91,8 @@ async def _claim_input(session, physician_id, patient_id, *, service_date=date(2
         patient_id=patient_id,
         service_date=service_date,
         source_system=None,
+        source_note_hash=None,
+        external_note_id=None,
         extraction_run_id=run_id,
         context=_UNKNOWN_CONTEXT,
         codes=codes or [_one_code_input()],

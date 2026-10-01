@@ -1,5 +1,5 @@
 """Seed a freshly wiped database with a demo admin user and all 25 simulated consultation-
-note patients, for local development. From backend/, with the venv active:
+note patients, each with an encounter holding its note, for local development. From backend/, with the venv active:
 
     python scripts/seed_db.py
 
@@ -28,8 +28,12 @@ from app.auth.factory import build_profile_service  # noqa: E402
 from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
 from app.bootstrap import postgres_database  # noqa: E402
+from app.extraction.encounter_date import parse_encounter_date  # noqa: E402
+from app.intake import Channel, content_hash  # noqa: E402
 from app.patients import format_full_name, nam  # noqa: E402
 from app.postgresdb import (  # noqa: E402
+    EncounterInput,
+    EncounterRepository,
     PatientRepository,
     PhysicianPatientRepository,
     PhysicianType,
@@ -52,6 +56,9 @@ ADMIN_REMUNERATION_TYPE = RemunerationType.MIXTE.value
 # admin once loaded: registration is derived from this exact-match comparison (see
 # app/patients/registration.py), there's no separate flag left to set.
 SEED_PRACTICE_NUMBER = "123456"
+
+# Matches what the frontend sends as TranscriptSource.system for a simulated patient.
+SEED_SOURCE_SYSTEM = "simule"
 
 # The em dash separates the name from the "NN ans (H/F)"/"NN mois (H/F)" demographic
 # suffix on every **Patient :** header line — strips that suffix so format_full_name only
@@ -120,6 +127,7 @@ async def main() -> None:
 
             patient_repository = PatientRepository(session)
             roster_repository = PhysicianPatientRepository(session)
+            encounter_repository = EncounterRepository(session)
             today = date.today()
 
             for sample in get_sample_patients():
@@ -149,7 +157,23 @@ async def main() -> None:
                     family_doctor_practice_number=SEED_PRACTICE_NUMBER,
                 )
                 await roster_repository.add(admin.id, patient.id)
-                print(f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable})")
+                # The sample's dossier number stands in for a source system's note id.
+                encounter = await encounter_repository.create(
+                    EncounterInput(
+                        user_id=admin.id,
+                        patient_id=patient.id,
+                        source_system=SEED_SOURCE_SYSTEM,
+                        channel=Channel.SAMPLE,
+                        external_note_id=sample.id,
+                        content_hash=content_hash(sample.transcript),
+                        note_text=sample.transcript,
+                        service_date=parse_encounter_date(fields.get("Date/heure")),
+                    )
+                )
+                print(
+                    f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable}), "
+                    f"encounter id={encounter.id} on {encounter.service_date}"
+                )
 
 
 if __name__ == "__main__":

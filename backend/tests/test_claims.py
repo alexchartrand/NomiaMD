@@ -10,11 +10,10 @@ from datetime import date, datetime, timezone
 from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
+from app.intake import content_hash
 from app.main import app
 from app.postgresdb import (
     Claim,
-    ExtractionRepository,
-    ExtractionRunInput,
     ExtractionStageInput,
     Gender,
     Patient,
@@ -23,7 +22,7 @@ from app.postgresdb import (
     UserRole,
     session_scope,
 )
-from tests.db_helpers import ensure_user_row, physician
+from tests.db_helpers import ensure_user_row, physician, seed_run
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
 # patients are globally unique by NAM — so each seeded patient needs its own NAM to avoid
@@ -75,20 +74,18 @@ async def _seed_patient(*, full_name="Roch Desjardins", is_vulnerable=False):
 async def _seed_run(patient_id, *, user_id=1, result=None, task="billing_codes"):
     await ensure_user_row(physician(user_id))
     async with session_scope() as session:
-        return await ExtractionRepository(session).create_run(
-            ExtractionRunInput(
-                user_id=user_id,
-                patient_id=patient_id,
-                transcript="transcript de test",
-                source_system="simule",
-                stages=[
-                    ExtractionStageInput(
-                        task=task,
-                        model="mistral-small-latest",
-                        result=result if result is not None else BILLING_RESULT,
-                    )
-                ],
-            )
+        return await seed_run(
+            session,
+            user_id=user_id,
+            patient_id=patient_id,
+            source_system="simule",
+            stages=[
+                ExtractionStageInput(
+                    task=task,
+                    model="mistral-small-latest",
+                    result=result if result is not None else BILLING_RESULT,
+                )
+            ],
         )
 
 
@@ -117,6 +114,10 @@ async def test_create_then_list_then_filter_then_void():
         assert created["status"] == "brouillon"
         assert created["bill_id"] is None
         assert created["source_system"] == "simule"
+        async with session_scope() as session:
+            stored = await session.get(Claim, created["id"])
+        assert stored.source_note_hash == content_hash("transcript de test")
+        assert stored.external_note_id is None
         assert created["total_amount"] == 33.15
         assert [c["code"] for c in created["codes"]] == ["TEST-BP-MGMT"]
 

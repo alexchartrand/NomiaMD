@@ -44,6 +44,8 @@ class ClaimInput:
     patient_id: int
     service_date: date
     source_system: str | None
+    source_note_hash: str | None
+    external_note_id: str | None
     extraction_run_id: int
     context: ClaimContextInput
     codes: Sequence[ClaimCodeInput]
@@ -95,6 +97,8 @@ class ClaimRepository(SessionRepository):
             patient_id=data.patient_id,
             service_date=data.service_date,
             source_system=data.source_system,
+            source_note_hash=data.source_note_hash,
+            external_note_id=data.external_note_id,
             extraction_run_id=data.extraction_run_id,
             is_registered=data.context.is_registered,
             is_vulnerable=data.context.is_vulnerable,

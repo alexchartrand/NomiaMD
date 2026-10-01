@@ -11,8 +11,6 @@ from app.auth import get_current_user
 from app.main import app
 from app.postgresdb import (
     Bill,
-    ExtractionRepository,
-    ExtractionRunInput,
     ExtractionStageInput,
     Gender,
     PatientRepository,
@@ -20,6 +18,7 @@ from app.postgresdb import (
     UserRole,
     session_scope,
 )
+from tests.db_helpers import seed_run
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
 # patients are globally unique by NAM now — so each seeded patient needs its own NAM to
@@ -66,20 +65,18 @@ async def _seed_patient(full_name="Roch Desjardins", ramq_number=None):
 
 async def _seed_run(patient_id, *, user_id=1, result=None):
     async with session_scope() as session:
-        return await ExtractionRepository(session).create_run(
-            ExtractionRunInput(
-                user_id=user_id,
-                patient_id=patient_id,
-                transcript="transcript de test",
-                source_system="simule",
-                stages=[
-                    ExtractionStageInput(
-                        task="billing_codes",
-                        model="mistral-small-latest",
-                        result=result if result is not None else BILLING_RESULT,
-                    )
-                ],
-            )
+        return await seed_run(
+            session,
+            user_id=user_id,
+            patient_id=patient_id,
+            source_system="simule",
+            stages=[
+                ExtractionStageInput(
+                    task="billing_codes",
+                    model="mistral-small-latest",
+                    result=result if result is not None else BILLING_RESULT,
+                )
+            ],
         )
 
 
