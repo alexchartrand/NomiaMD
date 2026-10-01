@@ -139,10 +139,12 @@ cp .env.example .env   # fill in MISTRAL_API_KEY, DB_PATH, JWT_SECRET_KEY; COOKI
 uv run uvicorn app.main:app --reload
 ```
 
-The extraction engine (`backend/app/extraction/engine.py`) talks to the Mistral API via
-llama_index's `MistralAI` client. No API key handy, or want to avoid real API calls? Set
-`MISTRAL_ENDPOINT=http://localhost:8080` and point it at `backend/scripts/fake_llm_server.py`
-instead (`make fake-llm`, or see "Quick start" above).
+The extraction engine (`backend/app/extraction/engine.py`) and the chatbot get their chat
+model from `backend/app/llm/`, which `LLM_PROVIDER` switches between the Mistral API
+(`mistral`, default) and any OpenAI-compatible server such as vLLM/TGI (`openai_compatible`,
+with `LLM_ENDPOINT` + `LLM_API_KEY`). No API key handy, or want to avoid real API calls? Set
+`LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1 LLM_API_KEY=fake` and
+run `backend/scripts/fake_llm_server.py` (`make fake-llm`, or `make dev-fake` which does both).
 
 Main endpoints (all but `/health` and `/auth/login` need a logged-in session cookie):
 

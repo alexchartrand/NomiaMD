@@ -3,7 +3,8 @@
 singleton — every other module should read config through it instead of touching
 `os.environ` directly.
 
-`mistral_api_key`/`mistral_embedding_model` are read lazily via property, not cached at
+`mistral_api_key`/`mistral_embedding_model` and the `llm_*` chat-provider settings are
+read lazily via property, not cached at
 construction: tests' `no_real_api_keys` fixture (tests/conftest.py) deletes
 MISTRAL_API_KEY from the environment per-test specifically to make any un-stubbed real-API
 code path raise instead of silently succeeding — caching the key at import time would
@@ -45,6 +46,22 @@ class Settings:
     @property
     def mistral_embedding_model(self) -> str:
         return os.environ["MISTRAL_EMBEDDING_MODEL"]
+
+    @property
+    def llm_provider(self) -> str:
+        """Which chat backend app/llm/chat.py builds: `mistral` (default) or
+        `openai_compatible`."""
+        return os.environ.get("LLM_PROVIDER", "mistral").strip().lower()
+
+    @property
+    def llm_endpoint(self) -> str | None:
+        return os.environ.get("LLM_ENDPOINT") or None
+
+    @property
+    def llm_api_key(self) -> str:
+        """Only read by the openai_compatible provider; the mistral one uses
+        mistral_api_key (shared with embeddings)."""
+        return os.environ["LLM_API_KEY"]
 
 
 settings = Settings()

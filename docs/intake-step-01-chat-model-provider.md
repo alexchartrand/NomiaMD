@@ -16,7 +16,7 @@ endpoint (vLLM/TGI) can replace the Mistral API without touching task code.
   `scripts/fake_llm_server.py` (`make dev-fake`).
 
 ## Tasks
-- [ ] New package `backend/app/llm/`:
+- [x] New package `backend/app/llm/`:
   - `chat.py`: `get_chat_llm(model) -> llama_index LLM`, cached per model. Selects the
     provider from `LLM_PROVIDER` (`mistral` | `openai_compatible`).
   - `mistral.py`: today's `MistralAI` construction (temperature 0, max_tokens 4096).
@@ -24,16 +24,16 @@ endpoint (vLLM/TGI) can replace the Mistral API without touching task code.
     same determinism settings, `is_chat_model=True`.
   - `response.py`: `ChatResponseReader` that pulls `finish_reason`, the model name and the
     content out of either provider's raw response (one place for the shape differences).
-- [ ] `Settings` (`backend/app/config.py`): `llm_provider`, `llm_endpoint`, `llm_api_key` as
+- [x] `Settings` (`backend/app/config.py`): `llm_provider`, `llm_endpoint`, `llm_api_key` as
   lazy properties, the same way `mistral_api_key` is read (keeps the `no_real_api_keys` safety net).
-- [ ] `engine.py`: keep `get_client` as the name tests patch, but make it delegate to
+- [x] `engine.py`: keep `get_client` as the name tests patch, but make it delegate to
   `get_chat_llm`. Use `ChatResponseReader` instead of indexing `response.raw` directly.
   Check how `OpenAILike` passes `response_format` (json_schema, strict).
-- [ ] `ramq_chatbot/factory.py`: build its LLM through `get_chat_llm`.
-- [ ] Make sure `scripts/fake_llm_server.py` answers both clients (the OpenAI and Mistral
+- [x] `ramq_chatbot/factory.py`: build its LLM through `get_chat_llm`.
+- [x] Make sure `scripts/fake_llm_server.py` answers both clients (the OpenAI and Mistral
   shapes are nearly identical). Update `Makefile` `dev-fake`, `.env.example`, and the docstrings
   in `try_extraction.py`/`eval_extraction.py` that mention `MISTRAL_ENDPOINT`.
-- [ ] Add the deps with `uv add llama-index-llms-openai-like`.
+- [x] Add the deps with `uv add llama-index-llms-openai-like`.
 
 ## Files
 `backend/app/llm/*` (new), `backend/app/extraction/engine.py`, `backend/app/ramq_chatbot/factory.py`,

@@ -1,5 +1,6 @@
-"""Live smoke test against the Mistral API. Requires MISTRAL_API_KEY to be configured
-(point MISTRAL_ENDPOINT at scripts/fake_llm_server.py instead to avoid a real API call).
+"""Live smoke test against the configured chat provider (LLM_PROVIDER, see app/llm/).
+Requires MISTRAL_API_KEY (embeddings always use it); point LLM_ENDPOINT at
+scripts/fake_llm_server.py instead to avoid a real chat-completion call.
 From backend/, with the venv active:
 
     python scripts/try_extraction.py
@@ -14,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 
 # Must run before app.extraction.engine is imported below — app.extraction.engine.get_client()
-# reads MISTRAL_API_KEY. Explicit path for the same reason as app/main.py: under a debugger,
+# reads the LLM_*/MISTRAL_API_KEY settings. Explicit path for the same reason as app/main.py: under a debugger,
 # load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 

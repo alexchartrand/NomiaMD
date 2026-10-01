@@ -26,8 +26,9 @@ uv run pytest tests/test_patients.py            # one file
 uv run pytest tests/test_patients.py::test_name -v   # one test
 ```
 Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY`
-and `DB_PATH`, or `MISTRAL_ENDPOINT` pointed at `scripts/fake_llm_server.py` (`make
-fake-llm`) to avoid spending real API calls. There's no lint/typecheck config on the
+and `DB_PATH`; set `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1
+LLM_API_KEY=fake` to point chat calls at `scripts/fake_llm_server.py` (`make fake-llm`)
+instead of spending real API calls. There's no lint/typecheck config on the
 backend (no ruff/mypy in `pyproject.toml`).
 
 Frontend (`frontend/`, from that directory):
@@ -60,6 +61,7 @@ Backend modules (`backend/app/`):
 
 | Module | Role |
 |---|---|
+| `llm/` | chat model provider selection (`LLM_PROVIDER`: `mistral` \| `openai_compatible`) and raw-response reading |
 | `extraction/` | `POST /extract`: runs the pipeline (`pipeline.py`) and the shared LLM call (`engine.py`) |
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
 | `ramq_codes/` | `billing_codes` task — billing context, candidate retrieval, eligibility, code selection |

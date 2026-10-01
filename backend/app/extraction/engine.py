@@ -1,18 +1,17 @@
-"""Shared LLM plumbing, talking to the Mistral API via llama-index's MistralAI client.
-Task-specific logic lives entirely in app/tasks/* — adding a new output type never
+"""Shared LLM plumbing, talking to whichever chat provider LLM_PROVIDER selects (see
+app/llm/). Task-specific logic lives entirely in app/tasks/* — adding a new output type never
 requires touching this file."""
 
 import json
 import logging
 import time
-from functools import lru_cache
 from typing import TypeVar
 
 from llama_index.core.base.llms.types import ChatMessage, MessageRole
-from llama_index.llms.mistralai import MistralAI
+from llama_index.core.llms import LLM
 
-from app.config import settings
 from app.extraction.models import ExtractionResult
+from app.llm import ChatResponseReader, get_chat_llm
 from app.tasks.base import ExtractionTask
 
 TInput = TypeVar("TInput")
@@ -20,21 +19,13 @@ TInput = TypeVar("TInput")
 logger = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=None)
-def get_client(model: str) -> MistralAI:
-    """Cached per model name — a task with a stronger model= override
-    (app/tasks/base.py's ExtractionTask.model) gets its own client instead of sharing one
-    tuned for a different model."""
-    return MistralAI(
-        model=model,
-        api_key=settings.mistral_api_key,
-        # Deterministic on purpose: this is a structured extraction task (pick codes from a
-        # closed candidate list), not a creative one — run-to-run variance here means the
-        # same transcript can non-reproducibly get a code or not, which undermines both
-        # debugging and the physician's trust in the suggestion.
-        temperature=0,
-        max_tokens=4096,
-    )
+_reader = ChatResponseReader()
+
+
+def get_client(model: str) -> LLM:
+    """The seam tests patch (app.extraction.engine.get_client). Caching and the
+    deterministic temperature=0 default live in get_chat_llm."""
+    return get_chat_llm(model)
 
 
 async def run_extraction(task: ExtractionTask[TInput], task_input: TInput) -> ExtractionResult:
@@ -66,11 +57,11 @@ async def run_extraction(task: ExtractionTask[TInput], task_input: TInput) -> Ex
         extra={"task": task.name, "model": task.model, "llm_duration_ms": round(llm_duration_ms, 1)},
     )
 
-    choice = response.raw["choices"][0]
-    if choice.finish_reason not in ("stop", "length"):
-        raise RuntimeError(f"Model did not return a normal completion (finish_reason={choice.finish_reason!r})")
+    completion = _reader.read(response)
+    if completion.finish_reason not in ("stop", "length"):
+        raise RuntimeError(f"Model did not return a normal completion (finish_reason={completion.finish_reason!r})")
 
-    raw = json.loads(response.message.content)
+    raw = json.loads(completion.content)
     parsed = task.parse(raw, prepared)
 
-    return ExtractionResult(task=task.name, result=parsed, model=response.raw["model"])
+    return ExtractionResult(task=task.name, result=parsed, model=completion.model)
