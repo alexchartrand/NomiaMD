@@ -22,11 +22,11 @@ backed by eval numbers rather than impressions. Write the decision down.
   `consultations/` cases** for each combination. Record the Mistral baseline first. A fix
   validated on one transcript can regress another.
 - [ ] Measure latency per extraction (summary + billing_codes), since the inbox batch depends on it.
-- [ ] Write `docs/decision-llm-hosting.md`: what was chosen, the eval table, the cost, the
-  residency guarantees, and the open risks.
+- [ ] Fill in the `decision-llm-hosting.docx` working document (OneDrive, not in the repo): hosting options and prices,
+  model candidates, the eval table, the cost estimate, and the final decision.
 
 ## Done when
-- The decision record exists, with a numbers table: baseline vs each candidate, ≥2 cases.
+- `decision-llm-hosting.docx` (OneDrive) has a filled-in decision section and an eval table: baseline vs each candidate, ≥2 cases.
 - The chosen endpoint works with `LLM_PROVIDER=openai_compatible` and `EMBEDDING_PROVIDER=openai_compatible`.
 - Updated `project_llm_model_selection` memory/notes.
 
