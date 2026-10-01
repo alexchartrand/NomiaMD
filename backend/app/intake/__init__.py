@@ -14,14 +14,24 @@ from app.intake.deduplicator import DedupOutcome
 from app.intake.models import EncounterMeta, SourceNote
 from app.intake.normalizers import NormalizerRegistry, default_normalizers
 from app.intake.queue import EncounterExtractor, ExtractionQueue, InlineExtractionQueue
-from app.intake.service import EmptyNoteError, IntakeService, ReceiveOutcome
+from app.intake.service import (
+    EmptyNoteError,
+    EncounterNotFoundError,
+    IntakeService,
+    PatientAlreadyAssignedError,
+    PatientNotFoundError,
+    ReceiveOutcome,
+)
 from app.intake.visit_match import SameVisitMatcher
+
+from app.intake.router import router as intake_router
 
 __all__ = [
     "Channel",
     "DedupOutcome",
     "EmptyNoteError",
     "EncounterExtractor",
+    "EncounterNotFoundError",
     "EncounterMeta",
     "EncounterStatus",
     "ExtractionQueue",
@@ -30,6 +40,8 @@ __all__ = [
     "ManualConnector",
     "NormalizerRegistry",
     "NoteSplitter",
+    "PatientAlreadyAssignedError",
+    "PatientNotFoundError",
     "ReceiveOutcome",
     "SampleConnector",
     "SameVisitMatcher",
@@ -37,5 +49,6 @@ __all__ = [
     "UnsupportedUploadError",
     "content_hash",
     "default_normalizers",
+    "intake_router",
     "status_of",
 ]

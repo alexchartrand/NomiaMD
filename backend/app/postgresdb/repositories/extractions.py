@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.postgresdb.models import ExtractionRun, ExtractionRunResult
 from app.postgresdb.repositories.base import SessionRepository
@@ -52,3 +52,24 @@ class ExtractionRepository(SessionRepository):
             select(ExtractionRunResult).where(ExtractionRunResult.run_id == run_id, ExtractionRunResult.task == task)
         )
         return result.scalar_one_or_none()
+
+    async def latest_run_ids(self, encounter_ids: Sequence[int]) -> dict[int, int]:
+        """Each encounter's most recent run id, for those that have one — re-extracting
+        adds a run, and only the newest is shown for review."""
+        if not encounter_ids:
+            return {}
+        rows = await self._session.execute(
+            select(ExtractionRun.encounter_id, func.max(ExtractionRun.id))
+            .where(ExtractionRun.encounter_id.in_(encounter_ids))
+            .group_by(ExtractionRun.encounter_id)
+        )
+        return {encounter_id: run_id for encounter_id, run_id in rows.all()}
+
+    async def get_results(self, run_ids: Sequence[int], task: str) -> dict[int, ExtractionRunResult]:
+        """One stage's result for each of `run_ids`, keyed by run id."""
+        if not run_ids:
+            return {}
+        rows = await self._session.scalars(
+            select(ExtractionRunResult).where(ExtractionRunResult.run_id.in_(run_ids), ExtractionRunResult.task == task)
+        )
+        return {row.run_id: row for row in rows.all()}

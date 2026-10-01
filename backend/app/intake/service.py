@@ -34,6 +34,19 @@ class EmptyNoteError(ValueError):
     """Nothing is left of the note once normalized (e.g. an HTML capture with no text)."""
 
 
+class EncounterNotFoundError(LookupError):
+    """No such encounter for this physician — someone else's looks the same as none."""
+
+
+class PatientNotFoundError(LookupError):
+    pass
+
+
+class PatientAlreadyAssignedError(ValueError):
+    """The encounter already has a patient, and its runs were extracted for that one: a
+    different pick would leave codes eligibility-filtered for the wrong person."""
+
+
 @dataclass(frozen=True)
 class ReceiveOutcome:
     outcome: DedupOutcome
@@ -75,6 +88,21 @@ class IntakeService:
             return outcome
         await self._queue.enqueue(outcome.encounter_id)
         return replace(outcome, enqueued=True)
+
+    async def assign_patient(self, encounter_id: int, patient_id: int, user: User) -> None:
+        """The physician's manual pick for an encounter "à associer" (its NAM was missing or
+        unknown), then its extraction is queued like any received note's."""
+        async with session_scope() as session:
+            encounters = EncounterRepository(session)
+            encounter = await encounters.get_for_user(encounter_id, user.id)
+            if encounter is None:
+                raise EncounterNotFoundError(encounter_id)
+            if encounter.patient_id is not None:
+                raise PatientAlreadyAssignedError(encounter_id)
+            if await PatientRepository(session).get(patient_id) is None:
+                raise PatientNotFoundError(patient_id)
+            await encounters.set_patient(encounter, patient_id)
+        await self._queue.enqueue(encounter_id)
 
     async def receive_all(self, notes: Iterable[SourceNote], user: User) -> list[ReceiveOutcome]:
         """Several notes delivered together (an ER shift paste, a seed), received in order —

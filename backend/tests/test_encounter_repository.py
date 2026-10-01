@@ -4,7 +4,7 @@ tests/test_extraction.py."""
 
 import itertools
 import re
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 
 import pytest
@@ -27,6 +27,7 @@ from app.postgresdb import (
     ExtractionStageInput,
     Gender,
     PatientRepository,
+    ReceivedWindow,
 )
 from tests.db_helpers import ensure_user_row, physician
 
@@ -36,6 +37,8 @@ _physician_ids = itertools.count(3000)
 _ramq_numbers = itertools.count(1)
 
 DAY = date(2026, 3, 4)
+# A window the test's own rows weren't received in: only dated ones match DAY.
+_LONG_AGO = ReceivedWindow(datetime(2000, 1, 1, tzinfo=timezone.utc), datetime(2000, 1, 2, tzinfo=timezone.utc))
 
 
 @pytest.fixture
@@ -113,8 +116,7 @@ async def _seed_claim(session, user_id, encounter, run):
 
 
 async def _status(repo, user_id, encounter) -> EncounterStatus:
-    [activity] = [a for a in await repo.list_for_day(user_id, DAY) if a.encounter.id == encounter.id]
-    return status_of(activity)
+    return status_of(await repo.activity_for_user(encounter.id, user_id))
 
 
 def test_channel_enum_matches_the_check_constraint():
@@ -165,9 +167,32 @@ async def test_list_for_day_is_the_owners_encounters_of_that_day_in_arrival_orde
     await repo.create(_input(other_id, note_text="d"))
     second = await repo.create(_input(physician_id, note_text="e"))
 
-    listed = await repo.list_for_day(physician_id, DAY)
+    listed = await repo.list_for_day(physician_id, DAY, _LONG_AGO)
 
     assert [a.encounter.id for a in listed] == [first.id, second.id]
+
+
+async def test_list_for_day_shows_an_undated_encounter_on_the_day_it_was_received(db_session, physician_id):
+    repo = EncounterRepository(db_session)
+    undated = await repo.create(_input(physician_id, note_text="sans date", service_date=None))
+    dated_elsewhere = await repo.create(_input(physician_id, note_text="autre jour", service_date=date(2026, 3, 5)))
+    now = datetime.now(timezone.utc)
+    around_now = ReceivedWindow(now - timedelta(hours=1), now + timedelta(hours=1))
+
+    listed = [a.encounter.id for a in await repo.list_for_day(physician_id, DAY, around_now)]
+    assert undated.id in listed
+    assert dated_elsewhere.id not in listed
+    assert undated.id not in [a.encounter.id for a in await repo.list_for_day(physician_id, DAY, _LONG_AGO)]
+
+
+async def test_activity_for_user_is_scoped_to_its_owner(db_session, physician_id):
+    other_id = physician_id + 100
+    await ensure_user_row(physician(other_id))
+    repo = EncounterRepository(db_session)
+    encounter = await repo.create(_input(physician_id))
+
+    assert (await repo.activity_for_user(encounter.id, physician_id)).encounter.id == encounter.id
+    assert await repo.activity_for_user(encounter.id, other_id) is None
 
 
 async def test_find_by_external_finds_an_exact_version_or_the_current_one(db_session, physician_id):

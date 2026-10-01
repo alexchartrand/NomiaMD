@@ -39,3 +39,21 @@ class SourceNote(BaseModel):
     text: str = Field(min_length=1)
     # Groups notes received together, e.g. one ER shift pasted at the end of the night.
     batch_label: str | None = Field(default=None, max_length=64)
+
+
+class PastedNotes(BaseModel):
+    """`POST /intake/notes`'s simple form: text as the physician pasted it — one note, or a
+    whole ER shift the splitter cuts into one note per `**NAM :**` header."""
+
+    text: str = Field(min_length=1)
+    source_system: str = Field(default="manual", min_length=1, max_length=64)
+    batch_label: str | None = Field(default=None, max_length=64)
+
+
+class ReceiveOutcomeOut(BaseModel):
+    """One received note's fate — app/intake/service.py's ReceiveOutcome, over HTTP."""
+
+    outcome: str
+    encounter_id: int
+    patient_id: int | None
+    enqueued: bool
