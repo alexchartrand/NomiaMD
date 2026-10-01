@@ -9,7 +9,7 @@ through, turning "a note from somewhere" into a deduplicated encounter with its 
 resolved deterministically.
 
 ## Tasks
-- [ ] `app/intake/models.py`:
+- [x] `app/intake/models.py`:
   - `IntakeChannel` (StrEnum): `paste`, `upload`, `sample`, `extension`, `scribe_webhook`,
     `fhir_pull`, `partner_api`
   - `EncounterMeta`: `time_start`, `time_end`, `location_label`, `etablissement_number`,
@@ -17,21 +17,21 @@ resolved deterministically.
   - `SourceNote` (Pydantic): `source_system`, `channel`, `external_note_id`,
     `external_encounter_id`, `signed_at`, `nam`, `mrn`, `service_date`, `meta`, `text`,
     `batch_label` (ER shift)
-- [ ] `app/intake/normalizers/`: a `NoteNormalizer` ABC with `PlainTextNormalizer` and
+- [x] `app/intake/normalizers/`: a `NoteNormalizer` ABC with `PlainTextNormalizer` and
   `HtmlNormalizer` (strip tags, keep paragraph breaks). The registry is keyed by `source_system`.
   Each normalizer also declares a `date_order` (`dmy` | `mdy`).
-- [ ] `parse_encounter_date(raw, date_order="dmy")` in `app/extraction/encounter_date.py`.
+- [x] `parse_encounter_date(raw, date_order="dmy")` in `app/extraction/encounter_date.py`.
   Pass the source's order through. This fixes the BACKLOG "MM/DD" item; check it off.
-- [ ] `app/intake/patient_resolver.py`: `PatientResolver.resolve(nam) -> int | None` uses
+- [x] `app/intake/patient_resolver.py`: `PatientResolver.resolve(nam) -> int | None` uses
   `app/patients/nam.py`'s `normalize`, then a new `PatientRepository.get_by_ramq_number`
   (active rows only). **Never** reads the note text and never calls the LLM. No NAM or an
   unknown NAM returns `None`, and the encounter shows as "à associer".
-- [ ] `app/intake/deduplicator.py`: `content_hash` = sha256 of the normalized text. Outcomes:
+- [x] `app/intake/deduplicator.py`: `content_hash` = sha256 of the normalized text. Outcomes:
   `new`, `duplicate` (same external id + hash), `new_version` (same external id, new hash),
   and a fallback match on `(patient, service_date, author_ref)` when there is no external id.
-- [ ] `app/intake/queue.py`: an `ExtractionQueue` Protocol with `enqueue(encounter_id)`. For now,
+- [x] `app/intake/queue.py`: an `ExtractionQueue` Protocol with `enqueue(encounter_id)`. For now,
   `InlineExtractionQueue` runs the pipeline directly (step 10 swaps in arq).
-- [ ] `app/intake/service.py`: `IntakeService.receive(note, user) -> ReceiveOutcome`. Normalize,
+- [x] `app/intake/service.py`: `IntakeService.receive(note, user) -> ReceiveOutcome`. Normalize,
   dedupe, resolve the patient, create the encounter, and enqueue when a patient is resolved.
   `new_version` handling is left as a TODO for step 16.
 
@@ -44,3 +44,19 @@ Unit tests cover:
 - that `receive` enqueues only when the patient is resolved
 
 `app/intake` imports nothing from `ramq_codes` (the bounded-context rule).
+
+## Notes (done 10/1)
+- `IntakeChannel` is step 06's `Channel` (`app/intake/channels.py`), reused rather than duplicated.
+- `SourceNote.service_date` takes a date or the source's own string; a string is parsed with
+  the source's `date_order`. `signed_at`, `mrn` and `batch_label` are stored in
+  `encounter_meta` alongside `EncounterMeta`'s fields — none of them drives a query yet.
+- `receive` resolves the patient *before* deduplicating: the fallback key needs it.
+- The fallback match (no external id; same patient, service date and `author_ref`) returns
+  `duplicate` whatever the text, and the outcome carries the encounter already on file. Two
+  genuinely separate visits by the same author on the same day would collide; revisit if a
+  channel without external ids turns out to send those.
+- `InlineExtractionQueue` doesn't import the pipeline: it runs an `EncounterExtractor`, and
+  the concrete one, `PipelineEncounterExtractor`, lives in `app/extraction/encounter_extractor.py`
+  (the pipeline reaches into `ramq_codes`). Wiring `IntakeService` into the app is step 09.
+- New repository reads: `PatientRepository.get_by_ramq_number`, `EncounterRepository.get`
+  and `list_current_for_patient_day`.

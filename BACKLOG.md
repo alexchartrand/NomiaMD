@@ -25,9 +25,6 @@
 - [ ] 🟢 NAM stored in plaintext — *added 8/27, from schema review*
   - `patients.ramq_number` and the NAM inside `encounters.note_text` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
 
-- [ ] 🟢 Slash-date parsing assumes `DD/MM/YYYY`, would misparse an Epic-style `MM/DD/YYYY` note — *added 8/24, from billing-workflow code review*
-  - `app/extraction/encounter_date.py`'s `_SLASH_DATE_RE` always reads `d/m/y`. Harmless today (Epic/Plume AI sources are still disabled buttons in the UI, and Quebec notes use `DD/MM/YYYY`), but once a US-market EHR source is wired up, a date like "03/04/2026" would silently parse as March 4 instead of April 3 for any day/month both ≤ 12 — no error, just a silently wrong `encounter_date`. Revisit once a real `source.system` other than `simule` sends dates.
-
 - [ ] 🟢 Facturation's patient filter only lists the physician's own roster — *added 8/24, from billing-workflow code review, reworded 9/30*
   - `ClaimRepository.list_for_physician` deliberately doesn't filter `deleted_at` (a deleted patient's past claims keep showing their name), but `FacturationPage/RecordsTab.tsx`'s patient filter dropdown is filled from the physician's roster (`GET /patients`). Since the 8/31 global-patient refactor, claims aren't roster-gated, so any patient billed but never added to (or removed from) "my patients" can't be picked in the filter. Minor; the "all patients" view still shows their claims. Could be filled from the distinct patients on the physician's own claims instead.
 
@@ -111,6 +108,10 @@
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] 🟢 Slash-date parsing assumes `DD/MM/YYYY`, would misparse an Epic-style `MM/DD/YYYY` note — *added 8/24, from billing-workflow code review, fixed 10/1*
+  - `app/extraction/encounter_date.py`'s `_SLASH_DATE_RE` always reads `d/m/y`. Harmless today (Epic/Plume AI sources are still disabled buttons in the UI, and Quebec notes use `DD/MM/YYYY`), but once a US-market EHR source is wired up, a date like "03/04/2026" would silently parse as March 4 instead of April 3 for any day/month both ≤ 12 — no error, just a silently wrong `encounter_date`. Revisit once a real `source.system` other than `simule` sends dates.
+  - 10/1 (intake step 07): `parse_encounter_date(raw, date_order)` takes a `DateOrder` (`dmy` | `mdy`), declared per `source_system` by `app/intake/normalizers/` (`epic` is month-first, everything else day-first). `IntakeService` and `PipelineEncounterExtractor` pass the source's order through. `POST /extract` still parses day-first; it's replaced by the intake routes in step 09.
 
 - [x] 🟢 Remove `MISTRAL_EMBEDDING_MODEL` from `.env` — *added 8/21, superseded 10/1*
   - The worry was that changing it silently breaks retrieval (query vectors in a different space than the LanceDB tables). Not removed: intake step 02 made the embedding model swappable on purpose (`EMBEDDING_PROVIDER`, `app/llm/embeddings.py`). Instead, `application_services()` now refuses to start when the query model's dimension doesn't match the codes/documents vector columns (`app/llm/embedding_guard.py`). A same-dimension model swap still passes until ramq-ingestion records the model name (its BACKLOG.md).
