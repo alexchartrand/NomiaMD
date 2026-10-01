@@ -1,7 +1,7 @@
 """`encounters` — one signed note from one source (see the Encounter model)."""
 
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from sqlalchemy import and_, exists, or_, select
 from sqlalchemy.exc import IntegrityError
@@ -35,11 +35,22 @@ class EncounterActivity:
 
 @dataclass(frozen=True)
 class ReceivedWindow:
-    """When a day starts and ends, as instants: an undated encounter belongs to the day it
-    was received on, and that day is the clinic's (app/clock.py), not the database's."""
+    """When a period starts and ends, as instants (end exclusive; None = unbounded): an
+    undated encounter belongs to the day it was received on, and that day is the clinic's
+    (app/clock.py), not the database's."""
 
-    start: datetime
-    end: datetime
+    start: datetime | None
+    end: datetime | None
+
+
+@dataclass(frozen=True)
+class EncounterPeriod:
+    """Service dates `first` through `last`, both included (None = unbounded), and the same
+    period as instants for the undated encounters."""
+
+    first: date | None
+    last: date | None
+    received: ReceivedWindow
 
 
 class DuplicateEncounterError(Exception):
@@ -103,19 +114,26 @@ class EncounterRepository(SessionRepository):
             return None
         return encounter
 
-    async def list_for_day(self, user_id: int, day: date, received: ReceivedWindow) -> list[EncounterActivity]:
-        """Every encounter of `day`, in arrival order, with what its status needs — one
+    async def list_in_period(self, user_id: int, period: EncounterPeriod) -> list[EncounterActivity]:
+        """Every encounter of the period, in arrival order, with what its status needs — one
         query, not one per encounter. An encounter with no service date yet (a paste with
-        no date, still waiting for a patient or for extraction to find one) shows on the day
-        it was received, so it never drops out of the inbox."""
-        dated = Encounter.service_date == day
-        undated = and_(
-            Encounter.service_date.is_(None),
-            Encounter.created_at >= received.start,
-            Encounter.created_at < received.end,
-        )
+        no date, still waiting for a patient or for extraction to find one) belongs to the
+        day it was received, so it never drops out of the inbox. One confirmed as another's
+        duplicate is left out."""
+        dated = [Encounter.service_date.is_not(None)]
+        if period.first is not None:
+            dated.append(Encounter.service_date >= period.first)
+        if period.last is not None:
+            dated.append(Encounter.service_date <= period.last)
+        undated = [Encounter.service_date.is_(None)]
+        if period.received.start is not None:
+            undated.append(Encounter.created_at >= period.received.start)
+        if period.received.end is not None:
+            undated.append(Encounter.created_at < period.received.end)
         return await self._activities(
-            select(*_activity_columns()).where(Encounter.user_id == user_id, or_(dated, undated)).order_by(Encounter.id)
+            select(*_activity_columns())
+            .where(Encounter.user_id == user_id, Encounter.duplicate_of_id.is_(None), or_(and_(*dated), and_(*undated)))
+            .order_by(Encounter.id)
         )
 
     async def activity_for_user(self, encounter_id: int, user_id: int) -> EncounterActivity | None:
@@ -172,4 +190,12 @@ class EncounterRepository(SessionRepository):
 
     async def record_extraction_error(self, encounter: Encounter, error: str) -> None:
         encounter.extraction_error = error
+        await self._session.flush()
+
+    async def mark_duplicate_of(self, encounter: Encounter, kept: Encounter) -> None:
+        encounter.duplicate_of_id = kept.id
+        await self._session.flush()
+
+    async def dismiss_duplicate(self, encounter: Encounter) -> None:
+        encounter.duplicate_dismissed_at = datetime.now(timezone.utc)
         await self._session.flush()

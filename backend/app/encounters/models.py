@@ -32,8 +32,13 @@ class EncounterRowOut(BaseModel):
     batch_label: str | None
     service_date: date | None
     received_at: datetime
-    # Codes in the latest run; None when it was never extracted.
+    # Codes in the latest run, and the run itself (what POST /claims takes); None when it
+    # was never extracted.
     code_count: int | None
+    extraction_run_id: int | None
+    # "Doublon possible": the day's other encounters this may be the same visit as, until
+    # the physician answers (see app/encounters/duplicates.py).
+    possible_duplicate_ids: list[int]
     # Approvable without opening it: see app/encounters/readiness.py.
     all_clean: bool
 
@@ -50,6 +55,8 @@ class EncounterDetailOut(BaseModel):
     service_date: date | None
     received_at: datetime
     meta: dict
+    # Set once the physician confirmed it's the same visit as that encounter.
+    duplicate_of_id: int | None
     note_text: str
     extraction_error: str | None
     extraction: BillingExtractionResponse | None

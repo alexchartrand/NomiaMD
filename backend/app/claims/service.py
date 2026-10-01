@@ -11,6 +11,7 @@ from app.claims.duplicates import EXTRACTION_ALREADY_CLAIMED, ClaimDuplicateGuar
 from app.claims.errors import (
     ClaimOnBillError,
     DuplicateClaimError,
+    DuplicateEncounterClaimError,
     EmptySelectionError,
     ExtractionRunNotFoundError,
     PatientNotFoundError,
@@ -76,6 +77,8 @@ class ClaimService:
         # The note the run was extracted from: its source and version are snapshotted onto
         # the claim, so they survive the encounter's retention purge.
         encounter = await self._run_encounter(run, physician.id)
+        if encounter.duplicate_of_id is not None:
+            raise DuplicateEncounterClaimError()
 
         await self._duplicate_guard.ensure_run_unclaimed(run.id)
         candidates = await self._billing_candidates(run.id, [s.code for s in selected])

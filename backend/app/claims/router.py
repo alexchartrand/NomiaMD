@@ -8,6 +8,7 @@ from app.claims.models import ClaimCreate, ClaimOut
 from app.claims.errors import (
     ClaimOnBillError,
     DuplicateClaimError,
+    DuplicateEncounterClaimError,
     EmptySelectionError,
     ExtractionRunNotFoundError,
     InvalidFeeSelectionError,
@@ -59,6 +60,10 @@ async def create_claim(
         raise HTTPException(
             status_code=409,
             detail={"code": "duplicate_claim", "message": exc.message},
+        ) from exc
+    except DuplicateEncounterClaimError as exc:
+        raise HTTPException(
+            status_code=409, detail="Cette rencontre a été marquée comme doublon d'une autre visite"
         ) from exc
 
 
