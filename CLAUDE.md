@@ -62,6 +62,7 @@ Backend modules (`backend/app/`):
 | Module | Role |
 |---|---|
 | `llm/` | chat and embedding model provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), raw-response reading, startup embedding-dimension guard |
+| `intake/` | where notes come from: `Encounter` channels, note hashing, derived encounter status (`status.py`) |
 | `extraction/` | `POST /extract`: runs the pipeline (`pipeline.py`) and the shared LLM call (`engine.py`) |
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
 | `ramq_codes/` | `billing_codes` task — billing context, candidate retrieval, eligibility, code selection |
@@ -78,7 +79,8 @@ Backend modules (`backend/app/`):
 and Postgres, registers tasks), used by `main.py`'s lifespan and by the scripts.
 
 Extraction flow: the physician picks a patient *first* (global search), then `POST /extract`
-(requires `patient_id`) runs `consultation_summary` → resolves a `BillingContext`
+(requires `patient_id`) stores the note as an `Encounter` (the retention purge target; runs
+cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
 (physician practice facts + patient age/vulnerability/registration) → `billing_codes`
 (multi-query hybrid retrieval, eligibility-filtered, RRF-fused → LLM picks from candidates).
 The physician reviews, then `POST /claims` saves from the stored extraction run.
