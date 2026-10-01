@@ -1,10 +1,21 @@
 """Parses the free-form 'encounter date' string consultation_summary extracts
 (EncounterSetting.date) into a real date — or None when it can't be confidently parsed.
 No default is ever substituted here: an unparsed date must surface to the physician as
-unparsed, not silently become "today" (see docs/plans/billing-workflow.md, Part 3)."""
+unparsed, not silently become "today" (see docs/plans/billing-workflow.md, Part 3).
+
+Slash dates are ambiguous whenever day and month are both <= 12, so the caller passes the
+order its source writes them in (app/intake/normalizers/ declares it per source_system):
+Quebec notes are day-first, Epic's US-built templates month-first."""
 
 import re
 from datetime import date
+from enum import StrEnum
+
+
+class DateOrder(StrEnum):
+    DMY = "dmy"
+    MDY = "mdy"
+
 
 _MONTHS = {
     "janvier": 1,
@@ -27,7 +38,7 @@ _FRENCH_DATE_RE = re.compile(r"(\d{1,2})\s+([a-zéèêëàâäîïôöûüùç]+
 _SLASH_DATE_RE = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4})$")
 
 
-def parse_encounter_date(raw: str | None) -> date | None:
+def parse_encounter_date(raw: str | None, date_order: DateOrder = DateOrder.DMY) -> date | None:
     if not raw or not raw.strip():
         return None
     text = raw.strip()
@@ -49,7 +60,8 @@ def parse_encounter_date(raw: str | None) -> date | None:
 
     match = _SLASH_DATE_RE.match(text)
     if match:
-        day, month, year = match.groups()
+        first, second, year = match.groups()
+        day, month = (first, second) if date_order == DateOrder.DMY else (second, first)
         try:
             return date(int(year), int(month), int(day))
         except ValueError:

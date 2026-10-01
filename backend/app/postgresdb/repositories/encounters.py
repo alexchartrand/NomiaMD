@@ -72,6 +72,11 @@ class EncounterRepository(SessionRepository):
             raise
         return encounter
 
+    async def get(self, encounter_id: int) -> Encounter | None:
+        """Unscoped — for background work that only has the id (app/intake/queue.py). Anything
+        acting on a physician's behalf uses get_for_user."""
+        return await self._session.get(Encounter, encounter_id)
+
     async def get_for_user(self, encounter_id: int, user_id: int) -> Encounter | None:
         encounter = await self._session.get(Encounter, encounter_id)
         if encounter is None or encounter.user_id != user_id:
@@ -112,6 +117,21 @@ class EncounterRepository(SessionRepository):
         else:
             query = query.where(Encounter.superseded_by_id.is_(None))
         return (await self._session.scalars(query.order_by(Encounter.id.desc()).limit(1))).first()
+
+    async def list_current_for_patient_day(self, user_id: int, patient_id: int, day: date) -> list[Encounter]:
+        """This physician's current (not superseded) encounters for one patient on one day,
+        oldest first — the candidates for app/intake/deduplicator.py's fallback match."""
+        rows = await self._session.scalars(
+            select(Encounter)
+            .where(
+                Encounter.user_id == user_id,
+                Encounter.patient_id == patient_id,
+                Encounter.service_date == day,
+                Encounter.superseded_by_id.is_(None),
+            )
+            .order_by(Encounter.id)
+        )
+        return list(rows.all())
 
     async def set_patient(self, encounter: Encounter, patient_id: int) -> None:
         encounter.patient_id = patient_id

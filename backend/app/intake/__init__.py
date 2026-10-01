@@ -3,8 +3,32 @@ Encounter, which the extraction pipeline then works on. Never imports ramq_codes
 
 Public interface — everything else that needs this imports it from here."""
 
+# channels and hashing first: importing the service pulls in app.extraction, whose router
+# imports Channel and content_hash back from this package while it's still initializing.
 from app.intake.channels import Channel
 from app.intake.hashing import content_hash
 from app.intake.status import EncounterStatus, status_of
 
-__all__ = ["Channel", "EncounterStatus", "content_hash", "status_of"]
+from app.intake.deduplicator import DedupOutcome
+from app.intake.models import EncounterMeta, SourceNote
+from app.intake.normalizers import NormalizerRegistry, default_normalizers
+from app.intake.queue import EncounterExtractor, ExtractionQueue, InlineExtractionQueue
+from app.intake.service import EmptyNoteError, IntakeService, ReceiveOutcome
+
+__all__ = [
+    "Channel",
+    "DedupOutcome",
+    "EmptyNoteError",
+    "EncounterExtractor",
+    "EncounterMeta",
+    "EncounterStatus",
+    "ExtractionQueue",
+    "InlineExtractionQueue",
+    "IntakeService",
+    "NormalizerRegistry",
+    "ReceiveOutcome",
+    "SourceNote",
+    "content_hash",
+    "default_normalizers",
+    "status_of",
+]

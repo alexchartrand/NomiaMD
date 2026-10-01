@@ -17,7 +17,7 @@ import logging
 from datetime import date
 from typing import Protocol, cast
 
-from app.extraction.encounter_date import parse_encounter_date
+from app.extraction.encounter_date import DateOrder, parse_encounter_date
 from app.extraction.engine import run_extraction
 from app.extraction.models import ExtractionResult
 from app.extraction.scoped_context import ScopedBillingContextBuilder
@@ -71,19 +71,20 @@ async def run_billing_codes_pipeline(
     user: User,
     patient_id: int,
     context_builder: ContextBuilder | None = None,
+    date_order: DateOrder = DateOrder.DMY,
 ) -> tuple[
     ExtractionResult[ConsultationSummaryResult],
     ExtractionResult[BillingCodesResult],
 ]:
     """Runs all three stages and returns both extraction results — callers that only need
     the final billing codes still get the intermediate summary (e.g. to store it for
-    traceability)."""
+    traceability). `date_order` is how the note's source writes slash dates."""
     context_builder = context_builder or ScopedBillingContextBuilder()
 
     summary_result = await run_extraction(get_task("consultation_summary"), transcript)
     summary = summary_result.result
 
-    encounter_date = parse_encounter_date(summary.encounter_setting.date)
+    encounter_date = parse_encounter_date(summary.encounter_setting.date, date_order)
 
     context = await _build_context(
         user=user, patient_id=patient_id, encounter_date=encounter_date, context_builder=context_builder
