@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
+from app.patients import nam as nam_module
+
 SAMPLE_PATIENTS_DIR = (
     Path(os.environ["SAMPLE_PATIENTS_DIR"])
     if os.environ.get("SAMPLE_PATIENTS_DIR")
@@ -31,15 +33,42 @@ class SamplePatient:
     id: str
     label: str
     transcript: str
+    # Normalized NAM from the note's `**NAM :**` header, or None if missing/malformed —
+    # lets the frontend auto-match this sample to the real Patient row seed_db.py creates
+    # for it (same normalization, see scripts/seed_db.py).
+    nam: str | None
 
 
 _FIELD_RE = re.compile(r"^\*\*(.+?)\s*:\*\*\s*(.*)$", re.MULTILINE)
-_AGE_SEX_RE = re.compile(r"(\d+)\s*ans\s*\((\w)\)")
+_AGE_SEX_YEARS_RE = re.compile(r"(\d+)\s*ans\s*\((\w)\)")
+_AGE_SEX_MONTHS_RE = re.compile(r"(\d+)\s*mois\s*\((\w)\)")
 _MOTIF_RE = re.compile(r"### Motif de consultation\s*\n(.+?)(?=\n#{2,3}|\Z)", re.DOTALL)
 
 
+def parse_header_fields(note: str) -> dict[str, str]:
+    """Every `**Label :** value` header line in a consultation note, as a dict — shared by
+    the sample-patient loader below and scripts/seed_db.py, which needs the same fields
+    (Patient/NAM/Médecin) to seed a Patient row per note."""
+    return dict(_FIELD_RE.findall(note))
+
+
+def parse_age_hint_years(patient_field: str) -> float | None:
+    """The age hint embedded in a `**Patient :**` line, e.g. "45 ans (H)" or, for an
+    infant, "18 mois (F)" — as whole or fractional years, for app.patients.nam.decode's
+    age_hint (it needs this to disambiguate a NAM's century when both the 19xx and 20xx
+    candidate birth years pass its own sanity checks, which happens for any very recent
+    NAM)."""
+    years_match = _AGE_SEX_YEARS_RE.search(patient_field)
+    if years_match:
+        return float(years_match.group(1))
+    months_match = _AGE_SEX_MONTHS_RE.search(patient_field)
+    if months_match:
+        return float(months_match.group(1)) / 12
+    return None
+
+
 def _build_label(note: str, fields: dict[str, str]) -> str:
-    age_sex = _AGE_SEX_RE.search(fields.get("Patient", ""))
+    age_sex = _AGE_SEX_YEARS_RE.search(fields.get("Patient", ""))
     demographic = f"{age_sex.group(1)}{age_sex.group(2)}" if age_sex else ""
 
     motif_match = _MOTIF_RE.search(note)
@@ -50,13 +79,14 @@ def _build_label(note: str, fields: dict[str, str]) -> str:
 
 def _load_note(path: Path, index: int) -> SamplePatient:
     note = path.read_text().strip()
-    fields = dict(_FIELD_RE.findall(note))
+    fields = parse_header_fields(note)
     dossier = fields.get("Dossier", "").strip().lstrip("#").strip()
 
     return SamplePatient(
         id=dossier or f"note-{index}",
         label=_build_label(note, fields),
         transcript=note,
+        nam=nam_module.normalize(fields.get("NAM")),
     )
 
 

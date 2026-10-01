@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 
 from app.auth import get_current_user
 from app.bills.factory import get_bill_service
@@ -33,8 +33,8 @@ async def create_bill(
 
 @router.get("", response_model=list[BillOut])
 async def list_bills(
-    limit: int = 100,
-    offset: int = 0,
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
     current_user: User = Depends(get_current_user),
     service: BillService = Depends(get_bill_service),
 ) -> list[BillOut]:

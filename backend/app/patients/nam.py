@@ -13,6 +13,11 @@ from app.postgresdb import Gender
 
 _NAM_RE = re.compile(r"^[A-Z]{4}\d{8}$")
 _NOT_ALNUM_RE = re.compile(r"[^A-Za-z0-9]")
+# Unlike _NAM_RE (a full-string validator for an already-isolated candidate token), this
+# scans free-form prose for a NAM-shaped substring wherever it appears — tolerant of the
+# spaced/hyphenated grouping the module docstring's own example uses ("DESR8102 1001") as
+# well as the unspaced form the consultations/ fixtures actually use ("DESR81021001").
+_EMBEDDED_NAM_RE = re.compile(r"\b[A-Za-z]{4}[\s-]?\d{4}[\s-]?\d{4}\b")
 
 _MAX_PLAUSIBLE_AGE = 120
 _CENTURIES = (1900, 2000)
@@ -88,3 +93,14 @@ def decode(nam: str, *, on_date: date, age_hint: float | None = None) -> NamIden
         birth = within_hint[0]
 
     return NamIdentity(date_of_birth=birth, gender=gender)
+
+
+def redact(text: str) -> str:
+    """Masks any NAM-shaped substring in free-form text with "[NAM]". Used by
+    app/ramq_codes/task.py before interpolating the raw transcript into the billing_codes
+    prompt: render_for_billing_codes already strips the patient's name and NAM from the
+    structured summary (app/summary/task.py), but the transcript now also reaches that
+    prompt (see BillingCodesTask), and a NAM is a direct government identifier — this is a
+    best-effort scrub, not a guarantee, so it errs toward over-matching rather than missing
+    one."""
+    return _EMBEDDED_NAM_RE.sub("[NAM]", text)

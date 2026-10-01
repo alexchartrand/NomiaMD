@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Extracts RAMQ billing codes (and future outputs) from clinical transcripts"
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi>=0.115",
+    "fastapi>=0.121",
     "uvicorn[standard]>=0.32",
     "pydantic>=2.9",
     "sqlalchemy>=2.0",
@@ -16,8 +16,6 @@ dependencies = [
     "llama-index-core>=0.12",
     "llama-index-embeddings-mistralai>=0.3",
     "llama-index-llms-mistralai>=0.10",
-    "llama-index-vector-stores-lancedb>=0.5",
-    "llama-index-retrievers-bm25>=0.7",
     "pandas>=2.0",
     "lancedb>=0.37",
     "psycopg[binary]>=3.2",
@@ -27,6 +25,7 @@ dependencies = [
     "argon2-cffi>=23.1",
     "pyjwt>=2.9",
     "reportlab>=4.2",
+    "tzdata>=2024.1",
 ]
 
 [project.optional-dependencies]
@@ -41,3 +40,6 @@ include = ["app*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+# Lets test modules import each other and tests/db_helpers.py as `tests.*` even when a
+# single file is run on its own.
+pythonpath = ["."]

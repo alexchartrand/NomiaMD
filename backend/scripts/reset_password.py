@@ -21,7 +21,8 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from app.auth.security import PasswordHasher  # noqa: E402
-from app.postgresdb import UserRepository, init_db  # noqa: E402
+from app.bootstrap import postgres_database  # noqa: E402
+from app.postgresdb import UserRepository, session_scope  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -42,17 +43,19 @@ def prompt_for_password() -> str:
 async def main() -> None:
     args = parse_args()
 
-    await init_db()
-    users = UserRepository()
-    user = await users.get_by_email(args.email)
-    if user is None:
-        print(f"No user with email {args.email!r}.", file=sys.stderr)
-        raise SystemExit(1)
+    async with postgres_database():
+        async with session_scope() as session:
+            user = await UserRepository(session).get_by_email(args.email)
+        if user is None:
+            print(f"No user with email {args.email!r}.", file=sys.stderr)
+            raise SystemExit(1)
 
-    password = prompt_for_password()
-    await users.update_password_hash(user.id, PasswordHasher().hash(password))
+        # Prompted between two scopes so no transaction is held open while waiting on input.
+        password = prompt_for_password()
+        async with session_scope() as session:
+            await UserRepository(session).update_password_hash(user.id, PasswordHasher().hash(password))
 
-    print(f"Password reset for {user.email!r} (id={user.id}).")
+        print(f"Password reset for {user.email!r} (id={user.id}).")
 
 
 if __name__ == "__main__":

@@ -25,8 +25,9 @@ export default function ProfilePage() {
 
   const [fullName, setFullName] = useState("");
   const [physicianType, setPhysicianType] = useState<PhysicianType | "">("");
-  const [numberOfPatients, setNumberOfPatients] = useState("");
+  const [panelSize, setPanelSize] = useState("");
   const [remunerationType, setRemunerationType] = useState<RemunerationType | "">("");
+  const [practiceNumber, setPracticeNumber] = useState("");
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState(false);
   const [profileSubmitting, setProfileSubmitting] = useState(false);
@@ -41,9 +42,10 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user) return;
     setFullName(user.full_name);
-    setPhysicianType((user.physician_type as PhysicianType | null) ?? "");
-    setNumberOfPatients(user.number_of_patients != null ? String(user.number_of_patients) : "");
-    setRemunerationType((user.remuneration_type as RemunerationType | null) ?? "");
+    setPhysicianType(user.physician_type ?? "");
+    setPanelSize(user.panel_size != null ? String(user.panel_size) : "");
+    setRemunerationType(user.remuneration_type ?? "");
+    setPracticeNumber(user.practice_number ?? "");
   }, [user]);
 
   async function handleProfileSubmit(event: FormEvent) {
@@ -51,9 +53,15 @@ export default function ProfilePage() {
     setProfileError(null);
     setProfileSuccess(false);
 
-    const parsedCount = numberOfPatients.trim() === "" ? null : Number(numberOfPatients);
+    const parsedCount = panelSize.trim() === "" ? null : Number(panelSize);
     if (parsedCount !== null && (Number.isNaN(parsedCount) || parsedCount < 0)) {
       setProfileError("Le nombre de patients doit être un nombre entier positif.");
+      return;
+    }
+
+    const trimmedPracticeNumber = practiceNumber.trim();
+    if (trimmedPracticeNumber !== "" && !/^\d{5,6}$/.test(trimmedPracticeNumber)) {
+      setProfileError("Le numéro de pratique doit contenir 5 ou 6 chiffres.");
       return;
     }
 
@@ -62,8 +70,9 @@ export default function ProfilePage() {
       const updated = await updateProfile({
         full_name: fullName,
         physician_type: physicianType === "" ? null : physicianType,
-        number_of_patients: parsedCount,
+        panel_size: parsedCount,
         remuneration_type: remunerationType === "" ? null : remunerationType,
+        practice_number: trimmedPracticeNumber === "" ? null : trimmedPracticeNumber,
       });
       refreshUser(updated);
       setProfileSuccess(true);
@@ -143,8 +152,8 @@ export default function ProfilePage() {
               >
                 <option value="">—</option>
                 {PHYSICIAN_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </Select>
@@ -158,8 +167,8 @@ export default function ProfilePage() {
                 id="profile-patient-count"
                 type="number"
                 min={0}
-                value={numberOfPatients}
-                onChange={(event) => setNumberOfPatients(event.target.value)}
+                value={panelSize}
+                onChange={(event) => setPanelSize(event.target.value)}
               />
             </div>
 
@@ -174,11 +183,23 @@ export default function ProfilePage() {
               >
                 <option value="">—</option>
                 {REMUNERATION_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </Select>
+            </div>
+
+            <div className="flex w-full max-w-sm flex-col gap-1.5">
+              <label htmlFor="profile-practice-number" className="text-sm text-muted-foreground">
+                Numéro de pratique
+              </label>
+              <TextField
+                id="profile-practice-number"
+                value={practiceNumber}
+                onChange={(event) => setPracticeNumber(event.target.value)}
+                placeholder="12345"
+              />
             </div>
 
             {profileError && (

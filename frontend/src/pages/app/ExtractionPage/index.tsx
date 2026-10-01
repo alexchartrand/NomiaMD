@@ -1,12 +1,19 @@
 import { useMemo, useReducer, useState, type FormEvent } from "react";
 import { cn } from "@/lib/utils";
-import { createClaim, describeError, DuplicateClaimError, extractBillingCodes } from "../../../api";
+import {
+  createClaim,
+  describeError,
+  DuplicateClaimError,
+  extractBillingCodes,
+  searchPatients,
+  type ExtractedFee,
+  type Patient,
+} from "../../../api";
 import { Banner } from "../../../components";
 import { SourceStep } from "./SourceStep";
 import { ReviewStep } from "./ReviewStep";
 import { useSamplePatients } from "./useSamplePatients";
-import { useRoster } from "./useRoster";
-import { useCreatePatientForm } from "./useCreatePatientForm";
+import { useCreatePatientForm } from "../patients/useCreatePatientForm";
 import { initialReviewState, reviewReducer } from "./reviewState";
 
 export default function ExtractionPage() {
@@ -14,11 +21,12 @@ export default function ExtractionPage() {
   const [transcript, setTranscript] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // Chosen before extraction runs (SourceStep.tsx) and fixed for the rest of the flow —
+  // not part of the review reducer below, which is scoped to a single extraction result.
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   const [review, dispatch] = useReducer(reviewReducer, initialReviewState);
   const step: 1 | 2 = !review.result ? 1 : 2;
-
-  const { roster, error: rosterError, reload: loadRoster } = useRoster();
 
   // Editing the transcript or changing the sample patient after an extraction (including
   // via the review page's "back" link) must clear everything derived from it — otherwise
@@ -28,19 +36,35 @@ export default function ExtractionPage() {
     createPatientForm.close();
   }
 
+  // Auto-fills the real patient picker from the sample consultation's own NAM, so the two
+  // pickers (which are otherwise independent — see CLAUDE.md) default to a matching pair.
+  // Best-effort: if nothing matches (e.g. the dev DB hasn't been seeded from
+  // consultations/) the field is simply left empty for the physician to fill in manually.
+  async function handleSampleNamLoaded(nam: string | null) {
+    if (!nam) return;
+    try {
+      const matches = await searchPatients(nam);
+      const match = matches.find((p) => p.ramq_number === nam);
+      if (match) setSelectedPatient(match);
+    } catch {
+      // ignore — leave the patient field for the physician to fill in manually
+    }
+  }
+
   const samplePatientPicker = useSamplePatients({
     onBeforeSelect: () => {
       clearResult();
       setError(null);
+      setSelectedPatient(null);
     },
     onTranscriptLoaded: setTranscript,
+    onNamLoaded: handleSampleNamLoaded,
     onError: setError,
   });
 
   const createPatientForm = useCreatePatientForm({
     onCreated: (patient) => {
-      loadRoster();
-      dispatch({ type: "roster-selected", id: patient.id });
+      setSelectedPatient(patient);
     },
   });
 
@@ -56,12 +80,12 @@ export default function ExtractionPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!source) return;
+    if (!source || !selectedPatient) return;
     setLoading(true);
     setError(null);
     clearResult();
     try {
-      const response = await extractBillingCodes(transcript, source);
+      const response = await extractBillingCodes(transcript, source, selectedPatient.id);
       dispatch({ type: "extracted", result: response });
     } catch (err) {
       setError(describeError(err));
@@ -74,38 +98,44 @@ export default function ExtractionPage() {
     dispatch({ type: "code-toggled", index });
   }
 
-  function startCreatePatient() {
-    const extracted = review.result?.patient_suggestion?.extracted;
-    createPatientForm.open({
-      full_name: extracted?.suggested_full_name ?? "",
-      ramq_number: extracted?.suggested_ramq_number ?? "",
-      date_of_birth: extracted?.suggested_date_of_birth ?? "",
-      gender: extracted?.suggested_gender ?? null,
-    });
+  function selectFee(index: number, feeIndex: number) {
+    dispatch({ type: "fee-selected", index, feeIndex });
   }
 
-  const selectedCodes = useMemo(() => {
-    const { result, selection } = review;
+  function startCreatePatient() {
+    createPatientForm.open();
+  }
+
+  const selectedEntries = useMemo(() => {
+    const { result, selection, feeSelection } = review;
     if (!result) return [];
-    return [...selection].sort((a, b) => a - b).map((i) => result.billing.result.codes[i]);
+    return [...selection].sort((a, b) => a - b).map((i) => {
+      const code = result.billing.result.codes[i];
+      const feeIndex = code.fees.length > 0 ? (feeSelection.get(i) ?? 0) : null;
+      const fee = feeIndex != null ? code.fees[feeIndex] : null;
+      return { code, feeIndex, fee };
+    });
   }, [review]);
 
-  const totalAmount = selectedCodes.reduce((sum, c) => sum + (c.fee.amount ?? 0), 0);
-  const codesMissingFee = selectedCodes.filter((c) => c.fee.amount == null).length;
+  // A fee in "unités" is a count of anesthesia base units, not a price — it never adds to
+  // the dollar total, and counts as a code without a dollar amount.
+  const dollarAmount = (fee: ExtractedFee | null) => (fee?.unit === "dollars" ? fee.amount : null);
+  const totalAmount = selectedEntries.reduce((sum, e) => sum + (dollarAmount(e.fee) ?? 0), 0);
+  const codesMissingFee = selectedEntries.filter((e) => dollarAmount(e.fee) == null).length;
 
   async function handleSave(confirmDuplicate: boolean) {
-    const { result, selectedRosterId, serviceDate, selection } = review;
-    if (!result || !selectedRosterId || !serviceDate || selection.size === 0) return;
+    const { result, serviceDate, selection } = review;
+    if (!result || !selectedPatient || !serviceDate || selection.size === 0) return;
     dispatch({ type: "save-started" });
     try {
+      const selectedCodes = new Map(
+        selectedEntries.map((e) => [e.code.code, { code: e.code.code, fee_index: e.feeIndex }]),
+      );
       await createClaim(
         {
-          patient_id: selectedRosterId,
+          extraction_run_id: result.extraction_run_id,
           service_date: serviceDate,
-          billing_extraction_record_id: result.billing_extraction_record_id,
-          summary_extraction_record_id: result.summary_extraction_record_id,
-          selected_codes: [...new Set(selectedCodes.map((c) => c.code))],
-          source_system: source,
+          selected_codes: [...selectedCodes.values()],
         },
         confirmDuplicate,
       );
@@ -187,31 +217,32 @@ export default function ExtractionPage() {
           onTranscriptChange={handleTranscriptChange}
           onSubmit={handleSubmit}
           loading={loading}
+          selectedPatient={selectedPatient}
+          onSelectPatient={setSelectedPatient}
+          createPatientForm={createPatientForm}
+          onStartCreatePatient={startCreatePatient}
         />
       )}
 
       {error && <Banner tone="error">{error}</Banner>}
 
-      {step === 2 && review.result && (
+      {step === 2 && review.result && selectedPatient && (
         <ReviewStep
           result={review.result}
+          patient={selectedPatient}
           onBack={clearResult}
-          roster={roster}
-          rosterError={rosterError}
-          selectedRosterId={review.selectedRosterId}
-          onSelectRoster={(id) => dispatch({ type: "roster-selected", id })}
-          onStartCreatePatient={startCreatePatient}
-          createPatientForm={createPatientForm}
           serviceDate={review.serviceDate}
           onServiceDateChange={(date) => dispatch({ type: "service-date-changed", date })}
           selection={review.selection}
           onToggleCode={toggleCode}
+          feeSelection={review.feeSelection}
+          onFeeSelected={selectFee}
           totalAmount={totalAmount}
           codesMissingFee={codesMissingFee}
           saving={review.saving}
           saveError={review.saveError}
           saved={review.saved}
-          canSave={Boolean(review.selectedRosterId) && Boolean(review.serviceDate) && review.selection.size > 0}
+          canSave={Boolean(review.serviceDate) && review.selection.size > 0}
           onSave={() => handleSave(false)}
         />
       )}

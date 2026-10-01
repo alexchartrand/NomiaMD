@@ -4,16 +4,18 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.auth import get_current_user
 from app.claims.factory import get_claim_service
-from app.claims.models import ClaimCreate, ClaimOut, ClaimStatus
-from app.claims.service import (
+from app.claims.models import ClaimCreate, ClaimOut
+from app.claims.errors import (
     ClaimOnBillError,
-    ClaimService,
     DuplicateClaimError,
     EmptySelectionError,
-    ExtractionRecordNotFoundError,
+    ExtractionRunNotFoundError,
+    InvalidFeeSelectionError,
     PatientNotFoundError,
     UnknownCodesError,
 )
+from app.claims.service import ClaimService
+from app.claims.status import ClaimStatus
 from app.postgresdb import User
 
 router = APIRouter(prefix="/claims", tags=["claims"])
@@ -28,18 +30,15 @@ async def create_claim(
 ) -> ClaimOut:
     try:
         return await service.create(
-            physician_id=current_user.id,
-            patient_id=body.patient_id,
+            physician=current_user,
+            extraction_run_id=body.extraction_run_id,
             service_date=body.service_date,
-            billing_extraction_record_id=body.billing_extraction_record_id,
-            summary_extraction_record_id=body.summary_extraction_record_id,
             selected_codes=body.selected_codes,
-            source_system=body.source_system,
             confirm_duplicate=confirm_duplicate,
         )
     except PatientNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Patient introuvable") from exc
-    except ExtractionRecordNotFoundError as exc:
+    except ExtractionRunNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Extraction introuvable") from exc
     except EmptySelectionError as exc:
         raise HTTPException(status_code=422, detail="Au moins un code doit être sélectionné") from exc
@@ -47,6 +46,14 @@ async def create_claim(
         raise HTTPException(
             status_code=422,
             detail=f"Code(s) absent(s) de cette extraction : {', '.join(exc.codes)}",
+        ) from exc
+    except InvalidFeeSelectionError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"Choix de tarif invalide pour le code {exc.code} "
+                f"(indice {exc.fee_index}, {exc.available} tarif(s) disponible(s))"
+            ),
         ) from exc
     except DuplicateClaimError as exc:
         raise HTTPException(
@@ -61,8 +68,8 @@ async def list_claims(
     date_from: date | None = None,
     date_to: date | None = None,
     status_filter: ClaimStatus | None = Query(default=None, alias="status"),
-    limit: int = 100,
-    offset: int = 0,
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
     current_user: User = Depends(get_current_user),
     service: ClaimService = Depends(get_claim_service),
 ) -> list[ClaimOut]:
@@ -77,18 +84,19 @@ async def list_claims(
     )
 
 
-@router.delete("/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{claim_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_claim(
-    record_id: int,
+    claim_id: int,
     current_user: User = Depends(get_current_user),
     service: ClaimService = Depends(get_claim_service),
 ) -> None:
     try:
-        deleted = await service.delete(record_id, current_user.id)
+        # A void, not a hard delete — see the Claim model.
+        deleted = await service.void(claim_id, current_user.id)
     except ClaimOnBillError as exc:
         raise HTTPException(
             status_code=409,
             detail="Cette facturation fait partie d'une facture générée. Supprimez d'abord la facture.",
         ) from exc
     if not deleted:
-        raise HTTPException(status_code=404, detail="Facture introuvable")
+        raise HTTPException(status_code=404, detail="Facturation introuvable")

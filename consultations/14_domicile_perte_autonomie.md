@@ -1,6 +1,3 @@
-# Consultation 14 — Visite à domicile, patient en perte sévère d'autonomie
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** GMF Boisé-des-Cèdres (visite à domicile)
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
 **Patient :** Rousseau, Gérard — 84 ans (H)

@@ -4,43 +4,71 @@ can't be built at import time the same way, because lancedb.connect_async needs 
 event loop — so this is opened explicitly by the app lifespan (app/bootstrap.py) instead.
 """
 
+from datetime import timedelta
+
 import lancedb
-from lancedb import AsyncConnection
-from llama_index.vector_stores.lancedb import LanceDBVectorStore
+from lancedb import AsyncConnection, AsyncTable
 
 from app.config import settings
-from app.lancedb.repository import CodeRepository
+from app.lancedb.code_versions import CurrentCodeTableProvider, ICodeTableProvider
 
-CODES_TABLE_NAME = "codes"
-EMBEDDINGS_TABLE_NAME = "code-embeddings"
+CODE_VERSIONS_TABLE_NAME = "code_versions"
+DOCUMENTS_TABLE_NAME = "documents-embeddings"
+
+# How stale an already-open table may be before LanceDB re-checks it for a newer version.
+# Without it, an open table never sees later writes: a promote (the `code_versions` flip),
+# an in-place re-extraction of the current codes table, or a rebuilt documents table would
+# all need a restart to show up.
+READ_CONSISTENCY_INTERVAL = timedelta(seconds=30)
 
 
 class LanceDB:
     """Open handle on the RAMQ LanceDB at DB_PATH. Opened once by the app lifespan
-    (app/bootstrap.py's application_services()), closed on shutdown; hands out the
-    repositories and the llama_index vector store built over the same database."""
+    (app/bootstrap.py's application_services()), closed on shutdown; hands out the raw
+    `documents-embeddings` table and a provider for the current `codes_<rev>` table (see
+    code_versions.py — which codes table is current can change while the process runs).
+    Connection wiring only — has no notion of app/lancedb/repository.py's repository
+    classes; those are built by the composition root (app/bootstrap.py) from what's exposed
+    here.
 
-    def __init__(self, connection: AsyncConnection, codes: CodeRepository, vector_store: LanceDBVectorStore) -> None:
+    Every table lives in the same LanceDB directory (ramq-ingestion writes them together),
+    so one AsyncConnection serves all of them."""
+
+    def __init__(
+        self,
+        connection: AsyncConnection,
+        code_tables: ICodeTableProvider,
+        documents_table: AsyncTable,
+    ) -> None:
         self._connection = connection
-        self._codes = codes
-        self._vector_store = vector_store
+        self._code_tables = code_tables
+        self._documents_table = documents_table
 
     @classmethod
     async def open(cls) -> "LanceDB":
-        connection = await lancedb.connect_async(settings.db_path)
-        codes = CodeRepository(await connection.open_table(CODES_TABLE_NAME))
-        vector_store = LanceDBVectorStore(
-            uri=settings.db_path, table_name=EMBEDDINGS_TABLE_NAME, flat_metadata=False
+        connection = await lancedb.connect_async(
+            settings.db_path, read_consistency_interval=READ_CONSISTENCY_INTERVAL
         )
-        return cls(connection, codes, vector_store)
+        try:
+            registry_table = await connection.open_table(CODE_VERSIONS_TABLE_NAME)
+            code_tables = CurrentCodeTableProvider(connection, registry_table)
+            # Resolved once here so a DB with no current codes table fails at startup, not on
+            # the first extraction.
+            await code_tables.current()
+            documents_table = await connection.open_table(DOCUMENTS_TABLE_NAME)
+        except Exception:
+            connection.close()
+            raise
+
+        return cls(connection, code_tables, documents_table)
 
     @property
-    def codes(self) -> CodeRepository:
-        return self._codes
+    def code_tables(self) -> ICodeTableProvider:
+        return self._code_tables
 
     @property
-    def vector_store(self) -> LanceDBVectorStore:
-        return self._vector_store
+    def documents_table(self) -> AsyncTable:
+        return self._documents_table
 
     def close(self) -> None:
         # lancedb 0.37's AsyncConnection.close() is sync, not a coroutine.

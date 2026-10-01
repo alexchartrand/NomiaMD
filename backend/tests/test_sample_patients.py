@@ -37,6 +37,19 @@ def test_nam_header_line_does_not_disturb_id_or_label_parsing():
     assert "**NAM :** GAGR59071301" in stemi.transcript
 
 
+def test_nam_is_parsed_and_normalized():
+    stemi = get_sample_patient("URG-2026-04471")
+    assert stemi is not None
+    assert stemi.nam == "GAGR59071301"
+
+
+def test_get_patient_endpoint_includes_nam():
+    with TestClient(app) as client:
+        response = client.get("/sample-patients/URG-2026-04471")
+    assert response.status_code == 200
+    assert response.json()["nam"] == "GAGR59071301"
+
+
 def test_list_patients_endpoint():
     with TestClient(app) as client:
         response = client.get("/sample-patients")

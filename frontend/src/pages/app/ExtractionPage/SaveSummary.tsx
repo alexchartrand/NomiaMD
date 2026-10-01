@@ -20,7 +20,7 @@ export function SaveSummary({ totalAmount, codesMissingFee, saving, saveError, s
           <span className="font-heading text-[1.6rem] font-bold">{totalAmount.toFixed(2)} $</span>
           {codesMissingFee > 0 && (
             <span className="text-sm text-muted-foreground">
-              ({codesMissingFee} code{codesMissingFee > 1 ? "s" : ""} sans tarif)
+              ({codesMissingFee} code{codesMissingFee > 1 ? "s" : ""} sans montant en $)
             </span>
           )}
         </div>

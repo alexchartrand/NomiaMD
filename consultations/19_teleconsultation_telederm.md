@@ -1,6 +1,3 @@
-# Consultation 19 — Téléconsultation, télédermatologie
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls (téléconsultation vidéo)
 **Médecin :** Dr. Étienne Marchand, MD, médecine familiale
 **Patient :** Boivin, Maxime — 29 ans (H)

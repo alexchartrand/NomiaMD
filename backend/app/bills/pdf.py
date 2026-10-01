@@ -39,7 +39,7 @@ class BillDocument:
     physician_type: str | None
     patient_groups: list[BillPatientGroup]
     total_amount: Decimal | None
-    record_count: int
+    claim_count: int
 
 
 def _fmt_date(d: date) -> str:
@@ -112,7 +112,7 @@ class BillPdfRenderer:
 
         story.append(
             Paragraph(
-                f"{document.record_count} facturation(s) — Total : {_fmt_amount(document.total_amount)}",
+                f"{document.claim_count} facturation(s) — Total : {_fmt_amount(document.total_amount)}",
                 footer_style,
             )
         )

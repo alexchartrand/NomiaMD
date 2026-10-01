@@ -1,35 +1,63 @@
 import { cn } from "@/lib/utils";
-import { Checkbox } from "../../../components";
-import type { ExtractedCode } from "../../../api";
+import { Checkbox, Select } from "../../../components";
+import type { ConfidenceLevel, ExtractedCode, ExtractedFee } from "../../../api";
 
-function confidenceBucket(confidence: number): "high" | "medium" | "low" {
-  if (confidence >= 0.85) return "high";
-  if (confidence >= 0.6) return "medium";
-  return "low";
-}
-
-const CONFIDENCE_CLASSES: Record<"high" | "medium" | "low", string> = {
+const CONFIDENCE_CLASSES: Record<ConfidenceLevel, string> = {
   high: "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]",
   medium: "bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-text)]",
   low: "bg-[color:var(--color-danger-bg)] text-destructive",
 };
 
+const CONFIDENCE_LABELS: Record<ConfidenceLevel, string> = {
+  high: "Confiance élevée",
+  medium: "Confiance moyenne",
+  low: "Confiance faible",
+};
+
+const CONFIDENCE_ORDER: Record<ConfidenceLevel, number> = {
+  high: 0,
+  medium: 1,
+  low: 2,
+};
+
+function formatAmount(fee: ExtractedFee): string {
+  if (fee.unit === "unités") return `${fee.amount_text ?? fee.amount ?? "?"} unités`;
+  return fee.amount != null ? `${fee.amount.toFixed(2)} $` : (fee.amount_text ?? "?");
+}
+
+function formatFee(fee: ExtractedFee): string {
+  const parts = [
+    formatAmount(fee),
+    fee.role != null ? `R = ${fee.role}` : null,
+    fee.context,
+    fee.lieux.length > 0 ? fee.lieux.join(", ") : null,
+    fee.majoration ? `majoration ${fee.majoration}` : null,
+  ];
+  return parts.filter(Boolean).join(" — ");
+}
+
 interface CodesReviewProps {
   codes: ExtractedCode[];
   selection: Set<number>;
   onToggle: (index: number) => void;
+  feeSelection: Map<number, number>;
+  onFeeSelected: (index: number, feeIndex: number) => void;
 }
 
-export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
+export function CodesReview({ codes, selection, onToggle, feeSelection, onFeeSelected }: CodesReviewProps) {
   if (codes.length === 0) {
     return <p>Aucun code candidat n&rsquo;est clairement appuyé par cette transcription.</p>;
   }
 
+  const sorted = codes
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => CONFIDENCE_ORDER[a.c.confidence] - CONFIDENCE_ORDER[b.c.confidence]);
+
   return (
     <ul className="m-0 flex flex-col gap-3 p-0">
-      {codes.map((c, i) => {
+      {sorted.map(({ c, i }) => {
         const checked = selection.has(i);
-        const bucket = confidenceBucket(c.confidence);
+        const bucket = c.confidence;
         return (
           <li
             key={i}
@@ -56,21 +84,45 @@ export function CodesReview({ codes, selection, onToggle }: CodesReviewProps) {
                   {c.code}
                 </span>
                 <span className="min-w-0 flex-1 font-heading font-semibold">{c.description}</span>
-                <span className="font-heading font-bold whitespace-nowrap">
-                  {c.fee.amount != null ? `${c.fee.amount.toFixed(2)} $` : "—"}
-                </span>
+                {c.fees.length > 1 ? (
+                  <Select
+                    value={feeSelection.get(i) ?? 0}
+                    onChange={(event) => onFeeSelected(i, Number(event.target.value))}
+                    aria-label={`Tarif pour le code ${c.code}`}
+                  >
+                    {c.fees.map((fee, feeIndex) => (
+                      <option key={feeIndex} value={feeIndex}>
+                        {formatFee(fee)}
+                      </option>
+                    ))}
+                  </Select>
+                ) : (
+                  <span className="font-heading font-bold whitespace-nowrap">
+                    {c.fees.length === 1 ? formatFee(c.fees[0]) : "—"}
+                  </span>
+                )}
               </div>
 
               <p className="m-0 text-[0.92rem] text-muted-foreground italic">{c.explanation}</p>
 
+              {c.needs_confirmation.length > 0 && (
+                <ul className="m-0 flex flex-col gap-1 pl-0 text-[0.85rem] text-[color:var(--color-warning-text)]">
+                  {c.needs_confirmation.map((note, noteIndex) => (
+                    <li key={noteIndex} className="list-none">
+                      ⚠ {note}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               <div className="flex justify-end">
                 <span
                   className={cn(
-                    "inline-flex items-center rounded-full px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650] tabular-nums",
+                    "inline-flex items-center rounded-full px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650]",
                     CONFIDENCE_CLASSES[bucket],
                   )}
                 >
-                  {(c.confidence * 100).toFixed(0)}%
+                  {CONFIDENCE_LABELS[bucket]}
                 </span>
               </div>
             </div>

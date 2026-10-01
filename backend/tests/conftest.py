@@ -1,75 +1,71 @@
-import os
+import json
 import shutil
 import tempfile
-
-# Route every test at a throwaway SQLite file instead of the developer's own dev DB.
-# Must sit above the `from app...` imports below: app.postgresdb.database binds DATABASE_URL
-# to a SQLAlchemy engine at import time, and app.config's load_dotenv(override=False) means
-# a pre-set env var wins over anything in .env — so this has to run before any app import.
-_TEST_DB_DIR = tempfile.mkdtemp(prefix="nomiamd-test-")
-os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{_TEST_DB_DIR}/test.db"
-
-import json
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import pytest
-from llama_index.core.schema import NodeWithScore, TextNode
+import pytest_asyncio
 
-from app.auth import get_current_user  # noqa: E402
-from app.postgresdb import User, UserRole  # noqa: E402
-from app.main import app  # noqa: E402
-from app.ramq_codes import BillingCodesTask  # noqa: E402
-from app.ramq_codes.models import Code, CodeFee  # noqa: E402
-from app.rate_limit import limiter  # noqa: E402
-from app.summary import ConsultationSummaryTask  # noqa: E402
-from app.tasks.registry import register_tasks  # noqa: E402
+from app.auth import get_current_user
+from app.bootstrap import postgres_database
+from app.postgresdb import PostgresDB, User, UserRole
+from app.main import app
+from app.lancedb.models import CodeRow, CodeRowFee
+from app.lancedb.repository import ICodeRepository
+from app.ramq_codes import BillingCodesTask, BillingContext
+from app.ramq_codes.eligibility import CandidateSet
+from app.ramq_codes.models import Code, CodeFee
+from app.rate_limit import limiter
+from app.summary import ConsultationSummaryResult, render_for_billing_codes
+from app.summary import ConsultationSummaryTask
+from app.tasks.registry import register_tasks
+from tests.db_helpers import ensure_user_row
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
 
 
 class _KeywordStubRetriever:
-    """Deterministic, dependency-free stand-in for the real llama_index-backed retriever
-    used in tests: ranks fixture candidates by how many of their fixture "keywords" appear
-    in the query text. Only ever used here — the real pipeline always goes through
-    RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics BaseRetriever's `.aretrieve()`
-    (list[NodeWithScore] out), since that's the interface BillingCodesTask._retriever
-    is used through (app/ramq_codes/task.py's build_prompt). Node metadata carries only
-    `number`, mirroring the real `code-embeddings` table's node shape — BillingCodesTask
-    joins full candidate data (description/when_to_use/rules/fees) in via `_codes_data`,
-    not off retriever node metadata, so that's all the stub needs to provide."""
+    """Deterministic, dependency-free stand-in for the real LanceDB-hybrid-search-backed
+    retriever used in tests: ranks fixture candidates by how many of their fixture
+    "keywords" appear in the rendered summary text. Only ever used here — the real
+    pipeline always goes through RAMQCodesRetriever (app/ramq_codes/retriever.py). Mimics
+    ICodesRetriever's `.aretrieve()` (a hybrid_search hit already carries the full row, not
+    just a number, so there's no separate join step to stub), but skips eligibility
+    filtering — the WHERE builder and UnresolvedAxisDetector have their own dedicated unit
+    tests (test_lancedb_eligibility.py, test_ramq_codes_eligibility.py); this fixture's
+    tiny made-up codes carry no eligibility bounds anyway."""
 
-    def __init__(self, entries: list[tuple[str, list[str]]]):
+    def __init__(self, entries: list[tuple[Code, list[str]]]):
         self._entries = entries
 
-    def retrieve(self, query: str) -> list[NodeWithScore]:
-        query_lower = query.lower()
+    async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> CandidateSet:
+        query_lower = render_for_billing_codes(summary).lower()
         scored = [
-            (number, sum(1 for kw in keywords if kw.lower() in query_lower))
-            for number, keywords in self._entries
+            (code, sum(1 for kw in keywords if kw.lower() in query_lower))
+            for code, keywords in self._entries
         ]
         ranked = sorted((pair for pair in scored if pair[1] > 0), key=lambda pair: pair[1], reverse=True)
-        return [
-            NodeWithScore(node=TextNode(text="", metadata={"number": number}), score=float(score))
-            for number, score in ranked
-        ]
-
-    async def aretrieve(self, query: str) -> list[NodeWithScore]:
-        return self.retrieve(query)
+        return CandidateSet(candidates=[code for code, _score in ranked], unresolved_axes=())
 
 
-class _StubCodesData:
-    """Deterministic, dependency-free stand-in for CodesData (app/ramq_codes/codes_data.py):
-    looks candidate numbers up in a fixed in-memory table instead of joining against the
-    real (large, network-embedding-backed) LanceDB `codes` table. Mimics CodesData's
-    `.get()` (list[Code] out, silently dropping numbers with no matching row), since that's
-    the interface BillingCodesTask._codes_data is used through."""
+class _StubCodeRepository(ICodeRepository):
+    """Deterministic by-key lookup over the same fixture rows _KeywordStubRetriever ranks —
+    stands in for the real LanceDB-backed CodeRepository so BillingCodesTask.resolve_fees can
+    be exercised (see app/extraction/pipeline.py's post-extraction fee resolution) without a
+    real LanceDB connection."""
 
-    def __init__(self, codes_by_number: dict[str, Code]):
-        self._codes_by_number = codes_by_number
+    def __init__(self, rows: list[CodeRow]):
+        self._rows_by_number = {row.number: row for row in rows}
 
-    async def get(self, numbers: list[str]) -> list[Code]:
-        return [self._codes_by_number[n] for n in numbers if n in self._codes_by_number]
+    async def get_by_number(self, number: str) -> CodeRow:
+        return self._rows_by_number[number]
+
+    async def list_by_numbers(self, numbers: list[str]) -> list[CodeRow]:
+        return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
+
+    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None) -> list:
+        raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
 
 
 @pytest.fixture(autouse=True)
@@ -86,27 +82,45 @@ def small_reference_table():
     singleton for this fixture to reach into until it makes one itself.
     """
     data = json.loads(SMALL_REFERENCE_PATH.read_text())
-    entries = [(entry["code"], entry.get("keywords", [])) for entry in data["codes"]]
-    stub_retriever = _KeywordStubRetriever(entries)
-
-    codes_by_number = {
-        entry["code"]: Code(
-            number=entry["code"],
-            description=entry["description"],
-            confidence=1.0,
-            when_to_use=tuple(entry.get("when_to_use", [])),
-            rules=tuple(entry.get("rules", [])),
-            fees=tuple(
-                CodeFee(amount=f.get("amount"), when_to_use=f.get("when_to_use"), majoration=f.get("majoration"))
-                for f in entry.get("fees", [])
+    entries = [
+        (
+            Code(
+                number=entry["code"],
+                description=entry["description"],
+                when_to_use=tuple(entry.get("when_to_use", [])),
+                rules=tuple(entry.get("rules", [])),
+                fees=tuple(
+                    CodeFee(
+                        amount=f.get("amount"),
+                        amount_text=f.get("amount_text"),
+                        context=f.get("context"),
+                        majoration=f.get("majoration"),
+                        lieux=tuple(f.get("lieux", [])),
+                    )
+                    for f in entry.get("fees", [])
+                ),
             ),
+            entry.get("keywords", []),
         )
         for entry in data["codes"]
-    }
-    stub_codes_data = _StubCodesData(codes_by_number)
+    ]
+    stub_retriever = _KeywordStubRetriever(entries)
+
+    rows = [
+        CodeRow(
+            number=entry["code"],
+            description=entry["description"],
+            header_path=entry.get("header_path", ""),
+            when_to_use=entry.get("when_to_use", []),
+            rules=entry.get("rules", []),
+            fees=[CodeRowFee(**f) for f in entry.get("fees", [])],
+        )
+        for entry in data["codes"]
+    ]
+    stub_codes = _StubCodeRepository(rows)
 
     register_tasks([
-        BillingCodesTask(stub_retriever, stub_codes_data),
+        BillingCodesTask(stub_retriever, stub_codes),
         ConsultationSummaryTask(),
     ])
     yield
@@ -118,8 +132,8 @@ def no_real_lancedb_on_startup(monkeypatch):
     opens a real LanceDB connection and rebuilds the task registry / chatbot engine from it
     (app/bootstrap.py's application_services()) — tests must not touch a real LanceDB, and
     must not clobber the stub registry small_reference_table just set up. Stubs out the
-    lifespan's call to application_services with a no-op so init_db() (Postgres/SQLite) is
-    the only real startup work TestClient still triggers.
+    lifespan's call to application_services with a no-op, so TestClient triggers no real
+    startup work — postgres_db already opened and bound the (SQLite) relational DB.
     """
 
     @asynccontextmanager
@@ -153,12 +167,34 @@ def reset_rate_limits():
     yield
 
 
-def pytest_sessionfinish(session, exitstatus):
-    shutil.rmtree(_TEST_DB_DIR, ignore_errors=True)
+@pytest_asyncio.fixture(scope="session", loop_scope="session", autouse=True)
+async def postgres_db():
+    """Routes every test at a throwaway SQLite file instead of the developer's own dev DB,
+    opened once for the whole session and bound the way app/bootstrap.py binds the real one
+    — so session_scope() (and every route's DbSession) works in any test without the app's
+    lifespan, which no_real_lancedb_on_startup stubs out."""
+    db_dir = tempfile.mkdtemp(prefix="nomiamd-test-")
+    try:
+        async with postgres_database(f"sqlite+aiosqlite:///{db_dir}/test.db") as db:
+            yield db
+    finally:
+        shutil.rmtree(db_dir, ignore_errors=True)
+
+
+@pytest.fixture
+async def db_session(postgres_db: PostgresDB):
+    """One session for a repository-level test, never committed: closing it at teardown
+    rolls back everything the test wrote, so repository tests don't leak rows into each
+    other. Tests that go through the API instead seed with session_scope (committed), since
+    the app reads in its own sessions. SQLite holds its write lock until this session ends,
+    so nothing else may write to the DB during a test using it — ensure_user_row in a
+    fixture or before the first write is fine."""
+    async with postgres_db.sessionmaker() as session:
+        yield session
 
 
 @pytest.fixture(autouse=True)
-def default_authenticated_user():
+async def default_authenticated_user():
     """Overrides the get_current_user FastAPI dependency with a fixed, in-memory user (no
     DB row) for every test by default — route tests (test_extraction.py,
     test_ramq_chatbot_endpoint.py, test_sample_patients.py) exercise extraction/retrieval/
@@ -168,9 +204,9 @@ def default_authenticated_user():
     of the individual test bodies that need the real dependency; it comes back for every
     other test since this fixture re-runs per test.
 
-    Pre-existing wart: this injects an in-memory User(id=1) with no DB row, so every test
-    row's physician_id=1 is a dangling FK — harmless only because SQLite doesn't enforce
-    foreign keys (see database.py)."""
+    The injected User(id=1) is also seeded as a real `users` row (tests/db_helpers.py):
+    SQLite enforces foreign keys now (see app/postgresdb/database.py), so every claim,
+    extraction record or roster entry written under physician_id=1 needs it to exist."""
     fake_user = User(
         id=1,
         email="physician@example.test",
@@ -178,6 +214,7 @@ def default_authenticated_user():
         role=UserRole.PHYSICIAN,
         is_active=True,
     )
+    await ensure_user_row(fake_user)
     app.dependency_overrides[get_current_user] = lambda: fake_user
     yield fake_user
     app.dependency_overrides.pop(get_current_user, None)

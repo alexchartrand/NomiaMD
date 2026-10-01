@@ -1,49 +1,113 @@
-
+import asyncio
+import logging
+import time
+from abc import ABC, abstractmethod
+from dataclasses import asdict
 from typing import List
 
-from llama_index.core import VectorStoreIndex
-from llama_index.core.retrievers import BaseRetriever, QueryFusionRetriever
-from llama_index.core.retrievers.fusion_retriever import FUSION_MODES
-from llama_index.core.schema import NodeWithScore, QueryBundle
-from llama_index.core.llms import LLM
 from llama_index.core.base.embeddings.base import BaseEmbedding
-from llama_index.core.vector_stores.types import BasePydanticVectorStore
-from llama_index.retrievers.bm25 import BM25Retriever
 
-__all__ = ["RAMQCodesRetriever"]
+from app.lancedb.converter import IConverter
+from app.lancedb.models import CodeRow
+from app.lancedb.fusion import ReciprocalRankFuser
+from app.lancedb.repository import ICodeRepository
+from app.ramq_codes.context import BillingContext
+from app.ramq_codes.eligibility import CandidateSet, EligibilityFilterFactory, UnresolvedAxisDetector
+from app.ramq_codes.models import Code
+from app.ramq_codes.query_planner import SummaryQueryPlanner
+from app.summary.models import ConsultationSummaryResult
 
-class RAMQCodesRetriever(BaseRetriever):
+__all__ = ["ICodesRetriever", "RAMQCodesRetriever"]
+
+logger = logging.getLogger(__name__)
+
+
+class ICodesRetriever(ABC):
+    @abstractmethod
+    async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> CandidateSet:
+        pass
+
+
+class RAMQCodesRetriever(ICodesRetriever):
+    """Hybrid (vector + native FTS) search over the current `codes_<rev>` LanceDB table,
+    fanned out across SummaryQueryPlanner's structural per-concept queries (one for the
+    visit, one per procedure/add-on the summary called out — see query_planner.py) and fused
+    with ReciprocalRankFuser. Every search is prefiltered on whatever eligibility facts
+    BillingContext resolves (eligibility.py), so a variant contradicting a known fact never
+    takes a retrieval slot; UnresolvedAxisDetector then names the unknown axes the
+    survivors still depend on, for the prompt to ask the physician about.
+
+    Replaces the old single-query VectorStoreIndex/BM25Retriever/QueryFusionRetriever stack
+    (that in-memory BM25 corpus scan and English stemmer only existed because the previous
+    `code-embeddings` table had no native FTS index; the flat `codes` table does — see
+    ramq-ingestion's docs/plans/flat-lancedb-codes-table.md). A hybrid_search hit already
+    carries the full row, so there's no separate hydrate-by-number step to make."""
+
     def __init__(
         self,
-        vector_store: BasePydanticVectorStore,
+        codes: ICodeRepository,
         embed_model: BaseEmbedding,
-        llm: LLM,
-        debug: bool = False,
+        converter: IConverter[CodeRow, Code],
+        query_planner: SummaryQueryPlanner | None = None,
+        fuser: ReciprocalRankFuser[Code] | None = None,
+        filter_factory: EligibilityFilterFactory | None = None,
+        axis_detector: UnresolvedAxisDetector | None = None,
+        similarity_top_k: int = 20,
+        fused_top_k: int = 40,
     ):
-        index = VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
-        vector_retriever = index.as_retriever(similarity_top_k=20)
-        nodes = vector_store.get_nodes()
-        bm25_retriever = BM25Retriever.from_defaults(
-            nodes=nodes, similarity_top_k=20)
+        self._codes = codes
+        self._embed_model = embed_model
+        self._converter = converter
+        self._query_planner = query_planner or SummaryQueryPlanner()
+        self._fuser = fuser or ReciprocalRankFuser(key=lambda code: code.number)
+        self._filter_factory = filter_factory or EligibilityFilterFactory()
+        self._axis_detector = axis_detector or UnresolvedAxisDetector()
+        self._similarity_top_k = similarity_top_k
+        self._fused_top_k = fused_top_k
 
-        self.retriever = QueryFusionRetriever(
-            [vector_retriever, bm25_retriever],
-            llm=llm,
-            similarity_top_k=20,
-            num_queries=1,  # set this to 1 to disable query generation
-            mode= FUSION_MODES.RELATIVE_SCORE,
-            use_async=False,
-            verbose=debug,)
-        
-        super().__init__()
+    async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> CandidateSet:
+        retriever_start = time.perf_counter()
 
-    def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        hits = self.retriever.retrieve(query_bundle)
+        queries = self._query_planner.plan(summary)
+        eligibility = self._filter_factory.from_context(context)
+        vectors = await asyncio.gather(*(self._embed_model.aget_query_embedding(q) for q in queries))
 
-        return hits
+        db_start = time.perf_counter()
+        per_query_hits = await asyncio.gather(
+            *(
+                self._codes.hybrid_search(
+                    text=query, vector=vector, k=self._similarity_top_k, eligibility=eligibility
+                )
+                for query, vector in zip(queries, vectors)
+            )
+        )
+        db_duration_ms = (time.perf_counter() - db_start) * 1000
 
-    async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        hits = await self.retriever.aretrieve(query_bundle)
-        return hits
+        per_query_codes = [[self._converter.convert(row) for row, _score in hits] for hits in per_query_hits]
 
+        fused = self._fuser.fuse(per_query_codes, top_k=self._fused_top_k)
+        result = CandidateSet(candidates=fused, unresolved_axes=self._axis_detector.detect(fused, context))
 
+        retriever_duration_ms = (time.perf_counter() - retriever_start) * 1000
+        logger.debug(
+            "RAMQCodesRetriever.aretrieve timing",
+            extra={
+                "retriever_duration_ms": round(retriever_duration_ms, 1),
+                "db_duration_ms": round(db_duration_ms, 1),
+                "query_count": len(queries),
+            },
+        )
+        logger.debug(
+            "RAMQCodesRetriever.aretrieve result",
+            extra={
+                "candidates": [
+                    {"number": code.number, "description": code.description}
+                    for code in result.candidates
+                ],
+                "candidate_count": len(result.candidates),
+                "eligibility": asdict(eligibility),
+                "unresolved_axes": list(result.unresolved_axes),
+            },
+        )
+
+        return result

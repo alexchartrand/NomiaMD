@@ -1,6 +1,3 @@
-# Consultation 10 — Visite d'évaluation d'un problème mineur, opinion
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Isabelle Roy, MD, médecine familiale
 **Patient :** Gaudreault, Sylvie — 51 ans (F)

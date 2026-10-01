@@ -1,0 +1,81 @@
+"""Assembles a BillingContext (context.py) from the physician's profile and the chosen
+patient's own facts — the business logic of "which administrative facts apply on this
+encounter date", split from app/extraction/pipeline.py's orchestration and from
+app/extraction/router.py's HTTP concerns, per this repo's one-class-one-job convention.
+
+Constructor-injected with ProfileService and PatientRepository, not global lookups — makes
+this class trivially fakeable in tests, same convention as app/patients/verification.py."""
+
+from datetime import date
+
+from app.auth.profile import ProfileService
+from app.clock import ClinicClock, Clock
+from app.patients.registration import resolve_registration
+from app.postgresdb import PatientRepository, User
+from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
+
+
+def _age_years_on(date_of_birth: date, on_date: date) -> float:
+    # Whole years is enough precision for the age-band axis (<70/<80/>=80) this feeds —
+    # matches app/patients/verification.py/nam.py's own age-in-years granularity.
+    years = on_date.year - date_of_birth.year
+    if (on_date.month, on_date.day) < (date_of_birth.month, date_of_birth.day):
+        years -= 1
+    return float(years)
+
+
+class BillingContextBuilder:
+    def __init__(
+        self, profile_service: ProfileService, patient_repository: PatientRepository, clock: Clock | None = None
+    ):
+        self._profiles = profile_service
+        self._patients = patient_repository
+        self._clock = clock or ClinicClock()
+
+    async def build(
+        self,
+        *,
+        user: User,
+        patient_id: int,
+        encounter_date: date | None,
+    ) -> BillingContext:
+        """Best-effort: a missing profile or a since-deleted patient degrades that half to
+        all-null rather than raising, mirroring extraction/router.py's existing "a lookup
+        bug must never throw away a completed extraction" stance for the patient side, and
+        extending it to the physician-profile side for the same reason. `patient_id` is
+        required — the physician now picks the patient before extraction runs, so there's
+        no "no patient chosen yet" case to model here any more."""
+        on_date = encounter_date or self._clock.today()
+
+        profile = (await self._profiles.as_of(user, on_date)).profile
+        is_assumed = False
+        if profile is None:
+            # No profile version had taken effect yet as of the encounter date — most
+            # commonly, the physician's very first profile was entered after this encounter
+            # (e.g. a backfilled transcript predating their own onboarding). The earliest
+            # version on file is the closest estimate, but it's still a guess: it's marked
+            # assumed, so it never filters candidates and the physician confirms it.
+            profile = (await self._profiles.earliest(user)).profile
+            is_assumed = profile is not None
+
+        physician = (
+            PhysicianContext(
+                panel_size=profile.panel_size,
+                physician_type=profile.physician_type,
+                remuneration_type=profile.remuneration_type,
+                is_assumed=is_assumed,
+            )
+            if profile is not None
+            else PhysicianContext()
+        )
+
+        patient = PatientContext()
+        record = await self._patients.get(patient_id)
+        if record is not None:
+            patient = PatientContext(
+                age_years=_age_years_on(record.date_of_birth, on_date),
+                is_registered=resolve_registration(record.family_doctor_practice_number, user.practice_number),
+                is_vulnerable=record.is_vulnerable,
+            )
+
+        return BillingContext(physician=physician, patient=patient, encounter_date=encounter_date)

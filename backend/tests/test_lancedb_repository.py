@@ -6,7 +6,7 @@ import re
 
 import pytest
 
-from app.lancedb.repository import CodeRepository, ICodeRepository
+from app.lancedb.repository import CodeRepository, CodeRowLookupError, ICodeRepository
 from app.lancedb.models import CodeRow
 
 
@@ -27,12 +27,15 @@ class _FakeSearchQuery:
         self._rows = [row for row in self._rows if row["number"] in wanted]
         return self
 
+    def select(self, columns: list[str]) -> "_FakeSearchQuery":
+        return self
+
     async def to_list(self) -> list[dict]:
         return self._rows
 
 
 class _FakeTable:
-    """In-memory stand-in for the real `codes` lancedb AsyncTable: .query() returns a query
+    """In-memory stand-in for the current `codes_<rev>` lancedb AsyncTable: .query() returns a query
     object pre-loaded with whichever rows the test wants back, and records the filter
     string CodeRepository built so tests can assert on the actual escaping/quoting logic."""
 
@@ -46,18 +49,32 @@ class _FakeTable:
         return query
 
 
+class _FakeTableProvider:
+    """Always resolves to one fake table — which table is current is code_versions.py's job,
+    pinned against a real LanceDB in test_lancedb_code_repository.py."""
+
+    def __init__(self, table: _FakeTable):
+        self._table = table
+
+    async def current(self) -> _FakeTable:
+        return self._table
+
+    async def current_version(self):
+        raise NotImplementedError
+
+
 def _reader(table: _FakeTable) -> CodeRepository:
-    return CodeRepository(table)
+    return CodeRepository(_FakeTableProvider(table))
 
 
 def _row(number: str, **fields) -> dict:
     return {
         "number": number,
         "description": "",
+        "header_path": "",
         "when_to_use": [],
         "rules": [],
         "fees": [],
-        "confidence": 1.0,
         **fields,
     }
 
@@ -68,7 +85,7 @@ def test_cannot_instantiate_interface_directly():
 
 
 async def test_get_by_number_returns_validated_code_row():
-    table = _FakeTable([_row("15801", description="Visite de prise en charge", confidence=0.9)])
+    table = _FakeTable([_row("15801", description="Visite de prise en charge", header_path="B > Visite")])
     reader = _reader(table)
 
     row = await reader.get_by_number("15801")
@@ -76,7 +93,7 @@ async def test_get_by_number_returns_validated_code_row():
     assert isinstance(row, CodeRow)
     assert row.number == "15801"
     assert row.description == "Visite de prise en charge"
-    assert row.confidence == 0.9
+    assert row.header_path == "B > Visite"
 
 
 async def test_get_by_number_filters_by_quoted_number():
@@ -101,7 +118,7 @@ async def test_get_by_number_raises_when_no_row_matches():
     table = _FakeTable([])
     reader = _reader(table)
 
-    with pytest.raises(ValueError, match="found 0"):
+    with pytest.raises(CodeRowLookupError, match="found 0"):
         await reader.get_by_number("missing")
 
 
@@ -109,7 +126,7 @@ async def test_get_by_number_raises_when_more_than_one_row_matches():
     table = _FakeTable([_row("15801"), _row("15801")])
     reader = _reader(table)
 
-    with pytest.raises(ValueError, match="found 2"):
+    with pytest.raises(CodeRowLookupError, match="found 2"):
         await reader.get_by_number("15801")
 
 

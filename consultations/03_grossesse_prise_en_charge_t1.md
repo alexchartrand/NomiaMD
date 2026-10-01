@@ -1,6 +1,3 @@
-# Consultation 03 — Prise en charge de grossesse, premier trimestre
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Fatima Ouedraogo, MD, médecine familiale
 **Patient :** Girard, Camille — 29 ans (F)

@@ -1,6 +1,3 @@
-# Consultation 07 — Visite de prise en charge, problème musculo-squelettique
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Étienne Marchand, MD, médecine familiale
 **Patient :** Simard, Yannick — 38 ans (H)

@@ -1,60 +1,89 @@
+import logging
+import time
 from typing import List
 
-from llama_index.core import VectorStoreIndex
 from llama_index.core.base.embeddings.base import BaseEmbedding
-from llama_index.core.llms import LLM
-from llama_index.core.vector_stores.types import BasePydanticVectorStore
-from llama_index.core.retrievers import BaseRetriever, QueryFusionRetriever
-from llama_index.core.retrievers.fusion_retriever import FUSION_MODES
-from llama_index.core.schema import NodeWithScore, QueryBundle
-from llama_index.retrievers.bm25 import BM25Retriever
+from llama_index.core.retrievers import BaseRetriever
+from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
 
+from app.lancedb.converter import IConverter
+from app.lancedb.models import DocumentRow
+from app.lancedb.repository import IDocumentRepository
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
 
-QUERY_GEN_PROMPT = """
-    You are a helpful assistant that generates multiple search queries based on a single input query. 
-    Queries will be used to retrieve billing information for doctors in Quebec, Canada.  
-      
-    Generate {num_queries} search queries, one on each line, 
-    related to the following input query:
-    Query: {query}
-    
-    Rules:
-    - Result must be in French.
-    - Use medical billing terminology, if possible.
-    - Do not suggest any billing codes."""
+logger = logging.getLogger(__name__)
+
 
 class RAMQManualRetriever(BaseRetriever):
+    """Hybrid (vector + native FTS) search over the `documents-embeddings` LanceDB table —
+    replaces the old VectorStoreIndex/BM25Retriever/QueryFusionRetriever stack (that BM25
+    corpus scan and English stemmer only existed because the previous nested-struct table
+    shape had no native FTS index; the flat table does — see ramq-ingestion's
+    docs/plans/flat-lancedb-documents-table.md). No LLM query fan-out (that was
+    query_generator.py's job, removed) and no RRF fusion step (app/lancedb/fusion.py's
+    ReciprocalRankFuser, still used by billing_codes' retriever) — with a single query and a
+    single hybrid_search call, there is nothing to fuse across.
+
+    Async-only: IDocumentRepository has no sync query path, so _retrieve() (the sync
+    BaseRetriever entry point) raises rather than pretending to support a code path nothing
+    in this backend actually calls — app/ramq_chatbot/engine.py's RAMQManualQueryEngine only
+    ever calls .aretrieve()."""
 
     def __init__(
         self,
-        vector_store: BasePydanticVectorStore,
-        llm: LLM,
+        documents: IDocumentRepository,
         embed_model: BaseEmbedding,
+        converter: IConverter[DocumentRow, TextNode],
         reference_expander: ReferenceExpander,
-        debug: bool = False,
+        similarity_top_k: int = 30,
     ):
+        self._documents = documents
+        self._embed_model = embed_model
+        self._converter = converter
         self._reference_expander = reference_expander
-        index = VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
-        vector_retriever = index.as_retriever(similarity_top_k=20)
-        nodes = vector_store.get_nodes()
-        bm25_retriever = BM25Retriever.from_defaults(
-            nodes=nodes, similarity_top_k=20)
-
-        self.retriever = QueryFusionRetriever(
-            [vector_retriever, bm25_retriever],
-            llm=llm,
-            similarity_top_k=20,
-            num_queries=3,  # set this to 1 to disable query generation
-            mode= FUSION_MODES.RECIPROCAL_RANK,
-            use_async=False,
-            verbose=debug,
-            query_gen_prompt=QUERY_GEN_PROMPT)
+        self._similarity_top_k = similarity_top_k
         super().__init__()
 
     def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        return self._reference_expander.expand(self.retriever.retrieve(query_bundle))
+        raise NotImplementedError("RAMQManualRetriever is async-only — use aretrieve()")
 
     async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        nodes = await self.retriever.aretrieve(query_bundle)
-        return await self._reference_expander.aexpand(nodes)
+        retriever_start = time.perf_counter()
+
+        vector = await self._embed_model.aget_query_embedding(query_bundle.query_str)
+
+        db_start = time.perf_counter()
+        hits = await self._documents.hybrid_search(
+            text=query_bundle.query_str, vector=vector, k=self._similarity_top_k
+        )
+        db_duration_ms = (time.perf_counter() - db_start) * 1000
+
+        nodes = [NodeWithScore(node=self._converter.convert(row), score=None) for row, _score in hits]
+        expanded = await self._reference_expander.aexpand(nodes)
+
+        retriever_duration_ms = (time.perf_counter() - retriever_start) * 1000
+        logger.debug(
+            "RAMQManualRetriever.aretrieve timing",
+            extra={
+                "retriever_duration_ms": round(retriever_duration_ms, 1),
+                "db_duration_ms": round(db_duration_ms, 1),
+            },
+        )
+        logger.debug(
+            "RAMQManualRetriever.aretrieve result",
+            extra={
+                "nodes": [
+                    {
+                        "node_id": n.node.node_id,
+                        "title": n.node.metadata.get("title"),
+                        "section_number": n.node.metadata.get("section_number"),
+                        "is_expansion": n.node.metadata.get("is_expansion", False),
+                        "text": n.node.text[:200],
+                    }
+                    for n in expanded
+                ],
+                "node_count": len(expanded),
+            },
+        )
+
+        return expanded

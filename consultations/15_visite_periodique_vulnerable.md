@@ -1,6 +1,3 @@
-# Consultation 15 — Visite périodique, patiente vulnérable inscrite
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
 **Patient :** Lefebvre, Madeleine — 88 ans (F)

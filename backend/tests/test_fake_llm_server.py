@@ -33,10 +33,16 @@ def _request_body(user_message: str, system_message: str = "system prompt") -> d
 def test_picks_candidates_from_prompt():
     user_message = (
         "Candidate RAMQ codes:\n"
-        "- 15801: Visite de prise en charge [when to use: Prise en charge d'un nouveau patient]\n"
-        "- 08579: Révision d'un examen\n"
-        "- 00260: Blocage du ganglion stellaire [fees: 174.90 — Pour un déplacement entre 8h et 18h]\n\n"
-        "Transcript:\nPatient exemple."
+        "- 15801 | B > Visite de prise en charge\n"
+        "  Visite de prise en charge\n"
+        "  Utilisation : Prise en charge d'un nouveau patient\n"
+        "- 08579 | B > Révision d'un examen\n"
+        "  Révision d'un examen\n"
+        "- 00260 | B > Blocage du ganglion stellaire\n"
+        "  Blocage du ganglion stellaire\n"
+        "  Conditions : Pour un déplacement entre 8h et 18h\n\n"
+        "Consultation summary (normalized view):\nRésumé.\n\n"
+        "Raw transcript (detail-of-record):\nPatient exemple."
     )
     response = client.post("/v1/chat/completions", json=_request_body(user_message))
     assert response.status_code == 200
@@ -48,7 +54,10 @@ def test_picks_candidates_from_prompt():
     assert content["codes"][0]["code"] == "15801"
     assert content["codes"][0]["description"] == "Visite de prise en charge"
     assert "explanation" in content["codes"][0]
-    assert content["codes"][0]["fee"] == {"amount": None, "when_to_use": None, "majoration": None}
+    assert content["codes"][0]["confidence"] == "medium"
+    assert "supporting_quote" in content["codes"][0]
+    assert content["codes"][0]["needs_confirmation"] == []
+    assert "fee" not in content["codes"][0]
 
 
 def test_no_candidates_returns_empty_codes_with_note():
@@ -59,7 +68,7 @@ def test_no_candidates_returns_empty_codes_with_note():
     assert content["notes"]
 
 
-def test_consultation_summary_request_echoes_header_fields_as_valid_result():
+def test_consultation_summary_request_echoes_the_date_header_as_valid_result():
     transcript = (
         "**Patient :** Desjardins, Roch — 45 ans (H)\n"
         "**NAM :** DESR81021001\n"
@@ -78,9 +87,6 @@ def test_consultation_summary_request_echoes_header_fields_as_valid_result():
     # ConsultationSummaryTask.parse() with.
     result = ConsultationSummaryResult.model_validate(content)
 
-    assert result.patient_information.name_as_stated == "Desjardins, Roch"
-    assert result.patient_information.ramq_number_as_stated == "DESR81021001"
-    assert result.patient_information.age_years == 45
     assert result.encounter_setting.date == "10 février 2026"
 
 

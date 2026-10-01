@@ -1,4 +1,7 @@
 
+import logging
+import time
+
 from llama_index.core.base.llms.types import ChatMessage, ChatResponse, MessageRole
 from llama_index.core.llms import LLM
 from llama_index.core.retrievers import BaseRetriever
@@ -6,6 +9,8 @@ from llama_index.core.query_engine import CustomQueryEngine
 from llama_index.core.schema import MetadataMode, NodeWithScore
 
 from app.ramq_chatbot.models import RAMQChatMessage
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """\
 You are a RAMQ billing specialist chatbot.
@@ -56,20 +61,30 @@ def _build_messages(
 
 
 def _citation_prefix(metadata: dict) -> str:
-    """Builds a "[Section 2.2.6, p.14-16]"-style prefix from a node's metadata, so the model
-    can follow the system prompt's "cite source" instruction. All fields optional. Nodes
-    ReferenceExpander pulled in (metadata["is_expansion"]) get a distinct label."""
+    """Builds a "[Section 2.2.6, p.14-16, https://...]"-style prefix from a node's metadata,
+    so the model can follow the system prompt's "cite source" instruction. All fields
+    optional. Nodes ReferenceExpander pulled in (metadata["is_expansion"]) get a distinct
+    label. `url` (the source document's own link) is appended whenever present — unlike
+    section/page, it isn't gated on section_number, since it's the only citation available
+    for a chunk ramq-ingestion didn't tag with a section."""
+    parts = []
+
     section = metadata.get("section_number")
-    if not section:
+    if section:
+        label = "Section référencée" if metadata.get("is_expansion") else "Section"
+        parts.append(f"{label} {section}")
+
+        page_start = metadata.get("page_start")
+        page_end = metadata.get("page_end")
+        if page_start is not None:
+            parts.append(f"p.{page_start}" if page_end in (None, page_start) else f"p.{page_start}-{page_end}")
+
+    url = metadata.get("url")
+    if url:
+        parts.append(url)
+
+    if not parts:
         return ""
-
-    label = "Section référencée" if metadata.get("is_expansion") else "Section"
-    parts = [f"{label} {section}"]
-
-    page_start = metadata.get("page_start")
-    page_end = metadata.get("page_end")
-    if page_start is not None:
-        parts.append(f"p.{page_start}" if page_end in (None, page_start) else f"p.{page_start}-{page_end}")
 
     return f"[{', '.join(parts)}] "
 
@@ -86,20 +101,29 @@ def _extract_content(response: ChatResponse) -> str:
 
 
 class RAMQManualQueryEngine(CustomQueryEngine):
+    """RAMQManualRetriever is async-only (see retriever.py), so this engine is too.
+    app/ramq_chatbot/router.py's POST /query is the only real caller and already only calls
+    acustom_query() — custom_query() is a required override of CustomQueryEngine's abstract
+    method, kept only to raise rather than to actually run a sync query."""
 
     retriever: BaseRetriever
     llm: LLM
 
     def custom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
-        nodes = self.retriever.retrieve(query_str)
-        context_str = "\n\n".join(_format_context_entry(n) for n in nodes)
-        messages = _build_messages(query_str, context_str, chat_history)
-        response = self.llm.chat(messages)
-        return _extract_content(response)
+        raise NotImplementedError("RAMQManualQueryEngine is async-only — use acustom_query()")
 
     async def acustom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
         nodes = await self.retriever.aretrieve(query_str)
         context_str = "\n\n".join(_format_context_entry(n) for n in nodes)
         messages = _build_messages(query_str, context_str, chat_history)
+
+        logger.debug("RAMQManualQueryEngine final query", extra={"user_message": messages[-1].content})
+
+        llm_start = time.perf_counter()
         response = await self.llm.achat(messages)
+        llm_duration_ms = (time.perf_counter() - llm_start) * 1000
+        logger.debug(
+            "RAMQManualQueryEngine llm call timing", extra={"llm_duration_ms": round(llm_duration_ms, 1)}
+        )
+
         return _extract_content(response)

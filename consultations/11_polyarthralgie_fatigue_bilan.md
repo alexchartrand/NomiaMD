@@ -1,6 +1,3 @@
-# Consultation 11 — Visite d'évaluation d'un problème complexe, opinion
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
 **Patient :** Bergeron, Manon — 47 ans (F)

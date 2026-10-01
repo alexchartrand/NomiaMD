@@ -13,3 +13,6 @@ class SamplePatientSummary(BaseModel):
 
 class SamplePatientDetail(SamplePatientSummary):
     transcript: str
+    # Normalized NAM, when the note's header has one — lets the frontend look up the
+    # matching real Patient row (seeded by scripts/seed_db.py) and auto-fill it.
+    nam: str | None

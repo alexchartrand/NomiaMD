@@ -23,4 +23,4 @@ def get_sample_patient_by_id(patient_id: str) -> SamplePatientDetail:
     patient = get_sample_patient(patient_id)
     if patient is None:
         raise HTTPException(status_code=404, detail=f"No sample patient with id '{patient_id}'")
-    return SamplePatientDetail(id=patient.id, label=patient.label, transcript=patient.transcript)
+    return SamplePatientDetail(id=patient.id, label=patient.label, transcript=patient.transcript, nam=patient.nam)

@@ -1,6 +1,3 @@
-# Consultation 20 — Visite de suivi, cessation tabagique
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Louis-Philippe Gagné, MD, médecine familiale
 **Patient :** Lapointe, Christiane — 55 ans (F)

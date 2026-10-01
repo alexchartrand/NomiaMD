@@ -1,6 +1,3 @@
-# Consultation 06 — Visite ponctuelle, médecine familiale
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Karim El-Amrani, MD, médecine familiale
 **Patient :** Cormier, Félix — 4 ans (H), accompagné de sa mère

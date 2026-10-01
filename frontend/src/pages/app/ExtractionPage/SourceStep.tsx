@@ -1,7 +1,9 @@
 import type { FormEvent } from "react";
 import { cn } from "@/lib/utils";
-import { Banner, Button, Card, Select, TextArea } from "../../../components";
-import type { SamplePatientSummary } from "../../../api";
+import { Banner, Button, Card, PatientSearchSelect, Select, TextArea } from "../../../components";
+import type { Patient, SamplePatientSummary } from "../../../api";
+import { CreatePatientForm } from "../patients/CreatePatientForm";
+import type { useCreatePatientForm } from "../patients/useCreatePatientForm";
 
 interface SourceStepProps {
   source: "simule" | null;
@@ -15,6 +17,10 @@ interface SourceStepProps {
   onTranscriptChange: (value: string) => void;
   onSubmit: (event: FormEvent) => void;
   loading: boolean;
+  selectedPatient: Patient | null;
+  onSelectPatient: (patient: Patient | null) => void;
+  createPatientForm: ReturnType<typeof useCreatePatientForm>;
+  onStartCreatePatient: () => void;
 }
 
 const sourceCardClasses =
@@ -32,6 +38,10 @@ export function SourceStep({
   onTranscriptChange,
   onSubmit,
   loading,
+  selectedPatient,
+  onSelectPatient,
+  createPatientForm,
+  onStartCreatePatient,
 }: SourceStepProps) {
   return (
     <>
@@ -61,6 +71,19 @@ export function SourceStep({
 
       {source && (
         <Card className="gap-4 p-6">
+          <div className="flex flex-col gap-[0.35rem]">
+            <label htmlFor="patient-search" className="text-sm text-muted-foreground">
+              Patient (obligatoire) :
+            </label>
+            <PatientSearchSelect id="patient-search" selected={selectedPatient} onSelect={onSelectPatient} />
+            {!selectedPatient && (
+              <Button type="button" variant="link" className="self-start" onClick={onStartCreatePatient}>
+                Créer un nouveau patient
+              </Button>
+            )}
+            {createPatientForm.visible && <CreatePatientForm form={createPatientForm} />}
+          </div>
+
           <div className="flex flex-col gap-[0.35rem]">
             <label htmlFor="patient-select" className="text-sm text-muted-foreground">
               Patient simulé :
@@ -94,7 +117,7 @@ export function SourceStep({
               className="w-full"
               placeholder="Collez la transcription de la consultation ici, ou sélectionnez un patient simulé ci-dessus..."
             />
-            <Button type="submit" disabled={loading || !transcript.trim()}>
+            <Button type="submit" disabled={loading || !transcript.trim() || !selectedPatient}>
               {loading ? "Extraction en cours..." : "Extraire les codes de facturation"}
             </Button>
           </form>

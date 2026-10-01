@@ -1,23 +1,17 @@
-"""CRUD for a physician's own patient roster, plus NAM-based identification of a roster
-patient from an LLM-extracted identity (see .nam, .suggestion).
+"""Global patient identity CRUD/search, a physician's own optional "my patients" roster,
+NAM parsing (.nam), and derived registration status (.registration).
 
 Public interface — everything else that needs this imports it from here rather than
-reaching into .router/.models/.nam/.suggestion directly."""
+reaching into .router/.models/.nam/.registration directly."""
 
 from app.patients import nam
+from app.patients.name_format import format_full_name
+from app.patients.registration import resolve_registration
 from app.patients.router import router as patients_router
-from app.patients.suggestion import (
-    ExtractedIdentity,
-    PatientPrefill,
-    PatientSuggestion,
-    PatientSuggestionService,
-)
 
 __all__ = [
     "patients_router",
     "nam",
-    "ExtractedIdentity",
-    "PatientPrefill",
-    "PatientSuggestion",
-    "PatientSuggestionService",
+    "format_full_name",
+    "resolve_registration",
 ]

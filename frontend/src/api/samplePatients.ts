@@ -7,6 +7,9 @@ export interface SamplePatientSummary {
 
 export interface SamplePatientDetail extends SamplePatientSummary {
   transcript: string;
+  // Normalized NAM from the note's header, or null if missing/malformed — used to look up
+  // the matching real Patient row (seeded by scripts/seed_db.py) and auto-fill it.
+  nam: string | null;
 }
 
 export async function listSamplePatients(): Promise<SamplePatientSummary[]> {

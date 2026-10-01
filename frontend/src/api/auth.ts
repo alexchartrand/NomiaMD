@@ -11,24 +11,35 @@ export interface UserOut {
   email: string;
   full_name: string;
   role: "admin" | "physician";
-  physician_type: string | null;
-  number_of_patients: number | null;
-  remuneration_type: string | null;
+  physician_type: PhysicianType | null;
+  panel_size: number | null;
+  remuneration_type: RemunerationType | null;
+  // Unlike the fields above, not versioned — see the User model's docstring for why.
+  practice_number: string | null;
 }
 
-// Kept in sync by hand with PhysicianType in backend/app/postgresdb/models.py.
-export const PHYSICIAN_TYPES = ["Médecin de famille", "Spécialiste", "Autre"] as const;
-export type PhysicianType = (typeof PHYSICIAN_TYPES)[number];
+// Kept in sync by hand with PhysicianType in backend/app/postgresdb/models.py. The API
+// sends and stores the code; the label is display only.
+export const PHYSICIAN_TYPES = [
+  { value: "med_fam", label: "Médecin de famille" },
+  { value: "specialiste", label: "Spécialiste" },
+  { value: "autre", label: "Autre" },
+] as const;
+export type PhysicianType = (typeof PHYSICIAN_TYPES)[number]["value"];
 
 // Kept in sync by hand with RemunerationType in backend/app/postgresdb/models.py.
-export const REMUNERATION_TYPES = ["Mixte", "À l'acte"] as const;
-export type RemunerationType = (typeof REMUNERATION_TYPES)[number];
+export const REMUNERATION_TYPES = [
+  { value: "mixte", label: "Mixte" },
+  { value: "a_l_acte", label: "À l'acte" },
+] as const;
+export type RemunerationType = (typeof REMUNERATION_TYPES)[number]["value"];
 
 export interface ProfileUpdateRequest {
   full_name: string;
   physician_type: PhysicianType | null;
-  number_of_patients: number | null;
+  panel_size: number | null;
   remuneration_type: RemunerationType | null;
+  practice_number: string | null;
 }
 
 export interface PasswordChangeRequest {

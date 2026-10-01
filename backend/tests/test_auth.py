@@ -9,21 +9,21 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.auth.security import PasswordHasher
-from app.postgresdb import PhysicianType, RemunerationType, UserRepository, UserRole, init_db
+from app.postgresdb import PhysicianType, RemunerationType, UserRepository, UserRole, session_scope
 from app.main import app
 
 PASSWORD = "correct horse battery staple"
 
 
 async def _create_user(**overrides):
-    await init_db()  # this test file may run before anything else has created the tables
     defaults = {
         "email": f"doc-{uuid.uuid4().hex[:8]}@example.test",
         "hashed_password": PasswordHasher().hash(PASSWORD),
         "full_name": "Dr. Doe",
         "role": UserRole.PHYSICIAN,
     }
-    return await UserRepository().create(**{**defaults, **overrides})
+    async with session_scope() as session:
+        return await UserRepository(session).create(**{**defaults, **overrides})
 
 
 def _drop_auth_override():
@@ -202,7 +202,7 @@ async def test_update_profile_success():
             json={
                 "full_name": "Dr. Jane Doe",
                 "physician_type": PhysicianType.MED_FAM.value,
-                "number_of_patients": 500,
+                "panel_size": 500,
                 "remuneration_type": RemunerationType.MIXTE.value,
             },
         )
@@ -211,8 +211,58 @@ async def test_update_profile_success():
     body = response.json()
     assert body["full_name"] == "Dr. Jane Doe"
     assert body["physician_type"] == PhysicianType.MED_FAM.value
-    assert body["number_of_patients"] == 500
+    assert body["panel_size"] == 500
     assert body["remuneration_type"] == RemunerationType.MIXTE.value
+
+
+async def test_update_profile_practice_number_persists():
+    # practice_number lives directly on `users` (not versioned like the rest of the
+    # profile) — see the User model's docstring for why.
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        update_response = client.patch(
+            "/auth/me",
+            json={"full_name": "Dr. Jane Doe", "practice_number": "123456"},
+        )
+        me_response = client.get("/auth/me")
+
+    assert update_response.status_code == 200
+    assert update_response.json()["practice_number"] == "123456"
+    assert me_response.json()["practice_number"] == "123456"
+
+
+async def test_update_profile_practice_number_already_on_another_account_returns_409():
+    # Registration is derived by matching practice numbers (app/patients/registration.py),
+    # so two accounts may never share one.
+    _drop_auth_override()
+    taken = f"{uuid.uuid4().int % 900000 + 100000}"
+    await _create_user(practice_number=taken)
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        response = client.patch("/auth/me", json={"full_name": "Dr. Jane Doe", "practice_number": taken})
+        me_response = client.get("/auth/me")
+
+    assert response.status_code == 409
+    assert me_response.json()["practice_number"] is None
+
+
+async def test_update_profile_invalid_practice_number_shape_returns_422():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        response = client.patch(
+            "/auth/me",
+            json={"full_name": "Dr. Doe", "practice_number": "12"},
+        )
+
+    assert response.status_code == 422
 
 
 async def test_update_profile_negative_patient_count_returns_422():
@@ -223,7 +273,7 @@ async def test_update_profile_negative_patient_count_returns_422():
         client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
         response = client.patch(
             "/auth/me",
-            json={"full_name": "Dr. Doe", "physician_type": None, "number_of_patients": -1},
+            json={"full_name": "Dr. Doe", "physician_type": None, "panel_size": -1},
         )
 
     assert response.status_code == 422
@@ -237,7 +287,7 @@ async def test_update_profile_invalid_physician_type_returns_422():
         client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
         response = client.patch(
             "/auth/me",
-            json={"full_name": "Dr. Doe", "physician_type": "Not a real type", "number_of_patients": None},
+            json={"full_name": "Dr. Doe", "physician_type": "Not a real type", "panel_size": None},
         )
 
     assert response.status_code == 422
@@ -254,7 +304,7 @@ async def test_update_profile_invalid_remuneration_type_returns_422():
             json={
                 "full_name": "Dr. Doe",
                 "physician_type": None,
-                "number_of_patients": None,
+                "panel_size": None,
                 "remuneration_type": "Not a real type",
             },
         )
@@ -268,7 +318,7 @@ async def test_update_profile_without_cookie_returns_401():
     with TestClient(app) as client:
         response = client.patch(
             "/auth/me",
-            json={"full_name": "Dr. Doe", "physician_type": None, "number_of_patients": None},
+            json={"full_name": "Dr. Doe", "physician_type": None, "panel_size": None},
         )
 
     assert response.status_code == 401

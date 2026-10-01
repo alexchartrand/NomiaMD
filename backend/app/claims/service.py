@@ -1,79 +1,36 @@
 """Business logic for turning a physician-reviewed extraction into a claim.
-Constructor-injected (ClaimRepository, PatientRepository, ExtractionRepository) —
-composed at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
+Constructor-injected (ClaimRepository, PatientRepository, ExtractionRepository, plus the
+ClaimDuplicateGuard, FeeSnapshotter and ClaimContextSnapshotter it composes) — wired at the
+module boundary by factory.py, no FastAPI/HTTP concerns here."""
 
 from datetime import date
-from decimal import Decimal
 
-from app.claims.models import ClaimCodeOut, ClaimOut
+from app.claims.candidates import ExtractionCandidates, StoredCandidate
+from app.claims.context import ClaimContextSnapshotter
+from app.claims.duplicates import EXTRACTION_ALREADY_CLAIMED, ClaimDuplicateGuard
+from app.claims.errors import (
+    ClaimOnBillError,
+    DuplicateClaimError,
+    EmptySelectionError,
+    ExtractionRunNotFoundError,
+    PatientNotFoundError,
+)
+from app.claims.fees import FeeSnapshotter
+from app.claims.mapper import ClaimMapper
+from app.claims.models import ClaimOut, SelectedCode
+from app.claims.status import ClaimLifecycle, ClaimStatus
 from app.postgresdb import (
     ClaimCodeInput,
-    ClaimDetail,
     ClaimInput,
     ClaimRepository,
-    ClaimWithCodes,
+    ExtractionAlreadyClaimedError,
     ExtractionRepository,
+    ExtractionRun,
     PatientRepository,
+    User,
 )
 
-
-class PatientNotFoundError(Exception):
-    pass
-
-
-class ExtractionRecordNotFoundError(Exception):
-    pass
-
-
-class UnknownCodesError(Exception):
-    def __init__(self, codes: list[str]):
-        self.codes = codes
-        super().__init__(f"Unknown codes: {', '.join(codes)}")
-
-
-class EmptySelectionError(Exception):
-    pass
-
-
-class DuplicateClaimError(Exception):
-    def __init__(self, message: str):
-        self.message = message
-        super().__init__(message)
-
-
-class ClaimOnBillError(Exception):
-    pass
-
-
-def _total_amount(codes: list[ClaimCodeOut]) -> Decimal | None:
-    amounts = [c.fee_amount for c in codes if c.fee_amount is not None]
-    return sum(amounts) if amounts else None
-
-
-def _to_decimal(amount: float | None) -> Decimal | None:
-    # str(amount) first: Decimal(33.15) keeps the binary float's imprecision
-    # (33.14999999999999857891...); Decimal(str(33.15)) gives the exact "33.15".
-    return None if amount is None else Decimal(str(amount))
-
-
-def _codes_out(codes) -> list[ClaimCodeOut]:
-    return [ClaimCodeOut.model_validate(c) for c in codes]
-
-
-def _detail_to_out(detail: ClaimDetail) -> ClaimOut:
-    codes = _codes_out(detail.codes)
-    return ClaimOut(
-        id=detail.record.id,
-        patient_id=detail.record.patient_id,
-        patient_full_name=detail.patient_full_name,
-        service_date=detail.record.service_date,
-        status=detail.record.status,
-        source_system=detail.record.source_system,
-        codes=codes,
-        total_amount=_total_amount(codes),
-        created_at=detail.record.created_at,
-        updated_at=detail.record.updated_at,
-    )
+BILLING_TASK = "billing_codes"
 
 
 class ClaimService:
@@ -82,112 +39,101 @@ class ClaimService:
         claim_repository: ClaimRepository,
         patient_repository: PatientRepository,
         extraction_repository: ExtractionRepository,
+        duplicate_guard: ClaimDuplicateGuard,
+        fee_snapshotter: FeeSnapshotter,
+        context_snapshotter: ClaimContextSnapshotter,
     ):
         self._claim_repository = claim_repository
         self._patient_repository = patient_repository
         self._extraction_repository = extraction_repository
+        self._duplicate_guard = duplicate_guard
+        self._fee_snapshotter = fee_snapshotter
+        self._context_snapshotter = context_snapshotter
 
     async def create(
         self,
         *,
-        physician_id: int,
-        patient_id: int,
+        physician: User,
+        extraction_run_id: int,
         service_date: date,
-        billing_extraction_record_id: int,
-        summary_extraction_record_id: int | None,
-        selected_codes: list[str],
-        source_system: str | None,
+        selected_codes: list[SelectedCode],
         confirm_duplicate: bool,
     ) -> ClaimOut:
-        deduped_selected = list(dict.fromkeys(selected_codes))
-        if not deduped_selected:
-            raise EmptySelectionError()
+        selected = self._dedupe(selected_codes)
+        run = await self._owned_run(extraction_run_id, physician.id)
 
-        patient = await self._patient_repository.get_for_physician(patient_id, physician_id)
+        # The patient is the one the run's codes were eligibility-filtered for — never a
+        # different one from the request. Any physician may claim any known patient
+        # (Patient is a global identity), but not one soft-deleted since the extraction.
+        patient = await self._patient_repository.get(run.patient_id)
         if patient is None:
             raise PatientNotFoundError()
 
-        extraction_record = await self._extraction_repository.get_for_user(
-            billing_extraction_record_id, physician_id
-        )
-        if extraction_record is None or extraction_record.task != "billing_codes":
-            raise ExtractionRecordNotFoundError()
-
-        if summary_extraction_record_id is not None:
-            summary_record = await self._extraction_repository.get_for_user(
-                summary_extraction_record_id, physician_id
-            )
-            if summary_record is None:
-                raise ExtractionRecordNotFoundError()
-
-        # The billing_extraction_record_id unique constraint already enforces this at the DB
-        # level; checking here first gives a clean 409 instead of a raw IntegrityError, and
-        # this one is never overridable by confirm_duplicate — resubmitting the exact same
-        # extraction as a second claim would be a client bug, not a legitimate re-bill.
-        already_saved = await self._claim_repository.get_by_billing_extraction_record_id(
-            billing_extraction_record_id
-        )
-        if already_saved is not None:
-            raise DuplicateClaimError("Cette extraction a déjà été enregistrée comme facturation.")
-
-        candidates_by_code: dict[str, dict] = {}
-        result = extraction_record.result_json
-        for entry in result.get("codes", []):
-            candidates_by_code.setdefault(entry["code"], entry)
-
-        unknown = [c for c in deduped_selected if c not in candidates_by_code]
-        if unknown:
-            raise UnknownCodesError(unknown)
-
-        # Unlike the same-extraction case above, a physician can legitimately bill the same
-        # patient twice in one day — this is a warning the caller can override, not a block.
+        await self._duplicate_guard.ensure_run_unclaimed(run.id)
+        candidates = await self._billing_candidates(run.id, [s.code for s in selected])
         if not confirm_duplicate:
-            existing_count = await self._claim_repository.count_for_patient_on_date(
-                physician_id, patient_id, service_date
-            )
-            if existing_count > 0:
-                raise DuplicateClaimError(
-                    "Une facturation existe déjà pour ce patient à cette date."
-                )
+            await self._duplicate_guard.ensure_first_on_date(physician.id, patient.id, service_date)
 
-        code_inputs = [
-            ClaimCodeInput(
-                code=code,
-                description=candidates_by_code[code]["description"],
-                confidence=candidates_by_code[code]["confidence"],
-                explanation=candidates_by_code[code]["explanation"],
-                fee_amount=_to_decimal((candidates_by_code[code].get("fee") or {}).get("amount")),
-                fee_when_to_use=(candidates_by_code[code].get("fee") or {}).get("when_to_use"),
-                majoration=(candidates_by_code[code].get("fee") or {}).get("majoration"),
-            )
-            for code in deduped_selected
-        ]
-
-        created: ClaimWithCodes = await self._claim_repository.create(
-            ClaimInput(
-                physician_id=physician_id,
-                patient_id=patient_id,
-                service_date=service_date,
-                status="brouillon",
-                source_system=source_system,
-                summary_extraction_record_id=summary_extraction_record_id,
-                billing_extraction_record_id=billing_extraction_record_id,
-                codes=code_inputs,
-            )
+        context = await self._context_snapshotter.snapshot(
+            physician=physician, patient_id=patient.id, service_date=service_date
         )
+        try:
+            created = await self._claim_repository.create(
+                ClaimInput(
+                    physician_id=physician.id,
+                    patient_id=patient.id,
+                    service_date=service_date,
+                    source_system=run.source_system,
+                    extraction_run_id=run.id,
+                    context=context,
+                    codes=[
+                        self._code_input(candidate, choice.fee_index)
+                        for choice, candidate in zip(selected, candidates)
+                    ],
+                )
+            )
+        except ExtractionAlreadyClaimedError as exc:
+            raise DuplicateClaimError(EXTRACTION_ALREADY_CLAIMED) from exc
 
-        codes_out = _codes_out(created.codes)
-        return ClaimOut(
-            id=created.record.id,
-            patient_id=created.record.patient_id,
-            patient_full_name=patient.full_name,
-            service_date=created.record.service_date,
-            status=created.record.status,
-            source_system=created.record.source_system,
-            codes=codes_out,
-            total_amount=_total_amount(codes_out),
-            created_at=created.record.created_at,
-            updated_at=created.record.updated_at,
+        return ClaimMapper.to_out(created.claim, patient.full_name, created.codes)
+
+    @staticmethod
+    def _dedupe(selected_codes: list[SelectedCode]) -> list[SelectedCode]:
+        """First choice per code wins; an empty selection is refused."""
+        by_code: dict[str, SelectedCode] = {}
+        for selected in selected_codes:
+            by_code.setdefault(selected.code, selected)
+        if not by_code:
+            raise EmptySelectionError()
+        return list(by_code.values())
+
+    async def _owned_run(self, run_id: int, physician_id: int) -> ExtractionRun:
+        run = await self._extraction_repository.get_run_for_user(run_id, physician_id)
+        if run is None:
+            raise ExtractionRunNotFoundError()
+        return run
+
+    async def _billing_candidates(self, run_id: int, codes: list[str]) -> list[StoredCandidate]:
+        result = await self._extraction_repository.get_result(run_id, BILLING_TASK)
+        if result is None:
+            raise ExtractionRunNotFoundError()
+        return ExtractionCandidates.from_result_json(result.result_json).require(codes)
+
+    def _code_input(self, candidate: StoredCandidate, fee_index: int | None) -> ClaimCodeInput:
+        fee = self._fee_snapshotter.snapshot(candidate, fee_index)
+        return ClaimCodeInput(
+            code=candidate.code,
+            description=candidate.description,
+            confidence=candidate.confidence,
+            explanation=candidate.explanation,
+            fee_amount=fee.amount,
+            fee_unit=fee.unit,
+            fee_units=fee.units,
+            fee_role=fee.role,
+            fee_context=fee.context,
+            fee_lieux=fee.lieux,
+            majoration=fee.majoration,
+            manual_rev=candidate.manual_rev,
         )
 
     async def list_for_physician(
@@ -197,7 +143,7 @@ class ClaimService:
         patient_id: int | None,
         date_from: date | None,
         date_to: date | None,
-        status: str | None,
+        status: ClaimStatus | None,
         limit: int,
         offset: int,
     ) -> list[ClaimOut]:
@@ -206,19 +152,20 @@ class ClaimService:
             patient_id=patient_id,
             date_from=date_from,
             date_to=date_to,
-            status=status,
+            billed=ClaimLifecycle.is_billed(status) if status is not None else None,
             limit=limit,
             offset=offset,
         )
-        return [_detail_to_out(d) for d in details]
+        return [ClaimMapper.from_detail(d) for d in details]
 
-    async def delete(self, record_id: int, physician_id: int) -> bool:
-        # Once a claim is on a generated bill (status != "brouillon"), it can only be freed
-        # by deleting that bill — otherwise a hard delete here would leave a dangling link
-        # row and silently shrink a bill's total behind the physician's back.
-        detail = await self._claim_repository.get_for_physician(record_id, physician_id)
-        if detail is None:
+    async def void(self, claim_id: int, physician_id: int) -> bool:
+        """Voids a draft (never a hard delete — see the Claim model). Once a claim is on a
+        bill, it can only be freed by voiding that bill first, or a bill's total would
+        silently shrink behind the physician's back."""
+        claim = await self._claim_repository.get_for_physician(claim_id, physician_id)
+        if claim is None:
             return False
-        if detail.record.status != "brouillon":
+        if not ClaimLifecycle.can_be_voided(claim):
             raise ClaimOnBillError()
-        return await self._claim_repository.delete_for_physician(record_id, physician_id)
+        await self._claim_repository.void(claim)
+        return True

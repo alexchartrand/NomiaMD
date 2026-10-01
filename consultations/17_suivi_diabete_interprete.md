@@ -1,6 +1,3 @@
-# Consultation 17 — Visite de suivi avec communication par interprète
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Fatima Ouedraogo, MD, médecine familiale
 **Patient :** Haidari, Rahim — 58 ans (H), inscrit, communication assistée par interprète (dari)

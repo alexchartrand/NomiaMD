@@ -6,10 +6,18 @@ interface UseSamplePatientsOptions {
   // whatever it derived from the previous transcript/extraction.
   onBeforeSelect: () => void;
   onTranscriptLoaded: (transcript: string) => void;
+  // The sample's normalized NAM (or null if missing/malformed), so the caller can try to
+  // auto-fill the real patient picker below — see SourceStep.tsx.
+  onNamLoaded: (nam: string | null) => void;
   onError: (message: string) => void;
 }
 
-export function useSamplePatients({ onBeforeSelect, onTranscriptLoaded, onError }: UseSamplePatientsOptions) {
+export function useSamplePatients({
+  onBeforeSelect,
+  onTranscriptLoaded,
+  onNamLoaded,
+  onError,
+}: UseSamplePatientsOptions) {
   const [samplePatients, setSamplePatients] = useState<SamplePatientSummary[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [listError, setListError] = useState<string | null>(null);
@@ -26,12 +34,14 @@ export function useSamplePatients({ onBeforeSelect, onTranscriptLoaded, onError 
     onBeforeSelect();
     if (!id) {
       onTranscriptLoaded("");
+      onNamLoaded(null);
       return;
     }
     setLoading(true);
     try {
       const patient = await getSamplePatient(id);
       onTranscriptLoaded(patient.transcript);
+      onNamLoaded(patient.nam);
     } catch (err) {
       onError(describeError(err));
     } finally {

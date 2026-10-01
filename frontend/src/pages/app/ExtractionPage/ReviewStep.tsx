@@ -3,21 +3,17 @@ import type { BillingExtractionResponse, Patient } from "../../../api";
 import { PatientMatchSection } from "./PatientMatchSection";
 import { CodesReview } from "./CodesReview";
 import { SaveSummary } from "./SaveSummary";
-import type { useCreatePatientForm } from "./useCreatePatientForm";
 
 interface ReviewStepProps {
   result: BillingExtractionResponse;
+  patient: Patient;
   onBack: () => void;
-  roster: Patient[];
-  rosterError: string | null;
-  selectedRosterId: number | "";
-  onSelectRoster: (id: number | "") => void;
-  onStartCreatePatient: () => void;
-  createPatientForm: ReturnType<typeof useCreatePatientForm>;
   serviceDate: string;
   onServiceDateChange: (value: string) => void;
   selection: Set<number>;
   onToggleCode: (index: number) => void;
+  feeSelection: Map<number, number>;
+  onFeeSelected: (index: number, feeIndex: number) => void;
   totalAmount: number;
   codesMissingFee: number;
   saving: boolean;
@@ -29,17 +25,14 @@ interface ReviewStepProps {
 
 export function ReviewStep({
   result,
+  patient,
   onBack,
-  roster,
-  rosterError,
-  selectedRosterId,
-  onSelectRoster,
-  onStartCreatePatient,
-  createPatientForm,
   serviceDate,
   onServiceDateChange,
   selection,
   onToggleCode,
+  feeSelection,
+  onFeeSelected,
   totalAmount,
   codesMissingFee,
   saving,
@@ -48,13 +41,6 @@ export function ReviewStep({
   canSave,
   onSave,
 }: ReviewStepProps) {
-  const suggestion = result.patient_suggestion;
-  const extracted = suggestion?.extracted ?? null;
-  const matchedId = suggestion?.matched_patient_id ?? null;
-  // The match is purely NAM-based, independent of name spelling — show the roster's own
-  // name rather than the transcript's (which may be a nickname, typo, or absent entirely).
-  const matchedPatientName = matchedId != null ? roster.find((p) => p.id === matchedId)?.full_name : null;
-
   return (
     <section>
       <p className="mb-2">
@@ -69,17 +55,7 @@ export function ReviewStep({
         <CardContent className="flex flex-col gap-[0.85rem]">
           {result.billing.result.notes && <Banner tone="warning">⚠ {result.billing.result.notes}</Banner>}
 
-          <PatientMatchSection
-            matchedId={matchedId}
-            matchedPatientName={matchedPatientName}
-            extracted={extracted}
-            roster={roster}
-            rosterError={rosterError}
-            selectedRosterId={selectedRosterId}
-            onSelectRoster={onSelectRoster}
-            onStartCreatePatient={onStartCreatePatient}
-            createPatientForm={createPatientForm}
-          />
+          <PatientMatchSection patient={patient} />
 
           <div className="flex flex-col gap-[0.35rem]">
             <label htmlFor="service-date" className="text-sm text-muted-foreground">
@@ -99,7 +75,13 @@ export function ReviewStep({
             )}
           </div>
 
-          <CodesReview codes={result.billing.result.codes} selection={selection} onToggle={onToggleCode} />
+          <CodesReview
+            codes={result.billing.result.codes}
+            selection={selection}
+            onToggle={onToggleCode}
+            feeSelection={feeSelection}
+            onFeeSelected={onFeeSelected}
+          />
 
           <SaveSummary
             totalAmount={totalAmount}

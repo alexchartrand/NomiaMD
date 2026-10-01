@@ -1,6 +1,3 @@
-# Consultation 16 — Examen périodique, patient de 70-79 ans
-*Dossier fictif à des fins de simulation/formation. Patient, médecin et données cliniques fictifs.*
-
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Karim El-Amrani, MD, médecine familiale
 **Patient :** Morin, Jean-Guy — 76 ans (H)

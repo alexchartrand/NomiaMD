@@ -1,23 +1,33 @@
-"""Exercises the /claims API end-to-end: create -> list -> filter -> delete, plus
+"""Exercises the /claims API end-to-end: create -> list -> filter -> void, plus
 ownership scoping and the validation/duplicate rules in app/claims/service.py. Status is
-read-only from this API (no PATCH) — a claim only leaves "brouillon" via POST /bills, see
-test_deleting_a_claim_on_a_bill_is_409 and tests/test_bills.py.
+derived and read-only from this API — a claim only leaves "brouillon" via POST /bills, see
+test_voiding_a_claim_on_a_bill_is_409 and tests/test_bills.py.
 """
 
 import itertools
-import json
-from datetime import date
+from datetime import date, datetime, timezone
 
 from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole
+from app.postgresdb import (
+    Claim,
+    ExtractionRepository,
+    ExtractionRunInput,
+    ExtractionStageInput,
+    Gender,
+    Patient,
+    PatientRepository,
+    User,
+    UserRole,
+    session_scope,
+)
+from tests.db_helpers import ensure_user_row, physician
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
-# most tests here reuse physician_id=1 — so each seeded patient needs its own NAM to avoid
-# tripping ix_patients_physician_ramq_number_active (models.py) against an earlier test's
-# still-active patient.
+# patients are globally unique by NAM — so each seeded patient needs its own NAM to avoid
+# tripping ix_patients_ramq_number_active (models.py) against an earlier test's patient.
 _ramq_numbers = itertools.count(1)
 
 BILLING_RESULT = {
@@ -25,16 +35,16 @@ BILLING_RESULT = {
         {
             "code": "TEST-BP-MGMT",
             "description": "Prise en charge d'une hypertension",
-            "confidence": 0.9,
+            "confidence": "high",
             "explanation": "hypertension artérielle depuis 10 ans",
-            "fee": {"amount": 33.15, "when_to_use": "Par visite de suivi", "majoration": None},
+            "fees": [{"amount": 33.15, "amount_text": "33,15", "context": "Par visite de suivi", "lieux": [], "majoration": None}],
         },
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",
-            "confidence": 0.85,
+            "confidence": "medium",
             "explanation": "Bilan sanguin de contrôle demandé",
-            "fee": {"amount": None, "when_to_use": None, "majoration": None},
+            "fees": [],
         },
     ],
     "notes": None,
@@ -51,57 +61,62 @@ def _other_physician():
     )
 
 
-async def _seed_patient(physician_id=1):
-    return await PatientRepository().create(
-        physician_id=physician_id,
-        full_name="Roch Desjardins",
-        ramq_number=f"DESR{next(_ramq_numbers):08d}",
-        date_of_birth=date(1981, 2, 10),
-        gender=Gender.MALE,
-        is_registered_with_physician=True,
-        is_vulnerable=False,
-    )
+async def _seed_patient(*, full_name="Roch Desjardins", is_vulnerable=False):
+    async with session_scope() as session:
+        return await PatientRepository(session).create(
+            full_name=full_name,
+            ramq_number=f"DESR{next(_ramq_numbers):08d}",
+            date_of_birth=date(1981, 2, 10),
+            gender=Gender.MALE,
+            is_vulnerable=is_vulnerable,
+        )
 
 
-async def _seed_extraction_record(*, user_id=1, result=None, task="billing_codes"):
-    [record] = await ExtractionRepository().create_many(
-        [
-            ExtractionRecordInput(
-                task=task,
-                transcript="transcript de test",
-                result=result if result is not None else BILLING_RESULT,
-                model="mistral-small-latest",
-                source_system="simule",
+async def _seed_run(patient_id, *, user_id=1, result=None, task="billing_codes"):
+    await ensure_user_row(physician(user_id))
+    async with session_scope() as session:
+        return await ExtractionRepository(session).create_run(
+            ExtractionRunInput(
                 user_id=user_id,
+                patient_id=patient_id,
+                transcript="transcript de test",
+                source_system="simule",
+                stages=[
+                    ExtractionStageInput(
+                        task=task,
+                        model="mistral-small-latest",
+                        result=result if result is not None else BILLING_RESULT,
+                    )
+                ],
             )
-        ]
-    )
-    return record
+        )
 
 
-def _valid_payload(*, patient_id, billing_extraction_record_id, service_date="2026-02-10"):
+async def _seed_patient_and_run(**run_kwargs):
+    patient = await _seed_patient()
+    return patient, await _seed_run(patient.id, **run_kwargs)
+
+
+def _valid_payload(*, extraction_run_id, service_date="2026-02-10"):
     return {
-        "patient_id": patient_id,
+        "extraction_run_id": extraction_run_id,
         "service_date": service_date,
-        "billing_extraction_record_id": billing_extraction_record_id,
-        "selected_codes": ["TEST-BP-MGMT"],
-        "source_system": "simule",
+        "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
     }
 
 
-async def test_create_then_list_then_filter_then_delete():
+async def test_create_then_list_then_filter_then_void():
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        extraction_record = await _seed_extraction_record()
+        patient, run = await _seed_patient_and_run()
 
-        create_response = client.post(
-            "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id),
-        )
+        create_response = client.post("/claims", json=_valid_payload(extraction_run_id=run.id))
         assert create_response.status_code == 201
         created = create_response.json()
+        assert created["patient_id"] == patient.id
         assert created["patient_full_name"] == "Roch Desjardins"
         assert created["status"] == "brouillon"
+        assert created["bill_id"] is None
+        assert created["source_system"] == "simule"
         assert created["total_amount"] == 33.15
         assert [c["code"] for c in created["codes"]] == ["TEST-BP-MGMT"]
 
@@ -125,15 +140,49 @@ async def test_create_then_list_then_filter_then_delete():
         list_after_delete = client.get("/claims")
         assert created["id"] not in [r["id"] for r in list_after_delete.json()]
 
+    # A void, not a hard delete: the row and its codes stay on record.
+    async with session_scope() as session:
+        stored = await session.get(Claim, created["id"])
+    assert stored is not None
+    assert stored.voided_at is not None
 
-async def test_deleting_a_claim_on_a_bill_is_409():
+
+async def test_the_claims_patient_is_the_one_the_extraction_ran_for():
+    # The codes were eligibility-filtered for the run's patient; nothing in the request can
+    # move them onto someone else.
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        extraction_record = await _seed_extraction_record()
-        created = client.post(
-            "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id),
-        ).json()
+        patient, run = await _seed_patient_and_run()
+        someone_else = await _seed_patient(full_name="Madeleine Lefebvre")
+
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["patient_id"] = someone_else.id
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 201
+    assert response.json()["patient_id"] == patient.id
+
+
+async def test_create_snapshots_the_billing_context_at_save_time():
+    with TestClient(app) as client:
+        patient = await _seed_patient(is_vulnerable=True)
+        run = await _seed_run(patient.id)
+
+        created = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
+
+    async with session_scope() as session:
+        stored = await session.get(Claim, created["id"])
+    # Born 1981-02-10, seen 2026-02-10: 45 completed years. The default physician has no
+    # practice number or profile, so registration and panel size stay unknown, not False/0.
+    assert stored.patient_age_years == 45
+    assert stored.is_vulnerable is True
+    assert stored.is_registered is None
+    assert stored.panel_size is None
+
+
+async def test_voiding_a_claim_on_a_bill_is_409():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+        created = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
 
         bill_response = client.post(
             "/bills",
@@ -146,7 +195,8 @@ async def test_deleting_a_claim_on_a_bill_is_409():
         assert bill_response.status_code == 201
 
         claim_after_billing = client.get("/claims", params={"status": "soumis"}).json()
-        assert created["id"] in [r["id"] for r in claim_after_billing]
+        [billed] = [r for r in claim_after_billing if r["id"] == created["id"]]
+        assert billed["bill_id"] == bill_response.json()["id"]
 
         delete_response = client.delete(f"/claims/{created['id']}")
         assert delete_response.status_code == 409
@@ -156,12 +206,8 @@ async def test_cross_physician_access_is_404():
     other_physician = _other_physician()
 
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        extraction_record = await _seed_extraction_record()
-        created = client.post(
-            "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id),
-        ).json()
+        _, run = await _seed_patient_and_run()
+        created = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
 
         app.dependency_overrides[get_current_user] = lambda: other_physician
         try:
@@ -174,71 +220,60 @@ async def test_cross_physician_access_is_404():
     assert delete_response.status_code == 404
 
 
-async def test_creating_against_another_physicians_patient_is_404():
+async def test_creating_a_claim_for_a_patient_not_on_the_billing_physicians_roster_succeeds():
+    # Patients are a shared, global identity — claiming one doesn't require having added
+    # them to "my patients list" first (see app/postgresdb/models.py's Patient).
     with TestClient(app) as client:
-        other_physicians_patient = await _seed_patient(physician_id=99)
-        extraction_record = await _seed_extraction_record()
+        _, run = await _seed_patient_and_run()
 
-        response = client.post(
-            "/claims",
-            json=_valid_payload(
-                patient_id=other_physicians_patient.id, billing_extraction_record_id=extraction_record.id
-            ),
-        )
+        response = client.post("/claims", json=_valid_payload(extraction_run_id=run.id))
+
+    assert response.status_code == 201
+
+
+async def test_creating_for_a_patient_deleted_since_the_extraction_is_404():
+    with TestClient(app) as client:
+        patient, run = await _seed_patient_and_run()
+        async with session_scope() as session:
+            (await session.get(Patient, patient.id)).deleted_at = datetime.now(timezone.utc)
+
+        response = client.post("/claims", json=_valid_payload(extraction_run_id=run.id))
 
     assert response.status_code == 404
 
 
-async def test_creating_against_another_physicians_extraction_record_is_404():
+async def test_creating_against_an_unknown_run_is_404():
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        other_physicians_extraction = await _seed_extraction_record(user_id=99)
-
-        response = client.post(
-            "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=other_physicians_extraction.id),
-        )
+        response = client.post("/claims", json=_valid_payload(extraction_run_id=999_999))
 
     assert response.status_code == 404
 
 
-async def test_billing_extraction_record_id_pointing_at_a_summary_record_is_404():
-    # get_for_user only checks ownership, not task type — swapping the ids in a request
-    # (summary_extraction_record_id where billing_extraction_record_id belongs) must still
-    # be rejected, not silently treated as "no candidate codes matched".
+async def test_creating_against_another_physicians_run_is_404():
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        summary_record = await _seed_extraction_record(
+        _, other_physicians_run = await _seed_patient_and_run(user_id=99)
+
+        response = client.post("/claims", json=_valid_payload(extraction_run_id=other_physicians_run.id))
+
+    assert response.status_code == 404
+
+
+async def test_a_run_without_a_billing_codes_result_is_404():
+    with TestClient(app) as client:
+        _, summary_only_run = await _seed_patient_and_run(
             task="consultation_summary", result={"short_description": "not a billing_codes result"}
         )
 
-        response = client.post(
-            "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=summary_record.id),
-        )
-
-    assert response.status_code == 404
-
-
-async def test_summary_extraction_record_id_owned_by_another_physician_is_404():
-    with TestClient(app) as client:
-        patient = await _seed_patient()
-        billing_record = await _seed_extraction_record()
-        other_physicians_summary = await _seed_extraction_record(user_id=99)
-
-        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=billing_record.id)
-        payload["summary_extraction_record_id"] = other_physicians_summary.id
-        response = client.post("/claims", json=payload)
+        response = client.post("/claims", json=_valid_payload(extraction_run_id=summary_only_run.id))
 
     assert response.status_code == 404
 
 
 async def test_empty_selected_codes_is_422():
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        extraction_record = await _seed_extraction_record()
+        _, run = await _seed_patient_and_run()
 
-        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+        payload = _valid_payload(extraction_run_id=run.id)
         payload["selected_codes"] = []
         response = client.post("/claims", json=payload)
 
@@ -247,21 +282,101 @@ async def test_empty_selected_codes_is_422():
 
 async def test_code_absent_from_extraction_is_422():
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        extraction_record = await _seed_extraction_record()
+        _, run = await _seed_patient_and_run()
 
-        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
-        payload["selected_codes"] = ["NOT-A-CANDIDATE"]
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"] = [{"code": "NOT-A-CANDIDATE", "fee_index": 0}]
         response = client.post("/claims", json=payload)
 
     assert response.status_code == 422
 
 
-async def test_second_save_of_same_extraction_is_409():
+async def test_selecting_a_fee_index_lands_that_variant_on_the_claim():
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        extraction_record = await _seed_extraction_record()
-        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+        multi_fee_result = {
+            "codes": [
+                {
+                    "code": "TEST-BP-MGMT",
+                    "description": "Prise en charge d'une hypertension",
+                    "confidence": "high",
+                    "explanation": "hypertension artérielle depuis 10 ans",
+                    "fees": [
+                        {"amount": 33.15, "amount_text": "33,15", "context": "Jour", "lieux": ["cabinet"], "majoration": None},
+                        {"amount": 40.0, "amount_text": "40,00", "role": 1, "context": "Soir",
+                         "lieux": ["cabinet", "domicile"], "majoration": "20%"},
+                    ],
+                }
+            ],
+            "notes": None,
+        }
+        _, run = await _seed_patient_and_run(result=multi_fee_result)
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 1}]
+
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 201
+    [code] = response.json()["codes"]
+    assert code["fee_amount"] == 40.0
+    assert code["fee_unit"] == "dollars"
+    assert code["fee_units"] is None
+    assert code["fee_role"] == 1
+    assert code["fee_context"] == "Soir"
+    assert code["fee_lieux"] == ["cabinet", "domicile"]
+    assert code["majoration"] == "20%"
+
+
+async def test_a_fee_in_units_is_never_billed_as_dollars():
+    # An R = 2 column counts anesthesia base units: "17" must never become $17 on a claim.
+    with TestClient(app) as client:
+        unit_fee_result = {
+            "codes": [
+                {
+                    "code": "TEST-BP-MGMT",
+                    "description": "Acte avec rémunération de l'anesthésiste",
+                    "confidence": "high",
+                    "explanation": "acte réalisé",
+                    "fees": [
+                        {"amount": 1344.75, "amount_text": "1 344,75", "role": 1, "unit": "dollars",
+                         "context": None, "lieux": [], "majoration": None},
+                        {"amount": 17.0, "amount_text": "17", "role": 2, "unit": "unités",
+                         "context": None, "lieux": [], "majoration": None},
+                    ],
+                }
+            ],
+            "notes": None,
+        }
+        _, run = await _seed_patient_and_run(result=unit_fee_result)
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 1}]
+
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 201
+    body = response.json()
+    [code] = body["codes"]
+    assert code["fee_amount"] is None
+    assert code["fee_unit"] == "unités"
+    assert code["fee_units"] == 17.0
+    assert code["fee_role"] == 2
+    assert body["total_amount"] is None
+
+
+async def test_out_of_range_fee_index_is_422():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 5}]
+
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 422
+
+
+async def test_second_save_of_same_run_is_409():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+        payload = _valid_payload(extraction_run_id=run.id)
 
         first = client.post("/claims", json=payload)
         assert first.status_code == 201
@@ -272,11 +387,10 @@ async def test_second_save_of_same_extraction_is_409():
     assert second.json()["detail"]["code"] == "duplicate_claim"
 
 
-async def test_second_save_of_same_extraction_is_409_even_with_confirm_duplicate():
+async def test_second_save_of_same_run_is_409_even_with_confirm_duplicate():
     with TestClient(app) as client:
-        patient = await _seed_patient()
-        extraction_record = await _seed_extraction_record()
-        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
+        _, run = await _seed_patient_and_run()
+        payload = _valid_payload(extraction_run_id=run.id)
 
         client.post("/claims", json=payload)
         second = client.post("/claims", json=payload, params={"confirm_duplicate": "true"})
@@ -284,56 +398,85 @@ async def test_second_save_of_same_extraction_is_409_even_with_confirm_duplicate
     assert second.status_code == 409
 
 
-async def test_same_patient_and_date_via_different_extraction_warns_then_allows_override():
+async def test_a_voided_claims_run_can_be_claimed_again():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+        payload = _valid_payload(extraction_run_id=run.id)
+
+        first = client.post("/claims", json=payload).json()
+        client.delete(f"/claims/{first['id']}")
+        second = client.post("/claims", json=payload)
+
+    assert second.status_code == 201
+
+
+async def test_same_patient_and_date_via_different_run_warns_then_allows_override():
     with TestClient(app) as client:
         patient = await _seed_patient()
-        first_extraction = await _seed_extraction_record()
-        second_extraction = await _seed_extraction_record()
+        first_run = await _seed_run(patient.id)
+        second_run = await _seed_run(patient.id)
 
-        first = client.post(
-            "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=first_extraction.id),
-        )
+        first = client.post("/claims", json=_valid_payload(extraction_run_id=first_run.id))
         assert first.status_code == 201
 
-        blocked = client.post(
-            "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=second_extraction.id),
-        )
+        blocked = client.post("/claims", json=_valid_payload(extraction_run_id=second_run.id))
         assert blocked.status_code == 409
         assert blocked.json()["detail"]["code"] == "duplicate_claim"
 
         overridden = client.post(
             "/claims",
-            json=_valid_payload(patient_id=patient.id, billing_extraction_record_id=second_extraction.id),
+            json=_valid_payload(extraction_run_id=second_run.id),
             params={"confirm_duplicate": "true"},
         )
         assert overridden.status_code == 201
 
 
-async def test_deleting_a_claim_removes_its_code_rows_and_total_is_null_when_no_fees():
+async def test_total_is_null_when_no_fees():
     with TestClient(app) as client:
-        patient = await _seed_patient()
         no_fee_result = {
             "codes": [
                 {
                     "code": "TEST-BLOODWORK-ORDER",
                     "description": "Demande et révision d'un bilan sanguin de routine",
-                    "confidence": 0.85,
+                    "confidence": "medium",
                     "explanation": "Bilan sanguin de contrôle demandé",
-                    "fee": {"amount": None, "when_to_use": None, "majoration": None},
+                    "fees": [],
                 }
             ],
             "notes": None,
         }
-        extraction_record = await _seed_extraction_record(result=no_fee_result)
-        payload = _valid_payload(patient_id=patient.id, billing_extraction_record_id=extraction_record.id)
-        payload["selected_codes"] = ["TEST-BLOODWORK-ORDER"]
+        _, run = await _seed_patient_and_run(result=no_fee_result)
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"] = [{"code": "TEST-BLOODWORK-ORDER", "fee_index": None}]
 
         created = client.post("/claims", json=payload).json()
-        assert created["total_amount"] is None
 
-        client.delete(f"/claims/{created['id']}")
-        list_response = client.get("/claims")
+    assert created["total_amount"] is None
+    [code] = created["codes"]
+    assert code["fee_unit"] is None
 
-    assert created["id"] not in [r["id"] for r in list_response.json()]
+
+def test_list_limit_above_the_maximum_is_422_not_silently_capped():
+    with TestClient(app) as client:
+        response = client.get("/claims", params={"limit": 500})
+
+    assert response.status_code == 422
+
+
+async def test_same_run_racing_past_the_pre_check_is_409_not_500(monkeypatch):
+    # Two saves of one run can both pass ClaimDuplicateGuard's read before either commits;
+    # the partial unique index must then surface as the same 409 as the pre-check.
+    async def _nothing_saved_yet(self, extraction_run_id):
+        return None
+
+    monkeypatch.setattr("app.postgresdb.ClaimRepository.get_live_by_extraction_run_id", _nothing_saved_yet)
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+        payload = _valid_payload(extraction_run_id=run.id)
+
+        first = client.post("/claims", json=payload)
+        second = client.post("/claims?confirm_duplicate=true", json=payload)
+
+    assert first.status_code == 201
+    assert second.status_code == 409
+    assert second.json()["detail"]["code"] == "duplicate_claim"

@@ -1,19 +1,26 @@
 import { unwrap, unwrapVoid } from "./http";
+import type { ConfidenceLevel, ExtractedFee } from "./extraction";
 
-// Kept in sync by hand with app/claims/models.py's ClaimStatus Literal. Read-only from
-// this API — a claim only leaves "brouillon" via POST /bills (see api/bills.ts), and
-// "facture" is reserved for a future real RAMQ submission response; nothing sets it yet.
-export const CLAIM_STATUSES = ["brouillon", "soumis", "facture"] as const;
+// Kept in sync by hand with app/claims/status.py's ClaimStatus. Derived server-side, never
+// set: a claim is "soumis" exactly when it's on a bill (bill_id != null) — it only leaves
+// "brouillon" via POST /bills (see api/bills.ts) and returns when that bill is deleted.
+export const CLAIM_STATUSES = ["brouillon", "soumis"] as const;
 export type ClaimStatus = (typeof CLAIM_STATUSES)[number];
 
 export interface ClaimCodeLine {
   code: string;
   description: string;
-  confidence: number;
+  confidence: ConfidenceLevel;
   explanation: string;
+  // Dollars only — a fee in "unités" carries its count in fee_units and no fee_amount.
   fee_amount: number | null;
-  fee_when_to_use: string | null;
+  fee_unit: ExtractedFee["unit"] | null;
+  fee_units: number | null;
+  fee_role: number | null;
+  fee_context: string | null;
+  fee_lieux: string[] | null;
   majoration: string | null;
+  manual_rev: string | null;
 }
 
 export interface Claim {
@@ -22,6 +29,7 @@ export interface Claim {
   patient_full_name: string;
   service_date: string; // ISO date (YYYY-MM-DD)
   status: ClaimStatus;
+  bill_id: number | null;
   source_system: string | null;
   codes: ClaimCodeLine[];
   total_amount: number | null;
@@ -29,13 +37,19 @@ export interface Claim {
   updated_at: string;
 }
 
+export interface SelectedCode {
+  code: string;
+  // Index into that code's resolved ExtractedFee[] (see api/extraction.ts) — null defaults
+  // to the first (and, for a single-fee code, only) entry server-side.
+  fee_index: number | null;
+}
+
+// No patient or source: both come from the extraction run server-side, since its codes were
+// eligibility-filtered for that run's patient.
 export interface ClaimInput {
-  patient_id: number;
+  extraction_run_id: number;
   service_date: string;
-  billing_extraction_record_id: number;
-  summary_extraction_record_id: number | null;
-  selected_codes: string[];
-  source_system: string | null;
+  selected_codes: SelectedCode[];
 }
 
 export interface ClaimFilters {
@@ -83,8 +97,8 @@ export async function listClaims(filters: ClaimFilters = {}): Promise<Claim[]> {
   return unwrap<Claim[]>(await fetch(`/api/claims${query ? `?${query}` : ""}`, { credentials: "same-origin" }));
 }
 
-// Status is otherwise read-only from this API — there is no PATCH endpoint for it, see
-// CLAIM_STATUSES' comment above.
+// Voids the claim server-side (it stays on record, hidden from lists). Only a draft can be
+// deleted; status is otherwise read-only, see CLAIM_STATUSES' comment above.
 export async function deleteClaim(id: number): Promise<void> {
   await unwrapVoid(await fetch(`/api/claims/${id}`, { method: "DELETE", credentials: "same-origin" }));
 }
