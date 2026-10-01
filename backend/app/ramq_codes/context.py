@@ -29,14 +29,26 @@ class PhysicianContext:
     """The billing physician's own practice facts, as of the encounter date — see
     ProfileService.as_of, not .current: a past encounter is interpreted under the panel
     size in effect then, not today's (same reasoning as PhysicianProfile's docstring and
-    ClaimCode's fee snapshot). When the encounter predates the physician's earliest profile
-    version, BillingContextBuilder falls back to that earliest version instead of leaving
-    this all-null — see its docstring and BACKLOG.md for why that's a deliberate, revisit-
-    later trade-off rather than the "never guess" default this class otherwise holds to."""
+    ClaimCode's fee snapshot).
+
+    `is_assumed` is True when no profile version was in effect yet on the encounter date and
+    BillingContextBuilder fell back to the earliest version on file. Those values are a
+    best guess, never an established fact: read `confirmed_panel_size`, not `panel_size`,
+    wherever the value would filter candidates or be recorded as fact, so an assumed panel
+    size stays an unresolved axis the physician confirms."""
 
     panel_size: int | None = None
     physician_type: str | None = None
     remuneration_type: str | None = None
+    is_assumed: bool = False
+
+    @property
+    def confirmed_panel_size(self) -> int | None:
+        return None if self.is_assumed else self.panel_size
+
+    @property
+    def assumed_panel_size(self) -> int | None:
+        return self.panel_size if self.is_assumed else None
 
 
 @dataclass(frozen=True)
@@ -66,8 +78,8 @@ class BillingContext:
         key is present only when the fact is actually known — an absent key means that axis
         filters nothing, and UnresolvedAxisDetector flags it if any candidate is bound on it."""
         axes: dict[str, bool | int | None] = {}
-        if self.physician.panel_size is not None:
-            axes[AXIS_PANEL_SIZE] = self.physician.panel_size
+        if self.physician.confirmed_panel_size is not None:
+            axes[AXIS_PANEL_SIZE] = self.physician.confirmed_panel_size
         if self.patient.is_registered is not None:
             axes[AXIS_REGISTRATION] = self.patient.is_registered
         if self.patient.is_vulnerable is not None:

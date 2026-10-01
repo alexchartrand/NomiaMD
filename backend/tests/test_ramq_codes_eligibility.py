@@ -48,6 +48,13 @@ def test_known_facts_are_carried_over():
     )
 
 
+def test_an_assumed_panel_size_filters_nothing():
+    # A guess from a profile entered after the encounter must never remove a variant.
+    context = BillingContext(physician=PhysicianContext(panel_size=320, is_assumed=True))
+
+    assert EligibilityFilterFactory().from_context(context).panel_size is None
+
+
 def test_age_is_floored_to_completed_years():
     # 79.6 is still "moins de 80 ans" (max_age=79) — rounding would wrongly exclude it.
     context = BillingContext(patient=PatientContext(age_years=79.6))
@@ -76,6 +83,14 @@ def test_a_known_axis_is_never_unresolved():
     unresolved = UnresolvedAxisDetector().detect([_15801], context)
 
     assert AXIS_PANEL_SIZE not in unresolved
+
+
+def test_an_assumed_panel_size_is_still_unresolved():
+    context = BillingContext(physician=PhysicianContext(panel_size=320, is_assumed=True))
+
+    unresolved = UnresolvedAxisDetector().detect([_15801], context)
+
+    assert AXIS_PANEL_SIZE in unresolved
 
 
 def test_an_unknown_axis_no_candidate_is_bounded_on_is_not_flagged():

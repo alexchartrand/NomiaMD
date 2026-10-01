@@ -47,23 +47,23 @@ class BillingContextBuilder:
         no "no patient chosen yet" case to model here any more."""
         on_date = encounter_date or self._clock.today()
 
-        account = await self._profiles.as_of(user, on_date)
-        profile = account.profile
+        profile = (await self._profiles.as_of(user, on_date)).profile
+        is_assumed = False
         if profile is None:
             # No profile version had taken effect yet as of the encounter date — most
             # commonly, the physician's very first profile was entered after this encounter
-            # (e.g. a demo/backfilled transcript predating their own onboarding). Fall back
-            # to the earliest version on file as a best-effort estimate rather than leaving
-            # the whole physician side unresolved: still real physician-entered data, just
-            # not provably in effect at this exact date. See BACKLOG.md — this trade-off
-            # needs revalidation once physicians accumulate multiple profile versions.
+            # (e.g. a backfilled transcript predating their own onboarding). The earliest
+            # version on file is the closest estimate, but it's still a guess: it's marked
+            # assumed, so it never filters candidates and the physician confirms it.
             profile = (await self._profiles.earliest(user)).profile
+            is_assumed = profile is not None
 
         physician = (
             PhysicianContext(
                 panel_size=profile.panel_size,
                 physician_type=profile.physician_type,
                 remuneration_type=profile.remuneration_type,
+                is_assumed=is_assumed,
             )
             if profile is not None
             else PhysicianContext()

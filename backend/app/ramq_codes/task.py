@@ -95,6 +95,10 @@ Established facts and open questions for this encounter:
   candidate too so the physician can pick between them. Do this even when the summary or
   transcript reads as if it already answers the question — an unresolved axis is only
   resolved by the established facts above, never by inference from either text.
+- The user message may also give unconfirmed indications for an unresolved axis (e.g. the
+  physician's likely panel size, from a profile entered after the encounter). Use them only
+  to decide which variant to list first or rate higher; the axis stays unresolved, so keep
+  every variant that differs on it and still add the `needs_confirmation` sentence.
 - A condition about the encounter itself (age, what was performed, referral) that the
   summary/transcript actively contradicts means the candidate does not apply — exclude it
   entirely, don't include it at low confidence "just in case".
@@ -136,8 +140,8 @@ def _known_facts_text(context: BillingContext) -> str | None:
     physician = context.physician
     patient = context.patient
 
-    if physician.panel_size is not None:
-        lines.append(f"- Clientèle inscrite du médecin : {physician.panel_size} patients.")
+    if physician.confirmed_panel_size is not None:
+        lines.append(f"- Clientèle inscrite du médecin : {physician.confirmed_panel_size} patients.")
     if patient.is_registered is not None:
         state = "est inscrit" if patient.is_registered else "n'est pas inscrit"
         lines.append(f"- Le patient {state} auprès de ce médecin.")
@@ -152,6 +156,17 @@ def _known_facts_text(context: BillingContext) -> str | None:
     if not lines:
         return None
     return "Faits établis pour cette facturation (certains, prioritaires sur toute déduction) :\n" + "\n".join(lines)
+
+
+def _assumed_facts_text(context: BillingContext) -> str | None:
+    panel_size = context.physician.assumed_panel_size
+    if panel_size is None:
+        return None
+    return (
+        "Indications non confirmées (aucun profil du médecin n'était en vigueur à la date de la "
+        "consultation ; valeurs tirées de son plus ancien profil au dossier) :\n"
+        f"- Clientèle inscrite du médecin : probablement {panel_size} patients."
+    )
 
 
 def _unresolved_axes_text(unresolved_axes: tuple[str, ...]) -> str | None:
@@ -183,6 +198,10 @@ class BillingCodesTask(ExtractionTask[BillingCodesInput]):
         known_facts = _known_facts_text(task_input.context)
         if known_facts:
             prompt_sections.append(known_facts)
+
+        assumed_facts = _assumed_facts_text(task_input.context)
+        if assumed_facts:
+            prompt_sections.append(assumed_facts)
 
         unresolved = _unresolved_axes_text(collapse_result.unresolved_axes)
         if unresolved:
