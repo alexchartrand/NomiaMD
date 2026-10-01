@@ -6,6 +6,7 @@ reaching into .router/.models/.service directly."""
 
 from app.sample_patients.router import router as sample_patients_router
 from app.sample_patients.service import (
+    SamplePatient,
     get_sample_patient,
     get_sample_patients,
     parse_age_hint_years,
@@ -13,6 +14,7 @@ from app.sample_patients.service import (
 )
 
 __all__ = [
+    "SamplePatient",
     "sample_patients_router",
     "get_sample_patient",
     "get_sample_patients",

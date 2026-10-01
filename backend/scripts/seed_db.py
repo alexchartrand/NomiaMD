@@ -1,5 +1,7 @@
 """Seed a freshly wiped database with a demo admin user and all 25 simulated consultation-
-note patients, each with an encounter holding its note, for local development. From backend/, with the venv active:
+note patients, each with an encounter holding its note, for local development. The
+encounters go through IntakeService (the sample connector), the same path a real note
+takes. From backend/, with the venv active:
 
     python scripts/seed_db.py
 
@@ -28,12 +30,9 @@ from app.auth.factory import build_profile_service  # noqa: E402
 from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
 from app.bootstrap import postgres_database  # noqa: E402
-from app.extraction.encounter_date import parse_encounter_date  # noqa: E402
-from app.intake import Channel, content_hash  # noqa: E402
+from app.intake import IntakeService, SampleConnector  # noqa: E402
 from app.patients import format_full_name, nam  # noqa: E402
 from app.postgresdb import (  # noqa: E402
-    EncounterInput,
-    EncounterRepository,
     PatientRepository,
     PhysicianPatientRepository,
     PhysicianType,
@@ -57,9 +56,6 @@ ADMIN_REMUNERATION_TYPE = RemunerationType.MIXTE.value
 # app/patients/registration.py), there's no separate flag left to set.
 SEED_PRACTICE_NUMBER = "123456"
 
-# Matches what the frontend sends as TranscriptSource.system for a simulated patient.
-SEED_SOURCE_SYSTEM = "simule"
-
 # The em dash separates the name from the "NN ans (H/F)"/"NN mois (H/F)" demographic
 # suffix on every **Patient :** header line — strips that suffix so format_full_name only
 # ever sees the "Surname, Given" part.
@@ -70,6 +66,13 @@ _NAME_PREFIX_RE = re.compile(r"^(.*?)\s*[—-]\s*\d")
 # consultations/README.md already flags vulnerability-status judgment calls as an open
 # ambiguity in these fixtures, not something a regex can fully resolve.
 _VULNERABLE_RE = re.compile(r"(?<!non )vuln[ée]rable", re.IGNORECASE)
+
+
+class _NoExtractionQueue:
+    """Seeded encounters wait "reçu": extracting 25 notes up front would spend 25 LLM runs."""
+
+    async def enqueue(self, encounter_id: int) -> None:
+        pass
 
 
 def prompt_for_password() -> str:
@@ -98,7 +101,9 @@ async def main() -> None:
 
     async with postgres_database():
         hashed_password = PasswordHasher().hash(password)
-        # One transaction for the whole seed: a failure part-way leaves the DB as it was.
+        # One transaction for the user and patients: a failure part-way leaves the DB as it
+        # was. It commits before the encounters, which IntakeService receives in its own
+        # sessions and resolves against these patients.
         async with session_scope() as session:
             try:
                 admin = await UserRepository(session).create(
@@ -127,7 +132,6 @@ async def main() -> None:
 
             patient_repository = PatientRepository(session)
             roster_repository = PhysicianPatientRepository(session)
-            encounter_repository = EncounterRepository(session)
             today = date.today()
 
             for sample in get_sample_patients():
@@ -136,12 +140,12 @@ async def main() -> None:
 
                 normalized_nam = nam.normalize(fields.get("NAM"))
                 if normalized_nam is None:
-                    print(f"  ! skipping {sample.id!r}: no valid NAM in header", file=sys.stderr)
+                    print(f"  ! no patient for {sample.id!r}: no valid NAM in header", file=sys.stderr)
                     continue
 
                 decoded = nam.decode(normalized_nam, on_date=today, age_hint=parse_age_hint_years(patient_field))
                 if decoded is None:
-                    print(f"  ! skipping {sample.id!r}: could not decode NAM {normalized_nam!r}", file=sys.stderr)
+                    print(f"  ! no patient for {sample.id!r}: could not decode NAM {normalized_nam!r}", file=sys.stderr)
                     continue
 
                 full_name = format_full_name(_name_as_stated(patient_field)) or patient_field
@@ -157,23 +161,12 @@ async def main() -> None:
                     family_doctor_practice_number=SEED_PRACTICE_NUMBER,
                 )
                 await roster_repository.add(admin.id, patient.id)
-                # The sample's dossier number stands in for a source system's note id.
-                encounter = await encounter_repository.create(
-                    EncounterInput(
-                        user_id=admin.id,
-                        patient_id=patient.id,
-                        source_system=SEED_SOURCE_SYSTEM,
-                        channel=Channel.SAMPLE,
-                        external_note_id=sample.id,
-                        content_hash=content_hash(sample.transcript),
-                        note_text=sample.transcript,
-                        service_date=parse_encounter_date(fields.get("Date/heure")),
-                    )
-                )
-                print(
-                    f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable}), "
-                    f"encounter id={encounter.id} on {encounter.service_date}"
-                )
+                print(f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable})")
+
+        # A sample whose patient wasn't created above still gets its encounter, "à associer".
+        outcomes = await IntakeService(_NoExtractionQueue()).receive_all(SampleConnector().notes(), admin)
+        for outcome in outcomes:
+            print(f"  + encounter id={outcome.encounter_id} ({outcome.outcome}, patient_id={outcome.patient_id})")
 
 
 if __name__ == "__main__":
