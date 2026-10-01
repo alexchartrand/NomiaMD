@@ -21,6 +21,19 @@ one-click path for clean items.
     then `POST /claims` runs per run. Never include rows with `needs_confirmation`.
   - `échec` rows get a "Réessayer" button (`POST /encounters/{id}/extract`).
   - Poll `GET /encounters` every ~15 s while any row is `reçu`.
+- [ ] **"Doublon possible"** — the same visit received twice with different text (e.g. the
+  extension's capture and the scribe's note). Intake never merges those on its own (step 07),
+  so the inbox asks:
+  - Backend: `Encounter.duplicate_of_id` (self-FK, nullable) and `duplicate_dismissed_at`
+    (nullable), stored only because they're the physician's decision. The flag itself is
+    derived in `GET /encounters`: a pair `SameVisitMatcher.may_be_same_visit` accepts, where
+    neither has been dismissed or confirmed. Delete the local DB and re-seed (no Alembic).
+  - `POST /encounters/{id}/duplicate-of/{other_id}` (confirm: this one is hidden from the
+    inbox and its extraction isn't billed) and `POST /encounters/{id}/not-duplicate`
+    (dismiss: the flag doesn't come back). Both scoped to the physician's own encounters.
+  - UI: a "doublon possible" badge on both rows, opening a side-by-side of the two notes
+    with "Même visite" (pick which to keep) and "Visites distinctes".
+  - Approve-all skips flagged rows until the physician answers.
 - [ ] `AppRouter.tsx`: add `/app/inbox` and make it the post-login landing page. Update the nav in `AppLayout.tsx`.
 - [ ] `ExtractionPage/SourceStep.tsx` becomes "Ajouter manuellement": a paste/upload form posting to
   `/intake/notes` (with an optional shift label), then redirecting to the inbox. Remove the
@@ -32,3 +45,6 @@ one-click path for clean items.
 - With `make dev-fake` + worker, a seeded day shows encounters. Associating a patient moves the
   row to `prêt`. Approve-all creates claims visible in Facturation, and rows with
   `needs_confirmation` are excluded.
+- Tests: two same-day visits with start times hours apart aren't flagged; a capture and a
+  scribe note of one visit are; confirming hides one; dismissing clears the flag for good;
+  approve-all skips flagged rows.

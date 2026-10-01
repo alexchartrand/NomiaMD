@@ -91,6 +91,14 @@ class PatientRepository(SessionRepository):
             return None
         return patient
 
+    async def get_by_ramq_number(self, ramq_number: str) -> Patient | None:
+        """The active patient with this (already canonical) NAM — at most one, by
+        ix_patients_ramq_number_active."""
+        result = await self._session.execute(
+            select(Patient).where(Patient.ramq_number == ramq_number, Patient.deleted_at.is_(None))
+        )
+        return result.scalars().first()
+
     async def get_or_create_by_ramq_number(
         self,
         *,
@@ -104,10 +112,7 @@ class PatientRepository(SessionRepository):
     ) -> Patient:
         """For scripts/seed_db.py: idempotent across re-runs against a not-quite-empty DB,
         and safe if two consultation notes ever shared a NAM."""
-        result = await self._session.execute(
-            select(Patient).where(Patient.ramq_number == ramq_number, Patient.deleted_at.is_(None))
-        )
-        existing = result.scalars().first()
+        existing = await self.get_by_ramq_number(ramq_number)
         if existing is not None:
             return existing
 

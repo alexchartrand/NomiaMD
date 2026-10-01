@@ -72,6 +72,11 @@ class EncounterRepository(SessionRepository):
             raise
         return encounter
 
+    async def get(self, encounter_id: int) -> Encounter | None:
+        """Unscoped — for background work that only has the id (app/intake/queue.py). Anything
+        acting on a physician's behalf uses get_for_user."""
+        return await self._session.get(Encounter, encounter_id)
+
     async def get_for_user(self, encounter_id: int, user_id: int) -> Encounter | None:
         encounter = await self._session.get(Encounter, encounter_id)
         if encounter is None or encounter.user_id != user_id:
@@ -112,6 +117,17 @@ class EncounterRepository(SessionRepository):
         else:
             query = query.where(Encounter.superseded_by_id.is_(None))
         return (await self._session.scalars(query.order_by(Encounter.id.desc()).limit(1))).first()
+
+    async def find_by_content_hash(self, user_id: int, content_hash: str) -> Encounter | None:
+        """This physician's earliest encounter with exactly this note text, from any source
+        — app/intake/deduplicator.py's match when a note has no external id."""
+        query = (
+            select(Encounter)
+            .where(Encounter.user_id == user_id, Encounter.content_hash == content_hash)
+            .order_by(Encounter.id)
+            .limit(1)
+        )
+        return (await self._session.scalars(query)).first()
 
     async def set_patient(self, encounter: Encounter, patient_id: int) -> None:
         encounter.patient_id = patient_id
