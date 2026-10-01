@@ -41,8 +41,8 @@ export interface ExtractionResult {
 
 export interface BillingExtractionResponse {
   billing: ExtractionResult;
-  summary_extraction_record_id: number;
-  billing_extraction_record_id: number;
+  // What POST /claims takes — the run carries the patient and both stages' results.
+  extraction_run_id: number;
   encounter_date: string | null; // ISO date (YYYY-MM-DD)
   encounter_date_raw: string | null;
 }

@@ -7,6 +7,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, PlainSerializer
 
 from app.claims.status import ClaimStatus
+from app.ramq_codes import FeeUnit
 
 
 # Mirrors app/ramq_codes/models.py's ExtractedCode.confidence — defined locally rather than
@@ -30,12 +31,13 @@ class SelectedCode(BaseModel):
 
 
 class ClaimCreate(BaseModel):
-    patient_id: int
+    """No patient_id or source_system: both come from the extraction run, whose codes were
+    eligibility-filtered for that patient. service_date stays — the physician may correct
+    the encounter date the extraction parsed."""
+
+    extraction_run_id: int
     service_date: date
-    billing_extraction_record_id: int
-    summary_extraction_record_id: int | None = None
     selected_codes: list[SelectedCode]
-    source_system: str | None = None
 
 
 class ClaimCodeOut(BaseModel):
@@ -43,9 +45,15 @@ class ClaimCodeOut(BaseModel):
     description: str
     confidence: ConfidenceLevel
     explanation: str
+    # Dollars only — a fee in units carries its count in fee_units instead.
     fee_amount: Money | None
-    fee_when_to_use: str | None
+    fee_unit: FeeUnit | None
+    fee_units: Money | None
+    fee_role: int | None
+    fee_context: str | None
+    fee_lieux: list[str] | None
     majoration: str | None
+    manual_rev: str | None
 
     model_config = {"from_attributes": True}
 
@@ -55,7 +63,9 @@ class ClaimOut(BaseModel):
     patient_id: int
     patient_full_name: str
     service_date: date
+    # Derived from bill_id — see app/claims/status.py.
     status: ClaimStatus
+    bill_id: int | None
     source_system: str | None
     codes: list[ClaimCodeOut]
     total_amount: Money | None

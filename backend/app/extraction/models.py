@@ -47,7 +47,7 @@ class BillingExtractionResponse(BaseModel):
     the contract for every future task."""
 
     billing: ExtractionResult[BillingCodesResult]
-    summary_extraction_record_id: int
-    billing_extraction_record_id: int
+    # What POST /claims takes: the run carries the patient and both stages' results.
+    extraction_run_id: int
     encounter_date: date | None
     encounter_date_raw: str | None

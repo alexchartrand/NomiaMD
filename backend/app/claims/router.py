@@ -9,7 +9,7 @@ from app.claims.errors import (
     ClaimOnBillError,
     DuplicateClaimError,
     EmptySelectionError,
-    ExtractionRecordNotFoundError,
+    ExtractionRunNotFoundError,
     InvalidFeeSelectionError,
     PatientNotFoundError,
     UnknownCodesError,
@@ -30,18 +30,15 @@ async def create_claim(
 ) -> ClaimOut:
     try:
         return await service.create(
-            physician_id=current_user.id,
-            patient_id=body.patient_id,
+            physician=current_user,
+            extraction_run_id=body.extraction_run_id,
             service_date=body.service_date,
-            billing_extraction_record_id=body.billing_extraction_record_id,
-            summary_extraction_record_id=body.summary_extraction_record_id,
             selected_codes=body.selected_codes,
-            source_system=body.source_system,
             confirm_duplicate=confirm_duplicate,
         )
     except PatientNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Patient introuvable") from exc
-    except ExtractionRecordNotFoundError as exc:
+    except ExtractionRunNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Extraction introuvable") from exc
     except EmptySelectionError as exc:
         raise HTTPException(status_code=422, detail="Au moins un code doit être sélectionné") from exc
@@ -94,7 +91,8 @@ async def delete_claim(
     service: ClaimService = Depends(get_claim_service),
 ) -> None:
     try:
-        deleted = await service.delete(claim_id, current_user.id)
+        # A void, not a hard delete — see the Claim model.
+        deleted = await service.void(claim_id, current_user.id)
     except ClaimOnBillError as exc:
         raise HTTPException(
             status_code=409,

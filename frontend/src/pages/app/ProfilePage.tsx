@@ -25,7 +25,7 @@ export default function ProfilePage() {
 
   const [fullName, setFullName] = useState("");
   const [physicianType, setPhysicianType] = useState<PhysicianType | "">("");
-  const [numberOfPatients, setNumberOfPatients] = useState("");
+  const [panelSize, setPanelSize] = useState("");
   const [remunerationType, setRemunerationType] = useState<RemunerationType | "">("");
   const [practiceNumber, setPracticeNumber] = useState("");
   const [profileError, setProfileError] = useState<string | null>(null);
@@ -42,9 +42,9 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user) return;
     setFullName(user.full_name);
-    setPhysicianType((user.physician_type as PhysicianType | null) ?? "");
-    setNumberOfPatients(user.number_of_patients != null ? String(user.number_of_patients) : "");
-    setRemunerationType((user.remuneration_type as RemunerationType | null) ?? "");
+    setPhysicianType(user.physician_type ?? "");
+    setPanelSize(user.panel_size != null ? String(user.panel_size) : "");
+    setRemunerationType(user.remuneration_type ?? "");
     setPracticeNumber(user.practice_number ?? "");
   }, [user]);
 
@@ -53,7 +53,7 @@ export default function ProfilePage() {
     setProfileError(null);
     setProfileSuccess(false);
 
-    const parsedCount = numberOfPatients.trim() === "" ? null : Number(numberOfPatients);
+    const parsedCount = panelSize.trim() === "" ? null : Number(panelSize);
     if (parsedCount !== null && (Number.isNaN(parsedCount) || parsedCount < 0)) {
       setProfileError("Le nombre de patients doit être un nombre entier positif.");
       return;
@@ -70,7 +70,7 @@ export default function ProfilePage() {
       const updated = await updateProfile({
         full_name: fullName,
         physician_type: physicianType === "" ? null : physicianType,
-        number_of_patients: parsedCount,
+        panel_size: parsedCount,
         remuneration_type: remunerationType === "" ? null : remunerationType,
         practice_number: trimmedPracticeNumber === "" ? null : trimmedPracticeNumber,
       });
@@ -152,8 +152,8 @@ export default function ProfilePage() {
               >
                 <option value="">—</option>
                 {PHYSICIAN_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </Select>
@@ -167,8 +167,8 @@ export default function ProfilePage() {
                 id="profile-patient-count"
                 type="number"
                 min={0}
-                value={numberOfPatients}
-                onChange={(event) => setNumberOfPatients(event.target.value)}
+                value={panelSize}
+                onChange={(event) => setPanelSize(event.target.value)}
               />
             </div>
 
@@ -183,8 +183,8 @@ export default function ProfilePage() {
               >
                 <option value="">—</option>
                 {REMUNERATION_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </Select>

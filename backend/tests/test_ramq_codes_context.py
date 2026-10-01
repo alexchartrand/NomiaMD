@@ -47,7 +47,7 @@ def _user(**overrides) -> User:
 def _profile(**overrides) -> PhysicianProfile:
     defaults = dict(
         id=1, user_id=1, effective_from=date(2026, 1, 1),
-        physician_type="omnipraticien", number_of_patients=320, remuneration_type="mixte",
+        physician_type="omnipraticien", panel_size=320, remuneration_type="mixte",
     )
     return PhysicianProfile(**{**defaults, **overrides})
 
@@ -65,18 +65,18 @@ async def test_no_profile_and_no_patient_yields_an_all_null_context():
 
     context = await builder.build(user=_user(), patient_id=999, encounter_date=date(2026, 6, 1))
 
-    assert context.physician.number_of_patients is None
+    assert context.physician.panel_size is None
     assert context.patient.age_years is None
     assert context.patient.is_registered is None
     assert context.patient.is_vulnerable is None
 
 
 async def test_profile_facts_carry_through_when_a_profile_exists():
-    builder = BillingContextBuilder(_FakeProfileService(_profile(number_of_patients=750)), _FakePatientRepository(None))
+    builder = BillingContextBuilder(_FakeProfileService(_profile(panel_size=750)), _FakePatientRepository(None))
 
     context = await builder.build(user=_user(), patient_id=999, encounter_date=date(2026, 6, 1))
 
-    assert context.physician.number_of_patients == 750
+    assert context.physician.panel_size == 750
     assert context.physician.physician_type == "omnipraticien"
     assert context.physician.remuneration_type == "mixte"
 
@@ -96,21 +96,21 @@ async def test_falls_back_to_the_earliest_profile_when_the_encounter_predates_ev
     # as_of finds nothing (encounter older than the physician's first profile version, e.g.
     # a demo transcript predating their own onboarding) — context_builder.py falls back to
     # the earliest version on file rather than leaving the physician side unresolved.
-    profile_service = _FakeProfileService(None, earliest=_profile(number_of_patients=640))
+    profile_service = _FakeProfileService(None, earliest=_profile(panel_size=640))
     builder = BillingContextBuilder(profile_service, _FakePatientRepository(None))
 
     context = await builder.build(user=_user(), patient_id=999, encounter_date=date(2020, 1, 1))
 
-    assert context.physician.number_of_patients == 640
+    assert context.physician.panel_size == 640
 
 
 async def test_does_not_fall_back_to_earliest_when_as_of_already_found_a_profile():
-    profile_service = _FakeProfileService(_profile(number_of_patients=320), earliest=_profile(number_of_patients=999))
+    profile_service = _FakeProfileService(_profile(panel_size=320), earliest=_profile(panel_size=999))
     builder = BillingContextBuilder(profile_service, _FakePatientRepository(None))
 
     context = await builder.build(user=_user(), patient_id=999, encounter_date=date(2026, 6, 1))
 
-    assert context.physician.number_of_patients == 320
+    assert context.physician.panel_size == 320
     assert profile_service.earliest_calls == []
 
 

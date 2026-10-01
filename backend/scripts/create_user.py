@@ -2,7 +2,7 @@
 operator running this script. From backend/, with the venv active:
 
     python scripts/create_user.py --email doc@example.com --full-name "Dr. X" --role physician \\
-        [--physician-type "GMF"] [--number-of-patients 850] [--remuneration-type "Mixte"]
+        [--physician-type med_fam] [--panel-size 850] [--remuneration-type mixte]
 
 The password is never accepted as a CLI argument (it would end up in shell history and
 `ps` output) — it's prompted for interactively instead.
@@ -30,6 +30,9 @@ from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
 from app.bootstrap import postgres_database  # noqa: E402
 from app.postgresdb import (  # noqa: E402
+    DuplicatePracticeNumberError,
+    PhysicianType,
+    RemunerationType,
     UserRepository,
     UserRole,
     session_scope,
@@ -41,9 +44,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--email", required=True)
     parser.add_argument("--full-name", required=True)
     parser.add_argument("--role", required=True, choices=[role.value for role in UserRole])
-    parser.add_argument("--physician-type", default=None)
-    parser.add_argument("--number-of-patients", type=int, default=None)
-    parser.add_argument("--remuneration-type", default=None)
+    parser.add_argument("--practice-number", default=None)
+    parser.add_argument("--physician-type", default=None, choices=[t.value for t in PhysicianType])
+    parser.add_argument("--panel-size", type=int, default=None)
+    parser.add_argument("--remuneration-type", default=None, choices=[t.value for t in RemunerationType])
     return parser.parse_args()
 
 
@@ -69,19 +73,23 @@ async def main() -> None:
                     hashed_password=hashed_password,
                     full_name=args.full_name,
                     role=UserRole(args.role),
+                    practice_number=args.practice_number,
                 )
+            except DuplicatePracticeNumberError:
+                print(f"Practice number {args.practice_number!r} is already on another account.", file=sys.stderr)
+                raise SystemExit(1)
             except IntegrityError:
                 print(f"A user with email {args.email!r} already exists.", file=sys.stderr)
                 raise SystemExit(1)
 
             # The practice facts live in their own dated table, so provisioning writes the
             # account's first profile version rather than more columns on `users`.
-            if any((args.physician_type, args.number_of_patients, args.remuneration_type)):
+            if any((args.physician_type, args.panel_size is not None, args.remuneration_type)):
                 await build_profile_service(session).record_practice_facts(
                     user.id,
                     PracticeFacts(
                         physician_type=args.physician_type,
-                        number_of_patients=args.number_of_patients,
+                        panel_size=args.panel_size,
                         remuneration_type=args.remuneration_type,
                     ),
                 )

@@ -1,12 +1,17 @@
-"""ORM shapes only — persistence lives in repositories/, not here."""
+"""ORM shapes only — persistence lives in repositories/, not here.
+
+There is no Alembic: the schema is created by `create_all` (database.py) and a local or demo
+DB is simply deleted and recreated when it changes. That holds until the first real release —
+adopt migrations before then (see BACKLOG.md)."""
 
 import enum
-from datetime import date, datetime, timezone
+from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     Date,
     DateTime,
     Enum,
@@ -25,6 +30,24 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.postgresdb.database import Base
 
+# JSON on SQLite (dev), JSONB on Postgres: keeps the retention purge and "which extractions
+# mention this NAM" query indexable instead of a full-table LIKE.
+_JSON = JSON().with_variant(JSONB, "postgresql")
+
+
+class CreatedAtMixin:
+    """Stamped by the database, never by Python — one clock (the DB's) for every row, and
+    no `default=` + `server_default=` pair to keep in sync. Base's `eager_defaults` reads the
+    value back on INSERT, so it's populated right after a flush without a refresh."""
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class TimestampMixin(CreatedAtMixin):
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
 
 class UserRole(str, enum.Enum):
     ADMIN = "admin"
@@ -32,19 +55,46 @@ class UserRole(str, enum.Enum):
 
 
 class PhysicianType(str, enum.Enum):
-    """Placeholder list — refine once the exact set of practice settings is confirmed."""
+    """Placeholder list — refine once the exact set of practice settings is confirmed.
 
-    MED_FAM = "Médecin de famille"
-    SPECIALIST = "Spécialiste"
-    AUTRE = "Autre"
+    Stored as its code (a plain String column validated at the API boundary), not a native
+    Enum: RAMQ controls this vocabulary, not this codebase. The French label is display
+    only and never reaches the database."""
+
+    MED_FAM = "med_fam"
+    SPECIALISTE = "specialiste"
+    AUTRE = "autre"
+
+    @property
+    def label(self) -> str:
+        return _PHYSICIAN_TYPE_LABELS[self]
+
+
+_PHYSICIAN_TYPE_LABELS = {
+    PhysicianType.MED_FAM: "Médecin de famille",
+    PhysicianType.SPECIALISTE: "Spécialiste",
+    PhysicianType.AUTRE: "Autre",
+}
 
 
 class RemunerationType(str, enum.Enum):
-    MIXTE = "Mixte"
-    A_L_ACTE = "À l'acte"
+    """Same storage convention as PhysicianType."""
+
+    MIXTE = "mixte"
+    A_L_ACTE = "a_l_acte"
+
+    @property
+    def label(self) -> str:
+        return _REMUNERATION_TYPE_LABELS[self]
 
 
-class User(Base):
+_REMUNERATION_TYPE_LABELS = {
+    RemunerationType.MIXTE: "Mixte",
+    RemunerationType.A_L_ACTE: "À l'acte",
+}
+
+
+class User(CreatedAtMixin, Base):
     """A manually-provisioned login (see scripts/create_user.py — there is no signup path).
     Identity and credentials only: the physician's editable practice facts live in
     PhysicianProfile, so this table stays small and rarely-written. `is_active` lets an
@@ -56,7 +106,9 @@ class User(Base):
     changes over a career, so it doesn't need PhysicianProfile's append-only history — a
     plain column here is enough. It's also the join key `Patient.family_doctor_practice_number`
     is compared against to derive whether a patient is registered with this physician (see
-    app/patients/registration.py)."""
+    app/patients/registration.py) — hence unique: two accounts sharing one would make that
+    derivation ambiguous. NULLs never collide in a unique index on either dialect, so any
+    number of accounts may leave it blank."""
 
     __tablename__ = "users"
 
@@ -66,43 +118,40 @@ class User(Base):
     full_name: Mapped[str] = mapped_column(String(255))
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.PHYSICIAN)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    practice_number: Mapped[str | None] = mapped_column(String(6), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
-    )
+    practice_number: Mapped[str | None] = mapped_column(String(6), nullable=True, unique=True)
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
-class PhysicianProfile(Base):
+class PhysicianProfile(TimestampMixin, Base):
     """A physician's practice facts, as of a date — append-only, one row per edit rather
     than one row per physician.
 
     These aren't user preferences: `remuneration_type` (mixte vs à l'acte),
-    `physician_type` and `number_of_patients` are administrative facts that decide which
-    RAMQ codes a physician may legally bill, and they change over a career. Keeping them
-    as mutable columns on `users` meant editing the profile silently rewrote the basis of
-    every past claim — the same failure ClaimCode's fee snapshot exists to prevent. A
-    claim must stay interpretable under the values in effect on its own service_date, so
-    read it with `get_effective_on(user_id, service_date)`, not `get_current`.
+    `physician_type` and `panel_size` are administrative facts that decide which RAMQ codes
+    a physician may legally bill, and they change over a career. Keeping them as mutable
+    columns on `users` meant editing the profile silently rewrote the basis of every past
+    claim — the same failure ClaimCode's fee snapshot exists to prevent. A claim must stay
+    interpretable under the values in effect on its own service_date, so read it with
+    `get_effective_on(user_id, service_date)`, not `get_current`.
+
+    One version per (user, effective_from): a same-day edit is a correction, not a second
+    version of reality, and PhysicianProfileRepository.upsert overwrites it with ON CONFLICT
+    rather than a select-then-insert that two concurrent saves could both pass.
 
     New editable fields are added here as nullable columns; `users` doesn't grow.
     """
 
     __tablename__ = "physician_profiles"
-    __table_args__ = (Index("ix_physician_profiles_user_effective", "user_id", "effective_from"),)
+    # Also the index for every (user_id, date) lookup — no separate user_id index needed.
+    __table_args__ = (UniqueConstraint("user_id", "effective_from", name="uq_physician_profiles_user_effective"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    # The date this version took effect. Rows are never updated except within the same
-    # day (see ProfileService.record_practice_facts) — there is no meaningful
-    # history between two edits made an hour apart.
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     effective_from: Mapped[date] = mapped_column(Date)
-    physician_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    number_of_patients: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    remuneration_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
-    )
+    # PhysicianType / RemunerationType codes, validated at the API boundary.
+    physician_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    panel_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    remuneration_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
 
 class Gender(str, enum.Enum):
@@ -113,7 +162,7 @@ class Gender(str, enum.Enum):
     OTHER = "X"
 
 
-class Patient(Base):
+class Patient(TimestampMixin, Base):
     """A single identity per real person, unique by NAM across the whole app — not owned
     by any one physician. Holds administrative facts (vulnerability, the patient's family
     doctor and their practice number) that billing_codes needs but can never derive from a
@@ -129,7 +178,7 @@ class Patient(Base):
         # same NAM, or a later correction of a duplicate. NULL ramq_number never
         # collides either way — both dialects already treat NULLs as distinct in a
         # unique index. Only as strong as the NAM's canonical form: PatientBase
-        # (app/patients/models.py) normalizes it before it ever reaches this table.
+        # (app/patients/models.py) normalizes it, and the CHECKs below refuse anything else.
         Index(
             "ix_patients_ramq_number_active",
             "ramq_number",
@@ -137,32 +186,40 @@ class Patient(Base):
             postgresql_where=text("deleted_at IS NULL"),
             sqlite_where=text("deleted_at IS NULL"),
         ),
+        # Canonical NAM: 4 uppercase letters + 8 digits. Same rule, each dialect's syntax —
+        # SQLite has no regex operator by default, but GLOB's character classes suffice.
+        CheckConstraint(
+            "ramq_number ~ '^[A-Z]{4}[0-9]{8}$'", name="ck_patients_ramq_number_canonical"
+        ).ddl_if(dialect="postgresql"),
+        CheckConstraint(
+            "ramq_number GLOB '[A-Z][A-Z][A-Z][A-Z][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'",
+            name="ck_patients_ramq_number_canonical_sqlite",
+        ).ddl_if(dialect="sqlite"),
+        # Name search is a substring ILIKE (PatientRepository.search), which a btree can't
+        # serve; a trigram GIN index can. Postgres only — needs the pg_trgm extension,
+        # which PostgresDB.open() creates. SQLite dev DBs are small enough to scan.
+        Index(
+            "ix_patients_full_name_trgm",
+            "full_name",
+            postgresql_using="gin",
+            postgresql_ops={"full_name": "gin_trgm_ops"},
+        ).ddl_if(dialect="postgresql"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     full_name: Mapped[str] = mapped_column(String(255))
-    ramq_number: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    ramq_number: Mapped[str | None] = mapped_column(String(12), nullable=True)
     date_of_birth: Mapped[date] = mapped_column(Date)
     gender: Mapped[Gender | None] = mapped_column(Enum(Gender), nullable=True)
     is_vulnerable: Mapped[bool] = mapped_column(Boolean, default=False)
     family_doctor_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     family_doctor_practice_number: Mapped[str | None] = mapped_column(String(6), nullable=True)
     # Nullable timestamp rather than a bool: under Law 25 the deletion date is the thing
-    # an audit asks for, not just whether the patient is gone. `IS NULL`/`IS NOT NULL`
-    # filters identically to the old is_deleted flag.
+    # an audit asks for, not just whether the patient is gone.
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
-        server_default=func.now(),
-    )
 
 
-class PhysicianPatient(Base):
+class PhysicianPatient(TimestampMixin, Base):
     """A physician's own, optional "my patients" list layered on top of the shared global
     Patient identity — membership plus a free-text personal note, nothing more.
     Deliberately does not carry a registration flag: whether a patient is registered with
@@ -173,144 +230,158 @@ class PhysicianPatient(Base):
     roster annotation for them should disappear too."""
 
     __tablename__ = "physician_patients"
+    # The unique constraint's (physician_id, patient_id) index serves physician_id lookups.
     __table_args__ = (UniqueConstraint("physician_id", "patient_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="CASCADE"), index=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
-        server_default=func.now(),
-    )
 
 
-class ExtractionRecord(Base):
-    """One stored extraction run. `transcript` is kept only long enough for physician
-    review — set up a retention/purge job before this holds real patient data; see the
-    compliance note in the top-level README."""
+class ExtractionRun(CreatedAtMixin, Base):
+    """One /extract call: the transcript (stored once, not per stage), who ran it, and for
+    which patient. The physician picks the patient *before* extraction runs, and every code
+    it suggests was eligibility-filtered for that patient — so a claim takes its patient
+    from here (Claim.extraction_run_id), never from its own request body.
 
-    __tablename__ = "extraction_records"
-    __table_args__ = (Index("ix_extraction_records_user_created", "user_id", "created_at"),)
+    Also the single target of the retention purge (see BACKLOG.md): deleting a run cascades
+    to its ExtractionRunResult rows and detaches any claim made from it (SET NULL — a claim's
+    codes are already snapshotted onto claim_codes). `purge_after` is when that may happen;
+    nothing sets or acts on it yet, since the retention period itself isn't decided."""
+
+    __tablename__ = "extraction_runs"
+    __table_args__ = (Index("ix_extraction_runs_user_created", "user_id", "created_at"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    task: Mapped[str] = mapped_column(String(64))
-    transcript: Mapped[str] = mapped_column(Text)
-    # JSON on SQLite (dev), JSONB on Postgres: keeps the retention purge and
-    # "which extractions mention this NAM" query indexable instead of a full-table LIKE.
-    result_json: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"))
-    model: Mapped[str] = mapped_column(String(64))
-    source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
-    )
-
-
-class Claim(Base):
-    """One physician-confirmed RAMQ claim for an encounter, with many code lines
-    (ClaimCode). `status` is a plain string, not a SQLAlchemy Enum — see the note in
-    docs/plans/billing-workflow.md, Part 5: with no Alembic, adding a status value later must
-    not require an `ALTER TYPE` on the prod Postgres box, so the allowed set is enforced by a
-    Pydantic Literal at the API boundary instead."""
-
-    __tablename__ = "claims"
-    __table_args__ = (
-        Index("ix_claims_physician_service_date", "physician_id", "service_date"),
-        UniqueConstraint("billing_extraction_record_id"),
-    )
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
-    # Plain FK against the shared, global Patient identity — not scoped to this physician.
-    # Any physician may bill any known patient regardless of "my patients list" membership
-    # (that list is optional personal metadata, not a billing gate; see PhysicianPatient).
-    # RESTRICT so a Patient can never be hard-deleted while any physician's claim still
-    # references them — stricter than before, since it now protects every physician's
-    # billing history, not just the one who happened to roster them.
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="RESTRICT"), index=True)
-    service_date: Mapped[date] = mapped_column(Date)
-    status: Mapped[str] = mapped_column(String(16), default="brouillon")
+    transcript: Mapped[str] = mapped_column(Text)
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    # SET NULL so the extraction_records retention purge (see ExtractionRecord) never fails
-    # on a claim: once saved, a claim's codes/fees are already snapshotted onto claim_codes,
-    # so it doesn't need its source extraction to stay renderable.
-    summary_extraction_record_id: Mapped[int | None] = mapped_column(
-        ForeignKey("extraction_records.id", ondelete="SET NULL"), nullable=True
-    )
-    billing_extraction_record_id: Mapped[int | None] = mapped_column(
-        ForeignKey("extraction_records.id", ondelete="SET NULL"), nullable=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
-        server_default=func.now(),
-    )
+    purge_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
 
 
-class ClaimCode(Base):
-    """One selected RAMQ code on a claim. Fields are a snapshot of the candidate at
-    save time (not a live join back to the LanceDB `codes` table), because that table is a
-    regenerated external artifact — re-deriving a historical claim's fee/rules would
-    silently rewrite history whenever the tariff data changes."""
+class ExtractionRunResult(CreatedAtMixin, Base):
+    """One pipeline stage's output within a run (consultation_summary, billing_codes, ...).
+    Per-stage LLM usage (tokens, latency) belongs here too once that's logged — see
+    BACKLOG.md's LLM usage item."""
 
-    __tablename__ = "claim_codes"
+    __tablename__ = "extraction_results"
+    __table_args__ = (UniqueConstraint("run_id", "task", name="uq_extraction_results_run_task"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    claim_id: Mapped[int] = mapped_column(ForeignKey("claims.id", ondelete="CASCADE"), index=True)
-    code: Mapped[str] = mapped_column(String(16))
-    description: Mapped[str] = mapped_column(Text)
-    # "high"/"medium"/"low" (see app/ramq_codes/models.py's ExtractedCode.confidence) —
-    # String + boundary validation rather than a native Enum, same convention as
-    # Claim.status just above: this vocabulary is controlled by the LLM prompt, not owned
-    # by this codebase (see BACKLOG.md's item on the enum-strategy split).
-    confidence: Mapped[str] = mapped_column(String(16))
-    explanation: Mapped[str] = mapped_column(Text)
-    fee_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
-    fee_when_to_use: Mapped[str | None] = mapped_column(Text, nullable=True)
-    majoration: Mapped[str | None] = mapped_column(Text, nullable=True)
+    run_id: Mapped[int] = mapped_column(ForeignKey("extraction_runs.id", ondelete="CASCADE"))
+    task: Mapped[str] = mapped_column(String(64))
+    model: Mapped[str] = mapped_column(String(64))
+    result_json: Mapped[dict] = mapped_column(_JSON)
 
 
 class Bill(Base):
     """One generated invoice grouping many claims over a date range. The PDF is
-    rendered on demand from the linked claims (which are themselves already snapshots —
-    see ClaimCode), so nothing is stored as bytes; total_amount/claim_count are
-    snapshotted anyway so listing bills never has to re-sum every claim's codes."""
+    rendered on demand from the linked claims (Claim.bill_id — themselves already snapshots,
+    see ClaimCode), so nothing is stored as bytes; total_amount/claim_count are snapshotted
+    anyway so listing bills never has to re-sum every claim's codes.
+
+    Never hard-deleted: "deleting" a bill sets `voided_at` and releases its claims back to
+    draft (BillService.delete), so the invoice number and its totals stay on record."""
 
     __tablename__ = "bills"
+    # Also serves physician_id-only lookups — no separate physician_id index needed.
     __table_args__ = (Index("ix_bills_physician_start_date", "physician_id", "start_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     start_date: Mapped[date] = mapped_column(Date)
     end_date: Mapped[date] = mapped_column(Date)
-    generated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now()
-    )
+    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     total_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
     claim_count: Mapped[int] = mapped_column(Integer)
+    voided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
-class BillClaim(Base):
-    """Association table linking a Bill to the claims it covers, rather than a
-    bill_id column on Claim — with no Alembic (see Claim's docstring), a new
-    table is created for free by create_all while a new column on an existing table is not.
-    The unique index on claim_id is the DB-level guarantee that a claim can never
-    land on two bills at once."""
+class Claim(TimestampMixin, Base):
+    """One physician-confirmed RAMQ claim for an encounter, with many code lines
+    (ClaimCode).
 
-    __tablename__ = "bill_claims"
+    There is no stored status: a claim is "soumis" exactly when it's on a bill (`bill_id IS
+    NOT NULL`) and "brouillon" otherwise — see app/claims/status.py. A stored copy could only
+    ever drift from the link it describes.
+
+    Never hard-deleted: "deleting" a draft sets `voided_at`, so a claim that was ever on a
+    bill can't be erased by voiding the bill and then the claim."""
+
+    __tablename__ = "claims"
+    __table_args__ = (
+        # Also serves physician_id-only lookups — no separate physician_id index needed.
+        Index("ix_claims_physician_service_date", "physician_id", "service_date"),
+        # One live claim per extraction run. Partial so voiding a claim frees its run to be
+        # claimed again, same as a hard delete used to.
+        Index(
+            "ix_claims_extraction_run_active",
+            "extraction_run_id",
+            unique=True,
+            postgresql_where=text("voided_at IS NULL"),
+            sqlite_where=text("voided_at IS NULL"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    bill_id: Mapped[int] = mapped_column(ForeignKey("bills.id", ondelete="CASCADE"), index=True)
-    claim_id: Mapped[int] = mapped_column(
-        ForeignKey("claims.id", ondelete="CASCADE"), unique=True, index=True
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    # Copied from the extraction run the claim was made from, never from the request. Plain
+    # FK against the shared, global Patient identity — any physician may bill any known
+    # patient. RESTRICT so a Patient can never be hard-deleted while any claim references them.
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="RESTRICT"), index=True)
+    service_date: Mapped[date] = mapped_column(Date)
+    source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # SET NULL so the retention purge (see ExtractionRun) never fails on a claim.
+    extraction_run_id: Mapped[int | None] = mapped_column(
+        ForeignKey("extraction_runs.id", ondelete="SET NULL"), nullable=True
     )
+    bill_id: Mapped[int | None] = mapped_column(ForeignKey("bills.id", ondelete="SET NULL"), nullable=True, index=True)
+
+    # The billing context the codes were chosen under, snapshotted at save time for the
+    # same reason as ClaimCode's fees: the patient's registration/vulnerability and the
+    # physician's panel size change later, and re-deriving them would silently reinterpret
+    # a past claim. Null means "unknown at save time", never "false".
+    is_registered: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    is_vulnerable: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    patient_age_years: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    panel_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    voided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class ClaimCode(CreatedAtMixin, Base):
+    """One selected RAMQ code on a claim. Fields are a snapshot of the candidate and the
+    fee the physician picked at save time (not a live join back to the LanceDB codes table),
+    because that table is a regenerated external artifact — re-deriving a historical claim's
+    fee/rules would silently rewrite history whenever the tariff data changes."""
+
+    __tablename__ = "claim_codes"
+    __table_args__ = (
+        # Also the index for claim_id lookups.
+        UniqueConstraint("claim_id", "code", name="uq_claim_codes_claim_code"),
+        # String + CHECK rather than a native Enum: the LLM prompt controls this
+        # vocabulary, not this codebase (see app/ramq_codes/models.py's ExtractedCode).
+        CheckConstraint("confidence IN ('high', 'medium', 'low')", name="ck_claim_codes_confidence"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    claim_id: Mapped[int] = mapped_column(ForeignKey("claims.id", ondelete="CASCADE"))
+    code: Mapped[str] = mapped_column(String(32))
+    description: Mapped[str] = mapped_column(Text)
+    confidence: Mapped[str] = mapped_column(String(16))
+    explanation: Mapped[str] = mapped_column(Text)
+    # Dollars only. A fee in units (anesthesia base units) is never a price: its count goes
+    # in fee_units and fee_amount stays NULL — see app/claims/fees.py.
+    fee_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    fee_unit: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    fee_units: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    # The manual's raw role column (R = 1, R = 2, R = 7…), meaning is section-specific.
+    fee_role: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    fee_context: Mapped[str | None] = mapped_column(Text, nullable=True)
+    fee_lieux: Mapped[list[str] | None] = mapped_column(_JSON, nullable=True)
+    majoration: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # The RAMQ manual revision the candidate came from — not carried by extraction results
+    # yet (see BACKLOG.md's manual_rev item), so NULL until it is.
+    manual_rev: Mapped[str | None] = mapped_column(String(32), nullable=True)

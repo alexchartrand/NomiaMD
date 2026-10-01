@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import Iterable
 
 from app.claims.models import ClaimCodeOut, ClaimOut
+from app.claims.status import ClaimLifecycle
 from app.postgresdb import Claim, ClaimCode, ClaimDetail
 
 
@@ -26,7 +27,8 @@ class ClaimMapper:
             patient_id=claim.patient_id,
             patient_full_name=patient_full_name,
             service_date=claim.service_date,
-            status=claim.status,
+            status=ClaimLifecycle.status_of(claim),
+            bill_id=claim.bill_id,
             source_system=claim.source_system,
             codes=codes_out,
             total_amount=cls.total_amount(codes_out),

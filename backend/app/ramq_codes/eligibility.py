@@ -37,7 +37,7 @@ class EligibilityFilterFactory:
             # The bounds are inclusive whole years ("moins de 80 ans" is max_age=79), so a
             # 79.6-year-old is 79 here, never rounded up to 80.
             age=math.floor(age) if age is not None else None,
-            panel_size=context.physician.number_of_patients,
+            panel_size=context.physician.panel_size,
             is_registered=context.patient.is_registered,
             is_vulnerable=context.patient.is_vulnerable,
         )

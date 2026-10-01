@@ -6,7 +6,7 @@ class PatientNotFoundError(Exception):
     pass
 
 
-class ExtractionRecordNotFoundError(Exception):
+class ExtractionRunNotFoundError(Exception):
     pass
 
 

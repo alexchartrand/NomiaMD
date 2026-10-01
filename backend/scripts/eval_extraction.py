@@ -33,7 +33,7 @@ consultation_summary call per entry, since query planning needs the structured s
 the raw transcript.
 
 Each eval_set.jsonl entry may carry optional `physician_context`/`patient_context` objects
-(number_of_patients/physician_type/remuneration_type; age_years/is_registered/is_vulnerable)
+(panel_size/physician_type/remuneration_type; age_years/is_registered/is_vulnerable)
 — without them every axis stays unresolved and the eligibility prefilter keeps every
 variant. This is what makes the panel-size-ambiguous entries in the default
 fixture (label_notes admitting "picked arbitrarily") actually gradeable: set the context and
@@ -87,7 +87,7 @@ def _context_from_entry(entry: dict) -> BillingContext:
     patient = entry.get("patient_context") or {}
     return BillingContext(
         physician=PhysicianContext(
-            number_of_patients=physician.get("number_of_patients"),
+            panel_size=physician.get("panel_size"),
             physician_type=physician.get("physician_type"),
             remuneration_type=physician.get("remuneration_type"),
         ),

@@ -1,5 +1,5 @@
 """Exercises the /bills API end-to-end: create from a set of brouillon claims ->
-list -> get detail -> download PDF -> delete, plus ownership scoping and the
+list -> get detail -> download PDF -> void, plus ownership scoping and the
 empty-selection/stale-selection validation in app/bills/service.py."""
 
 import itertools
@@ -9,7 +9,17 @@ from fastapi.testclient import TestClient
 
 from app.auth import get_current_user
 from app.main import app
-from app.postgresdb import ExtractionRecordInput, ExtractionRepository, Gender, PatientRepository, User, UserRole, session_scope
+from app.postgresdb import (
+    Bill,
+    ExtractionRepository,
+    ExtractionRunInput,
+    ExtractionStageInput,
+    Gender,
+    PatientRepository,
+    User,
+    UserRole,
+    session_scope,
+)
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
 # patients are globally unique by NAM now — so each seeded patient needs its own NAM to
@@ -54,40 +64,42 @@ async def _seed_patient(full_name="Roch Desjardins", ramq_number=None):
         )
 
 
-async def _seed_extraction_record(*, user_id=1, result=None):
+async def _seed_run(patient_id, *, user_id=1, result=None):
     async with session_scope() as session:
-        [record] = await ExtractionRepository(session).create_many(
-            [
-                ExtractionRecordInput(
-                    task="billing_codes",
-                    transcript="transcript de test",
-                    result=result if result is not None else BILLING_RESULT,
-                    model="mistral-small-latest",
-                    source_system="simule",
-                    user_id=user_id,
-                )
-            ]
+        return await ExtractionRepository(session).create_run(
+            ExtractionRunInput(
+                user_id=user_id,
+                patient_id=patient_id,
+                transcript="transcript de test",
+                source_system="simule",
+                stages=[
+                    ExtractionStageInput(
+                        task="billing_codes",
+                        model="mistral-small-latest",
+                        result=result if result is not None else BILLING_RESULT,
+                    )
+                ],
+            )
         )
-    return record
 
 
-async def _seed_claim(client, *, patient_id, service_date="2026-02-10"):
-    extraction_record = await _seed_extraction_record()
+async def _seed_claim(client, *, patient_id, service_date="2026-02-10", result=None):
+    run = await _seed_run(patient_id, result=result)
     response = client.post(
         "/claims",
         json={
-            "patient_id": patient_id,
+            "extraction_run_id": run.id,
             "service_date": service_date,
-            "billing_extraction_record_id": extraction_record.id,
             "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
-            "source_system": "simule",
         },
+        # Several claims per patient per day across these tests — not what's under test here.
+        params={"confirm_duplicate": "true"},
     )
     assert response.status_code == 201
     return response.json()
 
 
-async def test_create_then_list_then_get_then_pdf_then_delete():
+async def test_create_then_list_then_get_then_pdf_then_void():
     with TestClient(app) as client:
         patient = await _seed_patient()
         claim_a = await _seed_claim(client, patient_id=patient.id, service_date="2026-02-10")
@@ -126,8 +138,24 @@ async def test_create_then_list_then_get_then_pdf_then_delete():
         assert delete_response.status_code == 204
 
         assert client.get(f"/bills/{bill['id']}").status_code == 404
+        assert bill["id"] not in [b["id"] for b in client.get("/bills").json()]
+        assert client.delete(f"/bills/{bill['id']}").status_code == 404
         claims_after_delete = client.get("/claims", params={"status": "brouillon"}).json()
         assert {claim_a["id"], claim_b["id"]} <= {c["id"] for c in claims_after_delete}
+
+        # Released claims can go on a new bill.
+        rebilled = client.post(
+            "/bills",
+            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "claim_ids": [claim_a["id"]]},
+        )
+        assert rebilled.status_code == 201
+
+    # A void, not a hard delete: the invoice number and its totals stay on record.
+    async with session_scope() as session:
+        stored = await session.get(Bill, bill["id"])
+    assert stored is not None
+    assert stored.voided_at is not None
+    assert stored.claim_count == 2
 
 
 async def _seed_claim_with_fee(client, *, patient_id, service_date, fee_amount):
@@ -143,19 +171,7 @@ async def _seed_claim_with_fee(client, *, patient_id, service_date, fee_amount):
         ],
         "notes": None,
     }
-    extraction_record = await _seed_extraction_record(result=result)
-    response = client.post(
-        "/claims",
-        json={
-            "patient_id": patient_id,
-            "service_date": service_date,
-            "billing_extraction_record_id": extraction_record.id,
-            "selected_codes": [{"code": "TEST-BP-MGMT", "fee_index": 0}],
-            "source_system": "simule",
-        },
-    )
-    assert response.status_code == 201
-    return response.json()
+    return await _seed_claim(client, patient_id=patient_id, service_date=service_date, result=result)
 
 
 async def test_create_bill_total_is_exact_not_binary_float_drift():

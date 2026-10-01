@@ -12,7 +12,7 @@ so which database a process talks to is decided when it starts, not by whatever
 DATABASE_URL happened to be set when this module was first imported.
 """
 
-from sqlalchemy import event
+from sqlalchemy import event, text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -20,7 +20,10 @@ from app.config import settings
 
 
 class Base(DeclarativeBase):
-    pass
+    # Read server-generated columns (created_at, updated_at, generated_at) back in the same
+    # INSERT/UPDATE statement via RETURNING, so they're populated after a flush — an async
+    # session can't lazy-load an expired attribute later.
+    __mapper_args__ = {"eager_defaults": True}
 
 
 def _enable_sqlite_foreign_keys(dbapi_connection, _connection_record) -> None:
@@ -67,8 +70,13 @@ class PostgresDB:
         return db
 
     async def _create_missing_tables(self) -> None:
-        # create_all never alters an existing table — see BACKLOG.md's "No Alembic" item.
+        # create_all never alters an existing table: until the first release, a schema change
+        # means deleting the DB and letting this recreate it (see BACKLOG.md's "No Alembic").
         async with self._engine.begin() as conn:
+            if conn.dialect.name == "postgresql":
+                # For patients' trigram name-search index (models.py). A trusted extension
+                # since Postgres 13, so the database owner can create it.
+                await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
             await conn.run_sync(Base.metadata.create_all)
 
     async def close(self) -> None:

@@ -14,10 +14,10 @@ from app.postgresdb import (
     BillInput,
     BillRepository,
     ClaimAlreadyBilledError,
-    ClaimDetail,
     ClaimRepository,
     PatientRepository,
     PhysicianProfileRepository,
+    PhysicianType,
     UserRepository,
 )
 
@@ -75,12 +75,10 @@ class BillService:
         # Total is computed from each claim's own snapshotted code rows (never invented,
         # never re-derived from LanceDB) — same reasoning as ClaimCode's docstring.
         # Ownership and status are checked in the same transaction the bill is written in;
-        # a concurrent bill racing over the same claim is caught by bill_claims' unique
-        # claim_id instead (ClaimAlreadyBilledError below).
+        # a concurrent bill racing over the same claim is caught by attach_to_bill's
+        # conditional update instead (ClaimAlreadyBilledError below).
         details = await self._claim_repository.list_by_ids(physician_id, deduped)
-        if len(details) != len(deduped) or not all(
-            ClaimLifecycle.can_be_billed(d.claim.status) for d in details
-        ):
+        if len(details) != len(deduped) or not all(ClaimLifecycle.can_be_billed(d.claim) for d in details):
             raise StaleSelectionError()
 
         total = Decimal("0")
@@ -91,19 +89,19 @@ class BillService:
                 total += claim_amount
                 has_amount = True
 
-        try:
-            bill = await self._bill_repository.create(
-                BillInput(
-                    physician_id=physician_id,
-                    start_date=start_date,
-                    end_date=end_date,
-                    claim_ids=deduped,
-                    total_amount=total if has_amount else None,
-                )
+        bill = await self._bill_repository.create(
+            BillInput(
+                physician_id=physician_id,
+                start_date=start_date,
+                end_date=end_date,
+                claim_count=len(deduped),
+                total_amount=total if has_amount else None,
             )
+        )
+        try:
+            await self._claim_repository.attach_to_bill(deduped, bill.id)
         except ClaimAlreadyBilledError as exc:
             raise StaleSelectionError() from exc
-        await self._claim_repository.set_status(deduped, ClaimLifecycle.ON_BILLED)
         return _bill_to_out(bill)
 
     async def list_for_physician(self, physician_id: int, *, limit: int, offset: int) -> list[BillOut]:
@@ -114,7 +112,7 @@ class BillService:
         bill = await self._bill_repository.get_for_physician(bill_id, physician_id)
         if bill is None:
             return None
-        details = await self._bill_claims(bill_id, physician_id)
+        details = await self._claim_repository.list_for_bill(bill_id, physician_id)
         return BillDetailOut(**_bill_to_out(bill).model_dump(), claims=[ClaimMapper.from_detail(d) for d in details])
 
     async def render_pdf(self, bill_id: int, physician_id: int) -> bytes | None:
@@ -127,7 +125,7 @@ class BillService:
         # physician who changed practice type since must not have last month's invoice
         # reprinted under the new one.
         profile = await self._profile_repository.get_effective_on(physician_id, bill.end_date)
-        details = await self._bill_claims(bill_id, physician_id)
+        details = await self._claim_repository.list_for_bill(bill_id, physician_id)
 
         patient_ids = {d.claim.patient_id for d in details}
         patients = await self._patient_repository.get_many(list(patient_ids))
@@ -158,24 +156,31 @@ class BillService:
             end_date=bill.end_date,
             generated_at=bill.generated_at,
             physician_name=physician.full_name if physician is not None else "",
-            physician_type=profile.physician_type if profile is not None else None,
+            physician_type=self._physician_type_label(profile.physician_type if profile is not None else None),
             patient_groups=list(groups_by_patient.values()),
             total_amount=bill.total_amount,
             claim_count=bill.claim_count,
         )
         return self._pdf_renderer.render(document)
 
-    async def _bill_claims(self, bill_id: int, physician_id: int) -> list[ClaimDetail]:
-        claim_ids = await self._bill_repository.claim_ids_for_bill(bill_id)
-        return await self._claim_repository.list_by_ids(physician_id, claim_ids)
+    @staticmethod
+    def _physician_type_label(code: str | None) -> str | None:
+        # Stored as a code; the invoice shows the French label. An unrecognized code (the
+        # vocabulary changed since) is printed as-is rather than dropped.
+        if code is None:
+            return None
+        try:
+            return PhysicianType(code).label
+        except ValueError:
+            return code
 
     async def delete(self, bill_id: int, physician_id: int) -> bool:
-        """Deleting a bill releases its claims back to their pre-bill status, in the same
-        transaction — never a bill gone with its claims still frozen."""
+        """Voids the bill (never a hard delete — its number and totals stay on record) and
+        releases its claims back to draft, in the same transaction — never a bill gone with
+        its claims still frozen."""
         bill = await self._bill_repository.get_for_physician(bill_id, physician_id)
         if bill is None:
             return False
-        claim_ids = await self._bill_repository.claim_ids_for_bill(bill.id)
-        await self._bill_repository.delete(bill)
-        await self._claim_repository.set_status(claim_ids, ClaimLifecycle.ON_BILL_DELETED)
+        await self._bill_repository.void(bill)
+        await self._claim_repository.detach_from_bill(bill.id)
         return True

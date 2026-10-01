@@ -3,9 +3,22 @@
 from datetime import datetime, timezone
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.postgresdb.models import User, UserRole
 from app.postgresdb.repositories.base import SessionRepository
+
+
+class DuplicatePracticeNumberError(Exception):
+    """Another account already holds this practice number — users.practice_number is
+    unique, since registration is derived by matching it (app/patients/registration.py).
+    The session can only be rolled back afterwards, which its owner does as this propagates
+    (see session.py)."""
+
+
+def _violates_practice_number_unique(exc: IntegrityError) -> bool:
+    message = str(exc.orig).lower()
+    return "unique" in message and "practice_number" in message
 
 
 class UserRepository(SessionRepository):
@@ -35,9 +48,16 @@ class UserRepository(SessionRepository):
             practice_number=practice_number,
         )
         self._session.add(user)
-        await self._session.flush()
-        await self._session.refresh(user)
+        await self._flush_or_raise_duplicate()
         return user
+
+    async def _flush_or_raise_duplicate(self) -> None:
+        try:
+            await self._session.flush()
+        except IntegrityError as exc:
+            if _violates_practice_number_unique(exc):
+                raise DuplicatePracticeNumberError() from exc
+            raise
 
     async def touch_last_login(self, user_id: int) -> None:
         user = await self._session.get(User, user_id)
@@ -57,8 +77,7 @@ class UserRepository(SessionRepository):
             return None
         user.full_name = full_name
         user.practice_number = practice_number
-        await self._session.flush()
-        await self._session.refresh(user)
+        await self._flush_or_raise_duplicate()
         return user
 
     async def update_password_hash(self, user_id: int, hashed_password: str) -> None:

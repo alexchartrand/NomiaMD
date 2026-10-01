@@ -133,12 +133,9 @@ export default function ExtractionPage() {
       );
       await createClaim(
         {
-          patient_id: selectedPatient.id,
+          extraction_run_id: result.extraction_run_id,
           service_date: serviceDate,
-          billing_extraction_record_id: result.billing_extraction_record_id,
-          summary_extraction_record_id: result.summary_extraction_record_id,
           selected_codes: [...selectedCodes.values()],
-          source_system: source,
         },
         confirmDuplicate,
       );
