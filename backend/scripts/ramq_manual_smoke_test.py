@@ -63,9 +63,9 @@ async def main() -> None:
             print("    OK")
 
         # -- hybrid_search ------------------------------------------------------------------
-        from app.embedings import get_embeding_model
+        from app.llm import get_embedding_model
 
-        embed_model = get_embeding_model()
+        embed_model = get_embedding_model()
         vector = await embed_model.aget_query_embedding(KNOWN_QUERY)
         hits = await documents.hybrid_search(text=KNOWN_QUERY, vector=vector, k=5)
         print(f"--- hybrid_search({KNOWN_QUERY!r}): {len(hits)} hit(s)")

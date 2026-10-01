@@ -1241,6 +1241,31 @@ wheels = [
 ]
 
 [[package]]
+name = "llama-index-embeddings-openai"
+version = "0.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "llama-index-core" },
+    { name = "openai" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/52/eb56a4887501651fb17400f7f571c1878109ff698efbe0bbac9165a5603d/llama_index_embeddings_openai-0.6.0.tar.gz", hash = "sha256:eb3e6606be81cb89125073e23c97c0a6119dabb4827adbd14697c2029ad73f29", size = 7629, upload-time = "2026-03-12T20:21:27.234Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/d1/4bb0b80f4057903110060f617ef519197194b3ff5dd6153d850c8f5676fa/llama_index_embeddings_openai-0.6.0-py3-none-any.whl", hash = "sha256:039bb1007ad4267e25ddb89a206dfdab862bfb87d58da4271a3919e4f9df4d61", size = 7666, upload-time = "2026-03-12T20:21:28.079Z" },
+]
+
+[[package]]
+name = "llama-index-embeddings-openai-like"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "llama-index-embeddings-openai" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ca/09/671814fa7f52a462702e526689afc07a36e7d7242830ddf910faba480ded/llama_index_embeddings_openai_like-0.4.0.tar.gz", hash = "sha256:ec151f73eacf17476eda96481eb95815de0ec7c559eb7fe745d3589cfa3846f2", size = 3850, upload-time = "2026-08-31T15:53:08.791Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6a/00/e6025cc9661a4f5ac8149a6ac12c8d1308621a83b19fd0d10cf9e622d9d9/llama_index_embeddings_openai_like-0.4.0-py3-none-any.whl", hash = "sha256:b847b4c58388e1faf197a037c63917082d40a05cb3b551641d61e8567fa66828", size = 3632, upload-time = "2026-08-31T15:53:08.086Z" },
+]
+
+[[package]]
 name = "llama-index-instrumentation"
 version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1582,6 +1607,7 @@ dependencies = [
     { name = "lancedb" },
     { name = "llama-index-core" },
     { name = "llama-index-embeddings-mistralai" },
+    { name = "llama-index-embeddings-openai-like" },
     { name = "llama-index-llms-mistralai" },
     { name = "llama-index-llms-openai-like" },
     { name = "pandas" },
@@ -1613,6 +1639,7 @@ requires-dist = [
     { name = "lancedb", specifier = ">=0.37" },
     { name = "llama-index-core", specifier = ">=0.12" },
     { name = "llama-index-embeddings-mistralai", specifier = ">=0.3" },
+    { name = "llama-index-embeddings-openai-like", specifier = ">=0.2" },
     { name = "llama-index-llms-mistralai", specifier = ">=0.10" },
     { name = "llama-index-llms-openai-like", specifier = ">=0.8.0" },
     { name = "pandas", specifier = ">=2.0" },

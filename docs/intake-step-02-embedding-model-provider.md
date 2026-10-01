@@ -16,18 +16,21 @@ match the vectors stored in LanceDB.
   Mistral embedding model.
 
 ## Tasks
-- [ ] Move to `backend/app/llm/embeddings.py` (keep `app/embedings.py` as a re-export, or
-  update the 4 imports). Select the provider from `EMBEDDING_PROVIDER`
+- [x] Move to `backend/app/llm/embeddings.py` (keep `app/embedings.py` as a re-export, or
+  update the 4 imports). *Done: `app/embedings.py` deleted, the 4 imports updated; the
+  providers sit next to the chat ones in `app/llm/mistral.py`/`openai_compatible.py`.* Select the provider from `EMBEDDING_PROVIDER`
   (`mistral` | `openai_compatible`); `openai_compatible` uses `OpenAILikeEmbedding` against
   `EMBEDDING_ENDPOINT` (TEI and vLLM both expose `/v1/embeddings`).
-- [ ] Dimension guard: at `application_services()` startup (`app/bootstrap.py`), embed a probe
+- [x] Dimension guard: at `application_services()` startup (`app/bootstrap.py`), embed a probe
   string and compare its length with the vector column dimension of the current codes table
-  and the documents table. On mismatch, fail with a message naming both.
-- [ ] Check whether ramq-ingestion records the embedding model name (in `code_versions` or table
+  and the documents table. On mismatch, fail with a message naming both. *Done:
+  `app/llm/embedding_guard.py` + `LanceDB.vector_dimensions()`.*
+- [x] Check whether ramq-ingestion records the embedding model name (in `code_versions` or table
   metadata). If it does, also compare the model name. If it doesn't, add an item to
-  ramq-ingestion's BACKLOG.md (per the upstream-data feedback rule).
-- [ ] `.env.example`: add `EMBEDDING_PROVIDER`, `EMBEDDING_ENDPOINT`, `EMBEDDING_MODEL`. Keep
-  `MISTRAL_EMBEDDING_MODEL` as the mistral provider's setting.
+  ramq-ingestion's BACKLOG.md (per the upstream-data feedback rule). *It doesn't; item added.*
+- [x] `.env.example`: add `EMBEDDING_PROVIDER`, `EMBEDDING_ENDPOINT`, `EMBEDDING_MODEL`. Keep
+  `MISTRAL_EMBEDDING_MODEL` as the mistral provider's setting. *Also optional
+  `EMBEDDING_API_KEY` (TEI/vLLM run without auth by default).*
 
 ## Files
 `backend/app/llm/embeddings.py` (new), `backend/app/embedings.py`, `backend/app/bootstrap.py`,

@@ -61,7 +61,7 @@ Backend modules (`backend/app/`):
 
 | Module | Role |
 |---|---|
-| `llm/` | chat model provider selection (`LLM_PROVIDER`: `mistral` \| `openai_compatible`) and raw-response reading |
+| `llm/` | chat and embedding model provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), raw-response reading, startup embedding-dimension guard |
 | `extraction/` | `POST /extract`: runs the pipeline (`pipeline.py`) and the shared LLM call (`engine.py`) |
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
 | `ramq_codes/` | `billing_codes` task — billing context, candidate retrieval, eligibility, code selection |
@@ -110,7 +110,9 @@ client per domain under `api/`. `/api/*` proxies to the backend (`vite.config.ts
 - **RAMQ data is an external artifact** from `ramq-ingestion` (`~/Software/ramq-ingestion`),
   no code dependency. Codes live in versioned `codes_<rev>` tables; `code_versions`'
   `is_current` row picks the one to use (re-read per call; no current row = startup error).
-  `documents-embeddings` (chatbot) is in the same `DB_PATH`.
+  `documents-embeddings` (chatbot) is in the same `DB_PATH`. The query embedding model must
+  match the one that built their vectors; `application_services()` refuses to start on a
+  dimension mismatch (`app/llm/embedding_guard.py`).
 - **Frontend types in `src/api/` are kept in sync with backend Pydantic models by hand.**
 
 `consultations/` holds synthetic French notes (one per file, `**NAM :**` header);

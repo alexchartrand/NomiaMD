@@ -97,9 +97,6 @@
   - `ClaimService.create` (`app/claims/service.py`) awaits the patient/extraction/duplicate-check lookups one at a time even though none depends on another's result. `asyncio.gather` would cut the added latency on the claim-save path. Not measured against real Postgres latency, so profile before spending effort here.
   - (The `extraction/router.py` half of this item and the `update_status` re-fetch are gone: patient suggestion was removed on 8/31, and claims no longer have a status-update route.)
 
-- [ ] 🟢 Remove `MISTRAL_EMBEDDING_MODEL` from `.env` — *added 8/21*
-  - `config.py`'s `mistral_embedding_model` reads it from env and `embedings.py` passes it straight to `MistralAIEmbedding`, but it must always match whatever model ramq-ingestion used to embed the `codes_<rev>`/`documents-embeddings` LanceDB tables (`mistral-embed`) — changing it doesn't degrade gracefully, it silently breaks retrieval (embedding-space mismatch). Extraction's model names are already hardcoded per task (`ExtractionTask.model`, `app/tasks/base.py`); this should be too, rather than exposed as an operator-configurable env var.
-
 - [ ] 🟢 Unused dependency: pandas — *added 8/19, from codebase audit*
   - Declared in `backend/pyproject.toml`; zero imports anywhere in `app/`, `scripts/`, or `tests/`.
 
@@ -113,6 +110,9 @@
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] 🟢 Remove `MISTRAL_EMBEDDING_MODEL` from `.env` — *added 8/21, superseded 10/1*
+  - The worry was that changing it silently breaks retrieval (query vectors in a different space than the LanceDB tables). Not removed: intake step 02 made the embedding model swappable on purpose (`EMBEDDING_PROVIDER`, `app/llm/embeddings.py`). Instead, `application_services()` now refuses to start when the query model's dimension doesn't match the codes/documents vector columns (`app/llm/embedding_guard.py`). A same-dimension model swap still passes until ramq-ingestion records the model name (its BACKLOG.md).
 
 - [x] 🟢 `test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ranks_last` fails with `KeyError: 'is_expansion'` — *added 9/30, fixed 10/1*
   - `tests/test_ramq_chatbot_retriever.py`. Still failing on 9/30 (the other 8 tests in that file pass). Fails identically on `dev` before the versioned-codes-table change, so it's unrelated to it. Looks like the test still expects expansion metadata the chatbot retriever no longer sets.
