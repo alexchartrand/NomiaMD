@@ -19,9 +19,8 @@ class ExtractionStageInput:
 @dataclass
 class ExtractionRunInput:
     user_id: int
+    encounter_id: int
     patient_id: int
-    transcript: str
-    source_system: str | None
     stages: Sequence[ExtractionStageInput]
 
 
@@ -30,9 +29,8 @@ class ExtractionRepository(SessionRepository):
         """The run and every stage's result, in the caller's one transaction."""
         run = ExtractionRun(
             user_id=data.user_id,
+            encounter_id=data.encounter_id,
             patient_id=data.patient_id,
-            transcript=data.transcript,
-            source_system=data.source_system,
         )
         self._session.add(run)
         await self._session.flush()  # populate run.id for the result rows' FK

@@ -15,14 +15,13 @@ from sqlalchemy.exc import IntegrityError
 from app.auth import get_current_user
 from app.main import app
 from app.postgresdb import (
-    ExtractionRepository,
-    ExtractionRunInput,
     ExtractionStageInput,
     PatientRepository,
     User,
     UserRole,
     session_scope,
 )
+from tests.db_helpers import seed_run
 
 VALID_PATIENT = {
     "full_name": "Jean Tremblay",
@@ -405,16 +404,14 @@ async def test_a_patient_not_on_the_billing_physicians_roster_can_still_be_claim
     with TestClient(app) as client:
         created = client.post("/patients", json=_valid_patient()).json()
         async with session_scope() as session:
-            run = await ExtractionRepository(session).create_run(
-                ExtractionRunInput(
-                    user_id=1,
-                    patient_id=created["id"],
-                    transcript="transcript de test",
-                    source_system="simule",
-                    stages=[
-                        ExtractionStageInput(task="billing_codes", model="mistral-small-latest", result=billing_result)
-                    ],
-                )
+            run = await seed_run(
+                session,
+                user_id=1,
+                patient_id=created["id"],
+                source_system="simule",
+                stages=[
+                    ExtractionStageInput(task="billing_codes", model="mistral-small-latest", result=billing_result)
+                ],
             )
         claim_response = client.post(
             "/claims",

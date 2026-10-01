@@ -18,7 +18,8 @@ from sqlalchemy import select
 
 from app.extraction.engine import run_extraction
 from app.main import app
-from app.postgresdb import ExtractionRun, ExtractionRunResult, Gender, PatientRepository, session_scope
+from app.intake import content_hash
+from app.postgresdb import Encounter, ExtractionRun, ExtractionRunResult, Gender, PatientRepository, session_scope
 from app.ramq_codes import BillingCodesInput, BillingContext
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
@@ -165,10 +166,10 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
     assert "1 candidate code" in result.result.notes
 
 
-def _extract(client: TestClient, *, patient_id: int, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT):
+def _extract(client: TestClient, *, patient_id: int, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT, side_effect=None):
     with patch("app.extraction.engine.get_client") as mock_get_client:
         mock_get_client.return_value.achat = AsyncMock(
-            side_effect=[_mock_response(summary), _mock_response(billing)]
+            side_effect=side_effect or [_mock_response(summary), _mock_response(billing)]
         )
         return client.post(
             "/extract",
@@ -218,9 +219,48 @@ async def test_extract_endpoint_end_to_end():
     assert run.patient_id == patient.id
     assert run.user_id == 1
     assert sorted(tasks) == ["billing_codes", "consultation_summary"]
+    # The transcript lives on the run's encounter: a paste, with no external note id.
+    async with session_scope() as session:
+        encounter = await session.get(Encounter, run.encounter_id)
+    assert encounter.note_text == SAMPLE_TRANSCRIPT
+    assert encounter.content_hash == content_hash(SAMPLE_TRANSCRIPT)
+    assert encounter.channel == "paste"
+    assert encounter.source_system == "plume_ai"
+    assert encounter.external_note_id is None
+    assert encounter.external_encounter_id == "enc-123"
+    assert encounter.patient_id == patient.id
+    assert encounter.service_date is None
     # MOCK_SUMMARY_RESULT's encounter_setting.date is null -> must stay null, never "today".
     assert body["encounter_date"] is None
     assert body["encounter_date_raw"] is None
+
+
+async def test_extract_endpoint_sets_the_encounters_service_date_from_the_summary():
+    summary = {**MOCK_SUMMARY_RESULT, "encounter_setting": {**MOCK_SUMMARY_RESULT["encounter_setting"], "date": "2026-02-10"}}
+    with TestClient(app) as client:
+        patient = await _seed_patient()
+        response = _extract(client, patient_id=patient.id, summary=summary)
+
+    assert response.status_code == 200
+    async with session_scope() as session:
+        run = await session.get(ExtractionRun, response.json()["extraction_run_id"])
+        encounter = await session.get(Encounter, run.encounter_id)
+    assert encounter.service_date == date(2026, 2, 10)
+
+
+async def test_extract_endpoint_records_a_pipeline_failure_on_the_encounter():
+    with TestClient(app, raise_server_exceptions=False) as client:
+        patient = await _seed_patient()
+        response = _extract(client, patient_id=patient.id, side_effect=RuntimeError("model unavailable"))
+
+    assert response.status_code == 500
+    async with session_scope() as session:
+        encounter = await session.scalar(
+            select(Encounter).where(Encounter.patient_id == patient.id).order_by(Encounter.id.desc())
+        )
+        runs = (await session.scalars(select(ExtractionRun).where(ExtractionRun.encounter_id == encounter.id))).all()
+    assert encounter.extraction_error == "RuntimeError: model unavailable"
+    assert runs == []
 
 
 async def test_extract_endpoint_resolves_fees_from_the_real_candidate_data():

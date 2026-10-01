@@ -1,7 +1,7 @@
 """Business logic for turning a physician-reviewed extraction into a claim.
-Constructor-injected (ClaimRepository, PatientRepository, ExtractionRepository, plus the
-ClaimDuplicateGuard, FeeSnapshotter and ClaimContextSnapshotter it composes) — wired at the
-module boundary by factory.py, no FastAPI/HTTP concerns here."""
+Constructor-injected (ClaimRepository, PatientRepository, ExtractionRepository,
+EncounterRepository, plus the ClaimDuplicateGuard, FeeSnapshotter and ClaimContextSnapshotter
+it composes) — wired at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
 
 from datetime import date
 
@@ -23,6 +23,8 @@ from app.postgresdb import (
     ClaimCodeInput,
     ClaimInput,
     ClaimRepository,
+    Encounter,
+    EncounterRepository,
     ExtractionAlreadyClaimedError,
     ExtractionRepository,
     ExtractionRun,
@@ -39,6 +41,7 @@ class ClaimService:
         claim_repository: ClaimRepository,
         patient_repository: PatientRepository,
         extraction_repository: ExtractionRepository,
+        encounter_repository: EncounterRepository,
         duplicate_guard: ClaimDuplicateGuard,
         fee_snapshotter: FeeSnapshotter,
         context_snapshotter: ClaimContextSnapshotter,
@@ -46,6 +49,7 @@ class ClaimService:
         self._claim_repository = claim_repository
         self._patient_repository = patient_repository
         self._extraction_repository = extraction_repository
+        self._encounter_repository = encounter_repository
         self._duplicate_guard = duplicate_guard
         self._fee_snapshotter = fee_snapshotter
         self._context_snapshotter = context_snapshotter
@@ -69,6 +73,10 @@ class ClaimService:
         if patient is None:
             raise PatientNotFoundError()
 
+        # The note the run was extracted from: its source and version are snapshotted onto
+        # the claim, so they survive the encounter's retention purge.
+        encounter = await self._run_encounter(run, physician.id)
+
         await self._duplicate_guard.ensure_run_unclaimed(run.id)
         candidates = await self._billing_candidates(run.id, [s.code for s in selected])
         if not confirm_duplicate:
@@ -83,7 +91,9 @@ class ClaimService:
                     physician_id=physician.id,
                     patient_id=patient.id,
                     service_date=service_date,
-                    source_system=run.source_system,
+                    source_system=encounter.source_system,
+                    source_note_hash=encounter.content_hash,
+                    external_note_id=encounter.external_note_id,
                     extraction_run_id=run.id,
                     context=context,
                     codes=[
@@ -112,6 +122,12 @@ class ClaimService:
         if run is None:
             raise ExtractionRunNotFoundError()
         return run
+
+    async def _run_encounter(self, run: ExtractionRun, physician_id: int) -> Encounter:
+        encounter = await self._encounter_repository.get_for_user(run.encounter_id, physician_id)
+        if encounter is None:
+            raise ExtractionRunNotFoundError()
+        return encounter
 
     async def _billing_candidates(self, run_id: int, codes: list[str]) -> list[StoredCandidate]:
         result = await self._extraction_repository.get_result(run_id, BILLING_TASK)

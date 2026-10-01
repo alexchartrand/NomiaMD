@@ -7,7 +7,13 @@ from app.claims.context import ClaimContextSnapshotter
 from app.claims.duplicates import ClaimDuplicateGuard
 from app.claims.fees import FeeSnapshotter
 from app.claims.service import ClaimService
-from app.postgresdb import ClaimRepository, DbSession, ExtractionRepository, PatientRepository
+from app.postgresdb import (
+    ClaimRepository,
+    DbSession,
+    EncounterRepository,
+    ExtractionRepository,
+    PatientRepository,
+)
 from app.ramq_codes import BillingContextBuilder
 
 
@@ -18,6 +24,7 @@ def get_claim_service(session: DbSession) -> ClaimService:
         claims,
         patients,
         ExtractionRepository(session),
+        EncounterRepository(session),
         ClaimDuplicateGuard(claims),
         FeeSnapshotter(),
         ClaimContextSnapshotter(BillingContextBuilder(build_profile_service(session), patients)),

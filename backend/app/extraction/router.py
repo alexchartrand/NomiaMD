@@ -19,15 +19,17 @@ router = APIRouter()
 @router.post("/extract", response_model=BillingExtractionResponse)
 @limiter.limit("10/minute")
 # Runs a transcript through the billing_codes pipeline (consultation_summary -> billing_codes)
-# and persists both stages. POST a transcript + task="billing_codes" + patient_id (the
-# physician must choose the patient before extraction runs); returns the candidate RAMQ
-# codes for physician review, plus the encounter date.
+# and persists both stages, on a new paste Encounter holding the transcript. POST a
+# transcript + task="billing_codes" + patient_id (the physician must choose the patient
+# before extraction runs); returns the candidate RAMQ codes for physician review, plus the
+# encounter date.
 #
 # Deliberately not on the per-request DbSession (app/postgresdb/dependencies.py): the
 # pipeline makes two multi-second LLM calls, and a request-scoped session would hold a pooled
 # connection and an open transaction across both. Each DB step below (the patient lookup, the
 # pipeline's own context lookup in app/extraction/scoped_context.py, and ExtractionRecorder)
-# opens its own short session_scope instead.
+# opens its own short session_scope instead. A pipeline failure is recorded on the encounter
+# (its "échec" status) before propagating.
 async def extract(
     request: Request,
     body: ExtractionRequest,
@@ -50,21 +52,31 @@ async def extract(
     if patient is None:
         raise HTTPException(status_code=404, detail="Patient introuvable")
 
-    source_system = body.source.system if body.source else None
-
-    summary_result, result = await run_billing_codes_pipeline(
-        body.transcript, user=current_user, patient_id=body.patient_id
-    )
-    run = await recorder.save(
-        transcript=body.transcript,
-        source_system=source_system,
+    encounter = await recorder.open_encounter(
+        note_text=body.transcript,
+        source_system=body.source.system if body.source else None,
+        external_encounter_id=body.source.encounter_id if body.source else None,
         user_id=current_user.id,
         patient_id=body.patient_id,
-        stages=[summary_result, result],
     )
+    try:
+        summary_result, result = await run_billing_codes_pipeline(
+            body.transcript, user=current_user, patient_id=body.patient_id
+        )
+    except Exception as exc:
+        await recorder.record_failure(encounter_id=encounter.id, user_id=current_user.id, error=exc)
+        raise
 
     encounter_date_raw = summary_result.result.encounter_setting.date
     encounter_date = parse_encounter_date(encounter_date_raw)
+
+    run = await recorder.save(
+        encounter_id=encounter.id,
+        user_id=current_user.id,
+        patient_id=body.patient_id,
+        service_date=encounter_date,
+        stages=[summary_result, result],
+    )
 
     return BillingExtractionResponse(
         billing=result,

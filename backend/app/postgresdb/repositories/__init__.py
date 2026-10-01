@@ -17,6 +17,12 @@ from app.postgresdb.repositories.claims import (
     ClaimWithCodes,
     ExtractionAlreadyClaimedError,
 )
+from app.postgresdb.repositories.encounters import (
+    DuplicateEncounterError,
+    EncounterActivity,
+    EncounterInput,
+    EncounterRepository,
+)
 from app.postgresdb.repositories.extractions import (
     ExtractionRepository,
     ExtractionRunInput,
@@ -38,9 +44,13 @@ __all__ = [
     "ClaimRepository",
     "ClaimWithCodes",
     "ExtractionAlreadyClaimedError",
+    "DuplicateEncounterError",
     "DuplicatePatientRamqNumberError",
     "DuplicatePracticeNumberError",
     "DuplicateRosterEntryError",
+    "EncounterActivity",
+    "EncounterInput",
+    "EncounterRepository",
     "ExtractionRepository",
     "ExtractionRunInput",
     "ExtractionStageInput",
