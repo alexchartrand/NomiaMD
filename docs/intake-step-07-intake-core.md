@@ -50,13 +50,15 @@ Unit tests cover:
 - `SourceNote.service_date` takes a date or the source's own string; a string is parsed with
   the source's `date_order`. `signed_at`, `mrn` and `batch_label` are stored in
   `encounter_meta` alongside `EncounterMeta`'s fields — none of them drives a query yet.
-- `receive` resolves the patient *before* deduplicating: the fallback key needs it.
-- The fallback match (no external id; same patient, service date and `author_ref`) returns
-  `duplicate` whatever the text, and the outcome carries the encounter already on file. Two
-  genuinely separate visits by the same author on the same day would collide; revisit if a
-  channel without external ids turns out to send those.
+- Without an external id, only the exact same normalized text (same hash, any source) is a
+  `duplicate`. Different texts for the same patient, day and author are **never** merged:
+  physicians often see a patient several times a day, and a wrongly merged visit is never
+  billed, silently. Those are stored and extracted. `SameVisitMatcher`
+  (`app/intake/visit_match.py`) says when two encounters may be the same visit (same
+  patient and day, no conflicting author, start times within 30 min when both are known),
+  for the inbox's "doublon possible" flag (step 11).
 - `InlineExtractionQueue` doesn't import the pipeline: it runs an `EncounterExtractor`, and
   the concrete one, `PipelineEncounterExtractor`, lives in `app/extraction/encounter_extractor.py`
   (the pipeline reaches into `ramq_codes`). Wiring `IntakeService` into the app is step 09.
 - New repository reads: `PatientRepository.get_by_ramq_number`, `EncounterRepository.get`
-  and `list_current_for_patient_day`.
+  and `find_by_content_hash`.
