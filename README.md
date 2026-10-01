@@ -160,6 +160,11 @@ Main endpoints (all but `/health` and `/auth/login` need a logged-in session coo
 - `/patients` — the caller's roster, global NAM/name search (`/patients/search?q=`), create
 - `POST /extract` — `{"transcript": "...", "task": "billing_codes", "patient_id": 1}` →
   summary, suggested codes, and an `extraction_run_id`
+- `/intake/notes`, `/intake/upload` — push notes in (a paste, possibly a whole ER shift; a
+  list of structured notes; or a `.txt`/`.md` file); each is stored as an encounter and
+  extracted once its patient is known
+- `/encounters` — the day's inbox with derived statuses, one encounter with its latest
+  extraction, manual patient pick, on-demand (re-)extraction
 - `/claims` — save reviewed codes from an extraction run as a claim, list, void a draft
 - `/bills` — group claims into a bill, list, PDF export, void
 - `POST /query` — RAMQ billing chatbot (stateless; the client resends prior turns)

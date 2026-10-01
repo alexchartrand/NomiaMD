@@ -1,9 +1,9 @@
 """`encounters` — one signed note from one source (see the Encounter model)."""
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 
-from sqlalchemy import exists, select
+from sqlalchemy import and_, exists, or_, select
 from sqlalchemy.exc import IntegrityError
 
 from app.postgresdb.models import Claim, Encounter, ExtractionRun
@@ -33,6 +33,15 @@ class EncounterActivity:
     has_live_claim: bool
 
 
+@dataclass(frozen=True)
+class ReceivedWindow:
+    """When a day starts and ends, as instants: an undated encounter belongs to the day it
+    was received on, and that day is the clinic's (app/clock.py), not the database's."""
+
+    start: datetime
+    end: datetime
+
+
 class DuplicateEncounterError(Exception):
     """This exact version of an external note (same source, note id and content hash) was
     already received — the partial unique index ix_encounters_external_version is the
@@ -47,6 +56,17 @@ def _violates_external_version_unique(exc: IntegrityError) -> bool:
     return "unique constraint" in message and (
         "ix_encounters_external_version" in message or "encounters.external_note_id" in message
     )
+
+
+def _activity_columns():
+    """An encounter plus the two facts app/intake/status.py derives its status from."""
+    has_run = exists().where(ExtractionRun.encounter_id == Encounter.id)
+    has_live_claim = exists().where(
+        ExtractionRun.encounter_id == Encounter.id,
+        Claim.extraction_run_id == ExtractionRun.id,
+        Claim.voided_at.is_(None),
+    )
+    return Encounter, has_run.label("has_run"), has_live_claim.label("has_live_claim")
 
 
 class EncounterRepository(SessionRepository):
@@ -83,20 +103,29 @@ class EncounterRepository(SessionRepository):
             return None
         return encounter
 
-    async def list_for_day(self, user_id: int, day: date) -> list[EncounterActivity]:
+    async def list_for_day(self, user_id: int, day: date, received: ReceivedWindow) -> list[EncounterActivity]:
         """Every encounter of `day`, in arrival order, with what its status needs — one
-        query, not one per encounter."""
-        has_run = exists().where(ExtractionRun.encounter_id == Encounter.id)
-        has_live_claim = exists().where(
-            ExtractionRun.encounter_id == Encounter.id,
-            Claim.extraction_run_id == ExtractionRun.id,
-            Claim.voided_at.is_(None),
+        query, not one per encounter. An encounter with no service date yet (a paste with
+        no date, still waiting for a patient or for extraction to find one) shows on the day
+        it was received, so it never drops out of the inbox."""
+        dated = Encounter.service_date == day
+        undated = and_(
+            Encounter.service_date.is_(None),
+            Encounter.created_at >= received.start,
+            Encounter.created_at < received.end,
         )
-        rows = await self._session.execute(
-            select(Encounter, has_run.label("has_run"), has_live_claim.label("has_live_claim"))
-            .where(Encounter.user_id == user_id, Encounter.service_date == day)
-            .order_by(Encounter.id)
+        return await self._activities(
+            select(*_activity_columns()).where(Encounter.user_id == user_id, or_(dated, undated)).order_by(Encounter.id)
         )
+
+    async def activity_for_user(self, encounter_id: int, user_id: int) -> EncounterActivity | None:
+        activities = await self._activities(
+            select(*_activity_columns()).where(Encounter.id == encounter_id, Encounter.user_id == user_id)
+        )
+        return activities[0] if activities else None
+
+    async def _activities(self, query) -> list[EncounterActivity]:
+        rows = await self._session.execute(query)
         return [
             EncounterActivity(encounter=encounter, has_run=bool(run), has_live_claim=bool(claim))
             for encounter, run, claim in rows.all()

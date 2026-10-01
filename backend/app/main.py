@@ -9,7 +9,10 @@ from app.bills import bills_router
 from app.bootstrap import application_services
 from app.claims import claims_router
 from app.config import settings
+from app.encounters import encounters_router
+from app.encounters.factory import build_intake_service
 from app.extraction import extraction_router
+from app.intake import intake_router
 from app.logging_config import configure_logging
 from app.patients import patients_router
 from app.ramq_chatbot import ramq_chatbot_router
@@ -25,6 +28,7 @@ configure_logging(settings.log_level)
 async def lifespan(app: FastAPI):
     async with application_services() as db:
         app.state.lancedb = db
+        app.state.intake_service = build_intake_service()
         yield
 
 
@@ -35,7 +39,9 @@ app.add_middleware(RequestLoggingMiddleware)
 app.include_router(auth_router)
 app.include_router(bills_router)
 app.include_router(claims_router)
+app.include_router(encounters_router)
 app.include_router(extraction_router)
+app.include_router(intake_router)
 app.include_router(patients_router)
 app.include_router(ramq_chatbot_router)
 app.include_router(sample_patients_router)
