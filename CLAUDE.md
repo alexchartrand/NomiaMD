@@ -74,9 +74,11 @@ Mistral API call.
    (`ramq_codes/context_builder.py`, called with the required `patient_id` directly rather
    than a suggestion match) resolves the billing physician's own practice facts
    (`ProfileService.as_of`, not `.current` — the encounter date's panel size/remuneration
-   type, not today's; falls back to `ProfileService.earliest` when the encounter predates the
-   physician's first profile version, a deliberate best-effort trade-off flagged in
-   BACKLOG.md for revalidation) and the chosen patient's registration/vulnerability/exact
+   type, not today's; when the encounter predates the physician's first profile version it
+   falls back to `ProfileService.earliest`, marked `PhysicianContext.is_assumed` — an
+   assumed panel size never filters candidates, stays an unresolved axis, reaches the prompt
+   only as an unconfirmed hint, and isn't snapshotted onto a claim; consumers read
+   `confirmed_panel_size`) and the chosen patient's registration/vulnerability/exact
    age, then `billing_codes` runs with all of that. `ConsultationSummaryResult` carries no
    patient-identity fields at all — those administrative facts reach `billing_codes`
    exclusively through `BillingContext`, never re-extracted from the transcript. Nothing

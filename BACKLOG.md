@@ -19,18 +19,8 @@
 - [ ] 🟡 One extraction can mix two manual revisions — *added 9/30, from database review*
   - `CurrentCodeTableProvider.current()` is re-resolved on every `CodeRepository` call: once per planned query in `RAMQCodesRetriever`, then again in `BillingCodesTask.resolve_fees` after the LLM call. A promote landing mid-extraction gives candidates from one `codes_<rev>` and fees from another (or an empty fee list for a code dropped from the new manual). Fix: resolve the table once per extraction and pass it through — also the natural carrier for the `manual_rev` item in Features.
 
-- [ ] 🟡 Noisy `unit`/`role` tagging on some `codes_2026-06-05` fees — report to ramq-ingestion — *added 9/30, from the versioned-codes-table migration*
-  - `15837` (a B-section visit, no anesthesia) carries a stray `94 unités` fee with `role=2`; `08118` (radiology) has `role=1, unit="unités"` on `4.55`, which has decimals and so reads like a dollar amount. Of the 6,948 fees, 101 are `role=1` in units and 11 are `role=2` in dollars — worth a spot check upstream.
-  - The failure mode on this side is safe (a unit fee is never billed as dollars, the physician sees the label), but a mis-tagged dollar fee shows as units and drops out of the total.
-
-- [ ] 🟢 `test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ranks_last` fails with `KeyError: 'is_expansion'` — *added 9/30*
-  - `tests/test_ramq_chatbot_retriever.py`. Still failing on 9/30 (the other 8 tests in that file pass). Fails identically on `dev` before the versioned-codes-table change, so it's unrelated to it. Looks like the test still expects expansion metadata the chatbot retriever no longer sets.
-
-- [ ] 🟡 Physician-profile cold-start fallback needs revalidation once real profile history exists — *added 8/31, from billing_codes context propagation bug report*
-  - Root cause, confirmed against a real local run (`extraction_records` #9/#10): the physician's only `physician_profiles` row has `effective_from=2026-08-27`; the tested encounter is dated `2026-05-26`. `ProfileService.as_of` correctly (by its own "interpret a past encounter under the facts in effect then" contract) returns no profile for a date before any version existed, so `PhysicianContext` came back all-null and the model couldn't pick between codes 15839/15840 on panel size — exactly the "physician info should have been sent but wasn't" symptom reported.
-  - Fixed with a scoped fallback, not a change to the shared historical-accuracy contract: `BillingContextBuilder.build` (`app/ramq_codes/context_builder.py`) now calls the new `ProfileService.earliest`/`PhysicianProfileRepository.get_earliest` (`app/auth/profile.py`, `app/postgresdb/repository.py`) only when `as_of` finds nothing. `get_effective_on`/`as_of` themselves are untouched, so `app/bills/service.py`'s fee-snapshot lookup keeps strict as-of-date accuracy.
-  - **This is a real assumption, not just a bug fix — needs revalidation**: treating a physician's current-and-only profile as applicable to an arbitrarily old encounter is fine while every physician has at most one profile version, but once physicians accumulate multiple versions over a career (panel size/remuneration type do change), falling back to the *earliest* version for a pre-history encounter could become a materially wrong estimate rather than a reasonable one. User explicitly chose this trade-off (fall back rather than stay unresolved) when asked — revisit the choice once real multi-version profile data exists.
-  - Related, fixed alongside: when the *vulnerability* axis is genuinely unresolved (no roster match — same #9/#10 run, patient "Lefebvre, Madeleine" isn't on this physician's roster), the model was treating the transcript's own descriptive language ("patiente vulnérable inscrite") as if it resolved the axis, returning only the vulnerable-patient code variants (15839/15840) with `needs_confirmation` naming panel size but never vulnerability. `BillingCodesTask.SYSTEM_PROMPT` (`app/ramq_codes/task.py`) now states explicitly that the unresolved-axes list is authoritative and a transcript/summary mention never resolves it on its own — unverified by a further real-API run since this needs a live Mistral call to confirm the model actually complies with the strengthened wording.
+- [ ] 🟡 `Patient.is_vulnerable` can't say "unknown" — *added 10/1, from the profile-fallback review*
+  - The column is a non-null bool defaulting to `False` (`app/postgresdb/models.py`), so a patient created without anyone checking vulnerability is treated as established non-vulnerable: `EligibilityFilterFactory` filters the vulnerable variants out and the axis is never flagged for confirmation. Same "never guess" rule `BillingContext` holds to everywhere else. Fix: make it nullable (null = not entered yet), default new patients to null, and have the patient form ask explicitly.
 
 - [ ] 🟢 NAM stored in plaintext — *added 8/27, from schema review*
   - `patients.ramq_number` and the NAM inside `extraction_runs.transcript` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
@@ -72,6 +62,9 @@
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
 ## ✨ Features
+
+- [ ] 🟢 Let the physician backdate their profile ("En vigueur depuis") — *added 10/1*
+  - The first profile version is dated the day it's entered, so encounters before onboarding only get an assumed panel size (see the cold-start item in Done). `ProfileService.record_practice_facts` already takes `effective_from`; expose it on the profile form/API (default today) so the physician can say when the facts started and `as_of` finds a real version.
 
 - [ ] 🟡 Retune `similarity_top_k`/`fused_top_k` for the full-manual codes table — *added 9/30, from the versioned-codes-table migration*
   - `RAMQCodesRetriever` still uses `similarity_top_k=20`, `fused_top_k=40`, sized for the old 362-row, section-B-only table; `codes_2026-06-05` is 4,070 rows across B–V. The eligibility prefilter frees slots that ineligible variants used to take, but that's no substitute for measuring. Run `scripts/eval_extraction.py --retrieval-only` on 2+ cases (per the "a fix validated on one transcript can regress another" rule) before changing either number — `URG-2026-04512`'s `01320…` procedure codes can now appear at all.
@@ -120,6 +113,15 @@
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] 🟢 `test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ranks_last` fails with `KeyError: 'is_expansion'` — *added 9/30, fixed 10/1*
+  - `tests/test_ramq_chatbot_retriever.py`. Still failing on 9/30 (the other 8 tests in that file pass). Fails identically on `dev` before the versioned-codes-table change, so it's unrelated to it. Looks like the test still expects expansion metadata the chatbot retriever no longer sets.
+  - Passes as of 10/1 (all 9 tests in the file): `ReferenceExpander` sets `is_expansion` again and `RAMQManualRetriever` carries it through.
+  
+- [x] 🟡 Physician-profile cold-start fallback treated a guess as a fact — *added 8/31, from billing_codes context propagation bug report, fixed 10/1*
+  - The physician's first `physician_profiles` row is dated the day it's entered, so an older encounter has no version in effect; `BillingContextBuilder` falls back to the earliest version. That fallback used to feed the LanceDB eligibility filter and the claim's `panel_size` snapshot as if it were established.
+  - Now `PhysicianContext.is_assumed` marks it: the panel size doesn't filter, `UnresolvedAxisDetector` flags it for confirmation, the prompt gets it as an "indication non confirmée", and `ClaimContextSnapshotter` stores `NULL`. So multiple profile versions no longer make the guess risky, and the "revalidate later" condition is gone.
+  - The old vulnerability sub-bullet (unresolved because of "no roster match") is obsolete since the global-patient refactor; see the `is_vulnerable` item above for what's left on that axis.
 
 - [x] 🟡 Schema upgrade batch, once Alembic lands — *added 9/30, from database review, done 9/30*
   - Done without Alembic — decided 9/30 that the DB is deleted and recreated until the next release (see the No-Alembic item). Deviations from the plan below:
