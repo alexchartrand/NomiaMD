@@ -1,4 +1,4 @@
-from app.embedings import get_embeding_model
+from app.llm import get_embedding_model
 from app.lancedb import ICodeRepository, IDocumentRepository
 from app.llm import get_chat_llm
 from app.ramq_chatbot.converter import DocumentRowConverter
@@ -24,7 +24,7 @@ def init_ramq_query_engine(codes: ICodeRepository, documents: IDocumentRepositor
     )
     retriever = RAMQManualRetriever(
         documents=documents,
-        embed_model=get_embeding_model(),
+        embed_model=get_embedding_model(),
         converter=DocumentRowConverter(),
         reference_expander=reference_expander,
     )

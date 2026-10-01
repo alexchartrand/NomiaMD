@@ -154,9 +154,12 @@ def no_real_api_keys(monkeypatch):
     test path bypassed it."""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
-    # Same for the chat-provider selection (app/llm/): a developer's .env pointing at a
-    # real openai_compatible host must not leak into tests either.
-    for name in ("LLM_PROVIDER", "LLM_ENDPOINT", "LLM_API_KEY"):
+    # Same for the chat/embedding provider selection (app/llm/): a developer's .env pointing
+    # at a real openai_compatible host must not leak into tests either.
+    for name in (
+        "LLM_PROVIDER", "LLM_ENDPOINT", "LLM_API_KEY",
+        "EMBEDDING_PROVIDER", "EMBEDDING_ENDPOINT", "EMBEDDING_MODEL", "EMBEDDING_API_KEY",
+    ):
         monkeypatch.delenv(name, raising=False)
 
 

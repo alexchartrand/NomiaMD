@@ -27,6 +27,7 @@ dependencies = [
     "reportlab>=4.2",
     "tzdata>=2024.1",
     "llama-index-llms-openai-like>=0.8.0",
+    "llama-index-embeddings-openai-like>=0.2",
 ]
 
 [project.optional-dependencies]

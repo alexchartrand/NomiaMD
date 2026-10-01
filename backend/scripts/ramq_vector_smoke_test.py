@@ -24,7 +24,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from app.embedings import get_embeding_model
+from app.llm import get_embedding_model
 from app.lancedb import CodeRepository, LanceDB
 
 # (query, expected top-ranked code) — a handful of unambiguous cases from the real manual.
@@ -46,7 +46,7 @@ async def main() -> None:
         version = await db.code_tables.current_version()
         print(f"current codes table: {version.table_name} ({version.code_count} codes)")
         codes = CodeRepository(db.code_tables)
-        embed_model = get_embeding_model()
+        embed_model = get_embedding_model()
 
         all_passed = True
         for query, expected_top_code in KNOWN_QUERIES:

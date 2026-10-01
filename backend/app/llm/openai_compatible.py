@@ -1,8 +1,10 @@
+from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.llms import LLM
+from llama_index.embeddings.openai_like import OpenAILikeEmbedding
 from llama_index.llms.openai_like import OpenAILike
 
 from app.config import settings
-from app.llm.provider import MAX_TOKENS, ChatModelProvider
+from app.llm.provider import MAX_TOKENS, ChatModelProvider, EmbeddingModelProvider
 
 
 class OpenAICompatibleChatProvider(ChatModelProvider):
@@ -23,4 +25,24 @@ class OpenAICompatibleChatProvider(ChatModelProvider):
             max_tokens=MAX_TOKENS,
             is_chat_model=True,
             is_function_calling_model=False,
+        )
+
+
+class OpenAICompatibleEmbeddingProvider(EmbeddingModelProvider):
+    """Any server exposing OpenAI's `/v1/embeddings` (TEI, vLLM). EMBEDDING_ENDPOINT (base
+    URL *including* `/v1`) and EMBEDDING_MODEL are both required — the model must be the one
+    the LanceDB vectors were built with, which app/bootstrap.py checks by dimension."""
+
+    def build(self) -> BaseEmbedding:
+        endpoint = settings.embedding_endpoint
+        model = settings.embedding_model
+        if not endpoint or not model:
+            raise RuntimeError(
+                "EMBEDDING_PROVIDER=openai_compatible requires EMBEDDING_ENDPOINT "
+                "(e.g. http://host:8080/v1) and EMBEDDING_MODEL"
+            )
+        return OpenAILikeEmbedding(
+            model_name=model,
+            api_base=endpoint,
+            api_key=settings.embedding_api_key,
         )

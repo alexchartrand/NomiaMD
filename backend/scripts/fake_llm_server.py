@@ -26,8 +26,8 @@ endpoint was hit, since they all share this one.
 
 This exercises each pipeline (retrieval -> prompt -> parse -> API -> frontend)
 deterministically, without depending on any real model's behavior or making a real API call
-for chat completions. (Embeddings are a separate client with no fake/override — retrieval
-still calls the real Mistral embeddings API even under this fake server.)
+for chat completions. (Embeddings are a separate client, EMBEDDING_PROVIDER, that this
+server doesn't serve — retrieval still calls a real embedding model under this fake server.)
 
     python scripts/fake_llm_server.py [--port 8080] [--pick 2]
 """

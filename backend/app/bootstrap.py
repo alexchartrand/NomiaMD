@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from app.lancedb import CodeRepository, DocumentRepository, LanceDB
-from app.llm import chat_provider
+from app.llm import EmbeddingDimensionGuard, chat_provider, embedding_provider, get_embedding_model
 from app.postgresdb import PostgresDB, bind_database
 from app.ramq_chatbot import init_ramq_query_engine
 from app.tasks.registry import init_tasks
@@ -31,10 +31,15 @@ async def postgres_database(url: str | None = None) -> AsyncIterator[PostgresDB]
 
 @asynccontextmanager
 async def application_services() -> AsyncIterator[LanceDB]:
-    chat_provider()  # an unknown LLM_PROVIDER fails the boot, not the first extraction
+    # An unknown LLM_PROVIDER/EMBEDDING_PROVIDER fails the boot, not the first extraction.
+    chat_provider()
+    embedding_provider()
     async with postgres_database():
         db = await LanceDB.open()
         try:
+            # Query vectors must live in the same space as the stored ones; a mismatch would
+            # otherwise silently degrade hybrid search to its FTS half.
+            await EmbeddingDimensionGuard(get_embedding_model()).check(await db.vector_dimensions())
             codes = CodeRepository(db.code_tables)
             documents = DocumentRepository(db.documents_table)
             init_tasks(codes=codes)

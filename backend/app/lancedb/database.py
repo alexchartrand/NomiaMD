@@ -7,6 +7,7 @@ event loop — so this is opened explicitly by the app lifespan (app/bootstrap.p
 from datetime import timedelta
 
 import lancedb
+import pyarrow as pa
 from lancedb import AsyncConnection, AsyncTable
 
 from app.config import settings
@@ -14,6 +15,7 @@ from app.lancedb.code_versions import CurrentCodeTableProvider, ICodeTableProvid
 
 CODE_VERSIONS_TABLE_NAME = "code_versions"
 DOCUMENTS_TABLE_NAME = "documents-embeddings"
+VECTOR_COLUMN = "vector"
 
 # How stale an already-open table may be before LanceDB re-checks it for a newer version.
 # Without it, an open table never sees later writes: a promote (the `code_versions` flip),
@@ -70,6 +72,25 @@ class LanceDB:
     def documents_table(self) -> AsyncTable:
         return self._documents_table
 
+    async def vector_dimensions(self) -> dict[str, int]:
+        """Each embedded table's name mapped to its vector column's fixed dimension — the
+        current codes table and the documents table. app/bootstrap.py compares these with
+        the query embedding model's output at startup."""
+        version = await self._code_tables.current_version()
+        return {
+            version.table_name: await vector_dimension(await self._code_tables.current()),
+            DOCUMENTS_TABLE_NAME: await vector_dimension(self._documents_table),
+        }
+
     def close(self) -> None:
         # lancedb 0.37's AsyncConnection.close() is sync, not a coroutine.
         self._connection.close()
+
+
+async def vector_dimension(table: AsyncTable) -> int:
+    """The fixed size of `table`'s vector column (ramq-ingestion writes it as a
+    fixed_size_list<float32>)."""
+    vector_type = (await table.schema()).field(VECTOR_COLUMN).type
+    if not pa.types.is_fixed_size_list(vector_type):
+        raise TypeError(f"{table.name}.{VECTOR_COLUMN} is {vector_type}, expected a fixed-size list")
+    return vector_type.list_size

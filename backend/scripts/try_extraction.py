@@ -1,5 +1,5 @@
 """Live smoke test against the configured chat provider (LLM_PROVIDER, see app/llm/).
-Requires MISTRAL_API_KEY (embeddings always use it); point LLM_ENDPOINT at
+Requires MISTRAL_API_KEY (default EMBEDDING_PROVIDER=mistral uses it); point LLM_ENDPOINT at
 scripts/fake_llm_server.py instead to avoid a real chat-completion call.
 From backend/, with the venv active:
 

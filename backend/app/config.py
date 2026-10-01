@@ -3,8 +3,8 @@
 singleton — every other module should read config through it instead of touching
 `os.environ` directly.
 
-`mistral_api_key`/`mistral_embedding_model` and the `llm_*` chat-provider settings are
-read lazily via property, not cached at
+`mistral_api_key`/`mistral_embedding_model` and the `llm_*`/`embedding_*` provider
+settings are read lazily via property, not cached at
 construction: tests' `no_real_api_keys` fixture (tests/conftest.py) deletes
 MISTRAL_API_KEY from the environment per-test specifically to make any un-stubbed real-API
 code path raise instead of silently succeeding — caching the key at import time would
@@ -62,6 +62,27 @@ class Settings:
         """Only read by the openai_compatible provider; the mistral one uses
         mistral_api_key (shared with embeddings)."""
         return os.environ["LLM_API_KEY"]
+
+    @property
+    def embedding_provider(self) -> str:
+        """Which embedding backend app/llm/embeddings.py builds: `mistral` (default, model
+        from MISTRAL_EMBEDDING_MODEL) or `openai_compatible`."""
+        return os.environ.get("EMBEDDING_PROVIDER", "mistral").strip().lower()
+
+    @property
+    def embedding_endpoint(self) -> str | None:
+        return os.environ.get("EMBEDDING_ENDPOINT") or None
+
+    @property
+    def embedding_model(self) -> str | None:
+        """Only read by the openai_compatible provider."""
+        return os.environ.get("EMBEDDING_MODEL") or None
+
+    @property
+    def embedding_api_key(self) -> str:
+        """Only read by the openai_compatible provider. Optional: TEI and vLLM run without
+        auth by default, and the OpenAI client needs some non-empty value."""
+        return os.environ.get("EMBEDDING_API_KEY") or "unused"
 
 
 settings = Settings()
