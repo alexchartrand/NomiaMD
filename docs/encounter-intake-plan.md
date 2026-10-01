@@ -168,7 +168,7 @@ Certified in Quebec's AI transcription program: Plume IA, CoeurWay, AutoScribe (
 - The composition root stays in `app/bootstrap.py`. Add `make worker`.
 
 ### LLM provider abstraction
-- In `app/extraction/engine.py` and `app/embedings.py`, introduce `ChatModel` and `EmbeddingModel` interfaces with an `OpenAICompatible` implementation.
+- In `app/extraction/engine.py` and `app/llm/embeddings.py`, introduce `ChatModel` and `EmbeddingModel` interfaces with an `OpenAICompatible` implementation.
 - Generalize `MISTRAL_ENDPOINT` to `LLM_ENDPOINT` and `EMBEDDING_ENDPOINT`. The fake LLM server keeps working.
 
 ### Browser extension (new top-level `extension/`)

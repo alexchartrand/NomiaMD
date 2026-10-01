@@ -146,6 +146,13 @@ with `LLM_ENDPOINT` + `LLM_API_KEY`). No API key handy, or want to avoid real AP
 `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1 LLM_API_KEY=fake` and
 run `backend/scripts/fake_llm_server.py` (`make fake-llm`, or `make dev-fake` which does both).
 
+Retrieval's query embeddings come from the same package: `EMBEDDING_PROVIDER` switches
+between Mistral (`mistral`, default, `MISTRAL_EMBEDDING_MODEL`) and any server exposing
+`/v1/embeddings` such as TEI/vLLM (`openai_compatible`, with `EMBEDDING_ENDPOINT` +
+`EMBEDDING_MODEL`). The backend refuses to start when the query model's vector dimension
+doesn't match the LanceDB tables', so a model switch needs the tables re-embedded in
+`ramq-ingestion` first.
+
 Main endpoints (all but `/health` and `/auth/login` need a logged-in session cookie):
 
 - `GET /health` — lists registered tasks
