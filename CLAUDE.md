@@ -50,7 +50,7 @@ Mistral API call.
 
 ### Commit Messages
 - Follow Conventional Commits format: `<type>(<scope>): <short description>`
-- Never commit directly to the `main` branch.
+- Never commit directly to the `master` branch.
 - Always write explicit, imperative descriptions (e.g., "add", not "added").
 
 
