@@ -118,20 +118,16 @@ class EncounterRepository(SessionRepository):
             query = query.where(Encounter.superseded_by_id.is_(None))
         return (await self._session.scalars(query.order_by(Encounter.id.desc()).limit(1))).first()
 
-    async def list_current_for_patient_day(self, user_id: int, patient_id: int, day: date) -> list[Encounter]:
-        """This physician's current (not superseded) encounters for one patient on one day,
-        oldest first — the candidates for app/intake/deduplicator.py's fallback match."""
-        rows = await self._session.scalars(
+    async def find_by_content_hash(self, user_id: int, content_hash: str) -> Encounter | None:
+        """This physician's earliest encounter with exactly this note text, from any source
+        — app/intake/deduplicator.py's match when a note has no external id."""
+        query = (
             select(Encounter)
-            .where(
-                Encounter.user_id == user_id,
-                Encounter.patient_id == patient_id,
-                Encounter.service_date == day,
-                Encounter.superseded_by_id.is_(None),
-            )
+            .where(Encounter.user_id == user_id, Encounter.content_hash == content_hash)
             .order_by(Encounter.id)
+            .limit(1)
         )
-        return list(rows.all())
+        return (await self._session.scalars(query)).first()
 
     async def set_patient(self, encounter: Encounter, patient_id: int) -> None:
         encounter.patient_id = patient_id

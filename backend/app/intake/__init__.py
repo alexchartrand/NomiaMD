@@ -14,6 +14,7 @@ from app.intake.models import EncounterMeta, SourceNote
 from app.intake.normalizers import NormalizerRegistry, default_normalizers
 from app.intake.queue import EncounterExtractor, ExtractionQueue, InlineExtractionQueue
 from app.intake.service import EmptyNoteError, IntakeService, ReceiveOutcome
+from app.intake.visit_match import SameVisitMatcher
 
 __all__ = [
     "Channel",
@@ -27,6 +28,7 @@ __all__ = [
     "IntakeService",
     "NormalizerRegistry",
     "ReceiveOutcome",
+    "SameVisitMatcher",
     "SourceNote",
     "content_hash",
     "default_normalizers",

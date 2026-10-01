@@ -77,15 +77,12 @@ async def test_resolver_ignores_a_soft_deleted_patient(db_session):
 # --- Deduplicator ---
 
 
-def _key(user_id, *, note_text="Note signée.", external_note_id=None, patient_id=None, author_ref=None, day=DAY):
+def _key(user_id, *, note_text="Note signée.", external_note_id=None):
     return DedupKey(
         user_id=user_id,
         source_system="omnimed",
         content_hash=content_hash(note_text),
         external_note_id=external_note_id,
-        patient_id=patient_id,
-        service_date=day,
-        author_ref=author_ref,
     )
 
 
@@ -131,45 +128,24 @@ async def test_dedup_is_scoped_to_the_physician(db_session, physician_id):
     other = next(_physician_ids)
     await ensure_user_row(physician(other))
     await _seed_encounter(db_session, other, external_note_id="N-1")
-    result = await Deduplicator(EncounterRepository(db_session)).check(_key(physician_id, external_note_id="N-1"))
-    assert result.outcome == DedupOutcome.NEW
+    deduplicator = Deduplicator(EncounterRepository(db_session))
+    assert (await deduplicator.check(_key(physician_id, external_note_id="N-1"))).outcome == DedupOutcome.NEW
+    assert (await deduplicator.check(_key(physician_id))).outcome == DedupOutcome.NEW
 
 
-async def test_dedup_without_external_id_matches_same_patient_day_and_author(db_session, physician_id):
-    patient = await _seed_patient(db_session)
-    existing = await _seed_encounter(db_session, physician_id, patient_id=patient.id, author_ref="dr-42")
-    # Same visit through another channel: different text, no external id.
-    result = await Deduplicator(EncounterRepository(db_session)).check(
-        _key(physician_id, note_text="Autre capture de la même visite.", patient_id=patient.id, author_ref="dr-42")
-    )
+async def test_dedup_without_external_id_same_text_is_a_duplicate(db_session, physician_id):
+    # From any source: the extension's capture, pasted again by hand.
+    existing = await _seed_encounter(db_session, physician_id, external_note_id="N-1")
+    result = await Deduplicator(EncounterRepository(db_session)).check(_key(physician_id))
     assert result.outcome == DedupOutcome.DUPLICATE
     assert result.existing.id == existing.id
 
 
-async def test_dedup_fallback_needs_the_same_author(db_session, physician_id):
+async def test_dedup_never_merges_different_texts_without_external_id(db_session, physician_id):
+    # Same patient, day and author: often a second visit the same day, so never a duplicate.
     patient = await _seed_patient(db_session)
     await _seed_encounter(db_session, physician_id, patient_id=patient.id, author_ref="dr-42")
     result = await Deduplicator(EncounterRepository(db_session)).check(
-        _key(physician_id, patient_id=patient.id, author_ref="dr-7")
+        _key(physician_id, note_text="Revu en après-midi : fièvre persistante.")
     )
     assert result.outcome == DedupOutcome.NEW
-
-
-async def test_dedup_fallback_needs_every_key_part(db_session, physician_id):
-    patient = await _seed_patient(db_session)
-    await _seed_encounter(db_session, physician_id, patient_id=patient.id, author_ref="dr-42")
-    deduplicator = Deduplicator(EncounterRepository(db_session))
-    assert (await deduplicator.check(_key(physician_id, patient_id=patient.id))).outcome == DedupOutcome.NEW
-    assert (await deduplicator.check(_key(physician_id, author_ref="dr-42"))).outcome == DedupOutcome.NEW
-    no_day = _key(physician_id, patient_id=patient.id, author_ref="dr-42", day=None)
-    assert (await deduplicator.check(no_day)).outcome == DedupOutcome.NEW
-
-
-async def test_dedup_fallback_skips_superseded_versions(db_session, physician_id):
-    patient = await _seed_patient(db_session)
-    encounters = EncounterRepository(db_session)
-    old = await _seed_encounter(db_session, physician_id, patient_id=patient.id, author_ref="dr-42", note_text="v1")
-    new = await _seed_encounter(db_session, physician_id, patient_id=patient.id, author_ref="dr-42", note_text="v2")
-    await encounters.mark_superseded(old, new)
-    result = await Deduplicator(encounters).check(_key(physician_id, patient_id=patient.id, author_ref="dr-42"))
-    assert result.existing.id == new.id

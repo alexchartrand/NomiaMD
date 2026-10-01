@@ -86,9 +86,6 @@ class IntakeService:
                 source_system=note.source_system,
                 content_hash=note_hash,
                 external_note_id=note.external_note_id,
-                patient_id=patient_id,
-                service_date=service_date,
-                author_ref=note.meta.author_ref,
             )
         )
         if dedup.outcome == DedupOutcome.DUPLICATE:

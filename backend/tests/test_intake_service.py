@@ -163,23 +163,31 @@ async def test_receive_an_amended_note_is_a_new_version(user, nam):
     assert queue.enqueued == [first.encounter_id, amended.encounter_id]
 
 
-async def test_receive_the_same_visit_through_another_channel_is_a_duplicate(user, nam):
+async def test_receive_the_same_paste_twice_is_a_duplicate(user, nam):
+    queue = RecordingQueue()
+    service = IntakeService(queue)
+    first = await service.receive(_note(nam=nam), user)
+    again = await service.receive(_note(nam=nam), user)
+    assert again.outcome == DedupOutcome.DUPLICATE
+    assert again.encounter_id == first.encounter_id
+    assert queue.enqueued == [first.encounter_id]
+
+
+async def test_receive_keeps_every_visit_of_the_same_day(user, nam):
+    # Same patient, day and author, different notes: a morning and an afternoon visit are
+    # both billable, so both are stored and extracted.
     queue = RecordingQueue()
     service = IntakeService(queue)
     meta = EncounterMeta(author_ref="dr-42")
-    first = await service.receive(
-        _note(source_system="omnimed", channel=Channel.EXTENSION, external_note_id="N-1", nam=nam,
-              service_date="2026-03-04", meta=meta),
-        user,
+    morning = await service.receive(
+        _note(nam=nam, service_date="2026-03-04", meta=meta, text="9 h : toux depuis 3 jours."), user
     )
-    from_scribe = await service.receive(
-        _note(source_system="plume", channel=Channel.SCRIBE_WEBHOOK, nam=nam, service_date="2026-03-04",
-              meta=meta, text="La même visite, rédigée par le scribe."),
-        user,
+    afternoon = await service.receive(
+        _note(nam=nam, service_date="2026-03-04", meta=meta, text="15 h : revu, dyspnée nouvelle."), user
     )
-    assert from_scribe.outcome == DedupOutcome.DUPLICATE
-    assert from_scribe.encounter_id == first.encounter_id
-    assert queue.enqueued == [first.encounter_id]
+    assert morning.outcome == afternoon.outcome == DedupOutcome.NEW
+    assert morning.encounter_id != afternoon.encounter_id
+    assert queue.enqueued == [morning.encounter_id, afternoon.encounter_id]
 
 
 # --- InlineExtractionQueue ---

@@ -1,15 +1,16 @@
 """Has this note been received before? The same note can arrive twice through one channel
-(a retried webhook) or through two (the extension and a scribe).
+(a retried webhook, a double paste) or through two (the extension and a scribe).
 
 - With an external note id: the same id and hash is a `duplicate`; the same id with a new
   hash is a `new_version` (an amended note).
-- Without one: a current encounter of this physician's for the same patient, day and
-  author is taken to be the same visit — a `duplicate`, whatever its text. The outcome
-  carries that encounter so the caller can show it rather than drop the note silently.
+- Without one: only the exact same text (same hash) already on file for this physician is a
+  `duplicate`. Two different texts are never merged here, even for the same patient, day
+  and author: physicians often see a patient several times a day, and a wrongly merged
+  visit is a visit silently never billed. Those notes are stored, and the inbox flags pairs
+  that may be the same visit (app/intake/visit_match.py) for the physician to decide.
 - Anything else is `new`."""
 
 from dataclasses import dataclass
-from datetime import date
 from enum import StrEnum
 
 from app.postgresdb import Encounter, EncounterRepository
@@ -27,9 +28,6 @@ class DedupKey:
     source_system: str
     content_hash: str
     external_note_id: str | None
-    patient_id: int | None
-    service_date: date | None
-    author_ref: str | None
 
 
 @dataclass(frozen=True)
@@ -46,7 +44,7 @@ class Deduplicator:
     async def check(self, key: DedupKey) -> DedupResult:
         if key.external_note_id is not None:
             return await self._by_external_id(key, key.external_note_id)
-        return await self._by_visit(key)
+        return await self._by_content(key)
 
     async def _by_external_id(self, key: DedupKey, external_note_id: str) -> DedupResult:
         same_version = await self._encounters.find_by_external(
@@ -59,13 +57,9 @@ class Deduplicator:
             return DedupResult(DedupOutcome.NEW_VERSION, current)
         return DedupResult(DedupOutcome.NEW)
 
-    async def _by_visit(self, key: DedupKey) -> DedupResult:
-        if key.patient_id is None or key.service_date is None or key.author_ref is None:
-            return DedupResult(DedupOutcome.NEW)
-        candidates = await self._encounters.list_current_for_patient_day(
-            key.user_id, key.patient_id, key.service_date
-        )
-        for candidate in candidates:
-            if (candidate.encounter_meta or {}).get("author_ref") == key.author_ref:
-                return DedupResult(DedupOutcome.DUPLICATE, candidate)
+    async def _by_content(self, key: DedupKey) -> DedupResult:
+        # Any source: the extension's capture pasted again is still the same note.
+        same_text = await self._encounters.find_by_content_hash(key.user_id, key.content_hash)
+        if same_text is not None:
+            return DedupResult(DedupOutcome.DUPLICATE, same_text)
         return DedupResult(DedupOutcome.NEW)
