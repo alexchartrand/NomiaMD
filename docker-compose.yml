@@ -63,21 +63,21 @@ services:
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      # No TLS in this compose file yet (see root .env.example) — a `Secure` cookie would
-      # be silently dropped by the browser over plain HTTP. Flip to true once a
-      # TLS-terminating reverse proxy is in front of `frontend`.
+      # `caddy` terminates TLS, so set COOKIE_SECURE=true in .env for any real deploy (see
+      # root .env.example). The false default only suits a local run without Caddy, where
+      # browsers would silently drop a `Secure` cookie over plain HTTP.
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
     volumes:
       # Produced by the separate ramq-ingestion repo, not by this compose file — must
-      # already be populated at RAMQ_LANCEDB_PATH before `backend` can even start (it reads
-      # DB_PATH at import time, before /health can respond). One directory holds both
-      # billing_codes' `codes` table and ramq_chatbot's `documents-embeddings` table. See
-      # the root .env.example.
+      # already be populated at RAMQ_LANCEDB_PATH before `backend` can start (LanceDB.open()
+      # checks for a current code version during startup, before /health can respond). One
+      # directory holds billing_codes' `codes_<rev>`/`code_versions` tables and
+      # ramq_chatbot's `documents-embeddings` table. See the root .env.example.
       - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
       # consultations/ is a repo-root directory, outside this service's build context
       # (./backend), so it can't be baked into the image via COPY — bind-mounted instead.
-      # See SAMPLE_PATIENTS_DIR in app/sample_patients.py.
+      # See SAMPLE_PATIENTS_DIR in app/sample_patients/service.py.
       - ./consultations:/consultations:ro
     depends_on:
       postgres:
