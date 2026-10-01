@@ -61,6 +61,9 @@
 
 ## ✨ Features
 
+- [ ] 🟢 Paginate the inbox for long periods — *added 10/1, from the step 11 period filter*
+  - `GET /encounters` with no bounds ("Tout") loads every encounter, its latest run's results and its patient in one response, and the duplicate flagging is O(n²) over them. Fine for weeks of notes; for a year of them, add a limit/cursor (and keep "Tout" paged) or cap the preset.
+
 - [ ] 🟢 Let the physician backdate their profile ("En vigueur depuis") — *added 10/1*
   - The first profile version is dated the day it's entered, so encounters before onboarding only get an assumed panel size (see the cold-start item in Done). `ProfileService.record_practice_facts` already takes `effective_from`; expose it on the profile form/API (default today) so the physician can say when the facts started and `as_of` finds a real version.
 

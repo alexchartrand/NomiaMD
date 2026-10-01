@@ -63,7 +63,7 @@ Backend modules (`backend/app/`):
 |---|---|
 | `llm/` | chat and embedding model provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), raw-response reading, startup embedding-dimension guard |
 | `intake/` | where notes come from: connectors (sample, paste/upload + ER-shift splitter) → `IntakeService.receive(SourceNote)` — per-source normalizers (+ date order), NAM-only patient resolution, dedup, `ExtractionQueue`; derived encounter status (`status.py`), `POST /intake/notes`/`/intake/upload`. Never imports `ramq_codes` |
-| `encounters/` | the inbox: `/encounters` (day list with derived status + `all_clean`, detail with latest run, manual patient pick, on-demand extract); wires `IntakeService` to the extraction pipeline |
+| `encounters/` | the inbox: `/encounters` (list over a service-date range, with derived status + `all_clean`, detail with latest run, manual patient pick, on-demand extract, "doublon possible" flags derived over the listed encounters + the physician's confirm/dismiss); wires `IntakeService` to the extraction pipeline |
 | `extraction/` | `POST /extract`: runs the pipeline (`pipeline.py`) and the shared LLM call (`engine.py`) |
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
 | `ramq_codes/` | `billing_codes` task — billing context, candidate retrieval, eligibility, code selection |
@@ -87,7 +87,9 @@ cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
 The physician reviews, then `POST /claims` saves from the stored extraction run.
 
 Frontend (`frontend/src/`): pages under `pages/app/` routed by `AppRouter.tsx`, typed API
-client per domain under `api/`. `/api/*` proxies to the backend (`vite.config.ts`).
+client per domain under `api/`. The landing page is the inbox (`/app/inbox`); a row opens
+`/app/inbox/:encounterId` (note + code review, `pages/app/review/`); notes are added by hand
+on `/app/ajouter`. `/api/*` proxies to the backend (`vite.config.ts`).
 
 ### Invariants — don't break these
 
