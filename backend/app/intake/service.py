@@ -6,6 +6,7 @@ Opens its own short session_scope rather than taking the caller's: an InlineExtr
 makes LLM calls, which must not hold a pooled connection (same reasoning as
 app/extraction/recorder.py)."""
 
+from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from datetime import date
 
@@ -74,6 +75,11 @@ class IntakeService:
             return outcome
         await self._queue.enqueue(outcome.encounter_id)
         return replace(outcome, enqueued=True)
+
+    async def receive_all(self, notes: Iterable[SourceNote], user: User) -> list[ReceiveOutcome]:
+        """Several notes delivered together (an ER shift paste, a seed), received in order —
+        each one on its own, so one note's outcome never depends on another's."""
+        return [await self.receive(note, user) for note in notes]
 
     async def _store(
         self, session: AsyncSession, note: SourceNote, user: User, text: str, note_hash: str, service_date: date | None

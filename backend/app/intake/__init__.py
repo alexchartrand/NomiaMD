@@ -9,6 +9,7 @@ from app.intake.channels import Channel
 from app.intake.hashing import content_hash
 from app.intake.status import EncounterStatus, status_of
 
+from app.intake.connectors import ManualConnector, NoteSplitter, SampleConnector, UnsupportedUploadError
 from app.intake.deduplicator import DedupOutcome
 from app.intake.models import EncounterMeta, SourceNote
 from app.intake.normalizers import NormalizerRegistry, default_normalizers
@@ -26,10 +27,14 @@ __all__ = [
     "ExtractionQueue",
     "InlineExtractionQueue",
     "IntakeService",
+    "ManualConnector",
     "NormalizerRegistry",
+    "NoteSplitter",
     "ReceiveOutcome",
+    "SampleConnector",
     "SameVisitMatcher",
     "SourceNote",
+    "UnsupportedUploadError",
     "content_hash",
     "default_normalizers",
     "status_of",
