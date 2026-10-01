@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from app.lancedb import CodeRepository, DocumentRepository, LanceDB
+from app.llm import chat_provider
 from app.postgresdb import PostgresDB, bind_database
 from app.ramq_chatbot import init_ramq_query_engine
 from app.tasks.registry import init_tasks
@@ -30,6 +31,7 @@ async def postgres_database(url: str | None = None) -> AsyncIterator[PostgresDB]
 
 @asynccontextmanager
 async def application_services() -> AsyncIterator[LanceDB]:
+    chat_provider()  # an unknown LLM_PROVIDER fails the boot, not the first extraction
     async with postgres_database():
         db = await LanceDB.open()
         try:

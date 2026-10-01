@@ -8,12 +8,12 @@ dev:
 	wait
 
 # Backend + frontend + the fake LLM dev server (scripts/fake_llm_server.py) instead of a
-# real Mistral API call — use this when you don't want to burn real API calls/credits.
+# real chat-model call (embeddings still hit the real Mistral API) — use this when you don't want to burn real API calls/credits.
 dev-fake:
 	@echo "Starting backend, frontend, and the fake LLM dev server..."
 	@trap 'kill 0' EXIT; \
 	(cd backend && uv run python scripts/fake_llm_server.py) & \
-	(cd backend && MISTRAL_ENDPOINT=http://localhost:8080 uv run uvicorn app.main:app --reload) & \
+	(cd backend && LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1 LLM_API_KEY=fake uv run uvicorn app.main:app --reload) & \
 	(cd frontend && npm run dev) & \
 	wait
 

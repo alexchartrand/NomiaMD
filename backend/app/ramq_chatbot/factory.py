@@ -1,8 +1,6 @@
-from llama_index.llms.mistralai import MistralAI
-
-from app.config import settings
 from app.embedings import get_embeding_model
 from app.lancedb import ICodeRepository, IDocumentRepository
+from app.llm import get_chat_llm
 from app.ramq_chatbot.converter import DocumentRowConverter
 from app.ramq_codes.converter import CodesRowConverter
 from app.ramq_chatbot.engine import RAMQManualQueryEngine
@@ -19,12 +17,7 @@ def init_ramq_query_engine(codes: ICodeRepository, documents: IDocumentRepositor
     return. Called once by the app lifespan (app/bootstrap.py's application_services()),
     which is also what opens `documents`/`codes` in the first place (app/lancedb/database.py)."""
     global _engine
-    llm = MistralAI(
-        model="mistral-medium-latest",
-        api_key=settings.mistral_api_key,
-        temperature=0.5,
-        max_tokens=4096,
-    )
+    llm = get_chat_llm("mistral-medium-latest", temperature=0.5)
     reference_expander = ReferenceExpander(
         section_lookup=ManualSectionLookup(documents, DocumentRowConverter()),
         codes_data=CodesData(codes, CodesRowConverter()),

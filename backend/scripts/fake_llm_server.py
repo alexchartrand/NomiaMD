@@ -1,11 +1,11 @@
 """A tiny fake chat completions server, for testing and debugging the extraction
 pipeline and the ramq_chatbot task (and the frontend end-to-end) without calling the real
-Mistral API.
+chat model.
 
-Speaks the same wire protocol app/extraction/engine.py's and app/ramq_chatbot/factory.py's
-MistralAI clients use (POST /v1/chat/completions, Mistral's own request/response shape).
-Point the app at it by setting MISTRAL_ENDPOINT=http://localhost:8080 before starting the
-backend. It's deliberately "dumb": every request is routed to one of three fake responses by
+Speaks POST /v1/chat/completions, which both chat providers in app/llm/ use (the Mistral and
+OpenAI request/response shapes are near-identical). Point the app at it with
+LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1 LLM_API_KEY=fake (what
+`make dev-fake` does), or LLM_PROVIDER=mistral LLM_ENDPOINT=http://localhost:8080. It's deliberately "dumb": every request is routed to one of three fake responses by
 a marker unique to that caller's fixed prompt text (see _classify_request) — never by which
 endpoint was hit, since they all share this one.
 
@@ -209,7 +209,7 @@ async def chat_completions(request: Request):
                 "finish_reason": "stop",
             }
         ],
-        # Required by mistralai's ChatCompletionResponse model, unused by the pipeline.
+        # Required by both SDKs' response models, unused by the pipeline.
         "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
     }
 

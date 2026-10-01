@@ -18,9 +18,9 @@ the prompt at all) — those need different fixes. For every expected_codes entr
     given" vs. a genuine gap.
   - selection precision/recall: the model's returned codes vs expected_codes, as before.
 
-Requires MISTRAL_API_KEY to be set — either for a real Mistral API call, or with
-MISTRAL_ENDPOINT pointed at the fake dev server (`make fake-llm`) for the summary/selection
-calls. Retrieval always calls the real Mistral embeddings API regardless (no fake/override
+Requires MISTRAL_API_KEY to be set (embeddings), plus a chat provider: either the real
+Mistral API, or LLM_PROVIDER=openai_compatible with LLM_ENDPOINT pointed at the fake dev
+server (`make fake-llm`) for the summary/selection calls. Retrieval always calls the real Mistral embeddings API regardless (no fake/override
 exists for it — see scripts/fake_llm_server.py's module docstring), so DB_PATH must point at
 a real LanceDB with a current `codes_<rev>` table (see its `code_versions` registry) either way.
 
@@ -58,7 +58,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 
 # Must run before app.extraction.engine is imported below — app.extraction.engine.get_client()
-# reads MISTRAL_API_KEY. Explicit path for the same reason as app/main.py: under a debugger,
+# reads the LLM_*/MISTRAL_API_KEY settings. Explicit path for the same reason as app/main.py: under a debugger,
 # load_dotenv() searches os.getcwd() instead of walking up from this file.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
