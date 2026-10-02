@@ -6,7 +6,6 @@ import { Button } from "./Button";
 import { PageHeader } from "./PageHeader";
 
 const NAV_LINKS = [
-  { to: "/#fonctionnement", label: "Fonctionnement" },
   { to: "/prix", label: "Tarification" },
   { to: "/securite", label: "Sécurité" },
   { to: "/#faq", label: "FAQ" },
