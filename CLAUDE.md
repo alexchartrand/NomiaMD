@@ -74,6 +74,7 @@ Backend modules (`backend/app/`):
 | `auth/` | login/sessions (`AuthService`) and dated physician practice facts (`ProfileService`) |
 | `patients/` | global patient identity, search, per-physician roster, registration |
 | `claims/`, `bills/` | saving reviewed codes as claims; grouping claims into bills (+ PDF) |
+| `contact/` | public `POST /contact` (no login): the site's contact form → `contact_requests`, best-effort email via SMTP (`LogContactNotifier` when unset), honeypot + 5/hour limit |
 | `sample_patients/` | serves `consultations/` notes as simulated patients |
 
 `app/bootstrap.py`'s `application_services()` is the single composition root (opens LanceDB
@@ -87,7 +88,10 @@ cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
 The physician reviews, then `POST /claims` saves from the stored extraction run.
 
 Frontend (`frontend/src/`): pages under `pages/app/` routed by `AppRouter.tsx`, typed API
-client per domain under `api/`. The landing page is the inbox (`/app/inbox`); a row opens
+client per domain under `api/`. The public site (`/`, `/prix`, `/contact`, `/securite`,
+`/confidentialite`) shares `pages/site/SiteLayout.tsx`; landing sections live in
+`pages/landing/`, and contact details, prices and plans in `src/site/` (`config.ts`,
+`pricing.ts`) — the one place to edit them. The landing page is the inbox (`/app/inbox`); a row opens
 `/app/inbox/:encounterId` (note + code review, `pages/app/review/`); notes are added by hand
 on `/app/ajouter`. `/api/*` proxies to the backend (`vite.config.ts`).
 
