@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { ENCOUNTER_STATUSES, type EncounterPeriod } from "../../../api";
 import { Button, Select, TextField } from "../../../components";
@@ -12,6 +13,18 @@ interface FiltersBarProps {
   onFiltersChange: (filters: RowFilters) => void;
   // The sources seen in the period, for the source filter.
   sources: string[];
+}
+
+// Keeps a label glued to its field so a wrapping row never splits them apart.
+function FilterField({ htmlFor, label, children }: { htmlFor: string; label: string; children: ReactNode }) {
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <label htmlFor={htmlFor} className="text-sm text-muted-foreground">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
 }
 
 const presetClasses =
@@ -36,75 +49,74 @@ export function FiltersBar({ period, onPeriodChange, onPresetChange, filters, on
           </button>
         ))}
         <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
-          <label htmlFor="period-from" className="text-sm text-muted-foreground">
-            Du
-          </label>
-          <TextField
-            id="period-from"
-            type="date"
-            className="w-auto"
-            value={period.date_from ?? ""}
-            max={period.date_to ?? undefined}
-            onChange={(e) => onPeriodChange({ ...period, date_from: e.target.value || null })}
-          />
-          <label htmlFor="period-to" className="text-sm text-muted-foreground">
-            au
-          </label>
-          <TextField
-            id="period-to"
-            type="date"
-            className="w-auto"
-            value={period.date_to ?? ""}
-            min={period.date_from ?? undefined}
-            onChange={(e) => onPeriodChange({ ...period, date_to: e.target.value || null })}
-          />
+          <FilterField htmlFor="period-from" label="Du">
+            <TextField
+              id="period-from"
+              type="date"
+              className="w-auto"
+              value={period.date_from ?? ""}
+              max={period.date_to ?? undefined}
+              onChange={(e) => onPeriodChange({ ...period, date_from: e.target.value || null })}
+            />
+          </FilterField>
+          <FilterField htmlFor="period-to" label="au">
+            <TextField
+              id="period-to"
+              type="date"
+              className="w-auto"
+              value={period.date_to ?? ""}
+              min={period.date_from ?? undefined}
+              onChange={(e) => onPeriodChange({ ...period, date_to: e.target.value || null })}
+            />
+          </FilterField>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <label htmlFor="filter-status" className="text-sm text-muted-foreground">
-          Statut
-        </label>
-        <Select
-          id="filter-status"
-          value={filters.status}
-          onChange={(e) => onFiltersChange({ ...filters, status: e.target.value as StatusFilter })}
-        >
-          <option value="">Tous</option>
-          <option value="à traiter">À traiter (non facturées)</option>
-          {ENCOUNTER_STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </option>
-          ))}
-        </Select>
+        <FilterField htmlFor="filter-status" label="Statut">
+          <div className="w-56">
+            <Select
+              id="filter-status"
+              value={filters.status}
+              onChange={(e) => onFiltersChange({ ...filters, status: e.target.value as StatusFilter })}
+            >
+              <option value="">Tous</option>
+              <option value="à traiter">À traiter (non facturées)</option>
+              {ENCOUNTER_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </FilterField>
 
-        <label htmlFor="filter-source" className="text-sm text-muted-foreground">
-          Source
-        </label>
-        <Select
-          id="filter-source"
-          value={filters.source}
-          onChange={(e) => onFiltersChange({ ...filters, source: e.target.value })}
-        >
-          <option value="">Toutes</option>
-          {sources.map((source) => (
-            <option key={source} value={source}>
-              {source}
-            </option>
-          ))}
-        </Select>
+        <FilterField htmlFor="filter-source" label="Source">
+          <div className="w-56">
+            <Select
+              id="filter-source"
+              value={filters.source}
+              onChange={(e) => onFiltersChange({ ...filters, source: e.target.value })}
+            >
+              <option value="">Toutes</option>
+              {sources.map((source) => (
+                <option key={source} value={source}>
+                  {source}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </FilterField>
 
-        <label htmlFor="filter-patient" className="text-sm text-muted-foreground">
-          Patient
-        </label>
-        <TextField
-          id="filter-patient"
-          className="w-48"
-          value={filters.patient}
-          placeholder="Nom ou NAM..."
-          onChange={(e) => onFiltersChange({ ...filters, patient: e.target.value })}
-        />
+        <FilterField htmlFor="filter-patient" label="Patient">
+          <TextField
+            id="filter-patient"
+            className="w-48"
+            value={filters.patient}
+            placeholder="Nom ou NAM..."
+            onChange={(e) => onFiltersChange({ ...filters, patient: e.target.value })}
+          />
+        </FilterField>
 
         {hasRowFilters && (
           <Button type="button" variant="link" onClick={() => onFiltersChange({ status: "", source: "", patient: "" })}>
