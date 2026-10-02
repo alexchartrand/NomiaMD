@@ -24,7 +24,8 @@ import {
 } from "../../../components";
 import { cn } from "@/lib/utils";
 import { formatDate } from "../../../utils/date";
-import { STATUS_LABELS, describeFee } from "./constants";
+import { ClaimCodeList } from "./ClaimCodeList";
+import { STATUS_LABELS } from "./constants";
 
 interface RecordsTabProps {
   reloadSignal: number;
@@ -202,18 +203,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                   {expandedId === claim.id && (
                     <TableRow className="bg-[color:var(--color-primary-tint)] hover:bg-[color:var(--color-primary-tint)]">
                       <TableCell colSpan={6}>
-                        <ul className="m-0 space-y-2 pl-5">
-                          {claim.codes.map((c) => (
-                            <li key={c.code}>
-                              <span className="font-mono text-[0.85rem] text-primary">{c.code}</span>{" "}
-                              {c.description}
-                              {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}
-                              {describeFee(c) && <> — {describeFee(c)}</>}
-                              <br />
-                              <em>{c.explanation}</em>
-                            </li>
-                          ))}
-                        </ul>
+                        <ClaimCodeList codes={claim.codes} />
                       </TableCell>
                     </TableRow>
                   )}

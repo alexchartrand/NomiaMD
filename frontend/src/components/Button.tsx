@@ -15,6 +15,8 @@ const VARIANT_MAP: Record<ButtonVariant, VariantProps<typeof buttonVariants>["va
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
+  // Renders its single child (e.g. a router <Link>) styled as this button.
+  asChild?: boolean;
 };
 
 export function Button({ variant = "primary", className, ...rest }: ButtonProps) {

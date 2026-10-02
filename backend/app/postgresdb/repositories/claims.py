@@ -8,7 +8,7 @@ from typing import Sequence
 from sqlalchemy import Select, func, select, update
 from sqlalchemy.exc import IntegrityError
 
-from app.postgresdb.models import Claim, ClaimCode, Patient
+from app.postgresdb.models import Claim, ClaimCode, ExtractionRun, Patient
 from app.postgresdb.repositories.base import SessionRepository
 
 
@@ -149,14 +149,15 @@ class ClaimRepository(SessionRepository):
     async def _load_details(self, query: Select) -> list[ClaimDetail]:
         """Two round trips whatever the number of claims: the claims (with their patient's
         name), then every code row of those claims at once."""
-        rows = (await self._session.execute(query)).all()
+        return await self._with_codes((await self._session.execute(query)).all())
+
+    async def _with_codes(self, rows: Sequence) -> list[ClaimDetail]:
+        """`rows` start with (Claim, patient full name); any further columns are ignored."""
         if not rows:
             return []
-        names_by_id = {claim.id: full_name for claim, full_name in rows}
-
         code_rows = (
             await self._session.execute(
-                select(ClaimCode).where(ClaimCode.claim_id.in_(names_by_id.keys())).order_by(ClaimCode.id)
+                select(ClaimCode).where(ClaimCode.claim_id.in_([row[0].id for row in rows])).order_by(ClaimCode.id)
             )
         ).scalars().all()
         codes_by_claim: dict[int, list[ClaimCode]] = {}
@@ -164,12 +165,8 @@ class ClaimRepository(SessionRepository):
             codes_by_claim.setdefault(code_row.claim_id, []).append(code_row)
 
         return [
-            ClaimDetail(
-                claim=claim,
-                patient_full_name=names_by_id[claim.id],
-                codes=codes_by_claim.get(claim.id, []),
-            )
-            for claim, _ in rows
+            ClaimDetail(claim=row[0], patient_full_name=row[1], codes=codes_by_claim.get(row[0].id, []))
+            for row in rows
         ]
 
     async def list_for_physician(
@@ -203,6 +200,25 @@ class ClaimRepository(SessionRepository):
         if not claim_ids:
             return []
         return await self._load_details(self._details_query(physician_id).where(Claim.id.in_(claim_ids)))
+
+    async def live_for_encounters(self, physician_id: int, encounter_ids: Sequence[int]) -> dict[int, ClaimDetail]:
+        """Each encounter's live claim, from whichever of its runs it was saved — what the
+        physician actually selected, not what the latest run proposed. Encounters without
+        one are absent; if several runs were claimed, the most recent claim wins."""
+        if not encounter_ids:
+            return {}
+        query = (
+            self._details_query(physician_id)
+            .add_columns(ExtractionRun.encounter_id)
+            .join(ExtractionRun, ExtractionRun.id == Claim.extraction_run_id)
+            .where(ExtractionRun.encounter_id.in_(encounter_ids))
+        )
+        rows = (await self._session.execute(query)).all()
+        by_encounter: dict[int, ClaimDetail] = {}
+        # Newest first, so the first claim per encounter wins.
+        for detail, (_, _, encounter_id) in zip(await self._with_codes(rows), rows):
+            by_encounter.setdefault(encounter_id, detail)
+        return by_encounter
 
     async def list_for_bill(self, bill_id: int, physician_id: int) -> list[ClaimDetail]:
         return await self._load_details(self._details_query(physician_id).where(Claim.bill_id == bill_id))

@@ -1,6 +1,6 @@
 # Step 10 — Background extraction worker (arq)
 
-**Phase:** 2 · **Depends on:** 07, 09 · **Unblocks:** batch inbox, 05's purge job, 20's polling
+**Phase:** 2 · **Depends on:** 07, 09 (11's inbox already shipped, running extraction inline) · **Unblocks:** batch inbox, 05's purge job, 20's polling
 **Plan section:** §4 Background extraction
 
 ## Goal

@@ -27,6 +27,7 @@ from app.postgresdb import (
     ExtractionStageInput,
     Gender,
     PatientRepository,
+    EncounterPeriod,
     ReceivedWindow,
 )
 from tests.db_helpers import ensure_user_row, physician
@@ -39,6 +40,10 @@ _ramq_numbers = itertools.count(1)
 DAY = date(2026, 3, 4)
 # A window the test's own rows weren't received in: only dated ones match DAY.
 _LONG_AGO = ReceivedWindow(datetime(2000, 1, 1, tzinfo=timezone.utc), datetime(2000, 1, 2, tzinfo=timezone.utc))
+
+
+def _day(day: date, received: ReceivedWindow = _LONG_AGO) -> EncounterPeriod:
+    return EncounterPeriod(day, day, received)
 
 
 @pytest.fixture
@@ -157,7 +162,7 @@ async def test_pasted_notes_without_an_external_id_are_never_deduplicated(db_ses
     assert first.id != second.id
 
 
-async def test_list_for_day_is_the_owners_encounters_of_that_day_in_arrival_order(db_session, physician_id):
+async def test_list_in_period_is_the_owners_encounters_of_that_day_in_arrival_order(db_session, physician_id):
     other_id = physician_id + 100
     await ensure_user_row(physician(other_id))
     repo = EncounterRepository(db_session)
@@ -167,22 +172,22 @@ async def test_list_for_day_is_the_owners_encounters_of_that_day_in_arrival_orde
     await repo.create(_input(other_id, note_text="d"))
     second = await repo.create(_input(physician_id, note_text="e"))
 
-    listed = await repo.list_for_day(physician_id, DAY, _LONG_AGO)
+    listed = await repo.list_in_period(physician_id, _day(DAY))
 
     assert [a.encounter.id for a in listed] == [first.id, second.id]
 
 
-async def test_list_for_day_shows_an_undated_encounter_on_the_day_it_was_received(db_session, physician_id):
+async def test_list_in_period_shows_an_undated_encounter_on_the_day_it_was_received(db_session, physician_id):
     repo = EncounterRepository(db_session)
     undated = await repo.create(_input(physician_id, note_text="sans date", service_date=None))
     dated_elsewhere = await repo.create(_input(physician_id, note_text="autre jour", service_date=date(2026, 3, 5)))
     now = datetime.now(timezone.utc)
     around_now = ReceivedWindow(now - timedelta(hours=1), now + timedelta(hours=1))
 
-    listed = [a.encounter.id for a in await repo.list_for_day(physician_id, DAY, around_now)]
+    listed = [a.encounter.id for a in await repo.list_in_period(physician_id, _day(DAY, around_now))]
     assert undated.id in listed
     assert dated_elsewhere.id not in listed
-    assert undated.id not in [a.encounter.id for a in await repo.list_for_day(physician_id, DAY, _LONG_AGO)]
+    assert undated.id not in [a.encounter.id for a in await repo.list_in_period(physician_id, _day(DAY))]
 
 
 async def test_activity_for_user_is_scoped_to_its_owner(db_session, physician_id):

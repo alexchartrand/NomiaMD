@@ -303,6 +303,14 @@ class Encounter(TimestampMixin, Base):
         ForeignKey("encounters.id", ondelete="SET NULL"), nullable=True
     )
     extraction_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # The physician's answers to a "doublon possible" flag (the flag itself is derived — see
+    # app/encounters/duplicates.py). Confirmed: this one is the same visit as
+    # `duplicate_of_id`, hidden from the inbox and never billed. Dismissed: it's a distinct
+    # visit, and isn't flagged again.
+    duplicate_of_id: Mapped[int | None] = mapped_column(
+        ForeignKey("encounters.id", ondelete="SET NULL"), nullable=True
+    )
+    duplicate_dismissed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     purge_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
 
 

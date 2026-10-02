@@ -1,7 +1,7 @@
 // FastAPI's `detail` is a plain string for hand-raised HTTPExceptions (401, 400, ...) but a
 // list of { msg, loc, type } objects for Pydantic validation errors (422) — stringifying
 // that list directly (e.g. via `new Error(detail)`) collapses it to "[object Object]".
-function extractErrorDetail(body: unknown, fallback: string): string {
+export function extractErrorDetail(body: unknown, fallback: string): string {
   const detail = (body as { detail?: unknown } | null)?.detail;
   if (typeof detail === "string") return detail;
   if (Array.isArray(detail)) {

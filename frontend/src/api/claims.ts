@@ -1,4 +1,4 @@
-import { unwrap, unwrapVoid } from "./http";
+import { extractErrorDetail, unwrap, unwrapVoid } from "./http";
 import type { ConfidenceLevel, ExtractedFee } from "./extraction";
 
 // Kept in sync by hand with app/claims/status.py's ClaimStatus. Derived server-side, never
@@ -64,21 +64,34 @@ export interface ClaimFilters {
 export class DuplicateClaimError extends Error {}
 
 export async function createClaim(payload: ClaimInput, confirmDuplicate = false): Promise<Claim> {
-  const response = await fetch(`/api/claims?confirm_duplicate=${confirmDuplicate}`, {
-    method: "POST",
+  return sendClaim("/api/claims", "POST", payload, confirmDuplicate);
+}
+
+// A changed review of a draft: the server voids `id` and returns the claim saved in its place
+// (a new id). Refused (409) once the claim is on a bill.
+export async function replaceClaim(id: number, payload: ClaimInput, confirmDuplicate = false): Promise<Claim> {
+  return sendClaim(`/api/claims/${id}`, "PUT", payload, confirmDuplicate);
+}
+
+async function sendClaim(url: string, method: "POST" | "PUT", payload: ClaimInput, confirmDuplicate: boolean): Promise<Claim> {
+  const response = await fetch(`${url}?confirm_duplicate=${confirmDuplicate}`, {
+    method,
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
+  // Only a "duplicate_claim" 409 is a warning the physician may override; another 409 (an
+  // encounter confirmed as another's duplicate, a claim already on a bill) is a plain refusal.
   if (response.status === 409) {
     const body = await response.json().catch(() => null);
-    const detail = (body as { detail?: { message?: unknown } } | null)?.detail;
-    const message =
-      detail && typeof detail === "object" && typeof detail.message === "string"
-        ? detail.message
-        : "Une facturation existe déjà pour ce patient à cette date.";
-    throw new DuplicateClaimError(message);
+    const detail = (body as { detail?: { code?: unknown; message?: unknown } } | null)?.detail;
+    if (detail && typeof detail === "object" && detail.code === "duplicate_claim") {
+      throw new DuplicateClaimError(
+        typeof detail.message === "string" ? detail.message : "Une facturation existe déjà pour ce patient à cette date.",
+      );
+    }
+    throw new Error(extractErrorDetail(body, "La facturation a été refusée."));
   }
 
   return unwrap<Claim>(response);

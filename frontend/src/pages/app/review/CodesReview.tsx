@@ -42,9 +42,11 @@ interface CodesReviewProps {
   onToggle: (index: number) => void;
   feeSelection: Map<number, number>;
   onFeeSelected: (index: number, feeIndex: number) => void;
+  // Shown, not editable.
+  disabled?: boolean;
 }
 
-export function CodesReview({ codes, selection, onToggle, feeSelection, onFeeSelected }: CodesReviewProps) {
+export function CodesReview({ codes, selection, onToggle, feeSelection, onFeeSelected, disabled = false }: CodesReviewProps) {
   if (codes.length === 0) {
     return <p>Aucun code candidat n&rsquo;est clairement appuyé par cette transcription.</p>;
   }
@@ -69,6 +71,7 @@ export function CodesReview({ codes, selection, onToggle, feeSelection, onFeeSel
             <Checkbox
               className="mt-[0.3rem]"
               checked={checked}
+              disabled={disabled}
               onCheckedChange={() => onToggle(i)}
               aria-label={`Facturer le code ${c.code}`}
             />
@@ -87,6 +90,7 @@ export function CodesReview({ codes, selection, onToggle, feeSelection, onFeeSel
                 {c.fees.length > 1 ? (
                   <Select
                     value={feeSelection.get(i) ?? 0}
+                    disabled={disabled}
                     onChange={(event) => onFeeSelected(i, Number(event.target.value))}
                     aria-label={`Tarif pour le code ${c.code}`}
                   >

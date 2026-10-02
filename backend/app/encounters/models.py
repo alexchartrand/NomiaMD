@@ -4,6 +4,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
+from app.claims.models import ClaimOut
 from app.extraction.models import BillingExtractionResponse
 from app.intake import EncounterStatus
 
@@ -32,8 +33,14 @@ class EncounterRowOut(BaseModel):
     batch_label: str | None
     service_date: date | None
     received_at: datetime
-    # Codes in the latest run; None when it was never extracted.
+    # The codes billed on its live claim once there is one (status "revu"), else the codes
+    # the latest run proposes; None when it was never extracted.
     code_count: int | None
+    # The latest run (what POST /claims takes); None when it was never extracted.
+    extraction_run_id: int | None
+    # "Doublon possible": the day's other encounters this may be the same visit as, until
+    # the physician answers (see app/encounters/duplicates.py).
+    possible_duplicate_ids: list[int]
     # Approvable without opening it: see app/encounters/readiness.py.
     all_clean: bool
 
@@ -50,9 +57,13 @@ class EncounterDetailOut(BaseModel):
     service_date: date | None
     received_at: datetime
     meta: dict
+    # Set once the physician confirmed it's the same visit as that encounter.
+    duplicate_of_id: int | None
     note_text: str
     extraction_error: str | None
     extraction: BillingExtractionResponse | None
+    # The live claim saved from one of its runs: the codes the physician selected.
+    claim: ClaimOut | None
 
 
 class PatientPick(BaseModel):

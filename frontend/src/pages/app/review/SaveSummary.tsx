@@ -8,10 +8,24 @@ interface SaveSummaryProps {
   saveError: string | null;
   saved: boolean;
   canSave: boolean;
+  // Saving replaces the encounter's existing claim.
+  editing: boolean;
+  // Shown, not editable: no save button at all.
+  readOnly: boolean;
   onSave: () => void;
 }
 
-export function SaveSummary({ totalAmount, codesMissingFee, saving, saveError, saved, canSave, onSave }: SaveSummaryProps) {
+export function SaveSummary({
+  totalAmount,
+  codesMissingFee,
+  saving,
+  saveError,
+  saved,
+  canSave,
+  editing,
+  readOnly,
+  onSave,
+}: SaveSummaryProps) {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-[0.85rem]">
@@ -25,9 +39,11 @@ export function SaveSummary({ totalAmount, codesMissingFee, saving, saveError, s
           )}
         </div>
 
-        <Button type="button" onClick={onSave} disabled={saving || saved || !canSave}>
-          {saving ? "Enregistrement..." : "Enregistrer la facturation"}
-        </Button>
+        {!readOnly && (
+          <Button type="button" onClick={onSave} disabled={saving || saved || !canSave}>
+            {saving ? "Enregistrement..." : editing ? "Enregistrer les modifications" : "Enregistrer la facturation"}
+          </Button>
+        )}
       </div>
 
       {saveError && <Banner tone="error">{saveError}</Banner>}

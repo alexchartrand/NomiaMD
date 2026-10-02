@@ -21,6 +21,7 @@ from app.postgresdb.repositories.encounters import (
     DuplicateEncounterError,
     EncounterActivity,
     ReceivedWindow,
+    EncounterPeriod,
     EncounterInput,
     EncounterRepository,
 )
@@ -51,6 +52,7 @@ __all__ = [
     "DuplicateRosterEntryError",
     "EncounterActivity",
     "ReceivedWindow",
+    "EncounterPeriod",
     "EncounterInput",
     "EncounterRepository",
     "ExtractionRepository",

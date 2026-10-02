@@ -34,5 +34,18 @@ class DuplicateClaimError(Exception):
         super().__init__(message)
 
 
+class DuplicateEncounterClaimError(Exception):
+    """The run's encounter was confirmed as another's duplicate (the same visit, received
+    twice): only the kept one is billed."""
+
+
 class ClaimOnBillError(Exception):
     pass
+
+
+class ClaimNotFoundError(Exception):
+    pass
+
+
+class ClaimEncounterMismatchError(Exception):
+    """A claim can only be replaced by one from a run of the same encounter."""

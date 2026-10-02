@@ -7,6 +7,7 @@ Seeds through session_scope (committed): the routes open their own sessions."""
 
 import itertools
 from datetime import date, timedelta
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -14,8 +15,10 @@ from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 
 from app.auth import get_current_user
-from app.clock import ClinicClock, get_clock
+from app.clock import ClinicClock
 from app.encounters.masking import mask_name, mask_nam
+from app.encounters.readiness import is_all_clean
+from app.intake import EncounterStatus
 from app.main import app
 from app.postgresdb import Encounter, ExtractionRun, Gender, PatientRepository, session_scope
 from tests.db_helpers import ensure_user_row, physician
@@ -82,9 +85,34 @@ def _paste(client: TestClient, text: str, *, billing=MOCK_RESULT, **fields):
         patcher.stop()
 
 
+def _push(client: TestClient, patient, *, billing=MOCK_RESULT, service_date: date | None = None, **meta):
+    """One structured note, dated (today by default) — what the extension or a scribe
+    sends, unlike a paste whose date only the extraction can find."""
+    note = {
+        "source_system": meta.pop("source_system", "omnimed"),
+        "channel": meta.pop("channel", "extension"),
+        "nam": patient.ramq_number,
+        "service_date": (service_date or ClinicClock().today()).isoformat(),
+        "meta": meta,
+        "text": _note_text(),
+    }
+    patcher = _model(billing)
+    try:
+        response = client.post("/intake/notes", json=[note])
+    finally:
+        patcher.stop()
+    assert response.status_code == 200
+    [outcome] = response.json()
+    return outcome["encounter_id"]
+
+
 def _row(client: TestClient, encounter_id: int) -> dict:
     [row] = [row for row in client.get("/encounters").json() if row["id"] == encounter_id]
     return row
+
+
+def _listed_ids(client: TestClient) -> list[int]:
+    return [row["id"] for row in client.get("/encounters").json()]
 
 
 async def _encounter_count(user_id: int) -> int:
@@ -168,10 +196,11 @@ async def test_push_structured_source_notes(me, client):
     [outcome] = response.json()
     assert outcome["patient_id"] == patient.id
     # Dated by the source: listed on that day, not on the day it was received.
-    listed = client.get("/encounters", params={"date": "2026-03-04"}).json()
+    listed = client.get("/encounters", params={"date_from": "2026-03-04", "date_to": "2026-03-04"}).json()
     assert [row["id"] for row in listed] == [outcome["encounter_id"]]
     assert listed[0]["source_system"] == "omnimed"
-    assert outcome["encounter_id"] not in [row["id"] for row in client.get("/encounters").json()]
+    today = ClinicClock().today().isoformat()
+    assert client.get("/encounters", params={"date_from": today, "date_to": today}).json() == []
 
 
 async def test_push_with_an_unknown_nam_waits_for_a_patient_then_a_manual_pick_extracts_it(me, client):
@@ -284,16 +313,27 @@ async def test_another_physicians_encounter_is_not_found(me, client):
 )
 async def test_all_clean(me, client, billing, all_clean):
     patient = await _seed_patient()
-    [outcome] = _paste(client, _note_text(patient.ramq_number), billing=billing).json()
-    row = _row(client, outcome["encounter_id"])
+    encounter_id = _push(client, patient, billing=billing)
+    row = _row(client, encounter_id)
     assert row["status"] == "prêt"
     assert row["all_clean"] is all_clean
+    assert row["extraction_run_id"] is not None
+
+
+async def test_an_undated_encounter_is_never_all_clean(me, client):
+    """A claim needs its date: a paste the extraction couldn't date gets opened."""
+    patient = await _seed_patient()
+    [outcome] = _paste(client, _note_text(patient.ramq_number), billing=CLEAN_RESULT).json()
+    row = _row(client, outcome["encounter_id"])
+    assert row["status"] == "prêt"
+    assert row["service_date"] is None
+    assert row["all_clean"] is False
 
 
 async def test_a_reviewed_encounter_is_never_all_clean(me, client):
     patient = await _seed_patient()
-    [outcome] = _paste(client, _note_text(patient.ramq_number), billing=CLEAN_RESULT).json()
-    run_id = client.get(f"/encounters/{outcome['encounter_id']}").json()["extraction"]["extraction_run_id"]
+    encounter_id = _push(client, patient, billing=CLEAN_RESULT)
+    run_id = _row(client, encounter_id)["extraction_run_id"]
 
     claim = client.post(
         "/claims",
@@ -301,21 +341,61 @@ async def test_a_reviewed_encounter_is_never_all_clean(me, client):
     )
 
     assert claim.status_code == 201
-    row = _row(client, outcome["encounter_id"])
+    row = _row(client, encounter_id)
     assert row["status"] == "revu"
     assert row["all_clean"] is False
 
 
-async def test_list_defaults_to_the_clinics_today(me, client):
-    [outcome] = _paste(client, _note_text("ZZZZ99999999")).json()
-    tomorrow = ClinicClock().today() + timedelta(days=1)
+async def test_a_reviewed_encounter_shows_the_codes_billed_not_the_codes_proposed(me, client):
+    patient = await _seed_patient()
+    encounter_id = _push(client, patient)  # proposes two codes
+    run_id = _row(client, encounter_id)["extraction_run_id"]
+    assert _row(client, encounter_id)["code_count"] == 2
 
-    app.dependency_overrides[get_clock] = lambda: type("Pinned", (), {"today": lambda self: tomorrow})()
-    try:
-        assert client.get("/encounters").json() == []
-    finally:
-        app.dependency_overrides.pop(get_clock)
-    assert [row["id"] for row in client.get("/encounters").json()] == [outcome["encounter_id"]]
+    claim = client.post(
+        "/claims",
+        json={"extraction_run_id": run_id, "service_date": "2026-03-04", "selected_codes": [{"code": "TEST-BP-MGMT"}]},
+    )
+
+    assert claim.status_code == 201
+    assert _row(client, encounter_id)["code_count"] == 1
+    detail = client.get(f"/encounters/{encounter_id}").json()
+    assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BP-MGMT"]
+    assert len(detail["extraction"]["billing"]["result"]["codes"]) == 2
+
+
+async def test_an_encounter_without_a_claim_has_none(me, client):
+    patient = await _seed_patient()
+    encounter_id = _push(client, patient)
+
+    assert client.get(f"/encounters/{encounter_id}").json()["claim"] is None
+
+
+async def test_list_a_range_of_days(me, client):
+    """A physician who bills at the end of the week reads several days at once."""
+    patient = await _seed_patient()
+    monday = _push(client, patient, service_date=date(2026, 3, 2))
+    wednesday = _push(client, patient, service_date=date(2026, 3, 4))
+    next_monday = _push(client, patient, service_date=date(2026, 3, 9))
+    undated_today = _paste(client, _note_text("ZZZZ99999999")).json()[0]["encounter_id"]
+
+    def listed(**params) -> list[int]:
+        response = client.get("/encounters", params=params)
+        assert response.status_code == 200
+        return [row["id"] for row in response.json()]
+
+    assert listed(date_from="2026-03-02", date_to="2026-03-06") == [monday, wednesday]
+    assert listed(date_from="2026-03-04") == [wednesday, next_monday, undated_today]
+    assert listed(date_to="2026-03-04") == [monday, wednesday]
+    # No bounds at all: everything, the undated one on the day it was received.
+    assert listed() == [monday, wednesday, next_monday, undated_today]
+    today = ClinicClock().today().isoformat()
+    assert listed(date_from=today, date_to=today) == [undated_today]
+
+
+async def test_list_refuses_a_range_that_ends_before_it_starts(me, client):
+    response = client.get("/encounters", params={"date_from": "2026-03-06", "date_to": "2026-03-02"})
+    assert response.status_code == 422
 
 
 async def test_get_an_unknown_encounter_is_not_found(me, client):
@@ -360,12 +440,121 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
     assert [c["code"] for c in response.json()["billing"]["result"]["codes"]] == ["TEST-BP-MGMT"]
     row = _row(client, outcome["encounter_id"])
     assert row["status"] == "prêt"
-    assert row["all_clean"] is True
+    assert row["code_count"] == 1
 
 
 async def test_extract_on_demand_refuses_an_encounter_without_a_patient(me, client):
     [outcome] = _paste(client, _note_text("ZZZZ99999999")).json()
     assert client.post(f"/encounters/{outcome['encounter_id']}/extract").status_code == 409
+
+
+# --- doublon possible --------------------------------------------------------------------
+
+
+async def _same_visit_twice(client: TestClient, billing=CLEAN_RESULT) -> tuple[int, int]:
+    """The extension's capture and the scribe's note of one 09:00 visit."""
+    patient = await _seed_patient()
+    capture = _push(client, patient, billing=billing, time_start="09:00:00")
+    scribe = _push(client, patient, billing=billing, source_system="plume", channel="scribe_webhook", time_start="09:10:00")
+    return capture, scribe
+
+
+async def test_two_visits_hours_apart_are_not_flagged(me, client):
+    patient = await _seed_patient()
+    morning = _push(client, patient, billing=CLEAN_RESULT, time_start="09:00:00")
+    afternoon = _push(client, patient, billing=CLEAN_RESULT, time_start="15:00:00")
+
+    for encounter_id in (morning, afternoon):
+        row = _row(client, encounter_id)
+        assert row["possible_duplicate_ids"] == []
+        assert row["all_clean"] is True
+
+
+async def test_a_capture_and_a_scribe_note_of_one_visit_are_flagged_and_not_approvable(me, client):
+    capture, scribe = await _same_visit_twice(client)
+
+    assert _row(client, capture)["possible_duplicate_ids"] == [scribe]
+    assert _row(client, scribe)["possible_duplicate_ids"] == [capture]
+    # Approve-all skips them until the physician answers.
+    assert _row(client, capture)["all_clean"] is False
+    assert _row(client, scribe)["all_clean"] is False
+
+
+async def test_confirming_hides_one_and_it_is_never_billed(me, client):
+    capture, scribe = await _same_visit_twice(client)
+    hidden_run = _row(client, capture)["extraction_run_id"]
+
+    response = client.post(f"/encounters/{capture}/duplicate-of/{scribe}")
+
+    assert response.status_code == 204
+    assert _listed_ids(client) == [scribe]
+    kept = _row(client, scribe)
+    assert kept["possible_duplicate_ids"] == []
+    assert kept["all_clean"] is True
+    assert client.get(f"/encounters/{capture}").json()["duplicate_of_id"] == scribe
+    claim = client.post(
+        "/claims",
+        json={
+            "extraction_run_id": hidden_run,
+            "service_date": kept["service_date"],
+            "selected_codes": [{"code": "TEST-BP-MGMT"}],
+        },
+    )
+    assert claim.status_code == 409
+
+
+async def test_dismissing_clears_the_flag_for_good(me, client):
+    capture, scribe = await _same_visit_twice(client)
+
+    response = client.post(f"/encounters/{scribe}/not-duplicate")
+
+    assert response.status_code == 204
+    for encounter_id in (capture, scribe):
+        row = _row(client, encounter_id)
+        assert row["possible_duplicate_ids"] == []
+        assert row["all_clean"] is True
+    assert sorted(_listed_ids(client)) == sorted([capture, scribe])
+
+
+async def test_confirming_refuses_to_hide_a_billed_encounter(me, client):
+    capture, scribe = await _same_visit_twice(client)
+    row = _row(client, capture)
+    claim = client.post(
+        "/claims",
+        json={
+            "extraction_run_id": row["extraction_run_id"],
+            "service_date": row["service_date"],
+            "selected_codes": [{"code": "TEST-BP-MGMT"}],
+        },
+    )
+    assert claim.status_code == 201
+
+    assert client.post(f"/encounters/{capture}/duplicate-of/{scribe}").status_code == 409
+    # Keeping the billed one instead is fine.
+    assert client.post(f"/encounters/{scribe}/duplicate-of/{capture}").status_code == 204
+    assert _listed_ids(client) == [capture]
+
+
+async def test_confirming_refuses_itself_and_a_hidden_keeper(me, client):
+    capture, scribe = await _same_visit_twice(client)
+    assert client.post(f"/encounters/{capture}/duplicate-of/{capture}").status_code == 422
+
+    assert client.post(f"/encounters/{capture}/duplicate-of/{scribe}").status_code == 204
+    assert client.post(f"/encounters/{scribe}/duplicate-of/{capture}").status_code == 409
+
+
+async def test_duplicate_answers_are_scoped_to_the_physician(me, client):
+    capture, scribe = await _same_visit_twice(client)
+
+    someone_else = physician(next(_physician_ids))
+    await ensure_user_row(someone_else)
+    app.dependency_overrides[get_current_user] = lambda: someone_else
+
+    assert client.post(f"/encounters/{capture}/duplicate-of/{scribe}").status_code == 404
+    assert client.post(f"/encounters/{capture}/not-duplicate").status_code == 404
+
+    app.dependency_overrides[get_current_user] = lambda: me
+    assert _row(client, capture)["possible_duplicate_ids"] == [scribe]
 
 
 # --- masking ------------------------------------------------------------------------------
@@ -381,3 +570,22 @@ def test_mask_name_keeps_the_given_name_and_surname_initials():
 def test_mask_nam_hides_the_birth_date_digits():
     assert mask_nam("DESR81021001") == "DESR ******01"
     assert mask_nam(None) is None
+
+
+# --- readiness ----------------------------------------------------------------------------
+
+
+def _extraction(*codes):
+    """Just what is_all_clean reads: the latest run's codes."""
+    return SimpleNamespace(billing=SimpleNamespace(result=SimpleNamespace(codes=list(codes))))
+
+
+def _code(fees: int = 1, confidence: str = "high", needs_confirmation=()):
+    return SimpleNamespace(confidence=confidence, needs_confirmation=list(needs_confirmation), fees=[object()] * fees)
+
+
+def test_a_code_with_several_fees_is_not_clean():
+    """Approve-all would bill the first fee: the physician picks one in the review."""
+    ready = {"service_date": date(2026, 3, 4), "possible_duplicate": False}
+    assert is_all_clean(EncounterStatus.PRET, _extraction(_code(fees=1), _code(fees=0)), **ready)
+    assert not is_all_clean(EncounterStatus.PRET, _extraction(_code(fees=1), _code(fees=2)), **ready)
