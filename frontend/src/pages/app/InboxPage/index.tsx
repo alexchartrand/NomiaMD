@@ -167,11 +167,16 @@ export default function InboxPage() {
               {group.batches.map((batch) => (
                 <div key={batch.label ?? ""}>
                   {batch.label !== null && <h3 className="mb-1 text-sm font-semibold text-muted-foreground">{batch.label}</h3>}
-                  <Table>
+                  <Table className="min-w-[760px] table-fixed">
+                    <colgroup>
+                      {ENCOUNTER_COLUMNS.map((column, i) => (
+                        <col key={i} className={column.width} />
+                      ))}
+                    </colgroup>
                     <TableHeader>
                       <TableRow>
-                        {ENCOUNTER_COLUMNS.map((column) => (
-                          <TableHead key={column}>{column}</TableHead>
+                        {ENCOUNTER_COLUMNS.map((column, i) => (
+                          <TableHead key={i}>{column.label}</TableHead>
                         ))}
                       </TableRow>
                     </TableHeader>

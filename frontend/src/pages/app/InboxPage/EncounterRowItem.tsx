@@ -6,7 +6,16 @@ import { formatClinicTime } from "../../../utils/date";
 import { AssociatePatient } from "./AssociatePatient";
 import { DuplicateBadge, StatusChip } from "./StatusChip";
 
-export const ENCOUNTER_COLUMNS = ["Reçue", "Patient", "Source", "Codes", "Statut", ""] as const;
+// Fixed widths, so every day's (and shift's) table lines up with the others whatever its
+// rows contain — e.g. whether any row shows an "Extraire" button.
+export const ENCOUNTER_COLUMNS = [
+  { label: "Reçue", width: "w-[10%]" },
+  { label: "Patient", width: "w-[20%]" },
+  { label: "Source", width: "w-[14%]" },
+  { label: "Codes", width: "w-[8%]" },
+  { label: "Statut", width: "w-[20%]" },
+  { label: "", width: "w-[28%]" },
+] as const;
 
 interface EncounterRowItemProps {
   row: EncounterRow;
@@ -47,7 +56,7 @@ export function EncounterRowItem({ row, onChanged, onOpenDuplicate }: EncounterR
     <Fragment>
       <TableRow>
         <TableCell className="text-muted-foreground">{formatClinicTime(row.received_at)}</TableCell>
-        <TableCell>
+        <TableCell className="truncate">
           {row.patient ? (
             <>
               <span className="font-semibold">{row.patient.display_name}</span>
@@ -57,7 +66,7 @@ export function EncounterRowItem({ row, onChanged, onOpenDuplicate }: EncounterR
             <span className="text-muted-foreground">—</span>
           )}
         </TableCell>
-        <TableCell className="text-sm">{row.source_system}</TableCell>
+        <TableCell className="truncate text-sm">{row.source_system}</TableCell>
         <TableCell>{row.code_count ?? "—"}</TableCell>
         <TableCell>
           <div className="flex flex-wrap items-center gap-1.5">
