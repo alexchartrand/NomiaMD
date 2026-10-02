@@ -481,3 +481,86 @@ async def test_same_run_racing_past_the_pre_check_is_409_not_500(monkeypatch):
     assert first.status_code == 201
     assert second.status_code == 409
     assert second.json()["detail"]["code"] == "duplicate_claim"
+
+
+# --- PUT /claims/{id}: a changed review of a draft ------------------------------------------
+
+
+def _live_claim_ids(client: TestClient, patient: Patient) -> list[int]:
+    return [claim["id"] for claim in client.get("/claims", params={"patient_id": patient.id}).json()]
+
+
+async def test_replacing_a_draft_voids_it_and_saves_the_new_selection():
+    with TestClient(app) as client:
+        patient, run = await _seed_patient_and_run()
+        first = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
+
+        response = client.put(
+            f"/claims/{first['id']}",
+            json={
+                "extraction_run_id": run.id,
+                "service_date": "2026-02-11",
+                "selected_codes": [{"code": "TEST-BP-MGMT"}, {"code": "TEST-BLOODWORK-ORDER"}],
+            },
+        )
+
+        assert response.status_code == 200
+        replaced = response.json()
+        assert replaced["id"] != first["id"]
+        assert [c["code"] for c in replaced["codes"]] == ["TEST-BP-MGMT", "TEST-BLOODWORK-ORDER"]
+        assert replaced["service_date"] == "2026-02-11"
+        live = _live_claim_ids(client, patient)
+        assert replaced["id"] in live
+        assert first["id"] not in live
+    async with session_scope() as session:
+        assert (await session.get(Claim, first["id"])).voided_at is not None
+
+
+async def test_a_refused_replacement_leaves_the_draft_live():
+    with TestClient(app) as client:
+        patient, run = await _seed_patient_and_run()
+        first = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
+
+        response = client.put(
+            f"/claims/{first['id']}",
+            json={"extraction_run_id": run.id, "service_date": "2026-02-10", "selected_codes": []},
+        )
+
+        assert response.status_code == 422
+        assert first["id"] in _live_claim_ids(client, patient)
+
+
+async def test_replacing_a_claim_on_a_bill_is_409():
+    with TestClient(app) as client:
+        patient, run = await _seed_patient_and_run()
+        created = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
+        client.post(
+            "/bills",
+            json={"start_date": "2026-02-01", "end_date": "2026-02-28", "claim_ids": [created["id"]]},
+        )
+
+        response = client.put(f"/claims/{created['id']}", json=_valid_payload(extraction_run_id=run.id))
+
+        assert response.status_code == 409
+        assert created["id"] in _live_claim_ids(client, patient)
+
+
+async def test_replacing_from_another_encounters_run_is_422():
+    with TestClient(app) as client:
+        patient, run = await _seed_patient_and_run()
+        other_run = await _seed_run(patient.id)
+        created = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
+
+        response = client.put(f"/claims/{created['id']}", json=_valid_payload(extraction_run_id=other_run.id))
+
+        assert response.status_code == 422
+        assert created["id"] in _live_claim_ids(client, patient)
+
+
+async def test_replacing_an_unknown_claim_is_404():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+
+        response = client.put("/claims/999999", json=_valid_payload(extraction_run_id=run.id))
+
+    assert response.status_code == 404

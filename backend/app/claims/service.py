@@ -9,6 +9,8 @@ from app.claims.candidates import ExtractionCandidates, StoredCandidate
 from app.claims.context import ClaimContextSnapshotter
 from app.claims.duplicates import EXTRACTION_ALREADY_CLAIMED, ClaimDuplicateGuard
 from app.claims.errors import (
+    ClaimEncounterMismatchError,
+    ClaimNotFoundError,
     ClaimOnBillError,
     DuplicateClaimError,
     DuplicateEncounterClaimError,
@@ -109,6 +111,43 @@ class ClaimService:
             raise DuplicateClaimError(EXTRACTION_ALREADY_CLAIMED) from exc
 
         return ClaimMapper.to_out(created.claim, patient.full_name, created.codes)
+
+    async def replace(
+        self,
+        *,
+        claim_id: int,
+        physician: User,
+        extraction_run_id: int,
+        service_date: date,
+        selected_codes: list[SelectedCode],
+        confirm_duplicate: bool,
+    ) -> ClaimOut:
+        """The physician changed their review of a draft: void it and save the new selection
+        in its place, from the same encounter's latest run (or any of its runs). Nothing is
+        edited in place, so the voided claim keeps what was first saved. Both happen in the
+        request's session: if the new claim is refused, the old one is left live."""
+        claim = await self._claim_repository.get_for_physician(claim_id, physician.id)
+        if claim is None:
+            raise ClaimNotFoundError()
+        if not ClaimLifecycle.can_be_voided(claim):
+            raise ClaimOnBillError()
+        new_run = await self._owned_run(extraction_run_id, physician.id)
+        old_run = (
+            await self._extraction_repository.get_run_for_user(claim.extraction_run_id, physician.id)
+            if claim.extraction_run_id is not None
+            else None
+        )
+        if old_run is None or old_run.encounter_id != new_run.encounter_id:
+            raise ClaimEncounterMismatchError()
+
+        await self._claim_repository.void(claim)
+        return await self.create(
+            physician=physician,
+            extraction_run_id=extraction_run_id,
+            service_date=service_date,
+            selected_codes=selected_codes,
+            confirm_duplicate=confirm_duplicate,
+        )
 
     @staticmethod
     def _dedupe(selected_codes: list[SelectedCode]) -> list[SelectedCode]:

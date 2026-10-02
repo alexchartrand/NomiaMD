@@ -64,15 +64,25 @@ export interface ClaimFilters {
 export class DuplicateClaimError extends Error {}
 
 export async function createClaim(payload: ClaimInput, confirmDuplicate = false): Promise<Claim> {
-  const response = await fetch(`/api/claims?confirm_duplicate=${confirmDuplicate}`, {
-    method: "POST",
+  return sendClaim("/api/claims", "POST", payload, confirmDuplicate);
+}
+
+// A changed review of a draft: the server voids `id` and returns the claim saved in its place
+// (a new id). Refused (409) once the claim is on a bill.
+export async function replaceClaim(id: number, payload: ClaimInput, confirmDuplicate = false): Promise<Claim> {
+  return sendClaim(`/api/claims/${id}`, "PUT", payload, confirmDuplicate);
+}
+
+async function sendClaim(url: string, method: "POST" | "PUT", payload: ClaimInput, confirmDuplicate: boolean): Promise<Claim> {
+  const response = await fetch(`${url}?confirm_duplicate=${confirmDuplicate}`, {
+    method,
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
   // Only a "duplicate_claim" 409 is a warning the physician may override; another 409 (an
-  // encounter confirmed as another's duplicate) is a plain refusal.
+  // encounter confirmed as another's duplicate, a claim already on a bill) is a plain refusal.
   if (response.status === 409) {
     const body = await response.json().catch(() => null);
     const detail = (body as { detail?: { code?: unknown; message?: unknown } } | null)?.detail;

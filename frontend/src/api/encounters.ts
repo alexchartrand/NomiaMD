@@ -1,4 +1,5 @@
 import { unwrap, unwrapVoid } from "./http";
+import type { Claim } from "./claims";
 import type { BillingExtractionResponse } from "./extraction";
 
 // Kept in sync by hand with app/intake/status.py's EncounterStatus. Derived server-side,
@@ -31,8 +32,10 @@ export interface EncounterRow {
   batch_label: string | null;
   service_date: string | null; // ISO date (YYYY-MM-DD)
   received_at: string;
-  // Codes in the latest run, and that run (what POST /claims takes); null when never extracted.
+  // The codes billed on its live claim once there is one (status "revu"), else the codes the
+  // latest run proposes; null when never extracted.
   code_count: number | null;
+  // The latest run (what POST /claims takes); null when never extracted.
   extraction_run_id: number | null;
   // "Doublon possible": the other encounters this may be the same visit as, until the
   // physician answers (confirmDuplicate / dismissDuplicate below).
@@ -59,6 +62,8 @@ export interface EncounterDetail {
   note_text: string;
   extraction_error: string | null;
   extraction: BillingExtractionResponse | null;
+  // The live claim saved from one of its runs: the codes the physician selected.
+  claim: Claim | null;
 }
 
 // Service dates from `date_from` through `date_to`, both included (YYYY-MM-DD); either may

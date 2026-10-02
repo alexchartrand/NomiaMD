@@ -346,6 +346,31 @@ async def test_a_reviewed_encounter_is_never_all_clean(me, client):
     assert row["all_clean"] is False
 
 
+async def test_a_reviewed_encounter_shows_the_codes_billed_not_the_codes_proposed(me, client):
+    patient = await _seed_patient()
+    encounter_id = _push(client, patient)  # proposes two codes
+    run_id = _row(client, encounter_id)["extraction_run_id"]
+    assert _row(client, encounter_id)["code_count"] == 2
+
+    claim = client.post(
+        "/claims",
+        json={"extraction_run_id": run_id, "service_date": "2026-03-04", "selected_codes": [{"code": "TEST-BP-MGMT"}]},
+    )
+
+    assert claim.status_code == 201
+    assert _row(client, encounter_id)["code_count"] == 1
+    detail = client.get(f"/encounters/{encounter_id}").json()
+    assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BP-MGMT"]
+    assert len(detail["extraction"]["billing"]["result"]["codes"]) == 2
+
+
+async def test_an_encounter_without_a_claim_has_none(me, client):
+    patient = await _seed_patient()
+    encounter_id = _push(client, patient)
+
+    assert client.get(f"/encounters/{encounter_id}").json()["claim"] is None
+
+
 async def test_list_a_range_of_days(me, client):
     """A physician who bills at the end of the week reads several days at once."""
     patient = await _seed_patient()

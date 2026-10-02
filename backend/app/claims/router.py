@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -6,6 +8,8 @@ from app.auth import get_current_user
 from app.claims.factory import get_claim_service
 from app.claims.models import ClaimCreate, ClaimOut
 from app.claims.errors import (
+    ClaimEncounterMismatchError,
+    ClaimNotFoundError,
     ClaimOnBillError,
     DuplicateClaimError,
     DuplicateEncounterClaimError,
@@ -29,7 +33,7 @@ async def create_claim(
     current_user: User = Depends(get_current_user),
     service: ClaimService = Depends(get_claim_service),
 ) -> ClaimOut:
-    try:
+    with _claim_errors():
         return await service.create(
             physician=current_user,
             extraction_run_id=body.extraction_run_id,
@@ -37,6 +41,45 @@ async def create_claim(
             selected_codes=body.selected_codes,
             confirm_duplicate=confirm_duplicate,
         )
+
+
+@router.put("/{claim_id}", response_model=ClaimOut)
+async def replace_claim(
+    claim_id: int,
+    body: ClaimCreate,
+    confirm_duplicate: bool = False,
+    current_user: User = Depends(get_current_user),
+    service: ClaimService = Depends(get_claim_service),
+) -> ClaimOut:
+    """A changed review of a draft: voids it and returns the claim saved in its place."""
+    with _claim_errors():
+        try:
+            return await service.replace(
+                claim_id=claim_id,
+                physician=current_user,
+                extraction_run_id=body.extraction_run_id,
+                service_date=body.service_date,
+                selected_codes=body.selected_codes,
+                confirm_duplicate=confirm_duplicate,
+            )
+        except ClaimNotFoundError as exc:
+            raise HTTPException(status_code=404, detail="Facturation introuvable") from exc
+        except ClaimOnBillError as exc:
+            raise HTTPException(
+                status_code=409,
+                detail="Cette facturation fait partie d'une facture générée. Supprimez d'abord la facture.",
+            ) from exc
+        except ClaimEncounterMismatchError as exc:
+            raise HTTPException(
+                status_code=422, detail="Cette extraction ne provient pas de la même rencontre"
+            ) from exc
+
+
+@contextmanager
+def _claim_errors() -> Iterator[None]:
+    """What saving a claim can be refused for, shared by create and replace."""
+    try:
+        yield
     except PatientNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Patient introuvable") from exc
     except ExtractionRunNotFoundError as exc:

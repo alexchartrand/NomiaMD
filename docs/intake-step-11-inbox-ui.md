@@ -92,3 +92,10 @@ one-click path for clean items.
   `pages/app/review/`, with the save logic in `useCodeReview`. `ExtractionPage` and the
   frontend's sample picker are gone; `POST /extract` and `/sample-patients` stay on the
   backend (scripts use the former).
+- **Reviewing a billed encounter again** (10/2): the inbox's code count is the live claim's
+  codes once there is one (`ClaimRepository.live_for_encounters`), and the encounter detail
+  carries that `claim`. The review page re-opens with the proposed codes, the claimed ones
+  (and their fee and service date) ticked. A *brouillon* claim stays editable: saving calls
+  `PUT /claims/{id}`, which voids it and saves the new selection from a run of the same
+  encounter in one transaction (refused on a bill, 409; another encounter's run, 422). A
+  *soumis* claim, a confirmed duplicate or a superseded note is read-only.

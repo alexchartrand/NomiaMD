@@ -41,3 +41,11 @@ class DuplicateEncounterClaimError(Exception):
 
 class ClaimOnBillError(Exception):
     pass
+
+
+class ClaimNotFoundError(Exception):
+    pass
+
+
+class ClaimEncounterMismatchError(Exception):
+    """A claim can only be replaced by one from a run of the same encounter."""

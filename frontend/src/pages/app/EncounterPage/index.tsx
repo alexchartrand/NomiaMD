@@ -13,7 +13,9 @@ function readOnlyReason(encounter: EncounterDetail): string | null {
   if (encounter.duplicate_of_id !== null) {
     return "Cette rencontre a été marquée comme doublon d'une autre visite : elle n'est pas facturée.";
   }
-  if (encounter.status === "revu") return "Cette rencontre a déjà été facturée.";
+  if (encounter.claim?.status === "soumis") {
+    return "Cette facturation fait partie d'une facture générée : supprimez d'abord la facture pour la modifier.";
+  }
   if (encounter.status === "modifié") return "Une version plus récente de cette note a été reçue.";
   return null;
 }
@@ -27,6 +29,7 @@ export default function EncounterPage() {
   const [encounter, setEncounter] = useState<EncounterDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [extracting, setExtracting] = useState(false);
+  const [savedNotice, setSavedNotice] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -42,7 +45,12 @@ export default function EncounterPage() {
   }, [load]);
 
   const readOnly = encounter ? readOnlyReason(encounter) : null;
-  const review = useCodeReview(encounter?.extraction ?? null, readOnly !== null);
+  // A saved claim (first save or a draft's changes) changes the status and the claim the
+  // review starts from, so reload rather than keep the stale encounter.
+  const review = useCodeReview(encounter?.extraction ?? null, readOnly !== null, encounter?.claim ?? null, () => {
+    setSavedNotice(true);
+    void load();
+  });
 
   async function handleExtract() {
     setExtracting(true);
@@ -113,6 +121,16 @@ export default function EncounterPage() {
           )}
 
           {readOnly && <Banner tone="warning">{readOnly}</Banner>}
+          {!readOnly && encounter.claim && !savedNotice && (
+            <p className="m-0 text-sm text-muted-foreground">
+              Facturation enregistrée (brouillon). Vos modifications remplaceront la facturation existante.
+            </p>
+          )}
+          {savedNotice && (
+            <Banner tone="success">
+              Facturation enregistrée. <Link to="/app/facturation">Voir la facturation</Link>
+            </Banner>
+          )}
           {encounter.extraction && encounter.patient && (
             <ReviewStep result={encounter.extraction} patient={encounter.patient} review={review} />
           )}

@@ -32,6 +32,7 @@ export function ReviewStep({ result, patient, review }: ReviewStepProps) {
             type="date"
             className="w-auto"
             value={state.serviceDate}
+            disabled={review.readOnly}
             onChange={(e) => review.changeServiceDate(e.target.value)}
           />
           {!result.encounter_date && result.encounter_date_raw && (
@@ -47,6 +48,7 @@ export function ReviewStep({ result, patient, review }: ReviewStepProps) {
           onToggle={review.toggleCode}
           feeSelection={state.feeSelection}
           onFeeSelected={review.selectFee}
+          disabled={review.readOnly}
         />
 
         <SaveSummary
@@ -56,6 +58,8 @@ export function ReviewStep({ result, patient, review }: ReviewStepProps) {
           saveError={state.saveError}
           saved={state.saved}
           canSave={review.canSave}
+          editing={review.editing}
+          readOnly={review.readOnly}
           onSave={review.save}
         />
       </CardContent>
