@@ -42,7 +42,7 @@ export function InboxPreview() {
       <ul className="m-0 list-none p-0">
         {ENCOUNTERS.map((encounter) => (
           <li key={encounter.time} className="flex items-start gap-3 border-t border-border py-3">
-            <span className="w-12 shrink-0 pt-0.5 font-mono text-[0.75rem] text-muted-foreground">{encounter.time}</span>
+            <span className="w-14 shrink-0 whitespace-nowrap pt-0.5 font-mono text-[0.75rem] text-muted-foreground">{encounter.time}</span>
             <div className="min-w-0 flex-1">
               <div className="text-[0.88rem] font-semibold text-foreground">
                 {encounter.patient} <span className="font-normal text-muted-foreground">· {encounter.label}</span>
