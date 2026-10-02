@@ -32,7 +32,7 @@ export function Logo({ size = 32, className }: LogoProps) {
     <span className={cn("inline-flex items-center gap-[0.6rem]", className)}>
       <Mark size={size} />
       <span
-        className="inline-flex items-baseline font-heading leading-none tracking-[-0.03em]"
+        className="inline-flex items-baseline font-logo leading-none tracking-[-0.03em]"
         style={{ fontSize: size * 0.85 }}
       >
         <span className="font-[650] text-foreground">Nomia</span>
