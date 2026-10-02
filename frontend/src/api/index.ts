@@ -7,3 +7,4 @@ export * from "./chatbot";
 export * from "./auth";
 export * from "./encounters";
 export * from "./intake";
+export * from "./contact";
