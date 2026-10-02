@@ -8,6 +8,7 @@ from app.auth import auth_router
 from app.bills import bills_router
 from app.bootstrap import application_services
 from app.claims import claims_router
+from app.contact import contact_router
 from app.config import settings
 from app.encounters import encounters_router
 from app.encounters.factory import build_intake_service
@@ -39,6 +40,7 @@ app.add_middleware(RequestLoggingMiddleware)
 app.include_router(auth_router)
 app.include_router(bills_router)
 app.include_router(claims_router)
+app.include_router(contact_router)
 app.include_router(encounters_router)
 app.include_router(extraction_router)
 app.include_router(intake_router)

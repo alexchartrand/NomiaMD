@@ -462,3 +462,39 @@ class ClaimCode(CreatedAtMixin, Base):
     # The RAMQ manual revision the candidate came from — not carried by extraction results
     # yet (see BACKLOG.md's manual_rev item), so NULL until it is.
     manual_rev: Mapped[str | None] = mapped_column(String(32), nullable=True)
+
+
+class ContactRole(str, enum.Enum):
+    PHYSICIAN = "medecin"
+    CLINIC_MANAGER = "gestionnaire"
+    PARTNER = "partenaire"
+    OTHER = "autre"
+
+
+class ContactTopic(str, enum.Enum):
+    DEMO = "demo"
+    TRIAL = "essai"
+    PRICING = "tarifs"
+    PARTNERSHIP = "partenariat"
+    OTHER = "autre"
+
+
+class ContactRequest(CreatedAtMixin, Base):
+    """A message sent from the public site's contact form (POST /contact) — a prospect, not a
+    user, so no foreign key to anything. Submitting the form requires ticking the Law 25
+    consent box; `consent_at` records when that happened (always the row's own creation
+    time today, kept separate so a later consent-withdrawal flow has somewhere to write)."""
+
+    __tablename__ = "contact_requests"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120))
+    email: Mapped[str] = mapped_column(String(255))
+    phone: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    organization: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    role: Mapped[ContactRole] = mapped_column(Enum(ContactRole))
+    physician_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    topic: Mapped[ContactTopic] = mapped_column(Enum(ContactTopic))
+    plan: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    consent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

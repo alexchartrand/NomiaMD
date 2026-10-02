@@ -84,5 +84,32 @@ class Settings:
         auth by default, and the OpenAI client needs some non-empty value."""
         return os.environ.get("EMBEDDING_API_KEY") or "unused"
 
+    @property
+    def smtp_host(self) -> str | None:
+        """Outgoing mail for contact-form notifications (app/contact/notifier.py). Unset =
+        notifications are only logged."""
+        return os.environ.get("SMTP_HOST") or None
+
+    @property
+    def smtp_port(self) -> int:
+        return int(os.environ.get("SMTP_PORT", 587))
+
+    @property
+    def smtp_username(self) -> str | None:
+        return os.environ.get("SMTP_USERNAME") or None
+
+    @property
+    def smtp_password(self) -> str | None:
+        return os.environ.get("SMTP_PASSWORD") or None
+
+    @property
+    def smtp_from(self) -> str | None:
+        return os.environ.get("SMTP_FROM") or self.smtp_username
+
+    @property
+    def contact_notify_email(self) -> str | None:
+        """Where a new contact-form request is announced."""
+        return os.environ.get("CONTACT_NOTIFY_EMAIL") or None
+
 
 settings = Settings()
