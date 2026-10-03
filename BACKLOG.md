@@ -10,6 +10,12 @@
 
 ## 🐛 Bugs
 
+- [ ] 🔴 The public site is behind the IP allowlist — *added 10/2, from the public-site work*
+  - `frontend/nginx.conf` applies `include allowed_ips.conf; deny all;` to the whole server, so the landing, pricing, contact, security and privacy pages (and `POST /api/contact`) are 403 for any clinic or partner opening the link. Before emailing prospects, scope the allowlist to `/app`, `/login` and the authenticated `/api/*` routes, and let `/`, `/prix`, `/contact`, `/securite`, `/confidentialite`, static assets and `/api/contact` through. Also check that `allow` sees the real client: nginx's `$remote_addr` is Caddy's container address unless `set_real_ip_from`/`real_ip_header` are configured.
+
+- [ ] 🟡 Rate limits see every visitor as Caddy — *added 10/2, from the public-site work*
+  - Caddy → nginx → backend: uvicorn trusts `X-Forwarded-For` only from nginx (`--forwarded-allow-ips=172.28.0.10`), so the rightmost untrusted hop, Caddy, becomes `request.client.host`. slowapi keys on it, so `/contact`'s 5/hour, `/auth/login`'s 10/minute, `/extract` and `/query` are shared by all users at once. Fix: give `caddy` a static address on `internal` and add it to `--forwarded-allow-ips` (or set `trusted_proxies` in Caddy and have nginx forward the real IP).
+
 - [ ] 🟢 The test suite can't run against Postgres as-is — *added 9/30, from the schema batch*
   - `tests/db_helpers.py`'s `ensure_user_row` inserts users with explicit ids (1, 99, 2000…), which on Postgres doesn't advance `users_id_seq`, so the next autoincremented user (`test_auth.py`'s `_create_user`) collides on `users_pkey`. Only failure when conftest's `postgres_db` is pointed at Postgres. Fix: `setval` the sequence after seeding, or stop using fixed ids. Worth a `TEST_DATABASE_URL` switch in conftest once it passes — SQLite doesn't enforce `String(n)` lengths, which hid a too-short `claim_codes.code`.
 
@@ -60,6 +66,12 @@
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
 ## ✨ Features
+
+- [ ] 🟡 Enforce the free plan's 1 extraction per day — *added 10/2, from the public-site work*
+  - The pricing page (`frontend/src/site/pricing.ts`) advertises a Gratuit plan limited to 1 extraction per day, but nothing enforces it. Needs a plan on `User` (or a dated plan history, like practice facts) and a daily quota check on `POST /extract` and in the extraction worker, counted per physician over the Montreal day (`Clock`), with a clear message in the app when the limit is reached.
+
+- [ ] 🟢 Contact requests have no admin screen — *added 10/2, from the public-site work*
+  - `POST /contact` saves to `contact_requests` and emails `CONTACT_NOTIFY_EMAIL` when SMTP is configured; otherwise requests are only in the DB. A small admin-only list (and a retention purge, per the privacy policy) would follow.
 
 - [ ] 🟢 Paginate the inbox for long periods — *added 10/1, from the step 11 period filter*
   - `GET /encounters` with no bounds ("Tout") loads every encounter, its latest run's results and its patient in one response, and the duplicate flagging is O(n²) over them. Fine for weeks of notes; for a year of them, add a limit/cursor (and keep "Tout" paged) or cap the preset.

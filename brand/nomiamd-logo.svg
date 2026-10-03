@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 6 88 88">
-  <defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.00 6.00 88.00 88.00" width="88" height="88">
+<defs>
     <linearGradient id="tile" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="94" y2="94">
       <stop offset="0" stop-color="#3f7382" />
       <stop offset="1" stop-color="#123e49" />

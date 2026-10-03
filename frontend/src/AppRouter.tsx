@@ -3,6 +3,9 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
+import Security from "./pages/Security";
+import Privacy from "./pages/Privacy";
+import SiteLayout from "./pages/site/SiteLayout";
 import AppLayout from "./pages/app/AppLayout";
 import InboxPage from "./pages/app/InboxPage";
 import EncounterPage from "./pages/app/EncounterPage";
@@ -16,10 +19,14 @@ import { RequireAuth } from "./AuthContext";
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      <Route element={<SiteLayout />}>
+        <Route path="/" element={<Landing />} />
+        <Route path="/prix" element={<Pricing />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/securite" element={<Security />} />
+        <Route path="/confidentialite" element={<Privacy />} />
+      </Route>
       <Route path="/login" element={<Login />} />
-      <Route path="/prix" element={<Pricing />} />
-      <Route path="/contact" element={<Contact />} />
       <Route
         path="/app"
         element={
