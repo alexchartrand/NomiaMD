@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.00 6.00 88.00 88.00" width="88" height="88">
+<defs>
+    <linearGradient id="tile" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="94" y2="94">
+      <stop offset="0" stop-color="#3f7382" />
+      <stop offset="1" stop-color="#123e49" />
+    </linearGradient>
+    <linearGradient id="letter" gradientUnits="userSpaceOnUse" x1="28.6" y1="0" x2="71.4" y2="0">
+      <stop offset="0" stop-color="#f2efe7" />
+      <stop offset="0.261" stop-color="#f4eee7" />
+      <stop offset="0.356" stop-color="#f3e2ce" />
+      <stop offset="0.451" stop-color="#f1d6b4" />
+      <stop offset="0.546" stop-color="#efc99a" />
+      <stop offset="0.641" stop-color="#edbd7e" />
+      <stop offset="0.736" stop-color="#ebb061" />
+      <stop offset="0.831" stop-color="#e8a33d" />
+    </linearGradient>
+    <linearGradient id="fold" gradientUnits="userSpaceOnUse" x1="32.49" y1="27" x2="67.91" y2="73">
+      <stop offset="0" stop-color="#000" stop-opacity="0" />
+      <stop offset="0.55" stop-color="#000" stop-opacity="0" />
+      <stop offset="1" stop-color="#000" stop-opacity="0.28" />
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="88" height="88" rx="24" fill="url(#tile)" />
+  <path d="M28.6 73 28.6 27 43.73 27 60.11 58.15 60.25 58.15 60.25 27 71.4 27 71.4 73 57.18 73 39.89 40.8 39.75 40.8 39.75 73Z" fill="url(#letter)" />
+  <path d="M32.49 27 43.73 27 60.11 58.15 67.91 73 57.18 73 39.89 40.8Z" fill="url(#fold)" />
+</svg>
