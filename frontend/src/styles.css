@@ -12,10 +12,14 @@
 
 @custom-variant dark (&:is([data-theme="dark"] *));
 
+/* Wordmark only (Logo.tsx). A Latin subset of Google Fonts' variable Bricolage Grotesque, cut to
+   wght 600–800 with the full wdth axis (the wordmark is set at 80–86 % width) and opsz pinned at
+   32, the size it is shown at. */
 @font-face {
   font-family: "Bricolage Grotesque";
   font-style: normal;
-  font-weight: 200 800;
+  font-weight: 600 800;
+  font-stretch: 75% 100%;
   font-display: swap;
   src: url("/fonts/bricolage-grotesque.woff2") format("woff2");
 }
@@ -40,6 +44,8 @@
      purpose (subtle hover/highlight states) — sharing the name would silently make every
      shadcn accent-state utility render this decorative gold instead. */
   --color-brand-accent: #e8a33d;
+  /* Ink on the gold "MD" block of the wordmark: the same in both themes, since the block is gold in both. */
+  --color-brand-ink: #123e49;
   --color-border: rgba(18, 35, 44, 0.16);
   --color-danger: #d98f86;
   --color-danger-bg: rgba(217, 143, 134, 0.16);
