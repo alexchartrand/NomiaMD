@@ -12,7 +12,7 @@ const FEATURES = [
   {
     icon: InboxIcon,
     title: "Boîte de réception quotidienne",
-    body: "Toutes vos rencontres de la journée au même endroit, avec leur statut et les codes proposés.",
+    body: "Toutes vos rencontres de la journée au même endroit, avec leur statut et les codes de facturation proposés.",
   },
   {
     icon: ShieldCheckIcon,
@@ -22,7 +22,7 @@ const FEATURES = [
   {
     icon: ReceiptIcon,
     title: "Tarifs calculés automatiquement",
-    body: "Chaque code est accompagné de son tarif officiel, selon le lieu et le contexte de la visite.",
+    body: "Chaque code de facturation est accompagné de son tarif officiel, selon le lieu et le contexte de la visite.",
   },
   {
     icon: CopyIcon,

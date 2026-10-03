@@ -21,7 +21,7 @@ export function PageHeader({ tagline, nav, actions, logoSize = 30 }: PageHeaderP
         <nav
           className={cn(
             "flex flex-1 justify-center gap-8 max-[700px]:hidden",
-            "[&_a]:text-sm [&_a]:font-semibold [&_a]:text-muted-foreground [&_a]:no-underline [&_a:hover]:text-primary",
+            "[&_a]:text-base [&_a]:font-semibold [&_a]:text-muted-foreground [&_a]:no-underline [&_a:hover]:text-primary",
           )}
         >
           {nav}

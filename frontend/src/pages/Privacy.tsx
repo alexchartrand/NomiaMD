@@ -26,7 +26,7 @@ export default function Privacy() {
 
       <ProseSection title="Qui sommes-nous">
         <p className="m-0">
-          {SITE.name} offre aux médecins de famille du Québec un logiciel qui suggère les codes de facturation RAMQ
+          {SITE.name} offre aux médecins du Québec un logiciel qui suggère les codes de facturation RAMQ
           à partir de leurs notes de consultation. Cette politique explique quels renseignements personnels nous
           recueillons, pourquoi, et comment nous les protégeons, conformément à la <em>Loi sur la protection des
           renseignements personnels dans le secteur privé</em> (Loi 25).

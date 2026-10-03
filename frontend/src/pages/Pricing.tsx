@@ -9,14 +9,14 @@ import { FaqList } from "./site/FaqList";
 import { Section, SectionHeading } from "./site/Section";
 
 export default function Pricing() {
-  useDocumentTitle("Tarification");
+  useDocumentTitle("Tarifs");
   return (
     <>
       <Section className="pb-12 min-[801px]:pb-14">
         <SectionHeading
           as="h1"
           align="center"
-          eyebrow="Tarification"
+          eyebrow="Tarifs"
           title="Un forfait pour chaque pratique"
           lead="Commencez gratuitement, passez à un forfait payant quand NomiaMD fait partie de votre routine."
         />
@@ -54,7 +54,7 @@ function PlanCard({ plan }: { plan: Plan }) {
     <div
       className={cn(
         "relative flex flex-col rounded-2xl border bg-card p-7",
-        plan.highlighted ? "border-primary shadow-[0_24px_50px_-24px_rgba(18,35,44,0.35)]" : "border-border",
+        plan.highlighted ? "border-primary shadow-floating" : "border-border",
       )}
     >
       {plan.highlighted && (

@@ -6,12 +6,12 @@ const STEPS = [
     body: "Copiez-collez ou téléversez vos notes de consultation signées. Les intégrations directes avec les DMÉ et les scribes IA utilisés au Québec sont en développement.",
   },
   {
-    title: "NomiaMD trouve les codes",
-    body: "L'IA repère les actes facturables dans la note et les associe aux codes du manuel des omnipraticiens de la RAMQ.",
+    title: "NomiaMD trouve les codes de facturation",
+    body: "L'IA repère les actes facturables dans la note et les associe aux codes de facturation du manuel des omnipraticiens de la RAMQ.",
   },
   {
     title: "Les règles sont vérifiées",
-    body: "L'admissibilité de chaque code est vérifiée à partir de votre profil de pratique et du dossier du patient, et le tarif est calculé.",
+    body: "L'admissibilité de chaque code de facturation est vérifiée à partir de votre profil de pratique et du dossier du patient, et le tarif est calculé.",
   },
   {
     title: "Votre facture est prête",

@@ -4,7 +4,7 @@ import { Section, SectionHeading } from "../site/Section";
 const BENEFITS = [
   {
     icon: CircleDollarSignIcon,
-    problem: "Des codes oubliés",
+    problem: "Des codes de facturation oubliés",
     title: "Facturez tout ce que vous faites",
     body: "Suppléments, majorations, visites de prise en charge : NomiaMD repère dans votre note les actes facturables que l'on oublie facilement en fin de journée.",
   },
@@ -18,20 +18,20 @@ const BENEFITS = [
     icon: MoonIcon,
     problem: "La facturation le soir",
     title: "Quelques minutes par jour",
-    body: "Vos rencontres de la journée sont prêtes à facturer dans une seule boîte de réception. Fini les soirées passées à chercher le bon code.",
+    body: "Vos rencontres de la journée sont prêtes à facturer dans une seule boîte de réception. Fini les soirées passées à chercher le bon code de facturation.",
   },
 ];
 
 export function Benefits() {
   return (
-    <Section>
+    <Section className="pt-0 min-[801px]:pt-0">
       <SectionHeading
         eyebrow="Pourquoi NomiaMD"
         title="Moins de temps sur la facturation, plus de temps pour vos patients"
       />
       <div className="grid grid-cols-1 gap-6 min-[801px]:grid-cols-3">
         {BENEFITS.map((benefit) => (
-          <div key={benefit.title} className="rounded-2xl border border-border bg-card p-6">
+          <div key={benefit.title} className="rounded-2xl border border-border bg-card p-6 shadow-floating">
             <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-[color:var(--color-primary-tint)] text-primary">
               <benefit.icon className="size-5" aria-hidden="true" />
             </div>

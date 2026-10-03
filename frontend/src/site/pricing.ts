@@ -22,9 +22,9 @@ export const PLANS: Plan[] = [
     price: "0 $",
     unit: "pour toujours",
     features: [
-      "1 extraction de codes par jour",
+      "Codes de facturation pour 1 note par jour",
       "1 médecin",
-      "Codes RAMQ suggérés avec tarifs",
+      "Codes de facturation RAMQ suggérés avec tarifs",
       "Assistant RAMQ",
     ],
     cta: { label: "Essayer gratuitement", to: contactLink("essai", "gratuit") },
@@ -32,11 +32,11 @@ export const PLANS: Plan[] = [
   {
     id: "solo",
     name: "Solo",
-    audience: "Pour le médecin de famille qui facture lui-même.",
+    audience: "Pour le médecin qui facture lui-même.",
     price: "200 $",
     unit: "par mois",
     features: [
-      "Extractions illimitées",
+      "Codes de facturation pour un nombre illimité de notes",
       "1 médecin",
       "Boîte de réception quotidienne",
       "Factures regroupées et PDF",
@@ -63,7 +63,7 @@ export const PLANS: Plan[] = [
 ];
 
 export const INCLUDED_IN_ALL_PLANS = [
-  "Codes du manuel des omnipraticiens de la RAMQ, tenus à jour",
+  "Codes de facturation du manuel des omnipraticiens de la RAMQ, tenus à jour",
   "Admissibilité vérifiée selon votre profil et le dossier du patient",
   "Hébergement des données au Canada",
   "Aucun engagement à long terme",
@@ -77,7 +77,7 @@ export const PRICING_FAQ = [
   {
     question: "Que se passe-t-il une fois la limite quotidienne du forfait gratuit atteinte ?",
     answer:
-      "Vous pourrez extraire les codes d'une nouvelle note le lendemain. Vous pouvez passer au forfait Solo en tout temps pour des extractions illimitées.",
+      "Vous pourrez obtenir les codes de facturation d'une nouvelle note le lendemain. Vous pouvez passer au forfait Solo en tout temps pour un nombre illimité de notes.",
   },
   {
     question: "Comment suis-je facturé ?",

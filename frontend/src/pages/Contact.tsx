@@ -16,7 +16,7 @@ import { Section, SectionHeading } from "./site/Section";
 const TOPICS: { value: ContactTopic; label: string }[] = [
   { value: "demo", label: "Demander une démo" },
   { value: "essai", label: "Essayer gratuitement" },
-  { value: "tarifs", label: "Tarification" },
+  { value: "tarifs", label: "Tarifs" },
   { value: "partenariat", label: "Partenariat ou intégration" },
   { value: "autre", label: "Autre question" },
 ];

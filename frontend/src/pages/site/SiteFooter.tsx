@@ -7,17 +7,20 @@ const COLUMNS = [
     title: "Produit",
     links: [
       { to: "/#fonctionnement", label: "Fonctionnement" },
-      { to: "/prix", label: "Tarification" },
+      { to: "/prix", label: "Tarifs" },
       { to: "/#faq", label: "Questions fréquentes" },
     ],
   },
   {
-    title: "Entreprise",
+    title: "Mentions légales",
     links: [
-      { to: "/contact", label: "Contact" },
       { to: "/securite", label: "Sécurité" },
       { to: "/confidentialite", label: "Politique de confidentialité" },
     ],
+  },
+  {
+    title: "Nous joindre",
+    links: [{ to: "/contact", label: "Contact" }],
   },
 ];
 
@@ -28,7 +31,7 @@ export function SiteFooter() {
         <div>
           <Logo size={30} />
           <p className="mt-3 max-w-[18rem] text-sm text-muted-foreground">
-            La facturation RAMQ simplifiée pour les médecins de famille du Québec.
+            La facturation RAMQ simplifiée pour les médecins du Québec.
           </p>
         </div>
         {COLUMNS.map((column) => (
@@ -45,12 +48,6 @@ export function SiteFooter() {
             </ul>
           </div>
         ))}
-        <div>
-          <h2 className="mb-3 font-heading text-sm font-[650] text-foreground">Nous joindre</h2>
-          <a href={`mailto:${SITE.contactEmail}`} className="text-sm font-semibold text-primary no-underline hover:underline">
-            {SITE.contactEmail}
-          </a>
-        </div>
       </div>
       <div className="mx-auto max-w-[1080px] px-6">
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-5 text-[0.8rem] text-muted-foreground">

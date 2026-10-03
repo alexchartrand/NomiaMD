@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { MenuIcon, XIcon } from "lucide-react";
-import { contactLink } from "@/site/config";
 import { Button } from "./Button";
 import { PageHeader } from "./PageHeader";
 
 const NAV_LINKS = [
-  { to: "/prix", label: "Tarification" },
+  { to: "/", label: "Accueil" },
+  { to: "/prix", label: "Tarifs" },
   { to: "/securite", label: "Sécurité" },
   { to: "/#faq", label: "FAQ" },
   { to: "/contact", label: "Contact" },
@@ -30,11 +30,8 @@ export function SiteHeader() {
           ))}
           actions={
             <div className="flex items-center gap-2">
-              <Button asChild variant="ghost" className="max-[520px]:hidden">
-                <Link to="/login">Se connecter</Link>
-              </Button>
-              <Button asChild className="max-[700px]:hidden">
-                <Link to={contactLink("demo")}>Demander une démo</Link>
+              <Button asChild className="h-10 px-4 text-base max-[700px]:hidden">
+                <Link to="/login">Connexion</Link>
               </Button>
               <Button
                 variant="ghost"
@@ -60,11 +57,8 @@ export function SiteHeader() {
                 {link.label}
               </Link>
             ))}
-            <Link to="/login" className="rounded-lg px-2 py-2 font-semibold text-muted-foreground no-underline hover:bg-muted">
-              Se connecter
-            </Link>
-            <Button asChild className="mt-2 h-10">
-              <Link to={contactLink("demo")}>Demander une démo</Link>
+            <Button asChild className="mt-2 h-10 text-base">
+              <Link to="/login">Connexion</Link>
             </Button>
           </nav>
         )}

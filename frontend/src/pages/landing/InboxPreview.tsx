@@ -25,7 +25,7 @@ export function InboxPreview() {
 
   return (
     <div
-      className="w-full rounded-2xl border border-border bg-card p-5 shadow-[0_24px_50px_-24px_rgba(18,35,44,0.35)]"
+      className="w-full rounded-2xl border border-border bg-card p-5 shadow-floating"
       role="img"
       aria-label={`Exemple de boîte de réception : ${ENCOUNTERS.length} rencontres prêtes, total ${money.format(total)}`}
     >

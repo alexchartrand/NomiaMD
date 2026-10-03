@@ -9,7 +9,7 @@ const QUESTIONS: FaqItem[] = [
   {
     question: "À qui s'adresse NomiaMD ?",
     answer:
-      "Aux médecins de famille (omnipraticiens) du Québec, en cabinet, en GMF ou à l'urgence. Les codes proviennent du manuel des omnipraticiens de la RAMQ ; la facturation des médecins spécialistes n'est pas couverte pour l'instant.",
+      "Aux médecins omnipraticiens du Québec, en cabinet, en GMF ou à l'urgence. Les codes de facturation proviennent du manuel des omnipraticiens de la RAMQ ; la facturation des médecins spécialistes n'est pas couverte pour l'instant.",
   },
   {
     question: "Comment mes notes arrivent-elles dans NomiaMD ?",
@@ -24,7 +24,7 @@ const QUESTIONS: FaqItem[] = [
   {
     question: "Et si l'IA se trompe ?",
     answer:
-      "L'IA ne peut proposer que des codes du manuel dont les conditions d'admissibilité sont respectées, et les tarifs ne viennent jamais d'elle. Vous gardez toujours le dernier mot : rien n'est facturé sans votre confirmation.",
+      "L'IA ne peut proposer que des codes de facturation du manuel dont les conditions d'admissibilité sont respectées, et les tarifs ne viennent jamais d'elle. Vous gardez toujours le dernier mot : rien n'est facturé sans votre confirmation.",
   },
   {
     question: "NomiaMD transmet-il ma facturation à la RAMQ ?",

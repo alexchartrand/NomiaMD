@@ -48,6 +48,9 @@
   --color-success-bg: rgba(107, 163, 97, 0.16);
   --color-success-text: #3f6b35;
   --color-primary-tint: rgba(27, 94, 111, 0.08);
+  /* Landing page grid (LedgerBackdrop.tsx) and the glow behind the hero card (HeroAccents.tsx). */
+  --color-hero-grid: rgba(27, 94, 111, 0.18);
+  --color-hero-glow: rgba(27, 94, 111, 0.2);
 
   --font-display: "Plus Jakarta Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
   /* The wordmark keeps its own typeface (Logo.tsx), independent of the headings'. */
@@ -112,6 +115,8 @@
   --color-success-bg: rgba(129, 179, 118, 0.18);
   --color-success-text: #9bc98d;
   --color-primary-tint: rgba(79, 163, 181, 0.14);
+  --color-hero-grid: rgba(79, 163, 181, 0.2);
+  --color-hero-glow: rgba(79, 163, 181, 0.22);
 
   /* shadcn theme tokens, dark equivalents of the light block above. */
   --background: #0d1a1f;
@@ -162,6 +167,11 @@ body {
 h1,
 h2 {
   font-family: var(--font-display);
+}
+
+/* The lifted look of the landing page's floating cards (inbox preview, benefits, highlighted plan). */
+@theme {
+  --shadow-floating: 0 24px 50px -24px rgba(18, 35, 44, 0.35);
 }
 
 @theme inline {
