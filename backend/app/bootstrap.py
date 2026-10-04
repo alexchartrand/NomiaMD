@@ -11,6 +11,8 @@ read when the process starts rather than when app.postgresdb is first imported."
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
+from app.config import settings
+from app.intake.connectors.epic_fhir.factory import check_sandbox_startup
 from app.lancedb import CodeRepository, DocumentRepository, LanceDB
 from app.llm import EmbeddingDimensionGuard, chat_provider, embedding_provider, get_embedding_model
 from app.postgresdb import PostgresDB, bind_database
@@ -34,6 +36,7 @@ async def application_services() -> AsyncIterator[LanceDB]:
     # An unknown LLM_PROVIDER/EMBEDDING_PROVIDER fails the boot, not the first extraction.
     chat_provider()
     embedding_provider()
+    check_sandbox_startup(settings)
     async with postgres_database():
         db = await LanceDB.open()
         try:

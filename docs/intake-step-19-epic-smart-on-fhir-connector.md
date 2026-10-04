@@ -13,9 +13,11 @@ production needs.
 ## Tasks
 - [ ] SMART **EHR launch** (from inside Epic) and **standalone launch** (bulk shift fetch), PKCE,
   confidential client.
-  - Scopes: `launch`, `openid`, `fhirUser`, `patient/Patient.read`, `patient/Encounter.read`,
-    `patient/DocumentReference.read`, `patient/Binary.read`, `user/Practitioner.read`
-  - Check Epic's scope syntax (v1 vs v2) for the DSN environment.
+  - Scopes: `launch`, `openid`, `fhirUser`, `patient/Patient.r`, `patient/Encounter.rs`,
+    `patient/DocumentReference.rs`, `patient/Binary.r`, `user/Practitioner.r`
+  - The fhir.epic.com app is registered with **SMART Scope Version V2** (chosen 10/3 in step
+    11b), hence the `.r`/`.rs` syntax above. Confirm the DSN's Epic version accepts V2. If it
+    doesn't, switch the app to V1 and use `.read` instead.
 - [ ] Route `/launch/epic`: finish OAuth, fetch the launch context's notes with
   `EpicFhirClient`/`EpicNoteMapper`, run `IntakeService.receive` (`source_system="epic"`), then
   redirect to the inbox item.

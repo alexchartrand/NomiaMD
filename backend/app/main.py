@@ -13,7 +13,7 @@ from app.config import settings
 from app.encounters import encounters_router
 from app.encounters.factory import build_intake_service
 from app.extraction import extraction_router
-from app.intake import intake_router
+from app.intake import epic_sandbox_router, intake_router
 from app.logging_config import configure_logging
 from app.patients import patients_router
 from app.ramq_chatbot import ramq_chatbot_router
@@ -44,6 +44,7 @@ app.include_router(contact_router)
 app.include_router(encounters_router)
 app.include_router(extraction_router)
 app.include_router(intake_router)
+app.include_router(epic_sandbox_router)
 app.include_router(patients_router)
 app.include_router(ramq_chatbot_router)
 app.include_router(sample_patients_router)

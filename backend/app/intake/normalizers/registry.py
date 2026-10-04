@@ -24,6 +24,9 @@ def default_normalizers() -> NormalizerRegistry:
     # Epic (Santé Québec's DSN) is pasted as text until SMART on FHIR lands; its templates
     # are US-built and write month-first.
     registry.register("epic", PlainTextNormalizer(DateOrder.MDY))
+    # Epic's sandbox notes, pulled over FHIR as the HTML Binary of each DocumentReference
+    # (app/intake/connectors/epic_fhir/).
+    registry.register("epic_sandbox", HtmlNormalizer(DateOrder.MDY))
     # The browser extension's DOM captures (step 13).
     for dme in ("omnimed", "medesync", "myle"):
         registry.register(dme, HtmlNormalizer())

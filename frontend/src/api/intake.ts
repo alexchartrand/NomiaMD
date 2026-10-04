@@ -36,3 +36,25 @@ export async function uploadNotes(file: File, batchLabel: string | null): Promis
     await fetch("/api/intake/upload", { method: "POST", credentials: "same-origin", body }),
   );
 }
+
+// Mirrors app/intake/models.py's EpicSandboxStatus.
+export interface EpicSandboxStatus {
+  // How many sandbox patients the import reads.
+  patients: number;
+}
+
+// The Epic sandbox demo (step 11b) is off unless the backend's EPIC_SANDBOX_ENABLED is on;
+// its routes are then a 404, which means "don't show it" here rather than an error.
+export async function getEpicSandboxStatus(): Promise<EpicSandboxStatus | null> {
+  const response = await fetch("/api/intake/epic-sandbox", { credentials: "same-origin" });
+  if (response.status === 404) return null;
+  return unwrap<EpicSandboxStatus>(response);
+}
+
+// Pulls every sandbox patient's signed notes into the inbox; extraction runs inline, so
+// this takes a while. Importing again comes back as duplicates.
+export async function importEpicSandboxNotes(): Promise<ReceiveOutcome[]> {
+  return unwrap<ReceiveOutcome[]>(
+    await fetch("/api/intake/epic-sandbox/import", { method: "POST", credentials: "same-origin" }),
+  );
+}
