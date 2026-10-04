@@ -71,8 +71,8 @@
 ## ✨ Features
 
 - [ ] 🟡 Frontend test suite: page tests, then E2E — *added 10/4, from the frontend test plan*
-  - Done (branch `chore/frontend-test-setup`): vitest + Testing Library + msw, a `frontend` CI job, unit tests for the pure logic and API clients (Layer 1) and hook tests for `useCodeReview`, `useInbox` and `useCreatePatientForm` (Layer 2). Plan: `.claude/plans/` session file, summarized below.
-  - Next, Layer 3 page tests with msw, in this order: auth (`RequireAuth`, `Login`), inbox (filters, `ApproveAllModal`, `DuplicateModal`, `AssociatePatient`), review page, `PatientSearchSelect` (250 ms debounce, ≥ 2 characters), `AddNotesPage` (the ER-shift split is server-side, so assert requests only), Facturation, `PatientsPage`, `ProfilePage`/`Contact`/`ChatbotPage`, one smoke test per public page.
+  - Done (branch `chore/frontend-test-setup`): vitest + Testing Library + msw, a `frontend` CI job, unit tests for the pure logic and API clients (Layer 1), hook tests for `useCodeReview`, `useInbox` and `useCreatePatientForm` (Layer 2), and page tests for auth/login, the inbox (filters, bulk approval, duplicates, row actions, association) and the encounter review page (Layer 3, first three items).
+  - Next, remaining Layer 3 page tests with msw, in this order: `PatientSearchSelect` (250 ms debounce, ≥ 2 characters; only covered through the inbox's association flow so far), `AddNotesPage` (the ER-shift split is server-side, so assert requests only), Facturation, `PatientsPage`, `ProfilePage`/`Contact`/`ChatbotPage`, one smoke test per public page.
   - Then Layer 4, optional: 2-3 Playwright journeys against `make dev-fake` (login → extract → save claim; paste note → associate patient; claims → bill PDF), manual or nightly since retrieval embeddings still hit the real Mistral API.
 
 - [ ] 🟡 Serve Epic's JWK Set from the backend instead of a gist — *added 10/3, from the Epic sandbox connector (intake step 11b)*
