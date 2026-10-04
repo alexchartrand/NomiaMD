@@ -184,6 +184,7 @@ export default function PatientsPage() {
     try {
       await updatePatient(panel.entry.id, {
         ...globalForm,
+        full_name: globalForm.full_name.trim(),
         ramq_number: globalForm.ramq_number?.trim() || null,
         family_doctor_name: globalForm.family_doctor_name?.trim() || null,
         family_doctor_practice_number: globalForm.family_doctor_practice_number?.trim() || null,
