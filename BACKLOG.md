@@ -10,6 +10,9 @@
 
 ## 🐛 Bugs
 
+- [ ] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
+  - `frontend/src/pages/app/FacturationPage/BillsTab.tsx` renders `if (listError) return <Banner/>` before the table, and `handleDelete` reports its failure through the same `listError`. A refused delete (or a network blip) therefore replaces the whole list with the error, with no way to retry short of switching tabs. Give delete failures their own message state, shown above the table (as `RecordsTab` effectively does).
+
 - [ ] 🟡 A failed `/auth/me` logs the physician out of the UI — *added 10/4, from the frontend test plan*
   - `frontend/src/AuthContext.tsx` does `getCurrentUser().then(setUser).finally(...)` with no `.catch`. `getCurrentUser` only maps a 401 to `null`; a 5xx or a network error rejects, leaving `user` null with an unhandled rejection, so `RequireAuth` redirects a logged-in physician to `/login` during any backend blip or deploy. Fix: catch, keep a distinct "couldn't check" state, and show a retry instead of the login page. Pin it with the `RequireAuth` page test (Layer 3 of the frontend test plan).
 
@@ -71,8 +74,8 @@
 ## ✨ Features
 
 - [ ] 🟡 Frontend test suite: page tests, then E2E — *added 10/4, from the frontend test plan*
-  - Done (branch `chore/frontend-test-setup`): vitest + Testing Library + msw, a `frontend` CI job, unit tests for the pure logic and API clients (Layer 1), hook tests for `useCodeReview`, `useInbox` and `useCreatePatientForm` (Layer 2), and page tests for auth/login, the inbox (filters, bulk approval, duplicates, row actions, association) and the encounter review page (Layer 3, first three items).
-  - Next, remaining Layer 3 page tests with msw, in this order: `PatientSearchSelect` (250 ms debounce, ≥ 2 characters; only covered through the inbox's association flow so far), `AddNotesPage` (the ER-shift split is server-side, so assert requests only), Facturation, `PatientsPage`, `ProfilePage`/`Contact`/`ChatbotPage`, one smoke test per public page.
+  - Done (branch `chore/frontend-test-setup`): vitest + Testing Library + msw, a `frontend` CI job, unit tests for the pure logic and API clients (Layer 1), hook tests for `useCodeReview`, `useInbox` and `useCreatePatientForm` (Layer 2), and page tests for auth/login, the inbox (filters, bulk approval, duplicates, row actions, association) and the encounter review page (Layer 3, first three items), the add-notes page and Facturation (records, bills, bill creation).
+  - Next, remaining Layer 3 page tests with msw, in this order: `PatientSearchSelect` (250 ms debounce, ≥ 2 characters; only covered through the inbox's association flow so far), `PatientsPage`, `ProfilePage`/`Contact`/`ChatbotPage`, one smoke test per public page.
   - Then Layer 4, optional: 2-3 Playwright journeys against `make dev-fake` (login → extract → save claim; paste note → associate patient; claims → bill PDF), manual or nightly since retrieval embeddings still hit the real Mistral API.
 
 - [ ] 🟡 Serve Epic's JWK Set from the backend instead of a gist — *added 10/3, from the Epic sandbox connector (intake step 11b)*
@@ -109,6 +112,9 @@
   - Self-hosted Langfuse means another service to run/maintain but gets a UI, prompt diffing, and cost views; DB logging is zero new infra and keeps prompt/response content off any third-party system (relevant here since transcripts carry patient name + NAM), but you build your own queries/views to look at it.
 
 ## 🧹 Cleanup / Dead code
+
+- [ ] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests*
+  - Only one tab is mounted at a time, so the tab the physician switches to remounts and fetches fresh anyway; bumping `reloadSignal` after a bill is created or deleted changes nothing observable (removing `onChanged` in `BillsTab` leaves every test green). Drop the signal, or keep both tabs mounted if the intent was to avoid refetching on every switch.
 
 - [ ] 🟢 `formatClinicTime`'s comment says "HH:MM" but it renders "09 h 05" — *added 10/4, from the frontend tests*
   - `frontend/src/utils/date.ts` uses the `fr-CA` locale, so the output is `09 h 05` (and the separator whitespace varies by ICU version). Probably intended for a French UI; fix the comment, or switch to `hour12: false` with `en-CA` if a strict HH:MM is wanted. `date.test.ts` asserts the current output.
