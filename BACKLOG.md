@@ -70,9 +70,9 @@
 
 ## ✨ Features
 
-- [ ] 🟡 Frontend test suite: page tests, then E2E — *added 10/4, from the frontend test plan*
-  - Done (branch `chore/frontend-test-setup`): vitest + Testing Library + msw, a `frontend` CI job, unit tests for the pure logic and API clients (Layer 1), hook tests for `useCodeReview`, `useInbox` and `useCreatePatientForm` (Layer 2), and page tests for auth/login, the inbox (filters, bulk approval, duplicates, row actions, association) and the encounter review page (Layer 3, first three items), the add-notes page and Facturation (records, bills, bill creation).
-  - Next, remaining Layer 3 page tests with msw, in this order: `PatientSearchSelect` (250 ms debounce, ≥ 2 characters; only covered through the inbox's association flow so far), `PatientsPage`, `ProfilePage`/`Contact`/`ChatbotPage`, one smoke test per public page.
+- [ ] 🟢 Frontend test suite: Layer 4 (E2E) — *added 10/4, from the frontend test plan, Layers 1-3 done 10/4*
+  - Done (branch `chore/frontend-test-setup`): vitest + Testing Library + msw, a `frontend` CI job, and 316 tests: pure logic and API clients (Layer 1), hooks (Layer 2), and every page and the router (Layer 3 — auth/login, inbox, encounter review, add notes, Facturation, patients and `PatientSearchSelect`, profile, contact, RAMQ chat, public pages, route guards). Fixtures live in `frontend/src/test/`.
+  - Known test limits: jsdom's `FormData` doesn't stream into Node's fetch, so the upload test only checks the multipart content type; there are no visual/layout tests (responsive breakpoints, the landing page's design).
   - Then Layer 4, optional: 2-3 Playwright journeys against `make dev-fake` (login → extract → save claim; paste note → associate patient; claims → bill PDF), manual or nightly since retrieval embeddings still hit the real Mistral API.
 
 - [ ] 🟡 Serve Epic's JWK Set from the backend instead of a gist — *added 10/3, from the Epic sandbox connector (intake step 11b)*
