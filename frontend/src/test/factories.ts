@@ -1,4 +1,13 @@
-import type { BillingExtractionResponse, Claim, ClaimCodeLine, EncounterRow, ExtractedCode, ExtractedFee } from "../api";
+import type {
+  BillingExtractionResponse,
+  Claim,
+  ClaimCodeLine,
+  EncounterDetail,
+  EncounterRow,
+  ExtractedCode,
+  ExtractedFee,
+  Patient,
+} from "../api";
 
 // Synthetic fixtures only (no real NAMs or names). Typed against src/api so a drift in the
 // backend contract surfaces in `tsc -b` as well as in the tests.
@@ -96,6 +105,43 @@ export function makeEncounterRow(overrides: Partial<EncounterRow> = {}): Encount
     extraction_run_id: 1,
     possible_duplicate_ids: [],
     all_clean: false,
+    ...overrides,
+  };
+}
+
+export function makeEncounterDetail(overrides: Partial<EncounterDetail> = {}): EncounterDetail {
+  return {
+    id: 1,
+    status: "prêt",
+    patient: { id: 1, full_name: "Patient Test", nam: "TEST12345678" },
+    source_system: "sample",
+    channel: "paste",
+    external_note_id: null,
+    external_encounter_id: null,
+    batch_label: null,
+    service_date: "2026-10-01",
+    received_at: "2026-10-01T12:00:00Z",
+    meta: {},
+    duplicate_of_id: null,
+    note_text: "Note de test.",
+    extraction_error: null,
+    extraction: makeExtraction([makeProposedCode()]),
+    claim: null,
+    ...overrides,
+  };
+}
+
+export function makePatient(overrides: Partial<Patient> = {}): Patient {
+  return {
+    id: 1,
+    full_name: "Patient Test",
+    ramq_number: "TEST12345678",
+    date_of_birth: "1980-05-01",
+    gender: null,
+    is_vulnerable: false,
+    family_doctor_name: null,
+    family_doctor_practice_number: null,
+    is_registered_with_current_physician: null,
     ...overrides,
   };
 }

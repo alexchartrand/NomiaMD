@@ -32,11 +32,11 @@ export function serveSession(user: UserOut | null) {
 
 // `ui` is usually a <Routes> tree (or one page) rendered at `route`, inside the real
 // AuthProvider — so session handling is exercised, not mocked.
-export function renderWithProviders(ui: ReactElement, { route = "/" }: { route?: string } = {}) {
+export function renderWithProviders(ui: ReactElement, { route = "/", state }: { route?: string; state?: unknown } = {}) {
   return {
     user: userEvent.setup(),
     ...render(
-      <MemoryRouter initialEntries={[route]}>
+      <MemoryRouter initialEntries={[{ pathname: route.split("?")[0], search: route.includes("?") ? `?${route.split("?")[1]}` : "", state }]}>
         <AuthProvider>{ui}</AuthProvider>
       </MemoryRouter>,
     ),
