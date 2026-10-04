@@ -36,6 +36,8 @@ Frontend (`frontend/`, from that directory):
 ```bash
 npm install
 npm run dev       # http://localhost:5173, proxies /api to the backend on :8000
+npm test          # vitest (jsdom + msw): no network or backend needed
+npm run e2e       # Playwright journeys against a throwaway backend + the fake LLM (needs backend/.env's Mistral key and DB_PATH; not run in CI)
 npm run build     # tsc -b (type-check) + vite build — the closest thing to a typecheck/lint step; no eslint config exists
 ```
 

@@ -7,12 +7,14 @@ takes. From backend/, with the venv active:
     python scripts/seed_db.py
 
 Prompts for the new user's password interactively (same reasoning as create_user.py: never
-accepted as a CLI argument, to avoid it ending up in shell history/`ps` output). Fails
+accepted as a CLI argument, to avoid it ending up in shell history/`ps` output). The E2E suite
+(frontend/e2e/) has no terminal to prompt on, so it passes a throwaway one in SEED_ADMIN_PASSWORD. Fails
 loudly (rather than upserting) if the admin email already exists — that means the DB wasn't
 actually wiped, so re-run against a clean DB instead of layering seed data on top of itself.
 """
 
 import asyncio
+import os
 import re
 import sys
 from datetime import date
@@ -78,6 +80,9 @@ class _NoExtractionQueue:
 
 
 def prompt_for_password() -> str:
+    preset = os.environ.get("SEED_ADMIN_PASSWORD")
+    if preset:
+        return preset
     while True:
         password = getpass("Password for the new admin user: ")
         confirmation = getpass("Confirm password: ")
