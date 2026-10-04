@@ -10,6 +10,9 @@
 
 ## 🐛 Bugs
 
+- [ ] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
+  - `frontend/src/pages/app/FacturationPage/BillsTab.tsx` renders `if (listError) return <Banner/>` before the table, and `handleDelete` reports its failure through the same `listError`. A refused delete (or a network blip) therefore replaces the whole list with the error, with no way to retry short of switching tabs. Give delete failures their own message state, shown above the table (as `RecordsTab` effectively does).
+
 - [ ] 🔴 The public site is behind the IP allowlist — *added 10/2, from the public-site work*
   - `frontend/nginx.conf` applies `include allowed_ips.conf; deny all;` to the whole server, so the landing, pricing, contact, security and privacy pages (and `POST /api/contact`) are 403 for any clinic or partner opening the link. Before emailing prospects, scope the allowlist to `/app`, `/login` and the authenticated `/api/*` routes, and let `/`, `/prix`, `/contact`, `/securite`, `/confidentialite`, static assets and `/api/contact` through. Also check that `allow` sees the real client: nginx's `$remote_addr` is Caddy's container address unless `set_real_ip_from`/`real_ip_header` are configured.
 
@@ -67,6 +70,11 @@
 
 ## ✨ Features
 
+- [ ] 🟢 Frontend test suite: Layer 4 (E2E) — *added 10/4, from the frontend test plan, Layers 1-3 done 10/4*
+  - Done (branch `chore/frontend-test-setup`): vitest + Testing Library + msw, a `frontend` CI job, and 316 tests: pure logic and API clients (Layer 1), hooks (Layer 2), and every page and the router (Layer 3 — auth/login, inbox, encounter review, add notes, Facturation, patients and `PatientSearchSelect`, profile, contact, RAMQ chat, public pages, route guards). Fixtures live in `frontend/src/test/`.
+  - Known test limits: jsdom's `FormData` doesn't stream into Node's fetch, so the upload test only checks the multipart content type; there are no visual/layout tests (responsive breakpoints, the landing page's design).
+  - Then Layer 4, optional: 2-3 Playwright journeys against `make dev-fake` (login → extract → save claim; paste note → associate patient; claims → bill PDF), manual or nightly since retrieval embeddings still hit the real Mistral API.
+
 - [ ] 🟡 Serve Epic's JWK Set from the backend instead of a gist — *added 10/3, from the Epic sandbox connector (intake step 11b)*
   - fhir.epic.com only accepts a JWK Set URL for the public key (no certificate upload). The sandbox key is published for now as a public GitHub gist (`https://gist.githubusercontent.com/alexchartrand/9891641a40ecac266cecd167256af849/raw/jwks.json`, built by `scripts/epic_sandbox_jwks.py`). Move it to a route like `GET /.well-known/jwks.json` on our own domain: no login, public keys only, built from the configured private key(s) at startup, and able to list two keys at once so a key can be rotated without downtime. Step 19's production client id needs this anyway, since a gist on a personal account isn't acceptable for the Santé Québec review. Depends on the public site being reachable (see the IP-allowlist bug); once it's live, point the app's Non-Production JWK Set URL there and delete the gist.
 
@@ -102,6 +110,12 @@
 
 ## 🧹 Cleanup / Dead code
 
+- [ ] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests*
+  - Only one tab is mounted at a time, so the tab the physician switches to remounts and fetches fresh anyway; bumping `reloadSignal` after a bill is created or deleted changes nothing observable (removing `onChanged` in `BillsTab` leaves every test green). Drop the signal, or keep both tabs mounted if the intent was to avoid refetching on every switch.
+
+- [ ] 🟢 `formatClinicTime`'s comment says "HH:MM" but it renders "09 h 05" — *added 10/4, from the frontend tests*
+  - `frontend/src/utils/date.ts` uses the `fr-CA` locale, so the output is `09 h 05` (and the separator whitespace varies by ICU version). Probably intended for a French UI; fix the comment, or switch to `hour12: false` with `en-CA` if a strict HH:MM is wanted. `date.test.ts` asserts the current output.
+
 - [ ] 🟢 Ownership guard copy-pasted across repository methods — *added 8/24, from billing-workflow code review, reworded 9/30*
   - The patient copies are gone (patients are global since 8/31, no per-physician ownership). What's left: `record is None or record.physician_id != physician_id` twice in `ClaimRepository` and the same check on `bill` twice in `BillRepository` (`app/postgresdb/repository.py`). A future rule change (e.g. "also block if the physician account is deactivated") means updating all four by hand.
 
@@ -126,6 +140,13 @@
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] 🟡 A failed `/auth/me` logs the physician out of the UI — *added 10/4, from the frontend test plan, fixed 10/4*
+  - `frontend/src/AuthContext.tsx` does `getCurrentUser().then(setUser).finally(...)` with no `.catch`. `getCurrentUser` only maps a 401 to `null`; a 5xx or a network error rejects, leaving `user` null with an unhandled rejection, so `RequireAuth` redirects a logged-in physician to `/login` during any backend blip or deploy. Fix: catch, keep a distinct "couldn't check" state, and show a retry instead of the login page. Pin it with the `RequireAuth` page test (Layer 3 of the frontend test plan).
+  - Fixed: `AuthProvider` now keeps a `sessionError` with `retrySession()`, and `RequireAuth` shows the error with a "Réessayer" button instead of redirecting. Covered in `AuthContext.test.tsx` and `Login.test.tsx`.
+
+- [x] 🟡 API errors with a non-JSON body and no status text had an empty message — *added 10/4, from the first frontend test, fixed 10/4*
+  - `frontend/src/api/http.ts`'s `unwrap`/`unwrapVoid` fall back to `{ detail: response.statusText }`; an empty `statusText` (HTTP/2) is a valid string detail, so the thrown `Error` message was `""` and the "La requête a échoué : <status>" fallback was unreachable. `extractErrorDetail` now treats an empty string as no detail.
 
 - [x] 🟢 Slash-date parsing assumes `DD/MM/YYYY`, would misparse an Epic-style `MM/DD/YYYY` note — *added 8/24, from billing-workflow code review, fixed 10/1*
   - `app/extraction/encounter_date.py`'s `_SLASH_DATE_RE` always reads `d/m/y`. Harmless today (Epic/Plume AI sources are still disabled buttons in the UI, and Quebec notes use `DD/MM/YYYY`), but once a US-market EHR source is wired up, a date like "03/04/2026" would silently parse as March 4 instead of April 3 for any day/month both ≤ 12 — no error, just a silently wrong `encounter_date`. Revisit once a real `source.system` other than `simule` sends dates.
