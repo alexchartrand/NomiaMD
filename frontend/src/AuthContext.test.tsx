@@ -44,10 +44,41 @@ describe("RequireAuth", () => {
     expect(screen.queryByText("zone protégée")).not.toBeInTheDocument();
   });
 
-  // Known gap (BACKLOG.md): AuthProvider has no .catch on getCurrentUser, so a 5xx or network
-  // error is an unhandled rejection that ends up as a redirect to /login. Expected once fixed:
-  // a "couldn't check your session" state with a retry, not the login page.
-  it.todo("does not treat a server error on /auth/me as a logout");
+  describe("when the session can't be checked", () => {
+    it("does not treat a server error as a logout: shows it with a retry instead of the login page", async () => {
+      server.use(http.get("/api/auth/me", () => HttpResponse.json({ detail: "Erreur interne" }, { status: 500 })));
+      renderWithProviders(<Protected />, { route: "/app" });
+      expect(await screen.findByText("Erreur interne")).toBeInTheDocument();
+      expect(screen.queryByText("page de connexion")).not.toBeInTheDocument();
+      expect(screen.queryByText("zone protégée")).not.toBeInTheDocument();
+    });
+
+    it("explains an unreachable server", async () => {
+      server.use(http.get("/api/auth/me", () => HttpResponse.error()));
+      renderWithProviders(<Protected />, { route: "/app" });
+      expect(await screen.findByText(/Impossible de joindre le serveur/)).toBeInTheDocument();
+      expect(screen.queryByText("page de connexion")).not.toBeInTheDocument();
+    });
+
+    it("retries, and shows the page once the server is back", async () => {
+      server.use(http.get("/api/auth/me", () => HttpResponse.json({ detail: "Erreur interne" }, { status: 500 })));
+      const { user } = renderWithProviders(<Protected />, { route: "/app" });
+      await screen.findByText("Erreur interne");
+      serveSession(makeUser());
+      await user.click(screen.getByRole("button", { name: "Réessayer" }));
+      expect(await screen.findByText("zone protégée")).toBeInTheDocument();
+      expect(screen.queryByText("Erreur interne")).not.toBeInTheDocument();
+    });
+
+    it("goes to the login page when the retry finds there is no session", async () => {
+      server.use(http.get("/api/auth/me", () => HttpResponse.json({ detail: "Erreur interne" }, { status: 500 })));
+      const { user } = renderWithProviders(<Protected />, { route: "/app" });
+      await screen.findByText("Erreur interne");
+      serveSession(null);
+      await user.click(screen.getByRole("button", { name: "Réessayer" }));
+      expect(await screen.findByText("page de connexion")).toBeInTheDocument();
+    });
+  });
 });
 
 function Probe() {

@@ -13,9 +13,6 @@
 - [ ] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
   - `frontend/src/pages/app/FacturationPage/BillsTab.tsx` renders `if (listError) return <Banner/>` before the table, and `handleDelete` reports its failure through the same `listError`. A refused delete (or a network blip) therefore replaces the whole list with the error, with no way to retry short of switching tabs. Give delete failures their own message state, shown above the table (as `RecordsTab` effectively does).
 
-- [ ] 🟡 A failed `/auth/me` logs the physician out of the UI — *added 10/4, from the frontend test plan*
-  - `frontend/src/AuthContext.tsx` does `getCurrentUser().then(setUser).finally(...)` with no `.catch`. `getCurrentUser` only maps a 401 to `null`; a 5xx or a network error rejects, leaving `user` null with an unhandled rejection, so `RequireAuth` redirects a logged-in physician to `/login` during any backend blip or deploy. Fix: catch, keep a distinct "couldn't check" state, and show a retry instead of the login page. Pin it with the `RequireAuth` page test (Layer 3 of the frontend test plan).
-
 - [ ] 🔴 The public site is behind the IP allowlist — *added 10/2, from the public-site work*
   - `frontend/nginx.conf` applies `include allowed_ips.conf; deny all;` to the whole server, so the landing, pricing, contact, security and privacy pages (and `POST /api/contact`) are 403 for any clinic or partner opening the link. Before emailing prospects, scope the allowlist to `/app`, `/login` and the authenticated `/api/*` routes, and let `/`, `/prix`, `/contact`, `/securite`, `/confidentialite`, static assets and `/api/contact` through. Also check that `allow` sees the real client: nginx's `$remote_addr` is Caddy's container address unless `set_real_ip_from`/`real_ip_header` are configured.
 
@@ -143,6 +140,10 @@
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] 🟡 A failed `/auth/me` logs the physician out of the UI — *added 10/4, from the frontend test plan, fixed 10/4*
+  - `frontend/src/AuthContext.tsx` does `getCurrentUser().then(setUser).finally(...)` with no `.catch`. `getCurrentUser` only maps a 401 to `null`; a 5xx or a network error rejects, leaving `user` null with an unhandled rejection, so `RequireAuth` redirects a logged-in physician to `/login` during any backend blip or deploy. Fix: catch, keep a distinct "couldn't check" state, and show a retry instead of the login page. Pin it with the `RequireAuth` page test (Layer 3 of the frontend test plan).
+  - Fixed: `AuthProvider` now keeps a `sessionError` with `retrySession()`, and `RequireAuth` shows the error with a "Réessayer" button instead of redirecting. Covered in `AuthContext.test.tsx` and `Login.test.tsx`.
 
 - [x] 🟡 API errors with a non-JSON body and no status text had an empty message — *added 10/4, from the first frontend test, fixed 10/4*
   - `frontend/src/api/http.ts`'s `unwrap`/`unwrapVoid` fall back to `{ detail: response.statusText }`; an empty `statusText` (HTTP/2) is a valid string detail, so the thrown `Error` message was `""` and the "La requête a échoué : <status>" fallback was unreachable. `extractErrorDetail` now treats an empty string as no detail.

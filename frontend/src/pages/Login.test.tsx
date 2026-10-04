@@ -93,6 +93,16 @@ describe("Login", () => {
     expect(await screen.findByText("tableau de bord")).toBeInTheDocument();
   });
 
+  it("still lets the physician log in when the session check failed", async () => {
+    server.use(
+      http.get("/api/auth/me", () => HttpResponse.json({ detail: "Erreur interne" }, { status: 500 })),
+      http.post("/api/auth/login", () => HttpResponse.json(makeUser())),
+    );
+    const { user } = renderWithProviders(<Pages />, { route: "/login" });
+    await fillAndSubmit(user);
+    expect(await screen.findByText("tableau de bord")).toBeInTheDocument();
+  });
+
   it("links back to the home page", async () => {
     serveSession(null);
     const { user } = renderWithProviders(<Pages />, { route: "/login" });
