@@ -21,6 +21,9 @@ class EncounterMeta(BaseModel):
     # Also half of the deduplicator's fallback key when there's no external note id.
     author_ref: str | None = None
     referring_physician: str | None = None
+    # The source's own version of the note (FHIR meta.versionId). Kept for step 16's
+    # amended-note handling; dedup itself compares the external id and the content hash.
+    source_version: str | None = None
 
 
 class SourceNote(BaseModel):
@@ -57,3 +60,9 @@ class ReceiveOutcomeOut(BaseModel):
     encounter_id: int
     patient_id: int | None
     enqueued: bool
+
+
+class EpicSandboxStatus(BaseModel):
+    """The Epic sandbox demo is on; how many sandbox patients its import reads."""
+
+    patients: int

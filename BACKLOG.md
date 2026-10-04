@@ -67,6 +67,9 @@
 
 ## ✨ Features
 
+- [ ] 🟡 Serve Epic's JWK Set from the backend instead of a gist — *added 10/3, from the Epic sandbox connector (intake step 11b)*
+  - fhir.epic.com only accepts a JWK Set URL for the public key (no certificate upload). The sandbox key is published for now as a public GitHub gist (`https://gist.githubusercontent.com/alexchartrand/9891641a40ecac266cecd167256af849/raw/jwks.json`, built by `scripts/epic_sandbox_jwks.py`). Move it to a route like `GET /.well-known/jwks.json` on our own domain: no login, public keys only, built from the configured private key(s) at startup, and able to list two keys at once so a key can be rotated without downtime. Step 19's production client id needs this anyway, since a gist on a personal account isn't acceptable for the Santé Québec review. Depends on the public site being reachable (see the IP-allowlist bug); once it's live, point the app's Non-Production JWK Set URL there and delete the gist.
+
 - [ ] 🟡 Enforce the free plan's 1 extraction per day — *added 10/2, from the public-site work*
   - The pricing page (`frontend/src/site/pricing.ts`) advertises a Gratuit plan limited to 1 extraction per day, but nothing enforces it. Needs a plan on `User` (or a dated plan history, like practice facts) and a daily quota check on `POST /extract` and in the extraction worker, counted per physician over the Montreal day (`Clock`), with a clear message in the app when the limit is reached.
 

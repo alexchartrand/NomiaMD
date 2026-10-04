@@ -1,0 +1,11 @@
+{
+  "resourceType": "Patient",
+  "id": "erXuFYUfucBZaryVksYEcMg3",
+  "identifier": [
+    {"use": "usual", "type": {"text": "EPI"}, "system": "urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.0", "value": "E3826"}
+  ],
+  "active": true,
+  "name": [{"use": "official", "text": "Camila Maria Lopez", "family": "Lopez", "given": ["Camila", "Maria"]}],
+  "gender": "female",
+  "birthDate": "1987-09-12"
+}

@@ -1,0 +1,9 @@
+{
+  "resourceType": "Encounter",
+  "id": "eOfficeVisit3",
+  "status": "finished",
+  "class": {"system": "urn:oid:1.2.840.114350.1.72.1.7.7.10.696784.13260", "code": "5", "display": "Appointment"},
+  "subject": {"reference": "Patient/erXuFYUfucBZaryVksYEcMg3", "display": "Lopez, Camila Maria"},
+  "period": {"start": "2023-06-02T19:30:00Z", "end": "2023-06-02T20:00:00Z"},
+  "location": [{"location": {"reference": "Location/eFamilyMedicineClinic", "display": "EMC Family Medicine"}}]
+}

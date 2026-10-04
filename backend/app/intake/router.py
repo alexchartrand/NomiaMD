@@ -34,7 +34,7 @@ async def receive_notes(
     notes = (
         connector.from_paste(body.text, body.source_system, body.batch_label) if isinstance(body, PastedNotes) else body
     )
-    return await _receive(service, notes, current_user)
+    return await receive_and_report(service, notes, current_user)
 
 
 @router.post("/upload", response_model=list[ReceiveOutcomeOut])
@@ -55,10 +55,10 @@ async def upload_notes(
         notes = connector.from_upload(file.filename or "", content, source_system, batch_label)
     except UnsupportedUploadError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    return await _receive(service, notes, current_user)
+    return await receive_and_report(service, notes, current_user)
 
 
-async def _receive(service: IntakeService, notes: list[SourceNote], user: User) -> list[ReceiveOutcomeOut]:
+async def receive_and_report(service: IntakeService, notes: list[SourceNote], user: User) -> list[ReceiveOutcomeOut]:
     if not notes:
         raise HTTPException(status_code=422, detail="Aucune note à recevoir")
     try:

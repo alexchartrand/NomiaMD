@@ -1,5 +1,6 @@
 """Seed a freshly wiped database with a demo admin user and all 25 simulated consultation-
-note patients, each with an encounter holding its note, for local development. The
+note patients, each with an encounter holding its note, for local development — plus the
+Epic sandbox demo's patients (no encounters: those come from its import). The
 encounters go through IntakeService (the sample connector), the same path a real note
 takes. From backend/, with the venv active:
 
@@ -31,6 +32,7 @@ from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
 from app.bootstrap import postgres_database  # noqa: E402
 from app.intake import IntakeService, SampleConnector  # noqa: E402
+from app.intake.connectors.epic_fhir import SandboxRoster  # noqa: E402
 from app.patients import format_full_name, nam  # noqa: E402
 from app.postgresdb import (  # noqa: E402
     PatientRepository,
@@ -162,6 +164,21 @@ async def main() -> None:
                 )
                 await roster_repository.add(admin.id, patient.id)
                 print(f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable})")
+
+            # The Epic sandbox demo's patients, under the fake NAMs its import resolves them
+            # by (app/intake/connectors/epic_fhir/sandbox_patients.json). Synthetic too.
+            for demo in SandboxRoster.load().patients():
+                patient = await patient_repository.get_or_create_by_ramq_number(
+                    ramq_number=demo.nam,
+                    full_name=demo.full_name,
+                    date_of_birth=demo.birth_date,
+                    gender=demo.gender,
+                    is_vulnerable=False,
+                    family_doctor_name=None,
+                    family_doctor_practice_number=SEED_PRACTICE_NUMBER,
+                )
+                await roster_repository.add(admin.id, patient.id)
+                print(f"  + Epic sandbox patient {patient.full_name!r} (id={patient.id}, NAM {demo.nam})")
 
         # A sample whose patient wasn't created above still gets its encounter, "à associer".
         outcomes = await IntakeService(_NoExtractionQueue()).receive_all(SampleConnector().notes(), admin)

@@ -25,6 +25,7 @@ from app.intake.service import (
 from app.intake.visit_match import SameVisitMatcher
 
 from app.intake.router import router as intake_router
+from app.intake.epic_sandbox_router import router as epic_sandbox_router
 
 __all__ = [
     "Channel",
@@ -49,6 +50,7 @@ __all__ = [
     "UnsupportedUploadError",
     "content_hash",
     "default_normalizers",
+    "epic_sandbox_router",
     "intake_router",
     "status_of",
 ]

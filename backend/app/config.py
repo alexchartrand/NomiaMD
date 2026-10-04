@@ -111,5 +111,45 @@ class Settings:
         """Where a new contact-form request is announced."""
         return os.environ.get("CONTACT_NOTIFY_EMAIL") or None
 
+    @property
+    def app_env(self) -> str:
+        """`development` (default) or `production` — what demo-only features check before
+        they may turn on."""
+        return os.environ.get("APP_ENV", "development").strip().lower()
+
+    @property
+    def epic_sandbox_enabled(self) -> bool:
+        """The Epic sandbox demo import (app/intake/connectors/epic_fhir/). Refused at
+        startup when app_env is production."""
+        return _as_bool(os.environ.get("EPIC_SANDBOX_ENABLED"), default=False)
+
+    @property
+    def epic_sandbox_client_id(self) -> str:
+        """The fhir.epic.com app's non-production client id."""
+        return os.environ["EPIC_SANDBOX_CLIENT_ID"]
+
+    @property
+    def epic_sandbox_private_key_path(self) -> Path:
+        """The PEM private key whose public half the fhir.epic.com app's JWK Set URL serves
+        (scripts/epic_sandbox_jwks.py). Kept outside the repo."""
+        return Path(os.environ["EPIC_SANDBOX_PRIVATE_KEY_PATH"]).expanduser()
+
+    @property
+    def epic_sandbox_key_id(self) -> str | None:
+        """The JWT `kid`: which key of the JWK Set signed the assertion."""
+        return os.environ.get("EPIC_SANDBOX_KEY_ID") or None
+
+    @property
+    def epic_sandbox_fhir_base_url(self) -> str:
+        return os.environ.get(
+            "EPIC_SANDBOX_FHIR_BASE_URL", "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4/"
+        )
+
+    @property
+    def epic_sandbox_token_url(self) -> str:
+        return os.environ.get(
+            "EPIC_SANDBOX_TOKEN_URL", "https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token"
+        )
+
 
 settings = Settings()

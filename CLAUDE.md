@@ -24,6 +24,7 @@ uv run uvicorn app.main:app --reload   # run the API alone, http://localhost:800
 uv run pytest                    # full suite — mocked model + stubbed retriever, no network/API key/LanceDB needed
 uv run pytest tests/test_patients.py            # one file
 uv run pytest tests/test_patients.py::test_name -v   # one test
+uv run pytest -m epic_sandbox    # opt-in contract test against the live Epic sandbox (EPIC_SANDBOX_* set)
 ```
 Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY`
 and `DB_PATH`; set `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1
@@ -62,7 +63,7 @@ Backend modules (`backend/app/`):
 | Module | Role |
 |---|---|
 | `llm/` | chat and embedding model provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), raw-response reading, startup embedding-dimension guard |
-| `intake/` | where notes come from: connectors (sample, paste/upload + ER-shift splitter) → `IntakeService.receive(SourceNote)` — per-source normalizers (+ date order), NAM-only patient resolution, dedup, `ExtractionQueue`; derived encounter status (`status.py`), `POST /intake/notes`/`/intake/upload`. Never imports `ramq_codes` |
+| `intake/` | where notes come from: connectors (sample, paste/upload + ER-shift splitter, Epic FHIR — `connectors/epic_fhir/`, sandbox demo behind `EPIC_SANDBOX_ENABLED`) → `IntakeService.receive(SourceNote)` — per-source normalizers (+ date order), NAM-only patient resolution, dedup, `ExtractionQueue`; derived encounter status (`status.py`), `POST /intake/notes`/`/intake/upload`. Never imports `ramq_codes` |
 | `encounters/` | the inbox: `/encounters` (list over a service-date range, with derived status + `all_clean`, detail with latest run, manual patient pick, on-demand extract, "doublon possible" flags derived over the listed encounters + the physician's confirm/dismiss); wires `IntakeService` to the extraction pipeline |
 | `extraction/` | `POST /extract`: runs the pipeline (`pipeline.py`) and the shared LLM call (`engine.py`) |
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
