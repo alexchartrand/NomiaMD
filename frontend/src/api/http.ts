@@ -3,7 +3,7 @@
 // that list directly (e.g. via `new Error(detail)`) collapses it to "[object Object]".
 export function extractErrorDetail(body: unknown, fallback: string): string {
   const detail = (body as { detail?: unknown } | null)?.detail;
-  if (typeof detail === "string") return detail;
+  if (typeof detail === "string" && detail) return detail;
   if (Array.isArray(detail)) {
     return detail
       .map((entry) => (entry && typeof entry === "object" && "msg" in entry ? String(entry.msg) : String(entry)))

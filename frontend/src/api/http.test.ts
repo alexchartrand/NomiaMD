@@ -1,4 +1,4 @@
-import { describeError, extractErrorDetail, unwrap } from "./http";
+import { describeError, extractErrorDetail, unwrap, unwrapVoid } from "./http";
 
 describe("extractErrorDetail", () => {
   it("returns a string detail as is", () => {
@@ -8,6 +8,10 @@ describe("extractErrorDetail", () => {
   it("joins the msg of a 422 validation list", () => {
     const body = { detail: [{ msg: "champ requis" }, { msg: "NAM invalide" }] };
     expect(extractErrorDetail(body, "fallback")).toBe("champ requis NAM invalide");
+  });
+
+  it("falls back when the string detail is empty", () => {
+    expect(extractErrorDetail({ detail: "" }, "fallback")).toBe("fallback");
   });
 
   it("falls back when there is no usable detail", () => {
@@ -21,9 +25,15 @@ describe("unwrap", () => {
     await expect(unwrap(response)).rejects.toThrow("Server Error");
   });
 
-  // Bug: with an empty statusText the fallback `{ detail: "" }` is a valid string, so the
-  // thrown message is empty instead of "La requête a échoué : <status>".
-  it.todo("falls back to the status code when the body is not JSON and statusText is empty");
+  it("falls back to the status code when the body is not JSON and statusText is empty", async () => {
+    const response = new Response("oops", { status: 500, statusText: "" });
+    await expect(unwrap(response)).rejects.toThrow("La requête a échoué : 500");
+  });
+
+  it("falls back to the status code for unwrapVoid too", async () => {
+    const response = new Response("oops", { status: 502, statusText: "" });
+    await expect(unwrapVoid(response)).rejects.toThrow("La requête a échoué : 502");
+  });
 });
 
 describe("describeError", () => {
