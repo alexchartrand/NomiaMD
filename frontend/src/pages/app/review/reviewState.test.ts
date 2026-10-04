@@ -41,6 +41,16 @@ describe("reviewReducer", () => {
     expect(state.feeSelection.get(0)).toBe(1);
   });
 
+  it("tells fees apart by role alone when amount and context are equal", () => {
+    const sameButRole = makeProposedCode({
+      code: "00200",
+      fees: [makeFee({ amount: 50, role: 1 }), makeFee({ amount: 50, role: 2 })],
+    });
+    const claim = makeClaim({ codes: [makeClaimLine({ code: "00200", fee_amount: 50, fee_role: 2 })] });
+    const state = reviewReducer(initialReviewState, { type: "extracted", result: makeExtraction([sameButRole]), claim });
+    expect(state.feeSelection.get(0)).toBe(1);
+  });
+
   it("keeps the default fee when the claimed fee is the first one", () => {
     const claim = makeClaim({ codes: [makeClaimLine({ code: "00103", fee_amount: 50, fee_role: 1 })] });
     const state = reviewReducer(initialReviewState, { type: "extracted", result, claim });
