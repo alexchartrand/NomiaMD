@@ -199,3 +199,9 @@ class EncounterRepository(SessionRepository):
     async def dismiss_duplicate(self, encounter: Encounter) -> None:
         encounter.duplicate_dismissed_at = datetime.now(timezone.utc)
         await self._session.flush()
+
+    async def delete(self, encounter: Encounter) -> None:
+        """Hard delete — the retention purge's own operation. Runs and results cascade; claims,
+        duplicate links and amended-note links are detached (SET NULL)."""
+        await self._session.delete(encounter)
+        await self._session.flush()

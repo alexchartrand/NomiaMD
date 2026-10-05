@@ -24,6 +24,13 @@ class InvalidFeeSelectionError(Exception):
         super().__init__(f"fee_index {fee_index} out of range for code {code} ({available} available)")
 
 
+class InvalidLieuSelectionError(Exception):
+    def __init__(self, code: str, lieu: str):
+        self.code = code
+        self.lieu = lieu
+        super().__init__(f"lieu {lieu!r} is not offered by the chosen fee of code {code}")
+
+
 class EmptySelectionError(Exception):
     pass
 

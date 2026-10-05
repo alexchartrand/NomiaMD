@@ -9,6 +9,7 @@ from app.bills import bills_router
 from app.bootstrap import application_services
 from app.claims import claims_router
 from app.contact import contact_router
+from app.dashboard import dashboard_router
 from app.config import settings
 from app.encounters import encounters_router
 from app.extraction import extraction_router
@@ -42,6 +43,7 @@ app.include_router(auth_router)
 app.include_router(bills_router)
 app.include_router(claims_router)
 app.include_router(contact_router)
+app.include_router(dashboard_router)
 app.include_router(encounters_router)
 app.include_router(extraction_router)
 app.include_router(intake_router)

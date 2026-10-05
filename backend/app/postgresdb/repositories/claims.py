@@ -193,6 +193,11 @@ class ClaimRepository(SessionRepository):
             query = query.where(Claim.bill_id.is_not(None) if billed else Claim.bill_id.is_(None))
         return await self._load_details(query.limit(limit).offset(offset))
 
+    async def list_unbilled(self, physician_id: int) -> list[ClaimDetail]:
+        """Every live claim not on a bill yet — no page limit: what's still to bill is
+        counted and summed whole."""
+        return await self._load_details(self._details_query(physician_id).where(Claim.bill_id.is_(None)))
+
     async def list_by_ids(self, physician_id: int, claim_ids: Sequence[int]) -> list[ClaimDetail]:
         """The requested live claims this physician owns — ids that don't exist, are voided
         or belong to another physician are simply absent from the result, so callers compare

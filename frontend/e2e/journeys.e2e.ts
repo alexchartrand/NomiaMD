@@ -48,7 +48,7 @@ test.describe.serial("journeys", () => {
 
   test("paste a note, associate its patient, get codes", async ({ page }) => {
     await login(page);
-    await page.getByRole("navigation").getByRole("link", { name: "Ajouter manuellement" }).click();
+    await page.getByRole("link", { name: "Ajouter des notes" }).click();
     await page.getByRole("tab", { name: "Coller" }).click();
     await page.getByLabel("Notes à ajouter").fill(UNASSIGNED_NOTE);
     await page.getByLabel("Lot (facultatif)").fill("e2e");

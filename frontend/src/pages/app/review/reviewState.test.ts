@@ -69,6 +69,13 @@ describe("reviewReducer", () => {
     expect(state.feeSelection.get(0)).toBe(1);
   });
 
+  it("restores the single lieu a claim kept from a fee listing several", () => {
+    const multi = makeProposedCode({ code: "00200", fees: [makeFee({ amount: 50, lieux: ["cabinet", "domicile"] })] });
+    const claim = makeClaim({ codes: [makeClaimLine({ code: "00200", fee_amount: 50, fee_lieux: ["domicile"] })] });
+    const state = reviewReducer(initialReviewState, { type: "extracted", result: makeExtraction([multi]), claim });
+    expect(state.lieuSelection.get(0)).toBe("domicile");
+  });
+
   it("leaves out a claimed code the result no longer proposes", () => {
     const claim = makeClaim({ codes: [makeClaimLine({ code: "99999" })] });
     const state = reviewReducer(initialReviewState, { type: "extracted", result, claim });

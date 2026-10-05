@@ -110,6 +110,9 @@
 
 ## 🧹 Cleanup / Dead code
 
+- [ ] 🟡 `GET /dashboard` reads the physician's whole encounter history on every load — *added 10/5, from the dashboard work*
+  - `DashboardService.for_physician` (`backend/app/dashboard/service.py`) calls `EncounterInbox.period(user_id, None, None)` so a note still to act on counts however old it is. That loads every encounter, its latest extraction and live claim, and runs the duplicate flagger in Python, all to derive a handful of counts. The page polls every 15 s while a note is "reçu", so it repeats often. Fine at today's volumes, but it grows linearly. Fix: count the to-do statuses and the deadline candidates with SQL aggregates (status is derived, so the query has to mirror `app/intake/status.py`'s rules), and keep the full rows only for a bounded window: the 8 chart weeks plus the 6 latest encounters. A 120-day window was tried first and dropped because it hid older notes still waiting for review.
+
 - [ ] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests*
   - Only one tab is mounted at a time, so the tab the physician switches to remounts and fetches fresh anyway; bumping `reloadSignal` after a bill is created or deleted changes nothing observable (removing `onChanged` in `BillsTab` leaves every test green). Drop the signal, or keep both tabs mounted if the intent was to avoid refetching on every switch.
 

@@ -42,6 +42,8 @@ export interface SelectedCode {
   // Index into that code's resolved ExtractedFee[] (see api/extraction.ts) — null defaults
   // to the first (and, for a single-fee code, only) entry server-side.
   fee_index: number | null;
+  // One of that fee's lieux, when it lists several; the claim then keeps only it.
+  lieu?: string | null;
 }
 
 // No patient or source: both come from the extraction run server-side, since its codes were

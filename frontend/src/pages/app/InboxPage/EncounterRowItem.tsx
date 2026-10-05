@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { describeError, extractEncounter, type EncounterRow } from "../../../api";
+import { deleteEncounter, describeError, extractEncounter, type EncounterRow } from "../../../api";
 import { Button, TableCell, TableRow } from "../../../components";
 import { formatClinicTime } from "../../../utils/date";
 import { AssociatePatient } from "./AssociatePatient";
@@ -12,9 +12,8 @@ export const ENCOUNTER_COLUMNS = [
   { label: "Reçue", width: "w-[10%]" },
   { label: "Patient", width: "w-[20%]" },
   { label: "Source", width: "w-[14%]" },
-  { label: "Codes", width: "w-[8%]" },
   { label: "Statut", width: "w-[20%]" },
-  { label: "", width: "w-[28%]" },
+  { label: "", width: "w-[36%]" },
 ] as const;
 
 interface EncounterRowItemProps {
@@ -48,13 +47,34 @@ export function EncounterRowItem({ row, onChanged, onOpenDuplicate }: EncounterR
     }
   }
 
+  async function handleDelete() {
+    if (!window.confirm("Supprimer cette rencontre et ses extractions ? Cette action est irréversible.")) return;
+    setError(null);
+    try {
+      await deleteEncounter(row.id);
+      onChanged();
+    } catch (err) {
+      setError(describeError(err));
+    }
+  }
+
   // Remembers the list's period and filters for the encounter page's "back".
   const open = () => navigate(`/app/inbox/${row.id}`, { state: { inboxSearch: location.search } });
   const canExtract = row.patient !== null && (row.status === "reçu" || row.status === "échec");
 
   return (
     <Fragment>
-      <TableRow>
+      <TableRow
+        className="cursor-pointer"
+        tabIndex={0}
+        onClick={(event) => {
+          // Clicks on the row's own buttons do their own thing.
+          if (!(event.target as HTMLElement).closest("button, a")) open();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && event.target === event.currentTarget) open();
+        }}
+      >
         <TableCell className="text-muted-foreground">{formatClinicTime(row.received_at)}</TableCell>
         <TableCell className="truncate">
           {row.patient ? (
@@ -67,7 +87,6 @@ export function EncounterRowItem({ row, onChanged, onOpenDuplicate }: EncounterR
           )}
         </TableCell>
         <TableCell className="truncate text-sm">{row.source_system}</TableCell>
-        <TableCell>{row.code_count ?? "—"}</TableCell>
         <TableCell>
           <div className="flex flex-wrap items-center gap-1.5">
             <StatusChip status={row.status} />
@@ -86,13 +105,14 @@ export function EncounterRowItem({ row, onChanged, onOpenDuplicate }: EncounterR
                 {extracting ? "Extraction..." : row.status === "échec" ? "Réessayer" : "Extraire"}
               </Button>
             )}
-            {row.status === "prêt" ? (
+            {row.deletable && (
+              <Button type="button" variant="ghost" onClick={handleDelete}>
+                Supprimer
+              </Button>
+            )}
+            {row.status === "prêt" && (
               <Button type="button" onClick={open}>
                 Réviser
-              </Button>
-            ) : (
-              <Button type="button" variant="ghost" onClick={open}>
-                Voir
               </Button>
             )}
           </div>

@@ -12,6 +12,8 @@ export interface ReviewState {
   // up front — read with `feeSelection.get(i) ?? 0`, which is also correct for a single-fee
   // or no-fee code (the index is only ever used once fees.length > 0).
   feeSelection: Map<number, number>;
+  // Code array-index -> the lieu picked among a chosen fee's several; absent = the fee's first.
+  lieuSelection: Map<number, string>;
   // Nothing changed since it was loaded — saving a claim's own selection again is pointless.
   pristine: boolean;
   saving: boolean;
@@ -24,6 +26,7 @@ export const initialReviewState: ReviewState = {
   serviceDate: "",
   selection: new Set(),
   feeSelection: new Map(),
+  lieuSelection: new Map(),
   pristine: true,
   saving: false,
   saveError: null,
@@ -36,7 +39,7 @@ export type ReviewAction =
   | { type: "cleared" }
   | { type: "service-date-changed"; date: string }
   | { type: "code-toggled"; index: number }
-  | { type: "fee-selected"; index: number; feeIndex: number }
+  | { type: "fee-selected"; index: number; feeIndex: number; lieu?: string | null }
   | { type: "save-started" }
   | { type: "save-succeeded" }
   | { type: "save-cancelled" }
@@ -64,7 +67,10 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
     case "fee-selected": {
       const feeSelection = new Map(state.feeSelection);
       feeSelection.set(action.index, action.feeIndex);
-      return { ...state, feeSelection, pristine: false };
+      const lieuSelection = new Map(state.lieuSelection);
+      if (action.lieu) lieuSelection.set(action.index, action.lieu);
+      else lieuSelection.delete(action.index);
+      return { ...state, feeSelection, lieuSelection, pristine: false };
     }
     case "save-started":
       return { ...state, saving: true, saveError: null };
@@ -83,18 +89,22 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
 function selectionFromClaim(
   result: BillingExtractionResponse,
   claim: Claim,
-): Pick<ReviewState, "selection" | "feeSelection"> {
+): Pick<ReviewState, "selection" | "feeSelection" | "lieuSelection"> {
   const claimed = new Map(claim.codes.map((line) => [line.code, line]));
   const selection = new Set<number>();
   const feeSelection = new Map<number, number>();
+  const lieuSelection = new Map<number, string>();
   result.billing.result.codes.forEach((code, i) => {
     const line = claimed.get(code.code);
     if (!line) return;
     selection.add(i);
     const feeIndex = code.fees.findIndex((fee) => isSameFee(fee, line));
     if (feeIndex > 0) feeSelection.set(i, feeIndex);
+    // A claim keeps a single lieu when the physician narrowed a fee that lists several.
+    const claimedLieu = line.fee_lieux?.length === 1 ? line.fee_lieux[0] : null;
+    if (claimedLieu && code.fees[Math.max(feeIndex, 0)]?.lieux.length > 1) lieuSelection.set(i, claimedLieu);
   });
-  return { selection, feeSelection };
+  return { selection, feeSelection, lieuSelection };
 }
 
 function isSameFee(fee: ExtractedFee, line: ClaimCodeLine): boolean {

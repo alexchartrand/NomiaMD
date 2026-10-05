@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from app.claims.candidates import StoredCandidate
-from app.claims.errors import InvalidFeeSelectionError
+from app.claims.errors import InvalidFeeSelectionError, InvalidLieuSelectionError
 from app.ramq_codes import CodeFeeOut
 
 
@@ -20,10 +20,12 @@ class FeeSnapshot:
 
 
 class FeeSnapshotter:
-    def snapshot(self, candidate: StoredCandidate, fee_index: int | None) -> FeeSnapshot:
+    def snapshot(self, candidate: StoredCandidate, fee_index: int | None, lieu: str | None = None) -> FeeSnapshot:
         fee = self._select(candidate, fee_index)
         if fee is None:
             return FeeSnapshot()
+        if lieu is not None and lieu not in fee.lieux:
+            raise InvalidLieuSelectionError(candidate.code, lieu)
         is_dollars = fee.unit == "dollars"
         # A fee in "unités" (anesthesia base units, typically an R = 2 column) is a count,
         # not a price: billing its `amount` would turn 17 units into $17. The count goes in
@@ -35,7 +37,7 @@ class FeeSnapshotter:
             units=None if is_dollars else amount,
             role=fee.role,
             context=fee.context,
-            lieux=list(fee.lieux) or None,
+            lieux=[lieu] if lieu is not None else (list(fee.lieux) or None),
             majoration=fee.majoration,
         )
 

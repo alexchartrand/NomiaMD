@@ -21,12 +21,15 @@ export function Sidebar({ children }: SidebarProps) {
 type NavItemProps = {
   to: string;
   children: ReactNode;
+  // Active only on `to` itself, not on the pages below it (the dashboard at /app).
+  end?: boolean;
 };
 
-export function NavItem({ to, children }: NavItemProps) {
+export function NavItem({ to, children, end }: NavItemProps) {
   return (
     <NavLink
       to={to}
+      end={end}
       className={({ isActive }) =>
         cn(
           "block rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground",

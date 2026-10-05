@@ -6,5 +6,6 @@ export async function login(page: Page) {
   await page.getByLabel("Courriel").fill(ADMIN_EMAIL);
   await page.getByLabel("Mot de passe").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Se connecter" }).click();
-  await expect(page).toHaveURL(/\/app\/inbox/);
+  // Lands on the dashboard.
+  await expect(page).toHaveURL(/\/app\/?$/);
 }

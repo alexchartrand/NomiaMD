@@ -57,6 +57,11 @@
   /* Landing page grid (LedgerBackdrop.tsx) and the glow behind the hero card (HeroAccents.tsx). */
   --color-hero-grid: rgba(27, 94, 111, 0.18);
   --color-hero-glow: rgba(27, 94, 111, 0.2);
+  /* Dashboard activity chart (WeeklyActivityChart.tsx): reviewed vs still to bill. Their own
+     steps, not --color-primary/--color-brand-accent — those read too gray / too light as
+     marks; both pairs pass the dataviz palette checks (CVD, contrast) on their surface. */
+  --color-chart-reviewed: #00809a;
+  --color-chart-pending: #c77d10;
 
   --font-display: "Plus Jakarta Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
   /* The wordmark keeps its own typeface (Logo.tsx), independent of the headings'. */
@@ -123,6 +128,8 @@
   --color-primary-tint: rgba(79, 163, 181, 0.14);
   --color-hero-grid: rgba(79, 163, 181, 0.2);
   --color-hero-glow: rgba(79, 163, 181, 0.22);
+  --color-chart-reviewed: #1593ae;
+  --color-chart-pending: #c4831c;
 
   /* shadcn theme tokens, dark equivalents of the light block above. */
   --background: #0d1a1f;

@@ -28,6 +28,8 @@ class SelectedCode(BaseModel):
 
     code: str
     fee_index: int | None = None
+    # One of the chosen fee's lieux, when it lists several; the claim then keeps only it.
+    lieu: str | None = None
 
 
 class ClaimCreate(BaseModel):

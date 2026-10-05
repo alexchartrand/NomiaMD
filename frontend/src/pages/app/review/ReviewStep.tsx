@@ -23,7 +23,7 @@ export function ReviewStep({ result, patient, review }: ReviewStepProps) {
 
         <PatientMatchSection patient={patient} />
 
-        <div className="flex flex-col gap-[0.35rem]">
+        <div className="flex flex-col items-start gap-[0.35rem]">
           <label htmlFor="service-date" className="text-sm text-muted-foreground">
             Date de la consultation
           </label>
@@ -47,6 +47,7 @@ export function ReviewStep({ result, patient, review }: ReviewStepProps) {
           selection={state.selection}
           onToggle={review.toggleCode}
           feeSelection={state.feeSelection}
+          lieuSelection={state.lieuSelection}
           onFeeSelected={review.selectFee}
           disabled={review.readOnly}
         />

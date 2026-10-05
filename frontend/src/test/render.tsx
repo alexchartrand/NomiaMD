@@ -5,6 +5,7 @@ import type { ReactElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 import type { UserOut } from "../api";
 import { AuthProvider } from "../AuthContext";
+import { RamqChatProvider } from "../chat/RamqChatProvider";
 import { server } from "./server";
 
 export function makeUser(overrides: Partial<UserOut> = {}): UserOut {
@@ -31,13 +32,16 @@ export function serveSession(user: UserOut | null) {
 }
 
 // `ui` is usually a <Routes> tree (or one page) rendered at `route`, inside the real
-// AuthProvider — so session handling is exercised, not mocked.
+// AuthProvider — so session handling is exercised, not mocked — and the RAMQ chat thread
+// AppLayout provides (a page rendered alone still finds it).
 export function renderWithProviders(ui: ReactElement, { route = "/", state }: { route?: string; state?: unknown } = {}) {
   return {
     user: userEvent.setup(),
     ...render(
       <MemoryRouter initialEntries={[{ pathname: route.split("?")[0], search: route.includes("?") ? `?${route.split("?")[1]}` : "", state }]}>
-        <AuthProvider>{ui}</AuthProvider>
+        <AuthProvider>
+          <RamqChatProvider>{ui}</RamqChatProvider>
+        </AuthProvider>
       </MemoryRouter>,
     ),
   };

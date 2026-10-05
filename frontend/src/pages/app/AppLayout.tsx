@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { NavItem, Sidebar, SidebarFooter } from "../../components";
 import { useAuth } from "../../AuthContext";
+import { RamqChatProvider } from "../../chat/RamqChatProvider";
 
 export default function AppLayout() {
   const navigate = useNavigate();
@@ -14,8 +15,10 @@ export default function AppLayout() {
   return (
     <div className="flex min-h-screen">
       <Sidebar>
+        <NavItem to="/app" end>
+          Tableau de bord
+        </NavItem>
         <NavItem to="/app/inbox">Rencontres</NavItem>
-        <NavItem to="/app/ajouter">Ajouter manuellement</NavItem>
         <NavItem to="/app/facturation">Facturation</NavItem>
         <NavItem to="/app/chat">Clavardage</NavItem>
         <NavItem to="/app/patients">Patients</NavItem>
@@ -36,7 +39,9 @@ export default function AppLayout() {
         </SidebarFooter>
       </Sidebar>
       <div className="min-w-0 flex-1 overflow-y-auto py-10 px-12">
-        <Outlet />
+        <RamqChatProvider>
+          <Outlet />
+        </RamqChatProvider>
       </div>
     </div>
   );
