@@ -1,6 +1,7 @@
 import { screen, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import AppRouter from "./AppRouter";
+import { makeDashboard } from "./test/factories";
 import { makeUser, renderWithProviders, serveSession } from "./test/render";
 import { server } from "./test/server";
 
@@ -11,6 +12,7 @@ beforeEach(() => {
 
 function serveEmptyApp() {
   server.use(
+    http.get("/api/dashboard", () => HttpResponse.json(makeDashboard())),
     http.get("/api/encounters", () => HttpResponse.json([])),
     http.get("/api/patients", () => HttpResponse.json([])),
     http.get("/api/claims", () => HttpResponse.json([])),
@@ -72,16 +74,34 @@ describe("the app area", () => {
     },
   );
 
-  it("/app opens the inbox for a logged-in physician, with the navigation and their name", async () => {
+  it("/app opens the dashboard for a logged-in physician, with the navigation and their name", async () => {
     serveSession(makeUser({ full_name: "Dr Test" }));
     serveEmptyApp();
     renderWithProviders(<AppRouter />, { route: "/app" });
-    expect(await screen.findByRole("heading", { level: 1, name: "Rencontres" })).toBeInTheDocument();
-    expect(screen.getByText("Dr Test")).toBeInTheDocument();
-    const sidebar = within(screen.getByRole("complementary"));
-    for (const name of ["Rencontres","Facturation", "Clavardage", "Patients", "Profil"]) {
+    expect(await screen.findByRole("heading", { level: 1, name: "Bonjour, Dr Test" })).toBeInTheDocument();
+    const sidebar = within(screen.getByRole("navigation").closest("aside")!);
+    expect(sidebar.getByText("Dr Test")).toBeInTheDocument();
+    for (const name of ["Tableau de bord", "Rencontres", "Facturation", "Clavardage", "Patients", "Profil"]) {
       expect(sidebar.getByRole("link", { name })).toBeInTheDocument();
     }
+    // Only on the dashboard itself, not on every page under /app.
+    expect(sidebar.getByRole("link", { name: "Tableau de bord" })).toHaveClass("text-primary");
+    expect(sidebar.getByRole("link", { name: "Rencontres" })).not.toHaveClass("text-primary");
+  });
+
+  it("the dashboard's RAMQ assistant and the chat page share one conversation", async () => {
+    serveSession(makeUser());
+    serveEmptyApp();
+    server.use(http.post("/api/query", () => HttpResponse.json({ answer: "Le code 00103 s'applique." })));
+    const { user } = renderWithProviders(<AppRouter />, { route: "/app" });
+    const assistant = within(await screen.findByRole("complementary", { name: "Assistant RAMQ" }));
+    await user.type(assistant.getByPlaceholderText("Posez une question de facturation..."), "Quel code ?{Enter}");
+    expect(await assistant.findByText("Le code 00103 s'applique.")).toBeInTheDocument();
+
+    await user.click(assistant.getByRole("link", { name: "Agrandir" }));
+    expect(await screen.findByRole("heading", { level: 1, name: "Clavardage de facturation" })).toBeInTheDocument();
+    expect(screen.getByText("Quel code ?")).toBeInTheDocument();
+    expect(screen.getByText("Le code 00103 s'applique.")).toBeInTheDocument();
   });
 
   it("the sidebar navigates between the app's pages", async () => {
@@ -108,7 +128,7 @@ describe("the app area", () => {
     expect(loggedOut).toBe(true);
   });
 
-  it("logging in lands on the inbox", async () => {
+  it("logging in lands on the dashboard", async () => {
     serveSession(null);
     serveEmptyApp();
     server.use(http.post("/api/auth/login", () => HttpResponse.json(makeUser({ full_name: "Dr Test" }))));
@@ -116,6 +136,6 @@ describe("the app area", () => {
     await user.type(await screen.findByLabelText("Courriel"), "doc@example.test");
     await user.type(screen.getByLabelText("Mot de passe"), "secret123");
     await user.click(screen.getByRole("button", { name: "Se connecter" }));
-    expect(await screen.findByRole("heading", { level: 1, name: "Rencontres" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Bonjour, Dr Test" })).toBeInTheDocument();
   });
 });

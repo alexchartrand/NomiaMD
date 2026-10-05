@@ -2,6 +2,9 @@ import type {
   BillingExtractionResponse,
   Claim,
   ClaimCodeLine,
+  Dashboard,
+  DashboardKpis,
+  DashboardTasks,
   EncounterDetail,
   EncounterRow,
   ExtractedCode,
@@ -107,6 +110,36 @@ export function makeEncounterRow(overrides: Partial<EncounterRow> = {}): Encount
     all_clean: false,
     deletable: true,
     ...overrides,
+  };
+}
+
+// An empty dashboard on Monday 2026-10-05 unless overridden; `tasks`/`kpis` merge field
+// by field, so a test sets only the counts it's about.
+export function makeDashboard(
+  overrides: Omit<Partial<Dashboard>, "tasks" | "kpis"> & { tasks?: Partial<DashboardTasks>; kpis?: Partial<DashboardKpis> } = {},
+): Dashboard {
+  const { tasks, kpis, ...rest } = overrides;
+  return {
+    today: "2026-10-05",
+    tasks: {
+      to_do: 0,
+      to_review: 0,
+      approvable: 0,
+      to_associate: 0,
+      failed: 0,
+      extracting: 0,
+      possible_duplicates: 0,
+      ...tasks,
+    },
+    kpis: { encounters_this_week: 0, draft_count: 0, draft_total: 0, billed_this_month: 0, ...kpis },
+    deadlines: [],
+    weekly_activity: Array.from({ length: 8 }, (_, i) => ({
+      week_start: new Date(Date.UTC(2026, 7, 17 + 7 * i)).toISOString().slice(0, 10),
+      received: 0,
+      reviewed: 0,
+    })),
+    recent_encounters: [],
+    ...rest,
   };
 }
 

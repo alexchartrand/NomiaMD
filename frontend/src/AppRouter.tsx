@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Pricing from "./pages/Pricing";
@@ -7,6 +7,7 @@ import Security from "./pages/Security";
 import Privacy from "./pages/Privacy";
 import SiteLayout from "./pages/site/SiteLayout";
 import AppLayout from "./pages/app/AppLayout";
+import DashboardPage from "./pages/app/DashboardPage";
 import InboxPage from "./pages/app/InboxPage";
 import EncounterPage from "./pages/app/EncounterPage";
 import AddNotesPage from "./pages/app/AddNotesPage";
@@ -35,7 +36,7 @@ export default function AppRouter() {
           </RequireAuth>
         }
       >
-        <Route index element={<Navigate to="/app/inbox" replace />} />
+        <Route index element={<DashboardPage />} />
         <Route path="inbox" element={<InboxPage />} />
         <Route path="inbox/:encounterId" element={<EncounterPage />} />
         <Route path="ajouter" element={<AddNotesPage />} />

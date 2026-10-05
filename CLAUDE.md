@@ -67,6 +67,7 @@ Backend modules (`backend/app/`):
 | `llm/` | chat and embedding model provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), raw-response reading, startup embedding-dimension guard |
 | `intake/` | where notes come from: connectors (sample, paste/upload + ER-shift splitter, Epic FHIR — `connectors/epic_fhir/`, sandbox demo behind `EPIC_SANDBOX_ENABLED`) → `IntakeService.receive(SourceNote)` — per-source normalizers (+ date order), NAM-only patient resolution, dedup, `ExtractionQueue`; derived encounter status (`status.py`), `POST /intake/notes`/`/intake/upload`. Never imports `ramq_codes` |
 | `encounters/` | the inbox: `/encounters` (list over a service-date range, with derived status + `all_clean`, detail with latest run, manual patient pick, on-demand extract, "doublon possible" flags derived over the listed encounters + the physician's confirm/dismiss); wires `IntakeService` to the extraction pipeline |
+| `dashboard/` | `GET /dashboard` — the landing page's read-only summary over the inbox's derived rows: to-do counts, unbilled work near RAMQ's 90-day billing deadline (`deadline.py`), draft/billed totals, weekly activity, latest encounters. Today comes from `get_clock` |
 | `extraction/` | `POST /extract`: runs the pipeline (`pipeline.py`) and the shared LLM call (`engine.py`) |
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
 | `ramq_codes/` | `billing_codes` task — billing context, candidate retrieval, eligibility, code selection |
@@ -94,7 +95,7 @@ Frontend (`frontend/src/`): pages under `pages/app/` routed by `AppRouter.tsx`, 
 client per domain under `api/`. The public site (`/`, `/prix`, `/contact`, `/securite`,
 `/confidentialite`) shares `pages/site/SiteLayout.tsx`; landing sections live in
 `pages/landing/`, and contact details, prices and plans in `src/site/` (`config.ts`,
-`pricing.ts`) — the one place to edit them. The landing page is the inbox (`/app/inbox`); a row opens
+`pricing.ts`) — the one place to edit them. The landing page after login is the dashboard (`/app`, `pages/app/DashboardPage/`: tasks, KPIs, activity chart, latest encounters, and the RAMQ assistant beside them — one conversation shared with `/app/chat` through `chat/RamqChatProvider.tsx`, mounted in `AppLayout`). The inbox is `/app/inbox`; a row opens
 `/app/inbox/:encounterId` (note + code review, `pages/app/review/`); notes are added by hand
 on `/app/ajouter`. `/api/*` proxies to the backend (`vite.config.ts`).
 
