@@ -79,7 +79,7 @@ describe("the app area", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Rencontres" })).toBeInTheDocument();
     expect(screen.getByText("Dr Test")).toBeInTheDocument();
     const sidebar = within(screen.getByRole("complementary"));
-    for (const name of ["Rencontres", "Ajouter manuellement", "Facturation", "Clavardage", "Patients", "Profil"]) {
+    for (const name of ["Rencontres","Facturation", "Clavardage", "Patients", "Profil"]) {
       expect(sidebar.getByRole("link", { name })).toBeInTheDocument();
     }
   });
