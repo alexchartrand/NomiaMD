@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { describeError, extractEncounter, getEncounter, type EncounterDetail } from "../../../api";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { deleteEncounter, describeError, extractEncounter, getEncounter, type EncounterDetail } from "../../../api";
 import { Banner, Button, Card, CardContent, CardHeader, CardTitle, Spinner } from "../../../components";
 import { formatClinicTime, formatDate } from "../../../utils/date";
 import { AssociatePatient } from "../InboxPage/AssociatePatient";
@@ -28,6 +28,8 @@ export default function EncounterPage() {
   const inboxSearch = (useLocation().state as { inboxSearch?: string } | null)?.inboxSearch ?? "";
   const [encounter, setEncounter] = useState<EncounterDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
 
@@ -63,6 +65,19 @@ export default function EncounterPage() {
       setExtracting(false);
       // Either way the encounter changed: a new run, or the failure recorded on it.
       await load();
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm("Supprimer cette rencontre et ses extractions ? Cette action est irréversible.")) return;
+    setDeleting(true);
+    setError(null);
+    try {
+      await deleteEncounter(encounterId);
+      navigate(backTo);
+    } catch (err) {
+      setError(describeError(err));
+      setDeleting(false);
     }
   }
 
@@ -139,6 +154,12 @@ export default function EncounterPage() {
             <summary className="cursor-pointer font-heading font-semibold">Note reçue</summary>
             <pre className="mt-3 mb-0 font-mono text-sm whitespace-pre-wrap">{encounter.note_text}</pre>
           </details>
+
+          {!encounter.claim && (
+            <Button type="button" variant="danger" className="self-start" onClick={handleDelete} disabled={deleting}>
+              {deleting ? "Suppression..." : "Supprimer la rencontre"}
+            </Button>
+          )}
         </div>
       )}
     </section>

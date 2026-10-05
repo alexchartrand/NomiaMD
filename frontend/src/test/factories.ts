@@ -105,6 +105,7 @@ export function makeEncounterRow(overrides: Partial<EncounterRow> = {}): Encount
     extraction_run_id: 1,
     possible_duplicate_ids: [],
     all_clean: false,
+    deletable: true,
     ...overrides,
   };
 }

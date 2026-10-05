@@ -204,10 +204,17 @@ describe("row actions", () => {
     expect(await screen.findByText("rencontre 7")).toBeInTheDocument();
   });
 
-  it("offers 'Voir' instead of 'Réviser' once reviewed", async () => {
+  it("clicking a row opens the encounter, with no 'Réviser' once reviewed", async () => {
+    serveEncounters([ready(7, { status: "revu" })]);
+    const { user } = renderInbox();
+    await user.click((await screen.findAllByRole("row"))[1]);
+    expect(await screen.findByText("rencontre 7")).toBeInTheDocument();
+  });
+
+  it("offers no 'Réviser' once reviewed", async () => {
     serveEncounters([ready(1, { status: "revu" })]);
     renderInbox();
-    expect(await screen.findByRole("button", { name: "Voir" })).toBeInTheDocument();
+    await screen.findAllByRole("row");
     expect(screen.queryByRole("button", { name: "Réviser" })).not.toBeInTheDocument();
   });
 
@@ -234,7 +241,7 @@ describe("row actions", () => {
   it("does not offer extraction without a patient", async () => {
     serveEncounters([ready(1, { status: "reçu", patient: null })]);
     renderInbox();
-    await screen.findByRole("button", { name: "Voir" });
+    await screen.findAllByRole("row");
     expect(screen.queryByRole("button", { name: "Extraire" })).not.toBeInTheDocument();
   });
 

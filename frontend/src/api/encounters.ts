@@ -43,6 +43,8 @@ export interface EncounterRow {
   // Approvable from the list without opening it — the rule lives server-side
   // (app/encounters/readiness.py), never here.
   all_clean: boolean;
+  // No live claim, so DELETE /encounters/:id will be accepted.
+  deletable: boolean;
 }
 
 export interface EncounterDetail {
@@ -115,4 +117,9 @@ export async function confirmDuplicate(id: number, keptId: number): Promise<void
 // Distinct visits: `id` is never flagged again.
 export async function dismissDuplicate(id: number): Promise<void> {
   await unwrapVoid(await fetch(`/api/encounters/${id}/not-duplicate`, { method: "POST", credentials: "same-origin" }));
+}
+
+// Removes the encounter and its extractions for good; refused (409) while it has a claim.
+export async function deleteEncounter(id: number): Promise<void> {
+  await unwrapVoid(await fetch(`/api/encounters/${id}`, { method: "DELETE", credentials: "same-origin" }));
 }
