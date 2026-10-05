@@ -1,12 +1,54 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { deleteEncounter, describeError, extractEncounter, getEncounter, type EncounterDetail } from "../../../api";
-import { Banner, Button, Card, CardContent, CardHeader, CardTitle, Spinner } from "../../../components";
+import {
+  deleteEncounter,
+  describeError,
+  extractEncounter,
+  getEncounter,
+  type EncounterDetail,
+} from "../../../api";
+import {
+  Banner,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Spinner,
+} from "../../../components";
 import { formatClinicTime, formatDate } from "../../../utils/date";
 import { AssociatePatient } from "../InboxPage/AssociatePatient";
 import { StatusChip } from "../InboxPage/StatusChip";
 import { ReviewStep } from "../review/ReviewStep";
 import { useCodeReview } from "../review/useCodeReview";
+import { useEncounterNeighbours } from "./useEncounterNeighbours";
+
+// A step to a neighbouring encounter, carrying the inbox's period and filters along; inert
+// at either end of the list. Replaces the history entry so "back" isn't a walk through them.
+function StepButton({
+  id,
+  inboxSearch,
+  children,
+}: {
+  id: number | null;
+  inboxSearch: string;
+  children: ReactNode;
+}) {
+  if (id === null) {
+    return (
+      <Button type="button" variant="secondary" disabled>
+        {children}
+      </Button>
+    );
+  }
+  return (
+    <Button asChild variant="secondary">
+      <Link to={`/app/inbox/${id}`} replace state={{ inboxSearch }}>
+        {children}
+      </Link>
+    </Button>
+  );
+}
 
 // Why a review can be read but not saved, if it can't.
 function readOnlyReason(encounter: EncounterDetail): string | null {
@@ -16,7 +58,8 @@ function readOnlyReason(encounter: EncounterDetail): string | null {
   if (encounter.claim?.status === "soumis") {
     return "Cette facturation fait partie d'une facture générée : supprimez d'abord la facture pour la modifier.";
   }
-  if (encounter.status === "modifié") return "Une version plus récente de cette note a été reçue.";
+  if (encounter.status === "modifié")
+    return "Une version plus récente de cette note a été reçue.";
   return null;
 }
 
@@ -25,13 +68,15 @@ function readOnlyReason(encounter: EncounterDetail): string | null {
 export default function EncounterPage() {
   const encounterId = Number(useParams().encounterId);
   // The inbox's period and filters, when we came from it; its default period otherwise.
-  const inboxSearch = (useLocation().state as { inboxSearch?: string } | null)?.inboxSearch ?? "";
+  const inboxSearch =
+    (useLocation().state as { inboxSearch?: string } | null)?.inboxSearch ?? "";
   const [encounter, setEncounter] = useState<EncounterDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
+  const neighbours = useEncounterNeighbours(encounterId, inboxSearch);
 
   const load = useCallback(async () => {
     try {
@@ -49,10 +94,15 @@ export default function EncounterPage() {
   const readOnly = encounter ? readOnlyReason(encounter) : null;
   // A saved claim (first save or a draft's changes) changes the status and the claim the
   // review starts from, so reload rather than keep the stale encounter.
-  const review = useCodeReview(encounter?.extraction ?? null, readOnly !== null, encounter?.claim ?? null, () => {
-    setSavedNotice(true);
-    void load();
-  });
+  const review = useCodeReview(
+    encounter?.extraction ?? null,
+    readOnly !== null,
+    encounter?.claim ?? null,
+    () => {
+      setSavedNotice(true);
+      void load();
+    },
+  );
 
   async function handleExtract() {
     setExtracting(true);
@@ -69,7 +119,12 @@ export default function EncounterPage() {
   }
 
   async function handleDelete() {
-    if (!window.confirm("Supprimer cette rencontre et ses extractions ? Cette action est irréversible.")) return;
+    if (
+      !window.confirm(
+        "Supprimer cette rencontre et ses extractions ? Cette action est irréversible.",
+      )
+    )
+      return;
     setDeleting(true);
     setError(null);
     try {
@@ -83,15 +138,33 @@ export default function EncounterPage() {
 
   const backTo = `/app/inbox${inboxSearch}`;
   const canExtract =
-    encounter !== null && encounter.patient !== null && (encounter.status === "reçu" || encounter.status === "échec");
+    encounter !== null &&
+    encounter.patient !== null &&
+    (encounter.status === "reçu" || encounter.status === "échec");
 
   return (
     <section className="max-w-[860px]">
-      <p className="mb-2">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <Button asChild variant="link">
           <Link to={backTo}>← Rencontres</Link>
         </Button>
-      </p>
+        {neighbours && (
+          <nav
+            aria-label="Navigation entre les rencontres"
+            className="flex items-center gap-2 text-sm text-muted-foreground"
+          >
+            <StepButton id={neighbours.previousId} inboxSearch={inboxSearch}>
+              ← Précédente
+            </StepButton>
+            <span>
+              {neighbours.position} / {neighbours.total}
+            </span>
+            <StepButton id={neighbours.nextId} inboxSearch={inboxSearch}>
+              Suivante →
+            </StepButton>
+          </nav>
+        )}
+      </div>
 
       {error && <Banner tone="error">{error}</Banner>}
       {!encounter && !error && <Spinner label="Chargement..." />}
@@ -107,7 +180,9 @@ export default function EncounterPage() {
           <p className="m-0 text-sm text-muted-foreground">
             {[
               encounter.source_system,
-              encounter.service_date ? formatDate(encounter.service_date) : null,
+              encounter.service_date
+                ? formatDate(encounter.service_date)
+                : null,
               `reçue à ${formatClinicTime(encounter.received_at)}`,
               encounter.batch_label,
             ]
@@ -121,42 +196,75 @@ export default function EncounterPage() {
                 <CardTitle>Associer un patient</CardTitle>
               </CardHeader>
               <CardContent>
-                <AssociatePatient encounterId={encounter.id} onAssigned={load} />
+                <AssociatePatient
+                  encounterId={encounter.id}
+                  onAssigned={load}
+                />
               </CardContent>
             </Card>
           )}
 
           {encounter.status === "échec" && encounter.extraction_error && (
-            <Banner tone="error">L&rsquo;extraction a échoué : {encounter.extraction_error}</Banner>
+            <Banner tone="error">
+              L&rsquo;extraction a échoué : {encounter.extraction_error}
+            </Banner>
           )}
           {canExtract && (
-            <Button type="button" className="self-start" onClick={handleExtract} disabled={extracting}>
-              {extracting ? "Extraction en cours..." : encounter.status === "échec" ? "Réessayer" : "Extraire les codes"}
+            <Button
+              type="button"
+              className="self-start"
+              onClick={handleExtract}
+              disabled={extracting}
+            >
+              {extracting
+                ? "Extraction en cours..."
+                : encounter.status === "échec"
+                  ? "Réessayer"
+                  : "Extraire les codes"}
             </Button>
           )}
 
           {readOnly && <Banner tone="warning">{readOnly}</Banner>}
           {!readOnly && encounter.claim && !savedNotice && (
             <p className="m-0 text-sm text-muted-foreground">
-              Facturation enregistrée (brouillon). Vos modifications remplaceront la facturation existante.
+              Facturation enregistrée (brouillon). Vos modifications
+              remplaceront la facturation existante.
             </p>
           )}
           {savedNotice && (
             <Banner tone="success">
-              Facturation enregistrée. <Link to="/app/facturation">Voir la facturation</Link>
+              Facturation enregistrée.{" "}
+              <Link to="/app/facturation">Voir la facturation</Link>
             </Banner>
           )}
           {encounter.extraction && encounter.patient && (
-            <ReviewStep result={encounter.extraction} patient={encounter.patient} review={review} />
+            <ReviewStep
+              result={encounter.extraction}
+              patient={encounter.patient}
+              review={review}
+            />
           )}
 
-          <details open={!encounter.extraction} className="rounded-xl border border-border bg-card px-4 py-3">
-            <summary className="cursor-pointer font-heading font-semibold">Note reçue</summary>
-            <pre className="mt-3 mb-0 font-mono text-sm whitespace-pre-wrap">{encounter.note_text}</pre>
+          <details
+            open={!encounter.extraction}
+            className="rounded-xl border border-border bg-card px-4 py-3"
+          >
+            <summary className="cursor-pointer font-heading font-semibold">
+              Note reçue
+            </summary>
+            <pre className="mt-3 mb-0 font-mono text-sm whitespace-pre-wrap">
+              {encounter.note_text}
+            </pre>
           </details>
 
           {!encounter.claim && (
-            <Button type="button" variant="danger" className="self-start" onClick={handleDelete} disabled={deleting}>
+            <Button
+              type="button"
+              variant="danger"
+              className="self-start"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
               {deleting ? "Suppression..." : "Supprimer la rencontre"}
             </Button>
           )}

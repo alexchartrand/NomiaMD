@@ -5,6 +5,7 @@ import {
   makeClaim,
   makeClaimLine,
   makeEncounterDetail,
+  makeEncounterRow,
   makeExtraction,
   makeFee,
   makeProposedCode,
@@ -113,13 +114,13 @@ describe("reviewing the proposed codes", () => {
     expect(screen.getByText("(1 code sans montant en $)")).toBeInTheDocument();
   });
 
-  it("describes a fee with its role, context and units", async () => {
+  it("lists a code's fees by lieu, \"Autre\" when it has none, adding the role when lieux collide", async () => {
     serveEncounter(withCodes());
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
     expect(screen.getByText("8 unités")).toBeInTheDocument();
     const options = within(screen.getByLabelText("Tarif pour le code 00200")).getAllByRole("option");
-    expect(options.map((o) => o.textContent)).toEqual(["80.00 $ — R = 1", "95.00 $ — R = 2 — soir"]);
+    expect(options.map((o) => o.textContent)).toEqual(["Autre — R = 1", "Autre — R = 2 — soir"]);
   });
 
   it("shows what the physician must confirm, and the run's notes", async () => {
@@ -333,5 +334,35 @@ describe("what an encounter still needs", () => {
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
     expect(screen.queryByRole("button", { name: /Extraire|Réessayer/ })).not.toBeInTheDocument();
+  });
+});
+
+describe("stepping between encounters", () => {
+  const serveList = (...ids: number[]) =>
+    server.use(http.get("/api/encounters", () => HttpResponse.json(ids.map((id) => makeEncounterRow({ id })))));
+
+  it("links to the encounters around this one, in the inbox's order", async () => {
+    serveEncounter(withCodes());
+    serveList(9, 5, 2);
+    renderEncounter({ inboxSearch: "?all=1" });
+    expect(await screen.findByText("2 / 3")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "← Précédente" })).toHaveAttribute("href", "/app/inbox/9");
+    expect(screen.getByRole("link", { name: "Suivante →" })).toHaveAttribute("href", "/app/inbox/2");
+  });
+
+  it("disables the step that has nowhere to go", async () => {
+    serveEncounter(withCodes());
+    serveList(5, 2);
+    renderEncounter({ inboxSearch: "?all=1" });
+    expect(await screen.findByText("1 / 2")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "← Précédente" })).toBeDisabled();
+  });
+
+  it("shows no steps when the encounter isn't in the list it was opened from", async () => {
+    serveEncounter(withCodes());
+    serveList(9, 2);
+    renderEncounter({ inboxSearch: "?all=1" });
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByRole("navigation", { name: "Navigation entre les rencontres" })).not.toBeInTheDocument();
   });
 });
