@@ -2,7 +2,7 @@
 else's encounter is a 404, indistinguishable from one that doesn't exist.
 
 The patient pick and /extract may run an extraction (the pick queues one, which runs inline
-until step 10's worker), so they don't take the per-request DbSession — they read their
+unless a worker is configured), so they don't take the per-request DbSession — they read their
 response back in a fresh session_scope once the LLM calls are done. The duplicate answers
 make no LLM call and use it."""
 
@@ -17,13 +17,19 @@ from app.encounters.duplicates import (
     KeptEncounterIsDuplicateError,
     SameEncounterError,
 )
-from app.encounters.factory import get_duplicate_decisions, get_encounter_inbox, get_on_demand_extraction
+from app.encounters.factory import (
+    get_duplicate_decisions,
+    get_encounter_inbox,
+    get_extraction_queue,
+    get_on_demand_extraction,
+)
 from app.encounters.inbox import EncounterInbox
 from app.encounters.models import EncounterDetailOut, EncounterRowOut, PatientPick
 from app.encounters.on_demand import EncounterHasNoPatientError, OnDemandExtraction
 from app.extraction.models import BillingExtractionResponse
 from app.intake import (
     EncounterNotFoundError,
+    ExtractionQueue,
     IntakeService,
     PatientAlreadyAssignedError,
     PatientNotFoundError,
@@ -87,15 +93,22 @@ async def assign_patient(
     return detail
 
 
-@router.post("/{encounter_id}/extract", response_model=BillingExtractionResponse)
+@router.post("/{encounter_id}/extract", response_model=BillingExtractionResponse, responses={202: {"description": "Queued"}})
 @limiter.limit("10/minute")
 async def extract_encounter(
     request: Request,
     encounter_id: int,
+    wait: bool = True,
     current_user: User = Depends(get_current_user),
     extraction: OnDemandExtraction = Depends(get_on_demand_extraction),
-) -> BillingExtractionResponse:
+    queue: ExtractionQueue = Depends(get_extraction_queue),
+) -> BillingExtractionResponse | Response:
+    """Runs the extraction in the request and returns it; with `wait=false`, queues it for
+    the background worker (202) — how a failed encounter is retried without waiting."""
     try:
+        if not wait:
+            await extraction.enqueue(encounter_id, current_user, queue)
+            return Response(status_code=status.HTTP_202_ACCEPTED)
         return await extraction.run(encounter_id, current_user)
     except EncounterNotFoundError as exc:
         raise HTTPException(status_code=404, detail=_NOT_FOUND) from exc

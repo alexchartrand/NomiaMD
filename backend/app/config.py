@@ -37,6 +37,8 @@ class Settings:
             os.environ.get("JWT_REMEMBER_ME_EXPIRY_SECONDS", 30 * 24 * 3600)
         )
         self.cookie_secure = _as_bool(os.environ.get("COOKIE_SECURE"), default=True)
+        # Concurrent extractions per worker process; size to the LLM endpoint's throughput.
+        self.worker_max_jobs = int(os.environ.get("WORKER_MAX_JOBS", 4))
         self.log_level = os.environ.get("LOG_LEVEL", "INFO")
 
     @property

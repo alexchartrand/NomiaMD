@@ -1,11 +1,12 @@
-"""FastAPI dependencies for the /encounters routes, and the IntakeService app/main.py
-builds at startup — wired here because this is where intake meets extraction."""
+"""FastAPI dependencies for the /encounters routes."""
+
+from fastapi import Request
 
 from app.encounters.duplicates import DuplicateDecisions
 from app.encounters.inbox import EncounterInbox
 from app.encounters.on_demand import OnDemandExtraction
 from app.extraction.encounter_extractor import PipelineEncounterExtractor
-from app.intake import InlineExtractionQueue, IntakeService
+from app.intake import ExtractionQueue
 from app.postgresdb import DbSession
 
 
@@ -21,7 +22,5 @@ def get_on_demand_extraction() -> OnDemandExtraction:
     return OnDemandExtraction(PipelineEncounterExtractor())
 
 
-def build_intake_service() -> IntakeService:
-    """The note's extraction runs inline, in the request that delivered it. Step 10 picks an
-    arq-backed queue here instead, by config."""
-    return IntakeService(InlineExtractionQueue(PipelineEncounterExtractor()))
+def get_extraction_queue(request: Request) -> ExtractionQueue:
+    return request.app.state.extraction_queue
