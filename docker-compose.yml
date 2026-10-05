@@ -96,6 +96,37 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # Runs the extractions the backend queues in Redis. Same image and environment as
+  # `backend`; no port, no healthcheck endpoint — scale with replicas / WORKER_MAX_JOBS.
+  worker:
+    build:
+      context: ./backend
+    container_name: worker
+    restart: unless-stopped
+    command: ["arq", "app.worker.WorkerSettings"]
+    networks: [internal]
+    environment:
+      DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
+      REDIS_URL: redis://redis:6379/0
+      DB_PATH: /data/ramq-lancedb
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      WORKER_MAX_JOBS: ${WORKER_MAX_JOBS:-4}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   frontend:
     build:
       context: ./frontend

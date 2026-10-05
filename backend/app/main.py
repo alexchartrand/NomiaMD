@@ -11,9 +11,9 @@ from app.claims import claims_router
 from app.contact import contact_router
 from app.config import settings
 from app.encounters import encounters_router
-from app.encounters.factory import build_intake_service
 from app.extraction import extraction_router
-from app.intake import epic_sandbox_router, intake_router
+from app.extraction.background import extraction_queue
+from app.intake import IntakeService, epic_sandbox_router, intake_router
 from app.logging_config import configure_logging
 from app.patients import patients_router
 from app.ramq_chatbot import ramq_chatbot_router
@@ -27,9 +27,10 @@ configure_logging(settings.log_level)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with application_services() as db:
+    async with application_services() as db, extraction_queue() as queue:
         app.state.lancedb = db
-        app.state.intake_service = build_intake_service()
+        app.state.extraction_queue = queue
+        app.state.intake_service = IntakeService(queue)
         yield
 
 

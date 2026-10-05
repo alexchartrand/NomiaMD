@@ -8,22 +8,22 @@ Notes are extracted as they arrive, so by end of day the physician only reviews.
 path never waits on the LLM, except for the on-demand route.
 
 ## Tasks
-- [ ] `uv add arq`. New `backend/app/worker.py`:
+- [x] `uv add arq`. New `backend/app/worker.py`:
   - `WorkerSettings` with `redis_settings` from `settings.redis_url`
   - `on_startup` enters `application_services()` (`app/bootstrap.py`), the same composition root
   - `on_shutdown` exits it
-- [ ] Job `extract_encounter(ctx, encounter_id)`:
+- [x] Job `extract_encounter(ctx, encounter_id)`:
   - Idempotent: skip if a run already exists for this encounter.
   - Reuses `run_billing_codes_pipeline` and `ExtractionRecorder` unchanged.
   - On failure: `record_extraction_error`, with arq retries and backoff (max 3).
-- [ ] `ArqExtractionQueue` implements step 07's `ExtractionQueue`. Choose it when `REDIS_URL`
+- [x] `ArqExtractionQueue` implements step 07's `ExtractionQueue`. Choose it when `REDIS_URL`
   is a real Redis; otherwise keep `InlineExtractionQueue` (tests, simple dev).
-- [ ] Concurrency cap (`max_jobs`) sized to the LLM endpoint's throughput (from step 03).
-- [ ] Cron hook placeholder for later jobs (purge in 05, polling in 20).
-- [ ] `Makefile`: `worker` target; `dev`/`dev-fake` also start the worker (and a local Redis, or
+- [x] Concurrency cap (`max_jobs`) sized to the LLM endpoint's throughput (from step 03).
+- [x] Cron hook placeholder for later jobs (purge in 05, polling in 20).
+- [x] `Makefile`: `worker` target; `dev`/`dev-fake` also start the worker (and a local Redis, or
   document the inline fallback). `docker-compose.yml`: a `worker` service using the backend
   image with `arq app.worker.WorkerSettings`, on the `internal` network.
-- [ ] `POST /encounters/{id}/extract` re-enqueues a failed (`échec`) encounter, or runs it inline
+- [x] `POST /encounters/{id}/extract` re-enqueues a failed (`échec`) encounter, or runs it inline
   when the physician is waiting.
 
 ## Done when
