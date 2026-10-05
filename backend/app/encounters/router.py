@@ -19,6 +19,7 @@ from app.encounters.duplicates import (
 )
 from app.encounters.factory import (
     get_duplicate_decisions,
+    get_encounter_removal,
     get_encounter_inbox,
     get_extraction_queue,
     get_on_demand_extraction,
@@ -26,6 +27,7 @@ from app.encounters.factory import (
 from app.encounters.inbox import EncounterInbox
 from app.encounters.models import EncounterDetailOut, EncounterRowOut, PatientPick
 from app.encounters.on_demand import EncounterHasNoPatientError, OnDemandExtraction
+from app.encounters.removal import EncounterHasClaimError, EncounterRemoval
 from app.extraction.models import BillingExtractionResponse
 from app.intake import (
     EncounterNotFoundError,
@@ -68,6 +70,23 @@ async def get_encounter(
     if detail is None:
         raise HTTPException(status_code=404, detail=_NOT_FOUND)
     return detail
+
+
+@router.delete("/{encounter_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_encounter(
+    encounter_id: int,
+    current_user: User = Depends(get_current_user),
+    removal: EncounterRemoval = Depends(get_encounter_removal),
+) -> Response:
+    try:
+        await removal.remove(encounter_id, current_user.id)
+    except EncounterNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=_NOT_FOUND) from exc
+    except EncounterHasClaimError as exc:
+        raise HTTPException(
+            status_code=409, detail="Cette rencontre est déjà facturée : supprimez d'abord sa facturation"
+        ) from exc
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post("/{encounter_id}/patient", response_model=EncounterDetailOut)

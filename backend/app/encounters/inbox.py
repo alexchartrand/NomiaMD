@@ -68,6 +68,7 @@ class EncounterInbox:
                     code_count=_code_count(claims.get(encounter.id), extraction),
                     extraction_run_id=extraction.extraction_run_id if extraction is not None else None,
                     possible_duplicate_ids=possible_duplicate_ids,
+                    deletable=not activity.has_live_claim,
                     all_clean=is_all_clean(
                         status,
                         extraction,

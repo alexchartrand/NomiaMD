@@ -43,6 +43,8 @@ class EncounterRowOut(BaseModel):
     possible_duplicate_ids: list[int]
     # Approvable without opening it: see app/encounters/readiness.py.
     all_clean: bool
+    # Deletable: no live claim (see app/encounters/removal.py).
+    deletable: bool
 
 
 class EncounterDetailOut(BaseModel):

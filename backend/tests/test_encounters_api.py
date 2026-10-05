@@ -557,6 +557,44 @@ async def test_duplicate_answers_are_scoped_to_the_physician(me, client):
     assert _row(client, capture)["possible_duplicate_ids"] == [scribe]
 
 
+async def test_delete_an_encounter(me, client):
+    patient = await _seed_patient()
+    encounter_id = _push(client, patient)
+
+    assert _row(client, encounter_id)["deletable"] is True
+    assert client.delete(f"/encounters/{encounter_id}").status_code == 204
+
+    assert client.get(f"/encounters/{encounter_id}").status_code == 404
+    assert await _encounter_count(me.id) == 0
+
+
+async def test_an_encounter_with_a_claim_cannot_be_deleted(me, client):
+    patient = await _seed_patient()
+    encounter_id = _push(client, patient)
+    run_id = _row(client, encounter_id)["extraction_run_id"]
+    client.post(
+        "/claims",
+        json={"extraction_run_id": run_id, "service_date": "2026-03-04", "selected_codes": [{"code": "TEST-BP-MGMT"}]},
+    )
+
+    assert _row(client, encounter_id)["deletable"] is False
+    assert client.delete(f"/encounters/{encounter_id}").status_code == 409
+    assert client.get(f"/encounters/{encounter_id}").status_code == 200
+
+
+async def test_deleting_is_scoped_to_the_physician(me, client):
+    patient = await _seed_patient()
+    encounter_id = _push(client, patient)
+
+    someone_else = physician(next(_physician_ids))
+    await ensure_user_row(someone_else)
+    app.dependency_overrides[get_current_user] = lambda: someone_else
+
+    assert client.delete(f"/encounters/{encounter_id}").status_code == 404
+    app.dependency_overrides[get_current_user] = lambda: me
+    assert client.get(f"/encounters/{encounter_id}").status_code == 200
+
+
 # --- masking ------------------------------------------------------------------------------
 
 
