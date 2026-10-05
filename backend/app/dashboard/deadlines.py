@@ -17,7 +17,9 @@ class DeadlineWatch:
         self._deadline = deadline
 
     def items(self, rows: list[EncounterRowOut], drafts: list[ClaimDetail], today: date) -> list[DeadlineItemOut]:
-        """Most urgent first. An undated encounter has no deadline yet, so it's left out."""
+        """What can still be billed first, fewest days left first; then what's past the
+        deadline, most recently expired first — an item months overdue is the least
+        actionable. An undated encounter has no deadline yet, so it's left out."""
         items = [
             DeadlineItemOut(
                 kind="encounter",
@@ -39,4 +41,4 @@ class DeadlineWatch:
             for draft in drafts
         ]
         at_risk = [item for item in items if self._deadline.is_at_risk(item.days_left)]
-        return sorted(at_risk, key=lambda item: (item.days_left, item.kind, item.id))
+        return sorted(at_risk, key=lambda item: (item.days_left < 0, abs(item.days_left), item.kind, item.id))

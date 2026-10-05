@@ -95,8 +95,8 @@ def test_deadline_watch_skips_reviewed_outdated_and_undated_encounters():
     items = DeadlineWatch(BillingDeadline()).items(rows, [draft], TODAY)
 
     assert [(i.kind, i.id, i.days_left, i.patient_display) for i in items] == [
-        ("claim", 9, -1, "Marie T."),
         ("encounter", 1, 1, "Roch D."),
+        ("claim", 9, -1, "Marie T."),
     ]
 
 

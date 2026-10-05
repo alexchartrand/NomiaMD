@@ -14,9 +14,6 @@ from app.dashboard.tasks import TaskCounter
 from app.encounters.inbox import EncounterInbox
 from app.postgresdb import BillRepository, ClaimDetail, ClaimRepository
 
-# Service dates this far back are read: the activity chart's weeks and the 90-day deadline,
-# plus a month past it so an overdue encounter doesn't silently vanish.
-LOOKBACK_DAYS = 120
 RECENT_COUNT = 6
 
 
@@ -39,7 +36,9 @@ class DashboardService:
 
     async def for_physician(self, user_id: int) -> DashboardOut:
         today = self._clock.today()
-        rows = await self._inbox.period(user_id, today - timedelta(days=LOOKBACK_DAYS - 1), None)
+        # Every encounter, like the inbox's "Tout": a note still to act on counts however old
+        # it is — the oldest are the ones past RAMQ's deadline.
+        rows = await self._inbox.period(user_id, None, None)
         drafts = await self._claims.list_unbilled(user_id)
         this_week = week_start(today)
         return DashboardOut(

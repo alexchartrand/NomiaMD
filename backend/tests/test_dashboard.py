@@ -152,8 +152,9 @@ async def test_recent_encounters_are_the_last_six_received(me, client):
     assert recent == list(reversed(ids))[:6]
 
 
-async def test_deadlines_list_unbilled_work_closest_to_ramq_limit_first(me, client):
+async def test_deadlines_list_what_can_still_be_billed_first_then_what_is_overdue(me, client):
     patient = await _seed_patient()
+    long_overdue = _push(client, patient, service_date=TODAY - timedelta(days=200))
     overdue = _push(client, patient, service_date=TODAY - timedelta(days=95))
     soon = _push(client, patient, service_date=TODAY - timedelta(days=80))
     _push(client, patient, service_date=TODAY - timedelta(days=60))  # a month left: not yet
@@ -162,11 +163,12 @@ async def test_deadlines_list_unbilled_work_closest_to_ramq_limit_first(me, clie
     deadlines = _dashboard(client)["deadlines"]
 
     assert [(d["kind"], d["id"], d["days_left"]) for d in deadlines] == [
-        ("encounter", overdue, -5),
         ("claim", draft["id"], 5),
         ("encounter", soon, 10),
+        ("encounter", overdue, -5),
+        ("encounter", long_overdue, -110),
     ]
-    assert deadlines[1]["patient_display"] == "Roch D."
+    assert deadlines[0]["patient_display"] == "Roch D."
 
 
 async def test_a_reviewed_encounter_is_not_a_deadline_its_claim_is(me, client):
