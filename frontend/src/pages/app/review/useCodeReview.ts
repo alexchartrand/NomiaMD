@@ -9,6 +9,7 @@ import {
   type ExtractedFee,
 } from "../../../api";
 import { initialReviewState, reviewReducer } from "./reviewState";
+import { defaultLieu } from "./feeOptions";
 
 // A fee in "unités" is a count of anesthesia base units, not a price — it never adds to the
 // dollar total, and counts as a code without a dollar amount.
@@ -32,7 +33,7 @@ export function useCodeReview(
   }, [result, claim]);
 
   const selectedEntries = useMemo(() => {
-    const { result, selection, feeSelection } = state;
+    const { result, selection, feeSelection, lieuSelection } = state;
     if (!result) return [];
     return [...selection]
       .sort((a, b) => a - b)
@@ -40,7 +41,8 @@ export function useCodeReview(
         const code = result.billing.result.codes[i];
         const feeIndex = code.fees.length > 0 ? (feeSelection.get(i) ?? 0) : null;
         const fee = feeIndex != null ? code.fees[feeIndex] : null;
-        return { code, feeIndex, fee };
+        const lieu = fee ? (lieuSelection.get(i) ?? defaultLieu(fee)) : null;
+        return { code, feeIndex, fee, lieu };
       });
   }, [state]);
 
@@ -54,7 +56,7 @@ export function useCodeReview(
     if (!result || !serviceDate || selection.size === 0 || readOnly) return;
     dispatch({ type: "save-started" });
     try {
-      const selectedCodes = new Map(selectedEntries.map((e) => [e.code.code, { code: e.code.code, fee_index: e.feeIndex }]));
+      const selectedCodes = new Map(selectedEntries.map((e) => [e.code.code, { code: e.code.code, fee_index: e.feeIndex, lieu: e.lieu ?? undefined }]));
       const payload = {
         extraction_run_id: result.extraction_run_id,
         service_date: serviceDate,
@@ -86,7 +88,8 @@ export function useCodeReview(
     // Saving replaces an existing claim rather than creating one.
     editing: claim !== null,
     toggleCode: (index: number) => dispatch({ type: "code-toggled", index }),
-    selectFee: (index: number, feeIndex: number) => dispatch({ type: "fee-selected", index, feeIndex }),
+    selectFee: (index: number, feeIndex: number, lieu: string | null = null) =>
+      dispatch({ type: "fee-selected", index, feeIndex, lieu }),
     changeServiceDate: (date: string) => dispatch({ type: "service-date-changed", date }),
     totalAmount,
     codesMissingFee,

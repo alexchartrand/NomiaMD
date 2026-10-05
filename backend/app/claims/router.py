@@ -16,6 +16,7 @@ from app.claims.errors import (
     EmptySelectionError,
     ExtractionRunNotFoundError,
     InvalidFeeSelectionError,
+    InvalidLieuSelectionError,
     PatientNotFoundError,
     UnknownCodesError,
 )
@@ -98,6 +99,11 @@ def _claim_errors() -> Iterator[None]:
                 f"Choix de tarif invalide pour le code {exc.code} "
                 f"(indice {exc.fee_index}, {exc.available} tarif(s) disponible(s))"
             ),
+        ) from exc
+    except InvalidLieuSelectionError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Lieu invalide pour le code {exc.code} : {exc.lieu}",
         ) from exc
     except DuplicateClaimError as exc:
         raise HTTPException(

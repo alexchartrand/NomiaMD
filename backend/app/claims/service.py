@@ -102,7 +102,7 @@ class ClaimService:
                     extraction_run_id=run.id,
                     context=context,
                     codes=[
-                        self._code_input(candidate, choice.fee_index)
+                        self._code_input(candidate, choice.fee_index, choice.lieu)
                         for choice, candidate in zip(selected, candidates)
                     ],
                 )
@@ -177,8 +177,8 @@ class ClaimService:
             raise ExtractionRunNotFoundError()
         return ExtractionCandidates.from_result_json(result.result_json).require(codes)
 
-    def _code_input(self, candidate: StoredCandidate, fee_index: int | None) -> ClaimCodeInput:
-        fee = self._fee_snapshotter.snapshot(candidate, fee_index)
+    def _code_input(self, candidate: StoredCandidate, fee_index: int | None, lieu: str | None) -> ClaimCodeInput:
+        fee = self._fee_snapshotter.snapshot(candidate, fee_index, lieu)
         return ClaimCodeInput(
             code=candidate.code,
             description=candidate.description,

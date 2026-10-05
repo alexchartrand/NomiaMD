@@ -327,6 +327,48 @@ async def test_selecting_a_fee_index_lands_that_variant_on_the_claim():
     assert code["majoration"] == "20%"
 
 
+_TWO_LIEUX_RESULT = {
+    "codes": [
+        {
+            "code": "TEST-BP-MGMT",
+            "description": "Prise en charge d'une hypertension",
+            "confidence": "high",
+            "explanation": "hypertension artérielle depuis 10 ans",
+            "fees": [
+                {"amount": 40.0, "amount_text": "40,00", "context": "Jour", "lieux": ["cabinet", "domicile"],
+                 "majoration": None},
+            ],
+        }
+    ],
+    "notes": None,
+}
+
+
+async def test_selecting_a_lieu_keeps_only_that_lieu_on_the_claim():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run(result=_TWO_LIEUX_RESULT)
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 0, "lieu": "domicile"}]
+
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 201
+    [code] = response.json()["codes"]
+    assert code["fee_lieux"] == ["domicile"]
+    assert code["fee_amount"] == 40.0
+
+
+async def test_a_lieu_the_fee_does_not_offer_is_422():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run(result=_TWO_LIEUX_RESULT)
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"] = [{"code": "TEST-BP-MGMT", "fee_index": 0, "lieu": "urgence"}]
+
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 422
+
+
 async def test_a_fee_in_units_is_never_billed_as_dollars():
     # An R = 2 column counts anesthesia base units: "17" must never become $17 on a claim.
     with TestClient(app) as client:
