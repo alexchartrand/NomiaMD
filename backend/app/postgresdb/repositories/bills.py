@@ -49,6 +49,21 @@ class BillRepository(SessionRepository):
         )
         return list(result.scalars().all())
 
+    async def list_generated_between(self, physician_id: int, start: datetime, end: datetime) -> list[Bill]:
+        """Bills generated from `start` (included) to `end` (excluded) — instants, so the
+        caller decides whose calendar a month is (the clinic's, app/clock.py)."""
+        result = await self._session.execute(
+            select(Bill)
+            .where(
+                Bill.physician_id == physician_id,
+                Bill.voided_at.is_(None),
+                Bill.generated_at >= start,
+                Bill.generated_at < end,
+            )
+            .order_by(Bill.generated_at.desc(), Bill.id.desc())
+        )
+        return list(result.scalars().all())
+
     async def get_for_physician(self, bill_id: int, physician_id: int) -> Bill | None:
         bill = await self._session.get(Bill, bill_id)
         if bill is None or bill.physician_id != physician_id or bill.voided_at is not None:
