@@ -1,4 +1,4 @@
-.PHONY: dev backend frontend fake-llm dev-fake worker
+.PHONY: dev backend frontend fake-llm dev-fake worker redis
 
 dev:
 	@echo "Starting backend and frontend..."
@@ -7,10 +7,12 @@ dev:
 	(cd frontend && npm run dev) & \
 	wait
 
-# Background extraction needs a Redis (`docker compose up -d redis` exposes none by
-# default: run `docker run --rm -p 6379:6379 redis:7-alpine`) and REDIS_URL=redis://localhost:6379/0
-# in backend/.env, for both the API and `make worker`. Without a real REDIS_URL, extraction
-# runs inline in the request and no worker is needed.
+# Background extraction needs a Redis (`make redis`, in its own terminal) and
+# REDIS_URL=redis://localhost:6379/0 in backend/.env, for both the API and `make worker`.
+# Without a real REDIS_URL (comment it out), extraction runs inline and no worker is needed.
+redis:
+	docker run --rm --name nomiamd-dev-redis -p 6379:6379 redis:7-alpine
+
 worker:
 	cd backend && uv run arq app.worker.WorkerSettings
 
