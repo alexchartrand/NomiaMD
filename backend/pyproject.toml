@@ -16,7 +16,6 @@ dependencies = [
     "llama-index-core>=0.12",
     "llama-index-embeddings-mistralai>=0.3",
     "llama-index-llms-mistralai>=0.10",
-    "pandas>=2.0",
     "lancedb>=0.37",
     "psycopg[binary]>=3.2",
     "aiosqlite>=0.20",
