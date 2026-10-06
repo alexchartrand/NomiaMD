@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Banner, Button } from "../../../components";
 
 interface SaveSummaryProps {
@@ -13,8 +12,13 @@ interface SaveSummaryProps {
   // Shown, not editable: no save button at all.
   readOnly: boolean;
   onSave: () => void;
+  // There's a next encounter to go to: save then go there, or just go when there's nothing to save.
+  onSaveAndNext?: () => void;
+  onNext?: () => void;
 }
 
+// The review's total and actions, kept in view at the bottom of the screen while the
+// physician scrolls through the codes.
 export function SaveSummary({
   totalAmount,
   codesMissingFee,
@@ -25,10 +29,14 @@ export function SaveSummary({
   editing,
   readOnly,
   onSave,
+  onSaveAndNext,
+  onNext,
 }: SaveSummaryProps) {
+  const savable = !readOnly && canSave && !saved;
   return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-[0.85rem]">
+    <div className="sticky bottom-0 z-10 -mx-4 -mb-4 flex flex-col gap-3 rounded-b-xl border-t border-border bg-card px-4 py-3 shadow-[0_-6px_12px_-10px_rgb(0_0_0/0.25)]">
+      {saveError && <Banner tone="error">{saveError}</Banner>}
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-baseline gap-[0.6rem]">
           <span className="text-sm text-muted-foreground">Total indicatif</span>
           <span className="font-heading text-[1.6rem] font-bold">{totalAmount.toFixed(2)} $</span>
@@ -39,19 +47,30 @@ export function SaveSummary({
           )}
         </div>
 
-        {!readOnly && (
-          <Button type="button" onClick={onSave} disabled={saving || saved || !canSave}>
-            {saving ? "Enregistrement..." : editing ? "Enregistrer les modifications" : "Enregistrer la facturation"}
-          </Button>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {!readOnly && (
+            <Button
+              type="button"
+              variant={onSaveAndNext && savable ? "secondary" : "primary"}
+              onClick={onSave}
+              disabled={saving || !savable}
+            >
+              {saving ? "Enregistrement..." : editing ? "Enregistrer les modifications" : "Enregistrer la facturation"}
+            </Button>
+          )}
+          {onSaveAndNext && savable ? (
+            <Button type="button" onClick={onSaveAndNext} disabled={saving}>
+              Enregistrer et suivante →
+            </Button>
+          ) : (
+            onNext && (
+              <Button type="button" variant="secondary" onClick={onNext} disabled={saving}>
+                Suivante →
+              </Button>
+            )
+          )}
+        </div>
       </div>
-
-      {saveError && <Banner tone="error">{saveError}</Banner>}
-      {saved && (
-        <Banner tone="success">
-          Facturation enregistrée. <Link to="/app/facturation">Voir la facturation</Link>
-        </Banner>
-      )}
-    </>
+    </div>
   );
 }

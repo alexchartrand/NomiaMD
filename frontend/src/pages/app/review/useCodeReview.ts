@@ -28,9 +28,10 @@ export function useCodeReview(
 ) {
   const [state, dispatch] = useReducer(reviewReducer, initialReviewState);
 
+  // A review that can't be saved shows nothing ticked beyond its claim's codes.
   useEffect(() => {
-    dispatch(result ? { type: "extracted", result, claim } : { type: "cleared" });
-  }, [result, claim]);
+    dispatch(result ? { type: "extracted", result, claim, preselect: !readOnly } : { type: "cleared" });
+  }, [result, claim, readOnly]);
 
   const selectedEntries = useMemo(() => {
     const { result, selection, feeSelection, lieuSelection } = state;
@@ -51,9 +52,10 @@ export function useCodeReview(
   const canSave =
     !readOnly && Boolean(state.serviceDate) && state.selection.size > 0 && (claim === null || !state.pristine);
 
-  async function save(confirmDuplicate = false): Promise<void> {
+  // Resolves true once the claim is saved.
+  async function save(confirmDuplicate = false): Promise<boolean> {
     const { result, serviceDate, selection } = state;
-    if (!result || !serviceDate || selection.size === 0 || readOnly) return;
+    if (!result || !serviceDate || selection.size === 0 || readOnly) return false;
     dispatch({ type: "save-started" });
     try {
       const selectedCodes = new Map(selectedEntries.map((e) => [e.code.code, { code: e.code.code, fee_index: e.feeIndex, lieu: e.lieu ?? undefined }]));
@@ -65,20 +67,19 @@ export function useCodeReview(
       await (claim ? replaceClaim(claim.id, payload, confirmDuplicate) : createClaim(payload, confirmDuplicate));
       dispatch({ type: "save-succeeded" });
       onSaved?.();
+      return true;
     } catch (err) {
       // Only offer the confirm-and-retry dance on the first attempt: re-submitting the
       // exact same extraction (as opposed to the same patient/date via a different one) is
       // never overridable server-side, so retrying with confirmDuplicate=true would 409
       // again forever. Surfacing it as a plain error here breaks that loop.
       if (err instanceof DuplicateClaimError && !confirmDuplicate) {
-        if (window.confirm(`${err.message} Enregistrer quand même ?`)) {
-          await save(true);
-          return;
-        }
+        if (window.confirm(`${err.message} Enregistrer quand même ?`)) return save(true);
         dispatch({ type: "save-cancelled" });
-        return;
+        return false;
       }
       dispatch({ type: "save-failed", error: describeError(err) });
+      return false;
     }
   }
 

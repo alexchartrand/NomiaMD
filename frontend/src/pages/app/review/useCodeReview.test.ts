@@ -5,9 +5,10 @@ import { server } from "../../../test/server";
 import type { BillingExtractionResponse, Claim } from "../../../api";
 import { useCodeReview } from "./useCodeReview";
 
-const dollars = makeProposedCode({ code: "00103", fees: [makeFee({ amount: 50 }), makeFee({ amount: 70, role: 2 })] });
-const units = makeProposedCode({ code: "09001", fees: [makeFee({ amount: 8, unit: "unités" })] });
-const noFee = makeProposedCode({ code: "99998", fees: [] });
+// Medium confidence, so nothing starts ticked: each test ticks what it needs.
+const dollars = makeProposedCode({ code: "00103", confidence: "medium", fees: [makeFee({ amount: 50 }), makeFee({ amount: 70, role: 2 })] });
+const units = makeProposedCode({ code: "09001", confidence: "medium", fees: [makeFee({ amount: 8, unit: "unités" })] });
+const noFee = makeProposedCode({ code: "99998", confidence: "medium", fees: [] });
 const result = makeExtraction([dollars, units, noFee], { extraction_run_id: 42 });
 
 interface Props {
@@ -220,6 +221,44 @@ describe("duplicate claim", () => {
     expect(attempts).toBe(2);
     expect(confirm).toHaveBeenCalledOnce();
     expect(view.result.current.state.saveError).toBe("Déjà facturé.");
+  });
+});
+
+describe("preselection", () => {
+  const sure = makeProposedCode({ code: "00103", confidence: "high" });
+  const unsure = makeProposedCode({ code: "15145", confidence: "medium" });
+  const mixed = makeExtraction([unsure, sure]);
+
+  it("starts with the high-confidence codes ticked, ready to save", async () => {
+    const view = setup({ result: mixed });
+    await waitFor(() => expect([...view.result.current.state.selection]).toEqual([1]));
+    expect(view.result.current.canSave).toBe(true);
+  });
+
+  it("ticks nothing on a read-only review", async () => {
+    const view = setup({ result: mixed, readOnly: true });
+    await loaded(view);
+    expect(view.result.current.state.selection.size).toBe(0);
+  });
+});
+
+describe("save outcome", () => {
+  it("resolves true once saved, false on an error", async () => {
+    captureClaims();
+    const view = setup();
+    await loaded(view);
+    act(() => view.result.current.toggleCode(0));
+    let saved: boolean | undefined;
+    await act(async () => {
+      saved = await view.result.current.save();
+    });
+    expect(saved).toBe(true);
+
+    server.use(http.post("/api/claims", () => HttpResponse.json({ detail: "Erreur" }, { status: 500 })));
+    await act(async () => {
+      saved = await view.result.current.save();
+    });
+    expect(saved).toBe(false);
   });
 });
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   deleteEncounter,
@@ -19,6 +19,7 @@ import {
 import { formatClinicTime, formatDate } from "../../../utils/date";
 import { AssociatePatient } from "../InboxPage/AssociatePatient";
 import { StatusChip } from "../InboxPage/StatusChip";
+import { NotePanel } from "../review/NotePanel";
 import { ReviewStep } from "../review/ReviewStep";
 import { useCodeReview } from "../review/useCodeReview";
 import { useEncounterNeighbours } from "./useEncounterNeighbours";
@@ -63,13 +64,20 @@ function readOnlyReason(encounter: EncounterDetail): string | null {
   return null;
 }
 
+// What the page is opened with: the inbox's period and filters, when it came from it, and
+// whose claim was just saved, when it came from "Enregistrer et suivante".
+interface EncounterPageState {
+  inboxSearch?: string;
+  savedFor?: string;
+}
+
 // One encounter: its note, and the review of its latest extraction — or whatever it still
 // needs first (a patient, an extraction).
 export default function EncounterPage() {
   const encounterId = Number(useParams().encounterId);
-  // The inbox's period and filters, when we came from it; its default period otherwise.
-  const inboxSearch =
-    (useLocation().state as { inboxSearch?: string } | null)?.inboxSearch ?? "";
+  const opened = useLocation().state as EncounterPageState | null;
+  // The inbox's default period when it wasn't opened from the inbox.
+  const inboxSearch = opened?.inboxSearch ?? "";
   const [encounter, setEncounter] = useState<EncounterDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -77,19 +85,28 @@ export default function EncounterPage() {
   const [extracting, setExtracting] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
   const neighbours = useEncounterNeighbours(encounterId, inboxSearch);
+  // The encounter on screen, so a load still in flight for the previous one is dropped.
+  const shownId = useRef(encounterId);
 
   const load = useCallback(async () => {
     try {
-      setEncounter(await getEncounter(encounterId));
+      const detail = await getEncounter(encounterId);
+      if (shownId.current !== encounterId) return;
+      setEncounter(detail);
       setError(null);
     } catch (err) {
-      setError(describeError(err));
+      if (shownId.current === encounterId) setError(describeError(err));
     }
   }, [encounterId]);
 
+  // Stepping to another encounter keeps this page mounted: start it from scratch.
   useEffect(() => {
+    shownId.current = encounterId;
+    setEncounter(null);
+    setError(null);
+    setSavedNotice(false);
     void load();
-  }, [load]);
+  }, [encounterId, load]);
 
   const readOnly = encounter ? readOnlyReason(encounter) : null;
   // A saved claim (first save or a draft's changes) changes the status and the claim the
@@ -136,14 +153,25 @@ export default function EncounterPage() {
     }
   }
 
+  const nextId = neighbours?.nextId ?? null;
+  const goToNext = (savedFor?: string) =>
+    nextId !== null &&
+    navigate(`/app/inbox/${nextId}`, { replace: true, state: { inboxSearch, savedFor } });
+
+  async function handleSaveAndNext() {
+    const patientName = encounter?.patient?.full_name;
+    if (await review.save()) goToNext(patientName);
+  }
+
   const backTo = `/app/inbox${inboxSearch}`;
+  const reviewing = encounter?.extraction != null && encounter.patient != null;
   const canExtract =
     encounter !== null &&
     encounter.patient !== null &&
     (encounter.status === "reçu" || encounter.status === "échec");
 
   return (
-    <section className="max-w-[860px]">
+    <section className={reviewing ? "max-w-[1500px]" : "max-w-[860px]"}>
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <Button asChild variant="link">
           <Link to={backTo}>← Rencontres</Link>
@@ -175,6 +203,11 @@ export default function EncounterPage() {
             <h1 className="m-0 font-heading text-2xl font-semibold">
               {encounter.patient?.full_name ?? "Patient à associer"}
             </h1>
+            {encounter.patient?.nam && (
+              <span className="font-mono text-sm text-muted-foreground">
+                {encounter.patient.nam}
+              </span>
+            )}
             <StatusChip status={encounter.status} />
           </div>
           <p className="m-0 text-sm text-muted-foreground">
@@ -237,25 +270,26 @@ export default function EncounterPage() {
               <Link to="/app/facturation">Voir la facturation</Link>
             </Banner>
           )}
-          {encounter.extraction && encounter.patient && (
+          {!savedNotice && opened?.savedFor && (
+            <Banner tone="success">
+              Facturation de {opened.savedFor} enregistrée.{" "}
+              <Link to="/app/facturation">Voir la facturation</Link>
+            </Banner>
+          )}
+          {reviewing ? (
             <ReviewStep
-              result={encounter.extraction}
-              patient={encounter.patient}
+              result={encounter.extraction!}
+              noteText={encounter.note_text}
               review={review}
+              onSaveAndNext={nextId !== null ? handleSaveAndNext : undefined}
+              onNext={nextId !== null ? () => goToNext() : undefined}
+            />
+          ) : (
+            <NotePanel
+              text={encounter.note_text}
+              defaultOpen={!encounter.extraction}
             />
           )}
-
-          <details
-            open={!encounter.extraction}
-            className="rounded-xl border border-border bg-card px-4 py-3"
-          >
-            <summary className="cursor-pointer font-heading font-semibold">
-              Note reçue
-            </summary>
-            <pre className="mt-3 mb-0 font-mono text-sm whitespace-pre-wrap">
-              {encounter.note_text}
-            </pre>
-          </details>
 
           {!encounter.claim && (
             <Button

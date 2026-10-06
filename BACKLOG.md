@@ -70,6 +70,9 @@
 
 ## ✨ Features
 
+- [ ] 🟡 Group a code's variants into one choice on the review page — *added 10/6, from the review-page rework*
+  - Variants of one act that differ only on an unresolved axis (e.g. 15841/15842/15843, panel size) are proposed as separate cards in `frontend/src/pages/app/review/CodesReview.tsx`, each with its own checkbox, so the physician can tick two and bill both. Wanted: one card per act with a radio choice of variant, and the `needs_confirmation` text shown once. Needs a family key on `ExtractedCode` (server-only, like `fees`), derived from the code table (the shared `header_path`/family `ramq_codes` already uses for eligibility), not guessed by the frontend from descriptions. Also guard `ClaimService` against two variants of one family on the same claim.
+
 - [ ] 🟢 Frontend E2E: more journeys, and a nightly run — *added 10/4, from the frontend test plan*
   - Done (branch `chore/frontend-e2e-setup`): Playwright in `frontend/e2e/` with 3 serial journeys (extract a seeded note → pick codes → save the claim; paste a note → associate the patient → codes ready; bill the saved claims → PDF download). `npm run e2e` boots a throwaway backend (`backend/e2e.db`, reseeded each run), the fake LLM and Vite on their own ports. Needs `npx playwright install chromium` once, and `backend/.env` with `MISTRAL_API_KEY` and `DB_PATH` since retrieval embeddings still hit the real Mistral API.
   - Not done: it isn't in CI (it needs the Mistral key and the LanceDB, so a nightly or manual workflow with secrets, or a fake embedding server, would be the way in); the e2e files aren't covered by `tsc -b` (`tsconfig.json` only includes `src`); no journeys for the chat, patients page or duplicate handling.

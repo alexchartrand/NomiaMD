@@ -44,6 +44,12 @@ interface CodesReviewProps {
   feeSelection: Map<number, number>;
   lieuSelection: Map<number, string>;
   onFeeSelected: (index: number, feeIndex: number, lieu: string | null) => void;
+  // Per code index: whether its supporting quote was found in the note.
+  quoteInNote?: boolean[];
+  // The physician is looking at a code (hover or focus): its quote gets marked in the note.
+  onCodeFocused?: (index: number) => void;
+  // The physician asked to see a code's quote in the note.
+  onShowQuote?: (index: number) => void;
   // Shown, not editable.
   disabled?: boolean;
 }
@@ -55,6 +61,9 @@ export function CodesReview({
   feeSelection,
   lieuSelection,
   onFeeSelected,
+  quoteInNote = [],
+  onCodeFocused,
+  onShowQuote,
   disabled = false,
 }: CodesReviewProps) {
   if (codes.length === 0) {
@@ -84,12 +93,15 @@ export function CodesReview({
     return (
       <li
         key={i}
+        onMouseEnter={() => onCodeFocused?.(i)}
+        onFocus={() => onCodeFocused?.(i)}
         className={cn(
           "flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-[0.9rem] transition-colors",
           checked && "border-primary bg-[color:var(--color-primary-tint)]",
         )}
       >
         <Checkbox
+          id={`code-${i}`}
           className="mt-[0.3rem]"
           checked={checked}
           disabled={disabled}
@@ -98,17 +110,30 @@ export function CodesReview({
         />
 
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="flex items-baseline gap-[0.6rem]">
+          <div className="flex items-start gap-3">
+            <label
+              htmlFor={`code-${i}`}
+              className={cn("flex min-w-0 flex-1 items-baseline gap-[0.6rem]", !disabled && "cursor-pointer")}
+            >
+              <span
+                className={cn(
+                  "-rotate-[1.5deg] rounded-lg border-2 border-foreground px-[0.55rem] py-[0.2rem] font-mono text-base font-[650] text-foreground",
+                  checked && "border-primary text-primary",
+                )}
+              >
+                {c.code}
+              </span>
+              <span className="min-w-0 flex-1 font-heading font-semibold">
+                {c.description}
+              </span>
+            </label>
             <span
               className={cn(
-                "-rotate-[1.5deg] rounded-lg border-2 border-foreground px-[0.55rem] py-[0.2rem] font-mono text-base font-[650] text-foreground",
-                checked && "border-primary text-primary",
+                "inline-flex shrink-0 items-center rounded-full px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650] whitespace-nowrap",
+                CONFIDENCE_CLASSES[bucket],
               )}
             >
-              {c.code}
-            </span>
-            <span className="min-w-0 flex-1 font-heading font-semibold">
-              {c.description}
+              {CONFIDENCE_LABELS[bucket]}
             </span>
           </div>
 
@@ -157,9 +182,26 @@ export function CodesReview({
             )}
           </div>
 
-          <p className="m-0 text-[0.92rem] text-muted-foreground italic">
-            {c.explanation}
-          </p>
+          {c.explanation && (
+            <p className="m-0 text-[0.92rem] text-muted-foreground">{c.explanation}</p>
+          )}
+
+          {c.supporting_quote && (
+            <figure className="m-0 flex flex-col items-start gap-1 border-l-2 border-border pl-3">
+              <blockquote className="m-0 text-[0.9rem] italic">
+                &laquo;&nbsp;{c.supporting_quote}&nbsp;&raquo;
+              </blockquote>
+              {quoteInNote[i] && onShowQuote && (
+                <button
+                  type="button"
+                  onClick={() => onShowQuote(i)}
+                  className="cursor-pointer border-none bg-transparent p-0 text-[0.85rem] text-primary underline-offset-2 hover:underline"
+                >
+                  Voir dans la note
+                </button>
+              )}
+            </figure>
+          )}
 
           {c.needs_confirmation.length > 0 && (
             <ul className="m-0 flex flex-col gap-1 pl-0 text-[0.85rem] text-[color:var(--color-warning-text)]">
@@ -170,17 +212,6 @@ export function CodesReview({
               ))}
             </ul>
           )}
-
-          <div className="flex justify-end">
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650]",
-                CONFIDENCE_CLASSES[bucket],
-              )}
-            >
-              {CONFIDENCE_LABELS[bucket]}
-            </span>
-          </div>
         </div>
       </li>
     );
