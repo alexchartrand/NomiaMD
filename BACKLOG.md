@@ -148,13 +148,13 @@
 - [ ] 🟢 Unused "ghost" button variant — *added 8/19, from codebase audit, reworded 9/30*
   - `components/Button.tsx` still declares a `ghost` variant (mapped to shadcn's `ui/button.tsx`), but no call site of `components/Button` passes it. The only `variant="ghost"` in the app is in `ui/dialog.tsx`, which uses the shadcn button directly.
 
-- [ ] 🟢 Unused `tagline` prop — *added 8/19, from codebase audit*
-  - `components/PageHeader.tsx` renders it, but its only call site `SiteHeader.tsx` never supplies it.
-
 - [ ] 🟢 `encounter_id` accepted, validated, then discarded — *added 8/19, from codebase audit, needs confirmation*
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
 ## ✅ Done
+
+- [x] 🟢 Unused `tagline` prop — *added 8/19, from codebase audit, fixed 10/6*
+  - `components/PageHeader.tsx` rendered it, but its only call site `SiteHeader.tsx` never supplied it. Prop removed.
 
 - [x] 🟡 Serve Epic's JWK Set from the backend instead of a gist — *added 10/3, from the Epic sandbox connector (intake step 11b), fixed 10/6*
   - fhir.epic.com only accepts a JWK Set URL for the public key (no certificate upload). The sandbox key is published for now as a public GitHub gist (`https://gist.githubusercontent.com/alexchartrand/9891641a40ecac266cecd167256af849/raw/jwks.json`, built by `scripts/epic_sandbox_jwks.py`). Move it to a route like `GET /.well-known/jwks.json` on our own domain: no login, public keys only, built from the configured private key(s) at startup, and able to list two keys at once so a key can be rotated without downtime. Step 19's production client id needs this anyway, since a gist on a personal account isn't acceptable for the Santé Québec review. Depends on the public site being reachable (see the IP-allowlist bug); once it's live, point the app's Non-Production JWK Set URL there and delete the gist.
