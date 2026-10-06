@@ -1,17 +1,25 @@
+# One app stack: prod (a release tag) or demo (a branch, docker-compose.demo.yml on top), each
+# its own compose project from its own checkout, so they deploy independently. Neither
+# publishes a port: the shared `edge` Caddy (edge/docker-compose.yml) is the only public
+# ingress and reaches each stack's `frontend` over the external nomiamd-edge network.
+
 networks:
   # A fixed subnet so `frontend` can be given a static address (below) — backend pins
-  # --forwarded-allow-ips to that exact address rather than trusting any peer that can
-  # reach it (see backend/Dockerfile).
+  # FORWARDED_ALLOW_IPS to that exact address rather than trusting any peer that can reach
+  # it. Docker refuses overlapping subnets, so each stack on the host needs its own
+  # NETWORK_PREFIX (see .env.example).
   internal:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.28.0.0/24
+        - subnet: ${NETWORK_PREFIX:-172.28.0}.0/24
+  edge:
+    external: true
+    name: nomiamd-edge
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: nomiamd
@@ -33,7 +41,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: redis
     restart: unless-stopped
     volumes:
       - redis_data:/data
@@ -52,29 +59,34 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: backend
     restart: unless-stopped
     networks: [internal]
+    # Everything in this checkout's root .env (see .env.example), so a new backend setting
+    # needs no edit here. `environment:` wins over env_file: it pins the values that must
+    # differ inside a container from a developer's local .env.
+    env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
       SAMPLE_PATIENTS_DIR: /consultations
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
-      MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      # `caddy` terminates TLS, so set COOKIE_SECURE=true in .env for any real deploy (see
-      # root .env.example). The false default only suits a local run without Caddy, where
-      # browsers would silently drop a `Secure` cookie over plain HTTP.
-      COOKIE_SECURE: ${COOKIE_SECURE:-false}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      # uvicorn's --proxy-headers trusts X-Forwarded-For from nginx's static address only
+      # (`frontend` below), not from any peer on the network, so rate limiting sees real
+      # client IPs and can't be reset by a forged header.
+      FORWARDED_ALLOW_IPS: ${NETWORK_PREFIX:-172.28.0}.10
+      # Demo-only features (the Epic sandbox) refuse to start under production; only
+      # docker-compose.demo.yml overrides it.
+      APP_ENV: production
+      # The edge `caddy` terminates TLS, so the session cookie is always HTTPS-only here,
+      # whatever a local .env says (COOKIE_SECURE=false is for uvicorn over plain HTTP).
+      COOKIE_SECURE: "true"
     volumes:
       # Produced by the separate ramq-ingestion repo, not by this compose file — must
-      # already be populated at RAMQ_LANCEDB_PATH before `backend` can start (LanceDB.open()
+      # already be populated at the host's DB_PATH before `backend` can start (LanceDB.open()
       # checks for a current code version during startup, before /health can respond). One
       # directory holds billing_codes' `codes_<rev>`/`code_versions` tables and
       # ramq_chatbot's `documents-embeddings` table. See the root .env.example.
-      - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
+      - ${DB_PATH:?set DB_PATH in .env}:/data/ramq-lancedb:ro
       # consultations/ is a repo-root directory, outside this service's build context
       # (./backend), so it can't be baked into the image via COPY — bind-mounted instead.
       # See SAMPLE_PATIENTS_DIR in app/sample_patients/service.py.
@@ -101,21 +113,17 @@ services:
   worker:
     build:
       context: ./backend
-    container_name: worker
     restart: unless-stopped
     command: ["arq", "app.worker.WorkerSettings"]
     networks: [internal]
+    env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
-      MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      WORKER_MAX_JOBS: ${WORKER_MAX_JOBS:-4}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      APP_ENV: production
     volumes:
-      - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
+      - ${DB_PATH:?set DB_PATH in .env}:/data/ramq-lancedb:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -130,15 +138,18 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: frontend
     restart: unless-stopped
     environment:
       ALLOWED_CIDRS: ${ALLOWED_CIDRS}
     networks:
-      # Static IP so backend/Dockerfile's --forwarded-allow-ips can pin trust to nginx
-      # specifically instead of the whole subnet — keep these two values in sync.
+      # Static IP so the backend's FORWARDED_ALLOW_IPS (above) can pin trust to nginx
+      # specifically instead of the whole subnet.
       internal:
-        ipv4_address: 172.28.0.10
+        ipv4_address: ${NETWORK_PREFIX:-172.28.0}.10
+      # The name edge/Caddyfile proxies this stack's domain to — unique per stack.
+      edge:
+        aliases:
+          - ${EDGE_ALIAS:-prod-frontend}
     depends_on:
       backend:
         condition: service_healthy
@@ -148,35 +159,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # TLS termination for nomiamd.com / www.nomiamd.com — the only public ingress. Caddy
-  # fetches and renews Let's Encrypt certs automatically from the Caddyfile's site
-  # addresses; caddy_data is where it persists the ACME account + certs across restarts.
-  caddy:
-    image: caddy:2-alpine
-    container_name: caddy
-    restart: unless-stopped
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      # Static IP so frontend/nginx.conf's set_real_ip_from can trust Caddy's
-      # X-Forwarded-For (the real client) and nobody else's — keep these two values in sync.
-      internal:
-        ipv4_address: 172.28.0.11
-    depends_on:
-      - frontend
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
 volumes:
   postgres_data:
   redis_data:
-  caddy_data:
-  caddy_config:

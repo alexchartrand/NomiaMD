@@ -1,0 +1,46 @@
+# TLS termination for every NomiaMD stack on this host: the only service publishing ports
+# (80/443). Its own compose project, so the prod and demo app stacks (docker-compose.yml at
+# the repo root, one checkout each) deploy without touching it. Run it from the prod
+# checkout, and start it before either stack: it creates the nomiamd-edge network they join.
+#
+#   docker compose -f edge/docker-compose.yml up -d
+#
+# Reload after a Caddyfile change:
+#   docker compose -f edge/docker-compose.yml exec caddy caddy reload --config /etc/caddy/Caddyfile
+
+name: nomiamd-edge
+
+networks:
+  edge:
+    name: nomiamd-edge
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+services:
+  # caddy_data is where Caddy persists the ACME account + certs across restarts.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      # Static IP so frontend/nginx.conf's set_real_ip_from can trust Caddy's
+      # X-Forwarded-For (the real client) and nobody else's — keep these two values in sync.
+      edge:
+        ipv4_address: 172.30.0.11
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  caddy_data:
+  caddy_config:

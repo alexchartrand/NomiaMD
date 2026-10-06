@@ -19,15 +19,15 @@ patient data ever touches this system.
 
 Backend (`backend/`, from that directory):
 ```bash
-uv sync --extra dev              # install deps (see .env.example for required env vars)
+uv sync --extra dev              # install deps (see the repo-root .env.example for required env vars)
 uv run uvicorn app.main:app --reload   # run the API alone, http://localhost:8000
 uv run pytest                    # full suite — mocked model + stubbed retriever, no network/API key/LanceDB needed
 uv run pytest tests/test_patients.py            # one file
 uv run pytest tests/test_patients.py::test_name -v   # one test
 uv run pytest -m epic_sandbox    # opt-in contract test against the live Epic sandbox (EPIC_SANDBOX_* set)
 ```
-Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY`
-and `DB_PATH`; set `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1
+Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `LLM_API_KEY`,
+`EMBEDDING_API_KEY` and `DB_PATH`; set `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1
 LLM_API_KEY=fake` to point chat calls at `scripts/fake_llm_server.py` (`make fake-llm`)
 instead of spending real API calls. There's no lint/typecheck config on the
 backend (no ruff/mypy in `pyproject.toml`).
@@ -37,7 +37,7 @@ Frontend (`frontend/`, from that directory):
 npm install
 npm run dev       # http://localhost:5173, proxies /api to the backend on :8000
 npm test          # vitest (jsdom + msw): no network or backend needed
-npm run e2e       # Playwright journeys against a throwaway backend + the fake LLM (needs backend/.env's Mistral key and DB_PATH; not run in CI)
+npm run e2e       # Playwright journeys against a throwaway backend + the fake LLM (needs the root .env's Mistral key and DB_PATH; not run in CI)
 npm run build     # tsc -b (type-check) + vite build — the closest thing to a typecheck/lint step; no eslint config exists
 ```
 
@@ -138,7 +138,7 @@ on `/app/ajouter`. `/api/*` proxies to the backend (`vite.config.ts`).
 - Tests always run against a stubbed keyword retriever and mocked model responses
   (`backend/tests/conftest.py`'s `small_reference_table`/`no_real_api_keys` fixtures,
   autouse) — no network, no API key, no real LanceDB needed. Never rely on
-  `MISTRAL_API_KEY`/real retrieval being present in a test.
+  an API key/real retrieval being present in a test.
 - Transactions: repositories (`app/postgresdb/repositories/`) take an `AsyncSession` and only
   `flush()`, never commit. Whoever opens the session owns the outcome: `session_scope()`
   commits on normal exit, rolls back on exception. Routes depend on `DbSession` (one session

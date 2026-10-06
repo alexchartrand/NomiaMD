@@ -1,12 +1,12 @@
-"""Central place for environment-derived runtime configuration. Loads `.env` on import
-(mirrors the previous per-entrypoint `load_dotenv()` calls) and exposes a `settings`
-singleton — every other module should read config through it instead of touching
-`os.environ` directly.
+"""Central place for environment-derived runtime configuration. Loads the repo-root `.env`
+on import (the one file docker compose also reads; scripts import this module to load it)
+and exposes a `settings` singleton — every other module should read config through it
+instead of touching `os.environ` directly.
 
-`mistral_api_key`/`mistral_embedding_model` and the `llm_*`/`embedding_*` provider
-settings are read lazily via property, not cached at
-construction: tests' `no_real_api_keys` fixture (tests/conftest.py) deletes
-MISTRAL_API_KEY from the environment per-test specifically to make any un-stubbed real-API
+The `llm_*`/`embedding_*` provider settings are named by role (chat, embeddings), not by
+vendor: whichever provider LLM_PROVIDER/EMBEDDING_PROVIDER selects reads them. They're
+read lazily via property, not cached at construction: tests' `no_real_api_keys` fixture
+(tests/conftest.py) deletes the API keys from the environment per-test specifically to make any un-stubbed real-API
 code path raise instead of silently succeeding — caching the key at import time would
 defeat that safety net.
 """
@@ -16,7 +16,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Explicit path: under a debugger, load_dotenv() searches os.getcwd() instead. A missing file
+# is a no-op — in the containers, compose's env_file has already set the environment.
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 
 def _as_bool(value: str | None, default: bool) -> bool:
@@ -42,14 +44,6 @@ class Settings:
         self.log_level = os.environ.get("LOG_LEVEL", "INFO")
 
     @property
-    def mistral_api_key(self) -> str:
-        return os.environ["MISTRAL_API_KEY"]
-
-    @property
-    def mistral_embedding_model(self) -> str:
-        return os.environ["MISTRAL_EMBEDDING_MODEL"]
-
-    @property
     def llm_provider(self) -> str:
         """Which chat backend app/llm/chat.py builds: `mistral` (default) or
         `openai_compatible`."""
@@ -61,14 +55,15 @@ class Settings:
 
     @property
     def llm_api_key(self) -> str:
-        """Only read by the openai_compatible provider; the mistral one uses
-        mistral_api_key (shared with embeddings)."""
+        """The chat provider's key, whichever LLM_PROVIDER selects. Separate from
+        embedding_api_key: chat and embeddings can be different hosts (`make dev-fake`
+        points chat at the fake server while embeddings stay on Mistral)."""
         return os.environ["LLM_API_KEY"]
 
     @property
     def embedding_provider(self) -> str:
-        """Which embedding backend app/llm/embeddings.py builds: `mistral` (default, model
-        from MISTRAL_EMBEDDING_MODEL) or `openai_compatible`."""
+        """Which embedding backend app/llm/embeddings.py builds: `mistral` (default) or
+        `openai_compatible`."""
         return os.environ.get("EMBEDDING_PROVIDER", "mistral").strip().lower()
 
     @property
@@ -77,14 +72,15 @@ class Settings:
 
     @property
     def embedding_model(self) -> str | None:
-        """Only read by the openai_compatible provider."""
+        """Required by every provider: the model ramq-ingestion embedded the LanceDB tables
+        with."""
         return os.environ.get("EMBEDDING_MODEL") or None
 
     @property
-    def embedding_api_key(self) -> str:
-        """Only read by the openai_compatible provider. Optional: TEI and vLLM run without
-        auth by default, and the OpenAI client needs some non-empty value."""
-        return os.environ.get("EMBEDDING_API_KEY") or "unused"
+    def embedding_api_key(self) -> str | None:
+        """The embedding provider's key, whichever EMBEDDING_PROVIDER selects. Required by
+        mistral; optional for openai_compatible (TEI and vLLM run without auth by default)."""
+        return os.environ.get("EMBEDDING_API_KEY") or None
 
     @property
     def smtp_host(self) -> str | None:
@@ -115,9 +111,10 @@ class Settings:
 
     @property
     def app_env(self) -> str:
-        """`development` (default) or `production` — what demo-only features check before
-        they may turn on."""
-        return os.environ.get("APP_ENV", "development").strip().lower()
+        """`production` (default) or `development` — what demo-only features check before
+        they may turn on. Defaults to production so a deploy that forgets it stays locked
+        down; local dev opts out in its .env."""
+        return os.environ.get("APP_ENV", "production").strip().lower()
 
     @property
     def epic_sandbox_enabled(self) -> bool:

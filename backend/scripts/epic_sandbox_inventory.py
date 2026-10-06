@@ -1,6 +1,6 @@
 """Inventory the Epic sandbox (fhir.epic.com) for the step 11b demo: which test patients have
 signed clinical notes worth importing. From backend/, with EPIC_SANDBOX_CLIENT_ID and
-EPIC_SANDBOX_PRIVATE_KEY_PATH set (see .env.example):
+EPIC_SANDBOX_PRIVATE_KEY_PATH set (see the repo-root .env.example):
 
     uv run python scripts/epic_sandbox_inventory.py                 # print the table
     uv run python scripts/epic_sandbox_inventory.py --write         # + rewrite the roster
@@ -28,10 +28,6 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 import httpx  # noqa: E402
 
@@ -200,7 +196,7 @@ async def main() -> None:
     parser.add_argument("--per-patient", type=int, default=6, help="most notes kept per patient")
     args = parser.parse_args()
     if not (os.environ.get("EPIC_SANDBOX_CLIENT_ID") and os.environ.get("EPIC_SANDBOX_PRIVATE_KEY_PATH")):
-        raise SystemExit("Set EPIC_SANDBOX_CLIENT_ID and EPIC_SANDBOX_PRIVATE_KEY_PATH (backend/.env) first.")
+        raise SystemExit("Set EPIC_SANDBOX_CLIENT_ID and EPIC_SANDBOX_PRIVATE_KEY_PATH (repo-root .env) first.")
 
     ids = list(dict.fromkeys(KNOWN_SANDBOX_PATIENTS + args.patient_ids + args.record))
     async with httpx.AsyncClient(timeout=60) as http:

@@ -22,7 +22,7 @@ def fresh_llm_cache():
 
 
 def test_defaults_to_mistral(monkeypatch):
-    monkeypatch.setenv("MISTRAL_API_KEY", "test-key")
+    monkeypatch.setenv("LLM_API_KEY", "test-key")
     assert isinstance(chat_provider(), MistralChatProvider)
     llm = get_chat_llm("mistral-small-latest")
     assert isinstance(llm, MistralAI)
@@ -44,7 +44,7 @@ def test_selects_openai_compatible(monkeypatch):
 
 
 def test_temperature_override_gets_its_own_client(monkeypatch):
-    monkeypatch.setenv("MISTRAL_API_KEY", "test-key")
+    monkeypatch.setenv("LLM_API_KEY", "test-key")
     assert get_chat_llm("m", temperature=0.5).temperature == 0.5
     assert get_chat_llm("m") is not get_chat_llm("m", temperature=0.5)
     assert get_chat_llm("m") is get_chat_llm("m")

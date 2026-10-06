@@ -31,9 +31,9 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=5 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
 # One worker per container — let the orchestrator scale via replicas instead of
-# multiplexing inside one container. --proxy-headers trusts X-Forwarded-For, but only from
-# nginx's static compose IP (172.28.0.10, see docker-compose.yml's `frontend` service) —
-# not from any peer that can reach this container — so rate limiting sees real client IPs
-# and can't be reset by a forged header from elsewhere on the Docker network. Keep this in
-# sync with docker-compose.yml's `internal` network / `frontend`'s ipv4_address.
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips=172.28.0.10"]
+# multiplexing inside one container. --proxy-headers trusts X-Forwarded-For only from the
+# addresses in FORWARDED_ALLOW_IPS, which docker-compose.yml pins to nginx's static IP in
+# that stack — not to any peer that can reach this container — so rate limiting sees real
+# client IPs and can't be reset by a forged header from elsewhere on the Docker network.
+# Unset, uvicorn trusts 127.0.0.1 only: forwarded headers are ignored, never trusted.
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]

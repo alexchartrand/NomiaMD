@@ -44,5 +44,6 @@ class OpenAICompatibleEmbeddingProvider(EmbeddingModelProvider):
         return OpenAILikeEmbedding(
             model_name=model,
             api_base=endpoint,
-            api_key=settings.embedding_api_key,
+            # The OpenAI client needs some non-empty value even when the server has no auth.
+            api_key=settings.embedding_api_key or "unused",
         )

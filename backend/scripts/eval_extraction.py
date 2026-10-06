@@ -18,7 +18,7 @@ the prompt at all) — those need different fixes. For every expected_codes entr
     given" vs. a genuine gap.
   - selection precision/recall: the model's returned codes vs expected_codes, as before.
 
-Requires an embedding provider (MISTRAL_API_KEY for the default EMBEDDING_PROVIDER=mistral),
+Requires an embedding provider (EMBEDDING_API_KEY for the default EMBEDDING_PROVIDER=mistral),
 plus a chat provider: either the real Mistral API, or LLM_PROVIDER=openai_compatible with
 LLM_ENDPOINT pointed at the fake dev server (`make fake-llm`) for the summary/selection
 calls. Retrieval always calls a real embedding model (the fake server doesn't serve
@@ -56,12 +56,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dotenv import load_dotenv
-
-# Must run before app.extraction.engine is imported below — app.extraction.engine.get_client()
-# reads the LLM_*/MISTRAL_API_KEY settings. Explicit path for the same reason as app/main.py: under a debugger,
-# load_dotenv() searches os.getcwd() instead of walking up from this file.
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Loads the repo-root .env — must run before the app imports below read their settings.
+import app.config  # noqa: E402,F401
 
 from app.bootstrap import application_services  # noqa: E402
 from app.extraction.engine import run_extraction  # noqa: E402

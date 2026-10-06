@@ -20,7 +20,7 @@ Québec approval is involved: the sandbox is open to any registered developer an
   only a **Non-Production JWK Set URL**. That URL is
   `https://nomiamd.com/.well-known/jwks.json` (`app/jwks/`, the public halves committed under
   `app/jwks/public_keys/`), and the assertion's `kid` is the key's RFC 7638 thumbprint, the
-  same one the set lists it under. Env vars are in `backend/.env.example`. The app needs these APIs selected: `Patient.Read (R4)`,
+  same one the set lists it under. Env vars are in the root `.env.example`. The app needs these APIs selected: `Patient.Read (R4)`,
   `DocumentReference.Search (Clinical Notes) (R4)`, `Binary.Read (Clinical Notes) (R4)`,
   `Encounter.Read (R4)` and `Encounter.Search (R4)` (the last one only for the inventory).
 - [x] **Inventory the sandbox first.** `scripts/epic_sandbox_inventory.py` prints the table;
@@ -59,7 +59,7 @@ Québec approval is involved: the sandbox is open to any registered developer an
   flag is on. Epic errors → 502.
 - [x] Feature flag `EPIC_SANDBOX_ENABLED` (default off). Startup refuses the flag when the
   environment is marked production, so sandbox data never mixes with real data.
-  *Done:* production is `APP_ENV=production` (new; default `development`). Startup also fails
+  *Done:* production is `APP_ENV=production` (new; the default since 2026-10-06, so local dev sets `APP_ENV=development`). Startup also fails
   when the flag is on without a client id or key file.
 - [x] Frontend: re-enable the "Epic" card in "Ajouter manuellement" as **"Epic — démo
   (sandbox)"**. It's shown only when the backend reports the flag on. "Importer les notes"
@@ -122,8 +122,20 @@ Other things the real data showed:
 ## Demo script
 
 Setup (once): `EPIC_SANDBOX_ENABLED=true` and the `EPIC_SANDBOX_*` credentials in
-`backend/.env`, a freshly seeded DB (`scripts/seed_db.py` creates the two sandbox patients),
+the root `.env`, a freshly seeded DB (`scripts/seed_db.py` creates the two sandbox patients),
 then `make dev-fake` (or `make dev` for real codes).
+
+Key pair, if there isn't one yet (from `backend/`). Keep the private key outside the repo;
+commit the public half and deploy prod, which serves it at the JWK Set URL. The assertion's
+`kid` is derived from the key, so there's nothing else to configure:
+
+```bash
+openssl genrsa -out ~/.config/nomiamd/epic-sandbox/privatekey.pem 2048
+openssl pkey -in ~/.config/nomiamd/epic-sandbox/privatekey.pem -pubout -out app/jwks/public_keys/epic-sandbox.pem
+```
+
+Which patients are imported: `app/intake/connectors/epic_fhir/sandbox_patients.json`, written
+by `scripts/epic_sandbox_inventory.py --write` (then re-run `scripts/seed_db.py`).
 
 1. **Ajouter manuellement → "Epic — démo (sandbox)" → Importer les notes.** The import reads
    the 7 notes from fhir.epic.com and lands on the inbox, filtered to `epic_sandbox` over

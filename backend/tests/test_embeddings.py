@@ -30,8 +30,8 @@ def fresh_embedding_cache():
 
 
 def test_defaults_to_mistral(monkeypatch):
-    monkeypatch.setenv("MISTRAL_API_KEY", "test-key")
-    monkeypatch.setenv("MISTRAL_EMBEDDING_MODEL", "mistral-embed")
+    monkeypatch.setenv("EMBEDDING_API_KEY", "test-key")
+    monkeypatch.setenv("EMBEDDING_MODEL", "mistral-embed")
     assert isinstance(embedding_provider(), MistralEmbeddingProvider)
     model = get_embedding_model()
     assert isinstance(model, MistralAIEmbedding)
@@ -47,6 +47,17 @@ def test_selects_openai_compatible(monkeypatch):
     assert isinstance(model, OpenAILikeEmbedding)
     assert model.api_base == "http://localhost:8081/v1"
     assert model.model_name == "BAAI/bge-m3"
+
+
+@pytest.mark.parametrize("missing", ["EMBEDDING_API_KEY", "EMBEDDING_MODEL"])
+def test_mistral_requires_key_and_model(monkeypatch, missing):
+    # Not the SDK's own MISTRAL_API_KEY fallback: a missing role-based key fails loudly.
+    monkeypatch.setenv("EMBEDDING_API_KEY", "test-key")
+    monkeypatch.setenv("EMBEDDING_MODEL", "mistral-embed")
+    monkeypatch.setenv("MISTRAL_API_KEY", "sdk-fallback-key")
+    monkeypatch.delenv(missing)
+    with pytest.raises(RuntimeError, match="EMBEDDING_API_KEY.*EMBEDDING_MODEL"):
+        get_embedding_model()
 
 
 @pytest.mark.parametrize("missing", ["EMBEDDING_ENDPOINT", "EMBEDDING_MODEL"])

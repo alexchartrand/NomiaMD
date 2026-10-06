@@ -1,0 +1,21 @@
+# The demo stack's additions on top of docker-compose.yml: the Epic sandbox demo
+# (docs/intake-step-11b-epic-sandbox-demo.md), which refuses to run under APP_ENV=production
+# so sandbox notes never reach the prod database. The demo checkout's .env selects this file
+# with COMPOSE_FILE=docker-compose.yml:docker-compose.demo.yml (see .env.example), so plain
+# `docker compose ...` commands work there unchanged.
+
+services:
+  backend:
+    environment: &demo-environment
+      APP_ENV: development
+      EPIC_SANDBOX_PRIVATE_KEY_PATH: /run/secrets/epic-sandbox.pem
+    volumes:
+      # The host path is the .env's EPIC_SANDBOX_PRIVATE_KEY_PATH (absolute; the container
+      # runs as uid 10001, which must be able to read it).
+      - ${EPIC_SANDBOX_PRIVATE_KEY_PATH:?set EPIC_SANDBOX_PRIVATE_KEY_PATH in .env}:/run/secrets/epic-sandbox.pem:ro
+
+  # Startup checks the key file in every process that boots the app services.
+  worker:
+    environment: *demo-environment
+    volumes:
+      - ${EPIC_SANDBOX_PRIVATE_KEY_PATH:?set EPIC_SANDBOX_PRIVATE_KEY_PATH in .env}:/run/secrets/epic-sandbox.pem:ro

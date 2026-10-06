@@ -1,5 +1,5 @@
 """Live smoke test for the RAMQ manual chatbot (app/ramq_chatbot/), modeled on
-scripts/ramq_vector_smoke_test.py. Requires a real MISTRAL_API_KEY and DB_PATH
+scripts/ramq_vector_smoke_test.py. Requires real LLM_API_KEY/EMBEDDING_API_KEY and DB_PATH
 (see .env) — this makes real network calls against Mistral's completion/embedding APIs plus
 a real read of the local `documents-embeddings` LanceDB table, run manually rather than as
 part of the pytest suite. From backend/, with the venv active:
@@ -22,9 +22,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Loads the repo-root .env — must run before the app imports below read their settings.
+import app.config  # noqa: E402,F401
 
 from app.lancedb import CodeRepository, DocumentRepository, LanceDB  # noqa: E402
 from app.ramq_chatbot.factory import init_ramq_query_engine, get_ramq_query_engine  # noqa: E402

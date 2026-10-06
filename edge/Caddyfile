@@ -1,0 +1,20 @@
+# The host's only public ingress, shared by the prod and demo stacks: each site proxies to
+# the `frontend` alias its stack registers on the nomiamd-edge network (EDGE_ALIAS in that
+# stack's .env). An upstream is resolved per request, so a stack that's down only turns its
+# own domain into a 502. Caddy fetches and renews the Let's Encrypt certs for every site
+# below; each domain's DNS must point at this host.
+
+nomiamd.com {
+	reverse_proxy prod-frontend:80
+}
+
+www.nomiamd.com {
+	redir https://nomiamd.com{uri}
+}
+
+# The demo stack (a branch, synthetic and Epic-sandbox data only). Kept out of search
+# results: its public pages duplicate nomiamd.com's.
+demo.nomiamd.com {
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy demo-frontend:80
+}

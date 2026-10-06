@@ -15,7 +15,7 @@ class MistralChatProvider(ChatModelProvider):
     def build(self, model: str, temperature: float) -> LLM:
         return MistralAI(
             model=model,
-            api_key=settings.mistral_api_key,
+            api_key=settings.llm_api_key,
             endpoint=settings.llm_endpoint,
             temperature=temperature,
             max_tokens=MAX_TOKENS,
@@ -23,11 +23,14 @@ class MistralChatProvider(ChatModelProvider):
 
 
 class MistralEmbeddingProvider(EmbeddingModelProvider):
-    """Mistral's hosted embeddings API, model from MISTRAL_EMBEDDING_MODEL — the model
-    ramq-ingestion embedded today's LanceDB tables with."""
+    """Mistral's hosted embeddings API. EMBEDDING_MODEL (mistral-embed: the model
+    ramq-ingestion embedded today's LanceDB tables with) and EMBEDDING_API_KEY are both
+    required — checked here, since the Mistral SDK would otherwise fall back to its own
+    MISTRAL_API_KEY variable."""
 
     def build(self) -> BaseEmbedding:
-        return MistralAIEmbedding(
-            model_name=settings.mistral_embedding_model,
-            api_key=settings.mistral_api_key,
-        )
+        model = settings.embedding_model
+        api_key = settings.embedding_api_key
+        if not model or not api_key:
+            raise RuntimeError("EMBEDDING_PROVIDER=mistral requires EMBEDDING_API_KEY and EMBEDDING_MODEL (e.g. mistral-embed)")
+        return MistralAIEmbedding(model_name=model, api_key=api_key)

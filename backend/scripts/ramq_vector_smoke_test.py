@@ -1,5 +1,5 @@
 """Live smoke test for RAMQ code search (CodeRepository.hybrid_search, what
-app/ramq_codes/retriever.py fans out over). Requires a real MISTRAL_API_KEY and DB_PATH (see
+app/ramq_codes/retriever.py fans out over). Requires a real EMBEDDING_API_KEY and DB_PATH (see
 .env) — this is a real network call against Mistral's embedding API plus a real read of the
 current `codes_<rev>` LanceDB table (resolved through the `code_versions` registry), run
 manually rather than as part of the pytest suite. From backend/, with the venv active:
@@ -7,7 +7,7 @@ manually rather than as part of the pytest suite. From backend/, with the venv a
     python scripts/ramq_vector_smoke_test.py
 
 Checks two things pytest can't cheaply cover: that the corpus's embedding model assumption
-(MISTRAL_EMBEDDING_MODEL) actually matches whatever ramq-ingestion used to build the codes
+(EMBEDDING_MODEL) actually matches whatever ramq-ingestion used to build the codes
 table's vector column (a wrong model would still load and query
 without error, just against numerically valid but semantically meaningless scores), and
 that real French clinical text surfaces sensible, fully-hydrated candidates end to end —
@@ -20,9 +20,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Loads the repo-root .env — must run before the app imports below read their settings.
+import app.config  # noqa: E402,F401
 
 from app.llm import get_embedding_model
 from app.lancedb import CodeRepository, LanceDB

@@ -1,5 +1,5 @@
 """Live smoke test against the configured chat provider (LLM_PROVIDER, see app/llm/).
-Requires MISTRAL_API_KEY (default EMBEDDING_PROVIDER=mistral uses it); point LLM_ENDPOINT at
+Requires EMBEDDING_API_KEY (default EMBEDDING_PROVIDER=mistral) and LLM_API_KEY; point LLM_ENDPOINT at
 scripts/fake_llm_server.py instead to avoid a real chat-completion call.
 From backend/, with the venv active:
 
@@ -12,12 +12,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dotenv import load_dotenv
-
-# Must run before app.extraction.engine is imported below — app.extraction.engine.get_client()
-# reads the LLM_*/MISTRAL_API_KEY settings. Explicit path for the same reason as app/main.py: under a debugger,
-# load_dotenv() searches os.getcwd() instead of walking up from this file.
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Loads the repo-root .env — must run before the app imports below read their settings.
+import app.config  # noqa: E402,F401
 
 from app.bootstrap import application_services  # noqa: E402
 from app.extraction.pipeline import run_billing_codes_pipeline  # noqa: E402
