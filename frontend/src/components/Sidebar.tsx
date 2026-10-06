@@ -9,7 +9,7 @@ type SidebarProps = {
 
 export function Sidebar({ children }: SidebarProps) {
   return (
-    <aside className="flex w-[220px] shrink-0 flex-col gap-6 border-r border-border bg-card p-4 pt-6">
+    <aside className="flex w-[220px] shrink-0 flex-col gap-6 overflow-y-auto border-r border-border bg-card p-4 pt-6">
       <Link to="/app" className="inline-flex p-1" aria-label="NomiaMD accueil">
         <Logo size={26} />
       </Link>

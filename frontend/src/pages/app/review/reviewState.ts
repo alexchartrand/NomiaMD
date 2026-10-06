@@ -35,7 +35,8 @@ export const initialReviewState: ReviewState = {
 
 export type ReviewAction =
   // `claim`: the one already saved from this encounter, whose codes start ticked.
-  | { type: "extracted"; result: BillingExtractionResponse; claim?: Claim | null }
+  // `preselect`: without a claim, start with the high-confidence codes ticked.
+  | { type: "extracted"; result: BillingExtractionResponse; claim?: Claim | null; preselect?: boolean }
   | { type: "cleared" }
   | { type: "service-date-changed"; date: string }
   | { type: "code-toggled"; index: number }
@@ -52,7 +53,11 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
         ...initialReviewState,
         result: action.result,
         serviceDate: action.claim?.service_date ?? action.result.encounter_date ?? "",
-        ...(action.claim ? selectionFromClaim(action.result, action.claim) : {}),
+        ...(action.claim
+          ? selectionFromClaim(action.result, action.claim)
+          : action.preselect
+            ? { selection: highConfidence(action.result) }
+            : {}),
       };
     case "cleared":
       return initialReviewState;
@@ -81,6 +86,16 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
     case "save-failed":
       return { ...state, saving: false, saveError: action.error };
   }
+}
+
+// What a fresh review starts with ticked: the codes the model is most sure of. The physician
+// still un-ticks or adds before anything is saved.
+function highConfidence(result: BillingExtractionResponse): Set<number> {
+  const selection = new Set<number>();
+  result.billing.result.codes.forEach((code, i) => {
+    if (code.confidence === "high") selection.add(i);
+  });
+  return selection;
 }
 
 // The proposed codes a saved claim kept, and the fee picked for each — matched by code, then

@@ -13,7 +13,9 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    // The page scrolls inside the content column, not the window: the sidebar stays put and
+    // `sticky` elements (the review's save bar, the dashboard's assistant) stick to the screen.
+    <div className="flex h-dvh">
       <Sidebar>
         <NavItem to="/app" end>
           Tableau de bord
@@ -38,10 +40,13 @@ export default function AppLayout() {
           </button>
         </SidebarFooter>
       </Sidebar>
-      <div className="min-w-0 flex-1 overflow-y-auto py-10 px-12">
-        <RamqChatProvider>
-          <Outlet />
-        </RamqChatProvider>
+      {/* Padded inside the scroll container, not on it: `sticky` offsets count from its padding edge. */}
+      <div className="min-w-0 flex-1 overflow-y-auto">
+        <div className="py-10 px-12">
+          <RamqChatProvider>
+            <Outlet />
+          </RamqChatProvider>
+        </div>
       </div>
     </div>
   );

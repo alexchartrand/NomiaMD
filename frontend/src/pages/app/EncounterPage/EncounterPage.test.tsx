@@ -63,7 +63,7 @@ describe("loading", () => {
     renderEncounter();
     expect(await screen.findByRole("heading", { level: 1, name: "Patient Test" })).toBeInTheDocument();
     expect(screen.getByText(/sample · 01\/10\/2026 · reçue à .* · Garde du soir/)).toBeInTheDocument();
-    expect(screen.getByText("Patient : Patient Test (TEST12345678)")).toBeInTheDocument();
+    expect(screen.getByText("TEST12345678")).toBeInTheDocument();
     expect(screen.getByText("Texte de la note.")).toBeInTheDocument();
   });
 
@@ -89,22 +89,57 @@ describe("loading", () => {
 });
 
 describe("reviewing the proposed codes", () => {
-  it("lists the codes most confident first, nothing ticked, saving disabled", async () => {
+  it("lists the codes most confident first, the high-confidence ones ticked and ready to save", async () => {
     serveEncounter(withCodes());
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
     const boxes = screen.getAllByRole("checkbox").map((box) => box.getAttribute("aria-label"));
     expect(boxes).toEqual(["Facturer le code 00103", "Facturer le code 09001", "Facturer le code 00200"]);
-    expect(screen.getAllByRole("checkbox").every((box) => box.getAttribute("aria-checked") === "false")).toBe(true);
+    await waitFor(() => expect(checkbox("00103")).toBeChecked());
+    expect(checkbox("09001")).not.toBeChecked();
+    expect(checkbox("00200")).not.toBeChecked();
+    expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeEnabled();
+    expect(total()).toHaveTextContent("50.00 $");
+  });
+
+  it("starts with nothing ticked once the physician un-ticks it, and saving is disabled", async () => {
+    serveEncounter(withCodes());
+    const { user } = renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    await user.click(checkbox("00103"));
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeDisabled();
     expect(total()).toHaveTextContent("0.00 $");
+  });
+
+  it("ticks a code from its description too", async () => {
+    serveEncounter(withCodes());
+    const { user } = renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    await user.click(screen.getByText("Consultation"));
+    expect(checkbox("00200")).toBeChecked();
+  });
+
+  it("marks a hovered code's supporting quote in the note, without showing it on the card", async () => {
+    const quoted = makeProposedCode({ code: "00103", description: "Visite", supporting_quote: "« toux depuis trois jours »" });
+    const unquoted = makeProposedCode({ code: "15145", description: "Autre visite", supporting_quote: "Résumé : patient vu pour une toux" });
+    serveEncounter(
+      makeEncounterDetail({ id: 5, note_text: "Motif : toux depuis trois jours.", extraction: makeExtraction([quoted, unquoted]) }),
+    );
+    const { user } = renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByText(/«/)).not.toBeInTheDocument();
+    const note = screen.getByText("Note reçue").closest("details")!;
+    await user.hover(screen.getByText("Visite"));
+    expect(note.querySelector("mark")).toHaveTextContent("toux depuis trois jours");
+    // A quote that isn't in the note (it came from the summary) marks nothing.
+    await user.hover(screen.getByText("Autre visite"));
+    expect(note.querySelector("mark")).toBeNull();
   });
 
   it("totals the ticked codes at their chosen fee and leaves out a fee in units", async () => {
     serveEncounter(withCodes());
     const { user } = renderEncounter();
     await screen.findByRole("heading", { level: 1 });
-    await user.click(checkbox("00103"));
     await user.click(checkbox("00200"));
     expect(total()).toHaveTextContent("130.00 $");
     await user.selectOptions(screen.getByLabelText("Tarif pour le code 00200"), "1");
@@ -112,6 +147,17 @@ describe("reviewing the proposed codes", () => {
     await user.click(checkbox("09001"));
     expect(total()).toHaveTextContent("145.00 $");
     expect(screen.getByText("(1 code sans montant en $)")).toBeInTheDocument();
+  });
+
+  it("shows what the picked fee's option doesn't already say", async () => {
+    const byLieu = makeProposedCode({
+      code: "15804",
+      fees: [makeFee({ amount: 78, role: 1, majoration: "10 %", lieux: ["cabinet", "domicile"] })],
+    });
+    serveEncounter(makeEncounterDetail({ id: 5, extraction: makeExtraction([byLieu]) }));
+    renderEncounter();
+    await screen.findByLabelText("Tarif pour le code 15804");
+    expect(screen.getByText("R = 1 — majoration 10 %")).toBeInTheDocument();
   });
 
   it("lists a code's fees by lieu, \"Autre\" when it has none, adding the role when lieux collide", async () => {
@@ -149,7 +195,6 @@ describe("reviewing the proposed codes", () => {
     );
     const { user } = renderEncounter();
     expect(await screen.findByText(/Date non reconnue : « le 31 février »/)).toBeInTheDocument();
-    await user.click(checkbox("00103"));
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeDisabled();
     await user.type(screen.getByLabelText("Date de la consultation"), "2026-10-02");
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeEnabled();
@@ -177,7 +222,11 @@ describe("saving", () => {
     expect(body).toEqual({
       extraction_run_id: 77,
       service_date: "2026-10-01",
-      selected_codes: [{ code: "00200", fee_index: 1 }],
+      // 00103 was ticked from the start, for its high confidence.
+      selected_codes: [
+        { code: "00200", fee_index: 1 },
+        { code: "00103", fee_index: 0 },
+      ],
     });
     expect((await screen.findAllByText(/Facturation enregistrée\./)).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Voir la facturation" })[0]).toHaveAttribute("href", "/app/facturation");
@@ -190,7 +239,6 @@ describe("saving", () => {
     server.use(http.post("/api/claims", () => HttpResponse.json({ detail: "Patient introuvable" }, { status: 404 })));
     const { user } = renderEncounter();
     await screen.findByRole("heading", { level: 1 });
-    await user.click(checkbox("00103"));
     await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
     expect(await screen.findByText("Patient introuvable")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeEnabled();
@@ -208,14 +256,33 @@ describe("saving", () => {
           : HttpResponse.json({ detail: { code: "duplicate_claim", message: "Déjà facturé." } }, { status: 409 });
       }),
     );
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     const { user } = renderEncounter();
     await screen.findByRole("heading", { level: 1 });
-    await user.click(checkbox("00103"));
     await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
+    const dialog = await screen.findByRole("dialog", { name: "Facturation déjà enregistrée" });
+    expect(within(dialog).getByText("Déjà facturé.")).toBeInTheDocument();
+    expect(flags).toEqual(["false"]);
+    await user.click(within(dialog).getByRole("button", { name: "Enregistrer quand même" }));
     await waitFor(() => expect(flags).toEqual(["false", "true"]));
-    expect(confirm).toHaveBeenCalledWith("Déjà facturé. Enregistrer quand même ?");
-    confirm.mockRestore();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("saves nothing more when the physician cancels the duplicate question", async () => {
+    serveEncounter(withCodes());
+    let posts = 0;
+    server.use(
+      http.post("/api/claims", () => {
+        posts += 1;
+        return HttpResponse.json({ detail: { code: "duplicate_claim", message: "Déjà facturé." } }, { status: 409 });
+      }),
+    );
+    const { user } = renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
+    await user.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Annuler" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(posts).toBe(1);
+    expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeEnabled();
   });
 });
 
@@ -278,6 +345,13 @@ describe("read-only reviews", () => {
     expect(screen.queryByRole("button", { name: /Enregistrer/ })).not.toBeInTheDocument();
     expect(screen.getByLabelText("Date de la consultation")).toBeDisabled();
   });
+
+  it("ticks nothing it can't save", async () => {
+    serveEncounter(withCodes({ duplicate_of_id: 2 }));
+    renderEncounter();
+    await screen.findByText(/marquée comme doublon/);
+    expect(checkbox("00103")).not.toBeChecked();
+  });
 });
 
 describe("what an encounter still needs", () => {
@@ -286,7 +360,7 @@ describe("what an encounter still needs", () => {
     renderEncounter();
     expect(await screen.findByRole("heading", { level: 1, name: "Patient à associer" })).toBeInTheDocument();
     expect(screen.getByText("Associer un patient", { selector: "[data-slot=card-title], div, h3" })).toBeInTheDocument();
-    expect(screen.queryByText("Révision")).not.toBeInTheDocument();
+    expect(screen.queryByText("Codes proposés")).not.toBeInTheDocument();
   });
 
   it("'reçu' with a patient: extracts on demand, then shows the result", async () => {
@@ -302,7 +376,7 @@ describe("what an encounter still needs", () => {
     );
     const { user } = renderEncounter();
     await user.click(await screen.findByRole("button", { name: "Extraire les codes" }));
-    expect(await screen.findByText("Révision")).toBeInTheDocument();
+    expect(await screen.findByText("Codes proposés")).toBeInTheDocument();
     expect(extracted).toBe(true);
   });
 
@@ -337,6 +411,71 @@ describe("what an encounter still needs", () => {
   });
 });
 
+describe("re-running the extraction", () => {
+  it("asks first, then reads the note again and shows the new codes", async () => {
+    let detail = withCodes();
+    serveEncounter(() => detail);
+    let runs = 0;
+    server.use(
+      http.post("/api/encounters/5/extract", () => {
+        runs += 1;
+        detail = makeEncounterDetail({ id: 5, extraction: makeExtraction([makeProposedCode({ code: "15804", description: "Prise en charge" })]) });
+        return HttpResponse.json(detail.extraction);
+      }),
+    );
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Relancer l'extraction" }));
+    const dialog = await screen.findByRole("dialog", { name: "Relancer l'extraction ?" });
+    expect(within(dialog).getByText(/cases cochées seront perdues/)).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Relancer" }));
+    expect(await screen.findByText("Prise en charge")).toBeInTheDocument();
+    expect(runs).toBe(1);
+  });
+
+  it("does nothing when cancelled", async () => {
+    serveEncounter(withCodes());
+    let runs = 0;
+    server.use(http.post("/api/encounters/5/extract", () => ((runs += 1), HttpResponse.json({}))));
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Relancer l'extraction" }));
+    await user.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Annuler" }));
+    expect(runs).toBe(0);
+  });
+
+  it("says a saved claim stays until the physician saves again", async () => {
+    serveEncounter(withCodes({ status: "revu", claim: makeClaim({ codes: [makeClaimLine({ code: "00103", fee_amount: 50 })] }) }));
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Relancer l'extraction" }));
+    expect(await screen.findByText(/facturation enregistrée reste en place/)).toBeInTheDocument();
+  });
+
+  it("is not offered on a review that can't change", async () => {
+    serveEncounter(withCodes({ duplicate_of_id: 2 }));
+    renderEncounter();
+    await screen.findByText(/marquée comme doublon/);
+    expect(screen.queryByRole("button", { name: "Relancer l'extraction" })).not.toBeInTheDocument();
+  });
+});
+
+describe("deleting", () => {
+  it("asks in a dialog, then deletes and goes back to the inbox", async () => {
+    serveEncounter(withCodes());
+    let deleted = false;
+    server.use(
+      http.delete("/api/encounters/5", () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Supprimer la rencontre" }));
+    const dialog = await screen.findByRole("dialog", { name: "Supprimer la rencontre ?" });
+    expect(deleted).toBe(false);
+    await user.click(within(dialog).getByRole("button", { name: "Supprimer" }));
+    await waitFor(() => expect(deleted).toBe(true));
+  });
+});
+
 describe("stepping between encounters", () => {
   const serveList = (...ids: number[]) =>
     server.use(http.get("/api/encounters", () => HttpResponse.json(ids.map((id) => makeEncounterRow({ id })))));
@@ -356,6 +495,40 @@ describe("stepping between encounters", () => {
     renderEncounter({ inboxSearch: "?all=1" });
     expect(await screen.findByText("1 / 2")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "← Précédente" })).toBeDisabled();
+  });
+
+  it("saves and opens the next encounter, saying whose claim was saved", async () => {
+    serveEncounter(() => withCodes());
+    serveList(9, 5, 2);
+    server.use(http.post("/api/claims", () => HttpResponse.json(makeClaim())));
+    const { user } = renderWithProviders(
+      <Routes>
+        <Route path="/app/inbox/:encounterId" element={<EncounterPage />} />
+      </Routes>,
+      { route: "/app/inbox/5", state: { inboxSearch: "?all=1" } },
+    );
+    const saveAndNext = await screen.findByRole("button", { name: "Enregistrer et suivante →" });
+    server.use(
+      http.get("/api/encounters/:id", ({ params }) =>
+        HttpResponse.json(
+          makeEncounterDetail({ id: Number(params.id), patient: { id: 8, full_name: "Suivant Patient", nam: null } }),
+        ),
+      ),
+    );
+    await user.click(saveAndNext);
+    expect(await screen.findByText("3 / 3")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Suivant Patient" })).toBeInTheDocument();
+    expect(screen.getByText(/Facturation de Patient Test enregistrée\./)).toBeInTheDocument();
+  });
+
+  it("offers the next encounter when there's nothing to save", async () => {
+    serveEncounter(
+      withCodes({ status: "revu", claim: makeClaim({ codes: [makeClaimLine({ code: "00103", fee_amount: 50 })] }) }),
+    );
+    serveList(5, 2);
+    renderEncounter({ inboxSearch: "?all=1" });
+    expect(await screen.findByRole("button", { name: "Suivante →" })).toBeEnabled();
+    expect(screen.queryByRole("button", { name: "Enregistrer et suivante →" })).not.toBeInTheDocument();
   });
 
   it("shows no steps when the encounter isn't in the list it was opened from", async () => {

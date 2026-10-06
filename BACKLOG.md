@@ -70,6 +70,16 @@
 
 ## ✨ Features
 
+- [ ] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework*
+  - A `needs_confirmation` like « Confirmer la taille exacte de la clientèle inscrite… » comes back on every encounter dated before the physician's first profile version: `BillingContextBuilder` falls back to the earliest version as an *assumed* panel size, which never filters (`PhysicianContext.is_assumed`). The profile page can't fix it today: `ProfileService.record_practice_facts` is only called with `effective_from = today`.
+  - Wanted: (1) put the run's `unresolved_axes` (computed by `UnresolvedAxisDetector`, today only logged in `retriever.py`) on `BillingCodesResult` as a server-only field, so the review page knows deterministically that panel size is the open question instead of matching the model's free text; (2) a "En vigueur depuis" date on the profile form; (3) on the review page, one banner per run linking to the profile, then « Relancer l'extraction » once it's set.
+
+- [ ] 🟢 Replace the remaining `window.confirm` calls with `useConfirm` — *added 10/6, from the review-page rework*
+  - The encounter page now asks through `components/ConfirmDialog.tsx`'s `useConfirm`. Still on the browser's dialog: `PatientsPage.tsx` (remove from roster), `FacturationPage/BillsTab.tsx` (delete a bill), `FacturationPage/RecordsTab.tsx` (delete a claim), `InboxPage/EncounterRowItem.tsx` (delete an encounter). Their tests spy on `window.confirm` and need to click the dialog instead.
+
+- [ ] 🟡 Group a code's variants into one choice on the review page — *added 10/6, from the review-page rework*
+  - Variants of one act that differ only on an unresolved axis (e.g. 15841/15842/15843, panel size) are proposed as separate cards in `frontend/src/pages/app/review/CodesReview.tsx`, each with its own checkbox, so the physician can tick two and bill both. Wanted: one card per act with a radio choice of variant, and the `needs_confirmation` text shown once. Needs a family key on `ExtractedCode` (server-only, like `fees`), derived from the code table (the shared `header_path`/family `ramq_codes` already uses for eligibility), not guessed by the frontend from descriptions. Also guard `ClaimService` against two variants of one family on the same claim.
+
 - [ ] 🟢 Frontend E2E: more journeys, and a nightly run — *added 10/4, from the frontend test plan*
   - Done (branch `chore/frontend-e2e-setup`): Playwright in `frontend/e2e/` with 3 serial journeys (extract a seeded note → pick codes → save the claim; paste a note → associate the patient → codes ready; bill the saved claims → PDF download). `npm run e2e` boots a throwaway backend (`backend/e2e.db`, reseeded each run), the fake LLM and Vite on their own ports. Needs `npx playwright install chromium` once, and `backend/.env` with `MISTRAL_API_KEY` and `DB_PATH` since retrieval embeddings still hit the real Mistral API.
   - Not done: it isn't in CI (it needs the Mistral key and the LanceDB, so a nightly or manual workflow with secrets, or a fake embedding server, would be the way in); the e2e files aren't covered by `tsc -b` (`tsconfig.json` only includes `src`); no journeys for the chat, patients page or duplicate handling.

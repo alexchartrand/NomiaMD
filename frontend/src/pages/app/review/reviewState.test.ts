@@ -17,6 +17,24 @@ describe("reviewReducer", () => {
     expect(state.pristine).toBe(true);
   });
 
+  it("ticks the high-confidence codes when asked to preselect", () => {
+    const mixed = makeExtraction([
+      makeProposedCode({ code: "00103", confidence: "high" }),
+      makeProposedCode({ code: "00200", confidence: "medium" }),
+      makeProposedCode({ code: "15145", confidence: "high" }),
+      makeProposedCode({ code: "00328", confidence: "low" }),
+    ]);
+    const state = reviewReducer(initialReviewState, { type: "extracted", result: mixed, preselect: true });
+    expect([...state.selection]).toEqual([0, 2]);
+    expect(state.pristine).toBe(true);
+  });
+
+  it("ticks the claim's codes rather than preselecting", () => {
+    const claim = makeClaim({ codes: [makeClaimLine({ code: "15145" })] });
+    const state = reviewReducer(initialReviewState, { type: "extracted", result, claim, preselect: true });
+    expect([...state.selection]).toEqual([1]);
+  });
+
   it("leaves the date empty when the result has none", () => {
     const state = reviewReducer(initialReviewState, {
       type: "extracted",
