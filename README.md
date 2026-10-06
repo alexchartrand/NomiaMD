@@ -207,8 +207,10 @@ It expects the backend running on `localhost:8000` (proxied via `/api`, see
 
 ## Deploying
 
-Production runs the `docker-compose.yml` stack (Caddy → nginx frontend → backend → Postgres
-+ Redis). See [DEPLOY.md](DEPLOY.md) for the release runbook.
+Production runs the `docker-compose.yml` stack (nginx frontend → backend + worker → Postgres
++ Redis) behind a shared Caddy (`edge/`). The same host runs a demo stack from a branch at
+`demo.nomiamd.com`, with the Epic sandbox demo on (`docker-compose.demo.yml`). See
+[DEPLOY.md](DEPLOY.md) for the release runbook.
 
 ## Mobile
 

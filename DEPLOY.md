@@ -9,8 +9,22 @@ from scratch.
 Stack: `caddy` (TLS + reverse proxy, the only public ingress) → `frontend`
 (nginx serving the built SPA, proxies `/api/*` to `backend`) → `backend`
 (FastAPI/uvicorn) → `postgres` (users, physician profiles, patients, extraction
-runs, claims, bills) + `redis` (rate-limit storage). The RAMQ LanceDB directory is a
-read-only bind mount into `backend`, not a service.
+runs, claims, bills) + `redis` (rate-limit storage, extraction queue for `worker`).
+The RAMQ LanceDB directory is a read-only bind mount into `backend`, not a service.
+
+The host runs three independent compose projects:
+
+| Project | Checkout | Runs | Domain |
+|---|---|---|---|
+| `nomiamd-edge` | prod's (`edge/docker-compose.yml`) | `caddy`, on 80/443 | both below |
+| `nomiamd` | `/opt/nomiamd/NomiaMD/`, a release tag | the app stack | `nomiamd.com` |
+| `nomiamd-demo` | `/opt/nomiamd/NomiaMD-demo/`, a branch (e.g. `dev`) | the app stack + `docker-compose.demo.yml` (Epic sandbox) | `demo.nomiamd.com` |
+
+Each app stack has its own `.env`, Postgres volume and private network, so deploying
+one never restarts the other. `caddy` reaches each stack's `frontend` over the shared
+`nomiamd-edge` network (`EDGE_ALIAS`). The demo holds synthetic and Epic-sandbox data
+only: `APP_ENV=development` there is what lets the sandbox run, and prod is pinned to
+`production`, which refuses it.
 
 ## 1. Tag the release
 
@@ -63,7 +77,7 @@ cd /opt/nomiamd/NomiaMD/
 git fetch --tags
 git checkout vX.Y.Z
 docker compose up --build -d
-docker compose ps        # postgres, redis, backend, frontend report healthy; caddy (no healthcheck) just "Up"
+docker compose ps        # postgres, redis, backend, frontend report healthy; worker (no healthcheck) just "Up"
 curl -I https://nomiamd.com/api/health
 ```
 
@@ -94,6 +108,14 @@ If an existing table changed, it has to be altered by hand in the `postgres`
 container (or the `postgres_data` volume dropped, which **deletes all users,
 patients, claims and bills**) before the new backend will work against it.
 
+**Edge changes:** if `edge/` changed since the running tag (`git diff vPREVIOUS vX.Y.Z
+-- edge/`), apply it from the prod checkout after the checkout above:
+
+```bash
+docker compose -f edge/docker-compose.yml up -d                                   # compose file changed
+docker compose -f edge/docker-compose.yml exec caddy caddy reload --config /etc/caddy/Caddyfile   # Caddyfile only
+```
+
 ## 4. Create the physician account(s), if new ones are needed
 
 There's no signup page — accounts are provisioned manually:
@@ -117,3 +139,73 @@ To reset a forgotten password:
 ```bash
 docker compose exec backend python scripts/reset_password.py --email you@example.com
 ```
+
+## Demo stack (`demo.nomiamd.com`)
+
+Same steps as prod, from `/opt/nomiamd/NomiaMD-demo/`, on a branch instead of a tag. It
+shares the RAMQ LanceDB directory with prod (same `DB_PATH`, mounted read-only).
+
+### Deploy a new version
+
+```bash
+cd /opt/nomiamd/NomiaMD-demo/
+git fetch && git checkout dev && git pull
+docker compose up --build -d
+docker compose ps
+```
+
+The checklist under step 3 (env, schema) applies here too. The demo's data is
+disposable: on a schema change, `docker compose down -v` (drops this stack's volumes
+only, never prod's) then re-seed.
+
+### One-time setup
+
+1. DNS: an A record for `demo.nomiamd.com` pointing at this host. `caddy` gets its
+   certificate on the first request once the record resolves.
+2. Checkout and `.env`:
+   ```bash
+   git clone <repo> /opt/nomiamd/NomiaMD-demo && cd /opt/nomiamd/NomiaMD-demo
+   git checkout dev
+   cp .env.example .env
+   ```
+   Fill it in like prod's (its own `POSTGRES_PASSWORD` and `JWT_SECRET_KEY`), plus:
+   ```bash
+   COMPOSE_PROJECT_NAME=nomiamd-demo
+   COMPOSE_FILE=docker-compose.yml:docker-compose.demo.yml
+   NETWORK_PREFIX=172.28.1
+   EDGE_ALIAS=demo-frontend
+   EPIC_SANDBOX_ENABLED=true
+   EPIC_SANDBOX_CLIENT_ID=<the fhir.epic.com app's non-production client id>
+   EPIC_SANDBOX_PRIVATE_KEY_PATH=/opt/nomiamd/secrets/epic-sandbox.pem
+   ```
+3. The Epic private key, readable by the containers' user (uid 10001). Its public half
+   must already be served by prod at `https://nomiamd.com/.well-known/jwks.json`:
+   ```bash
+   scp ~/.config/nomiamd/epic-sandbox/privatekey.pem user@nomiamd.com:/opt/nomiamd/secrets/epic-sandbox.pem
+   sudo chown 10001 /opt/nomiamd/secrets/epic-sandbox.pem && sudo chmod 400 /opt/nomiamd/secrets/epic-sandbox.pem
+   ```
+4. Start and seed it (the demo physician, the simulated patients and the Epic sandbox
+   patients):
+   ```bash
+   docker compose up --build -d
+   docker compose exec backend python scripts/seed_db.py
+   ```
+
+## One-time migration: Caddy out of the prod stack
+
+Before the edge project existed, `caddy` was a service of the prod stack. The first
+deploy of a tag that has `edge/` moves it out, with a minute or two of downtime:
+
+```bash
+cd /opt/nomiamd/NomiaMD/
+git fetch --tags && git checkout vX.Y.Z
+# .env: RAMQ_LANCEDB_PATH → DB_PATH (see "Env changes" in step 3)
+docker rm -f caddy                                  # frees 80/443
+docker compose -f edge/docker-compose.yml up -d     # new caddy + the nomiamd-edge network
+docker compose up --build -d --remove-orphans       # prod rejoins via the edge network
+```
+
+Every prod container is recreated (they lose their fixed `container_name`s); data lives
+in the `nomiamd_postgres_data` volume and is kept. The new `caddy` has its own
+certificate volume and fetches fresh certificates on start. Once it's healthy, the old
+`nomiamd_caddy_data` and `nomiamd_caddy_config` volumes can be removed.
