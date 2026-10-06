@@ -15,6 +15,7 @@ import { Banner, Card, CardContent, CardHeader, CardTitle, PatientSearchSelect, 
 import { clinicToday } from "../../../utils/date";
 import { AddedCodes } from "../review/AddedCodes";
 import { feeTotals } from "../review/feeOptions";
+import { FrequentCodes } from "../review/FrequentCodes";
 import {
   emptyManualCodes,
   manualCodesFromClaim,
@@ -143,14 +144,22 @@ export default function FacturerPage() {
             </Banner>
           )}
           {patient ? (
-            <AddedCodes
+            <>
+              <FrequentCodes
+                patientId={patient.id}
+                serviceDate={serviceDate || null}
+                onAdd={(hit) => dispatch({ type: "manual-code-added", hit })}
+                excludeNumbers={entries.map((e) => e.hit.number)}
+              />
+              <AddedCodes
               entries={entries}
               onAdd={(hit) => dispatch({ type: "manual-code-added", hit })}
               onRemove={(number) => dispatch({ type: "manual-code-removed", number })}
               onFeeSelected={(number, feeIndex, lieu) => dispatch({ type: "manual-fee-selected", number, feeIndex, lieu })}
               patientId={patient.id}
               serviceDate={serviceDate || null}
-            />
+              />
+            </>
           ) : (
             <p className="text-sm text-muted-foreground">Choisissez d&rsquo;abord le patient.</p>
           )}

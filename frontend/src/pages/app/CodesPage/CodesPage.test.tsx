@@ -49,6 +49,32 @@ describe("CodesPage", () => {
     expect(last.has("patient_id")).toBe(false);
   });
 
+  it("offers the physician's frequent codes in a dropdown, and opens the one picked", async () => {
+    const queries: URLSearchParams[] = [];
+    server.use(
+      http.get("/api/codes/search", ({ request }) => {
+        const params = new URL(request.url).searchParams;
+        queries.push(params);
+        return HttpResponse.json([visit]);
+      }),
+      http.get("/api/codes/15801", () => HttpResponse.json(makeCodeDetail({ ...visit, when_to_use: ["Suivi"] }))),
+    );
+    const { user } = renderWithProviders(<CodesPage />);
+
+    const dropdown = await screen.findByRole("combobox", { name: "Codes fréquents" });
+    // The frequent codes: an empty query, for no patient.
+    expect(queries[0].has("q")).toBe(false);
+    expect(queries[0].has("patient_id")).toBe(false);
+    // Nothing is listed until something is searched or picked.
+    expect(screen.queryByRole("button", { name: /15801/ })).not.toBeInTheDocument();
+
+    await user.selectOptions(dropdown, "15801");
+
+    expect(screen.getByRole("searchbox", { name: "Rechercher un code RAMQ" })).toHaveValue("15801");
+    expect(await screen.findByText("Suivi")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /15801/ })).toHaveAttribute("aria-expanded", "true");
+  });
+
   it("says when nothing matches", async () => {
     server.use(http.get("/api/codes/search", () => HttpResponse.json([])));
     const { user } = renderWithProviders(<CodesPage />);

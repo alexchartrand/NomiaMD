@@ -97,6 +97,31 @@ describe("FacturerPage", { timeout: 20_000 }, () => {
     ]);
   });
 
+  it("adds one of the patient's frequent codes in one click", async () => {
+    const searches: URLSearchParams[] = [];
+    server.use(
+      http.get("/api/codes/search", ({ request }) => {
+        searches.push(new URL(request.url).searchParams);
+        return HttpResponse.json([suture, visit]);
+      }),
+    );
+    const calls = captureSaves();
+    const { user } = renderAt("/app/facturer");
+    await pickPatient(user);
+
+    await user.click(await screen.findByRole("button", { name: /Ajouter le code 00059/ }, SLOW));
+    // Added: no longer offered, and on the claim.
+    expect(screen.queryByRole("button", { name: /Ajouter le code 00059/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Retirer le code 00059" })).toBeInTheDocument();
+    // The frequent codes are the ones this patient may be billed.
+    expect(searches[0].get("patient_id")).toBe("7");
+    expect(searches[0].has("q")).toBe(false);
+
+    await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
+    await waitFor(() => expect(calls).toHaveLength(1));
+    expect(calls[0].body).toMatchObject({ selected_codes: [{ code: "00059", fee_index: 0 }] });
+  });
+
   it("a removed code is not billed", async () => {
     const calls = captureSaves();
     const { user } = renderAt("/app/facturer");
