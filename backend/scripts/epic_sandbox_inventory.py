@@ -1,6 +1,6 @@
 """Inventory the Epic sandbox (fhir.epic.com) for the step 11b demo: which test patients have
-signed clinical notes worth importing. From backend/, with EPIC_SANDBOX_CLIENT_ID,
-EPIC_SANDBOX_PRIVATE_KEY_PATH and EPIC_SANDBOX_KEY_ID set (see .env.example):
+signed clinical notes worth importing. From backend/, with EPIC_SANDBOX_CLIENT_ID and
+EPIC_SANDBOX_PRIVATE_KEY_PATH set (see .env.example):
 
     uv run python scripts/epic_sandbox_inventory.py                 # print the table
     uv run python scripts/epic_sandbox_inventory.py --write         # + rewrite the roster
@@ -211,8 +211,8 @@ async def main() -> None:
             raise SystemExit(
                 f"Epic refused the token request: {error}\n"
                 "invalid_client usually means the app (or its JWK Set URL) isn't synced to the "
-                "sandbox yet, the client id isn't the non-production one, or the JWK Set's kid "
-                "doesn't match EPIC_SANDBOX_KEY_ID."
+                "sandbox yet, the client id isn't the non-production one, or the key's public half "
+                "isn't in the JWK Set the app's URL serves (app/jwks/public_keys/)."
             ) from error
         inventory = Inventory(client, DemoNoteSelector(args.min_chars, args.per_patient))
         roster = [patient for fhir_id in ids if (patient := await inventory.patient(fhir_id, fhir_id in args.record))]

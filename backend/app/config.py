@@ -132,14 +132,9 @@ class Settings:
 
     @property
     def epic_sandbox_private_key_path(self) -> Path:
-        """The PEM private key whose public half the fhir.epic.com app's JWK Set URL serves
-        (scripts/epic_sandbox_jwks.py). Kept outside the repo."""
+        """The PEM private key whose public half GET /.well-known/jwks.json serves
+        (app/jwks/public_keys/), the fhir.epic.com app's JWK Set URL. Kept outside the repo."""
         return Path(os.environ["EPIC_SANDBOX_PRIVATE_KEY_PATH"]).expanduser()
-
-    @property
-    def epic_sandbox_key_id(self) -> str | None:
-        """The JWT `kid`: which key of the JWK Set signed the assertion."""
-        return os.environ.get("EPIC_SANDBOX_KEY_ID") or None
 
     @property
     def epic_sandbox_fhir_base_url(self) -> str:

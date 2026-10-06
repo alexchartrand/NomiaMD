@@ -18,7 +18,7 @@ pytestmark = pytest.mark.epic_sandbox
 # Read at import, before conftest's no_real_api_keys clears them for every test.
 _CREDENTIALS = {
     name: os.environ.get(name)
-    for name in ("EPIC_SANDBOX_CLIENT_ID", "EPIC_SANDBOX_PRIVATE_KEY_PATH", "EPIC_SANDBOX_KEY_ID")
+    for name in ("EPIC_SANDBOX_CLIENT_ID", "EPIC_SANDBOX_PRIVATE_KEY_PATH")
 }
 
 

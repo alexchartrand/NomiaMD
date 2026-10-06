@@ -78,6 +78,7 @@ Backend modules (`backend/app/`):
 | `auth/` | login/sessions (`AuthService`) and dated physician practice facts (`ProfileService`) |
 | `patients/` | global patient identity, search, per-physician roster, registration |
 | `claims/`, `bills/` | saving reviewed codes as claims; grouping claims into bills (+ PDF) |
+| `jwks/` | public `GET /.well-known/jwks.json`: the public keys committed in `jwks/public_keys/` (loaded at startup), what Epic's JWK Set URL points at; `kid` = RFC 7638 thumbprint, which the Epic signer derives from its private key |
 | `contact/` | public `POST /contact` (no login): the site's contact form → `contact_requests`, best-effort email via SMTP (`LogContactNotifier` when unset), honeypot + 5/hour limit |
 | `sample_patients/` | serves `consultations/` notes as simulated patients |
 

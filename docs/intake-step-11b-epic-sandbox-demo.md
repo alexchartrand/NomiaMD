@@ -17,9 +17,10 @@ Québec approval is involved: the sandbox is open to any registered developer an
   *Done:* backend services (`BackendServicesTokenProvider`: RS384 client assertion,
   `client_credentials` grant, token cached until a minute before expiry). Key pair at
   `~/.config/nomiamd/epic-sandbox/`. fhir.epic.com no longer takes an uploaded certificate,
-  only a **Non-Production JWK Set URL**. That URL is a public HTTPS address serving
-  `scripts/epic_sandbox_jwks.py`'s output, and the assertion's `kid` (`EPIC_SANDBOX_KEY_ID`)
-  names the key in it. Env vars are in `backend/.env.example`. The app needs these APIs selected: `Patient.Read (R4)`,
+  only a **Non-Production JWK Set URL**. That URL is
+  `https://nomiamd.com/.well-known/jwks.json` (`app/jwks/`, the public halves committed under
+  `app/jwks/public_keys/`), and the assertion's `kid` is the key's RFC 7638 thumbprint, the
+  same one the set lists it under. Env vars are in `backend/.env.example`. The app needs these APIs selected: `Patient.Read (R4)`,
   `DocumentReference.Search (Clinical Notes) (R4)`, `Binary.Read (Clinical Notes) (R4)`,
   `Encounter.Read (R4)` and `Encounter.Search (R4)` (the last one only for the inventory).
 - [x] **Inventory the sandbox first.** `scripts/epic_sandbox_inventory.py` prints the table;
@@ -87,8 +88,8 @@ versioning, the production client id and Santé Québec activation.
 
 ## Sandbox inventory (2026-10-03)
 
-Backend services auth works against fhir.epic.com: client id + JWK Set URL (a public gist for
-now, see BACKLOG.md) + `kid`. A new app took about 45 minutes to sync to the sandbox
+Backend services auth works against fhir.epic.com: client id + JWK Set URL (first a public gist,
+now `GET /.well-known/jwks.json`) + `kid`. A new app took about 45 minutes to sync to the sandbox
 (`invalid_client` until then).
 
 **The sandbox is shared and writable.** Of 153 signed notes across Epic's 8 documented test

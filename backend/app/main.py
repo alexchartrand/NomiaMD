@@ -15,6 +15,7 @@ from app.encounters import encounters_router
 from app.extraction import extraction_router
 from app.extraction.background import extraction_queue
 from app.intake import IntakeService, epic_sandbox_router, intake_router
+from app.jwks import JwkSet, jwks_router
 from app.logging_config import configure_logging
 from app.patients import patients_router
 from app.ramq_chatbot import ramq_chatbot_router
@@ -28,6 +29,8 @@ configure_logging(settings.log_level)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # A bad public key file fails the boot, not the first fetch by an EHR.
+    app.state.jwk_set = JwkSet.from_directory()
     async with application_services() as db, extraction_queue() as queue:
         app.state.lancedb = db
         app.state.extraction_queue = queue
@@ -48,6 +51,7 @@ app.include_router(encounters_router)
 app.include_router(extraction_router)
 app.include_router(intake_router)
 app.include_router(epic_sandbox_router)
+app.include_router(jwks_router)
 app.include_router(patients_router)
 app.include_router(ramq_chatbot_router)
 app.include_router(sample_patients_router)

@@ -162,7 +162,6 @@ def no_real_api_keys(monkeypatch):
         # And the Epic sandbox demo: a developer's flag/credentials must not turn its routes
         # on, or let a test reach fhir.epic.com (the contract test opts back in itself).
         "APP_ENV", "EPIC_SANDBOX_ENABLED", "EPIC_SANDBOX_CLIENT_ID", "EPIC_SANDBOX_PRIVATE_KEY_PATH",
-        "EPIC_SANDBOX_KEY_ID",
     ):
         monkeypatch.delenv(name, raising=False)
 

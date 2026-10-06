@@ -14,15 +14,18 @@ from app.intake.connectors.epic_fhir.sandbox import (
     ensure_sandbox_allowed,
 )
 from app.intake.connectors.epic_fhir.sandbox_roster import SandboxRoster
+from app.jwks import PublicJwk
 
 
 def sandbox_client(http: httpx.AsyncClient, settings: Settings) -> EpicFhirClient:
+    private_key_pem = settings.epic_sandbox_private_key_path.read_text(encoding="utf-8")
     tokens = BackendServicesTokenProvider(
         http,
         token_url=settings.epic_sandbox_token_url,
         client_id=settings.epic_sandbox_client_id,
-        private_key_pem=settings.epic_sandbox_private_key_path.read_text(encoding="utf-8"),
-        key_id=settings.epic_sandbox_key_id,
+        private_key_pem=private_key_pem,
+        # The same thumbprint the JWK Set lists the public half under.
+        key_id=PublicJwk.from_private_pem(private_key_pem.encode()).kid,
     )
     return EpicFhirClient(http, settings.epic_sandbox_fhir_base_url, tokens)
 
