@@ -142,9 +142,6 @@
   - `ClaimService.create` (`app/claims/service.py`) awaits the patient/extraction/duplicate-check lookups one at a time even though none depends on another's result. `asyncio.gather` would cut the added latency on the claim-save path. Not measured against real Postgres latency, so profile before spending effort here.
   - (The `extraction/router.py` half of this item and the `update_status` re-fetch are gone: patient suggestion was removed on 8/31, and claims no longer have a status-update route.)
 
-- [ ] 🟢 Unused "ghost" button variant — *added 8/19, from codebase audit, reworded 9/30*
-  - `components/Button.tsx` still declares a `ghost` variant (mapped to shadcn's `ui/button.tsx`), but no call site of `components/Button` passes it. The only `variant="ghost"` in the app is in `ui/dialog.tsx`, which uses the shadcn button directly.
-
 - [ ] 🟢 `encounter_id` accepted, validated, then discarded — *added 8/19, from codebase audit, needs confirmation*
   - `extraction/models.py` / `extraction/router.py` — router only reads `source.system`; `encounter_id` is parsed and never persisted. Frontend sends `source: { system }` only (`frontend/src/api/extraction.ts`), never an `encounter_id`. CLAUDE.md frames multi-source ingestion (Epic/Plume) as part of the design, so may be intentional scaffolding rather than a mistake.
 
@@ -153,6 +150,10 @@
 - [x] 🟢 Unused dependency: pandas — *added 8/19, from codebase audit, fixed 10/6*
   - Declared in `backend/pyproject.toml`; zero imports anywhere in `app/`, `scripts/`, or `tests/`.
   - Fixed: removed with `uv remove pandas`. No other package pulls it in (LanceDB treats it as optional), so it's gone from `uv.lock` entirely.
+
+- [x] 🟢 Unused "ghost" button variant — *added 8/19, from codebase audit, reworded 9/30, obsolete 10/6*
+  - `components/Button.tsx` declared a `ghost` variant that no call site of `components/Button` passed.
+  - Obsolete: it's in use now — `SiteHeader.tsx`, `InboxPage/AssociatePatient.tsx`, `InboxPage/EncounterRowItem.tsx` and `EncounterPage/index.tsx` all pass `variant="ghost"` to `components/Button`. Keep it.
 
 - [x] 🟢 Unused `tagline` prop — *added 8/19, from codebase audit, fixed 10/6*
   - `components/PageHeader.tsx` rendered it, but its only call site `SiteHeader.tsx` never supplied it. Prop removed.
