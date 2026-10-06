@@ -313,6 +313,7 @@ export default function EncounterPage() {
             <ReviewStep
               result={encounter.extraction!}
               noteText={encounter.note_text}
+              patientId={encounter.patient!.id}
               review={review}
               onSaveAndNext={nextId !== null ? handleSaveAndNext : undefined}
               onNext={nextId !== null ? () => goToNext() : undefined}

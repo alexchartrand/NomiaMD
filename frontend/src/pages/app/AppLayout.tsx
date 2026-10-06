@@ -22,6 +22,8 @@ export default function AppLayout() {
         </NavItem>
         <NavItem to="/app/inbox">Rencontres</NavItem>
         <NavItem to="/app/facturation">Facturation</NavItem>
+        <NavItem to="/app/facturer">Facturer</NavItem>
+        <NavItem to="/app/codes">Codes RAMQ</NavItem>
         <NavItem to="/app/chat">Clavardage</NavItem>
         <NavItem to="/app/patients">Patients</NavItem>
         <NavItem to="/app/profile">Profil</NavItem>

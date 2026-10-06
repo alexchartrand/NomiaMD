@@ -1,10 +1,12 @@
 import { Fragment, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   CLAIM_STATUSES,
   deleteClaim,
   describeError,
   listClaims,
   listRoster,
+  MANUAL_SOURCE_SYSTEM,
   type Claim,
   type ClaimFilters,
   type ClaimStatus,
@@ -158,11 +160,21 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
           <TableBody>
             {claims.map((claim) => {
               const deletable = claim.status === "brouillon";
+              // Billed without an encounter: edited on the Facturer page (an encounter's claim
+              // is edited from its review instead).
+              const manual = claim.source_system === MANUAL_SOURCE_SYSTEM;
               return (
                 <Fragment key={claim.id}>
                   <TableRow>
                     <TableCell>{formatDate(claim.service_date)}</TableCell>
-                    <TableCell>{claim.patient_full_name}</TableCell>
+                    <TableCell>
+                      {claim.patient_full_name}
+                      {manual && (
+                        <span className="ml-2 inline-block rounded-full bg-muted px-[0.5rem] py-[0.1rem] text-[0.75rem] text-muted-foreground">
+                          Sans rencontre
+                        </span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       {claim.codes.map((c) => c.code).join(", ")}{" "}
                       <Button
@@ -188,6 +200,11 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
+                        {manual && deletable && (
+                          <Button asChild variant="secondary">
+                            <Link to={`/app/facturer/${claim.id}`}>Modifier</Link>
+                          </Button>
+                        )}
                         <Button
                           type="button"
                           variant="danger"

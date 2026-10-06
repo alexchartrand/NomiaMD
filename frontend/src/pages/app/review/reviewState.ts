@@ -1,4 +1,12 @@
-import type { BillingExtractionResponse, Claim, ClaimCodeLine, ExtractedFee } from "../../../api";
+import type { BillingExtractionResponse, Claim } from "../../../api";
+import { feeFromClaimLine } from "./feeOptions";
+import {
+  emptyManualCodes,
+  isManualCodesAction,
+  manualCodesReducer,
+  type ManualCodesAction,
+  type ManualCodesState,
+} from "./manualCodes";
 
 // Everything derived from a single extraction result, from the moment it's loaded through
 // the save outcome — grouped so a different result resets all of it atomically instead of
@@ -14,6 +22,8 @@ export interface ReviewState {
   feeSelection: Map<number, number>;
   // Code array-index -> the lieu picked among a chosen fee's several; absent = the fee's first.
   lieuSelection: Map<number, string>;
+  // Codes the physician added from the code search, beyond the proposed ones.
+  manual: ManualCodesState;
   // Nothing changed since it was loaded — saving a claim's own selection again is pointless.
   pristine: boolean;
   saving: boolean;
@@ -27,6 +37,7 @@ export const initialReviewState: ReviewState = {
   selection: new Set(),
   feeSelection: new Map(),
   lieuSelection: new Map(),
+  manual: emptyManualCodes,
   pristine: true,
   saving: false,
   saveError: null,
@@ -44,9 +55,11 @@ export type ReviewAction =
   | { type: "save-started" }
   | { type: "save-succeeded" }
   | { type: "save-cancelled" }
-  | { type: "save-failed"; error: string };
+  | { type: "save-failed"; error: string }
+  | ManualCodesAction;
 
 export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewState {
+  if (isManualCodesAction(action)) return manualCodesChanged(state, action);
   switch (action.type) {
     case "extracted":
       return {
@@ -88,6 +101,21 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
   }
 }
 
+function manualCodesChanged(state: ReviewState, action: ManualCodesAction): ReviewState {
+  // A searched code the extraction already proposes is ticked rather than added twice.
+  if (action.type === "manual-code-added") {
+    const proposed = state.result?.billing.result.codes.findIndex((c) => c.code === action.hit.number) ?? -1;
+    if (proposed >= 0) {
+      return { ...state, selection: new Set(state.selection).add(proposed), pristine: false };
+    }
+  }
+  return {
+    ...state,
+    manual: manualCodesReducer(state.manual, action),
+    pristine: action.type === "manual-codes-restored" ? state.pristine : false,
+  };
+}
+
 // What a fresh review starts with ticked: the codes the model is most sure of. The physician
 // still un-ticks or adds before anything is saved.
 function highConfidence(result: BillingExtractionResponse): Set<number> {
@@ -113,16 +141,9 @@ function selectionFromClaim(
     const line = claimed.get(code.code);
     if (!line) return;
     selection.add(i);
-    const feeIndex = code.fees.findIndex((fee) => isSameFee(fee, line));
+    const { feeIndex, lieu } = feeFromClaimLine(code.fees, line);
     if (feeIndex > 0) feeSelection.set(i, feeIndex);
-    // A claim keeps a single lieu when the physician narrowed a fee that lists several.
-    const claimedLieu = line.fee_lieux?.length === 1 ? line.fee_lieux[0] : null;
-    if (claimedLieu && code.fees[Math.max(feeIndex, 0)]?.lieux.length > 1) lieuSelection.set(i, claimedLieu);
+    if (lieu) lieuSelection.set(i, lieu);
   });
   return { selection, feeSelection, lieuSelection };
-}
-
-function isSameFee(fee: ExtractedFee, line: ClaimCodeLine): boolean {
-  const amount = fee.unit === "dollars" ? line.fee_amount : line.fee_units;
-  return fee.role === line.fee_role && fee.context === line.fee_context && fee.amount === amount;
 }

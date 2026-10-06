@@ -2,6 +2,8 @@ import type {
   BillingExtractionResponse,
   Claim,
   ClaimCodeLine,
+  CodeDetail,
+  CodeHit,
   Dashboard,
   DashboardKpis,
   DashboardTasks,
@@ -63,6 +65,7 @@ export function makeClaimLine(overrides: Partial<ClaimCodeLine> = {}): ClaimCode
   return {
     code: "00103",
     description: "Visite principale",
+    origin: "suggested",
     confidence: "high",
     explanation: "",
     fee_amount: 50,
@@ -90,6 +93,34 @@ export function makeClaim(overrides: Partial<Claim> = {}): Claim {
     total_amount: 50,
     created_at: "2026-10-01T12:00:00Z",
     updated_at: "2026-10-01T12:00:00Z",
+    ...overrides,
+  };
+}
+
+export function makeCodeHit(overrides: Partial<CodeHit> = {}): CodeHit {
+  return {
+    number: "00059",
+    description: "Suture d'une plaie simple",
+    header_path: "C — Actes diagnostiques et thérapeutiques > Peau",
+    fees: [makeFee({ amount: 25 })],
+    needs_confirmation: [],
+    ...overrides,
+  };
+}
+
+export function makeCodeDetail(overrides: Partial<CodeDetail> = {}): CodeDetail {
+  return {
+    ...makeCodeHit(),
+    when_to_use: [],
+    rules: [],
+    eligibility: {
+      min_age: null,
+      max_age: null,
+      min_panel_size: null,
+      max_panel_size: null,
+      requires_registered: null,
+      requires_vulnerable: null,
+    },
     ...overrides,
   };
 }

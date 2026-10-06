@@ -11,6 +11,9 @@ export function QuickActions() {
         <Link to="/app/inbox">Boîte de réception</Link>
       </Button>
       <Button asChild variant="secondary">
+        <Link to="/app/facturer">Facturer sans rencontre</Link>
+      </Button>
+      <Button asChild variant="secondary">
         <Link to="/app/facturation">Facturation</Link>
       </Button>
     </div>
