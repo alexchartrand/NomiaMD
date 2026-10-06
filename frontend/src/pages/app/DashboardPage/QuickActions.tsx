@@ -1,21 +1,24 @@
+import { FilePlus2, ReceiptText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../../../components";
 
+// The two ways work starts: notes in, or a claim with no note at all. Everything else is in
+// the sidebar.
 export function QuickActions() {
   return (
-    <div className="flex flex-wrap gap-2">
+    <>
+      <Button asChild variant="secondary">
+        <Link to="/app/facturer">
+          <ReceiptText aria-hidden />
+          Facturer sans rencontre
+        </Link>
+      </Button>
       <Button asChild>
-        <Link to="/app/ajouter">Ajouter des notes</Link>
+        <Link to="/app/ajouter">
+          <FilePlus2 aria-hidden />
+          Ajouter des notes
+        </Link>
       </Button>
-      <Button asChild variant="secondary">
-        <Link to="/app/inbox">Boîte de réception</Link>
-      </Button>
-      <Button asChild variant="secondary">
-        <Link to="/app/facturer">Facturer sans rencontre</Link>
-      </Button>
-      <Button asChild variant="secondary">
-        <Link to="/app/facturation">Facturation</Link>
-      </Button>
-    </div>
+    </>
   );
 }
