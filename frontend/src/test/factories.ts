@@ -136,6 +136,8 @@ export function makeEncounterRow(overrides: Partial<EncounterRow> = {}): Encount
     service_date: "2026-10-01",
     received_at: "2026-10-01T12:00:00Z",
     code_count: 1,
+    codes: ["00103"],
+    indicative_total: 50,
     extraction_run_id: 1,
     possible_duplicate_ids: [],
     all_clean: false,

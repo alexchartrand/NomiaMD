@@ -1,39 +1,44 @@
-import { useMemo, useState } from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { CalendarSearch, CheckCheck, FilePlus2, SearchX } from "lucide-react";
+import { toast } from "sonner";
 import type { EncounterPeriod, EncounterRow } from "../../../api";
-import { Banner, Button, Spinner, Table, TableBody, TableHead, TableHeader, TableRow } from "../../../components";
-import { formatLongDate } from "../../../utils/date";
+import { AppPage, AppPageHeader, Banner, Button, EmptyState, Skeleton, Tabs } from "../../../components";
+import { formatMoney } from "../../../utils/money";
 import type { ReceivedSummary } from "../AddNotesPage";
 import { ApproveAllModal } from "./ApproveAllModal";
+import { DayCard } from "./DayCard";
 import { DuplicateModal } from "./DuplicateModal";
-import { ENCOUNTER_COLUMNS, EncounterRowItem } from "./EncounterRowItem";
-import { matches, type RowFilters } from "./filters";
+import { matches, type RowFilters, type StatusFilter } from "./filters";
 import { FiltersBar } from "./FiltersBar";
 import { presetPeriod, type PresetId } from "./periods";
 import { groupByDay, readFilters, readPeriod, toParams } from "./inboxView";
+import { statusTabs } from "./statusTabs";
 import { useInbox } from "./useInbox";
 
 function plural(count: number, singular: string, pluralForm: string): string {
   return `${count} ${count > 1 ? pluralForm : singular}`;
 }
 
-// "23 rencontres · 19 prêtes · 2 à associer" (+ failures, when there are any).
-function countsLine(rows: EncounterRow[]): string {
-  const count = (status: EncounterRow["status"]) => rows.filter((row) => row.status === status).length;
-  const parts = [
-    plural(rows.length, "rencontre", "rencontres"),
-    plural(count("prêt"), "prête", "prêtes"),
-    `${count("à associer")} à associer`,
-  ];
-  const failed = count("échec");
-  if (failed > 0) parts.push(plural(failed, "échec", "échecs"));
-  return parts.join(" · ");
-}
-
-function ReceivedBanner({ summary }: { summary: ReceivedSummary }) {
+function receivedMessage(summary: ReceivedSummary): string {
   const parts = [plural(summary.received, "note reçue", "notes reçues")];
   if (summary.duplicates > 0) parts.push(`${plural(summary.duplicates, "déjà reçue", "déjà reçues")} (ignorées)`);
-  return <Banner tone="success">{parts.join(" · ")}.</Banner>;
+  return `${parts.join(" · ")}.`;
+}
+
+// Notes just added from the Ajouter page: said once, as a toast, then dropped from the
+// history entry so a reload doesn't say it again.
+function useReceivedToast() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const received = (location.state as { received?: ReceivedSummary } | null)?.received;
+  const shown = useRef(false);
+  useEffect(() => {
+    if (!received || shown.current) return;
+    shown.current = true;
+    toast.success(receivedMessage(received));
+    navigate(`${location.pathname}${location.search}`, { replace: true, state: null });
+  }, [received, location.pathname, location.search, navigate]);
 }
 
 // The physician's encounters over a period — a day, or the whole week for whoever bills on
@@ -42,8 +47,7 @@ export default function InboxPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const period = readPeriod(searchParams);
   const filters = readFilters(searchParams);
-  const location = useLocation();
-  const received = (location.state as { received?: ReceivedSummary } | null)?.received;
+  useReceivedToast();
 
   const { rows, loading, error, reload } = useInbox(period);
   const [approving, setApproving] = useState(false);
@@ -51,7 +55,9 @@ export default function InboxPage() {
 
   const sources = useMemo(() => [...new Set(rows.map((row) => row.source_system))].sort(), [rows]);
   const shown = useMemo(() => rows.filter((row) => matches(row, filters)), [rows, filters.status, filters.source, filters.patient]);
+  const tabs = useMemo(() => statusTabs(rows, filters), [rows, filters.source, filters.patient, filters.status]);
   const cleanRows = useMemo(() => shown.filter((row) => row.all_clean), [shown]);
+  const cleanTotal = cleanRows.reduce((sum, row) => sum + (row.indicative_total ?? 0), 0);
   const days = useMemo(() => groupByDay(shown), [shown]);
 
   function changePeriod(next: EncounterPeriod) {
@@ -68,14 +74,22 @@ export default function InboxPage() {
     setSearchParams(toParams(period, next), { replace: true });
   }
 
+  const addNotes = (
+    <Button asChild>
+      <Link to="/app/ajouter">
+        <FilePlus2 aria-hidden />
+        Ajouter des notes
+      </Link>
+    </Button>
+  );
+
   return (
-    <section className="max-w-[1100px]">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-heading text-2xl font-semibold">Rencontres</h1>
-        <Button asChild variant="secondary">
-          <Link to="/app/ajouter">Ajouter manuellement</Link>
-        </Button>
-      </div>
+    <AppPage>
+      <AppPageHeader
+        title="Rencontres"
+        description="Les notes reçues, avec les codes proposés. Révisez-les une à une, ou approuvez en lot celles qui ne présentent aucune ambiguïté."
+        actions={addNotes}
+      />
 
       <FiltersBar
         period={period}
@@ -86,61 +100,65 @@ export default function InboxPage() {
         sources={sources}
       />
 
-      <div className="my-5 flex flex-wrap items-center justify-between gap-4">
-        <p className="m-0 text-muted-foreground">
-          {loading ? "" : countsLine(shown)}
-          {!loading && shown.length !== rows.length && ` (sur ${rows.length})`}
-        </p>
-        <Button type="button" onClick={() => setApproving(true)} disabled={cleanRows.length === 0}>
-          Approuver les rencontres prêtes{cleanRows.length > 0 ? ` (${cleanRows.length})` : ""}
-        </Button>
-      </div>
+      <Tabs<StatusFilter>
+        ariaLabel="Statut"
+        className="mt-5"
+        items={tabs.map((tab) => ({ id: tab.id, label: tab.label, count: loading ? undefined : tab.count }))}
+        value={filters.status}
+        onChange={(status) => changeFilters({ ...filters, status })}
+      />
 
-      {received && <ReceivedBanner summary={received} />}
-      {error && <Banner tone="error">{error}</Banner>}
-
-      {loading ? (
-        <Spinner label="Chargement..." />
-      ) : shown.length === 0 ? (
-        <p>{rows.length === 0 ? "Aucune rencontre pour cette période." : "Aucune rencontre ne correspond aux filtres."}</p>
-      ) : (
-        <div className="flex flex-col gap-8">
-          {days.map((group) => (
-            <div key={group.day} className="flex flex-col gap-3">
-              <h2 className="m-0 font-heading text-lg font-semibold first-letter:uppercase">
-                {formatLongDate(group.day)}
-                <span className="ml-2 text-sm font-normal text-muted-foreground">
-                  {plural(group.batches.reduce((n, batch) => n + batch.rows.length, 0), "rencontre", "rencontres")}
-                </span>
-              </h2>
-              {group.batches.map((batch) => (
-                <div key={batch.label ?? ""}>
-                  {batch.label !== null && <h3 className="mb-1 text-sm font-semibold text-muted-foreground">{batch.label}</h3>}
-                  <Table className="min-w-[760px] table-fixed">
-                    <colgroup>
-                      {ENCOUNTER_COLUMNS.map((column, i) => (
-                        <col key={i} className={column.width} />
-                      ))}
-                    </colgroup>
-                    <TableHeader>
-                      <TableRow>
-                        {ENCOUNTER_COLUMNS.map((column, i) => (
-                          <TableHead key={i}>{column.label}</TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {batch.rows.map((row) => (
-                        <EncounterRowItem key={row.id} row={row} onChanged={reload} onOpenDuplicate={setDuplicateOf} />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              ))}
-            </div>
-          ))}
+      {cleanRows.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/25 bg-[color:var(--color-primary-tint)] px-4 py-3">
+          <p className="m-0 flex items-center gap-2.5 text-sm">
+            <CheckCheck aria-hidden className="size-5 shrink-0 text-primary" />
+            <span>
+              <span className="font-semibold">{plural(cleanRows.length, "rencontre prête", "rencontres prêtes")} sans ambiguïté</span>
+              <span className="text-muted-foreground">
+                {" "}
+                · codes à confiance élevée, rien à confirmer{cleanTotal > 0 ? ` · ${formatMoney(cleanTotal)}` : ""}
+              </span>
+            </span>
+          </p>
+          <Button type="button" onClick={() => setApproving(true)}>
+            Approuver en lot ({cleanRows.length})
+          </Button>
         </div>
       )}
+
+      <div className="mt-5 flex flex-col gap-5">
+        {error && <Banner tone="error">{error}</Banner>}
+
+        {loading ? (
+          <div aria-busy="true" aria-label="Chargement des rencontres" className="flex flex-col gap-3">
+            <Skeleton className="h-11 rounded-xl" />
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-14 rounded-lg" />
+            ))}
+          </div>
+        ) : shown.length === 0 ? (
+          rows.length === 0 ? (
+            <EmptyState
+              icon={CalendarSearch}
+              title="Aucune rencontre pour cette période."
+              description="Choisissez une autre période, ou ajoutez les notes signées de vos consultations."
+              action={addNotes}
+            />
+          ) : (
+            <EmptyState
+              icon={SearchX}
+              title="Aucune rencontre ne correspond aux filtres."
+              action={
+                <Button type="button" variant="secondary" onClick={() => changeFilters({ status: "", source: "", patient: "" })}>
+                  Effacer les filtres
+                </Button>
+              }
+            />
+          )
+        ) : (
+          days.map((group) => <DayCard key={group.day} group={group} onChanged={reload} onOpenDuplicate={setDuplicateOf} />)
+        )}
+      </div>
 
       {approving && <ApproveAllModal rows={cleanRows} onClose={() => setApproving(false)} onApproved={reload} />}
       {duplicateOf && (
@@ -151,6 +169,6 @@ export default function InboxPage() {
           onResolved={reload}
         />
       )}
-    </section>
+    </AppPage>
   );
 }

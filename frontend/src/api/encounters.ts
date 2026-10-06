@@ -32,9 +32,14 @@ export interface EncounterRow {
   batch_label: string | null;
   service_date: string | null; // ISO date (YYYY-MM-DD)
   received_at: string;
-  // The codes billed on its live claim once there is one (status "revu"), else the codes the
+  // How many codes its live claim bills once there is one (status "revu"), else how many the
   // latest run proposes; null when never extracted.
   code_count: number | null;
+  // The codes shown: the claim's, else the latest run's high-confidence ones (what the
+  // review starts with ticked). The total is theirs, indicative; null when none has a
+  // dollar fee.
+  codes: string[] | null;
+  indicative_total: number | null;
   // The latest run (what POST /claims takes); null when never extracted.
   extraction_run_id: number | null;
   // "Doublon possible": the other encounters this may be the same visit as, until the

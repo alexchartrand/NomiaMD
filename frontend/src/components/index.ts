@@ -31,3 +31,4 @@ export { RowActions, type RowAction } from "./RowActions";
 export { Tabs, type TabItem } from "./Tabs";
 export { Skeleton } from "./ui/skeleton";
 export { Toaster } from "./ui/sonner";
+export { CodeChips } from "./CodeChips";

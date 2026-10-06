@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { BookOpen, Inbox, LayoutDashboard, MessagesSquare, ReceiptText, Users } from "lucide-react";
-import { NavItem, NavSection, Sidebar, Toaster } from "../../components";
+import { NavItem, NavSection, Sidebar } from "../../components";
 import { RamqChatProvider } from "../../chat/RamqChatProvider";
 import { useInboxCount } from "./shell/useNavCounts";
 import { UserMenu } from "./shell/UserMenu";
@@ -44,7 +44,6 @@ export default function AppLayout() {
           </RamqChatProvider>
         </div>
       </div>
-      <Toaster position="bottom-right" richColors={false} closeButton />
     </div>
   );
 }
