@@ -372,8 +372,8 @@ class Bill(Base):
 
 
 class Claim(TimestampMixin, Base):
-    """One physician-confirmed RAMQ claim for an encounter, with many code lines
-    (ClaimCode).
+    """One physician-confirmed RAMQ claim for an encounter — or, billed by hand without one,
+    for a patient on a date — with many code lines (ClaimCode).
 
     There is no stored status: a claim is "soumis" exactly when it's on a bill (`bill_id IS
     NOT NULL`) and "brouillon" otherwise — see app/claims/status.py. A stored copy could only
@@ -410,7 +410,8 @@ class Claim(TimestampMixin, Base):
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
     source_note_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     external_note_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    # SET NULL so the retention purge (see Encounter) never fails on a claim.
+    # SET NULL so the retention purge (see Encounter) never fails on a claim. Never set on a
+    # claim billed without an encounter (source_system "manual" — app/claims/manual.py).
     extraction_run_id: Mapped[int | None] = mapped_column(
         ForeignKey("extraction_runs.id", ondelete="SET NULL"), nullable=True
     )
@@ -440,15 +441,22 @@ class ClaimCode(CreatedAtMixin, Base):
         UniqueConstraint("claim_id", "code", name="uq_claim_codes_claim_code"),
         # String + CHECK rather than a native Enum: the LLM prompt controls this
         # vocabulary, not this codebase (see app/ramq_codes/models.py's ExtractedCode).
+        # A NULL confidence passes (a code the physician added by hand was never scored).
         CheckConstraint("confidence IN ('high', 'medium', 'low')", name="ck_claim_codes_confidence"),
+        CheckConstraint("origin IN ('suggested', 'manual')", name="ck_claim_codes_origin"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     claim_id: Mapped[int] = mapped_column(ForeignKey("claims.id", ondelete="CASCADE"))
     code: Mapped[str] = mapped_column(String(32))
     description: Mapped[str] = mapped_column(Text)
-    confidence: Mapped[str] = mapped_column(String(16))
-    explanation: Mapped[str] = mapped_column(Text)
+    # Where the line came from: "suggested" — offered by the claim's extraction run, snapshot
+    # from its stored result; "manual" — added by the physician from the code search, snapshot
+    # from the current codes table (app/claims/catalog.py). Stored rather than derived: the
+    # run it would be derived from may be purged, and the codes table is regenerated.
+    origin: Mapped[str] = mapped_column(String(16), default="suggested", server_default="suggested")
+    confidence: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    explanation: Mapped[str] = mapped_column(Text, default="")
     # Dollars only. A fee in units (anesthesia base units) is never a price: its count goes
     # in fee_units and fee_amount stays NULL — see app/claims/fees.py.
     fee_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)

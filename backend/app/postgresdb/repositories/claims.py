@@ -16,7 +16,7 @@ from app.postgresdb.repositories.base import SessionRepository
 class ClaimCodeInput:
     code: str
     description: str
-    confidence: str
+    confidence: str | None
     explanation: str
     fee_amount: Decimal | None
     fee_unit: str | None
@@ -26,6 +26,7 @@ class ClaimCodeInput:
     fee_lieux: list[str] | None
     majoration: str | None
     manual_rev: str | None
+    origin: str = "suggested"
 
 
 @dataclass
@@ -46,7 +47,7 @@ class ClaimInput:
     source_system: str | None
     source_note_hash: str | None
     external_note_id: str | None
-    extraction_run_id: int
+    extraction_run_id: int | None
     context: ClaimContextInput
     codes: Sequence[ClaimCodeInput]
 
@@ -117,6 +118,7 @@ class ClaimRepository(SessionRepository):
                 claim_id=claim.id,
                 code=c.code,
                 description=c.description,
+                origin=c.origin,
                 confidence=c.confidence,
                 explanation=c.explanation,
                 fee_amount=c.fee_amount,
@@ -265,6 +267,20 @@ class ClaimRepository(SessionRepository):
             select(Claim).where(Claim.extraction_run_id == extraction_run_id, Claim.voided_at.is_(None))
         )
         return result.scalar_one_or_none()
+
+    async def most_used_codes(self, physician_id: int, limit: int) -> list[str]:
+        """The code numbers this physician bills most, over their live claims — most claims
+        first, then most recently billed. Derived on every read rather than kept as a
+        counter: it can never drift from the claims themselves."""
+        result = await self._session.execute(
+            select(ClaimCode.code)
+            .join(Claim, Claim.id == ClaimCode.claim_id)
+            .where(Claim.physician_id == physician_id, Claim.voided_at.is_(None))
+            .group_by(ClaimCode.code)
+            .order_by(func.count().desc(), func.max(Claim.service_date).desc(), ClaimCode.code)
+            .limit(limit)
+        )
+        return list(result.scalars().all())
 
     async def count_for_patient_on_date(self, physician_id: int, patient_id: int, service_date: date) -> int:
         result = await self._session.execute(

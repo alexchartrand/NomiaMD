@@ -12,7 +12,9 @@ from app.bootstrap import postgres_database
 from app.postgresdb import PostgresDB, User, UserRole
 from app.main import app
 from app.lancedb.models import CodeRow, CodeRowFee
-from app.lancedb.repository import ICodeRepository
+from app.code_catalog import init_code_catalog
+from app.lancedb.eligibility import CodeEligibilityFilter
+from app.lancedb.repository import CodeRowLookupError, ICodeCatalogRepository
 from app.ramq_codes import BillingCodesTask, BillingContext
 from app.ramq_codes.eligibility import CandidateSet
 from app.ramq_codes.models import Code, CodeFee
@@ -49,23 +51,70 @@ class _KeywordStubRetriever:
         return CandidateSet(candidates=[code for code, _score in ranked], unresolved_axes=())
 
 
-class _StubCodeRepository(ICodeRepository):
+class StubCodeRepository(ICodeCatalogRepository):
     """Deterministic by-key lookup over the same fixture rows _KeywordStubRetriever ranks —
-    stands in for the real LanceDB-backed CodeRepository so BillingCodesTask.resolve_fees can
-    be exercised (see app/extraction/pipeline.py's post-extraction fee resolution) without a
-    real LanceDB connection."""
+    stands in for the real LanceDB-backed CodeRepository so BillingCodesTask.resolve_fees and
+    the hand-search/claim paths (app/code_catalog, app/claims) can be exercised without a real
+    LanceDB connection. Eligibility is applied in Python with the same rule as the real WHERE
+    (app/lancedb/eligibility.py: a null bound always passes); keyword search is a plain
+    case-insensitive substring match on the description."""
+
+    REVISION = "test-rev"
 
     def __init__(self, rows: list[CodeRow]):
         self._rows_by_number = {row.number: row for row in rows}
 
     async def get_by_number(self, number: str) -> CodeRow:
-        return self._rows_by_number[number]
+        try:
+            return self._rows_by_number[number]
+        except KeyError:
+            raise CodeRowLookupError(number) from None
 
-    async def list_by_numbers(self, numbers: list[str]) -> list[CodeRow]:
-        return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
+    async def list_by_numbers(self, numbers: list[str], eligibility: CodeEligibilityFilter | None = None) -> list[CodeRow]:
+        return [
+            self._rows_by_number[n]
+            for n in numbers
+            if n in self._rows_by_number and self._eligible(self._rows_by_number[n], eligibility)
+        ]
 
     async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None) -> list:
         raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
+
+    async def keyword_search(self, text: str, k: int, eligibility: CodeEligibilityFilter | None = None) -> list:
+        needle = text.lower()
+        rows = [r for r in self._rows_by_number.values() if needle in r.description.lower()]
+        return [(r, 1.0) for r in rows if self._eligible(r, eligibility)][:k]
+
+    async def list_by_number_prefix(
+        self, prefix: str, k: int, eligibility: CodeEligibilityFilter | None = None
+    ) -> list[CodeRow]:
+        rows = sorted((r for r in self._rows_by_number.values() if r.number.startswith(prefix)), key=lambda r: r.number)
+        return [r for r in rows if self._eligible(r, eligibility)][:k]
+
+    async def current_revision(self) -> str:
+        return self.REVISION
+
+    @staticmethod
+    def _eligible(row: CodeRow, eligibility: CodeEligibilityFilter | None) -> bool:
+        if eligibility is None:
+            return True
+        checks = []
+        if eligibility.age is not None:
+            checks += [row.min_age is None or row.min_age <= eligibility.age,
+                       row.max_age is None or row.max_age >= eligibility.age]
+        if eligibility.panel_size is not None:
+            checks += [row.min_panel_size is None or row.min_panel_size <= eligibility.panel_size,
+                       row.max_panel_size is None or row.max_panel_size >= eligibility.panel_size]
+        if eligibility.is_registered is not None:
+            checks.append(row.requires_registered is None or row.requires_registered == eligibility.is_registered)
+        if eligibility.is_vulnerable is not None:
+            checks.append(row.requires_vulnerable is None or row.requires_vulnerable == eligibility.is_vulnerable)
+        return all(checks)
+
+
+_ELIGIBILITY_AXES = (
+    "min_age", "max_age", "min_panel_size", "max_panel_size", "requires_registered", "requires_vulnerable",
+)
 
 
 @pytest.fixture(autouse=True)
@@ -114,10 +163,12 @@ def small_reference_table():
             when_to_use=entry.get("when_to_use", []),
             rules=entry.get("rules", []),
             fees=[CodeRowFee(**f) for f in entry.get("fees", [])],
+            **{axis: entry[axis] for axis in _ELIGIBILITY_AXES if axis in entry},
         )
         for entry in data["codes"]
     ]
-    stub_codes = _StubCodeRepository(rows)
+    stub_codes = StubCodeRepository(rows)
+    init_code_catalog(stub_codes)
 
     register_tasks([
         BillingCodesTask(stub_retriever, stub_codes),

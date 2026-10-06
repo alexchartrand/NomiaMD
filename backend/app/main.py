@@ -8,6 +8,7 @@ from app.auth import auth_router
 from app.bills import bills_router
 from app.bootstrap import application_services
 from app.claims import claims_router
+from app.code_catalog import code_catalog_router
 from app.contact import contact_router
 from app.dashboard import dashboard_router
 from app.config import settings
@@ -45,6 +46,7 @@ app.add_middleware(RequestLoggingMiddleware)
 app.include_router(auth_router)
 app.include_router(bills_router)
 app.include_router(claims_router)
+app.include_router(code_catalog_router)
 app.include_router(contact_router)
 app.include_router(dashboard_router)
 app.include_router(encounters_router)

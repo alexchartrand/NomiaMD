@@ -1,11 +1,14 @@
-"""Business logic for turning a physician-reviewed extraction into a claim.
-Constructor-injected (ClaimRepository, PatientRepository, ExtractionRepository,
-EncounterRepository, plus the ClaimDuplicateGuard, FeeSnapshotter and ClaimContextSnapshotter
-it composes) — wired at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
+"""Business logic for turning a physician-reviewed extraction into a claim — the codes the
+run suggested plus any the physician added from the code search. Constructor-injected
+(ClaimRepository, PatientRepository, ExtractionRepository, EncounterRepository, plus the
+ClaimDuplicateGuard, ClaimLineBuilder, ClaimContextSnapshotter and ClaimCodeResolver it
+composes) — wired at the module boundary by factory.py, no FastAPI/HTTP concerns here. A claim
+billed without an encounter is manual.py's ManualClaimService."""
 
 from datetime import date
 
-from app.claims.candidates import ExtractionCandidates, StoredCandidate
+from app.claims.candidates import ExtractionCandidates
+from app.claims.code_resolver import ClaimCodeResolver
 from app.claims.context import ClaimContextSnapshotter
 from app.claims.duplicates import EXTRACTION_ALREADY_CLAIMED, ClaimDuplicateGuard
 from app.claims.errors import (
@@ -14,16 +17,14 @@ from app.claims.errors import (
     ClaimOnBillError,
     DuplicateClaimError,
     DuplicateEncounterClaimError,
-    EmptySelectionError,
     ExtractionRunNotFoundError,
     PatientNotFoundError,
 )
-from app.claims.fees import FeeSnapshotter
+from app.claims.lines import ClaimLineBuilder
 from app.claims.mapper import ClaimMapper
 from app.claims.models import ClaimOut, SelectedCode
 from app.claims.status import ClaimLifecycle, ClaimStatus
 from app.postgresdb import (
-    ClaimCodeInput,
     ClaimInput,
     ClaimRepository,
     Encounter,
@@ -46,16 +47,18 @@ class ClaimService:
         extraction_repository: ExtractionRepository,
         encounter_repository: EncounterRepository,
         duplicate_guard: ClaimDuplicateGuard,
-        fee_snapshotter: FeeSnapshotter,
+        line_builder: ClaimLineBuilder,
         context_snapshotter: ClaimContextSnapshotter,
+        code_resolver: ClaimCodeResolver,
     ):
         self._claim_repository = claim_repository
         self._patient_repository = patient_repository
         self._extraction_repository = extraction_repository
         self._encounter_repository = encounter_repository
         self._duplicate_guard = duplicate_guard
-        self._fee_snapshotter = fee_snapshotter
+        self._line_builder = line_builder
         self._context_snapshotter = context_snapshotter
+        self._code_resolver = code_resolver
 
     async def create(
         self,
@@ -66,7 +69,7 @@ class ClaimService:
         selected_codes: list[SelectedCode],
         confirm_duplicate: bool,
     ) -> ClaimOut:
-        selected = self._dedupe(selected_codes)
+        selected = ClaimLineBuilder.dedupe(selected_codes)
         run = await self._owned_run(extraction_run_id, physician.id)
 
         # The patient is the one the run's codes were eligibility-filtered for — never a
@@ -83,13 +86,17 @@ class ClaimService:
             raise DuplicateEncounterClaimError()
 
         await self._duplicate_guard.ensure_run_unclaimed(run.id)
-        candidates = await self._billing_candidates(run.id, [s.code for s in selected])
-        if not confirm_duplicate:
-            await self._duplicate_guard.ensure_first_on_date(physician.id, patient.id, service_date)
-
         context = await self._context_snapshotter.snapshot(
             physician=physician, patient_id=patient.id, service_date=service_date
         )
+        # A code the run offered is billed as suggested; any other the physician added from
+        # the code search, eligibility-checked against this same context.
+        candidates = await self._code_resolver.resolve(
+            [s.code for s in selected], await self._run_candidates(run.id), context.eligibility
+        )
+        if not confirm_duplicate:
+            await self._duplicate_guard.ensure_first_on_date(physician.id, patient.id, service_date)
+
         try:
             created = await self._claim_repository.create(
                 ClaimInput(
@@ -100,11 +107,8 @@ class ClaimService:
                     source_note_hash=encounter.content_hash,
                     external_note_id=encounter.external_note_id,
                     extraction_run_id=run.id,
-                    context=context,
-                    codes=[
-                        self._code_input(candidate, choice.fee_index, choice.lieu)
-                        for choice, candidate in zip(selected, candidates)
-                    ],
+                    context=context.record,
+                    codes=self._line_builder.build(selected, candidates),
                 )
             )
         except ExtractionAlreadyClaimedError as exc:
@@ -149,16 +153,6 @@ class ClaimService:
             confirm_duplicate=confirm_duplicate,
         )
 
-    @staticmethod
-    def _dedupe(selected_codes: list[SelectedCode]) -> list[SelectedCode]:
-        """First choice per code wins; an empty selection is refused."""
-        by_code: dict[str, SelectedCode] = {}
-        for selected in selected_codes:
-            by_code.setdefault(selected.code, selected)
-        if not by_code:
-            raise EmptySelectionError()
-        return list(by_code.values())
-
     async def _owned_run(self, run_id: int, physician_id: int) -> ExtractionRun:
         run = await self._extraction_repository.get_run_for_user(run_id, physician_id)
         if run is None:
@@ -171,28 +165,11 @@ class ClaimService:
             raise ExtractionRunNotFoundError()
         return encounter
 
-    async def _billing_candidates(self, run_id: int, codes: list[str]) -> list[StoredCandidate]:
+    async def _run_candidates(self, run_id: int) -> ExtractionCandidates:
         result = await self._extraction_repository.get_result(run_id, BILLING_TASK)
         if result is None:
             raise ExtractionRunNotFoundError()
-        return ExtractionCandidates.from_result_json(result.result_json).require(codes)
-
-    def _code_input(self, candidate: StoredCandidate, fee_index: int | None, lieu: str | None) -> ClaimCodeInput:
-        fee = self._fee_snapshotter.snapshot(candidate, fee_index, lieu)
-        return ClaimCodeInput(
-            code=candidate.code,
-            description=candidate.description,
-            confidence=candidate.confidence,
-            explanation=candidate.explanation,
-            fee_amount=fee.amount,
-            fee_unit=fee.unit,
-            fee_units=fee.units,
-            fee_role=fee.role,
-            fee_context=fee.context,
-            fee_lieux=fee.lieux,
-            majoration=fee.majoration,
-            manual_rev=candidate.manual_rev,
-        )
+        return ExtractionCandidates.from_result_json(result.result_json)
 
     async def list_for_physician(
         self,
@@ -215,6 +192,10 @@ class ClaimService:
             offset=offset,
         )
         return [ClaimMapper.from_detail(d) for d in details]
+
+    async def get(self, claim_id: int, physician_id: int) -> ClaimOut | None:
+        details = await self._claim_repository.list_by_ids(physician_id, [claim_id])
+        return ClaimMapper.from_detail(details[0]) if details else None
 
     async def void(self, claim_id: int, physician_id: int) -> bool:
         """Voids a draft (never a hard delete — see the Claim model). Once a claim is on a

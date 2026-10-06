@@ -23,6 +23,18 @@ AXIS_AGE_BAND = "age_band"
 
 ALL_AXES = (AXIS_PANEL_SIZE, AXIS_REGISTRATION, AXIS_VULNERABILITY, AXIS_AGE_BAND)
 
+# The same axes in the French wording shown to both the billing_codes model (as something it
+# must ask the physician to confirm) and the physician (ExtractedCode.needs_confirmation, and
+# a hand-searched code's own "à confirmer" — see app/code_catalog/). No thresholds are named
+# here: they vary across the manual's sections, and each code's own description states the
+# one it's bound by.
+AXIS_LABELS_FR = {
+    AXIS_PANEL_SIZE: "la taille de la clientèle inscrite du médecin",
+    AXIS_REGISTRATION: "le statut d'inscription du patient auprès de ce médecin (inscrit ou non)",
+    AXIS_VULNERABILITY: "le statut de vulnérabilité du patient au sens de la RAMQ",
+    AXIS_AGE_BAND: "l'âge exact du patient",
+}
+
 
 @dataclass(frozen=True)
 class PhysicianContext:

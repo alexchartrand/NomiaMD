@@ -22,6 +22,7 @@ from app.postgresdb import (
     UserRole,
     session_scope,
 )
+from tests.conftest import StubCodeRepository
 from tests.db_helpers import ensure_user_row, physician, seed_run
 
 # The test DB is shared (session-scoped file, not reset per test — see conftest.py), and
@@ -281,7 +282,7 @@ async def test_empty_selected_codes_is_422():
     assert response.status_code == 422
 
 
-async def test_code_absent_from_extraction_is_422():
+async def test_a_code_neither_suggested_nor_in_the_codes_table_is_422():
     with TestClient(app) as client:
         _, run = await _seed_patient_and_run()
 
@@ -290,6 +291,53 @@ async def test_code_absent_from_extraction_is_422():
         response = client.post("/claims", json=payload)
 
     assert response.status_code == 422
+    assert "NOT-A-CANDIDATE" in response.json()["detail"]
+
+
+async def test_a_code_added_by_hand_is_snapshotted_from_the_codes_table():
+    # 00059 isn't in the run's result: the physician added it from the code search.
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"].append({"code": "00059", "fee_index": 0})
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 201
+    suggested, added = response.json()["codes"]
+    assert (suggested["code"], suggested["origin"], suggested["confidence"]) == ("TEST-BP-MGMT", "suggested", "high")
+    assert added["code"] == "00059"
+    assert added["origin"] == "manual"
+    assert added["confidence"] is None
+    assert added["explanation"] == ""
+    assert added["description"] == "Suture d'une plaie simple"
+    assert added["fee_amount"] == 25.0
+    assert added["manual_rev"] == StubCodeRepository.REVISION
+    assert response.json()["total_amount"] == 58.15
+
+
+async def test_a_code_added_by_hand_that_the_patient_is_ineligible_for_is_422():
+    # 09090 is for patients under 18; the seeded patient was born in 1981.
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+
+        payload = _valid_payload(extraction_run_id=run.id)
+        payload["selected_codes"].append({"code": "09090"})
+        response = client.post("/claims", json=payload)
+
+    assert response.status_code == 422
+    assert "09090" in response.json()["detail"]
+
+
+async def test_get_returns_the_physicians_live_claim_only():
+    with TestClient(app) as client:
+        _, run = await _seed_patient_and_run()
+        created = client.post("/claims", json=_valid_payload(extraction_run_id=run.id)).json()
+
+        assert client.get(f"/claims/{created['id']}").json()["id"] == created["id"]
+
+        client.delete(f"/claims/{created['id']}")
+        assert client.get(f"/claims/{created['id']}").status_code == 404
 
 
 async def test_selecting_a_fee_index_lands_that_variant_on_the_claim():

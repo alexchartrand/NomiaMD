@@ -10,10 +10,14 @@ class ExtractionRunNotFoundError(Exception):
     pass
 
 
-class UnknownCodesError(Exception):
+class IneligibleOrUnknownCodesError(Exception):
+    """Codes the physician added by hand that the current codes table doesn't have — or has
+    only in variants the patient's known facts contradict (age, registration, vulnerability,
+    confirmed panel size): the same deterministic rule the code search applies."""
+
     def __init__(self, codes: list[str]):
         self.codes = codes
-        super().__init__(f"Unknown codes: {', '.join(codes)}")
+        super().__init__(f"Ineligible or unknown codes: {', '.join(codes)}")
 
 
 class InvalidFeeSelectionError(Exception):
@@ -55,4 +59,5 @@ class ClaimNotFoundError(Exception):
 
 
 class ClaimEncounterMismatchError(Exception):
-    """A claim can only be replaced by one from a run of the same encounter."""
+    """A claim can only be replaced by one from a run of the same encounter — and a claim
+    billed without an encounter only by another one billed without an encounter."""
