@@ -8,7 +8,7 @@ dev:
 	wait
 
 # Background extraction needs a Redis (`make redis`, in its own terminal) and
-# REDIS_URL=redis://localhost:6379/0 in backend/.env, for both the API and `make worker`.
+# REDIS_URL=redis://localhost:6379/0 in the root .env, for both the API and `make worker`.
 # Without a real REDIS_URL (comment it out), extraction runs inline and no worker is needed.
 redis:
 	docker run --rm --name nomiamd-dev-redis -p 6379:6379 redis:7-alpine

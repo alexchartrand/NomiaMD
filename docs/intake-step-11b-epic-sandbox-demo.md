@@ -20,7 +20,7 @@ Québec approval is involved: the sandbox is open to any registered developer an
   only a **Non-Production JWK Set URL**. That URL is
   `https://nomiamd.com/.well-known/jwks.json` (`app/jwks/`, the public halves committed under
   `app/jwks/public_keys/`), and the assertion's `kid` is the key's RFC 7638 thumbprint, the
-  same one the set lists it under. Env vars are in `backend/.env.example`. The app needs these APIs selected: `Patient.Read (R4)`,
+  same one the set lists it under. Env vars are in the root `.env.example`. The app needs these APIs selected: `Patient.Read (R4)`,
   `DocumentReference.Search (Clinical Notes) (R4)`, `Binary.Read (Clinical Notes) (R4)`,
   `Encounter.Read (R4)` and `Encounter.Search (R4)` (the last one only for the inventory).
 - [x] **Inventory the sandbox first.** `scripts/epic_sandbox_inventory.py` prints the table;
@@ -122,7 +122,7 @@ Other things the real data showed:
 ## Demo script
 
 Setup (once): `EPIC_SANDBOX_ENABLED=true` and the `EPIC_SANDBOX_*` credentials in
-`backend/.env`, a freshly seeded DB (`scripts/seed_db.py` creates the two sandbox patients),
+the root `.env`, a freshly seeded DB (`scripts/seed_db.py` creates the two sandbox patients),
 then `make dev-fake` (or `make dev` for real codes).
 
 1. **Ajouter manuellement → "Epic — démo (sandbox)" → Importer les notes.** The import reads

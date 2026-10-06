@@ -16,12 +16,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dotenv import load_dotenv
-
-# Must run before app.postgresdb is imported below — app.config.settings reads DATABASE_URL
-# at import time. Explicit path for the same reason as app/main.py: under a debugger,
-# load_dotenv() searches os.getcwd() instead of walking up from this file.
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Loads the repo-root .env — must run before the app imports below read their settings.
+import app.config  # noqa: E402,F401
 
 from sqlalchemy.exc import IntegrityError  # noqa: E402
 

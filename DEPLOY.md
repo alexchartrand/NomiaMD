@@ -44,7 +44,7 @@ Syncs the local LanceDB directory (`DB_PATH` from ramq-ingestion's `.env`, or
 `LOCAL_DB`) — the versioned `codes_<rev>` tables plus the `code_versions`
 registry for `billing_codes`, and `documents-embeddings` for `ramq_chatbot` — to
 `/opt/nomiamd/data/<basename of that directory>/` on the server (`rsync
---delete`). The server's `RAMQ_LANCEDB_PATH` (in its `.env`) must point at that
+--delete`). The server's `DB_PATH` (in its `.env`) must point at that
 subdirectory, not at `/opt/nomiamd/data/` itself; pass a different remote base
 path as a second argument if it lives elsewhere.
 
@@ -69,6 +69,17 @@ curl -I https://nomiamd.com/api/health
 
 `/api/health` sits behind the nginx IP allowlist (`ALLOWED_CIDRS`), so the
 `curl` gets a 403 from anywhere not on it — run it from an allowed address.
+
+**Env changes:** the server's `.env` follows the root `.env.example` (compose hands all of
+it to `backend` and `worker`). Before deploying, check whether it changed since the running
+tag and update the server's `.env` to match:
+
+```bash
+git diff vPREVIOUS vX.Y.Z -- .env.example
+```
+
+`RAMQ_LANCEDB_PATH` was renamed `DB_PATH` when the two example files were merged into one;
+compose refuses to start until it's set.
 
 **Schema changes:** there are no migrations yet (no Alembic until the first
 release). On startup the backend only runs `create_all`, which creates *missing*

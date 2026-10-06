@@ -55,26 +55,27 @@ services:
     container_name: backend
     restart: unless-stopped
     networks: [internal]
+    # Everything in the root .env (see .env.example), so a new backend setting needs no edit
+    # here. `environment:` wins over env_file: it pins the values that must differ inside a
+    # container from a developer's local .env.
+    env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
       SAMPLE_PATIENTS_DIR: /consultations
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
-      MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      # `caddy` terminates TLS, so set COOKIE_SECURE=true in .env for any real deploy (see
-      # root .env.example). The false default only suits a local run without Caddy, where
-      # browsers would silently drop a `Secure` cookie over plain HTTP.
-      COOKIE_SECURE: ${COOKIE_SECURE:-false}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      # Demo-only features (the Epic sandbox) refuse to start under production.
+      APP_ENV: ${APP_ENV:-production}
+      # `caddy` terminates TLS, so the session cookie is always HTTPS-only here, whatever a
+      # local .env says (COOKIE_SECURE=false is for uvicorn run directly over plain HTTP).
+      COOKIE_SECURE: "true"
     volumes:
       # Produced by the separate ramq-ingestion repo, not by this compose file — must
-      # already be populated at RAMQ_LANCEDB_PATH before `backend` can start (LanceDB.open()
+      # already be populated at the host's DB_PATH before `backend` can start (LanceDB.open()
       # checks for a current code version during startup, before /health can respond). One
       # directory holds billing_codes' `codes_<rev>`/`code_versions` tables and
       # ramq_chatbot's `documents-embeddings` table. See the root .env.example.
-      - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
+      - ${DB_PATH:?set DB_PATH in .env}:/data/ramq-lancedb:ro
       # consultations/ is a repo-root directory, outside this service's build context
       # (./backend), so it can't be baked into the image via COPY — bind-mounted instead.
       # See SAMPLE_PATIENTS_DIR in app/sample_patients/service.py.
@@ -105,17 +106,14 @@ services:
     restart: unless-stopped
     command: ["arq", "app.worker.WorkerSettings"]
     networks: [internal]
+    env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://nomiamd:${POSTGRES_PASSWORD}@postgres:5432/nomiamd
       REDIS_URL: redis://redis:6379/0
       DB_PATH: /data/ramq-lancedb
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
-      MISTRAL_EMBEDDING_MODEL: ${MISTRAL_EMBEDDING_MODEL}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      WORKER_MAX_JOBS: ${WORKER_MAX_JOBS:-4}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      APP_ENV: ${APP_ENV:-production}
     volumes:
-      - ${RAMQ_LANCEDB_PATH}:/data/ramq-lancedb:ro
+      - ${DB_PATH:?set DB_PATH in .env}:/data/ramq-lancedb:ro
     depends_on:
       postgres:
         condition: service_healthy

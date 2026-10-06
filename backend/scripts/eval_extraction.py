@@ -56,12 +56,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dotenv import load_dotenv
-
-# Must run before app.extraction.engine is imported below — app.extraction.engine.get_client()
-# reads the LLM_*/MISTRAL_API_KEY settings. Explicit path for the same reason as app/main.py: under a debugger,
-# load_dotenv() searches os.getcwd() instead of walking up from this file.
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Loads the repo-root .env — must run before the app imports below read their settings.
+import app.config  # noqa: E402,F401
 
 from app.bootstrap import application_services  # noqa: E402
 from app.extraction.engine import run_extraction  # noqa: E402

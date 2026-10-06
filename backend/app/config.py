@@ -1,7 +1,7 @@
-"""Central place for environment-derived runtime configuration. Loads `.env` on import
-(mirrors the previous per-entrypoint `load_dotenv()` calls) and exposes a `settings`
-singleton — every other module should read config through it instead of touching
-`os.environ` directly.
+"""Central place for environment-derived runtime configuration. Loads the repo-root `.env`
+on import (the one file docker compose also reads; scripts import this module to load it)
+and exposes a `settings` singleton — every other module should read config through it
+instead of touching `os.environ` directly.
 
 `mistral_api_key`/`mistral_embedding_model` and the `llm_*`/`embedding_*` provider
 settings are read lazily via property, not cached at
@@ -16,7 +16,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+# Explicit path: under a debugger, load_dotenv() searches os.getcwd() instead. A missing file
+# is a no-op — in the containers, compose's env_file has already set the environment.
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 
 def _as_bool(value: str | None, default: bool) -> bool:

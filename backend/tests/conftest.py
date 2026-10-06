@@ -146,7 +146,7 @@ def no_real_lancedb_on_startup(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def no_real_api_keys(monkeypatch):
-    """app/main.py loads .env at import time, so real API keys configured there (for
+    """app/config.py loads the repo-root .env at import time, so real API keys configured there (for
     actually running the app) would otherwise leak into every test process — silently
     enabling real network calls in tests that never asked for them. MISTRAL_API_KEY in
     particular now gates all RAMQ candidate retrieval (app/ramq_codes/retriever.py), so a

@@ -19,7 +19,7 @@ patient data ever touches this system.
 
 Backend (`backend/`, from that directory):
 ```bash
-uv sync --extra dev              # install deps (see .env.example for required env vars)
+uv sync --extra dev              # install deps (see the repo-root .env.example for required env vars)
 uv run uvicorn app.main:app --reload   # run the API alone, http://localhost:8000
 uv run pytest                    # full suite — mocked model + stubbed retriever, no network/API key/LanceDB needed
 uv run pytest tests/test_patients.py            # one file
@@ -37,7 +37,7 @@ Frontend (`frontend/`, from that directory):
 npm install
 npm run dev       # http://localhost:5173, proxies /api to the backend on :8000
 npm test          # vitest (jsdom + msw): no network or backend needed
-npm run e2e       # Playwright journeys against a throwaway backend + the fake LLM (needs backend/.env's Mistral key and DB_PATH; not run in CI)
+npm run e2e       # Playwright journeys against a throwaway backend + the fake LLM (needs the root .env's Mistral key and DB_PATH; not run in CI)
 npm run build     # tsc -b (type-check) + vite build — the closest thing to a typecheck/lint step; no eslint config exists
 ```
 

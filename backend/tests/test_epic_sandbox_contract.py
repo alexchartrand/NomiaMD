@@ -1,7 +1,7 @@
 """Contract test against the live Epic sandbox (fhir.epic.com): the real token exchange, a
 real search and the mapper on what really comes back. Excluded from the default run — opt in
 with `uv run pytest -m epic_sandbox`, with EPIC_SANDBOX_CLIENT_ID and
-EPIC_SANDBOX_PRIVATE_KEY_PATH set (backend/.env is read)."""
+EPIC_SANDBOX_PRIVATE_KEY_PATH set (the repo-root .env is read)."""
 
 import os
 

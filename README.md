@@ -135,7 +135,8 @@ uv run python scripts/seed_db.py
 ```bash
 cd backend
 uv sync --extra dev
-cp .env.example .env   # fill in MISTRAL_API_KEY, DB_PATH, JWT_SECRET_KEY; COOKIE_SECURE=false locally
+cp ../.env.example ../.env   # one file at the repo root, shared with docker compose: fill in
+                             # MISTRAL_API_KEY, DB_PATH, JWT_SECRET_KEY
 uv run uvicorn app.main:app --reload
 ```
 
