@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import { Banner, Button } from "../../../components";
 import { formatMoney } from "../../../utils/money";
 
@@ -40,7 +41,7 @@ export function SaveSummary({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-baseline gap-[0.6rem]">
           <span className="text-sm text-muted-foreground">Total indicatif</span>
-          <span className="font-heading text-[1.6rem] font-bold">{formatMoney(totalAmount)}</span>
+          <span className="font-heading text-[1.6rem] font-bold tabular-nums">{formatMoney(totalAmount)}</span>
           {codesMissingFee > 0 && (
             <span className="text-sm text-muted-foreground">
               ({codesMissingFee} code{codesMissingFee > 1 ? "s" : ""} sans montant en $)
@@ -49,6 +50,12 @@ export function SaveSummary({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {savable && (
+            <span className="hidden text-xs text-muted-foreground xl:inline" aria-hidden>
+              <kbd className="rounded border border-border bg-muted px-1 py-px font-sans">Ctrl</kbd> +{" "}
+              <kbd className="rounded border border-border bg-muted px-1 py-px font-sans">Entrée</kbd>
+            </span>
+          )}
           {!readOnly && (
             <Button
               type="button"
@@ -61,12 +68,14 @@ export function SaveSummary({
           )}
           {onSaveAndNext && savable ? (
             <Button type="button" onClick={onSaveAndNext} disabled={saving}>
-              Enregistrer et suivante →
+              Enregistrer et suivante
+              <ArrowRight aria-hidden />
             </Button>
           ) : (
             onNext && (
               <Button type="button" variant="secondary" onClick={onNext} disabled={saving}>
-                Suivante →
+                Suivante
+                <ArrowRight aria-hidden />
               </Button>
             )
           )}

@@ -8,6 +8,7 @@ import type {
   DashboardKpis,
   DashboardTasks,
   EncounterDetail,
+  EncounterPatient,
   EncounterRow,
   ExtractedCode,
   ExtractedFee,
@@ -176,11 +177,23 @@ export function makeDashboard(
   };
 }
 
+export function makeEncounterPatient(overrides: Partial<EncounterPatient> = {}): EncounterPatient {
+  return {
+    id: 1,
+    full_name: "Patient Test",
+    nam: "TEST12345678",
+    date_of_birth: "1980-05-20",
+    is_vulnerable: false,
+    is_registered: true,
+    ...overrides,
+  };
+}
+
 export function makeEncounterDetail(overrides: Partial<EncounterDetail> = {}): EncounterDetail {
   return {
     id: 1,
     status: "prêt",
-    patient: { id: 1, full_name: "Patient Test", nam: "TEST12345678" },
+    patient: makeEncounterPatient(),
     source_system: "sample",
     channel: "paste",
     external_note_id: null,

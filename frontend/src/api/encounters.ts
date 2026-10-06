@@ -21,6 +21,11 @@ export interface EncounterPatient {
   id: number;
   full_name: string;
   nam: string | null;
+  // What the billing context reads from the patient's file; registration derived against
+  // the signed-in physician, null when either practice number is missing.
+  date_of_birth: string; // ISO date (YYYY-MM-DD)
+  is_vulnerable: boolean;
+  is_registered: boolean | null;
 }
 
 export interface EncounterRow {

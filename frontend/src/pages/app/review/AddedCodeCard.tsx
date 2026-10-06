@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { Button } from "../../../components";
+import { Badge, Button } from "../../../components";
 import type { ManualCodeEntry } from "./manualCodes";
 import { FeePicker } from "./FeePicker";
 import { NeedsConfirmation } from "./NeedsConfirmation";
@@ -17,17 +17,13 @@ export function AddedCodeCard({ entry, onFeeSelected, onRemove, disabled = false
   return (
     <li className="flex items-start gap-3 rounded-xl border border-primary bg-[color:var(--color-primary-tint)] px-4 py-[0.9rem]">
       <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <div className="flex items-start gap-3">
-          <div className="flex min-w-0 flex-1 items-baseline gap-[0.6rem]">
-            <span className="-rotate-[1.5deg] rounded-lg border-2 border-primary px-[0.55rem] py-[0.2rem] font-mono text-base font-[650] text-primary">
-              {hit.number}
-            </span>
-            <span className="min-w-0 flex-1 font-heading font-semibold">{hit.description}</span>
-          </div>
-          <span className="inline-flex shrink-0 items-center rounded-full bg-muted px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650] whitespace-nowrap text-muted-foreground">
-            Ajouté manuellement
+        <div className="flex items-center justify-between gap-3">
+          <span className="-rotate-[1.5deg] rounded-lg border-2 border-primary px-[0.55rem] py-[0.2rem] font-mono text-base font-[650] text-primary">
+            {hit.number}
           </span>
+          <Badge>Ajouté manuellement</Badge>
         </div>
+        <span className="font-heading text-[0.95rem] leading-snug font-semibold">{hit.description}</span>
 
         <FeePicker
           code={hit.number}

@@ -34,7 +34,7 @@ export function FeePicker({ code, fees, feeIndex, lieu, onSelect, disabled = fal
       {options.length > 1 ? (
         <>
           <Select
-            containerClassName="w-fit max-w-full"
+            containerClassName="w-fit max-w-[min(100%,20rem)]"
             value={optionValue(feeIndex, lieu)}
             disabled={disabled}
             onChange={(event) => {

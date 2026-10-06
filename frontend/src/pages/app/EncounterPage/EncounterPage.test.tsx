@@ -5,6 +5,7 @@ import {
   makeClaim,
   makeClaimLine,
   makeEncounterDetail,
+  makeEncounterPatient,
   makeEncounterRow,
   makeExtraction,
   makeFee,
@@ -62,7 +63,16 @@ describe("loading", () => {
     serveEncounter(withCodes({ batch_label: "Garde du soir", note_text: "Texte de la note." }));
     renderEncounter();
     expect(await screen.findByRole("heading", { level: 1, name: "Patient Test" })).toBeInTheDocument();
-    expect(screen.getByText(/sample · 01\/10\/2026 · reçue à .* · Garde du soir/)).toBeInTheDocument();
+    const visit = within(screen.getByLabelText("Rencontre"));
+    expect(visit.getByText("01/10/2026")).toBeInTheDocument();
+    expect(visit.getByText(/^Reçue à /)).toBeInTheDocument();
+    expect(visit.getByText("sample")).toBeInTheDocument();
+    expect(visit.getByText("Garde du soir")).toBeInTheDocument();
+    // What the billing context was built from: the patient's file, at the visit's date.
+    const context = within(screen.getByLabelText("Contexte de facturation"));
+    expect(context.getByText("46 ans")).toBeInTheDocument();
+    expect(context.getByText("Inscrit auprès de vous")).toBeInTheDocument();
+    expect(context.getByText("Non vulnérable")).toBeInTheDocument();
     expect(screen.getByText("TEST12345678")).toBeInTheDocument();
     expect(screen.getByText("Texte de la note.")).toBeInTheDocument();
   });
@@ -77,14 +87,14 @@ describe("loading", () => {
     serveEncounter(withCodes());
     renderEncounter({ inboxSearch: "?status=revu&from=2026-10-01" });
     await screen.findByRole("heading", { level: 1 });
-    expect(screen.getByRole("link", { name: "← Rencontres" })).toHaveAttribute("href", "/app/inbox?status=revu&from=2026-10-01");
+    expect(screen.getByRole("link", { name: "Rencontres" })).toHaveAttribute("href", "/app/inbox?status=revu&from=2026-10-01");
   });
 
   it("links back to the plain inbox otherwise", async () => {
     serveEncounter(withCodes());
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
-    expect(screen.getByRole("link", { name: "← Rencontres" })).toHaveAttribute("href", "/app/inbox");
+    expect(screen.getByRole("link", { name: "Rencontres" })).toHaveAttribute("href", "/app/inbox");
   });
 });
 
@@ -229,9 +239,19 @@ describe("saving", () => {
       ],
     });
     expect((await screen.findAllByText(/Facturation enregistrée\./)).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "Voir la facturation" })[0]).toHaveAttribute("href", "/app/facturation");
+    expect(screen.getByRole("button", { name: "Voir la facturation" })).toBeInTheDocument();
     // The reload brought the saved claim back, so the review now starts from it, unchanged.
     expect(screen.getByRole("button", { name: "Enregistrer les modifications" })).toBeDisabled();
+  });
+
+  it("saves with Ctrl+Enter, from anywhere on the page", async () => {
+    serveEncounter(withCodes());
+    let posted = false;
+    server.use(http.post("/api/claims", () => ((posted = true), HttpResponse.json(makeClaim()))));
+    const { user } = renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    await user.keyboard("{Control>}{Enter}{/Control}");
+    await waitFor(() => expect(posted).toBe(true));
   });
 
   it("shows the server's error and lets the physician try again", async () => {
@@ -468,7 +488,8 @@ describe("deleting", () => {
       }),
     );
     const { user } = renderEncounter();
-    await user.click(await screen.findByRole("button", { name: "Supprimer la rencontre" }));
+    await user.click(await screen.findByRole("button", { name: "Plus d'actions sur la rencontre" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Supprimer la rencontre" }));
     const dialog = await screen.findByRole("dialog", { name: "Supprimer la rencontre ?" });
     expect(deleted).toBe(false);
     await user.click(within(dialog).getByRole("button", { name: "Supprimer" }));
@@ -485,8 +506,8 @@ describe("stepping between encounters", () => {
     serveList(9, 5, 2);
     renderEncounter({ inboxSearch: "?all=1" });
     expect(await screen.findByText("2 / 3")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "← Précédente" })).toHaveAttribute("href", "/app/inbox/9");
-    expect(screen.getByRole("link", { name: "Suivante →" })).toHaveAttribute("href", "/app/inbox/2");
+    expect(screen.getByRole("link", { name: "Précédente" })).toHaveAttribute("href", "/app/inbox/9");
+    expect(screen.getByRole("link", { name: "Suivante" })).toHaveAttribute("href", "/app/inbox/2");
   });
 
   it("disables the step that has nowhere to go", async () => {
@@ -494,7 +515,7 @@ describe("stepping between encounters", () => {
     serveList(5, 2);
     renderEncounter({ inboxSearch: "?all=1" });
     expect(await screen.findByText("1 / 2")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "← Précédente" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Précédente" })).toBeDisabled();
   });
 
   it("saves and opens the next encounter, saying whose claim was saved", async () => {
@@ -507,11 +528,11 @@ describe("stepping between encounters", () => {
       </Routes>,
       { route: "/app/inbox/5", state: { inboxSearch: "?all=1" } },
     );
-    const saveAndNext = await screen.findByRole("button", { name: "Enregistrer et suivante →" });
+    const saveAndNext = await screen.findByRole("button", { name: "Enregistrer et suivante" });
     server.use(
       http.get("/api/encounters/:id", ({ params }) =>
         HttpResponse.json(
-          makeEncounterDetail({ id: Number(params.id), patient: { id: 8, full_name: "Suivant Patient", nam: null } }),
+          makeEncounterDetail({ id: Number(params.id), patient: makeEncounterPatient({ id: 8, full_name: "Suivant Patient", nam: null }) }),
         ),
       ),
     );
@@ -527,8 +548,8 @@ describe("stepping between encounters", () => {
     );
     serveList(5, 2);
     renderEncounter({ inboxSearch: "?all=1" });
-    expect(await screen.findByRole("button", { name: "Suivante →" })).toBeEnabled();
-    expect(screen.queryByRole("button", { name: "Enregistrer et suivante →" })).not.toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Suivante" })).toBeEnabled();
+    expect(screen.queryByRole("button", { name: "Enregistrer et suivante" })).not.toBeInTheDocument();
   });
 
   it("shows no steps when the encounter isn't in the list it was opened from", async () => {

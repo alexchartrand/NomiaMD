@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { Route, Routes, useLocation, useParams } from "react-router-dom";
-import { makeEncounterDetail, makeEncounterRow, makeExtraction, makeFee, makePatient, makeProposedCode } from "../../../test/factories";
+import { makeEncounterDetail, makeEncounterPatient, makeEncounterRow, makeExtraction, makeFee, makePatient, makeProposedCode } from "../../../test/factories";
 import { makeUser, renderWithProviders, serveSession } from "../../../test/render";
 import { server } from "../../../test/server";
 import type { EncounterRow } from "../../../api";
@@ -354,7 +354,7 @@ describe("approve all", () => {
   const cleanDetail = (id: number, codes = [makeProposedCode({ code: `0010${id}` })]) =>
     makeEncounterDetail({
       id,
-      patient: { id, full_name: `Patient ${id}`, nam: null },
+      patient: makeEncounterPatient({ id, full_name: `Patient ${id}`, nam: null }),
       extraction: makeExtraction(codes, { extraction_run_id: 100 + id }),
     });
 

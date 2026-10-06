@@ -10,8 +10,8 @@ import { SaveSummary } from "./SaveSummary";
 import { locateQuote } from "./quoteLocator";
 import type { CodeReview } from "./useCodeReview";
 
-// Wide enough, beside the sidebar, for the note and the codes side by side.
-const SIDE_BY_SIDE = "(min-width: 1400px)";
+// Wide enough, beside the sidebar, for the note and the codes side by side: a 1280px laptop.
+const SIDE_BY_SIDE = "(min-width: 1200px)";
 
 interface ReviewStepProps {
   result: BillingExtractionResponse;
@@ -42,12 +42,12 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
   );
 
   return (
-    <div className={docked ? "grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start gap-6" : "flex flex-col gap-4"}>
+    <div className={docked ? "grid grid-cols-[minmax(300px,2fr)_minmax(0,3fr)] items-start gap-5" : "flex flex-col gap-4"}>
       {docked && note}
 
       <Card className="overflow-visible">
         <CardHeader className="flex flex-wrap items-start justify-between gap-3">
-          <CardTitle className="text-[1.3rem] font-bold">Codes proposés</CardTitle>
+          <CardTitle className="font-heading text-lg font-bold">Codes proposés</CardTitle>
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-2">
               <label htmlFor="service-date" className="text-sm text-muted-foreground">
