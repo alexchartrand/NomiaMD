@@ -4,7 +4,7 @@ import { ADMIN_PASSWORD } from "./e2e/credentials";
 // End-to-end journeys against the real stack: the FastAPI backend on a throwaway SQLite
 // file seeded with the synthetic consultations, the fake chat LLM (scripts/fake_llm_server.py)
 // and the Vite dev server. Own ports, so it never collides with `make dev`.
-// Retrieval embeddings still hit the real Mistral API (the root .env needs MISTRAL_API_KEY and
+// Retrieval embeddings still hit the real Mistral API (the root .env needs EMBEDDING_API_KEY and
 // DB_PATH), which is why this is not part of `npm test` or the PR checks — run `npm run e2e`.
 const BACKEND_PORT = 8010;
 const FAKE_LLM_PORT = 8081;

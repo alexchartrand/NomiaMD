@@ -136,7 +136,7 @@ uv run python scripts/seed_db.py
 cd backend
 uv sync --extra dev
 cp ../.env.example ../.env   # one file at the repo root, shared with docker compose: fill in
-                             # MISTRAL_API_KEY, DB_PATH, JWT_SECRET_KEY
+                             # LLM_API_KEY, EMBEDDING_API_KEY, DB_PATH, JWT_SECRET_KEY
 uv run uvicorn app.main:app --reload
 ```
 
@@ -148,9 +148,10 @@ with `LLM_ENDPOINT` + `LLM_API_KEY`). No API key handy, or want to avoid real AP
 run `backend/scripts/fake_llm_server.py` (`make fake-llm`, or `make dev-fake` which does both).
 
 Retrieval's query embeddings come from the same package: `EMBEDDING_PROVIDER` switches
-between Mistral (`mistral`, default, `MISTRAL_EMBEDDING_MODEL`) and any server exposing
-`/v1/embeddings` such as TEI/vLLM (`openai_compatible`, with `EMBEDDING_ENDPOINT` +
-`EMBEDDING_MODEL`). The backend refuses to start when the query model's vector dimension
+between Mistral (`mistral`, default) and any server exposing `/v1/embeddings` such as
+TEI/vLLM (`openai_compatible`, with `EMBEDDING_ENDPOINT`), with the model in
+`EMBEDDING_MODEL`. Keys are per role, not per vendor: `LLM_API_KEY` for chat,
+`EMBEDDING_API_KEY` for embeddings (the same Mistral key when both use Mistral). The backend refuses to start when the query model's vector dimension
 doesn't match the LanceDB tables', so a model switch needs the tables re-embedded in
 `ramq-ingestion` first.
 
@@ -180,7 +181,7 @@ real LanceDB needed:
 uv run pytest
 ```
 
-To try it against the real Mistral API once `MISTRAL_API_KEY` and `DB_PATH` are configured,
+To try it against the real Mistral API once `LLM_API_KEY`, `EMBEDDING_API_KEY` and `DB_PATH` are configured,
 `scripts/try_extraction.py` runs the pipeline against a sample transcript pulled from
 `consultations/` (see "Layout" above), and `scripts/eval_extraction.py` scores retrieval and
 selection against a hand-labeled set (default `tests/fixtures/eval_billing_codes.jsonl`, still

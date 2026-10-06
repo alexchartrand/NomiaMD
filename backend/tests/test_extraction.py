@@ -1,6 +1,6 @@
 """Exercises the full pipeline (prompt building -> schema -> parsing -> storage -> API)
 against a mocked model response, since no live Mistral API call is made in this
-environment. Once MISTRAL_API_KEY is configured, see scripts/try_extraction.py for a
+environment. Once LLM_API_KEY and EMBEDDING_API_KEY are configured, see scripts/try_extraction.py for a
 live smoke test.
 
 Uses the small tests/fixtures/reference_data_test.json table (via the small_reference_table

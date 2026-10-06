@@ -72,7 +72,7 @@
   - The encounter page now asks through `components/ConfirmDialog.tsx`'s `useConfirm`. Still on the browser's dialog: `PatientsPage.tsx` (remove from roster), `FacturationPage/BillsTab.tsx` (delete a bill), `FacturationPage/RecordsTab.tsx` (delete a claim), `InboxPage/EncounterRowItem.tsx` (delete an encounter). Their tests spy on `window.confirm` and need to click the dialog instead.
 
 - [ ] 🟢 Frontend E2E: more journeys, and a nightly run — *added 10/4, from the frontend test plan*
-  - Playwright in `frontend/e2e/` covers 3 journeys (extract → pick codes → save the claim; paste a note → associate the patient; bill the saved claims → PDF). `npm run e2e` needs the root `.env`'s `MISTRAL_API_KEY` and `DB_PATH`, since retrieval embeddings still hit the real Mistral API.
+  - Playwright in `frontend/e2e/` covers 3 journeys (extract → pick codes → save the claim; paste a note → associate the patient; bill the saved claims → PDF). `npm run e2e` needs the root `.env`'s `EMBEDDING_API_KEY` and `DB_PATH`, since retrieval embeddings still hit the real Mistral API.
   - Not done: it isn't in CI (needs a nightly/manual workflow with secrets, or a fake embedding server); the e2e files aren't covered by `tsc -b` (`tsconfig.json` only includes `src`); no journeys for the chat, patients page or duplicate handling.
   - Known limits of the unit suite: jsdom's `FormData` doesn't stream into Node's fetch, so the upload test only checks the multipart content type; there are no visual/layout tests.
 

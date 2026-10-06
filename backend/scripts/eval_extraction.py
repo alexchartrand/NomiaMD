@@ -18,7 +18,7 @@ the prompt at all) — those need different fixes. For every expected_codes entr
     given" vs. a genuine gap.
   - selection precision/recall: the model's returned codes vs expected_codes, as before.
 
-Requires an embedding provider (MISTRAL_API_KEY for the default EMBEDDING_PROVIDER=mistral),
+Requires an embedding provider (EMBEDDING_API_KEY for the default EMBEDDING_PROVIDER=mistral),
 plus a chat provider: either the real Mistral API, or LLM_PROVIDER=openai_compatible with
 LLM_ENDPOINT pointed at the fake dev server (`make fake-llm`) for the summary/selection
 calls. Retrieval always calls a real embedding model (the fake server doesn't serve

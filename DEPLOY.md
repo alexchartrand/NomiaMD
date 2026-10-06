@@ -92,8 +92,10 @@ tag and update the server's `.env` to match:
 git diff vPREVIOUS vX.Y.Z -- .env.example
 ```
 
-`RAMQ_LANCEDB_PATH` was renamed `DB_PATH` when the two example files were merged into one;
-compose refuses to start until it's set.
+Renamed so far: `RAMQ_LANCEDB_PATH` → `DB_PATH` (compose refuses to start until it's set),
+and the vendor-named Mistral settings → per-role ones: `MISTRAL_API_KEY` → `LLM_API_KEY`
+**and** `EMBEDDING_API_KEY` (the same key in both while Mistral serves both),
+`MISTRAL_EMBEDDING_MODEL` → `EMBEDDING_MODEL`.
 
 **Schema changes:** there are no migrations yet (no Alembic until the first
 release). On startup the backend only runs `create_all`, which creates *missing*

@@ -73,7 +73,7 @@ def small_reference_table():
     """Points RAMQ candidate retrieval and code lookup at a tiny, stable fixture rather than
     the real (large, network-backed) llama_index vector store and LanceDB `codes` table —
     tests need candidate narrowing to behave predictably without a real vector index,
-    MISTRAL_API_KEY, or network call.
+    API key, or network call.
 
     Populates app.tasks.registry's task dict directly with a BillingCodesTask built from
     these stubs (register_tasks — the same call app/bootstrap.py's init_tasks makes with
@@ -148,10 +148,11 @@ def no_real_lancedb_on_startup(monkeypatch):
 def no_real_api_keys(monkeypatch):
     """app/config.py loads the repo-root .env at import time, so real API keys configured there (for
     actually running the app) would otherwise leak into every test process — silently
-    enabling real network calls in tests that never asked for them. MISTRAL_API_KEY in
-    particular now gates all RAMQ candidate retrieval (app/ramq_codes/retriever.py), so a
+    enabling real network calls in tests that never asked for them. EMBEDDING_API_KEY in
+    particular gates all RAMQ candidate retrieval (app/ramq_codes/retriever.py), so a
     stray real key here would make small_reference_table's stub retriever pointless if any
-    test path bypassed it."""
+    test path bypassed it. The vendor SDKs' own variables (OPENAI_API_KEY,
+    MISTRAL_API_KEY) go too, since the SDKs fall back to them."""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
     # Same for the chat/embedding provider selection (app/llm/): a developer's .env pointing

@@ -26,8 +26,8 @@ uv run pytest tests/test_patients.py            # one file
 uv run pytest tests/test_patients.py::test_name -v   # one test
 uv run pytest -m epic_sandbox    # opt-in contract test against the live Epic sandbox (EPIC_SANDBOX_* set)
 ```
-Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `MISTRAL_API_KEY`
-and `DB_PATH`; set `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1
+Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `LLM_API_KEY`,
+`EMBEDDING_API_KEY` and `DB_PATH`; set `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1
 LLM_API_KEY=fake` to point chat calls at `scripts/fake_llm_server.py` (`make fake-llm`)
 instead of spending real API calls. There's no lint/typecheck config on the
 backend (no ruff/mypy in `pyproject.toml`).
@@ -138,7 +138,7 @@ on `/app/ajouter`. `/api/*` proxies to the backend (`vite.config.ts`).
 - Tests always run against a stubbed keyword retriever and mocked model responses
   (`backend/tests/conftest.py`'s `small_reference_table`/`no_real_api_keys` fixtures,
   autouse) — no network, no API key, no real LanceDB needed. Never rely on
-  `MISTRAL_API_KEY`/real retrieval being present in a test.
+  an API key/real retrieval being present in a test.
 - Transactions: repositories (`app/postgresdb/repositories/`) take an `AsyncSession` and only
   `flush()`, never commit. Whoever opens the session owns the outcome: `session_scope()`
   commits on normal exit, rolls back on exception. Routes depend on `DbSession` (one session
