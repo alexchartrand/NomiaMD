@@ -14,6 +14,7 @@ import {
   TextField,
 } from "../../../components";
 import { formatDate } from "../../../utils/date";
+import { formatMoney } from "../../../utils/money";
 
 interface CreateBillModalProps {
   onClose: () => void;
@@ -142,7 +143,7 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
         candidates && (
           <>
             <span className="text-sm text-muted-foreground">
-              {selection.size} facturation(s) sélectionnée(s) — total {totalSelected.toFixed(2)} $
+              {selection.size} facturation(s) sélectionnée(s) — total {formatMoney(totalSelected)}
             </span>
             <Button type="button" disabled={selection.size === 0 || submitting} onClick={handleSubmit}>
               {submitting ? "Génération..." : "Générer la facture"}
@@ -216,7 +217,7 @@ export function CreateBillModal({ onClose, onCreated }: CreateBillModalProps) {
                 <TableCell>{formatDate(claim.service_date)}</TableCell>
                 <TableCell>{claim.patient_full_name}</TableCell>
                 <TableCell>{claim.codes.map((c) => c.code).join(", ")}</TableCell>
-                <TableCell>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</TableCell>
+                <TableCell>{claim.total_amount != null ? formatMoney(claim.total_amount) : "—"}</TableCell>
               </TableRow>
             ))}
           </TableBody>

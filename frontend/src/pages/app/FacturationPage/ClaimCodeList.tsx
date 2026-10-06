@@ -1,5 +1,6 @@
 import type { ClaimCodeLine } from "../../../api";
 import { describeFee } from "./constants";
+import { formatMoney } from "../../../utils/money";
 
 // A claim's snapshotted code lines, with their fee and the model's explanation — or, for a
 // code the physician added from the code search, a mark saying so.
@@ -9,7 +10,7 @@ export function ClaimCodeList({ codes }: { codes: ClaimCodeLine[] }) {
       {codes.map((c) => (
         <li key={c.code}>
           <span className="font-mono text-[0.85rem] text-primary">{c.code}</span> {c.description}
-          {c.fee_amount != null && ` — ${c.fee_amount.toFixed(2)} $`}
+          {c.fee_amount != null && ` — ${formatMoney(c.fee_amount)}`}
           {describeFee(c) && <> — {describeFee(c)}</>}
           <br />
           {c.origin === "manual" ? (

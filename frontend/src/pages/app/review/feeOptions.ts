@@ -1,4 +1,5 @@
 import type { ClaimCodeLine, ExtractedFee } from "../../../api";
+import { formatMoney } from "../../../utils/money";
 
 // One entry of a code's fee selector: a fee at one of its lieux. A fee listing several
 // lieux yields one option per lieu; `lieu` is null for a fee with at most one.
@@ -10,7 +11,7 @@ export interface FeeOption {
 
 export function formatAmount(fee: ExtractedFee): string {
   if (fee.unit === "unités") return `${fee.amount_text ?? fee.amount ?? "?"} unités`;
-  return fee.amount != null ? `${fee.amount.toFixed(2)} $` : (fee.amount_text ?? "?");
+  return fee.amount != null ? formatMoney(fee.amount) : (fee.amount_text ?? "?");
 }
 
 function joinParts(parts: (string | null | undefined)[]): string {

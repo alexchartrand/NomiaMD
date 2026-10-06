@@ -76,7 +76,7 @@ describe("claims tab", () => {
     const row = (await screen.findByText("Jeanne Dupont")).closest("tr")!;
     expect(within(row).getByText("01/10/2026")).toBeInTheDocument();
     expect(within(row).getByText(/00101/)).toBeInTheDocument();
-    expect(within(row).getByText("51.00 $")).toBeInTheDocument();
+    expect(within(row).getByText("51,00 $")).toBeInTheDocument();
     expect(within(row).getByText("Brouillon")).toBeInTheDocument();
     const submitted = screen.getByText("Marc Roy").closest("tr")!;
     expect(within(submitted).getByText("Soumis")).toBeInTheDocument();
@@ -192,7 +192,7 @@ describe("generated bills tab", () => {
     const row = (await screen.findByText("F-2026-0001")).closest("tr")!;
     expect(within(row).getByText("01/10/2026 – 07/10/2026")).toBeInTheDocument();
     expect(within(row).getByText("08/10/2026")).toBeInTheDocument();
-    expect(within(row).getByText("120.00 $")).toBeInTheDocument();
+    expect(within(row).getByText("120,00 $")).toBeInTheDocument();
     const pdf = within(row).getByRole("link", { name: "Télécharger le PDF" });
     expect(pdf).toHaveAttribute("href", "/api/bills/1/pdf");
     expect(pdf).toHaveAttribute("download");
@@ -354,11 +354,11 @@ describe("creating a bill", () => {
     expect(within(dialog).getByRole("button", { name: "Générer la facture" })).toBeDisabled();
     await user.click(await within(dialog).findByLabelText("Sélectionner la facturation de Jeanne Dupont"));
     await user.click(within(dialog).getByLabelText("Sélectionner la facturation de Marc Roy"));
-    expect(within(dialog).getByText("2 facturation(s) sélectionnée(s) — total 103.00 $")).toBeInTheDocument();
+    expect(within(dialog).getByText("2 facturation(s) sélectionnée(s) — total 103,00 $")).toBeInTheDocument();
     await user.click(within(dialog).getByLabelText("Tout sélectionner"));
-    expect(within(dialog).getByText("3 facturation(s) sélectionnée(s) — total 103.00 $")).toBeInTheDocument();
+    expect(within(dialog).getByText("3 facturation(s) sélectionnée(s) — total 103,00 $")).toBeInTheDocument();
     await user.click(within(dialog).getByLabelText("Tout sélectionner"));
-    expect(within(dialog).getByText("0 facturation(s) sélectionnée(s) — total 0.00 $")).toBeInTheDocument();
+    expect(within(dialog).getByText("0 facturation(s) sélectionnée(s) — total 0,00 $")).toBeInTheDocument();
     await user.click(within(dialog).getByLabelText("Sélectionner la facturation de Marc Roy"));
     await user.click(within(dialog).getByLabelText("Sélectionner la facturation de Lise Tremblay"));
     await user.click(within(dialog).getByRole("button", { name: "Générer la facture" }));

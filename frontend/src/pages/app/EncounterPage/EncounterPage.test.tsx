@@ -99,7 +99,7 @@ describe("reviewing the proposed codes", () => {
     expect(checkbox("09001")).not.toBeChecked();
     expect(checkbox("00200")).not.toBeChecked();
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeEnabled();
-    expect(total()).toHaveTextContent("50.00 $");
+    expect(total()).toHaveTextContent("50,00 $");
   });
 
   it("starts with nothing ticked once the physician un-ticks it, and saving is disabled", async () => {
@@ -108,7 +108,7 @@ describe("reviewing the proposed codes", () => {
     await screen.findByRole("heading", { level: 1 });
     await user.click(checkbox("00103"));
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeDisabled();
-    expect(total()).toHaveTextContent("0.00 $");
+    expect(total()).toHaveTextContent("0,00 $");
   });
 
   it("ticks a code from its description too", async () => {
@@ -141,11 +141,11 @@ describe("reviewing the proposed codes", () => {
     const { user } = renderEncounter();
     await screen.findByRole("heading", { level: 1 });
     await user.click(checkbox("00200"));
-    expect(total()).toHaveTextContent("130.00 $");
+    expect(total()).toHaveTextContent("130,00 $");
     await user.selectOptions(screen.getByLabelText("Tarif pour le code 00200"), "1");
-    expect(total()).toHaveTextContent("145.00 $");
+    expect(total()).toHaveTextContent("145,00 $");
     await user.click(checkbox("09001"));
-    expect(total()).toHaveTextContent("145.00 $");
+    expect(total()).toHaveTextContent("145,00 $");
     expect(screen.getByText("(1 code sans montant en $)")).toBeInTheDocument();
   });
 
@@ -175,8 +175,8 @@ describe("reviewing the proposed codes", () => {
     extraction.billing.result.notes = "Note incomplète";
     serveEncounter(makeEncounterDetail({ id: 5, extraction }));
     renderEncounter();
-    expect(await screen.findByText("⚠ Lieu de consultation à confirmer")).toBeInTheDocument();
-    expect(screen.getByText("⚠ Note incomplète")).toBeInTheDocument();
+    expect(await screen.findByText("Lieu de consultation à confirmer")).toBeInTheDocument();
+    expect(screen.getByText("Note incomplète")).toBeInTheDocument();
   });
 
   it("says when no code is supported by the note", async () => {
@@ -302,7 +302,7 @@ describe("an encounter with a saved claim", () => {
     expect(screen.getByLabelText("Tarif pour le code 00200")).toHaveValue("1");
     expect(screen.getByText(/Facturation enregistrée \(brouillon\)/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Enregistrer les modifications" })).toBeDisabled();
-    expect(total()).toHaveTextContent("95.00 $");
+    expect(total()).toHaveTextContent("95,00 $");
   });
 
   it("replaces the claim (PUT) once the physician changes something", async () => {

@@ -12,6 +12,7 @@ import { Banner, Button, Table, TableBody, TableCell, TableHead, TableHeader, Ta
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDate } from "../../../utils/date";
+import { formatMoney } from "../../../utils/money";
 
 interface BillsTabProps {
   reloadSignal: number;
@@ -110,7 +111,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
                     Détails
                   </Button>
                 </TableCell>
-                <TableCell>{bill.total_amount != null ? `${bill.total_amount.toFixed(2)} $` : "—"}</TableCell>
+                <TableCell>{bill.total_amount != null ? formatMoney(bill.total_amount) : "—"}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <a
@@ -139,7 +140,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
                           <li key={c.id}>
                             {formatDate(c.service_date)} — {c.patient_full_name} —{" "}
                             {c.codes.map((code) => code.code).join(", ")}
-                            {c.total_amount != null && ` — ${c.total_amount.toFixed(2)} $`}
+                            {c.total_amount != null && ` — ${formatMoney(c.total_amount)}`}
                           </li>
                         ))}
                       </ul>

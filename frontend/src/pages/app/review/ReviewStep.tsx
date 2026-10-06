@@ -70,7 +70,7 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-[0.85rem]">
-          {result.billing.result.notes && <Banner tone="warning">⚠ {result.billing.result.notes}</Banner>}
+          {result.billing.result.notes && <Banner tone="warning">{result.billing.result.notes}</Banner>}
 
           <CodesReview
             codes={codes}

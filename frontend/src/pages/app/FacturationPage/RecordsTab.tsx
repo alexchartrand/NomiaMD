@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "../../../utils/date";
 import { ClaimCodeList } from "./ClaimCodeList";
 import { STATUS_LABELS } from "./constants";
+import { formatMoney } from "../../../utils/money";
 
 interface RecordsTabProps {
   reloadSignal: number;
@@ -185,7 +186,7 @@ export function RecordsTab({ reloadSignal }: RecordsTabProps) {
                         Détails
                       </Button>
                     </TableCell>
-                    <TableCell>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</TableCell>
+                    <TableCell>{claim.total_amount != null ? formatMoney(claim.total_amount) : "—"}</TableCell>
                     <TableCell>
                       <span
                         className={cn(

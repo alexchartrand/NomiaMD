@@ -140,7 +140,7 @@ export default function FacturerPage() {
           <CardTitle className="text-[1.1rem] font-bold">Codes</CardTitle>
           {retired.length > 0 && (
             <Banner tone="warning">
-              ⚠ Code(s) retiré(s) du manuel en vigueur, qui ne seront pas conservés : {retired.join(", ")}
+              Code(s) retiré(s) du manuel en vigueur, qui ne seront pas conservés : {retired.join(", ")}
             </Banner>
           )}
           {patient ? (

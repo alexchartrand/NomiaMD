@@ -1,55 +1,50 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { NavItem, Sidebar, SidebarFooter } from "../../components";
-import { useAuth } from "../../AuthContext";
+import { Outlet } from "react-router-dom";
+import { BookOpen, Inbox, LayoutDashboard, MessagesSquare, ReceiptText, Users } from "lucide-react";
+import { NavItem, NavSection, Sidebar, Toaster } from "../../components";
 import { RamqChatProvider } from "../../chat/RamqChatProvider";
+import { useInboxCount } from "./shell/useNavCounts";
+import { UserMenu } from "./shell/UserMenu";
 
 export default function AppLayout() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  async function handleLogout() {
-    await logout();
-    navigate("/login");
-  }
+  const inboxCount = useInboxCount();
 
   return (
     // The page scrolls inside the content column, not the window: the sidebar stays put and
     // `sticky` elements (the review's save bar, the dashboard's assistant) stick to the screen.
     <div className="flex h-dvh">
-      <Sidebar>
-        <NavItem to="/app" end>
-          Tableau de bord
-        </NavItem>
-        <NavItem to="/app/inbox">Rencontres</NavItem>
-        <NavItem to="/app/facturation">Facturation</NavItem>
-        <NavItem to="/app/facturer">Facturer</NavItem>
-        <NavItem to="/app/codes">Codes RAMQ</NavItem>
-        <NavItem to="/app/chat">Clavardage</NavItem>
-        <NavItem to="/app/patients">Patients</NavItem>
-        <NavItem to="/app/profile">Profil</NavItem>
-        <SidebarFooter>
-          {user && (
-            <span className="block px-3 pt-1 pb-2 text-sm font-semibold text-muted-foreground">
-              {user.full_name}
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="block w-full cursor-pointer rounded-lg border-none bg-transparent px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            Se déconnecter
-          </button>
-        </SidebarFooter>
+      <Sidebar footer={<UserMenu />}>
+        <NavSection>
+          <NavItem to="/app" end icon={LayoutDashboard}>
+            Tableau de bord
+          </NavItem>
+          <NavItem to="/app/inbox" icon={Inbox} count={inboxCount}>
+            Rencontres
+          </NavItem>
+          <NavItem to="/app/facturation" icon={ReceiptText} alsoActiveOn={["/app/facturer"]}>
+            Facturation
+          </NavItem>
+          <NavItem to="/app/patients" icon={Users}>
+            Patients
+          </NavItem>
+        </NavSection>
+        <NavSection title="Référence RAMQ">
+          <NavItem to="/app/codes" icon={BookOpen}>
+            Codes RAMQ
+          </NavItem>
+          <NavItem to="/app/chat" icon={MessagesSquare}>
+            Assistant RAMQ
+          </NavItem>
+        </NavSection>
       </Sidebar>
       {/* Padded inside the scroll container, not on it: `sticky` offsets count from its padding edge. */}
       <div className="min-w-0 flex-1 overflow-y-auto">
-        <div className="py-10 px-12">
+        <div className="px-8 py-8">
           <RamqChatProvider>
             <Outlet />
           </RamqChatProvider>
         </div>
       </div>
+      <Toaster position="bottom-right" richColors={false} closeButton />
     </div>
   );
 }
