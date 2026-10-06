@@ -253,6 +253,20 @@ describe("generated bills tab", () => {
     expect(onDelete).not.toHaveBeenCalled();
     confirm.mockRestore();
   });
+
+  it("shows the server's refusal and keeps the list", async () => {
+    serveClaims([]);
+    serveBills([makeBill()]);
+    server.use(http.delete("/api/bills/1", () => HttpResponse.json({ detail: "Facture déjà transmise" }, { status: 409 })));
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    const { user } = renderPage();
+    await openBills(user);
+    await user.click(await screen.findByRole("button", { name: "Supprimer" }));
+    expect(await screen.findByText("Facture déjà transmise")).toBeInTheDocument();
+    expect(screen.getByText("F-2026-0001")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Supprimer" })).toBeInTheDocument();
+    confirm.mockRestore();
+  });
 });
 
 describe("creating a bill", () => {

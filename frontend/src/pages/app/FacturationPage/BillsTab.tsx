@@ -22,6 +22,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [expandedDetail, setExpandedDetail] = useState<BillDetail | null>(null);
@@ -30,6 +31,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
   function loadBills() {
     setLoading(true);
     setListError(null);
+    setDeleteError(null);
     listBills()
       .then(setBills)
       .catch((err) => setListError(describeError(err)))
@@ -61,6 +63,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
       )
     )
       return;
+    setDeleteError(null);
     try {
       await deleteBill(bill.id);
       if (expandedId === bill.id) {
@@ -70,7 +73,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
       loadBills();
       onChanged();
     } catch (err) {
-      setListError(describeError(err));
+      setDeleteError(describeError(err));
     }
   }
 
@@ -79,72 +82,75 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
   if (bills.length === 0) return <p>Aucune facture générée.</p>;
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Numéro</TableHead>
-          <TableHead>Période</TableHead>
-          <TableHead>Générée le</TableHead>
-          <TableHead>Facturations</TableHead>
-          <TableHead>Total</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {bills.map((bill) => (
-          <Fragment key={bill.id}>
-            <TableRow>
-              <TableCell>{bill.number}</TableCell>
-              <TableCell>
-                {formatDate(bill.start_date)} – {formatDate(bill.end_date)}
-              </TableCell>
-              <TableCell>{formatDate(bill.generated_at.slice(0, 10))}</TableCell>
-              <TableCell>
-                {bill.claim_count}{" "}
-                <Button type="button" variant="link" onClick={() => toggleExpand(bill)}>
-                  Détails
-                </Button>
-              </TableCell>
-              <TableCell>{bill.total_amount != null ? `${bill.total_amount.toFixed(2)} $` : "—"}</TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  <a
-                    className={cn(buttonVariants({ variant: "secondary" }), "border-border")}
-                    href={billPdfUrl(bill.id)}
-                    download
-                  >
-                    Télécharger le PDF
-                  </a>
-                  <Button type="button" variant="danger" onClick={() => handleDelete(bill)}>
-                    Supprimer
+    <>
+      {deleteError && <Banner tone="error">{deleteError}</Banner>}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Numéro</TableHead>
+            <TableHead>Période</TableHead>
+            <TableHead>Générée le</TableHead>
+            <TableHead>Facturations</TableHead>
+            <TableHead>Total</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {bills.map((bill) => (
+            <Fragment key={bill.id}>
+              <TableRow>
+                <TableCell>{bill.number}</TableCell>
+                <TableCell>
+                  {formatDate(bill.start_date)} – {formatDate(bill.end_date)}
+                </TableCell>
+                <TableCell>{formatDate(bill.generated_at.slice(0, 10))}</TableCell>
+                <TableCell>
+                  {bill.claim_count}{" "}
+                  <Button type="button" variant="link" onClick={() => toggleExpand(bill)}>
+                    Détails
                   </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-            {expandedId === bill.id && (
-              <TableRow className="bg-[color:var(--color-primary-tint)] hover:bg-[color:var(--color-primary-tint)]">
-                <TableCell colSpan={6}>
-                  {detailError && <Banner tone="error">{detailError}</Banner>}
-                  {!detailError && !expandedDetail && (
-                    <p className="text-sm text-muted-foreground">Chargement...</p>
-                  )}
-                  {expandedDetail && (
-                    <ul className="m-0 space-y-2 pl-5">
-                      {expandedDetail.claims.map((c) => (
-                        <li key={c.id}>
-                          {formatDate(c.service_date)} — {c.patient_full_name} —{" "}
-                          {c.codes.map((code) => code.code).join(", ")}
-                          {c.total_amount != null && ` — ${c.total_amount.toFixed(2)} $`}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                </TableCell>
+                <TableCell>{bill.total_amount != null ? `${bill.total_amount.toFixed(2)} $` : "—"}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <a
+                      className={cn(buttonVariants({ variant: "secondary" }), "border-border")}
+                      href={billPdfUrl(bill.id)}
+                      download
+                    >
+                      Télécharger le PDF
+                    </a>
+                    <Button type="button" variant="danger" onClick={() => handleDelete(bill)}>
+                      Supprimer
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
-            )}
-          </Fragment>
-        ))}
-      </TableBody>
-    </Table>
+              {expandedId === bill.id && (
+                <TableRow className="bg-[color:var(--color-primary-tint)] hover:bg-[color:var(--color-primary-tint)]">
+                  <TableCell colSpan={6}>
+                    {detailError && <Banner tone="error">{detailError}</Banner>}
+                    {!detailError && !expandedDetail && (
+                      <p className="text-sm text-muted-foreground">Chargement...</p>
+                    )}
+                    {expandedDetail && (
+                      <ul className="m-0 space-y-2 pl-5">
+                        {expandedDetail.claims.map((c) => (
+                          <li key={c.id}>
+                            {formatDate(c.service_date)} — {c.patient_full_name} —{" "}
+                            {c.codes.map((code) => code.code).join(", ")}
+                            {c.total_amount != null && ` — ${c.total_amount.toFixed(2)} $`}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </TableCell>
+                </TableRow>
+              )}
+            </Fragment>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   );
 }

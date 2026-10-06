@@ -10,7 +10,7 @@
 
 ## 🐛 Bugs
 
-- [ ] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
+- [x] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
   - `frontend/src/pages/app/FacturationPage/BillsTab.tsx` renders `if (listError) return <Banner/>` before the table, and `handleDelete` reports its failure through the same `listError`. A refused delete (or a network blip) therefore replaces the whole list with the error, with no way to retry short of switching tabs. Give delete failures their own message state, shown above the table (as `RecordsTab` effectively does).
 
 - [ ] 🔴 The public site is behind the IP allowlist — *added 10/2, from the public-site work*
