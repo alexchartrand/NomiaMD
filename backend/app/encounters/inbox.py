@@ -11,11 +11,10 @@ from app.encounters.duplicates import DuplicateFlagger
 from app.encounters.masking import mask_name, mask_nam
 from app.encounters.models import EncounterDetailOut, EncounterRowOut, MaskedPatientOut, PatientOut
 from app.encounters.readiness import is_all_clean
-from app.extraction.models import BillingExtractionResponse
+from app.encounters.row_billing import RowBillingSummarizer
 from app.extraction.stored import StoredExtractionLoader
 from app.intake import status_of
 from app.postgresdb import (
-    ClaimDetail,
     ClaimRepository,
     EncounterActivity,
     EncounterPeriod,
@@ -30,6 +29,7 @@ from app.postgresdb import (
 class EncounterInbox:
     def __init__(self, session: AsyncSession, flagger: DuplicateFlagger | None = None) -> None:
         self._flagger = flagger or DuplicateFlagger()
+        self._row_billing = RowBillingSummarizer()
         self._encounters = EncounterRepository(session)
         self._patients = PatientRepository(session)
         self._extractions = StoredExtractionLoader(session)
@@ -65,6 +65,7 @@ class EncounterInbox:
             extraction = extractions.get(encounter.id)
             patient = patients.get(encounter.patient_id) if encounter.patient_id is not None else None
             possible_duplicate_ids = duplicates.get(encounter.id, [])
+            billing = self._row_billing.summarize(claims.get(encounter.id), extraction)
             rows.append(
                 EncounterRowOut(
                     id=encounter.id,
@@ -75,7 +76,9 @@ class EncounterInbox:
                     batch_label=_batch_label(activity),
                     service_date=encounter.service_date,
                     received_at=encounter.created_at,
-                    code_count=_code_count(claims.get(encounter.id), extraction),
+                    code_count=billing.code_count,
+                    codes=billing.codes,
+                    indicative_total=billing.indicative_total,
                     extraction_run_id=extraction.extraction_run_id if extraction is not None else None,
                     possible_duplicate_ids=possible_duplicate_ids,
                     deletable=not activity.has_live_claim,
@@ -124,14 +127,6 @@ def _period(first: date | None, last: date | None) -> EncounterPeriod:
         end=clinic_day_bounds(last)[1] if last is not None else None,
     )
     return EncounterPeriod(first, last, received)
-
-
-def _code_count(claim: ClaimDetail | None, extraction: BillingExtractionResponse | None) -> int | None:
-    """What was billed once a claim exists — the physician may have unchecked some of the
-    proposed codes — else what the latest run proposes."""
-    if claim is not None:
-        return len(claim.codes)
-    return len(extraction.billing.result.codes) if extraction is not None else None
 
 
 def _batch_label(activity: EncounterActivity) -> str | None:

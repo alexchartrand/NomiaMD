@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
-from app.claims.models import ClaimOut
+from app.claims.models import ClaimOut, Money
 from app.extraction.models import BillingExtractionResponse
 from app.intake import EncounterStatus
 
@@ -33,9 +33,13 @@ class EncounterRowOut(BaseModel):
     batch_label: str | None
     service_date: date | None
     received_at: datetime
-    # The codes billed on its live claim once there is one (status "revu"), else the codes
+    # How many codes its live claim bills once there is one (status "revu"), else how many
     # the latest run proposes; None when it was never extracted.
     code_count: int | None
+    # The codes shown: the claim's, else the latest run's high-confidence ones (what the review
+    # starts with ticked). The total is theirs, indicative — see app/encounters/row_billing.py.
+    codes: list[str] | None
+    indicative_total: Money | None
     # The latest run (what POST /claims takes); None when it was never extracted.
     extraction_run_id: int | None
     # "Doublon possible": the day's other encounters this may be the same visit as, until

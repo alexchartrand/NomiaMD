@@ -136,6 +136,9 @@ async def test_push_a_note_with_a_known_nam_is_extracted_and_ready(me, client):
     row = _row(client, outcome["encounter_id"])
     assert row["status"] == "prêt"
     assert row["code_count"] == 2
+    # The high-confidence code only (what the review starts with ticked), at its fee.
+    assert row["codes"] == ["TEST-BP-MGMT"]
+    assert row["indicative_total"] == 33.15
     assert row["batch_label"] == "Urgence nuit"
     assert row["source_system"] == "manual"
     assert row["channel"] == "paste"
@@ -213,6 +216,8 @@ async def test_push_with_an_unknown_nam_waits_for_a_patient_then_a_manual_pick_e
     assert row["status"] == "à associer"
     assert row["patient"] is None
     assert row["code_count"] is None
+    assert row["codes"] is None
+    assert row["indicative_total"] is None
     assert row["all_clean"] is False
 
     patient = await _seed_patient()
@@ -350,17 +355,25 @@ async def test_a_reviewed_encounter_shows_the_codes_billed_not_the_codes_propose
     patient = await _seed_patient()
     encounter_id = _push(client, patient)  # proposes two codes
     run_id = _row(client, encounter_id)["extraction_run_id"]
-    assert _row(client, encounter_id)["code_count"] == 2
+    assert _row(client, encounter_id)["codes"] == ["TEST-BP-MGMT"]
 
+    # The physician bills the medium-confidence code instead, which has no fee in the table.
     claim = client.post(
         "/claims",
-        json={"extraction_run_id": run_id, "service_date": "2026-03-04", "selected_codes": [{"code": "TEST-BP-MGMT"}]},
+        json={
+            "extraction_run_id": run_id,
+            "service_date": "2026-03-04",
+            "selected_codes": [{"code": "TEST-BLOODWORK-ORDER"}],
+        },
     )
 
     assert claim.status_code == 201
-    assert _row(client, encounter_id)["code_count"] == 1
+    row = _row(client, encounter_id)
+    assert row["code_count"] == 1
+    assert row["codes"] == ["TEST-BLOODWORK-ORDER"]
+    assert row["indicative_total"] is None
     detail = client.get(f"/encounters/{encounter_id}").json()
-    assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BP-MGMT"]
+    assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BLOODWORK-ORDER"]
     assert len(detail["extraction"]["billing"]["result"]["codes"]) == 2
 
 
@@ -440,7 +453,7 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
     assert [c["code"] for c in response.json()["billing"]["result"]["codes"]] == ["TEST-BP-MGMT"]
     row = _row(client, outcome["encounter_id"])
     assert row["status"] == "prêt"
-    assert row["code_count"] == 1
+    assert row["codes"] == ["TEST-BP-MGMT"]
 
 
 async def test_extract_on_demand_refuses_an_encounter_without_a_patient(me, client):
