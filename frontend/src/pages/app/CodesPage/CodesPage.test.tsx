@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { makeCodeDetail, makeCodeHit, makeFee } from "../../../test/factories";
 import { makeUser, renderWithProviders, serveSession } from "../../../test/render";
@@ -20,8 +20,10 @@ describe("CodesPage", () => {
     const queries: URLSearchParams[] = [];
     server.use(
       http.get("/api/codes/search", ({ request }) => {
-        queries.push(new URL(request.url).searchParams);
-        return HttpResponse.json([visit]);
+        const params = new URL(request.url).searchParams;
+        queries.push(params);
+        // No frequent codes yet (empty query): only search results on the page.
+        return HttpResponse.json(params.has("q") ? [visit] : []);
       }),
       http.get("/api/codes/15801", () =>
         HttpResponse.json(
@@ -49,30 +51,28 @@ describe("CodesPage", () => {
     expect(last.has("patient_id")).toBe(false);
   });
 
-  it("offers the physician's frequent codes in a dropdown, and opens the one picked", async () => {
+  it("keeps the physician's frequent codes in a collapsible list of the same cards", async () => {
     const queries: URLSearchParams[] = [];
     server.use(
       http.get("/api/codes/search", ({ request }) => {
-        const params = new URL(request.url).searchParams;
-        queries.push(params);
+        queries.push(new URL(request.url).searchParams);
         return HttpResponse.json([visit]);
       }),
       http.get("/api/codes/15801", () => HttpResponse.json(makeCodeDetail({ ...visit, when_to_use: ["Suivi"] }))),
     );
     const { user } = renderWithProviders(<CodesPage />);
 
-    const dropdown = await screen.findByRole("combobox", { name: "Codes fréquents" });
+    const summary = await screen.findByText("Codes fréquents (1)");
     // The frequent codes: an empty query, for no patient.
     expect(queries[0].has("q")).toBe(false);
     expect(queries[0].has("patient_id")).toBe(false);
-    // Nothing is listed until something is searched or picked.
-    expect(screen.queryByRole("button", { name: /15801/ })).not.toBeInTheDocument();
+    const details = summary.closest("details")!;
+    expect(details).not.toHaveAttribute("open");
 
-    await user.selectOptions(dropdown, "15801");
-
-    expect(screen.getByRole("searchbox", { name: "Rechercher un code RAMQ" })).toHaveValue("15801");
-    expect(await screen.findByText("Suivi")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /15801/ })).toHaveAttribute("aria-expanded", "true");
+    await user.click(summary);
+    expect(details).toHaveAttribute("open");
+    await user.click(within(details).getByRole("button", { name: /15801.*Visite périodique/ }));
+    expect(await within(details).findByText("Suivi")).toBeInTheDocument();
   });
 
   it("says when nothing matches", async () => {
