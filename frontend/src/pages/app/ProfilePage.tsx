@@ -8,13 +8,18 @@ import {
   type PhysicianType,
   type RemunerationType,
 } from "../../api";
+import { toast } from "sonner";
 import {
+  AppPage,
+  AppPageHeader,
   Banner,
   Button,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
+  FormField,
   Select,
   TextField,
 } from "../../components";
@@ -29,14 +34,12 @@ export default function ProfilePage() {
   const [remunerationType, setRemunerationType] = useState<RemunerationType | "">("");
   const [practiceNumber, setPracticeNumber] = useState("");
   const [profileError, setProfileError] = useState<string | null>(null);
-  const [profileSuccess, setProfileSuccess] = useState(false);
   const [profileSubmitting, setProfileSubmitting] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordSubmitting, setPasswordSubmitting] = useState(false);
 
   useEffect(() => {
@@ -51,7 +54,8 @@ export default function ProfilePage() {
   async function handleProfileSubmit(event: FormEvent) {
     event.preventDefault();
     setProfileError(null);
-    setProfileSuccess(false);
+    // A new attempt: the last one's confirmation no longer says anything.
+    toast.dismiss("profile-saved");
 
     const parsedCount = panelSize.trim() === "" ? null : Number(panelSize);
     if (parsedCount !== null && (Number.isNaN(parsedCount) || parsedCount < 0)) {
@@ -75,7 +79,7 @@ export default function ProfilePage() {
         practice_number: trimmedPracticeNumber === "" ? null : trimmedPracticeNumber,
       });
       refreshUser(updated);
-      setProfileSuccess(true);
+      toast.success("Profil mis à jour.", { id: "profile-saved" });
     } catch (err) {
       setProfileError(describeError(err));
     } finally {
@@ -86,7 +90,7 @@ export default function ProfilePage() {
   async function handlePasswordSubmit(event: FormEvent) {
     event.preventDefault();
     setPasswordError(null);
-    setPasswordSuccess(false);
+    toast.dismiss("password-changed");
 
     if (newPassword.length < 8) {
       setPasswordError("Le nouveau mot de passe doit contenir au moins 8 caractères.");
@@ -103,7 +107,7 @@ export default function ProfilePage() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setPasswordSuccess(true);
+      toast.success("Mot de passe modifié.", { id: "password-changed" });
     } catch (err) {
       setPasswordError(describeError(err));
     } finally {
@@ -114,171 +118,135 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <section className="max-w-3xl space-y-6">
-      <h1 className="font-heading text-2xl font-semibold">Profil</h1>
+    <AppPage width="narrow">
+      <AppPageHeader title="Profil" description="Vos coordonnées et vos faits de pratique, à jour pour que les bons codes vous soient proposés." />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Renseignements</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleProfileSubmit} className="flex flex-col items-start gap-4">
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-email" className="text-sm text-muted-foreground">
-                Courriel
-              </label>
-              <TextField id="profile-email" value={user.email} disabled />
-            </div>
+      <div className="flex flex-col gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-heading text-lg font-semibold">Renseignements</CardTitle>
+            <CardDescription>
+              Le type de pratique, la taille de votre clientèle inscrite et votre numéro de pratique déterminent les codes
+              admissibles. Chaque modification s&apos;applique à partir d&apos;aujourd&apos;hui.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleProfileSubmit} className="flex flex-col gap-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FormField id="profile-email" label="Courriel">
+                  <TextField id="profile-email" value={user.email} disabled />
+                </FormField>
+                <FormField id="profile-full-name" label="Nom complet">
+                  <TextField id="profile-full-name" value={fullName} onChange={(event) => setFullName(event.target.value)} />
+                </FormField>
+                <FormField id="profile-physician-type" label="Type de pratique">
+                  <Select
+                    id="profile-physician-type"
+                    containerClassName="max-w-none"
+                    value={physicianType}
+                    onChange={(event) => setPhysicianType(event.target.value as PhysicianType | "")}
+                  >
+                    <option value="">—</option>
+                    {PHYSICIAN_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </Select>
+                </FormField>
+                <FormField id="profile-remuneration-type" label="Mode de rémunération">
+                  <Select
+                    id="profile-remuneration-type"
+                    containerClassName="max-w-none"
+                    value={remunerationType}
+                    onChange={(event) => setRemunerationType(event.target.value as RemunerationType | "")}
+                  >
+                    <option value="">—</option>
+                    {REMUNERATION_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </Select>
+                </FormField>
+                <FormField id="profile-patient-count" label="Nombre de patients" hint="Votre clientèle inscrite.">
+                  <TextField
+                    id="profile-patient-count"
+                    type="number"
+                    min={0}
+                    value={panelSize}
+                    onChange={(event) => setPanelSize(event.target.value)}
+                  />
+                </FormField>
+                <FormField
+                  id="profile-practice-number"
+                  label="Numéro de pratique"
+                  hint="5 ou 6 chiffres. Vos patients inscrits sont ceux dont le médecin de famille porte ce numéro."
+                >
+                  <TextField
+                    id="profile-practice-number"
+                    value={practiceNumber}
+                    onChange={(event) => setPracticeNumber(event.target.value)}
+                    placeholder="12345"
+                  />
+                </FormField>
+              </div>
 
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-full-name" className="text-sm text-muted-foreground">
-                Nom complet
-              </label>
-              <TextField
-                id="profile-full-name"
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
-              />
-            </div>
+              {profileError && <Banner tone="error">{profileError}</Banner>}
 
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-physician-type" className="text-sm text-muted-foreground">
-                Type de pratique
-              </label>
-              <Select
-                id="profile-physician-type"
-                value={physicianType}
-                onChange={(event) => setPhysicianType(event.target.value as PhysicianType | "")}
-              >
-                <option value="">—</option>
-                {PHYSICIAN_TYPES.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
+              <div className="flex justify-end">
+                <Button type="submit" disabled={profileSubmitting}>
+                  {profileSubmitting ? "Enregistrement..." : "Enregistrer"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
 
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-patient-count" className="text-sm text-muted-foreground">
-                Nombre de patients
-              </label>
-              <TextField
-                id="profile-patient-count"
-                type="number"
-                min={0}
-                value={panelSize}
-                onChange={(event) => setPanelSize(event.target.value)}
-              />
-            </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-heading text-lg font-semibold">Mot de passe</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FormField id="profile-current-password" label="Mot de passe actuel" className="sm:col-span-2 sm:max-w-[calc(50%-0.5rem)]">
+                  <TextField
+                    id="profile-current-password"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                  />
+                </FormField>
+                <FormField id="profile-new-password" label="Nouveau mot de passe" hint="Au moins 8 caractères.">
+                  <TextField
+                    id="profile-new-password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(event) => setNewPassword(event.target.value)}
+                  />
+                </FormField>
+                <FormField id="profile-confirm-password" label="Confirmer le nouveau mot de passe">
+                  <TextField
+                    id="profile-confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                  />
+                </FormField>
+              </div>
 
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-remuneration-type" className="text-sm text-muted-foreground">
-                Mode de rémunération
-              </label>
-              <Select
-                id="profile-remuneration-type"
-                value={remunerationType}
-                onChange={(event) => setRemunerationType(event.target.value as RemunerationType | "")}
-              >
-                <option value="">—</option>
-                {REMUNERATION_TYPES.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
+              {passwordError && <Banner tone="error">{passwordError}</Banner>}
 
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-practice-number" className="text-sm text-muted-foreground">
-                Numéro de pratique
-              </label>
-              <TextField
-                id="profile-practice-number"
-                value={practiceNumber}
-                onChange={(event) => setPracticeNumber(event.target.value)}
-                placeholder="12345"
-              />
-            </div>
-
-            {profileError && (
-              <Banner tone="error" className="w-full max-w-sm">
-                {profileError}
-              </Banner>
-            )}
-            {profileSuccess && (
-              <Banner tone="success" className="w-full max-w-sm">
-                Profil mis à jour.
-              </Banner>
-            )}
-
-            <Button type="submit" disabled={profileSubmitting}>
-              {profileSubmitting ? "Enregistrement..." : "Enregistrer"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Mot de passe</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordSubmit} className="flex flex-col items-start gap-4">
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-current-password" className="text-sm text-muted-foreground">
-                Mot de passe actuel
-              </label>
-              <TextField
-                id="profile-current-password"
-                type="password"
-                value={currentPassword}
-                onChange={(event) => setCurrentPassword(event.target.value)}
-              />
-            </div>
-
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-new-password" className="text-sm text-muted-foreground">
-                Nouveau mot de passe
-              </label>
-              <TextField
-                id="profile-new-password"
-                type="password"
-                value={newPassword}
-                onChange={(event) => setNewPassword(event.target.value)}
-              />
-            </div>
-
-            <div className="flex w-full max-w-sm flex-col gap-1.5">
-              <label htmlFor="profile-confirm-password" className="text-sm text-muted-foreground">
-                Confirmer le nouveau mot de passe
-              </label>
-              <TextField
-                id="profile-confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-              />
-            </div>
-
-            {passwordError && (
-              <Banner tone="error" className="w-full max-w-sm">
-                {passwordError}
-              </Banner>
-            )}
-            {passwordSuccess && (
-              <Banner tone="success" className="w-full max-w-sm">
-                Mot de passe modifié.
-              </Banner>
-            )}
-
-            <Button type="submit" disabled={passwordSubmitting}>
-              {passwordSubmitting ? "Enregistrement..." : "Changer le mot de passe"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </section>
+              <div className="flex justify-end">
+                <Button type="submit" disabled={passwordSubmitting}>
+                  {passwordSubmitting ? "Enregistrement..." : "Changer le mot de passe"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </AppPage>
   );
 }

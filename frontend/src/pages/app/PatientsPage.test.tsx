@@ -49,6 +49,17 @@ function renderPage(role: "physician" | "admin" = "physician") {
 
 const rowOf = (name: string) => screen.getByText(name).closest("tr")!;
 
+// A row's ⋯ menu, then one of its items.
+async function pickRowAction(user: ReturnType<typeof renderPage>["user"], name: string, item: string) {
+  await user.click(await screen.findByRole("button", { name: `Actions — ${name}` }));
+  await user.click(await screen.findByRole("menuitem", { name: item }));
+}
+
+async function answer(user: ReturnType<typeof renderPage>["user"], label: "Retirer" | "Annuler") {
+  const dialog = await screen.findByRole("dialog", { name: "Retirer le patient ?" });
+  await user.click(within(dialog).getByRole("button", { name: label }));
+}
+
 describe("the roster", () => {
   it("lists the physician's patients with their details", async () => {
     serveRoster([jeanne, marc, lise]);
@@ -58,9 +69,25 @@ describe("the roster", () => {
     expect(row.getByText("01/05/1980")).toBeInTheDocument();
     expect(row.getByText("F")).toBeInTheDocument();
     const cells = (name: string) => within(rowOf(name)).getAllByRole("cell").map((c) => c.textContent);
-    expect(cells("Jeanne Dupont").slice(0, 6)).toEqual(["Jeanne Dupont", "TEST11111111", "01/05/1980", "F", "Oui", "Oui"]);
-    expect(cells("Marc Roy").slice(0, 6)).toEqual(["Marc Roy", "—", "24/12/1975", "—", "Non", "Non"]);
+    // The name with the physician's note under it, the birth date with the age beside it.
+    expect(cells("Jeanne Dupont")[0]).toBe("Jeanne DupontAllergique à la pénicilline");
+    expect(cells("Jeanne Dupont")[2]).toMatch(/^01\/05\/1980\d+ ans$/);
+    expect(cells("Jeanne Dupont").slice(3, 6)).toEqual(["F", "Inscrit", "Oui"]);
+    expect(cells("Marc Roy").slice(0, 2)).toEqual(["Marc Roy", "—"]);
+    expect(cells("Marc Roy").slice(3, 6)).toEqual(["—", "Non inscrit", "Non"]);
     expect(cells("Lise Tremblay")[4]).toBe("Inconnu");
+  });
+
+  it("searches the list by name or NAM, ignoring accents", async () => {
+    serveRoster([jeanne, marc]);
+    const { user } = renderPage();
+    await screen.findByText("Jeanne Dupont");
+    await user.type(screen.getByLabelText("Rechercher un patient"), "tést1111");
+    expect(screen.queryByText("Marc Roy")).not.toBeInTheDocument();
+    expect(screen.getByText("Jeanne Dupont")).toBeInTheDocument();
+    await user.clear(screen.getByLabelText("Rechercher un patient"));
+    await user.type(screen.getByLabelText("Rechercher un patient"), "zzz");
+    expect(screen.getByText("Aucun patient ne correspond à cette recherche.")).toBeInTheDocument();
   });
 
   it("says when the list is empty", async () => {
@@ -87,36 +114,32 @@ describe("removing a patient from the list", () => {
         return new HttpResponse(null, { status: 204 });
       }),
     );
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     const { user } = renderPage();
-    await screen.findByText("Jeanne Dupont");
-    await user.click(within(rowOf("Jeanne Dupont")).getByRole("button", { name: "Retirer" }));
-    expect(confirm).toHaveBeenCalledWith("Retirer Jeanne Dupont de votre liste de patients ?");
+    await pickRowAction(user, "Jeanne Dupont", "Retirer");
+    expect(await screen.findByText(/Retirer Jeanne Dupont de votre liste de patients \?/)).toBeInTheDocument();
+    await answer(user, "Retirer");
     await waitFor(() => expect(screen.queryByText("Jeanne Dupont")).not.toBeInTheDocument());
     expect(removed).toBe("1");
     expect(screen.getByText("Marc Roy")).toBeInTheDocument();
-    confirm.mockRestore();
   });
 
   it("does nothing when the physician declines", async () => {
     serveRoster([jeanne]);
     const onDelete = vi.fn();
     server.use(http.delete("/api/patients/roster/:id", () => (onDelete(), new HttpResponse(null, { status: 204 }))));
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
     const { user } = renderPage();
-    await user.click(await screen.findByRole("button", { name: "Retirer" }));
+    await pickRowAction(user, "Jeanne Dupont", "Retirer");
+    await answer(user, "Annuler");
     expect(onDelete).not.toHaveBeenCalled();
-    confirm.mockRestore();
   });
 
   it("shows the server's refusal", async () => {
     serveRoster([jeanne]);
     server.use(http.delete("/api/patients/roster/:id", () => HttpResponse.json({ detail: "Retrait impossible" }, { status: 409 })));
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     const { user } = renderPage();
-    await user.click(await screen.findByRole("button", { name: "Retirer" }));
+    await pickRowAction(user, "Jeanne Dupont", "Retirer");
+    await answer(user, "Retirer");
     expect(await screen.findByText("Retrait impossible")).toBeInTheDocument();
-    confirm.mockRestore();
   });
 });
 
@@ -132,7 +155,7 @@ describe("personal notes", () => {
       }),
     );
     const { user } = renderPage();
-    await user.click(await screen.findByRole("button", { name: "Notes" }));
+    await pickRowAction(user, "Jeanne Dupont", "Notes");
     expect(screen.getByText("Notes — Jeanne Dupont")).toBeInTheDocument();
     const notes = screen.getByRole("textbox");
     expect(notes).toHaveValue("Allergique à la pénicilline");
@@ -153,17 +176,17 @@ describe("personal notes", () => {
       }),
     );
     const { user } = renderPage();
-    await user.click(await screen.findByRole("button", { name: "Notes" }));
+    await pickRowAction(user, "Jeanne Dupont", "Notes");
     await user.clear(screen.getByRole("textbox"));
     await user.click(screen.getByRole("button", { name: "Enregistrer" }));
     await waitFor(() => expect(body).toEqual({ notes: null }));
   });
 
-  it("shows an error and keeps the panel open; cancel closes it", async () => {
+  it("shows an error and keeps the dialog open; cancel closes it", async () => {
     serveRoster([jeanne]);
     server.use(http.patch("/api/patients/roster/:id", () => HttpResponse.json({ detail: "Refusé" }, { status: 403 })));
     const { user } = renderPage();
-    await user.click(await screen.findByRole("button", { name: "Notes" }));
+    await pickRowAction(user, "Jeanne Dupont", "Notes");
     await user.click(screen.getByRole("button", { name: "Enregistrer" }));
     expect(await screen.findByText("Refusé")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Annuler" }));
@@ -175,9 +198,10 @@ describe("personal notes", () => {
 describe("editing the shared patient record (admin only)", () => {
   it("is not offered to a physician", async () => {
     serveRoster([jeanne]);
-    renderPage("physician");
-    await screen.findByText("Jeanne Dupont");
-    expect(screen.queryByRole("button", { name: "Modifier" })).not.toBeInTheDocument();
+    const { user } = renderPage("physician");
+    await user.click(await screen.findByRole("button", { name: "Actions — Jeanne Dupont" }));
+    expect(await screen.findByRole("menuitem", { name: "Notes" })).toBeInTheDocument();
+    expect(screen.queryByRole("menuitem", { name: "Modifier" })).not.toBeInTheDocument();
   });
 
   it("is offered to an admin, prefilled, and saves trimmed values with blanks as null", async () => {
@@ -190,7 +214,7 @@ describe("editing the shared patient record (admin only)", () => {
       }),
     );
     const { user } = renderPage("admin");
-    await user.click(await screen.findByRole("button", { name: "Modifier" }));
+    await pickRowAction(user, "Jeanne Dupont", "Modifier");
     expect(screen.getByLabelText("Nom complet")).toHaveValue("Jeanne Dupont");
     expect(screen.getByLabelText("Numéro RAMQ (NAM)")).toHaveValue("TEST11111111");
     expect(screen.getByLabelText("Date de naissance")).toHaveValue("1980-05-01");
@@ -223,7 +247,7 @@ describe("editing the shared patient record (admin only)", () => {
     const onPatch = vi.fn();
     server.use(http.patch("/api/patients/:id", () => (onPatch(), HttpResponse.json(jeanne))));
     const { user } = renderPage("admin");
-    await user.click(await screen.findByRole("button", { name: "Modifier" }));
+    await pickRowAction(user, "Jeanne Dupont", "Modifier");
     await user.clear(screen.getByLabelText("Nom complet"));
     await user.click(screen.getByRole("button", { name: "Enregistrer" }));
     expect(screen.getByText("Le nom et la date de naissance sont obligatoires.")).toBeInTheDocument();
@@ -234,7 +258,7 @@ describe("editing the shared patient record (admin only)", () => {
     serveRoster([jeanne]);
     server.use(http.patch("/api/patients/:id", () => HttpResponse.json({ detail: "NAM déjà utilisé" }, { status: 409 })));
     const { user } = renderPage("admin");
-    await user.click(await screen.findByRole("button", { name: "Modifier" }));
+    await pickRowAction(user, "Jeanne Dupont", "Modifier");
     await user.click(screen.getByRole("button", { name: "Enregistrer" }));
     expect(await screen.findByText("NAM déjà utilisé")).toBeInTheDocument();
   });
@@ -297,7 +321,7 @@ describe("creating a new patient", () => {
     await user.type(screen.getByLabelText("Date de naissance"), "1990-02-03");
   }
 
-  it("hides the top buttons while the form is open, and cancel brings them back", async () => {
+  it("opens in a dialog over the page, and cancel closes it", async () => {
     serveRoster([]);
     const { user } = renderPage();
     await user.click(await screen.findByRole("button", { name: "Créer un nouveau patient" }));
@@ -326,7 +350,7 @@ describe("creating a new patient", () => {
     const { user } = renderPage();
     await fill(user);
     await user.click(screen.getByRole("button", { name: "Créer le patient" }));
-    expect(await screen.findByText("Nouveau Patient", { selector: "td" })).toBeInTheDocument();
+    expect(await screen.findByText("Nouveau Patient", { selector: "td span" })).toBeInTheDocument();
     expect(posted).toMatchObject({ full_name: "Nouveau Patient", date_of_birth: "1990-02-03", ramq_number: null });
     expect(rostered).toEqual({ patient_id: 9 });
     expect(screen.queryByText("Nouveau patient")).not.toBeInTheDocument();

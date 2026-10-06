@@ -42,7 +42,7 @@ beforeEach(() => {
   server.use(http.get("/api/intake/epic-sandbox", () => new HttpResponse(null, { status: 404 })));
 });
 
-const submit = () => screen.getByRole("button", { name: "Ajouter à la boîte de réception" });
+const submit = () => screen.getByRole("button", { name: "Ajouter aux rencontres" });
 
 describe("pasting notes", () => {
   it("cannot be submitted while empty or blank", async () => {
@@ -107,7 +107,7 @@ describe("pasting notes", () => {
     const { user } = renderPage();
     await user.type(screen.getByLabelText("Notes à ajouter"), "note");
     await user.click(submit());
-    expect(await screen.findByRole("button", { name: "Réception et extraction en cours..." })).toBeDisabled();
+    expect(await screen.findByRole("button", { name: "Réception et extraction en cours…" })).toBeDisabled();
     release();
     await screen.findByTestId("landed");
   });

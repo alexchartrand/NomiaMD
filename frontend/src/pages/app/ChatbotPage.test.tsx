@@ -26,9 +26,17 @@ const send = () => screen.getByRole("button", { name: "Envoyer" });
 describe("the RAMQ chat", () => {
   it("starts empty, with nothing to send or clear", () => {
     renderWithProviders(<ChatbotPage />);
-    expect(screen.getByText("Posez une question pour commencer.")).toBeInTheDocument();
+    expect(screen.getByText("Posez une question pour commencer, par exemple :")).toBeInTheDocument();
     expect(send()).toBeDisabled();
     expect(screen.getByRole("button", { name: "Effacer la conversation" })).toBeDisabled();
+  });
+
+  it("sends a suggested question in one click", async () => {
+    const requests = serveChat("Réponse.");
+    const { user } = renderWithProviders(<ChatbotPage />);
+    await user.click(screen.getByRole("button", { name: /visite de suivi et une visite périodique/ }));
+    expect(await screen.findByText("Réponse.")).toBeInTheDocument();
+    expect(requests).toHaveLength(1);
   });
 
   it("does not send a blank question", async () => {
@@ -49,7 +57,7 @@ describe("the RAMQ chat", () => {
     expect(screen.getByText("Quel code pour une visite ?")).toBeInTheDocument();
     expect(requests).toEqual([{ query: "Quel code pour une visite ?", history: [] }]);
     expect(box()).toHaveValue("");
-    expect(screen.queryByText("Posez une question pour commencer.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Posez une question pour commencer, par exemple :")).not.toBeInTheDocument();
   });
 
   it("renders the answer as markdown", async () => {
@@ -141,7 +149,7 @@ describe("the RAMQ chat", () => {
     await user.type(box(), "q{Enter}");
     await screen.findByText("Service indisponible");
     await user.click(screen.getByRole("button", { name: "Effacer la conversation" }));
-    expect(screen.getByText("Posez une question pour commencer.")).toBeInTheDocument();
+    expect(screen.getByText("Posez une question pour commencer, par exemple :")).toBeInTheDocument();
     expect(screen.queryByText("Service indisponible")).not.toBeInTheDocument();
     expect(within(document.body).queryByText("q")).not.toBeInTheDocument();
     await waitFor(() => expect(screen.getByRole("button", { name: "Effacer la conversation" })).toBeDisabled());

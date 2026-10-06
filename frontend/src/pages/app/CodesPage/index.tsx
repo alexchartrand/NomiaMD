@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { searchCodes, type CodeHit } from "../../../api";
-import { Banner, TextField } from "../../../components";
+import { Search } from "lucide-react";
+import { AppPage, AppPageHeader, Banner, TextField } from "../../../components";
 import { useDebouncedSearch } from "../../../lib/useDebouncedSearch";
 import { useFrequentCodes } from "../review/useFrequentCodes";
 import { CodeResult } from "./CodeResult";
@@ -35,33 +36,27 @@ export default function CodesPage() {
   );
 
   return (
-    <section className="flex max-w-[860px] flex-col gap-6">
-      <div>
-        <h1 className="font-heading text-2xl font-semibold">Codes RAMQ</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Recherchez un code du manuel des omnipraticiens par numéro ou par description.
-        </p>
-      </div>
-
-      {frequent.codes.length > 0 && (
-        <details className="rounded-xl border border-border px-4 py-3">
-          <summary className="cursor-pointer font-heading font-semibold">
-            Codes fréquents ({frequent.codes.length})
-          </summary>
-          <div className="mt-3">{renderCards("frequent", frequent.codes)}</div>
-        </details>
-      )}
-
-      <TextField
-        type="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Numéro (ex. 0070) ou description (ex. suture plaie)..."
-        aria-label="Rechercher un code RAMQ"
-        autoFocus
+    <AppPage width="narrow" className="flex flex-col gap-5">
+      <AppPageHeader
+        title="Codes RAMQ"
+        description="Recherchez un code du manuel des omnipraticiens par numéro ou par description : ses tarifs, son admissibilité et quand l'utiliser."
+        className="mb-1"
       />
 
-      {error && <Banner tone="error">{error}</Banner>}
+      <div className="relative">
+        <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        <TextField
+          type="search"
+          className="h-11 pl-9 text-base"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Numéro (ex. 0070) ou description (ex. suture plaie)..."
+          aria-label="Rechercher un code RAMQ"
+          autoFocus
+        />
+      </div>
+
+
       {loading ? (
         <p className="text-sm text-muted-foreground">Recherche...</p>
       ) : (
@@ -73,6 +68,15 @@ export default function CodesPage() {
           renderCards("search", results)
         ))
       )}
-    </section>
+      {/* Below the results, not between them and the field. */}
+      {frequent.codes.length > 0 && (
+        <details className="rounded-xl border border-border bg-card px-4 py-3">
+          <summary className="cursor-pointer font-heading font-semibold">
+            Codes fréquents ({frequent.codes.length})
+          </summary>
+          <div className="mt-3">{renderCards("frequent", frequent.codes)}</div>
+        </details>
+      )}
+    </AppPage>
   );
 }

@@ -138,7 +138,8 @@ describe("profile details", () => {
     await user.clear(field);
     await user.type(field, "1");
     await user.click(saveProfile());
-    expect(screen.queryByText("Profil mis à jour.")).not.toBeInTheDocument();
+    // The toast is dismissed, and slides out.
+    await waitFor(() => expect(screen.queryByText("Profil mis à jour.")).not.toBeInTheDocument());
   });
 });
 

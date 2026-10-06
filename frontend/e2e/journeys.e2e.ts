@@ -52,7 +52,7 @@ test.describe.serial("journeys", () => {
     await page.getByRole("tab", { name: "Coller" }).click();
     await page.getByLabel("Notes à ajouter").fill(UNASSIGNED_NOTE);
     await page.getByLabel("Lot (facultatif)").fill("e2e");
-    await page.getByRole("button", { name: "Ajouter à la boîte de réception" }).click();
+    await page.getByRole("button", { name: "Ajouter aux rencontres" }).click();
 
     await openAllEncounters(page);
     const row = page.getByRole("row").filter({ hasText: "À associer" });
