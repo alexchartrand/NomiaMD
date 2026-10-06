@@ -22,6 +22,13 @@ class PatientOut(BaseModel):
     id: int
     full_name: str
     nam: str | None
+    # The facts the billing context reads from the patient's file, shown beside the review so
+    # the physician sees what eligibility was decided on. Registration is derived against the
+    # viewing physician (app/patients/registration.py), None when either practice number is
+    # missing.
+    date_of_birth: date
+    is_vulnerable: bool
+    is_registered: bool | None
 
 
 class EncounterRowOut(BaseModel):

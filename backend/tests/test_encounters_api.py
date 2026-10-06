@@ -50,14 +50,15 @@ def client():
         yield client
 
 
-async def _seed_patient(full_name: str = "Roch Desjardins"):
+async def _seed_patient(full_name: str = "Roch Desjardins", **fields):
     async with session_scope() as session:
         return await PatientRepository(session).create(
             full_name=full_name,
             ramq_number=f"ENCA{next(_ramq_numbers):08d}",
             date_of_birth=date(1981, 2, 10),
             gender=Gender.MALE,
-            is_vulnerable=False,
+            is_vulnerable=fields.pop("is_vulnerable", False),
+            **fields,
         )
 
 
@@ -152,6 +153,10 @@ async def test_push_a_note_with_a_known_nam_is_extracted_and_ready(me, client):
     detail = client.get(f"/encounters/{outcome['encounter_id']}").json()
     assert detail["patient"]["full_name"] == "Roch Desjardins"
     assert detail["patient"]["nam"] == patient.ramq_number
+    # The patient's billing facts, registration unknown without practice numbers.
+    assert detail["patient"]["date_of_birth"] == "1981-02-10"
+    assert detail["patient"]["is_vulnerable"] is False
+    assert detail["patient"]["is_registered"] is None
     assert detail["status"] == "prêt"
     assert detail["extraction"]["billing"]["task"] == "billing_codes"
     assert [c["code"] for c in detail["extraction"]["billing"]["result"]["codes"]] == [
@@ -204,6 +209,20 @@ async def test_push_structured_source_notes(me, client):
     assert listed[0]["source_system"] == "omnimed"
     today = ClinicClock().today().isoformat()
     assert client.get("/encounters", params={"date_from": today, "date_to": today}).json() == []
+
+
+async def test_the_detail_derives_registration_against_the_viewing_physician(me, client):
+    me.practice_number = "12345"
+    mine = await _seed_patient(family_doctor_practice_number="12345", is_vulnerable=True)
+    theirs = await _seed_patient("Marie Tremblay", family_doctor_practice_number="99999")
+
+    def patient_of(patient):
+        encounter_id = _push(client, patient)
+        return client.get(f"/encounters/{encounter_id}").json()["patient"]
+
+    assert patient_of(mine)["is_registered"] is True
+    assert patient_of(mine)["is_vulnerable"] is True
+    assert patient_of(theirs)["is_registered"] is False
 
 
 async def test_push_with_an_unknown_nam_waits_for_a_patient_then_a_manual_pick_extracts_it(me, client):
