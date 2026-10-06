@@ -550,7 +550,15 @@ def test_startup_refuses_the_sandbox_flag_in_production(monkeypatch):
         check_sandbox_startup(settings)
 
 
+def test_startup_refuses_the_sandbox_flag_when_app_env_is_unset(monkeypatch):
+    monkeypatch.setenv("EPIC_SANDBOX_ENABLED", "true")
+
+    with pytest.raises(EpicSandboxInProductionError):
+        check_sandbox_startup(settings)
+
+
 def test_startup_requires_the_key_file_when_the_flag_is_on(monkeypatch, tmp_path):
+    monkeypatch.setenv("APP_ENV", "development")
     monkeypatch.setenv("EPIC_SANDBOX_ENABLED", "true")
     monkeypatch.setenv("EPIC_SANDBOX_CLIENT_ID", "client-123")
     monkeypatch.setenv("EPIC_SANDBOX_PRIVATE_KEY_PATH", str(tmp_path / "missing.pem"))
@@ -559,7 +567,5 @@ def test_startup_requires_the_key_file_when_the_flag_is_on(monkeypatch, tmp_path
         check_sandbox_startup(settings)
 
 
-def test_startup_ignores_the_sandbox_settings_when_the_flag_is_off(monkeypatch):
-    monkeypatch.setenv("APP_ENV", "production")
-
+def test_startup_ignores_the_sandbox_settings_when_the_flag_is_off():
     check_sandbox_startup(settings)

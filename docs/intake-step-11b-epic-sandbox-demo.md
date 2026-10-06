@@ -59,7 +59,7 @@ Québec approval is involved: the sandbox is open to any registered developer an
   flag is on. Epic errors → 502.
 - [x] Feature flag `EPIC_SANDBOX_ENABLED` (default off). Startup refuses the flag when the
   environment is marked production, so sandbox data never mixes with real data.
-  *Done:* production is `APP_ENV=production` (new; default `development`). Startup also fails
+  *Done:* production is `APP_ENV=production` (new; the default since 2026-10-06, so local dev sets `APP_ENV=development`). Startup also fails
   when the flag is on without a client id or key file.
 - [x] Frontend: re-enable the "Epic" card in "Ajouter manuellement" as **"Epic — démo
   (sandbox)"**. It's shown only when the backend reports the flag on. "Importer les notes"

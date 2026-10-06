@@ -111,9 +111,10 @@ class Settings:
 
     @property
     def app_env(self) -> str:
-        """`development` (default) or `production` — what demo-only features check before
-        they may turn on."""
-        return os.environ.get("APP_ENV", "development").strip().lower()
+        """`production` (default) or `development` — what demo-only features check before
+        they may turn on. Defaults to production so a deploy that forgets it stays locked
+        down; local dev opts out in its .env."""
+        return os.environ.get("APP_ENV", "production").strip().lower()
 
     @property
     def epic_sandbox_enabled(self) -> bool:
