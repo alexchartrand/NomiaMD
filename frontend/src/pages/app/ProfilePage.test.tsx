@@ -18,6 +18,8 @@ async function renderProfile(user: UserOut = doctor) {
   serveSession(user);
   const view = renderWithProviders(<ProfilePage />);
   await screen.findByRole("heading", { name: "Profil" });
+  // The form is filled from the loaded user by an effect, after the first render.
+  await waitFor(() => expect(screen.getByLabelText("Nom complet")).toHaveValue(user.full_name));
   return view;
 }
 
