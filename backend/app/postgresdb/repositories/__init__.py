@@ -23,6 +23,7 @@ from app.postgresdb.repositories.encounters import (
     EncounterActivity,
     ReceivedWindow,
     EncounterPeriod,
+    OverviewScope,
     EncounterInput,
     EncounterRepository,
 )
@@ -56,6 +57,7 @@ __all__ = [
     "EncounterActivity",
     "ReceivedWindow",
     "EncounterPeriod",
+    "OverviewScope",
     "EncounterInput",
     "EncounterRepository",
     "ExtractionRepository",

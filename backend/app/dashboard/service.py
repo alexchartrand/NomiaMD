@@ -1,6 +1,10 @@
 """The physician's dashboard: what's left to do, how billing is going, what came in last.
 Orchestration only — each figure is computed by its own class (tasks.py, deadlines.py,
-activity.py) from the inbox's rows, so statuses stay the inbox's derived ones. Read-only."""
+activity.py) from the inbox's rows, so statuses stay the inbox's derived ones. Read-only.
+
+The rows are the inbox's overview, not the whole history: the chart's weeks, the latest
+received, and every note still to act on or flagged as a possible duplicate, however old —
+the oldest are the ones past RAMQ's deadline. Every figure below only reads those."""
 
 from datetime import date, timedelta
 from decimal import Decimal
@@ -36,9 +40,7 @@ class DashboardService:
 
     async def for_physician(self, user_id: int) -> DashboardOut:
         today = self._clock.today()
-        # Every encounter, like the inbox's "Tout": a note still to act on counts however old
-        # it is — the oldest are the ones past RAMQ's deadline.
-        rows = await self._inbox.period(user_id, None, None)
+        rows = await self._inbox.overview(user_id, since=self._activity.first_day(today), latest=RECENT_COUNT)
         drafts = await self._claims.list_unbilled(user_id)
         this_week = week_start(today)
         return DashboardOut(

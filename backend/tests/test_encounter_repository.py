@@ -28,6 +28,7 @@ from app.postgresdb import (
     Gender,
     PatientRepository,
     EncounterPeriod,
+    OverviewScope,
     ReceivedWindow,
 )
 from tests.db_helpers import ensure_user_row, physician
@@ -188,6 +189,64 @@ async def test_list_in_period_shows_an_undated_encounter_on_the_day_it_was_recei
     assert undated.id in listed
     assert dated_elsewhere.id not in listed
     assert undated.id not in [a.encounter.id for a in await repo.list_in_period(physician_id, _day(DAY))]
+
+
+# The window: service dates from DAY on; no undated row was received in it.
+_FROM_DAY = EncounterPeriod(DAY, None, ReceivedWindow(datetime(2100, 1, 1, tzinfo=timezone.utc), None))
+OLD = DAY - timedelta(days=200)
+
+
+async def _billed(session, user_id, patient, *, note_text, service_date=OLD):
+    repo = EncounterRepository(session)
+    encounter = await repo.create(_input(user_id, patient_id=patient.id, note_text=note_text, service_date=service_date))
+    await _seed_claim(session, user_id, encounter, await _seed_run(session, user_id, encounter))
+    return encounter
+
+
+async def _overview_ids(repo, user_id, latest=0) -> list[int]:
+    return [a.encounter.id for a in await repo.list_for_overview(user_id, OverviewScope(_FROM_DAY, latest))]
+
+
+async def test_list_for_overview_keeps_old_unsettled_work_and_leaves_settled_history_out(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    repo = EncounterRepository(db_session)
+    billed = await _billed(db_session, physician_id, patient, note_text="facturée")
+    to_review = await repo.create(_input(physician_id, patient_id=patient.id, note_text="à revoir", service_date=OLD - timedelta(days=1)))
+    await _seed_run(db_session, physician_id, to_review)
+    unmatched = await repo.create(_input(physician_id, note_text="sans patient", service_date=OLD - timedelta(days=2)))
+    v1 = await repo.create(_input(physician_id, patient_id=patient.id, external_note_id="n", note_text="v1", service_date=OLD - timedelta(days=3)))
+    v2 = await repo.create(_input(physician_id, patient_id=patient.id, external_note_id="n", note_text="v2", service_date=OLD - timedelta(days=3)))
+    await repo.mark_superseded(v1, v2)
+    hidden = await repo.create(_input(physician_id, patient_id=patient.id, note_text="doublon", service_date=OLD - timedelta(days=4)))
+    await repo.mark_duplicate_of(hidden, billed)
+    recent_billed = await _billed(db_session, physician_id, patient, note_text="récente", service_date=DAY)
+
+    listed = await _overview_ids(repo, physician_id)
+
+    assert listed == [to_review.id, unmatched.id, v2.id, recent_billed.id]
+    assert billed.id not in listed and v1.id not in listed and hidden.id not in listed
+
+
+async def test_list_for_overview_keeps_old_encounters_sharing_a_visit_until_one_is_answered(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    repo = EncounterRepository(db_session)
+    capture = await _billed(db_session, physician_id, patient, note_text="capture")
+    scribe = await _billed(db_session, physician_id, patient, note_text="scribe")
+    await _billed(db_session, physician_id, patient, note_text="autre jour", service_date=OLD - timedelta(days=1))
+
+    assert await _overview_ids(repo, physician_id) == [capture.id, scribe.id]
+
+    await repo.dismiss_duplicate(scribe)
+    assert await _overview_ids(repo, physician_id) == []
+
+
+async def test_list_for_overview_adds_the_latest_received_whatever_their_service_date(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    repo = EncounterRepository(db_session)
+    await _billed(db_session, physician_id, patient, note_text="première", service_date=OLD)
+    latest = await _billed(db_session, physician_id, patient, note_text="dernière", service_date=OLD - timedelta(days=30))
+
+    assert await _overview_ids(repo, physician_id, latest=1) == [latest.id]
 
 
 async def test_activity_for_user_is_scoped_to_its_owner(db_session, physician_id):

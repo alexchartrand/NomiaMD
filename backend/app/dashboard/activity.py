@@ -23,6 +23,10 @@ class WeeklyActivity:
     def __init__(self, weeks: int = 8) -> None:
         self._weeks = weeks
 
+    def first_day(self, today: date) -> date:
+        """The Monday the chart starts on: rows before it aren't counted."""
+        return week_start(today) - timedelta(weeks=self._weeks - 1)
+
     def buckets(self, rows: list[EncounterRowOut], today: date) -> list[WeekActivityOut]:
         """The last `weeks` weeks, oldest first, this one included — empty weeks too."""
         received: Counter[date] = Counter()
@@ -32,6 +36,5 @@ class WeeklyActivity:
             received[week] += 1
             if row.status == EncounterStatus.REVU:
                 reviewed[week] += 1
-        this_week = week_start(today)
-        weeks = [this_week - timedelta(weeks=n) for n in reversed(range(self._weeks))]
+        weeks = [self.first_day(today) + timedelta(weeks=n) for n in range(self._weeks)]
         return [WeekActivityOut(week_start=w, received=received[w], reviewed=reviewed[w]) for w in weeks]

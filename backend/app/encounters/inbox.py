@@ -20,6 +20,7 @@ from app.postgresdb import (
     EncounterActivity,
     EncounterPeriod,
     EncounterRepository,
+    OverviewScope,
     Patient,
     PatientRepository,
     ReceivedWindow,
@@ -37,11 +38,20 @@ class EncounterInbox:
     async def period(self, user_id: int, first: date | None, last: date | None) -> list[EncounterRowOut]:
         """Service dates `first` through `last`, both included; either may be open — a
         physician who bills at the end of the week reads several days at once."""
-        received = ReceivedWindow(
-            start=clinic_day_bounds(first)[0] if first is not None else None,
-            end=clinic_day_bounds(last)[1] if last is not None else None,
+        activities = await self._encounters.list_in_period(user_id, _period(first, last))
+        return await self._rows(user_id, activities)
+
+    async def overview(self, user_id: int, since: date, latest: int) -> list[EncounterRowOut]:
+        """Enough rows to summarize the physician's work without reading all of it: service
+        dates from `since` on, the `latest` received, and — however old — every row still to
+        act on or flagged as a possible duplicate (EncounterRepository.list_for_overview).
+        Statuses, `all_clean` and duplicate flags are exact for every row returned."""
+        activities = await self._encounters.list_for_overview(
+            user_id, OverviewScope(window=_period(since, None), latest=latest)
         )
-        activities = await self._encounters.list_in_period(user_id, EncounterPeriod(first, last, received))
+        return await self._rows(user_id, activities)
+
+    async def _rows(self, user_id: int, activities: list[EncounterActivity]) -> list[EncounterRowOut]:
         encounters = [activity.encounter for activity in activities]
         extractions = await self._extractions.latest(encounters)
         claims = await self._claims.live_for_encounters(user_id, [e.id for e in encounters])
@@ -106,6 +116,14 @@ class EncounterInbox:
             extraction=await self._extractions.latest_one(encounter),
             claim=ClaimMapper.from_detail(claim) if claim is not None else None,
         )
+
+
+def _period(first: date | None, last: date | None) -> EncounterPeriod:
+    received = ReceivedWindow(
+        start=clinic_day_bounds(first)[0] if first is not None else None,
+        end=clinic_day_bounds(last)[1] if last is not None else None,
+    )
+    return EncounterPeriod(first, last, received)
 
 
 def _code_count(claim: ClaimDetail | None, extraction: BillingExtractionResponse | None) -> int | None:

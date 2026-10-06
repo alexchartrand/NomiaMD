@@ -143,6 +143,15 @@ async def test_tasks_count_what_is_left_to_do(me, client):
     assert recent == [failed["encounter_id"], unmatched["encounter_id"], to_review, clean]
 
 
+async def test_an_old_visit_received_twice_is_still_a_possible_duplicate(me, client):
+    patient = await _seed_patient()
+    long_ago = TODAY - timedelta(days=200)
+    _push(client, patient, service_date=long_ago, time_start="09:00:00")
+    _push(client, patient, service_date=long_ago, time_start="09:10:00", source_system="plume", channel="scribe_webhook")
+
+    assert _dashboard(client)["tasks"]["possible_duplicates"] == 2
+
+
 async def test_recent_encounters_are_the_last_six_received(me, client):
     patient = await _seed_patient()
     ids = [_push(client, patient, service_date=TODAY - timedelta(days=n)) for n in range(8)]

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 
 from sqlalchemy import and_, exists, or_, select
+from sqlalchemy.orm import aliased
 from sqlalchemy.exc import IntegrityError
 
 from app.postgresdb.models import Claim, Encounter, ExtractionRun
@@ -53,6 +54,16 @@ class EncounterPeriod:
     received: ReceivedWindow
 
 
+@dataclass(frozen=True)
+class OverviewScope:
+    """What a summary of the physician's work needs, without reading their whole history:
+    `window`'s encounters plus the `latest` received ones, and — however old — every one
+    still unsettled or that may be another's duplicate (see list_for_overview)."""
+
+    window: EncounterPeriod
+    latest: int
+
+
 class DuplicateEncounterError(Exception):
     """This exact version of an external note (same source, note id and content hash) was
     already received — the partial unique index ix_encounters_external_version is the
@@ -69,15 +80,46 @@ def _violates_external_version_unique(exc: IntegrityError) -> bool:
     )
 
 
-def _activity_columns():
-    """An encounter plus the two facts app/intake/status.py derives its status from."""
-    has_run = exists().where(ExtractionRun.encounter_id == Encounter.id)
-    has_live_claim = exists().where(
+def _has_run():
+    return exists().where(ExtractionRun.encounter_id == Encounter.id)
+
+
+def _has_live_claim():
+    return exists().where(
         ExtractionRun.encounter_id == Encounter.id,
         Claim.extraction_run_id == ExtractionRun.id,
         Claim.voided_at.is_(None),
     )
-    return Encounter, has_run.label("has_run"), has_live_claim.label("has_live_claim")
+
+
+def _activity_columns():
+    """An encounter plus the two facts app/intake/status.py derives its status from."""
+    return Encounter, _has_run().label("has_run"), _has_live_claim().label("has_live_claim")
+
+
+def _in_period(period: EncounterPeriod):
+    """Dated encounters by service date, undated ones by when they were received."""
+    dated = [Encounter.service_date.is_not(None)]
+    if period.first is not None:
+        dated.append(Encounter.service_date >= period.first)
+    if period.last is not None:
+        dated.append(Encounter.service_date <= period.last)
+    undated = [Encounter.service_date.is_(None)]
+    if period.received.start is not None:
+        undated.append(Encounter.created_at >= period.received.start)
+    if period.received.end is not None:
+        undated.append(Encounter.created_at < period.received.end)
+    return or_(and_(*dated), and_(*undated))
+
+
+def _is_open(encounter):
+    """Not answered for as a duplicate, and its note's current version (DuplicateFlagger's
+    candidates)."""
+    return and_(
+        encounter.duplicate_of_id.is_(None),
+        encounter.duplicate_dismissed_at.is_(None),
+        encounter.superseded_by_id.is_(None),
+    )
 
 
 class EncounterRepository(SessionRepository):
@@ -120,19 +162,50 @@ class EncounterRepository(SessionRepository):
         no date, still waiting for a patient or for extraction to find one) belongs to the
         day it was received, so it never drops out of the inbox. One confirmed as another's
         duplicate is left out."""
-        dated = [Encounter.service_date.is_not(None)]
-        if period.first is not None:
-            dated.append(Encounter.service_date >= period.first)
-        if period.last is not None:
-            dated.append(Encounter.service_date <= period.last)
-        undated = [Encounter.service_date.is_(None)]
-        if period.received.start is not None:
-            undated.append(Encounter.created_at >= period.received.start)
-        if period.received.end is not None:
-            undated.append(Encounter.created_at < period.received.end)
         return await self._activities(
             select(*_activity_columns())
-            .where(Encounter.user_id == user_id, Encounter.duplicate_of_id.is_(None), or_(and_(*dated), and_(*undated)))
+            .where(Encounter.user_id == user_id, Encounter.duplicate_of_id.is_(None), _in_period(period))
+            .order_by(Encounter.id)
+        )
+
+    async def list_for_overview(self, user_id: int, scope: OverviewScope) -> list[EncounterActivity]:
+        """The encounters a summary can't do without, in arrival order, one query. Besides
+        the window and the latest received, at any age:
+
+        - unsettled ones — not superseded, and not billed once matched to a patient: every
+          encounter app/intake/status.py could call anything but `modifié` or `revu`;
+        - open ones sharing a patient and a service date with another open one — a superset
+          of the pairs DuplicateFlagger can flag, so its flags over this list are exact.
+
+        Confirmed duplicates are left out, as in list_in_period."""
+        latest = (
+            select(Encounter.id)
+            .where(Encounter.user_id == user_id, Encounter.duplicate_of_id.is_(None))
+            .order_by(Encounter.created_at.desc(), Encounter.id.desc())
+            .limit(scope.latest)
+        )
+        unsettled = and_(
+            Encounter.superseded_by_id.is_(None),
+            or_(Encounter.patient_id.is_(None), ~_has_live_claim()),
+        )
+        other = aliased(Encounter)
+        shares_a_visit = and_(
+            _is_open(Encounter),
+            exists().where(
+                other.user_id == Encounter.user_id,
+                other.id != Encounter.id,
+                other.patient_id == Encounter.patient_id,
+                other.service_date == Encounter.service_date,
+                _is_open(other),
+            ),
+        )
+        return await self._activities(
+            select(*_activity_columns())
+            .where(
+                Encounter.user_id == user_id,
+                Encounter.duplicate_of_id.is_(None),
+                or_(_in_period(scope.window), Encounter.id.in_(latest), unsettled, shares_a_visit),
+            )
             .order_by(Encounter.id)
         )
 
