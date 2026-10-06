@@ -129,7 +129,7 @@ export default function AddNotesPage() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 rows={14}
-                className="w-full text-[0.85rem]"
+                className="min-h-72 w-full text-[0.85rem]"
                 aria-label="Notes à ajouter"
                 placeholder="Collez la note signée ici, ou toutes les notes d'un quart de travail..."
               />
