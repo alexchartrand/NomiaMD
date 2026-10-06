@@ -54,12 +54,14 @@
 - [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
   - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
 
-- [ ] 🟡 Login timing side-channel enables user enumeration — *added 8/19, from codebase audit*
+- [x] 🟡 Login timing side-channel enables user enumeration — *added 8/19, from codebase audit, fixed 10/6*
   - `auth/service.py` `login()` returns immediately on `user is None`, but runs the deliberately slow Argon2 `verify()` when the email exists — response time distinguishes valid from invalid emails.
   - Fix: always run a dummy hash verify on the unknown-user path. Low real-world impact given the small, manually-provisioned user base.
+  - Fixed: an unknown email now runs `PasswordHasher.verify_dummy` (a verify against a lazily built random hash), and a known email is verified *before* the `is_active` check, so a deactivated account isn't faster either. Every login attempt costs exactly one Argon2 verify. Covered in `tests/test_auth_service.py`.
 
-- [ ] 🟡 Argon2 verify blocks the event loop on every login — *added 8/19, from codebase audit*
+- [x] 🟡 Argon2 verify blocks the event loop on every login — *added 8/19, from codebase audit, fixed 10/6*
   - `AuthService.login` (async) calls the sync, CPU-slow `PasswordHasher.verify` directly (`auth/security.py`), no `run_in_threadpool`. Stalls the whole process for tens–hundreds of ms, including other physicians' in-flight `/extract`/`/query` requests.
+  - Fixed: `AuthService` runs every hash/verify (login, dummy verify, change-password) through `asyncio.to_thread`. Covered in `tests/test_auth_service.py`.
 
 - [ ] 🟢 Backend has no network-level allowlist of its own — *added 8/19, from codebase audit*
   - `docker-compose.yml`: header-spoofing protection depends entirely on nginx being the only path to `backend:8000`. Partially mitigated since S1's fix moved backend to an `internal` network, but backend still has no self-defense if another container joins that network later.

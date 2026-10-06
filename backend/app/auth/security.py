@@ -2,8 +2,10 @@
 FastAPI, no database — so it can be unit-tested in isolation from the request/response
 cycle and from persistence."""
 
+import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+from functools import cached_property
 
 import jwt
 from argon2 import PasswordHasher as _Argon2Hasher
@@ -13,6 +15,9 @@ from app.postgresdb import User
 
 
 class PasswordHasher:
+    """Argon2 hashing. Every call is deliberately CPU-slow and synchronous — async callers
+    run it in a worker thread so it doesn't stall the event loop."""
+
     def __init__(self) -> None:
         self._hasher = _Argon2Hasher()
 
@@ -24,6 +29,17 @@ class PasswordHasher:
             return self._hasher.verify(hashed_password, password)
         except VerifyMismatchError:
             return False
+
+    def verify_dummy(self, password: str) -> None:
+        """Spends the time of a real verify against a hash no password matches, so a login
+        for an unknown email takes as long as one for a known email."""
+        self.verify(password, self._dummy_hash)
+
+    @cached_property
+    def _dummy_hash(self) -> str:
+        # Built on first use: the hash costs as much as a verify, and most hashers
+        # (tests, scripts) never need it.
+        return self._hasher.hash(secrets.token_urlsafe(32))
 
 
 @dataclass
