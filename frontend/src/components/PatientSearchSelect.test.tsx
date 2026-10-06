@@ -59,7 +59,7 @@ describe("PatientSearchSelect", () => {
     const user = userEvent.setup();
     render(<Harness onSelect={vi.fn()} />);
     await user.type(input(), "Dupont");
-    expect(await screen.findByRole("button", { name: /Jeanne Dupont/ })).toBeInTheDocument();
+    expect(await screen.findByRole("option", { name: /Jeanne Dupont/ })).toBeInTheDocument();
     expect(queries).toEqual(["Dupont"]);
   });
 
@@ -68,8 +68,8 @@ describe("PatientSearchSelect", () => {
     const user = userEvent.setup();
     render(<Harness onSelect={vi.fn()} />);
     await user.type(input(), "ro");
-    expect(await screen.findByRole("button", { name: /Jeanne Dupont.*TEST11111111/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Marc Roy" })).toBeInTheDocument();
+    expect(await screen.findByRole("option", { name: /Jeanne Dupont.*TEST11111111/ })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Marc Roy" })).toBeInTheDocument();
   });
 
   it("shows a searching state, then 'no patient' when nothing matches", async () => {
@@ -104,10 +104,10 @@ describe("PatientSearchSelect", () => {
     const user = userEvent.setup();
     render(<Harness onSelect={onSelect} />);
     await user.type(input(), "ro");
-    await user.click(await screen.findByRole("button", { name: "Marc Roy" }));
+    await user.click(await screen.findByRole("option", { name: "Marc Roy" }));
     expect(onSelect).toHaveBeenCalledWith(roy);
     expect(input()).toHaveValue("Marc Roy");
-    expect(screen.queryByRole("button", { name: /Jeanne Dupont/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: /Jeanne Dupont/ })).not.toBeInTheDocument();
   });
 
   it("editing the field after a pick clears the selection", async () => {
@@ -132,10 +132,10 @@ describe("PatientSearchSelect", () => {
     const user = userEvent.setup();
     render(<Harness onSelect={vi.fn()} />);
     await user.type(input(), "Dup");
-    await screen.findByRole("button", { name: /Jeanne Dupont/ });
+    await screen.findByRole("option", { name: /Jeanne Dupont/ });
     await user.click(screen.getByRole("button", { name: "ailleurs" }));
-    await waitFor(() => expect(screen.queryByRole("button", { name: /Jeanne Dupont/ })).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByRole("option", { name: /Jeanne Dupont/ })).not.toBeInTheDocument());
     await user.click(input());
-    expect(await screen.findByRole("button", { name: /Jeanne Dupont/ })).toBeInTheDocument();
+    expect(await screen.findByRole("option", { name: /Jeanne Dupont/ })).toBeInTheDocument();
   });
 });

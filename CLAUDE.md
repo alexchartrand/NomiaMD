@@ -71,13 +71,14 @@ Backend modules (`backend/app/`):
 | `extraction/` | `POST /extract`: runs the pipeline (`pipeline.py`) and the shared LLM call (`engine.py`) |
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
 | `ramq_codes/` | `billing_codes` task — billing context, candidate retrieval, eligibility, code selection |
+| `code_catalog/` | hand code search/lookup, no LLM and no embedding: `GET /codes/search` (digits = number prefix, else French FTS; empty = the physician's most billed codes; with `patient_id`, eligibility-filtered like retrieval + per-code `needs_confirmation`), `GET /codes/{number}`; `registry.py` holds the process's `ICodeCatalogRepository` (set by `application_services()`), which `claims/` reads hand-picked codes through |
 | `ramq_chatbot/` | `POST /query` — stateless RAMQ manual chatbot (hybrid search + reference expansion) |
 | `tasks/` | `ExtractionTask` base, task registry, strict JSON schema generation |
 | `lancedb/` | read side of the RAMQ LanceDB tables (generic, never imports a domain package) |
 | `postgresdb/` | ORM models, sessions, one repository module per aggregate |
 | `auth/` | login/sessions (`AuthService`) and dated physician practice facts (`ProfileService`) |
 | `patients/` | global patient identity, search, per-physician roster, registration |
-| `claims/`, `bills/` | saving reviewed codes as claims; grouping claims into bills (+ PDF) |
+| `claims/`, `bills/` | saving reviewed codes as claims — the run's suggestions plus codes added from the search (`ClaimCode.origin`), or a claim with no encounter at all (`POST/PUT /claims/manual`, `source_system="manual"`, no duplicate guard); grouping claims into bills (+ PDF) |
 | `jwks/` | public `GET /.well-known/jwks.json`: the public keys committed in `jwks/public_keys/` (loaded at startup), what Epic's JWK Set URL points at; `kid` = RFC 7638 thumbprint, which the Epic signer derives from its private key |
 | `contact/` | public `POST /contact` (no login): the site's contact form → `contact_requests`, best-effort email via SMTP (`LogContactNotifier` when unset), honeypot + 5/hour limit |
 | `sample_patients/` | serves `consultations/` notes as simulated patients |
@@ -90,7 +91,9 @@ Extraction flow: the physician picks a patient *first* (global search), then `PO
 cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
 (physician practice facts + patient age/vulnerability/registration) → `billing_codes`
 (multi-query hybrid retrieval, eligibility-filtered, RRF-fused → LLM picks from candidates).
-The physician reviews, then `POST /claims` saves from the stored extraction run.
+The physician reviews (and may add codes from the code search), then `POST /claims` saves from
+the stored extraction run. Billing without an encounter (`/app/facturer`) skips all of it:
+patient + date + hand-picked codes → `POST /claims/manual`.
 
 Frontend (`frontend/src/`): pages under `pages/app/` routed by `AppRouter.tsx`, typed API
 client per domain under `api/`. The public site (`/`, `/prix`, `/contact`, `/securite`,
@@ -98,7 +101,8 @@ client per domain under `api/`. The public site (`/`, `/prix`, `/contact`, `/sec
 `pages/landing/`, and contact details, prices and plans in `src/site/` (`config.ts`,
 `pricing.ts`) — the one place to edit them. The landing page after login is the dashboard (`/app`, `pages/app/DashboardPage/`: tasks, KPIs, activity chart, latest encounters, and the RAMQ assistant beside them — one conversation shared with `/app/chat` through `chat/RamqChatProvider.tsx`, mounted in `AppLayout`). The inbox is `/app/inbox`; a row opens
 `/app/inbox/:encounterId` (note + code review, `pages/app/review/`); notes are added by hand
-on `/app/ajouter`. `/api/*` proxies to the backend (`vite.config.ts`).
+on `/app/ajouter`. `/app/facturer` bills without an encounter (and edits such a draft at
+`/app/facturer/:claimId`); `/app/codes` is the RAMQ code reference. `/api/*` proxies to the backend (`vite.config.ts`).
 
 ### Invariants — don't break these
 
@@ -111,6 +115,10 @@ on `/app/ajouter`. `/api/*` proxies to the backend (`vite.config.ts`).
   never filters — read `confirmed_panel_size`.
 - **The model only picks from offered candidates** — anything else is dropped. Empty output
   is a valid answer.
+- **Codes the physician adds by hand are eligibility-checked server-side** against the current
+  codes table with the claim's own `BillingContext` (`claims/catalog.py`) — the search UI hiding
+  them isn't the guard. Their description and fees are snapshotted from that table by number,
+  never from the request body; a code the run offered is snapshotted from the run instead.
 - **Practice facts are dated.** Read them with `ProfileService.as_of(user, service_date)`,
   not today's values. "Today" comes from the injected `Clock` (America/Montreal), never
   `date.today()`.

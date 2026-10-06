@@ -70,7 +70,9 @@ class ICodeRepository(ABC):
         pass
 
     @abstractmethod
-    async def list_by_numbers(self, numbers: List[str]) -> List[CodeRow]:
+    async def list_by_numbers(
+        self, numbers: List[str], eligibility: CodeEligibilityFilter | None = None
+    ) -> List[CodeRow]:
         pass
 
     @abstractmethod
@@ -80,7 +82,29 @@ class ICodeRepository(ABC):
         pass
 
 
-class CodeRepository(ICodeRepository):
+class ICodeCatalogRepository(ICodeRepository):
+    """What a physician searching the codes by hand needs on top of ICodeRepository: no
+    embedding involved (a keystroke must not cost an API call), and the revision a code was
+    read from, which a claim snapshots."""
+
+    @abstractmethod
+    async def keyword_search(
+        self, text: str, k: int, eligibility: CodeEligibilityFilter | None = None
+    ) -> List[Tuple[CodeRow, float]]:
+        pass
+
+    @abstractmethod
+    async def list_by_number_prefix(
+        self, prefix: str, k: int, eligibility: CodeEligibilityFilter | None = None
+    ) -> List[CodeRow]:
+        pass
+
+    @abstractmethod
+    async def current_revision(self) -> str:
+        pass
+
+
+class CodeRepository(ICodeCatalogRepository):
     """Queries whichever `codes_<rev>` table the `code_versions` registry currently marks as
     current (code_versions.py), re-resolved on every call so a promote takes effect without
     a restart. Each revision table has one row per `number`, so no revision filter is
@@ -105,21 +129,27 @@ class CodeRepository(ICodeRepository):
 
         return CodeRow.model_validate(rows[0])
 
-    async def list_by_numbers(self, numbers: List[str]) -> List[CodeRow]:
+    async def list_by_numbers(
+        self, numbers: List[str], eligibility: CodeEligibilityFilter | None = None
+    ) -> List[CodeRow]:
+        """With `eligibility`, a number whose row contradicts a known fact is simply absent
+        from the result, like an unknown one — callers compare against what they asked for."""
+        if not numbers:
+            return []
         # Quote-escape rather than trust code numbers are always digit-only, since they come
-        # from a retrieved embedding hit rather than a hardcoded source.
+        # from a retrieved embedding hit or a request body rather than a hardcoded source.
         quoted = ", ".join(_quote(n) for n in numbers)
         table = await self._tables.current()
         rows = (
             await table.query()
-            .where(f"number IN ({quoted})")
+            .where(self._and(f"number IN ({quoted})", eligibility))
             .select(_CODE_ROW_COLUMNS)
             .to_list()
         )
         results = [CodeRow.model_validate(row) for row in rows]
 
         missing = sorted(set(numbers) - {r.number for r in results})
-        if missing:
+        if missing and eligibility is None:
             logger.warning(
                 "Candidate RAMQ code number(s) not found in the codes table (stale "
                 "embeddings index?) — dropped from results",
@@ -154,6 +184,43 @@ class CodeRepository(ICodeRepository):
             query = query.where(where)
         rows = await query.limit(k).select(_CODE_ROW_COLUMNS).to_list()
         return [(CodeRow.model_validate(row), row["_relevance_score"]) for row in rows]
+
+    async def keyword_search(
+        self, text: str, k: int, eligibility: CodeEligibilityFilter | None = None
+    ) -> List[Tuple[CodeRow, float]]:
+        # The FTS half of hybrid_search alone, over the same French-stemmed, trigram indices:
+        # partial words ("sutur", "infiltr") match, and no embedding call is made. `_score`
+        # is selected explicitly — LanceDB's auto-projection of it is deprecated.
+        table = await self._tables.current()
+        query = table.query().nearest_to_text(MultiMatchQuery(text, columns=_CODE_FTS_COLUMNS))
+        where = self._where_builder.build(eligibility) if eligibility is not None else None
+        if where is not None:
+            query = query.where(where)
+        rows = await query.limit(k).select([*_CODE_ROW_COLUMNS, "_score"]).to_list()
+        return [(CodeRow.model_validate(row), row["_score"]) for row in rows]
+
+    async def list_by_number_prefix(
+        self, prefix: str, k: int, eligibility: CodeEligibilityFilter | None = None
+    ) -> List[CodeRow]:
+        # LIKE wildcards in `prefix` would widen the match; callers pass digits only (see
+        # app/code_catalog/query.py), and the quote-escape still guards the literal itself.
+        table = await self._tables.current()
+        rows = (
+            await table.query()
+            .where(self._and(f"number LIKE {_quote(prefix + '%')}", eligibility))
+            .select(_CODE_ROW_COLUMNS)
+            .to_list()
+        )
+        # Sorted here rather than in the query: LanceDB's query builder has no ORDER BY, and
+        # a prefix of a few digits matches at most a few thousand small rows.
+        return sorted((CodeRow.model_validate(row) for row in rows), key=lambda r: r.number)[:k]
+
+    async def current_revision(self) -> str:
+        return (await self._tables.current_version()).manual_rev
+
+    def _and(self, clause: str, eligibility: CodeEligibilityFilter | None) -> str:
+        where = self._where_builder.build(eligibility) if eligibility is not None else None
+        return clause if where is None else f"({clause}) AND {where}"
 
 
 class IDocumentRepository(ABC):

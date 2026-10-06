@@ -13,6 +13,7 @@ export { TextArea } from "./TextArea";
 export { TextField } from "./TextField";
 export { Select } from "./Select";
 export { PatientSearchSelect } from "./PatientSearchSelect";
+export { SearchCombobox } from "./SearchCombobox";
 export { Banner } from "./Banner";
 export { Modal } from "./Modal";
 export { ConfirmDialog, useConfirm, type ConfirmOptions } from "./ConfirmDialog";

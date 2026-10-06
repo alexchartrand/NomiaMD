@@ -1,4 +1,4 @@
-import { makeClaim, makeClaimLine, makeExtraction, makeFee, makeProposedCode } from "../../../test/factories";
+import { makeClaim, makeClaimLine, makeCodeHit, makeExtraction, makeFee, makeProposedCode } from "../../../test/factories";
 import { initialReviewState, reviewReducer, type ReviewState } from "./reviewState";
 
 const twoFees = makeProposedCode({
@@ -156,5 +156,38 @@ describe("reviewReducer", () => {
       saveError: "non",
     });
     expect(reviewReducer({ ...started, saveError: "old" }, { type: "save-started" }).saveError).toBeNull();
+  });
+});
+
+describe("codes added from the search", () => {
+  const loaded = () => reviewReducer(initialReviewState, { type: "extracted", result });
+
+  it("adds a code the extraction didn't propose, and marks the review changed", () => {
+    const hit = makeCodeHit({ number: "00059" });
+    const state = reviewReducer(loaded(), { type: "manual-code-added", hit });
+    expect(state.manual.codes).toEqual([hit]);
+    expect(state.selection.size).toBe(0);
+    expect(state.pristine).toBe(false);
+  });
+
+  it("ticks a proposed code instead of adding it twice", () => {
+    const state = reviewReducer(loaded(), { type: "manual-code-added", hit: makeCodeHit({ number: "15145" }) });
+    expect(state.manual.codes).toEqual([]);
+    expect([...state.selection]).toEqual([1]);
+  });
+
+  it("restoring a claim's added codes leaves the review unchanged", () => {
+    const hit = makeCodeHit({ number: "00059" });
+    const state = reviewReducer(loaded(), {
+      type: "manual-codes-restored",
+      manual: { codes: [hit], feeSelection: new Map(), lieuSelection: new Map() },
+    });
+    expect(state.manual.codes).toEqual([hit]);
+    expect(state.pristine).toBe(true);
+  });
+
+  it("a new result drops the codes added to the previous one", () => {
+    const added = reviewReducer(loaded(), { type: "manual-code-added", hit: makeCodeHit({ number: "00059" }) });
+    expect(reviewReducer(added, { type: "extracted", result }).manual.codes).toEqual([]);
   });
 });

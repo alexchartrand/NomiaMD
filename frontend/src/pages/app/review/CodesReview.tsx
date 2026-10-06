@@ -1,17 +1,9 @@
 import { cn } from "@/lib/utils";
-import { Checkbox, Select } from "../../../components";
-import type {
-  ConfidenceLevel,
-  ExtractedCode,
-  ExtractedFee,
-} from "../../../api";
-import {
-  buildFeeOptions,
-  defaultLieu,
-  feeDetails,
-  formatAmount,
-  optionValue,
-} from "./feeOptions";
+import { Checkbox } from "../../../components";
+import type { ConfidenceLevel, ExtractedCode } from "../../../api";
+import { defaultLieu } from "./feeOptions";
+import { FeePicker } from "./FeePicker";
+import { NeedsConfirmation } from "./NeedsConfirmation";
 
 const CONFIDENCE_CLASSES: Record<ConfidenceLevel, string> = {
   high: "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]",
@@ -31,18 +23,6 @@ const CONFIDENCE_ORDER: Record<ConfidenceLevel, number> = {
   medium: 1,
   low: 2,
 };
-
-// What a lone fee shows beside its amount; a fee with several lieux gets a selector instead.
-function singleFeeDetails(fee: ExtractedFee): string {
-  return [fee.lieux[0], feeDetails(fee)].filter(Boolean).join(" — ");
-}
-
-// What the picked option's label doesn't already say about its fee (role, context,
-// majoration): a label only carries them when they're needed to tell options apart.
-function pickedFeeDetails(fee: ExtractedFee, label: string): string {
-  const details = feeDetails(fee);
-  return details && !label.includes(details) ? details : "";
-}
 
 interface CodesReviewProps {
   codes: ExtractedCode[];
@@ -86,13 +66,10 @@ export function CodesReview({
   const renderCode = ({ c, i }: { c: ExtractedCode; i: number }) => {
     const checked = selection.has(i);
     const bucket = c.confidence;
-    const options = buildFeeOptions(c.fees);
     const feeIndex = feeSelection.get(i) ?? 0;
     const lieu = c.fees[feeIndex]
       ? (lieuSelection.get(i) ?? defaultLieu(c.fees[feeIndex]))
       : null;
-    const picked = options.find((o) => o.feeIndex === feeIndex && o.lieu === lieu);
-    const pickedDetails = picked ? pickedFeeDetails(c.fees[feeIndex], picked.label) : "";
     return (
       <li
         key={i}
@@ -140,69 +117,20 @@ export function CodesReview({
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-[0.6rem]">
-            {options.length > 1 ? (
-              <>
-                <Select
-                  containerClassName="w-fit max-w-full"
-                  value={optionValue(feeIndex, lieu)}
-                  disabled={disabled}
-                  onChange={(event) => {
-                    const chosen = options.find(
-                      (o) =>
-                        optionValue(o.feeIndex, o.lieu) === event.target.value,
-                    );
-                    if (chosen) onFeeSelected(i, chosen.feeIndex, chosen.lieu);
-                  }}
-                  aria-label={`Tarif pour le code ${c.code}`}
-                >
-                  {options.map((o) => (
-                    <option
-                      key={optionValue(o.feeIndex, o.lieu)}
-                      value={optionValue(o.feeIndex, o.lieu)}
-                    >
-                      {o.label}
-                    </option>
-                  ))}
-                </Select>
-                <span className="font-heading font-bold whitespace-nowrap">
-                  {formatAmount(c.fees[feeIndex])}
-                </span>
-                {pickedDetails && (
-                  <span className="min-w-0 text-[0.85rem] text-muted-foreground">
-                    {pickedDetails}
-                  </span>
-                )}
-              </>
-            ) : c.fees.length === 1 ? (
-              <>
-                <span className="font-heading font-bold whitespace-nowrap">
-                  {formatAmount(c.fees[0])}
-                </span>
-                {singleFeeDetails(c.fees[0]) && (
-                  <span className="min-w-0 text-[0.85rem] text-muted-foreground">
-                    {singleFeeDetails(c.fees[0])}
-                  </span>
-                )}
-              </>
-            ) : (
-              <span className="font-heading font-bold">—</span>
-            )}
-          </div>
+          <FeePicker
+            code={c.code}
+            fees={c.fees}
+            feeIndex={feeIndex}
+            lieu={lieu}
+            onSelect={(chosenFee, chosenLieu) => onFeeSelected(i, chosenFee, chosenLieu)}
+            disabled={disabled}
+          />
 
           {c.explanation && (
             <p className="m-0 text-[0.92rem] text-muted-foreground">{c.explanation}</p>
           )}
 
-          {c.needs_confirmation.length > 0 && (
-            <ul className="m-0 flex flex-col gap-1 pl-0 text-[0.85rem] text-[color:var(--color-warning-text)]">
-              {c.needs_confirmation.map((note, noteIndex) => (
-                <li key={noteIndex} className="list-none">
-                  ⚠ {note}
-                </li>
-              ))}
-            </ul>
-          )}
+          <NeedsConfirmation notes={c.needs_confirmation} />
         </div>
       </li>
     );

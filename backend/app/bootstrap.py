@@ -11,6 +11,7 @@ read when the process starts rather than when app.postgresdb is first imported."
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
+from app.code_catalog import init_code_catalog
 from app.config import settings
 from app.intake.connectors.epic_fhir.factory import check_sandbox_startup
 from app.lancedb import CodeRepository, DocumentRepository, LanceDB
@@ -46,6 +47,7 @@ async def application_services() -> AsyncIterator[LanceDB]:
             codes = CodeRepository(db.code_tables)
             documents = DocumentRepository(db.documents_table)
             init_tasks(codes=codes)
+            init_code_catalog(codes)
             init_ramq_query_engine(codes, documents)
             yield db
         finally:

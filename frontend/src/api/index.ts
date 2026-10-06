@@ -2,6 +2,7 @@ export * from "./http";
 export * from "./patients";
 export * from "./extraction";
 export * from "./claims";
+export * from "./codes";
 export * from "./bills";
 export * from "./chatbot";
 export * from "./auth";

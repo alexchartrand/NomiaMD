@@ -267,7 +267,7 @@ describe("adding an existing patient", () => {
     const { user } = renderPage();
     await user.click(await screen.findByRole("button", { name: "Ajouter un patient existant" }));
     await user.type(screen.getByLabelText("Patient"), "Dupont");
-    await user.click(await screen.findByRole("button", { name: /Jeanne Dupont/ }));
+    await user.click(await screen.findByRole("option", { name: /Jeanne Dupont/ }));
     await user.type(screen.getByLabelText("Notes personnelles"), "  suivi annuel ");
     await user.click(screen.getByRole("button", { name: "Ajouter" }));
     expect(await screen.findByText("TEST11111111")).toBeInTheDocument();
@@ -282,7 +282,7 @@ describe("adding an existing patient", () => {
     const { user } = renderPage();
     await user.click(await screen.findByRole("button", { name: "Ajouter un patient existant" }));
     await user.type(screen.getByLabelText("Patient"), "Dupont");
-    await user.click(await screen.findByRole("button", { name: /Jeanne Dupont/ }));
+    await user.click(await screen.findByRole("option", { name: /Jeanne Dupont/ }));
     await user.click(screen.getByRole("button", { name: "Ajouter" }));
     expect(await screen.findByText("Déjà dans votre liste")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Annuler" }));

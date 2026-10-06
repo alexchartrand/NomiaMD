@@ -4,13 +4,7 @@ from typing import Any
 
 from app.lancedb.repository import ICodeRepository
 from app.patients import nam
-from app.ramq_codes.context import (
-    AXIS_AGE_BAND,
-    AXIS_PANEL_SIZE,
-    AXIS_REGISTRATION,
-    AXIS_VULNERABILITY,
-    BillingContext,
-)
+from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext
 from app.ramq_codes.models import BillingCodesResult, Code, CodeFeeOut
 from app.ramq_codes.retriever import ICodesRetriever
 from app.summary.models import ConsultationSummaryResult
@@ -23,18 +17,6 @@ from app.tasks.schema import to_strict_schema
 # is kept there, but billing_codes gets the stronger model. See app/tasks/base.py's
 # ExtractionTask.model and app/extraction/engine.py's per-model client cache.
 MODEL = "mistral-medium-latest"
-
-# Shared vocabulary with app/ramq_codes/eligibility.py — the axis names
-# UnresolvedAxisDetector leaves unresolved, in the French wording shown to both the model (as
-# something it must ask the physician to confirm) and, via ExtractedCode.needs_confirmation,
-# ultimately the physician. No thresholds are named here: they vary across the manual's
-# sections, and each candidate's own description states the one it's bound by.
-_AXIS_LABELS_FR = {
-    AXIS_PANEL_SIZE: "la taille de la clientèle inscrite du médecin",
-    AXIS_REGISTRATION: "le statut d'inscription du patient auprès de ce médecin (inscrit ou non)",
-    AXIS_VULNERABILITY: "le statut de vulnérabilité du patient au sens de la RAMQ",
-    AXIS_AGE_BAND: "l'âge exact du patient",
-}
 
 
 @dataclass(frozen=True)
@@ -172,7 +154,7 @@ def _assumed_facts_text(context: BillingContext) -> str | None:
 def _unresolved_axes_text(unresolved_axes: tuple[str, ...]) -> str | None:
     if not unresolved_axes:
         return None
-    lines = [f"- {_AXIS_LABELS_FR[axis]}" for axis in unresolved_axes if axis in _AXIS_LABELS_FR]
+    lines = [f"- {AXIS_LABELS_FR[axis]}" for axis in unresolved_axes if axis in AXIS_LABELS_FR]
     if not lines:
         return None
     return (

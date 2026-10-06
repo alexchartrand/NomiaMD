@@ -51,6 +51,25 @@ function serveBills(bills: Bill[] | (() => Bill[])) {
 const renderPage = () => renderWithProviders(<FacturationPage />);
 
 describe("claims tab", () => {
+  it("marks a claim billed without an encounter and offers to edit its draft", async () => {
+    serveClaims([
+      claimFor(1, "Jeanne Dupont", {
+        source_system: "manual",
+        codes: [makeClaimLine({ code: "00059", origin: "manual", confidence: null, explanation: "" })],
+      }),
+      claimFor(2, "Marc Roy"),
+    ]);
+    const { user } = renderPage();
+    const manualRow = (await screen.findByText(/Jeanne Dupont/)).closest("tr")!;
+    expect(within(manualRow).getByText("Sans rencontre")).toBeInTheDocument();
+    expect(within(manualRow).getByRole("link", { name: "Modifier" })).toHaveAttribute("href", "/app/facturer/1");
+    const encounterRow = screen.getByText("Marc Roy").closest("tr")!;
+    expect(within(encounterRow).queryByRole("link", { name: "Modifier" })).not.toBeInTheDocument();
+
+    await user.click(within(manualRow).getByRole("button", { name: "Détails" }));
+    expect(await screen.findByText("Ajouté manuellement")).toBeInTheDocument();
+  });
+
   it("lists the claims with date, codes, total and status", async () => {
     serveClaims([claimFor(1, "Jeanne Dupont"), claimFor(2, "Marc Roy", { status: "soumis", bill_id: 1, total_amount: null })]);
     renderPage();

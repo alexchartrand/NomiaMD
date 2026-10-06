@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { makeClaim, makeClaimLine, makeExtraction, makeFee, makeProposedCode } from "../../../test/factories";
+import { makeClaim, makeClaimLine, makeCodeDetail, makeCodeHit, makeExtraction, makeFee, makeProposedCode } from "../../../test/factories";
 import { server } from "../../../test/server";
 import type { BillingExtractionResponse, Claim } from "../../../api";
 import { useCodeReview } from "./useCodeReview";
@@ -278,5 +278,42 @@ describe("a new result", () => {
     await loaded(view);
     view.rerender({ result: null });
     await waitFor(() => expect(view.result.current.state.result).toBeNull());
+  });
+});
+
+describe("codes added from the search", () => {
+  const suture = makeCodeHit({ number: "00059", fees: [makeFee({ amount: 25 })] });
+
+  it("count toward the total, make the review savable, and are saved with the proposed ones", async () => {
+    const calls = captureClaims();
+    const view = setup();
+    await loaded(view);
+    act(() => view.result.current.addCode(suture));
+    expect(view.result.current.totalAmount).toBe(25);
+    expect(view.result.current.canSave).toBe(true);
+    act(() => view.result.current.toggleCode(0));
+    await act(() => view.result.current.save());
+    expect(calls[0].body).toEqual({
+      extraction_run_id: 42,
+      service_date: "2026-10-01",
+      selected_codes: [
+        { code: "00103", fee_index: 0 },
+        { code: "00059", fee_index: 0 },
+      ],
+    });
+  });
+
+  it("are re-read from the codes table when reopening a claim that has some", async () => {
+    server.use(http.get("/api/codes/:number", ({ params }) => HttpResponse.json(makeCodeDetail({ ...suture, number: String(params.number) }))));
+    const claim = makeClaim({
+      codes: [makeClaimLine({ code: "00103" }), makeClaimLine({ code: "00059", origin: "manual", fee_amount: 25 })],
+    });
+    const view = setup({ result, claim });
+    await waitFor(() => expect(view.result.current.state.manual.codes.map((c) => c.number)).toEqual(["00059"]));
+    expect(view.result.current.totalAmount).toBe(75);
+    // Restoring isn't a change: nothing new to save yet.
+    expect(view.result.current.canSave).toBe(false);
+    act(() => view.result.current.removeCode("00059"));
+    expect(view.result.current.canSave).toBe(true);
   });
 });

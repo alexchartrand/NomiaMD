@@ -301,6 +301,82 @@ async def test_hybrid_search_with_an_empty_filter_keeps_every_variant():
         assert sorted(row.number for row, _score in hits) == ["15801", "15802"]
 
 
+# -- manual search (ICodeCatalogRepository) -------------------------------------------------
+
+
+async def test_keyword_search_matches_description_without_a_vector():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [
+            _record("A", description="suture d'une plaie"),
+            _record("B", description="consultation de routine"),
+        ]
+        repository = await _async_repository(persist_dir, records)
+
+        hits = await repository.keyword_search("suture", k=5)
+
+        assert [row.number for row, _score in hits] == ["A"]
+        assert isinstance(hits[0][1], float)
+
+
+async def test_keyword_search_applies_the_eligibility_filter():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [
+            _record("under80", description="visite de suivi", max_age=79),
+            _record("80plus", description="visite de suivi", min_age=80),
+        ]
+        repository = await _async_repository(persist_dir, records)
+
+        hits = await repository.keyword_search("visite", k=5, eligibility=CodeEligibilityFilter(age=85))
+
+        assert [row.number for row, _score in hits] == ["80plus"]
+
+
+async def test_list_by_number_prefix_returns_matching_numbers_in_order_up_to_k():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [_record("15803"), _record("15801"), _record("15802"), _record("00059")]
+        repository = await _async_repository(persist_dir, records)
+
+        rows = await repository.list_by_number_prefix("158", k=2)
+
+        assert [r.number for r in rows] == ["15801", "15802"]
+
+
+async def test_list_by_number_prefix_applies_the_eligibility_filter():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [_record("15801", max_panel_size=499), _record("15802", min_panel_size=500)]
+        repository = await _async_repository(persist_dir, records)
+
+        rows = await repository.list_by_number_prefix("158", k=10, eligibility=CodeEligibilityFilter(panel_size=800))
+
+        assert [r.number for r in rows] == ["15802"]
+
+
+async def test_list_by_numbers_drops_ineligible_rows_when_filtered():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [_record("15801", requires_registered=True), _record("00059")]
+        repository = await _async_repository(persist_dir, records)
+
+        rows = await repository.list_by_numbers(
+            ["15801", "00059"], eligibility=CodeEligibilityFilter(is_registered=False)
+        )
+
+        assert [r.number for r in rows] == ["00059"]
+
+
+async def test_list_by_numbers_with_no_numbers_returns_nothing():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        repository = await _async_repository(persist_dir, [_record("A")])
+
+        assert await repository.list_by_numbers([]) == []
+
+
+async def test_current_revision_is_the_registry_rows_manual_rev():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        repository = await _async_repository(persist_dir, [_record("A")])
+
+        assert await repository.current_revision() == "2026-06-05"
+
+
 # -- code_versions registry -----------------------------------------------------------------
 
 

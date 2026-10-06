@@ -3,17 +3,15 @@ import {
   createClaim,
   describeError,
   DuplicateClaimError,
+  getCode,
   replaceClaim,
   type BillingExtractionResponse,
   type Claim,
-  type ExtractedFee,
+  type CodeHit,
 } from "../../../api";
 import { initialReviewState, reviewReducer } from "./reviewState";
-import { defaultLieu } from "./feeOptions";
-
-// A fee in "unités" is a count of anesthesia base units, not a price — it never adds to the
-// dollar total, and counts as a code without a dollar amount.
-const dollarAmount = (fee: ExtractedFee | null) => (fee?.unit === "dollars" ? fee.amount : null);
+import { defaultLieu, feeTotals } from "./feeOptions";
+import { manualCodesFromClaim, manualEntries, manualSelectedCodes } from "./manualCodes";
 
 export interface CodeReviewOptions {
   // Shown, never saved: already billed, an outdated version, or a confirmed duplicate.
@@ -36,9 +34,21 @@ export function useCodeReview(
 ) {
   const [state, dispatch] = useReducer(reviewReducer, initialReviewState);
 
-  // A review that can't be saved shows nothing ticked beyond its claim's codes.
+  // A review that can't be saved shows nothing ticked beyond its claim's codes. The codes the
+  // claim added by hand are re-read from the codes table for their fee options.
   useEffect(() => {
     dispatch(result ? { type: "extracted", result, claim, preselect: !readOnly } : { type: "cleared" });
+    const added = result ? (claim?.codes.filter((line) => line.origin === "manual") ?? []) : [];
+    if (added.length === 0) return;
+    let current = true;
+    Promise.allSettled(added.map((line) => getCode(line.code))).then((outcomes) => {
+      if (!current) return;
+      const hits = outcomes.flatMap((o): CodeHit[] => (o.status === "fulfilled" ? [o.value] : []));
+      dispatch({ type: "manual-codes-restored", manual: manualCodesFromClaim(hits, added) });
+    });
+    return () => {
+      current = false;
+    };
   }, [result, claim, readOnly]);
 
   const selectedEntries = useMemo(() => {
@@ -55,22 +65,22 @@ export function useCodeReview(
       });
   }, [state]);
 
-  const totalAmount = selectedEntries.reduce((sum, e) => sum + (dollarAmount(e.fee) ?? 0), 0);
-  const codesMissingFee = selectedEntries.filter((e) => dollarAmount(e.fee) == null).length;
-  const canSave =
-    !readOnly && Boolean(state.serviceDate) && state.selection.size > 0 && (claim === null || !state.pristine);
+  const addedEntries = useMemo(() => manualEntries(state.manual), [state.manual]);
+  const { totalAmount, codesMissingFee } = feeTotals([...selectedEntries, ...addedEntries].map((e) => e.fee));
+  const hasCodes = state.selection.size > 0 || state.manual.codes.length > 0;
+  const canSave = !readOnly && Boolean(state.serviceDate) && hasCodes && (claim === null || !state.pristine);
 
   // Resolves true once the claim is saved.
   async function save(overrideDuplicate = false): Promise<boolean> {
-    const { result, serviceDate, selection } = state;
-    if (!result || !serviceDate || selection.size === 0 || readOnly) return false;
+    const { result, serviceDate } = state;
+    if (!result || !serviceDate || !hasCodes || readOnly) return false;
     dispatch({ type: "save-started" });
     try {
       const selectedCodes = new Map(selectedEntries.map((e) => [e.code.code, { code: e.code.code, fee_index: e.feeIndex, lieu: e.lieu ?? undefined }]));
       const payload = {
         extraction_run_id: result.extraction_run_id,
         service_date: serviceDate,
-        selected_codes: [...selectedCodes.values()],
+        selected_codes: [...selectedCodes.values(), ...manualSelectedCodes(state.manual)],
       };
       await (claim ? replaceClaim(claim.id, payload, overrideDuplicate) : createClaim(payload, overrideDuplicate));
       dispatch({ type: "save-succeeded" });
@@ -100,6 +110,10 @@ export function useCodeReview(
     selectFee: (index: number, feeIndex: number, lieu: string | null = null) =>
       dispatch({ type: "fee-selected", index, feeIndex, lieu }),
     changeServiceDate: (date: string) => dispatch({ type: "service-date-changed", date }),
+    addCode: (hit: CodeHit) => dispatch({ type: "manual-code-added", hit }),
+    removeCode: (number: string) => dispatch({ type: "manual-code-removed", number }),
+    selectAddedFee: (number: string, feeIndex: number, lieu: string | null = null) =>
+      dispatch({ type: "manual-fee-selected", number, feeIndex, lieu }),
     totalAmount,
     codesMissingFee,
     canSave,

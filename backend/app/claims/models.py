@@ -6,6 +6,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, PlainSerializer
 
+from app.claims.origin import CodeOrigin
 from app.claims.status import ClaimStatus
 from app.ramq_codes import FeeUnit
 
@@ -39,13 +40,27 @@ class ClaimCreate(BaseModel):
 
     extraction_run_id: int
     service_date: date
+    # The run's suggestions the physician kept, plus any code they added from the code
+    # search — told apart server-side by whether the run offered it.
+    selected_codes: list[SelectedCode]
+
+
+class ManualClaimCreate(BaseModel):
+    """A claim billed without an encounter: no note, no extraction run — the physician names
+    the patient and picks every code from the code search. Each code is eligibility-checked
+    against that patient on service_date, and snapshotted from the current codes table."""
+
+    patient_id: int
+    service_date: date
     selected_codes: list[SelectedCode]
 
 
 class ClaimCodeOut(BaseModel):
     code: str
     description: str
-    confidence: ConfidenceLevel
+    origin: CodeOrigin
+    # None for a code the physician added by hand — it was never scored.
+    confidence: ConfidenceLevel | None
     explanation: str
     # Dollars only — a fee in units carries its count in fee_units instead.
     fee_amount: Money | None

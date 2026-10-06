@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source_document": "test fixture — not real RAMQ data",
-    "entry_count": 3
+    "entry_count": 7
   },
   "codes": [
     {
@@ -25,6 +25,46 @@
       "when_to_use": ["Première visite d'un patient non inscrit"],
       "rules": ["Ne peut être réclamé pour un patient déjà inscrit à la clinique"],
       "keywords": ["nouvelle inscription", "non inscrit", "première visite"]
+    },
+    {
+      "code": "15801",
+      "description": "Visite périodique d'un patient inscrit, clientèle de moins de 500 patients",
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous",
+      "when_to_use": ["Visite périodique d'un patient inscrit"],
+      "rules": [],
+      "fees": [
+        {"amount": 52.4, "amount_text": "52,40", "context": "En cabinet", "lieux": ["cabinet"], "majoration": null},
+        {"amount": 61.1, "amount_text": "61,10", "context": "À domicile", "lieux": ["domicile"], "majoration": null}
+      ],
+      "max_panel_size": 499,
+      "requires_registered": true
+    },
+    {
+      "code": "15802",
+      "description": "Visite périodique d'un patient inscrit, clientèle de 500 patients ou plus",
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous",
+      "when_to_use": ["Visite périodique d'un patient inscrit"],
+      "rules": [],
+      "fees": [{"amount": 48.75, "amount_text": "48,75", "context": null, "lieux": [], "majoration": null}],
+      "min_panel_size": 500,
+      "requires_registered": true
+    },
+    {
+      "code": "00059",
+      "description": "Suture d'une plaie simple",
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Peau",
+      "when_to_use": [],
+      "rules": ["Une seule fois par plaie"],
+      "fees": [{"amount": 25.0, "amount_text": "25,00", "context": null, "lieux": [], "majoration": null}]
+    },
+    {
+      "code": "09090",
+      "description": "Visite d'un enfant de moins de 18 ans",
+      "header_path": "B — Consultation, examen et visite > Visites pédiatriques",
+      "when_to_use": [],
+      "rules": [],
+      "fees": [{"amount": 40.0, "amount_text": "40,00", "context": null, "lieux": [], "majoration": null}],
+      "max_age": 17
     }
   ]
 }

@@ -14,6 +14,8 @@ import AddNotesPage from "./pages/app/AddNotesPage";
 import ChatbotPage from "./pages/app/ChatbotPage";
 import PatientsPage from "./pages/app/PatientsPage";
 import FacturationPage from "./pages/app/FacturationPage";
+import FacturerPage from "./pages/app/FacturerPage";
+import CodesPage from "./pages/app/CodesPage";
 import ProfilePage from "./pages/app/ProfilePage";
 import { RequireAuth } from "./AuthContext";
 
@@ -43,6 +45,9 @@ export default function AppRouter() {
         <Route path="chat" element={<ChatbotPage />} />
         <Route path="patients" element={<PatientsPage />} />
         <Route path="facturation" element={<FacturationPage />} />
+        <Route path="facturer" element={<FacturerPage />} />
+        <Route path="facturer/:claimId" element={<FacturerPage />} />
+        <Route path="codes" element={<CodesPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>

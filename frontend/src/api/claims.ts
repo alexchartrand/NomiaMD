@@ -7,10 +7,20 @@ import type { ConfidenceLevel, ExtractedFee } from "./extraction";
 export const CLAIM_STATUSES = ["brouillon", "soumis"] as const;
 export type ClaimStatus = (typeof CLAIM_STATUSES)[number];
 
+// Kept in sync by hand with backend/app/claims/origin.py's CodeOrigin: "suggested" — offered by
+// the claim's extraction; "manual" — added by the physician from the code search.
+export type CodeOrigin = "suggested" | "manual";
+
+// Kept in sync with MANUAL_SOURCE_SYSTEM there: the source_system of a claim billed without an
+// encounter (no note).
+export const MANUAL_SOURCE_SYSTEM = "manual";
+
 export interface ClaimCodeLine {
   code: string;
   description: string;
-  confidence: ConfidenceLevel;
+  origin: CodeOrigin;
+  // Null for a code added by hand — it was never scored.
+  confidence: ConfidenceLevel | null;
   explanation: string;
   // Dollars only — a fee in "unités" carries its count in fee_units and no fee_amount.
   fee_amount: number | null;
@@ -47,9 +57,17 @@ export interface SelectedCode {
 }
 
 // No patient or source: both come from the extraction run server-side, since its codes were
-// eligibility-filtered for that run's patient.
+// eligibility-filtered for that run's patient. `selected_codes` may hold codes the run didn't
+// suggest: the server snapshots those from the codes table, eligibility-checked.
 export interface ClaimInput {
   extraction_run_id: number;
+  service_date: string;
+  selected_codes: SelectedCode[];
+}
+
+// A claim billed without an encounter: every code picked from the code search.
+export interface ManualClaimInput {
+  patient_id: number;
   service_date: string;
   selected_codes: SelectedCode[];
 }
@@ -97,6 +115,30 @@ async function sendClaim(url: string, method: "POST" | "PUT", payload: ClaimInpu
   }
 
   return unwrap<Claim>(response);
+}
+
+export async function createManualClaim(payload: ManualClaimInput): Promise<Claim> {
+  return sendManualClaim("/api/claims/manual", "POST", payload);
+}
+
+// Same void-and-recreate as replaceClaim, for a draft billed without an encounter.
+export async function replaceManualClaim(id: number, payload: ManualClaimInput): Promise<Claim> {
+  return sendManualClaim(`/api/claims/manual/${id}`, "PUT", payload);
+}
+
+async function sendManualClaim(url: string, method: "POST" | "PUT", payload: ManualClaimInput): Promise<Claim> {
+  return unwrap<Claim>(
+    await fetch(url, {
+      method,
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }),
+  );
+}
+
+export async function getClaim(id: number): Promise<Claim> {
+  return unwrap<Claim>(await fetch(`/api/claims/${id}`, { credentials: "same-origin" }));
 }
 
 export async function listClaims(filters: ClaimFilters = {}): Promise<Claim[]> {

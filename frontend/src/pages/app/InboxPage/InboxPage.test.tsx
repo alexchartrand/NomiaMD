@@ -282,7 +282,7 @@ describe("row actions", () => {
     await user.click(await screen.findByRole("button", { name: "Associer un patient" }));
     expect(screen.getByRole("button", { name: "Associer" })).toBeDisabled();
     await user.type(screen.getByPlaceholderText("Nom ou NAM du patient..."), "Dupont");
-    await user.click(await screen.findByRole("button", { name: /Jeanne Dupont/ }));
+    await user.click(await screen.findByRole("option", { name: /Jeanne Dupont/ }));
     await user.click(screen.getByRole("button", { name: "Associer" }));
     await waitFor(() => expect(body).toEqual({ patient_id: 42 }));
     expect(await screen.findByRole("button", { name: "Réviser" })).toBeInTheDocument();

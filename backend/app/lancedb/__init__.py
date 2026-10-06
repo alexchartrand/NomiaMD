@@ -15,6 +15,7 @@ from app.lancedb.repository import (
     CodeRepository,
     CodeRowLookupError,
     DocumentRepository,
+    ICodeCatalogRepository,
     ICodeRepository,
     IDocumentRepository,
 )
@@ -28,6 +29,7 @@ __all__ = [
     "CodeEligibilityWhereBuilder",
     "CodeRepository",
     "CodeRowLookupError",
+    "ICodeCatalogRepository",
     "ICodeRepository",
     "DocumentRepository",
     "IDocumentRepository",

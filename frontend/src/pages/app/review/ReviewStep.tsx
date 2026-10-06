@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import { Banner, Card, CardContent, CardHeader, CardTitle, TextField } from "../../../components";
 import type { BillingExtractionResponse } from "../../../api";
 import { useMediaQuery } from "../../../lib/useMediaQuery";
+import { AddedCodes } from "./AddedCodes";
 import { CodesReview } from "./CodesReview";
+import { manualEntries } from "./manualCodes";
 import { NotePanel } from "./NotePanel";
 import { SaveSummary } from "./SaveSummary";
 import { locateQuote } from "./quoteLocator";
@@ -14,6 +16,8 @@ const SIDE_BY_SIDE = "(min-width: 1400px)";
 interface ReviewStepProps {
   result: BillingExtractionResponse;
   noteText: string;
+  // The encounter's patient: codes added from the search are the ones they may be billed.
+  patientId: number;
   review: CodeReview;
   // Set when there's a next encounter in the list this one was opened from.
   onSaveAndNext?: () => void;
@@ -21,7 +25,7 @@ interface ReviewStepProps {
 }
 
 // The proposed codes to tick, beside the note they were read from.
-export function ReviewStep({ result, noteText, review, onSaveAndNext, onNext }: ReviewStepProps) {
+export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext, onNext }: ReviewStepProps) {
   const { state } = review;
   const docked = useMediaQuery(SIDE_BY_SIDE);
   const codes = result.billing.result.codes;
@@ -76,6 +80,18 @@ export function ReviewStep({ result, noteText, review, onSaveAndNext, onNext }: 
             lieuSelection={state.lieuSelection}
             onFeeSelected={review.selectFee}
             onCodeFocused={setFocused}
+            disabled={review.readOnly}
+          />
+
+          <AddedCodes
+            entries={manualEntries(state.manual)}
+            onAdd={review.addCode}
+            onRemove={review.removeCode}
+            onFeeSelected={review.selectAddedFee}
+            patientId={patientId}
+            serviceDate={state.serviceDate || null}
+            excludeNumbers={codes.filter((_, i) => state.selection.has(i)).map((c) => c.code)}
+            searchLabel="Ajouter un code non proposé"
             disabled={review.readOnly}
           />
 
