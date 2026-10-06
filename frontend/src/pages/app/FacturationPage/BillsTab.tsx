@@ -1,4 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
+import { ChevronDown, Download, FileText, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   billPdfUrl,
   deleteBill,
@@ -8,9 +10,21 @@ import {
   type Bill,
   type BillDetail,
 } from "../../../api";
-import { Banner, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import {
+  Banner,
+  Button,
+  CodeChips,
+  EmptyState,
+  RowActions,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  useConfirm,
+} from "../../../components";
 import { formatDate } from "../../../utils/date";
 import { formatMoney } from "../../../utils/money";
 
@@ -20,6 +34,7 @@ interface BillsTabProps {
 }
 
 export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
+  const { confirm, dialog } = useConfirm();
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
@@ -58,12 +73,13 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
   }
 
   async function handleDelete(bill: Bill) {
-    if (
-      !window.confirm(
-        `Supprimer la facture ${bill.number} ? Les ${bill.claim_count} réclamation(s) qu'elle contient redeviendront des brouillons.`,
-      )
-    )
-      return;
+    const confirmed = await confirm({
+      title: `Supprimer la facture ${bill.number} ?`,
+      message: `Les ${bill.claim_count} réclamation(s) qu'elle contient redeviendront des brouillons.`,
+      confirmLabel: "Supprimer",
+      tone: "danger",
+    });
+    if (!confirmed) return;
     setDeleteError(null);
     try {
       await deleteBill(bill.id);
@@ -78,80 +94,120 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
     }
   }
 
-  if (loading) return <p className="text-sm text-muted-foreground">Chargement...</p>;
+  if (loading) {
+    return (
+      <div aria-busy="true" aria-label="Chargement des factures" className="flex flex-col gap-2">
+        {[0, 1, 2].map((i) => (
+          <Skeleton key={i} className="h-12 rounded-lg" />
+        ))}
+      </div>
+    );
+  }
   if (listError) return <Banner tone="error">{listError}</Banner>;
-  if (bills.length === 0) return <p>Aucune facture générée.</p>;
+  if (bills.length === 0) {
+    return (
+      <>
+        {dialog}
+        <EmptyState
+          icon={FileText}
+          title="Aucune facture générée."
+          description="Regroupez vos réclamations en brouillon dans une facture, à télécharger en PDF."
+        />
+      </>
+    );
+  }
 
   return (
     <>
-      {deleteError && <Banner tone="error">{deleteError}</Banner>}
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Numéro</TableHead>
-            <TableHead>Période</TableHead>
-            <TableHead>Générée le</TableHead>
-            <TableHead>Facturations</TableHead>
-            <TableHead>Total</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {bills.map((bill) => (
-            <Fragment key={bill.id}>
-              <TableRow>
-                <TableCell>{bill.number}</TableCell>
-                <TableCell>
-                  {formatDate(bill.start_date)} – {formatDate(bill.end_date)}
-                </TableCell>
-                <TableCell>{formatDate(bill.generated_at.slice(0, 10))}</TableCell>
-                <TableCell>
-                  {bill.claim_count}{" "}
-                  <Button type="button" variant="link" onClick={() => toggleExpand(bill)}>
-                    Détails
-                  </Button>
-                </TableCell>
-                <TableCell>{bill.total_amount != null ? formatMoney(bill.total_amount) : "—"}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <a
-                      className={cn(buttonVariants({ variant: "secondary" }), "border-border")}
-                      href={billPdfUrl(bill.id)}
-                      download
-                    >
-                      Télécharger le PDF
-                    </a>
-                    <Button type="button" variant="danger" onClick={() => handleDelete(bill)}>
-                      Supprimer
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-              {expandedId === bill.id && (
-                <TableRow className="bg-[color:var(--color-primary-tint)] hover:bg-[color:var(--color-primary-tint)]">
-                  <TableCell colSpan={6}>
-                    {detailError && <Banner tone="error">{detailError}</Banner>}
-                    {!detailError && !expandedDetail && (
-                      <p className="text-sm text-muted-foreground">Chargement...</p>
-                    )}
-                    {expandedDetail && (
-                      <ul className="m-0 space-y-2 pl-5">
-                        {expandedDetail.claims.map((c) => (
-                          <li key={c.id}>
-                            {formatDate(c.service_date)} — {c.patient_full_name} —{" "}
-                            {c.codes.map((code) => code.code).join(", ")}
-                            {c.total_amount != null && ` — ${formatMoney(c.total_amount)}`}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </TableCell>
-                </TableRow>
-              )}
-            </Fragment>
-          ))}
-        </TableBody>
-      </Table>
+      {dialog}
+      {deleteError && <Banner tone="error" className="mb-4">{deleteError}</Banner>}
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <Table>
+          <TableHeader className="bg-muted/40">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-10 pl-3" aria-label="Détails" />
+              <TableHead>Numéro</TableHead>
+              <TableHead>Période</TableHead>
+              <TableHead>Générée le</TableHead>
+              <TableHead className="text-right">Réclamations</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead className="w-0" aria-label="Actions" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {bills.map((bill) => {
+              const expanded = expandedId === bill.id;
+              return (
+                <Fragment key={bill.id}>
+                  <TableRow
+                    className="cursor-pointer"
+                    onClick={(event) => {
+                      if (!(event.target as HTMLElement).closest("button, a, [role=menuitem]")) void toggleExpand(bill);
+                    }}
+                  >
+                    <TableCell className="pl-3">
+                      <button
+                        type="button"
+                        aria-label="Détails"
+                        aria-expanded={expanded}
+                        onClick={() => void toggleExpand(bill)}
+                        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <ChevronDown aria-hidden className={cn("size-4 transition-transform", expanded && "rotate-180")} />
+                      </button>
+                    </TableCell>
+                    <TableCell className="font-mono font-semibold">{bill.number}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {formatDate(bill.start_date)} – {formatDate(bill.end_date)}
+                    </TableCell>
+                    <TableCell className="tabular-nums">{formatDate(bill.generated_at.slice(0, 10))}</TableCell>
+                    <TableCell className="text-right tabular-nums">{bill.claim_count}</TableCell>
+                    <TableCell className="text-right font-semibold tabular-nums">
+                      {bill.total_amount != null ? formatMoney(bill.total_amount) : "—"}
+                    </TableCell>
+                    <TableCell className="pr-3">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button asChild variant="secondary">
+                          <a href={billPdfUrl(bill.id)} download aria-label="Télécharger le PDF">
+                            <Download aria-hidden />
+                            PDF
+                          </a>
+                        </Button>
+                        <RowActions
+                          label={`Actions — facture ${bill.number}`}
+                          actions={[{ label: "Supprimer", icon: Trash2, danger: true, onSelect: () => handleDelete(bill) }]}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  {expanded && (
+                    <TableRow className="bg-muted/30 hover:bg-muted/30">
+                      <TableCell colSpan={7} className="px-6 py-3 whitespace-normal">
+                        {detailError && <Banner tone="error">{detailError}</Banner>}
+                        {!detailError && !expandedDetail && <Skeleton className="h-16 rounded-lg" />}
+                        {expandedDetail && (
+                          <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+                            {expandedDetail.claims.map((c) => (
+                              <li key={c.id} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                <span className="w-24 tabular-nums text-muted-foreground">{formatDate(c.service_date)}</span>
+                                <span className="min-w-40 font-semibold">{c.patient_full_name}</span>
+                                <CodeChips codes={c.codes.map((code) => code.code)} />
+                                {c.total_amount != null && (
+                                  <span className="ml-auto font-semibold tabular-nums">{formatMoney(c.total_amount)}</span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </Fragment>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
 }

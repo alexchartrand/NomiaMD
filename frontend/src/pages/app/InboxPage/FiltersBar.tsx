@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 import { Search, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { EncounterPeriod } from "../../../api";
-import { Button, Select, TextField } from "../../../components";
+import { Button, SegmentedControl, Select, TextField } from "../../../components";
 import { sourceLabel } from "../../../utils/sources";
 import type { RowFilters } from "./filters";
 import { PRESETS, presetOf, type PresetId } from "./periods";
@@ -38,25 +37,12 @@ export function FiltersBar({ period, onPeriodChange, onPresetChange, filters, on
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div role="group" aria-label="Période" className="inline-flex flex-wrap rounded-lg bg-muted p-0.5">
-          {PRESETS.map((preset) => {
-            const active = activePreset === preset.id;
-            return (
-              <button
-                key={preset.id}
-                type="button"
-                aria-pressed={active}
-                className={cn(
-                  "cursor-pointer rounded-md border-none bg-transparent px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
-                  active && "bg-card text-primary shadow-sm hover:text-primary",
-                )}
-                onClick={() => onPresetChange(preset.id)}
-              >
-                {preset.label}
-              </button>
-            );
-          })}
-        </div>
+        <SegmentedControl<PresetId>
+          ariaLabel="Période"
+          segments={PRESETS}
+          value={activePreset}
+          onChange={onPresetChange}
+        />
         <div className="flex flex-wrap items-center gap-2">
           <FilterField htmlFor="period-from" label="Du">
             <TextField
