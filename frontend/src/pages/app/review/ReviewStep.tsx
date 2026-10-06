@@ -26,15 +26,13 @@ export function ReviewStep({ result, noteText, review, onSaveAndNext, onNext }: 
   const docked = useMediaQuery(SIDE_BY_SIDE);
   const codes = result.billing.result.codes;
   const quotes = useMemo(() => codes.map((c) => locateQuote(noteText, c.supporting_quote)), [codes, noteText]);
-  // The code whose quote is marked in the note: the last one hovered, focused or asked for.
+  // The code whose supporting quote is marked in the note: the last one hovered or focused.
   const [focused, setFocused] = useState<number | null>(null);
-  const [reveal, setReveal] = useState(0);
 
   const note = (
     <NotePanel
       text={noteText}
       highlight={focused !== null ? quotes[focused] : null}
-      reveal={reveal}
       docked={docked}
     />
   );
@@ -77,12 +75,7 @@ export function ReviewStep({ result, noteText, review, onSaveAndNext, onNext }: 
             feeSelection={state.feeSelection}
             lieuSelection={state.lieuSelection}
             onFeeSelected={review.selectFee}
-            quoteInNote={quotes.map((q) => q !== null)}
             onCodeFocused={setFocused}
-            onShowQuote={(i) => {
-              setFocused(i);
-              setReveal((n) => n + 1);
-            }}
             disabled={review.readOnly}
           />
 

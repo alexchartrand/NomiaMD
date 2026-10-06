@@ -5,9 +5,6 @@ interface NotePanelProps {
   text: string;
   // The part of the note to mark: the supporting quote of the code being looked at.
   highlight?: QuoteRange | null;
-  // Bumped each time the physician asks to see the highlight: opens the note and brings it
-  // into view.
-  reveal?: number;
   // Beside the review on a wide screen: always open, scrolling on its own. Otherwise a
   // collapsible section under it.
   docked?: boolean;
@@ -15,7 +12,7 @@ interface NotePanelProps {
 }
 
 // The note as it was received, with the quote behind a proposed code marked in it.
-export function NotePanel({ text, highlight = null, reveal = 0, docked = false, defaultOpen = false }: NotePanelProps) {
+export function NotePanel({ text, highlight = null, docked = false, defaultOpen = false }: NotePanelProps) {
   const [open, setOpen] = useState(defaultOpen);
   const scroller = useRef<HTMLDivElement>(null);
   const mark = useRef<HTMLElement>(null);
@@ -29,13 +26,6 @@ export function NotePanel({ text, highlight = null, reveal = 0, docked = false, 
     const visible = top >= box.scrollTop && top + marked.offsetHeight <= box.scrollTop + box.clientHeight;
     if (!visible) box.scrollTo?.({ top: Math.max(0, top - box.clientHeight / 3), behavior: "smooth" });
   }, [docked, highlight]);
-
-  useEffect(() => {
-    if (reveal === 0 || docked) return;
-    setOpen(true);
-    // Once the section has opened.
-    requestAnimationFrame(() => mark.current?.scrollIntoView?.({ block: "center", behavior: "smooth" }));
-  }, [reveal, docked]);
 
   const body = (
     <pre className="m-0 font-mono text-sm whitespace-pre-wrap">

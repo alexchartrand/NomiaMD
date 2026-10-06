@@ -119,20 +119,21 @@ describe("reviewing the proposed codes", () => {
     expect(checkbox("00200")).toBeChecked();
   });
 
-  it("shows a code's supporting quote and marks it in the note", async () => {
-    const quoted = makeProposedCode({ code: "00103", supporting_quote: "« toux depuis trois jours »" });
-    const unquoted = makeProposedCode({ code: "15145", supporting_quote: "Résumé : patient vu pour une toux" });
+  it("marks a hovered code's supporting quote in the note, without showing it on the card", async () => {
+    const quoted = makeProposedCode({ code: "00103", description: "Visite", supporting_quote: "« toux depuis trois jours »" });
+    const unquoted = makeProposedCode({ code: "15145", description: "Autre visite", supporting_quote: "Résumé : patient vu pour une toux" });
     serveEncounter(
       makeEncounterDetail({ id: 5, note_text: "Motif : toux depuis trois jours.", extraction: makeExtraction([quoted, unquoted]) }),
     );
     const { user } = renderEncounter();
-    expect(await screen.findByText(/toux depuis trois jours »/)).toBeInTheDocument();
-    // Only a quote found in the note can be shown there.
-    expect(screen.getAllByRole("button", { name: "Voir dans la note" })).toHaveLength(1);
-    await user.click(screen.getByRole("button", { name: "Voir dans la note" }));
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByText(/«/)).not.toBeInTheDocument();
     const note = screen.getByText("Note reçue").closest("details")!;
-    expect(note).toHaveAttribute("open");
+    await user.hover(screen.getByText("Visite"));
     expect(note.querySelector("mark")).toHaveTextContent("toux depuis trois jours");
+    // A quote that isn't in the note (it came from the summary) marks nothing.
+    await user.hover(screen.getByText("Autre visite"));
+    expect(note.querySelector("mark")).toBeNull();
   });
 
   it("totals the ticked codes at their chosen fee and leaves out a fee in units", async () => {

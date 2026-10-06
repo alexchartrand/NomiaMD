@@ -44,12 +44,8 @@ interface CodesReviewProps {
   feeSelection: Map<number, number>;
   lieuSelection: Map<number, string>;
   onFeeSelected: (index: number, feeIndex: number, lieu: string | null) => void;
-  // Per code index: whether its supporting quote was found in the note.
-  quoteInNote?: boolean[];
-  // The physician is looking at a code (hover or focus): its quote gets marked in the note.
+  // The physician is looking at a code (hover or focus): its supporting quote gets marked in the note.
   onCodeFocused?: (index: number) => void;
-  // The physician asked to see a code's quote in the note.
-  onShowQuote?: (index: number) => void;
   // Shown, not editable.
   disabled?: boolean;
 }
@@ -61,9 +57,7 @@ export function CodesReview({
   feeSelection,
   lieuSelection,
   onFeeSelected,
-  quoteInNote = [],
   onCodeFocused,
-  onShowQuote,
   disabled = false,
 }: CodesReviewProps) {
   if (codes.length === 0) {
@@ -184,23 +178,6 @@ export function CodesReview({
 
           {c.explanation && (
             <p className="m-0 text-[0.92rem] text-muted-foreground">{c.explanation}</p>
-          )}
-
-          {c.supporting_quote && (
-            <figure className="m-0 flex flex-col items-start gap-1 border-l-2 border-border pl-3">
-              <blockquote className="m-0 text-[0.9rem] italic">
-                &laquo;&nbsp;{c.supporting_quote}&nbsp;&raquo;
-              </blockquote>
-              {quoteInNote[i] && onShowQuote && (
-                <button
-                  type="button"
-                  onClick={() => onShowQuote(i)}
-                  className="cursor-pointer border-none bg-transparent p-0 text-[0.85rem] text-primary underline-offset-2 hover:underline"
-                >
-                  Voir dans la note
-                </button>
-              )}
-            </figure>
           )}
 
           {c.needs_confirmation.length > 0 && (
