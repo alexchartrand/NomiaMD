@@ -125,6 +125,18 @@ Setup (once): `EPIC_SANDBOX_ENABLED=true` and the `EPIC_SANDBOX_*` credentials i
 the root `.env`, a freshly seeded DB (`scripts/seed_db.py` creates the two sandbox patients),
 then `make dev-fake` (or `make dev` for real codes).
 
+Key pair, if there isn't one yet (from `backend/`). Keep the private key outside the repo;
+commit the public half and deploy prod, which serves it at the JWK Set URL. The assertion's
+`kid` is derived from the key, so there's nothing else to configure:
+
+```bash
+openssl genrsa -out ~/.config/nomiamd/epic-sandbox/privatekey.pem 2048
+openssl pkey -in ~/.config/nomiamd/epic-sandbox/privatekey.pem -pubout -out app/jwks/public_keys/epic-sandbox.pem
+```
+
+Which patients are imported: `app/intake/connectors/epic_fhir/sandbox_patients.json`, written
+by `scripts/epic_sandbox_inventory.py --write` (then re-run `scripts/seed_db.py`).
+
 1. **Ajouter manuellement → "Epic — démo (sandbox)" → Importer les notes.** The import reads
    the 7 notes from fhir.epic.com and lands on the inbox, filtered to `epic_sandbox` over
    all dates (the notes date from 2006–2023, which the default period would hide). Every
