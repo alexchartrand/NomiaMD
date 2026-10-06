@@ -59,14 +59,15 @@ test.describe.serial("journeys", () => {
     await expect(row).toHaveCount(1);
     await row.getByRole("button", { name: "Associer un patient" }).click();
     await page.getByPlaceholder("Nom ou NAM du patient...").fill("Desjardins");
-    await page.getByRole("button", { name: /Desjardins/ }).click();
+    await page.getByRole("option", { name: /Desjardins/ }).click();
     await page.getByRole("button", { name: "Associer", exact: true }).click();
     await expect(page.getByRole("row").filter({ hasText: "À associer" })).toHaveCount(0);
 
     // Picking the patient queues the extraction: the pasted note, grouped under its batch
     // label, ends up ready for review.
     await page.getByRole("textbox", { name: "Patient" }).fill("Roch");
-    const batch = page.getByRole("heading", { name: "e2e" }).locator("xpath=..");
+    // The batch is its own table body inside the day's card, under its label.
+    const batch = page.locator("tbody").filter({ has: page.getByRole("heading", { name: "e2e" }) });
     await expect(batch.getByText("Prêt", { exact: true })).toBeVisible();
     await expect(batch.getByRole("button", { name: "Réviser" })).toBeVisible();
   });
@@ -76,15 +77,14 @@ test.describe.serial("journeys", () => {
     await page.getByRole("navigation").getByRole("link", { name: "Facturation" }).click();
     await page.getByRole("button", { name: "Créer une facture" }).click();
 
+    // Every draft, over the period that covers them, comes ticked.
     const dialog = page.getByRole("dialog");
-    await dialog.getByLabel("Du").fill("2000-01-01");
-    await dialog.getByLabel("Au").fill("2100-01-01");
-    await dialog.getByRole("button", { name: "Rechercher" }).click();
-    await dialog.getByRole("checkbox", { name: "Tout sélectionner" }).check();
+    await expect(dialog.getByRole("checkbox", { name: "Tout sélectionner" })).toBeChecked();
     await dialog.getByRole("button", { name: "Générer la facture" }).click();
     await expect(dialog).toBeHidden();
 
-    await page.getByRole("button", { name: "Factures générées" }).click();
+    // …and the page moved to the generated bills.
+    await expect(page.getByRole("tab", { name: "Factures générées" })).toHaveAttribute("aria-selected", "true");
     const pdf = page.getByRole("link", { name: "Télécharger le PDF" }).first();
     await expect(pdf).toBeVisible();
 
