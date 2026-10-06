@@ -16,12 +16,15 @@ interface Props {
   readOnly?: boolean;
   claim?: Claim | null;
   onSaved?: () => void;
+  confirmDuplicate?: (message: string) => Promise<boolean>;
 }
 
 function setup(initial: Props = { result }) {
-  return renderHook((props: Props) => useCodeReview(props.result, props.readOnly, props.claim ?? null, props.onSaved), {
-    initialProps: initial,
-  });
+  return renderHook(
+    ({ result, confirmDuplicate = async () => false, ...options }: Props) =>
+      useCodeReview(result, { ...options, confirmDuplicate }),
+    { initialProps: initial },
+  );
 }
 
 // Waits for the "extracted" dispatch from the effect to land.
@@ -185,20 +188,19 @@ describe("duplicate claim", () => {
         return flag === "true" ? HttpResponse.json(makeClaim()) : HttpResponse.json(duplicate, { status: 409 });
       }),
     );
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
-    const view = setup();
+    const confirm = vi.fn(async () => true);
+    const view = setup({ result, confirmDuplicate: confirm });
     await loaded(view);
     act(() => view.result.current.toggleCode(0));
     await act(() => view.result.current.save());
-    expect(confirm).toHaveBeenCalledWith("Déjà facturé. Enregistrer quand même ?");
+    expect(confirm).toHaveBeenCalledWith("Déjà facturé.");
     expect(flags).toEqual(["false", "true"]);
     expect(view.result.current.state.saved).toBe(true);
   });
 
   it("stops without an error when the physician declines", async () => {
     server.use(http.post("/api/claims", () => HttpResponse.json(duplicate, { status: 409 })));
-    vi.spyOn(window, "confirm").mockReturnValue(false);
-    const view = setup();
+    const view = setup({ result, confirmDuplicate: async () => false });
     await loaded(view);
     act(() => view.result.current.toggleCode(0));
     await act(() => view.result.current.save());
@@ -213,8 +215,8 @@ describe("duplicate claim", () => {
         return HttpResponse.json(duplicate, { status: 409 });
       }),
     );
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
-    const view = setup();
+    const confirm = vi.fn(async () => true);
+    const view = setup({ result, confirmDuplicate: confirm });
     await loaded(view);
     act(() => view.result.current.toggleCode(0));
     await act(() => view.result.current.save());

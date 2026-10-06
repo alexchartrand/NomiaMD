@@ -15,16 +15,24 @@ import { defaultLieu } from "./feeOptions";
 // dollar total, and counts as a code without a dollar amount.
 const dollarAmount = (fee: ExtractedFee | null) => (fee?.unit === "dollars" ? fee.amount : null);
 
+export interface CodeReviewOptions {
+  // Shown, never saved: already billed, an outdated version, or a confirmed duplicate.
+  readOnly?: boolean;
+  // The one already saved from this encounter, whose codes, fees and date start selected;
+  // saving replaces it.
+  claim?: Claim | null;
+  // Called once the claim is saved.
+  onSaved?: () => void;
+  // Asked when the server finds a claim for the same patient and day: the server's message
+  // in, whether to save anyway out.
+  confirmDuplicate: (message: string) => Promise<boolean>;
+}
+
 // One extraction's review, from the codes the physician ticks to the saved claim. A new
 // `result` (another encounter, a re-run) resets everything derived from the previous one.
-// `readOnly`: shown, never saved — already billed, an outdated version, or a confirmed duplicate.
-// `claim`: the one already saved from this encounter, whose codes, fees and date start
-// selected; saving replaces it. `onSaved`: called once the claim is saved.
 export function useCodeReview(
   result: BillingExtractionResponse | null,
-  readOnly = false,
-  claim: Claim | null = null,
-  onSaved?: () => void,
+  { readOnly = false, claim = null, onSaved, confirmDuplicate }: CodeReviewOptions,
 ) {
   const [state, dispatch] = useReducer(reviewReducer, initialReviewState);
 
@@ -53,7 +61,7 @@ export function useCodeReview(
     !readOnly && Boolean(state.serviceDate) && state.selection.size > 0 && (claim === null || !state.pristine);
 
   // Resolves true once the claim is saved.
-  async function save(confirmDuplicate = false): Promise<boolean> {
+  async function save(overrideDuplicate = false): Promise<boolean> {
     const { result, serviceDate, selection } = state;
     if (!result || !serviceDate || selection.size === 0 || readOnly) return false;
     dispatch({ type: "save-started" });
@@ -64,17 +72,17 @@ export function useCodeReview(
         service_date: serviceDate,
         selected_codes: [...selectedCodes.values()],
       };
-      await (claim ? replaceClaim(claim.id, payload, confirmDuplicate) : createClaim(payload, confirmDuplicate));
+      await (claim ? replaceClaim(claim.id, payload, overrideDuplicate) : createClaim(payload, overrideDuplicate));
       dispatch({ type: "save-succeeded" });
       onSaved?.();
       return true;
     } catch (err) {
       // Only offer the confirm-and-retry dance on the first attempt: re-submitting the
       // exact same extraction (as opposed to the same patient/date via a different one) is
-      // never overridable server-side, so retrying with confirmDuplicate=true would 409
+      // never overridable server-side, so retrying with confirm_duplicate=true would 409
       // again forever. Surfacing it as a plain error here breaks that loop.
-      if (err instanceof DuplicateClaimError && !confirmDuplicate) {
-        if (window.confirm(`${err.message} Enregistrer quand même ?`)) return save(true);
+      if (err instanceof DuplicateClaimError && !overrideDuplicate) {
+        if (await confirmDuplicate(err.message)) return save(true);
         dispatch({ type: "save-cancelled" });
         return false;
       }

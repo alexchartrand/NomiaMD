@@ -37,6 +37,13 @@ function singleFeeDetails(fee: ExtractedFee): string {
   return [fee.lieux[0], feeDetails(fee)].filter(Boolean).join(" — ");
 }
 
+// What the picked option's label doesn't already say about its fee (role, context,
+// majoration): a label only carries them when they're needed to tell options apart.
+function pickedFeeDetails(fee: ExtractedFee, label: string): string {
+  const details = feeDetails(fee);
+  return details && !label.includes(details) ? details : "";
+}
+
 interface CodesReviewProps {
   codes: ExtractedCode[];
   selection: Set<number>;
@@ -84,6 +91,8 @@ export function CodesReview({
     const lieu = c.fees[feeIndex]
       ? (lieuSelection.get(i) ?? defaultLieu(c.fees[feeIndex]))
       : null;
+    const picked = options.find((o) => o.feeIndex === feeIndex && o.lieu === lieu);
+    const pickedDetails = picked ? pickedFeeDetails(c.fees[feeIndex], picked.label) : "";
     return (
       <li
         key={i}
@@ -139,11 +148,11 @@ export function CodesReview({
                   value={optionValue(feeIndex, lieu)}
                   disabled={disabled}
                   onChange={(event) => {
-                    const picked = options.find(
+                    const chosen = options.find(
                       (o) =>
                         optionValue(o.feeIndex, o.lieu) === event.target.value,
                     );
-                    if (picked) onFeeSelected(i, picked.feeIndex, picked.lieu);
+                    if (chosen) onFeeSelected(i, chosen.feeIndex, chosen.lieu);
                   }}
                   aria-label={`Tarif pour le code ${c.code}`}
                 >
@@ -159,6 +168,11 @@ export function CodesReview({
                 <span className="font-heading font-bold whitespace-nowrap">
                   {formatAmount(c.fees[feeIndex])}
                 </span>
+                {pickedDetails && (
+                  <span className="min-w-0 text-[0.85rem] text-muted-foreground">
+                    {pickedDetails}
+                  </span>
+                )}
               </>
             ) : c.fees.length === 1 ? (
               <>

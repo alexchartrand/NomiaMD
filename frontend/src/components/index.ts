@@ -15,6 +15,7 @@ export { Select } from "./Select";
 export { PatientSearchSelect } from "./PatientSearchSelect";
 export { Banner } from "./Banner";
 export { Modal } from "./Modal";
+export { ConfirmDialog, useConfirm, type ConfirmOptions } from "./ConfirmDialog";
 export { Spinner } from "./Spinner";
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./Table";
 export { PageHeader } from "./PageHeader";

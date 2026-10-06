@@ -149,6 +149,17 @@ describe("reviewing the proposed codes", () => {
     expect(screen.getByText("(1 code sans montant en $)")).toBeInTheDocument();
   });
 
+  it("shows what the picked fee's option doesn't already say", async () => {
+    const byLieu = makeProposedCode({
+      code: "15804",
+      fees: [makeFee({ amount: 78, role: 1, majoration: "10 %", lieux: ["cabinet", "domicile"] })],
+    });
+    serveEncounter(makeEncounterDetail({ id: 5, extraction: makeExtraction([byLieu]) }));
+    renderEncounter();
+    await screen.findByLabelText("Tarif pour le code 15804");
+    expect(screen.getByText("R = 1 — majoration 10 %")).toBeInTheDocument();
+  });
+
   it("lists a code's fees by lieu, \"Autre\" when it has none, adding the role when lieux collide", async () => {
     serveEncounter(withCodes());
     renderEncounter();
@@ -245,13 +256,33 @@ describe("saving", () => {
           : HttpResponse.json({ detail: { code: "duplicate_claim", message: "Déjà facturé." } }, { status: 409 });
       }),
     );
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     const { user } = renderEncounter();
     await screen.findByRole("heading", { level: 1 });
     await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
+    const dialog = await screen.findByRole("dialog", { name: "Facturation déjà enregistrée" });
+    expect(within(dialog).getByText("Déjà facturé.")).toBeInTheDocument();
+    expect(flags).toEqual(["false"]);
+    await user.click(within(dialog).getByRole("button", { name: "Enregistrer quand même" }));
     await waitFor(() => expect(flags).toEqual(["false", "true"]));
-    expect(confirm).toHaveBeenCalledWith("Déjà facturé. Enregistrer quand même ?");
-    confirm.mockRestore();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("saves nothing more when the physician cancels the duplicate question", async () => {
+    serveEncounter(withCodes());
+    let posts = 0;
+    server.use(
+      http.post("/api/claims", () => {
+        posts += 1;
+        return HttpResponse.json({ detail: { code: "duplicate_claim", message: "Déjà facturé." } }, { status: 409 });
+      }),
+    );
+    const { user } = renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
+    await user.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Annuler" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(posts).toBe(1);
+    expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeEnabled();
   });
 });
 
@@ -377,6 +408,71 @@ describe("what an encounter still needs", () => {
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
     expect(screen.queryByRole("button", { name: /Extraire|Réessayer/ })).not.toBeInTheDocument();
+  });
+});
+
+describe("re-running the extraction", () => {
+  it("asks first, then reads the note again and shows the new codes", async () => {
+    let detail = withCodes();
+    serveEncounter(() => detail);
+    let runs = 0;
+    server.use(
+      http.post("/api/encounters/5/extract", () => {
+        runs += 1;
+        detail = makeEncounterDetail({ id: 5, extraction: makeExtraction([makeProposedCode({ code: "15804", description: "Prise en charge" })]) });
+        return HttpResponse.json(detail.extraction);
+      }),
+    );
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Relancer l'extraction" }));
+    const dialog = await screen.findByRole("dialog", { name: "Relancer l'extraction ?" });
+    expect(within(dialog).getByText(/cases cochées seront perdues/)).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Relancer" }));
+    expect(await screen.findByText("Prise en charge")).toBeInTheDocument();
+    expect(runs).toBe(1);
+  });
+
+  it("does nothing when cancelled", async () => {
+    serveEncounter(withCodes());
+    let runs = 0;
+    server.use(http.post("/api/encounters/5/extract", () => ((runs += 1), HttpResponse.json({}))));
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Relancer l'extraction" }));
+    await user.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Annuler" }));
+    expect(runs).toBe(0);
+  });
+
+  it("says a saved claim stays until the physician saves again", async () => {
+    serveEncounter(withCodes({ status: "revu", claim: makeClaim({ codes: [makeClaimLine({ code: "00103", fee_amount: 50 })] }) }));
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Relancer l'extraction" }));
+    expect(await screen.findByText(/facturation enregistrée reste en place/)).toBeInTheDocument();
+  });
+
+  it("is not offered on a review that can't change", async () => {
+    serveEncounter(withCodes({ duplicate_of_id: 2 }));
+    renderEncounter();
+    await screen.findByText(/marquée comme doublon/);
+    expect(screen.queryByRole("button", { name: "Relancer l'extraction" })).not.toBeInTheDocument();
+  });
+});
+
+describe("deleting", () => {
+  it("asks in a dialog, then deletes and goes back to the inbox", async () => {
+    serveEncounter(withCodes());
+    let deleted = false;
+    server.use(
+      http.delete("/api/encounters/5", () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const { user } = renderEncounter();
+    await user.click(await screen.findByRole("button", { name: "Supprimer la rencontre" }));
+    const dialog = await screen.findByRole("dialog", { name: "Supprimer la rencontre ?" });
+    expect(deleted).toBe(false);
+    await user.click(within(dialog).getByRole("button", { name: "Supprimer" }));
+    await waitFor(() => expect(deleted).toBe(true));
   });
 });
 

@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
   Spinner,
+  useConfirm,
 } from "../../../components";
 import { formatClinicTime, formatDate } from "../../../utils/date";
 import { AssociatePatient } from "../InboxPage/AssociatePatient";
@@ -108,18 +109,35 @@ export default function EncounterPage() {
     void load();
   }, [encounterId, load]);
 
+  const { confirm, dialog } = useConfirm();
   const readOnly = encounter ? readOnlyReason(encounter) : null;
-  // A saved claim (first save or a draft's changes) changes the status and the claim the
-  // review starts from, so reload rather than keep the stale encounter.
-  const review = useCodeReview(
-    encounter?.extraction ?? null,
-    readOnly !== null,
-    encounter?.claim ?? null,
-    () => {
+  const review = useCodeReview(encounter?.extraction ?? null, {
+    readOnly: readOnly !== null,
+    claim: encounter?.claim ?? null,
+    // A saved claim (first save or a draft's changes) changes the status and the claim the
+    // review starts from, so reload rather than keep the stale encounter.
+    onSaved: () => {
       setSavedNotice(true);
       void load();
     },
-  );
+    confirmDuplicate: (message) =>
+      confirm({
+        title: "Facturation déjà enregistrée",
+        message,
+        confirmLabel: "Enregistrer quand même",
+      }),
+  });
+
+  async function handleRerun() {
+    const confirmed = await confirm({
+      title: "Relancer l'extraction ?",
+      message: encounter?.claim
+        ? "Les codes proposés seront remplacés par une nouvelle lecture de la note. La facturation enregistrée reste en place jusqu'à ce que vous enregistriez de nouveau."
+        : "Les codes proposés seront remplacés par une nouvelle lecture de la note, et les cases cochées seront perdues.",
+      confirmLabel: "Relancer",
+    });
+    if (confirmed) await handleExtract();
+  }
 
   async function handleExtract() {
     setExtracting(true);
@@ -136,12 +154,13 @@ export default function EncounterPage() {
   }
 
   async function handleDelete() {
-    if (
-      !window.confirm(
-        "Supprimer cette rencontre et ses extractions ? Cette action est irréversible.",
-      )
-    )
-      return;
+    const confirmed = await confirm({
+      title: "Supprimer la rencontre ?",
+      message: "La rencontre et ses extractions seront supprimées. Cette action est irréversible.",
+      confirmLabel: "Supprimer",
+      tone: "danger",
+    });
+    if (!confirmed) return;
     setDeleting(true);
     setError(null);
     try {
@@ -169,9 +188,12 @@ export default function EncounterPage() {
     encounter !== null &&
     encounter.patient !== null &&
     (encounter.status === "reçu" || encounter.status === "échec");
+  // A new reading of a note whose codes can still change.
+  const canRerun = reviewing && readOnly === null;
 
   return (
     <section className={reviewing ? "max-w-[1500px]" : "max-w-[860px]"}>
+      {dialog}
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <Button asChild variant="link">
           <Link to={backTo}>← Rencontres</Link>
@@ -209,6 +231,17 @@ export default function EncounterPage() {
               </span>
             )}
             <StatusChip status={encounter.status} />
+            {canRerun && (
+              <Button
+                type="button"
+                variant="ghost"
+                className="ml-auto"
+                onClick={handleRerun}
+                disabled={extracting}
+              >
+                {extracting ? "Extraction en cours..." : "Relancer l'extraction"}
+              </Button>
+            )}
           </div>
           <p className="m-0 text-sm text-muted-foreground">
             {[
