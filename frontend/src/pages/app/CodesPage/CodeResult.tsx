@@ -11,7 +11,8 @@ interface CodeResultProps {
   onToggle: () => void;
 }
 
-// One search result; expanded, the code's full entry from the manual.
+// One search result; expanded, the code's entry from the manual — its fees, eligibility and
+// when to use it. Its rules aren't shown yet: their extraction (ramq-ingestion) is incomplete.
 export function CodeResult({ hit, expanded, onToggle }: CodeResultProps) {
   const panelId = `code-detail-${hit.number}`;
   return (
@@ -90,15 +91,6 @@ function CodeDetailPanel({ number }: { number: string }) {
         <Section title="Quand l'utiliser">
           <ul className="m-0 flex flex-col gap-1 pl-5">
             {detail.when_to_use.map((line, i) => (
-              <li key={i}>{line}</li>
-            ))}
-          </ul>
-        </Section>
-      )}
-      {detail.rules.length > 0 && (
-        <Section title="Règles">
-          <ul className="m-0 flex flex-col gap-1 pl-5">
-            {detail.rules.map((line, i) => (
               <li key={i}>{line}</li>
             ))}
           </ul>

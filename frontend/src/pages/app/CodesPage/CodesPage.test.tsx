@@ -16,7 +16,7 @@ const visit = makeCodeHit({
 beforeEach(() => serveSession(makeUser()));
 
 describe("CodesPage", () => {
-  it("searches every code, and opens a code's rules, fees and eligibility", async () => {
+  it("searches every code, and opens a code's fees, eligibility and when to use it", async () => {
     const queries: URLSearchParams[] = [];
     server.use(
       http.get("/api/codes/search", ({ request }) => {
@@ -39,8 +39,9 @@ describe("CodesPage", () => {
     await user.type(screen.getByRole("searchbox", { name: "Rechercher un code RAMQ" }), "visite");
     await user.click(await screen.findByRole("button", { name: /15801.*Visite périodique/ }));
 
-    expect(await screen.findByText("Une fois par année")).toBeInTheDocument();
-    expect(screen.getByText("Visite périodique d'un patient inscrit")).toBeInTheDocument();
+    expect(await screen.findByText("Visite périodique d'un patient inscrit")).toBeInTheDocument();
+    // Rules aren't shown until their extraction is complete.
+    expect(screen.queryByText("Une fois par année")).not.toBeInTheDocument();
     expect(screen.getByText("Clientèle inscrite du médecin : 499 patients ou moins")).toBeInTheDocument();
     expect(screen.getByText("Patient inscrit auprès du médecin")).toBeInTheDocument();
     const last = queries[queries.length - 1];
