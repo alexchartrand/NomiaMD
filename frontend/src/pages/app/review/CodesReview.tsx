@@ -8,6 +8,7 @@ import type {
 import {
   buildFeeOptions,
   defaultLieu,
+  feeDetails,
   formatAmount,
   optionValue,
 } from "./feeOptions";
@@ -31,15 +32,9 @@ const CONFIDENCE_ORDER: Record<ConfidenceLevel, number> = {
   low: 2,
 };
 
-function formatFee(fee: ExtractedFee): string {
-  const parts = [
-    formatAmount(fee),
-    fee.role != null ? `R = ${fee.role}` : null,
-    fee.context,
-    fee.lieux.length > 0 ? fee.lieux.join(", ") : null,
-    fee.majoration ? `majoration ${fee.majoration}` : null,
-  ];
-  return parts.filter(Boolean).join(" — ");
+// What a lone fee shows beside its amount; a fee with several lieux gets a selector instead.
+function singleFeeDetails(fee: ExtractedFee): string {
+  return [fee.lieux[0], feeDetails(fee)].filter(Boolean).join(" — ");
 }
 
 interface CodesReviewProps {
@@ -121,7 +116,7 @@ export function CodesReview({
             {options.length > 1 ? (
               <>
                 <Select
-                  className="w-auto max-w-full"
+                  containerClassName="w-fit max-w-full"
                   value={optionValue(feeIndex, lieu)}
                   disabled={disabled}
                   onChange={(event) => {
@@ -146,10 +141,19 @@ export function CodesReview({
                   {formatAmount(c.fees[feeIndex])}
                 </span>
               </>
+            ) : c.fees.length === 1 ? (
+              <>
+                <span className="font-heading font-bold whitespace-nowrap">
+                  {formatAmount(c.fees[0])}
+                </span>
+                {singleFeeDetails(c.fees[0]) && (
+                  <span className="min-w-0 text-[0.85rem] text-muted-foreground">
+                    {singleFeeDetails(c.fees[0])}
+                  </span>
+                )}
+              </>
             ) : (
-              <span className="font-heading font-bold whitespace-nowrap">
-                {c.fees.length === 1 ? formatFee(c.fees[0]) : "—"}
-              </span>
+              <span className="font-heading font-bold">—</span>
             )}
           </div>
 

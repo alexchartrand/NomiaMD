@@ -17,7 +17,7 @@ function joinParts(parts: (string | null | undefined)[]): string {
   return parts.filter(Boolean).join(" — ");
 }
 
-function feeDetails(fee: ExtractedFee): string {
+export function feeDetails(fee: ExtractedFee): string {
   return joinParts([
     fee.role != null ? `R = ${fee.role}` : null,
     fee.context,
