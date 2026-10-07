@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate, useSearchParams } from "react-router-do
 import { CalendarSearch, CheckCheck, FilePlus2, SearchX } from "lucide-react";
 import { toast } from "sonner";
 import type { EncounterPeriod, EncounterRow } from "../../../api";
-import { AppPage, AppPageHeader, Banner, Button, EmptyState, Skeleton, Tabs } from "../../../components";
+import { AppPage, AppPageHeader, Banner, Button, EmptyState, Pagination, Skeleton, Tabs } from "../../../components";
+import { paginate } from "../../../lib/paginate";
 import { formatMoney } from "../../../utils/money";
 import type { ReceivedSummary } from "../AddNotesPage";
 import { ApproveAllModal } from "./ApproveAllModal";
@@ -11,7 +12,7 @@ import { DayCard } from "./DayCard";
 import { DuplicateModal } from "./DuplicateModal";
 import { matches, type RowFilters, type StatusFilter } from "./filters";
 import { FiltersBar } from "./FiltersBar";
-import { groupByDay, readFilters, readPeriod, toParams } from "./inboxView";
+import { groupByDay, readFilters, readPage, readPeriod, toParams } from "./inboxView";
 import { statusTabs } from "./statusTabs";
 import { useInbox } from "./useInbox";
 
@@ -46,7 +47,9 @@ export default function InboxPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const period = readPeriod(searchParams);
   const filters = readFilters(searchParams);
+  const page = readPage(searchParams);
   useReceivedToast();
+  const listRef = useRef<HTMLDivElement>(null);
 
   const { rows, loading, error, reload } = useInbox(period);
   const [approving, setApproving] = useState(false);
@@ -58,6 +61,14 @@ export default function InboxPage() {
   const cleanRows = useMemo(() => shown.filter((row) => row.all_clean), [shown]);
   const cleanTotal = cleanRows.reduce((sum, row) => sum + (row.indicative_total ?? 0), 0);
   const days = useMemo(() => groupByDay(shown), [shown]);
+  // Paged by rows, in the order they're shown: a long day can run over to the next page,
+  // its card then repeated there with the day's full count and total.
+  const pages = useMemo(
+    () => paginate(days.flatMap((group) => group.batches.flatMap((batch) => batch.rows)), page),
+    [days, page],
+  );
+  const pageDays = useMemo(() => groupByDay(pages.items), [pages.items]);
+  const wholeDays = useMemo(() => new Map(days.map((group) => [group.day, group])), [days]);
 
   function changePeriod(next: EncounterPeriod) {
     if (next.date_from && next.date_to && next.date_from > next.date_to) return;
@@ -67,6 +78,10 @@ export default function InboxPage() {
   function changeFilters(next: RowFilters) {
     // Typing in the patient search shouldn't stack a history entry per keystroke.
     setSearchParams(toParams(period, next), { replace: true });
+  }
+
+  function changePage(next: number) {
+    setSearchParams({ ...toParams(period, filters), ...(next > 1 && { page: String(next) }) });
   }
 
   const addNotes = (
@@ -120,7 +135,7 @@ export default function InboxPage() {
         </div>
       )}
 
-      <div className="mt-5 flex flex-col gap-5">
+      <div ref={listRef} className="mt-5 flex scroll-mt-4 flex-col gap-5">
         {error && <Banner tone="error">{error}</Banner>}
 
         {loading ? (
@@ -150,7 +165,18 @@ export default function InboxPage() {
             />
           )
         ) : (
-          days.map((group) => <DayCard key={group.day} group={group} onChanged={reload} onOpenDuplicate={setDuplicateOf} />)
+          <>
+            {pageDays.map((group) => (
+              <DayCard
+                key={group.day}
+                group={group}
+                whole={wholeDays.get(group.day)}
+                onChanged={reload}
+                onOpenDuplicate={setDuplicateOf}
+              />
+            ))}
+            <Pagination {...pages} onChange={changePage} listRef={listRef} />
+          </>
         )}
       </div>
 

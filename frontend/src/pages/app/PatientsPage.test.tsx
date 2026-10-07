@@ -90,6 +90,32 @@ describe("the roster", () => {
     expect(screen.getByText("Aucun patient ne correspond à cette recherche.")).toBeInTheDocument();
   });
 
+  it("splits a long list into pages, back to the first one on a new search", async () => {
+    const many = Array.from({ length: 55 }, (_, i) =>
+      entry({ id: 100 + i, full_name: `Patient ${String(i + 1).padStart(2, "0")}`, ramq_number: null }),
+    );
+    serveRoster(many);
+    const { user } = renderPage();
+    await screen.findByText("Patient 01");
+    expect(screen.getByText("Patient 50")).toBeInTheDocument();
+    expect(screen.queryByText("Patient 51")).not.toBeInTheDocument();
+    const pagination = screen.getByRole("navigation", { name: "Pagination" });
+    expect(within(pagination).getByText("1–50 sur 55")).toBeInTheDocument();
+
+    await user.click(within(pagination).getByRole("button", { name: "Page 2" }));
+    expect(screen.getByText("Patient 55")).toBeInTheDocument();
+    expect(screen.queryByText("Patient 01")).not.toBeInTheDocument();
+    expect(within(pagination).getByRole("button", { name: "Page suivante" })).toBeDisabled();
+
+    // Still every patient, but a new search: back to the first page.
+    await user.type(screen.getByLabelText("Rechercher un patient"), "p");
+    expect(screen.getByText("Patient 01")).toBeInTheDocument();
+
+    await user.clear(screen.getByLabelText("Rechercher un patient"));
+    await user.type(screen.getByLabelText("Rechercher un patient"), "5");
+    expect(screen.queryByRole("navigation", { name: "Pagination" })).not.toBeInTheDocument();
+  });
+
   it("says when the list is empty", async () => {
     serveRoster([]);
     renderPage();

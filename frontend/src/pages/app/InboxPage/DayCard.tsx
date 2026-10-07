@@ -10,15 +10,18 @@ function plural(count: number, singular: string, pluralForm: string): string {
 }
 
 interface DayCardProps {
+  // The day's rows on this page of the inbox…
   group: DayGroup;
+  // …and all of them, for its count and total, when the day runs over more than one page.
+  whole?: DayGroup;
   onChanged: () => void;
   onOpenDuplicate: (row: EncounterRow) => void;
 }
 
 // One day of encounters: its date, count and indicative total, then its rows — a shift
 // pasted at once (batch label) under its own sub-heading.
-export function DayCard({ group, onChanged, onOpenDuplicate }: DayCardProps) {
-  const rows = group.batches.flatMap((batch) => batch.rows);
+export function DayCard({ group, whole = group, onChanged, onOpenDuplicate }: DayCardProps) {
+  const rows = whole.batches.flatMap((batch) => batch.rows);
   const total = rows.reduce((sum, row) => sum + (row.indicative_total ?? 0), 0);
   return (
     <section aria-label={formatLongDate(group.day)} className="overflow-hidden rounded-xl border border-border bg-card">

@@ -54,6 +54,12 @@ export function readFilters(params: URLSearchParams): RowFilters {
   };
 }
 
+// The list's page, kept in the URL so coming back from an encounter lands on it. Changing
+// the period or the filters (`toParams`) leaves it out: back to the first page.
+export function readPage(params: URLSearchParams): number {
+  return Number(params.get("page")) || 1;
+}
+
 export function toParams(
   period: EncounterPeriod,
   filters: RowFilters,

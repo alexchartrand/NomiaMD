@@ -163,6 +163,33 @@ describe("period and filters", () => {
     expect(screen.getByRole("tab", { name: /Revues/ })).toHaveAttribute("aria-selected", "true");
   });
 
+  it("splits a long list into pages kept in the URL, a day running over carrying its full count", async () => {
+    // 40 encounters on the 6th, then 20 on the 5th: the 5th starts on page 1 and ends on page 2.
+    const rows = Array.from({ length: 60 }, (_, i) => ready(i + 1, { service_date: i < 40 ? "2026-10-06" : "2026-10-05" }));
+    serveEncounters(rows);
+    const { user } = renderInbox("/app/inbox?page=2");
+    await screen.findByText("Patient 51");
+    expect(screen.queryByText("Patient 50")).not.toBeInTheDocument();
+    expect(screen.getByText("Patient 60")).toBeInTheDocument();
+    const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+    expect(headings).toHaveLength(1);
+    expect(headings[0]).toMatch(/^lundi 5 octobre 2026\s*20 rencontres/);
+    expect(screen.getByText("51–60 sur 60")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Page précédente" }));
+    expect(screen.getByText("Patient 1")).toBeInTheDocument();
+    expect(screen.getByText("Patient 50")).toBeInTheDocument();
+    expect(screen.getByTestId("where").textContent).not.toContain("page=");
+
+    await user.click(screen.getByRole("button", { name: "Page 2" }));
+    expect(screen.getByTestId("where").textContent).toContain("page=2");
+    // A new filter starts over from the first page.
+    await user.click(screen.getByRole("tab", { name: /À traiter/ }));
+    expect(screen.getByText("Patient 1")).toBeInTheDocument();
+    expect(screen.getByTestId("where").textContent).not.toContain("page=");
+    // Fifty full rows rendered a few times over: slow under a loaded jsdom run.
+  }, 15_000);
+
   it("filters rows client-side without a new request, and keeps the status in the URL", async () => {
     const requests = serveEncounters([ready(1), ready(2, { status: "revu" })]);
     const { user } = renderInbox();

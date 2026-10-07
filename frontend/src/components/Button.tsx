@@ -17,6 +17,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   // Renders its single child (e.g. a router <Link>) styled as this button.
   asChild?: boolean;
+  size?: VariantProps<typeof buttonVariants>["size"];
 };
 
 export function Button({ variant = "primary", className, ...rest }: ButtonProps) {

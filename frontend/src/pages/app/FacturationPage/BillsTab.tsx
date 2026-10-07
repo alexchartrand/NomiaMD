@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Download, FileSearch, FileText, SearchX, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,7 @@ import {
   Button,
   CodeChips,
   EmptyState,
+  Pagination,
   PeriodFilter,
   RowActions,
   Skeleton,
@@ -27,6 +28,7 @@ import {
   TableRow,
   useConfirm,
 } from "../../../components";
+import { usePagination } from "../../../lib/usePagination";
 import { formatDate } from "../../../utils/date";
 import { formatMoney } from "../../../utils/money";
 import type { Period } from "../../../utils/periods";
@@ -68,6 +70,8 @@ export function BillsTab({ period, onPeriodChange }: BillsTabProps) {
 
   const shown = useMemo(() => bills.filter((bill) => overlaps(bill, period)), [bills, period.date_from, period.date_to]);
   const shownTotal = shown.reduce((sum, bill) => sum + (bill.total_amount ?? 0), 0);
+  const pages = usePagination(shown, `${period.date_from ?? ""}/${period.date_to ?? ""}`);
+  const listRef = useRef<HTMLDivElement>(null);
 
   async function toggleExpand(bill: Bill) {
     if (expandedId === bill.id) {
@@ -155,7 +159,7 @@ export function BillsTab({ period, onPeriodChange }: BillsTabProps) {
       {dialog}
       {periodFilter}
       {deleteError && <Banner tone="error" className="mb-4">{deleteError}</Banner>}
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div ref={listRef} className="scroll-mt-4 overflow-hidden rounded-xl border border-border bg-card">
         <Table>
           <TableHeader className="bg-muted/40">
             <TableRow className="hover:bg-transparent">
@@ -169,7 +173,7 @@ export function BillsTab({ period, onPeriodChange }: BillsTabProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {shown.map((bill) => {
+            {pages.items.map((bill) => {
               const expanded = expandedId === bill.id;
               return (
                 <Fragment key={bill.id}>
@@ -258,6 +262,12 @@ export function BillsTab({ period, onPeriodChange }: BillsTabProps) {
             Total <span className="font-semibold tabular-nums">{formatMoney(shownTotal)}</span>
           </span>
         </div>
+        <Pagination
+          {...pages}
+          onChange={pages.setPage}
+          listRef={listRef}
+          className="border-t border-border bg-muted/40 px-4 py-2"
+        />
       </div>
     </>
   );

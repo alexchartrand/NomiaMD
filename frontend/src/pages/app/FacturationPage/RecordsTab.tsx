@@ -154,6 +154,7 @@ export function RecordsTab({
             onToggleAll={toggleAll}
             onDelete={handleDelete}
             today={today}
+            filtersKey={JSON.stringify([period.date_from, period.date_to, filters])}
             footer={
               <SelectionBar
                 selected={selected}

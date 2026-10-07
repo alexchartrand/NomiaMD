@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { NotebookPen, Pencil, Search, UserMinus, UserPlus, UserRoundPlus, Users } from "lucide-react";
 import { describeError, listRoster, removeFromRoster, addToRoster, type RosterEntry } from "../../api";
 import {
@@ -9,6 +9,7 @@ import {
   Button,
   EmptyState,
   Modal,
+  Pagination,
   RowActions,
   Skeleton,
   Table,
@@ -22,6 +23,7 @@ import {
 } from "../../components";
 import { formatAge, formatDate, clinicToday } from "../../utils/date";
 import { fold } from "../../utils/text";
+import { usePagination } from "../../lib/usePagination";
 import { useAuth } from "../../AuthContext";
 import { AddExistingDialog } from "./patients/AddExistingDialog";
 import { CreatePatientForm } from "./patients/CreatePatientForm";
@@ -72,6 +74,8 @@ export default function PatientsPage() {
     const q = fold(query.trim());
     return q ? roster.filter((entry) => fold(`${entry.full_name} ${entry.ramq_number ?? ""}`).includes(q)) : roster;
   }, [roster, query]);
+  const pages = usePagination(shown, query.trim());
+  const listRef = useRef<HTMLDivElement>(null);
 
   function closeAndReload() {
     setDialog(null);
@@ -144,7 +148,7 @@ export default function PatientsPage() {
       ) : shown.length === 0 ? (
         <EmptyState icon={Search} title="Aucun patient ne correspond à cette recherche." />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div ref={listRef} className="scroll-mt-4 overflow-hidden rounded-xl border border-border bg-card">
           <Table>
             <TableHeader className="bg-muted/40">
               <TableRow className="hover:bg-transparent">
@@ -158,7 +162,7 @@ export default function PatientsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {shown.map((entry) => (
+              {pages.items.map((entry) => (
                 <TableRow key={entry.id}>
                   <TableCell className="max-w-64 pl-4">
                     <span className="block font-semibold">{entry.full_name}</span>
@@ -192,6 +196,12 @@ export default function PatientsPage() {
               ))}
             </TableBody>
           </Table>
+          <Pagination
+            {...pages}
+            onChange={pages.setPage}
+            listRef={listRef}
+            className="border-t border-border bg-muted/40 px-4 py-2"
+          />
         </div>
       )}
 

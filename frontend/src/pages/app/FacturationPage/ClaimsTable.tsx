@@ -1,4 +1,4 @@
-import { Fragment, useState, type ReactNode } from "react";
+import { Fragment, useRef, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, FileSearch, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import {
   Badge,
   Checkbox,
   CodeChips,
+  Pagination,
   RowActions,
   Table,
   TableBody,
@@ -15,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components";
+import { usePagination } from "../../../lib/usePagination";
 import { formatDate } from "../../../utils/date";
 import { formatMoney } from "../../../utils/money";
 import { ClaimCodeList } from "./ClaimCodeList";
@@ -29,6 +31,9 @@ interface ClaimsTableProps {
   onToggleAll: () => void;
   onDelete: (claim: Claim) => void;
   today: string;
+  // Stands for the period and filters the claims are listed under: when it changes, the
+  // table goes back to its first page.
+  filtersKey: string;
   // Under the totals, inside the card: the selection's bar.
   footer?: ReactNode;
 }
@@ -45,7 +50,7 @@ function DeadlineBadge({ serviceDate, today }: { serviceDate: string; today: str
   );
 }
 
-export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete, today, footer }: ClaimsTableProps) {
+export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete, today, filtersKey, footer }: ClaimsTableProps) {
   const navigate = useNavigate();
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const toggleExpanded = (id: number) => setExpandedId(expandedId === id ? null : id);
@@ -54,15 +59,18 @@ export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete,
   const tickedCount = drafts.filter((claim) => selected.has(claim.id)).length;
   const allTicked = drafts.length > 0 && tickedCount === drafts.length;
   const listedTotal = claims.reduce((sum, claim) => sum + (claim.total_amount ?? 0), 0);
+  const pages = usePagination(claims, filtersKey);
+  const listRef = useRef<HTMLDivElement>(null);
 
   return (
     // `clip`, not `hidden`: it rounds the corners without becoming a scroll container, which
     // would keep the footer's sticky bar from sticking to the screen.
-    <div className="overflow-clip rounded-xl border border-border bg-card">
+    <div ref={listRef} className="scroll-mt-4 overflow-clip rounded-xl border border-border bg-card">
       <Table>
         <TableHeader className="bg-muted/40">
           <TableRow className="hover:bg-transparent">
             <TableHead className="w-10 pl-4">
+              {/* Every draft listed, on every page: what "Créer une facture" ticks too. */}
               {drafts.length > 0 && (
                 <Checkbox
                   checked={allTicked ? true : tickedCount > 0 ? "indeterminate" : false}
@@ -81,7 +89,7 @@ export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete,
           </TableRow>
         </TableHeader>
         <TableBody>
-          {claims.map((claim) => {
+          {pages.items.map((claim) => {
             const draft = claim.status === "brouillon";
             // Billed without an encounter: edited on the Facturer page (an encounter's claim
             // is edited from its review instead).
@@ -182,6 +190,12 @@ export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete,
           Total <span className="font-semibold tabular-nums">{formatMoney(listedTotal)}</span>
         </span>
       </div>
+      <Pagination
+        {...pages}
+        onChange={pages.setPage}
+        listRef={listRef}
+        className="border-t border-border bg-muted/40 px-4 py-2"
+      />
       {footer}
     </div>
   );
