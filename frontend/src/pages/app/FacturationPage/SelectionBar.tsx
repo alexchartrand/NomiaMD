@@ -24,7 +24,13 @@ export function SelectionBar({ selected, onClear, onCreated, onStale }: Selectio
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (selected.length === 0) return error ? <Banner tone="error" className="mt-3">{error}</Banner> : null;
+  if (selected.length === 0) {
+    return error ? (
+      <div className="border-t border-border px-4 py-3">
+        <Banner tone="error">{error}</Banner>
+      </div>
+    ) : null;
+  }
 
   const period = periodOf(selected);
   const total = selected.reduce((sum, claim) => sum + (claim.total_amount ?? 0), 0);
@@ -51,25 +57,25 @@ export function SelectionBar({ selected, onClear, onCreated, onStale }: Selectio
     }
   }
 
+  // Like the review's save bar: the card's last strip, kept in view at the bottom of the
+  // screen while the physician scrolls through the claims.
   return (
     <div
       role="region"
       aria-label="Sélection"
-      className="sticky bottom-4 z-10 mt-3 flex flex-col gap-3 rounded-xl border border-primary/25 bg-[color:var(--color-primary-tint)] px-4 py-3 shadow-[0_6px_16px_-8px_rgb(0_0_0/0.3)]"
+      className="sticky bottom-0 z-10 flex flex-col gap-3 border-t border-border bg-card px-4 py-3 shadow-[0_-6px_12px_-10px_rgb(0_0_0/0.25)]"
     >
       {error && <Banner tone="error">{error}</Banner>}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="m-0 text-sm">
-          <span className="font-semibold">{count}</span>
-          <span className="text-muted-foreground">
-            {" "}
-            · <span className="tabular-nums">{formatMoney(total)}</span> · {span}
-          </span>
-        </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-baseline gap-x-[0.6rem] gap-y-1">
+          <span className="text-sm text-muted-foreground">{count}</span>
+          <span className="font-heading text-[1.6rem] font-bold tabular-nums">{formatMoney(total)}</span>
+          <span className="text-sm text-muted-foreground">{span}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
-            variant="ghost"
+            variant="secondary"
             disabled={submitting}
             onClick={() => {
               setError(null);

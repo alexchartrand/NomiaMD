@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, FileSearch, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,6 +29,8 @@ interface ClaimsTableProps {
   onToggleAll: () => void;
   onDelete: (claim: Claim) => void;
   today: string;
+  // Under the totals, inside the card: the selection's bar.
+  footer?: ReactNode;
 }
 
 // How long a draft has left before RAMQ refuses it.
@@ -43,7 +45,7 @@ function DeadlineBadge({ serviceDate, today }: { serviceDate: string; today: str
   );
 }
 
-export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete, today }: ClaimsTableProps) {
+export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete, today, footer }: ClaimsTableProps) {
   const navigate = useNavigate();
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const toggleExpanded = (id: number) => setExpandedId(expandedId === id ? null : id);
@@ -54,7 +56,9 @@ export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete,
   const listedTotal = claims.reduce((sum, claim) => sum + (claim.total_amount ?? 0), 0);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
+    // `clip`, not `hidden`: it rounds the corners without becoming a scroll container, which
+    // would keep the footer's sticky bar from sticking to the screen.
+    <div className="overflow-clip rounded-xl border border-border bg-card">
       <Table>
         <TableHeader className="bg-muted/40">
           <TableRow className="hover:bg-transparent">
@@ -178,6 +182,7 @@ export function ClaimsTable({ claims, selected, onToggle, onToggleAll, onDelete,
           Total <span className="font-semibold tabular-nums">{formatMoney(listedTotal)}</span>
         </span>
       </div>
+      {footer}
     </div>
   );
 }

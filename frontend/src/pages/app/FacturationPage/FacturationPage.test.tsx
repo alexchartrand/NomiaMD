@@ -414,7 +414,9 @@ describe("billing from the list", () => {
 
     await user.click(screen.getByLabelText("Sélectionner la réclamation de Marc Roy"));
     await user.click(screen.getByLabelText("Sélectionner la réclamation de Lise Tremblay"));
-    expect(selectionBar()).toHaveTextContent("2 réclamations sélectionnées · 52,00 $ · du 03/10/2026 au 05/10/2026");
+    expect(within(selectionBar()).getByText("2 réclamations sélectionnées")).toBeInTheDocument();
+    expect(within(selectionBar()).getByText("52,00 $")).toBeInTheDocument();
+    expect(within(selectionBar()).getByText("du 03/10/2026 au 05/10/2026")).toBeInTheDocument();
 
     await user.click(within(selectionBar()).getByRole("button", { name: "Générer la facture" }));
     await waitFor(() => expect(body).toEqual({ start_date: "2026-10-03", end_date: "2026-10-05", claim_ids: [2, 3] }));

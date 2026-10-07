@@ -149,28 +149,28 @@ export function RecordsTab({
             />
           )
         ) : (
-          <div>
-            <ClaimsTable
-              claims={shown}
-              selected={selection}
-              onToggle={toggle}
-              onToggleAll={toggleAll}
-              onDelete={handleDelete}
-              today={today}
-            />
-            <SelectionBar
-              selected={selected}
-              onClear={() => setSelection(new Set())}
-              onCreated={(bill) => {
-                setSelection(new Set());
-                onBillCreated(bill);
-              }}
-              onStale={() => {
-                setSelection(new Set());
-                void reload();
-              }}
-            />
-          </div>
+          <ClaimsTable
+            claims={shown}
+            selected={selection}
+            onToggle={toggle}
+            onToggleAll={toggleAll}
+            onDelete={handleDelete}
+            today={today}
+            footer={
+              <SelectionBar
+                selected={selected}
+                onClear={() => setSelection(new Set())}
+                onCreated={(bill) => {
+                  setSelection(new Set());
+                  onBillCreated(bill);
+                }}
+                onStale={() => {
+                  setSelection(new Set());
+                  void reload();
+                }}
+              />
+            }
+          />
         )}
       </div>
     </>
