@@ -50,6 +50,11 @@ export function addDays(isoDate: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+// Whole days from `from` to `to` (negative when `to` comes first).
+export function daysBetween(from: string, to: string): number {
+  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
+}
+
 // Monday = 0 ... Sunday = 6.
 export function weekdayIndex(isoDate: string): number {
   return (new Date(`${isoDate}T00:00:00Z`).getUTCDay() + 6) % 7;

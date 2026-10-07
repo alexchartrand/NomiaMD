@@ -1,5 +1,6 @@
 import { extractErrorDetail, unwrap, unwrapVoid } from "./http";
 import type { ConfidenceLevel, ExtractedFee } from "./extraction";
+import { fetchAllPages } from "./paging";
 
 // Kept in sync by hand with app/claims/status.py's ClaimStatus. Derived server-side, never
 // set: a claim is "soumis" exactly when it's on a bill (bill_id != null) — it only leaves
@@ -154,6 +155,11 @@ export async function listClaims(filters: ClaimFilters = {}): Promise<Claim[]> {
   const query = params.toString();
 
   return unwrap<Claim[]>(await fetch(`/api/claims${query ? `?${query}` : ""}`, { credentials: "same-origin" }));
+}
+
+// Every claim matching the filters (a page's `limit`/`offset` are this function's business).
+export function listAllClaims(filters: Omit<ClaimFilters, "limit" | "offset"> = {}): Promise<Claim[]> {
+  return fetchAllPages((limit, offset) => listClaims({ ...filters, limit, offset }));
 }
 
 // Voids the claim server-side (it stays on record, hidden from lists). Only a draft can be

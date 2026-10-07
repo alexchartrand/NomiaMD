@@ -1,5 +1,6 @@
 import type { Claim } from "./claims";
 import { unwrap, unwrapVoid } from "./http";
+import { fetchAllPages } from "./paging";
 
 export interface Bill {
   id: number;
@@ -42,8 +43,17 @@ export async function createBill(payload: BillCreateInput): Promise<Bill> {
   return unwrap<Bill>(response);
 }
 
-export async function listBills(): Promise<Bill[]> {
-  return unwrap<Bill[]>(await fetch("/api/bills", { credentials: "same-origin" }));
+export async function listBills(page: { limit?: number; offset?: number } = {}): Promise<Bill[]> {
+  const params = new URLSearchParams();
+  if (page.limit != null) params.set("limit", String(page.limit));
+  if (page.offset != null) params.set("offset", String(page.offset));
+  const query = params.toString();
+  return unwrap<Bill[]>(await fetch(`/api/bills${query ? `?${query}` : ""}`, { credentials: "same-origin" }));
+}
+
+// Every bill, newest first.
+export function listAllBills(): Promise<Bill[]> {
+  return fetchAllPages((limit, offset) => listBills({ limit, offset }));
 }
 
 export async function getBill(id: number): Promise<BillDetail> {

@@ -1,44 +1,73 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { FilePlus2, ReceiptText } from "lucide-react";
 import { toast } from "sonner";
+import type { Bill } from "../../../api";
 import { AppPage, AppPageHeader, Button, Tabs } from "../../../components";
+import { periodToParams, readPeriodParams, type Period } from "../../../utils/periods";
 import { BillsTab } from "./BillsTab";
-import { CreateBillModal } from "./CreateBillModal";
-import { RecordsTab, type StatusFilter } from "./RecordsTab";
+import { claimFiltersToParams, readClaimFilters, type ClaimFilters } from "./claimFilters";
+import { RecordsTab } from "./RecordsTab";
 
 type Tab = "reclamations" | "factures";
 
-// The URL says which tab, which claim status, and whether the bill dialog is open (`bill=1`,
-// what the dashboard's "réclamations à facturer" task links to).
+// The URL holds the tab, its period (all of it by default) and, on the claims, the
+// filters — so the dashboard can link to the drafts (`status=brouillon`), and `bill=1` (its
+// "réclamations à facturer" task) lands with every draft ticked.
 export default function FacturationPage() {
   const [params, setParams] = useSearchParams();
   const tab: Tab = params.get("tab") === "factures" ? "factures" : "reclamations";
-  const status = (params.get("status") ?? "") as StatusFilter;
-  const billing = params.get("bill") === "1";
+  const period = readPeriodParams(params, "all");
+  const filters = readClaimFilters(params);
   // Bumped whenever a bill is created or deleted, so whichever tab is mounted refetches —
-  // record statuses and the bills list can each change from the other tab's actions.
+  // claim statuses and the bills list can each change from the other tab's actions.
   const [reloadSignal, setReloadSignal] = useState(0);
+  const [selectAll, setSelectAll] = useState(false);
 
-  // One call per change: react-router doesn't queue search-param updates like setState.
-  function update(changes: Record<string, string | null>) {
-    const next = new URLSearchParams(params);
-    for (const [key, value] of Object.entries(changes)) {
-      if (value) next.set(key, value);
-      else next.delete(key);
-    }
-    setParams(next, { replace: true });
+  function show(next: { tab?: Tab; period: Period; filters?: ClaimFilters }, options?: { replace?: boolean }) {
+    setParams(
+      {
+        ...(next.tab === "factures" ? { tab: "factures" } : {}),
+        ...periodToParams(next.period),
+        ...(next.filters ? claimFiltersToParams(next.filters) : {}),
+      },
+      options,
+    );
   }
 
-  function handleChanged() {
+  function changePeriod(next: Period) {
+    if (next.date_from && next.date_to && next.date_from > next.date_to) return;
+    show({ tab, period: next, filters: tab === "reclamations" ? filters : undefined });
+  }
+
+  // The drafts, all ticked: what's still to bill in the period shown.
+  function billDrafts(options?: { replace?: boolean }) {
+    show({ period, filters: { ...filters, status: "brouillon" } }, options);
+    setSelectAll(true);
+  }
+
+  useEffect(() => {
+    if (params.get("bill") === "1") billDrafts({ replace: true });
+    // Only the link the page was opened with: `billDrafts` drops `bill` from the URL.
+  }, []);
+
+  const handleSelectAllDone = useCallback((count: number) => {
+    setSelectAll(false);
+    if (count === 0) toast.info("Aucune réclamation en brouillon à facturer pour cette période.");
+  }, []);
+
+  function handleBillCreated(bill: Bill) {
     setReloadSignal((n) => n + 1);
+    toast.success(`Facture ${bill.number} générée.`, {
+      action: { label: "Voir les factures", onClick: () => setParams({ tab: "factures" }) },
+    });
   }
 
   return (
     <AppPage>
       <AppPageHeader
         title="Facturation"
-        description="Vos réclamations enregistrées, et les factures qui les regroupent pour la RAMQ."
+        description="Vos réclamations enregistrées, et les factures qui les regroupent pour la RAMQ. Cochez les brouillons à facturer."
         actions={
           <>
             <Button asChild variant="secondary">
@@ -47,7 +76,7 @@ export default function FacturationPage() {
                 Facturer sans rencontre
               </Link>
             </Button>
-            <Button type="button" onClick={() => update({ bill: "1" })}>
+            <Button type="button" onClick={() => billDrafts()}>
               <FilePlus2 aria-hidden />
               Créer une facture
             </Button>
@@ -63,24 +92,24 @@ export default function FacturationPage() {
           { id: "factures", label: "Factures générées" },
         ]}
         value={tab}
-        onChange={(id) => update({ tab: id === "factures" ? id : null })}
+        // Each tab starts on its default period: a bill's period isn't a claim's date.
+        onChange={(id) => setParams(id === "factures" ? { tab: id } : {})}
       />
 
       {tab === "reclamations" ? (
-        <RecordsTab reloadSignal={reloadSignal} status={status} onStatusChange={(next) => update({ status: next || null })} />
-      ) : (
-        <BillsTab reloadSignal={reloadSignal} onChanged={handleChanged} />
-      )}
-
-      {billing && (
-        <CreateBillModal
-          onClose={() => update({ bill: null })}
-          onCreated={() => {
-            handleChanged();
-            update({ tab: "factures", bill: null });
-            toast.success("Facture générée.");
-          }}
+        <RecordsTab
+          reloadSignal={reloadSignal}
+          period={period}
+          onPeriodChange={changePeriod}
+          filters={filters}
+          // Typing in the patient search shouldn't stack a history entry per keystroke.
+          onFiltersChange={(next) => show({ period, filters: next }, { replace: true })}
+          selectAll={selectAll}
+          onSelectAllDone={handleSelectAllDone}
+          onBillCreated={handleBillCreated}
         />
+      ) : (
+        <BillsTab reloadSignal={reloadSignal} onChanged={() => setReloadSignal((n) => n + 1)} period={period} onPeriodChange={changePeriod} />
       )}
     </AppPage>
   );

@@ -1,12 +1,13 @@
-import { Fragment, useEffect, useState } from "react";
-import { ChevronDown, Download, FileText, Trash2 } from "lucide-react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { ChevronDown, Download, FileSearch, FileText, SearchX, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   billPdfUrl,
   deleteBill,
   describeError,
   getBill,
-  listBills,
+  listAllBills,
   type Bill,
   type BillDetail,
 } from "../../../api";
@@ -15,6 +16,7 @@ import {
   Button,
   CodeChips,
   EmptyState,
+  PeriodFilter,
   RowActions,
   Skeleton,
   Table,
@@ -27,13 +29,23 @@ import {
 } from "../../../components";
 import { formatDate } from "../../../utils/date";
 import { formatMoney } from "../../../utils/money";
+import type { Period } from "../../../utils/periods";
 
 interface BillsTabProps {
   reloadSignal: number;
   onChanged: () => void;
+  period: Period;
+  onPeriodChange: (period: Period) => void;
 }
 
-export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
+// A bill belongs to a period when the dates it covers overlap it.
+function overlaps(bill: Bill, period: Period): boolean {
+  if (period.date_from && bill.end_date < period.date_from) return false;
+  if (period.date_to && bill.start_date > period.date_to) return false;
+  return true;
+}
+
+export function BillsTab({ reloadSignal, onChanged, period, onPeriodChange }: BillsTabProps) {
   const { confirm, dialog } = useConfirm();
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,13 +60,16 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
     setLoading(true);
     setListError(null);
     setDeleteError(null);
-    listBills()
+    listAllBills()
       .then(setBills)
       .catch((err) => setListError(describeError(err)))
       .finally(() => setLoading(false));
   }
 
   useEffect(loadBills, [reloadSignal]);
+
+  const shown = useMemo(() => bills.filter((bill) => overlaps(bill, period)), [bills, period.date_from, period.date_to]);
+  const shownTotal = shown.reduce((sum, bill) => sum + (bill.total_amount ?? 0), 0);
 
   async function toggleExpand(bill: Bill) {
     if (expandedId === bill.id) {
@@ -94,25 +109,46 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
     }
   }
 
+  const periodFilter = (
+    <div className="mb-5 rounded-xl border border-border bg-card px-4 py-3">
+      <PeriodFilter period={period} onChange={onPeriodChange} idPrefix="bills-period" />
+    </div>
+  );
+
   if (loading) {
     return (
-      <div aria-busy="true" aria-label="Chargement des factures" className="flex flex-col gap-2">
-        {[0, 1, 2].map((i) => (
-          <Skeleton key={i} className="h-12 rounded-lg" />
-        ))}
-      </div>
+      <>
+        {periodFilter}
+        <div aria-busy="true" aria-label="Chargement des factures" className="flex flex-col gap-2">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} className="h-12 rounded-lg" />
+          ))}
+        </div>
+      </>
     );
   }
-  if (listError) return <Banner tone="error">{listError}</Banner>;
-  if (bills.length === 0) {
+  if (listError) {
+    return (
+      <>
+        {periodFilter}
+        <Banner tone="error">{listError}</Banner>
+      </>
+    );
+  }
+  if (shown.length === 0) {
     return (
       <>
         {dialog}
-        <EmptyState
-          icon={FileText}
-          title="Aucune facture générée."
-          description="Regroupez vos réclamations en brouillon dans une facture, à télécharger en PDF."
-        />
+        {periodFilter}
+        {bills.length === 0 ? (
+          <EmptyState
+            icon={FileText}
+            title="Aucune facture générée."
+            description="Cochez vos réclamations en brouillon pour les regrouper dans une facture, à télécharger en PDF."
+          />
+        ) : (
+          <EmptyState icon={SearchX} title="Aucune facture pour cette période." />
+        )}
       </>
     );
   }
@@ -120,6 +156,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
   return (
     <>
       {dialog}
+      {periodFilter}
       {deleteError && <Banner tone="error" className="mb-4">{deleteError}</Banner>}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <Table>
@@ -135,7 +172,7 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {bills.map((bill) => {
+            {shown.map((bill) => {
               const expanded = expandedId === bill.id;
               return (
                 <Fragment key={bill.id}>
@@ -192,6 +229,15 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
                                 <span className="w-24 tabular-nums text-muted-foreground">{formatDate(c.service_date)}</span>
                                 <span className="min-w-40 font-semibold">{c.patient_full_name}</span>
                                 <CodeChips codes={c.codes.map((code) => code.code)} />
+                                {c.encounter_id != null && (
+                                  <Link
+                                    to={`/app/inbox/${c.encounter_id}`}
+                                    className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
+                                  >
+                                    <FileSearch aria-hidden className="size-3.5" />
+                                    Voir la rencontre
+                                  </Link>
+                                )}
                                 {c.total_amount != null && (
                                   <span className="ml-auto font-semibold tabular-nums">{formatMoney(c.total_amount)}</span>
                                 )}
@@ -207,6 +253,14 @@ export function BillsTab({ reloadSignal, onChanged }: BillsTabProps) {
             })}
           </TableBody>
         </Table>
+        <div className="flex items-center justify-between border-t border-border bg-muted/40 px-4 py-2.5 text-sm">
+          <span className="text-muted-foreground">
+            {shown.length} facture{shown.length > 1 ? "s" : ""}
+          </span>
+          <span>
+            Total <span className="font-semibold tabular-nums">{formatMoney(shownTotal)}</span>
+          </span>
+        </div>
       </div>
     </>
   );

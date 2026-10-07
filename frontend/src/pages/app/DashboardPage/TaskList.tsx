@@ -61,7 +61,7 @@ function tasksOf({ tasks, kpis }: Dashboard): Task[] {
     kpis.draft_count > 0 && {
       label: plural(kpis.draft_count, "réclamation à facturer", "réclamations à facturer"),
       detail: formatMoney(kpis.draft_total),
-      // Straight to the bill: every draft preselected (FacturationPage reads `bill`).
+      // Straight to billing: the drafts, every one ticked (FacturationPage reads `bill`).
       to: "/app/facturation?bill=1",
       icon: ReceiptText,
       tone: "primary",

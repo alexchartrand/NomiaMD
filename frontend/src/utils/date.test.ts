@@ -3,6 +3,7 @@ import {
   ageOn,
   clinicDayOf,
   clinicToday,
+  daysBetween,
   formatAge,
   formatClinicTime,
   formatDate,
@@ -105,5 +106,17 @@ describe("ageOn / formatAge", () => {
     expect(formatAge("2024-09-03", "2026-03-03")).toBe("18 mois");
     expect(formatAge("2024-03-03", "2026-03-03")).toBe("2 ans");
     expect(formatAge("1959-01-01", "2026-03-03")).toBe("67 ans");
+  });
+});
+
+describe("daysBetween", () => {
+  it("counts calendar days, across months and backwards", () => {
+    expect(daysBetween("2026-10-01", "2026-10-01")).toBe(0);
+    expect(daysBetween("2026-09-28", "2026-10-03")).toBe(5);
+    expect(daysBetween("2026-10-03", "2026-09-28")).toBe(-5);
+  });
+
+  it("isn't thrown off by a daylight-saving change", () => {
+    expect(daysBetween("2026-10-31", "2026-11-02")).toBe(2);
   });
 });
