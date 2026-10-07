@@ -1,4 +1,4 @@
-"""Seed a freshly wiped database with a demo admin user and all 25 simulated consultation-
+"""Seed a freshly wiped database with a demo admin user and every simulated consultation-
 note patients, each with an encounter holding its note, for local development — plus the
 Epic sandbox demo's patients (no encounters: those come from its import). The
 encounters go through IntakeService (the sample connector), the same path a real note
@@ -54,9 +54,10 @@ ADMIN_REMUNERATION_TYPE = RemunerationType.MIXTE.value
 
 # A single fabricated placeholder, not a real RAMQ practice number — reused both as the
 # seeded admin's own practice_number and as every seeded patient's
-# family_doctor_practice_number, so all 25 automatically resolve as "registered" with the
-# admin once loaded: registration is derived from this exact-match comparison (see
-# app/patients/registration.py), there's no separate flag left to set.
+# family_doctor_practice_number, so every seeded patient resolves as "registered" with the
+# admin once loaded — except those whose **Patient :** line says "non inscrit(e)" (walk-in,
+# ER, shared-care notes), seeded with no family doctor: registration is derived from this
+# exact-match comparison (see app/patients/registration.py), there's no separate flag to set.
 SEED_PRACTICE_NUMBER = "123456"
 
 # The em dash separates the name from the "NN ans (H/F)"/"NN mois (H/F)" demographic
@@ -70,9 +71,13 @@ _NAME_PREFIX_RE = re.compile(r"^(.*?)\s*[—-]\s*\d")
 # ambiguity in these fixtures, not something a regex can fully resolve.
 _VULNERABLE_RE = re.compile(r"(?<!non )vuln[ée]rable", re.IGNORECASE)
 
+# Matched against the **Patient :** header line only — the note body may well mention
+# "patient non inscrit" while describing a billing rule or someone else.
+_NOT_REGISTERED_RE = re.compile(r"\bnon[- ]inscrite?\b", re.IGNORECASE)
+
 
 class _NoExtractionQueue:
-    """Seeded encounters wait "reçu": extracting 25 notes up front would spend 25 LLM runs."""
+    """Seeded encounters wait "reçu": extracting every note up front would spend one LLM run each."""
 
     async def enqueue(self, encounter_id: int) -> None:
         pass
@@ -156,6 +161,7 @@ async def main() -> None:
 
                 full_name = format_full_name(_name_as_stated(patient_field)) or patient_field
                 is_vulnerable = bool(_VULNERABLE_RE.search(sample.transcript))
+                is_registered = not _NOT_REGISTERED_RE.search(patient_field)
 
                 patient = await patient_repository.get_or_create_by_ramq_number(
                     ramq_number=normalized_nam,
@@ -163,11 +169,14 @@ async def main() -> None:
                     date_of_birth=decoded.date_of_birth,
                     gender=decoded.gender,
                     is_vulnerable=is_vulnerable,
-                    family_doctor_name=_family_doctor_name(fields),
-                    family_doctor_practice_number=SEED_PRACTICE_NUMBER,
+                    family_doctor_name=_family_doctor_name(fields) if is_registered else None,
+                    family_doctor_practice_number=SEED_PRACTICE_NUMBER if is_registered else None,
                 )
                 await roster_repository.add(admin.id, patient.id)
-                print(f"  + patient {patient.full_name!r} (id={patient.id}, vulnerable={is_vulnerable})")
+                print(
+                    f"  + patient {patient.full_name!r} "
+                    f"(id={patient.id}, vulnerable={is_vulnerable}, registered={is_registered})"
+                )
 
             # The Epic sandbox demo's patients, under the fake NAMs its import resolves them
             # by (app/intake/connectors/epic_fhir/sandbox_patients.json). Synthetic too.
