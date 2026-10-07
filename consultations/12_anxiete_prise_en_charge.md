@@ -1,6 +1,6 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Étienne Marchand, MD, médecine familiale
-**Patient :** Bissonnette, Olivier — 22 ans (H)
+**Patient :** Bissonnette, Olivier — 22 ans (H), inscrit, vulnérable
 **NAM :** BISO04050501
 **Dossier :** #CLI-2026-01227
 **Date/heure :** 5 mai 2026, 17h00

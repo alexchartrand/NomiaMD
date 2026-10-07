@@ -1,6 +1,6 @@
 **Clinique :** GMF Boisé-des-Cèdres
 **Médecin :** Dr. Naomi Fortier, MD, médecine familiale
-**Patient :** Roy, Camille — 32 ans (F)
+**Patient :** Roy, Camille — 32 ans (F), inscrite, vulnérable
 **NAM :** ROYC94512801
 **Dossier :** #GMF-2026-00312
 **Date/heure :** 17 septembre 2026, 14h00
