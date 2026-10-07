@@ -1,53 +1,61 @@
 # consultations/
 
-25 synthetic French-language consultation notes, one per file — 20 family-medicine
-(médecine familiale) notes plus 5 urgence/médecine-familiale notes originally at the
-repo root as `notes_consultation_simulees.md`. All patients, physicians, clinics, and
-clinical details are entirely fictional.
+58 synthetic French-language consultation notes, one per file. All patients, physicians,
+clinics and clinical details are entirely fictional.
 
-This is the default source for `backend/app/sample_patients.py` — every `.md` file here
-except `README.md` is loaded as a selectable "simulated patient" (`GET /patients`,
-`GET /patients/{id}`), one note per file. See root `README.md`.
+This is the default source for `backend/app/sample_patients/`: every `.md` file here
+except `README.md` is loaded as a selectable "simulated patient", one note per file, and
+`backend/scripts/seed_db.py` seeds one patient + encounter per note. See root `README.md`.
 
-## Contents
+## Note format
 
-- `01_hta_prise_en_charge.md` … `25_fatigue_depression_suivi.md` — one consultation
-  note per file.
-- `eval_labels.jsonl` — one entry per note (notes 1-20 only) with a best-effort
-  candidate RAMQ code guess, in the same schema as
-  `backend/tests/fixtures/eval_billing_codes.jsonl`. Merged into that fixture — see
-  "RAMQ code labels" below for the caveats that still apply to every entry.
+A fixed header that the loaders parse (`**Label :** value` lines), then a free-form body:
 
-## Scope and diversity
+- `**Clinique :**`, `**Service :**` or `**Établissement :**` — where the encounter happened
+- `**Médecin :**`, `**Patient :**` (`Nom, Prénom — NN ans (H/F)`, optionally
+  `, inscrit(e)` / `, non inscrit(e)` / `vulnérable`), `**NAM :**`, `**Dossier :**`
+  (the sample's id), `**Date/heure :**` (`13 juillet 2026, 14h15`)
+- `### Motif de consultation` (used for the inbox label)
 
-Family-doctor (omnipraticien) encounters only, matching this repo's current RAMQ
-scope (see root `README.md`). Two fictional clinics (Clinique médicale Les Tilleuls,
-a cabinet privé; GMF Boisé-des-Cèdres, a groupe de médecine de famille), a CHU
-urgence, and one telemedicine encounter, across physicians. Ages span 18 months to 88
-years and include: chronic disease management (HTA, dyslipidemia, diabetes),
-pregnancy (first-trimester intake and third-trimester follow-up), pediatrics (well-child
-visit, acute otitis, pediatric appendicitis), musculoskeletal (acute low back pain,
-shoulder tendinopathy follow-up, second-opinion knee osteoarthritis), a
-suspicious-lesion opinion visit, a complex multi-system opinion visit, mental health
-(new GAD intake, depression follow-up), geriatrics/home care (a home visit for severe
-loss of autonomy, a periodic visit for a vulnerable inscribed patient), a periodic exam
-for a 70-79-year-old, an interpreter-assisted visit, an inter-professional
-specialist-communication note, a telederm video consultation, and urgence cases (STEMI,
-hand laceration/suture, pediatric appendicitis).
+`seed_db.py` seeds a patient as **not registered** with the demo physician when the
+`**Patient :**` line says `non inscrit(e)`, and as **vulnérable** when the note contains
+"vulnérable" (not preceded by "non "). Keep those words out of notes where they don't apply.
+
+The body deliberately varies like real notes do: full templates (HMA / ATCD / Rx / E/P /
+Impression / Plan) only for intakes and admissions, terse S/O/A/P follow-ups without
+ATCD or Rx, ward-round and CHSLD notes full of abbreviations, ER notes with triage and
+disposition, dictated prose.
+
+## Coverage
+
+| Notes | Content |
+|---|---|
+| 01-25 | Original set: cabinet (Clinique médicale Les Tilleuls), GMF Boisé-des-Cèdres, a CHU urgence, one video teleconsultation — mostly single-code visits |
+| 26-35 | *Easy* (1 code): GMF/cabinet follow-ups (incl. vulnérable, 80+), walk-in non-registered, new-patient intake, CHSLD round, hospital ward round, ER exam, home visit (severe loss of autonomy), CLSC/GMF-U pregnancy follow-up (mixte) |
+| 36-47 | *Medium* (2 codes or a look-alike trap): visit + office ECG / laceration repair / I&D / joint injection, psychotherapy (no visit), CHSLD admission + NIM, CHSLD evening call-out, ward admission and discharge, ER exam + repair, home visit + ECG, shared mental-health follow-up |
+| 48-55 | *Hard* (3+ codes or rule traps): follow-up + mental status exam (one code), several cabinet procedures, night ER with an admitted patient, CHSLD phone order + death certification, vulnérable intake + interpreter, IUD insertion (includes the visit), ward hand-over + family meeting (mixte), ER complex-situation forfait |
+| 56-58 | *Negatives* (no code): insurer form only, prescription renewal without a visit, no-show |
 
 ## RAMQ code labels — read before trusting them
 
-`eval_labels.jsonl`'s `expected_codes` are **not verified by a physician or RAMQ
-billing expert**. This session cross-referenced each note against the descriptions in
-the ~101-code corpus in the LanceDB `codes` table at `DB_PATH` (produced by the
-separate `ramq-ingestion` repo — see root `README.md`'s "RAMQ data ingestion" section)
-and picked the most plausible-sounding code, but picking correct RAMQ codes requires billing
-expertise this session doesn't have — see `label_notes` on each entry for the specific
-reasoning and open ambiguities (panel-size splits, vulnerability-status judgment calls,
-near-duplicate code families whose actual distinction isn't recoverable from the
-corpus's parsed text). One entry (`CLI-2026-01230`) is marked `needs_physician_label`
-outright rather than guessed, because the three candidate codes were textually
-indistinguishable in the corpus. Treat every `draft-unverified` entry as a starting
-point for a physician/billing-literate reviewer, not as ground truth — same caveat
-that already applies to the other entries in
-`backend/tests/fixtures/eval_billing_codes.jsonl`, which these lines have been merged into.
+Labels live in `backend/tests/fixtures/eval_billing_codes.jsonl` (the file
+`backend/scripts/eval_extraction.py` reads by default), one entry per note, keyed by the
+note's dossier number. Each carries the `physician_context` / `patient_context` facts the
+eval feeds the eligibility filter (panel size, remuneration, age, registration,
+vulnerability) — they're part of the label: the same note can have a different right
+answer for a different physician.
+
+**None of them is verified by a physician or billing expert.** They were picked on
+2026-10-07 from the omnipraticien manual (rev. 2026-09-17, préambule général rules cited
+in each `label_notes`) and the `codes_2026-09-17` table; notes 01-25 were re-audited the
+same day (several original guesses were wrong — e.g. an under-80 code for an 88-year-old).
+
+- `label_status: "draft-unverified"` — the manual text supports the label.
+- `label_status: "to_review"` — a judgment call; `review_reason` says exactly what a
+  physician needs to decide (walk-in vs scheduled, hospital unit level A/B, a designation…).
+- `expected_codes: []` outside `needs_physician_label` is a real answer: nothing billable.
+
+Known gaps in the codes table that affect these labels (ER codes wrongly requiring
+registration, mislabelled vulnérable variants, missing surgical-tray supplements) are
+logged in ramq-ingestion's `BACKLOG.md`; the app-side ones (no care-setting axis…) in
+the root `BACKLOG.md`.

@@ -123,7 +123,7 @@ deterministically, not for judging extraction quality. Embeddings for retrieval 
 from the real Mistral API.
 
 There's no signup page. On a fresh database, seed a demo physician account (prompts for its
-password) and the 25 simulated patients:
+password) and the simulated patients from `consultations/`:
 
 ```bash
 cd backend

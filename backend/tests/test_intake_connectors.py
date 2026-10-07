@@ -38,10 +38,10 @@ def _note(nam: str | None, body: str) -> str:
 def test_sample_connector_delivers_every_fixture_note():
     notes = SampleConnector().notes()
 
-    assert len(notes) == 25
+    assert len(notes) == 58
     assert {note.source_system for note in notes} == {SAMPLE_SOURCE_SYSTEM}
     assert {note.channel for note in notes} == {Channel.SAMPLE}
-    assert len({note.external_note_id for note in notes}) == 25
+    assert len({note.external_note_id for note in notes}) == 58
 
 
 def test_sample_connector_reads_nam_and_date_from_the_header():
@@ -188,13 +188,13 @@ async def test_seeding_the_samples_creates_one_encounter_each_and_reseeding_none
 
     first = await intake.receive_all(SampleConnector().notes(), user)
 
-    assert [outcome.outcome for outcome in first] == [DedupOutcome.NEW] * 25
-    assert await _encounter_count(user.id) == 25
+    assert [outcome.outcome for outcome in first] == [DedupOutcome.NEW] * 58
+    assert await _encounter_count(user.id) == 58
     assert len(queue.enqueued) == 1
 
     second = await intake.receive_all(SampleConnector().notes(), user)
 
-    assert [outcome.outcome for outcome in second] == [DedupOutcome.DUPLICATE] * 25
+    assert [outcome.outcome for outcome in second] == [DedupOutcome.DUPLICATE] * 58
     assert [outcome.encounter_id for outcome in second] == [outcome.encounter_id for outcome in first]
-    assert await _encounter_count(user.id) == 25
+    assert await _encounter_count(user.id) == 58
     assert len(queue.enqueued) == 1
