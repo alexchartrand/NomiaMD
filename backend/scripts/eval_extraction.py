@@ -42,7 +42,8 @@ the right variant becomes the only one offered.
 
 Defaults to tests/fixtures/eval_billing_codes.jsonl, a *draft* fixture: labels are
 best-effort readings of the RAMQ manual, not physician-verified — label_status is
-"draft-unverified" or "to_review" (with a review_reason saying what a physician must decide).
+"draft-unverified", "to_review" (with a review_reason saying what a physician must decide), or
+"reviewed" (a to_review question settled by a human review; label_notes records the decision).
 An entry with expected_codes == [] is a labeled negative (the right answer is no code: a
 no-show, a non-insured form...) and is scored on whether the model returned nothing — except
 under label_status "needs_physician_label", where [] only means "not labeled yet".

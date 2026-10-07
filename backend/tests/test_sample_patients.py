@@ -88,5 +88,5 @@ def test_eval_fixture_entries_point_at_real_notes():
     for entry in entries:
         assert get_sample_patient(entry["patient_id"]) is not None, entry["patient_id"]
         assert all(re.fullmatch(r"\d{5}", code) for code in entry["expected_codes"]), entry["patient_id"]
-        assert entry["label_status"] in {"draft-unverified", "to_review", "needs_physician_label"}
+        assert entry["label_status"] in {"draft-unverified", "to_review", "reviewed", "needs_physician_label"}
         assert ("review_reason" in entry) == (entry["label_status"] == "to_review"), entry["patient_id"]

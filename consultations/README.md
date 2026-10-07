@@ -45,7 +45,8 @@ eval feeds the eligibility filter (panel size, remuneration, age, registration,
 vulnerability) — they're part of the label: the same note can have a different right
 answer for a different physician.
 
-**None of them is verified by a physician or billing expert.** They were picked on
+**None of the draft labels is verified by a physician or billing expert** (only the
+`reviewed` ones went through a review). They were picked on
 2026-10-07 from the omnipraticien manual (rev. 2026-09-17, préambule général rules cited
 in each `label_notes`) and the `codes_2026-09-17` table; notes 01-25 were re-audited the
 same day (several original guesses were wrong — e.g. an under-80 code for an 88-year-old).
@@ -53,6 +54,8 @@ same day (several original guesses were wrong — e.g. an under-80 code for an 8
 - `label_status: "draft-unverified"` — the manual text supports the label.
 - `label_status: "to_review"` — a judgment call; `review_reason` says exactly what a
   physician needs to decide (walk-in vs scheduled, hospital unit level A/B, a designation…).
+- `label_status: "reviewed"` — a `to_review` judgment call settled in a human review
+  (2026-10-07); the decision and its reason close `label_notes`.
 - `expected_codes: []` outside `needs_physician_label` is a real answer: nothing billable.
 
 Known gaps in the codes table that affect these labels (ER codes wrongly requiring
