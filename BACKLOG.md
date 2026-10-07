@@ -11,6 +11,10 @@
 
 ## 🐛 Bugs
 
+- [ ] 🔴 No two-factor login — *added 10/7, from opening `ALLOWED_CIDRS` to everyone*
+  - Physicians use the app from hospitals, clinics, home and cellular, so `ALLOWED_CIDRS` has to be `0.0.0.0/0,::/0` and the IP allowlist no longer protects anything. Email + password (`app/auth/`) is now the only barrier in front of patient data. Add TOTP (authenticator app) at login, with recovery codes and an admin reset in `scripts/reset_password.py`'s style.
+  - Acceptable while the app holds only synthetic data; must be done before real patient data (Law 25's "reasonable security measures" for remote access to health data).
+
 - [ ] 🔴 No purge/retention policy on `encounters` — *added 8/21, moved from DEPLOY.md, escalated 8/24, escalated 8/29, reworded 9/30, retargeted 10/1*
   - The note text lives in `encounters.note_text` (with the patient's name and NAM verbatim), so the encounter is the purge target. Deleting one cascades to its runs and their results and sets `claims.extraction_run_id` to NULL; claims keep `source_note_hash`/`external_note_id`. `encounters.purge_after` (indexed) exists but nothing sets or acts on it — pick the retention period, set it where encounters are created, and add the job (intake step 05).
   - Acceptable while demoing with the synthetic notes in `consultations/`; must be done before this ever touches real patient data (Law 25). The NAM is scrubbed from the *prompt* (`app/patients/nam.py`'s `redact`), not from what's stored.
@@ -18,6 +22,13 @@
 - [ ] 🔴 No Alembic — schema changes require a DB wipe or a hand-run `ALTER TABLE` — *added 8/24, escalated 8/27, deferred 9/30*
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one.
   - Decided 9/30: not needed until the next release — every existing DB (local SQLite and the demo Postgres) is deleted and recreated on a schema change until then. Adopt Alembic (with the current schema as its baseline revision) before the first release that holds data worth keeping; it gates going live.
+
+- [ ] 🟡 Login brute force is only limited per IP — *added 10/7, from opening `ALLOWED_CIDRS` to everyone*
+  - `POST /auth/login` is `@limiter.limit("10/minute")` keyed on `get_remote_address` (`app/rate_limit.py`), so an attacker rotating IPs gets 10 guesses/minute per address against one account, with nothing tracking failures per account. Add a per-account counter (exponential delay or temporary lockout after N failures, reset on success), and log failed attempts.
+
+- [ ] 🟡 No password policy, and 30-day sessions can't be revoked — *added 10/7, from opening `ALLOWED_CIDRS` to everyone*
+  - `scripts/create_user.py` and `reset_password.py` accept any password, even one character. Enforce a minimum length (≥ 12) and reject common/breached passwords.
+  - Sessions are stateless JWTs: 12 h by default, 30 days with "Rester connecté" (`JWT_REMEMBER_ME_EXPIRY_SECONDS`, `app/auth/security.py`). Nothing invalidates one before it expires — not a password reset, a logout on another device, or a lost phone. Shorten the remember-me lifetime and add a revocation hook (e.g. a per-user `token_version` claim bumped on password reset).
 
 - [ ] 🟡 Eligibility can't see several RAMQ conditions the new eval notes hit — *added 10/7, from labeling `consultations/` 26-58*
   - **Care setting isn't an axis.** `BillingContext` has no place of service (cabinet / GMF / CLSC-GMF-U / domicile / CHSLD / CHSGS ward / urgence), so CHSLD (`15615`-`15625`), ward (`15638`-`15655`) and ER (`15052`-`15070`) codes compete with cabinet visits for every note, and the model alone decides. The setting is in the note header and `EncounterSetting.location_detail`, and `fees[].lieux` already partially encodes it.
