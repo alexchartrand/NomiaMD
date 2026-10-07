@@ -19,6 +19,12 @@
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one.
   - Decided 9/30: not needed until the next release — every existing DB (local SQLite and the demo Postgres) is deleted and recreated on a schema change until then. Adopt Alembic (with the current schema as its baseline revision) before the first release that holds data worth keeping; it gates going live.
 
+- [ ] 🟡 Eligibility can't see several RAMQ conditions the new eval notes hit — *added 10/7, from labeling `consultations/` 26-58*
+  - **Care setting isn't an axis.** `BillingContext` has no place of service (cabinet / GMF / CLSC-GMF-U / domicile / CHSLD / CHSGS ward / urgence), so CHSLD (`15615`-`15625`), ward (`15638`-`15655`) and ER (`15052`-`15070`) codes compete with cabinet visits for every note, and the model alone decides. The setting is in the note header and `EncounterSetting.location_detail`, and `fees[].lieux` already partially encodes it.
+  - **Vulnérable tariff is reserved to the treating physician or their group** (P.G. 2.2.6 A a). Eligibility treats `is_vulnerable` as a plain patient attribute, so a clinically vulnerable patient seen by another physician (home-care doctor, walk-in) gets only the vulnérable variants — the right non-vulnérable code is filtered out (eval entry `DOM-2026-00022` sets `is_vulnerable=false` to get around it).
+  - **Physician designations aren't practice facts.** `08775`-`08777` (MSK) need a comité-paritaire designation; ward visits split by the unit's level A/B (annexe XXII 2.01). Neither is in `PracticeFacts`, so both variants are always offered (several `to_review` entries hinge on these).
+  - The ER-code `requires_registered` data bug is upstream (ramq-ingestion BACKLOG, 10/7).
+
 - [ ] 🟡 One extraction can mix two manual revisions — *added 9/30, from database review*
   - `CurrentCodeTableProvider.current()` is re-resolved on every `CodeRepository` call: once per planned query in `RAMQCodesRetriever`, then again in `BillingCodesTask.resolve_fees` after the LLM call. A promote landing mid-extraction gives candidates from one `codes_<rev>` and fees from another (or an empty fee list for a code dropped from the new manual). Fix: resolve the table once per extraction and pass it through — also the natural carrier for the `manual_rev` item in Features.
 
