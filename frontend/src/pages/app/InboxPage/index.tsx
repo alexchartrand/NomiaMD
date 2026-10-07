@@ -11,7 +11,6 @@ import { DayCard } from "./DayCard";
 import { DuplicateModal } from "./DuplicateModal";
 import { matches, type RowFilters, type StatusFilter } from "./filters";
 import { FiltersBar } from "./FiltersBar";
-import { presetPeriod, type PresetId } from "./periods";
 import { groupByDay, readFilters, readPeriod, toParams } from "./inboxView";
 import { statusTabs } from "./statusTabs";
 import { useInbox } from "./useInbox";
@@ -65,10 +64,6 @@ export default function InboxPage() {
     setSearchParams(toParams(next, filters));
   }
 
-  function changePreset(id: PresetId) {
-    changePeriod(presetPeriod(id));
-  }
-
   function changeFilters(next: RowFilters) {
     // Typing in the patient search shouldn't stack a history entry per keystroke.
     setSearchParams(toParams(period, next), { replace: true });
@@ -94,7 +89,6 @@ export default function InboxPage() {
       <FiltersBar
         period={period}
         onPeriodChange={changePeriod}
-        onPresetChange={changePreset}
         filters={filters}
         onFiltersChange={changeFilters}
         sources={sources}

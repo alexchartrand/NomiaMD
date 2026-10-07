@@ -1,71 +1,26 @@
-import type { ReactNode } from "react";
 import { Search, X } from "lucide-react";
 import type { EncounterPeriod } from "../../../api";
-import { Button, SegmentedControl, Select, TextField } from "../../../components";
+import { Button, FilterField, PeriodFilter, Select, TextField } from "../../../components";
 import { sourceLabel } from "../../../utils/sources";
 import type { RowFilters } from "./filters";
-import { PRESETS, presetOf, type PresetId } from "./periods";
 
 interface FiltersBarProps {
   period: EncounterPeriod;
   onPeriodChange: (period: EncounterPeriod) => void;
-  onPresetChange: (id: PresetId) => void;
   filters: RowFilters;
   onFiltersChange: (filters: RowFilters) => void;
   // The sources seen in the period, for the source filter.
   sources: string[];
 }
 
-// Keeps a label glued to its field so a wrapping row never splits them apart.
-function FilterField({ htmlFor, label, children }: { htmlFor: string; label: string; children: ReactNode }) {
-  return (
-    <div className="flex shrink-0 items-center gap-2">
-      <label htmlFor={htmlFor} className="text-sm text-muted-foreground">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
 // The period (presets or a date range), then who and where from. The status is the tabs
 // under this bar.
-export function FiltersBar({ period, onPeriodChange, onPresetChange, filters, onFiltersChange, sources }: FiltersBarProps) {
-  const activePreset = presetOf(period);
+export function FiltersBar({ period, onPeriodChange, filters, onFiltersChange, sources }: FiltersBarProps) {
   const hasRowFilters = Boolean(filters.source || filters.patient);
 
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <SegmentedControl<PresetId>
-          ariaLabel="Période"
-          segments={PRESETS}
-          value={activePreset}
-          onChange={onPresetChange}
-        />
-        <div className="flex flex-wrap items-center gap-2">
-          <FilterField htmlFor="period-from" label="Du">
-            <TextField
-              id="period-from"
-              type="date"
-              className="w-auto"
-              value={period.date_from ?? ""}
-              max={period.date_to ?? undefined}
-              onChange={(e) => onPeriodChange({ ...period, date_from: e.target.value || null })}
-            />
-          </FilterField>
-          <FilterField htmlFor="period-to" label="au">
-            <TextField
-              id="period-to"
-              type="date"
-              className="w-auto"
-              value={period.date_to ?? ""}
-              min={period.date_from ?? undefined}
-              onChange={(e) => onPeriodChange({ ...period, date_to: e.target.value || null })}
-            />
-          </FilterField>
-        </div>
-      </div>
+      <PeriodFilter period={period} onChange={onPeriodChange} />
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
         <div className="relative w-64">

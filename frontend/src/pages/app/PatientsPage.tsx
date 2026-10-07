@@ -21,6 +21,7 @@ import {
   useConfirm,
 } from "../../components";
 import { formatAge, formatDate, clinicToday } from "../../utils/date";
+import { fold } from "../../utils/text";
 import { useAuth } from "../../AuthContext";
 import { AddExistingDialog } from "./patients/AddExistingDialog";
 import { CreatePatientForm } from "./patients/CreatePatientForm";
@@ -35,11 +36,6 @@ function RegistrationBadge({ value }: { value: boolean | null }) {
   if (value === true) return <Badge tone="success">Inscrit</Badge>;
   if (value === false) return <Badge>Non inscrit</Badge>;
   return <Badge tone="warning">Inconnu</Badge>;
-}
-
-// Accents and case don't matter: "fred" finds "Frédéric".
-function fold(text: string): string {
-  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
 
 export default function PatientsPage() {

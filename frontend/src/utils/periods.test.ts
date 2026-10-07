@@ -1,4 +1,4 @@
-import { DEFAULT_PRESET, presetOf, presetPeriod, PRESETS } from "./periods";
+import { periodToParams, presetOf, presetPeriod, PRESETS, readPeriodParams } from "./periods";
 
 // Mid-day UTC so the Montreal date is the same calendar day.
 function today(iso: string) {
@@ -64,8 +64,19 @@ describe("presetOf", () => {
   it("treats a missing and an undefined bound alike", () => {
     expect(presetOf({ date_from: undefined, date_to: undefined })).toBe("all");
   });
+});
 
-  it("the default preset exists", () => {
-    expect(PRESETS.some((preset) => preset.id === DEFAULT_PRESET)).toBe(true);
+describe("period URL params", () => {
+  it("no params is the page's default preset", () => {
+    today("2026-10-07");
+    expect(readPeriodParams(new URLSearchParams(), "today")).toEqual(presetPeriod("today"));
+    expect(readPeriodParams(new URLSearchParams(), "all")).toEqual({});
+  });
+
+  it("round-trips a date range and 'all'", () => {
+    const range = { date_from: "2026-10-01", date_to: "2026-10-03" };
+    expect(readPeriodParams(new URLSearchParams(periodToParams(range)), "today")).toEqual(range);
+    expect(periodToParams({})).toEqual({ all: "1" });
+    expect(readPeriodParams(new URLSearchParams(periodToParams({})), "today")).toEqual({});
   });
 });

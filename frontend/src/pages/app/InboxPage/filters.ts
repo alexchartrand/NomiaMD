@@ -1,4 +1,5 @@
 import type { EncounterRow, EncounterStatus } from "../../../api";
+import { fold } from "../../../utils/text";
 
 // "à traiter": everything the physician still has to act on — not billed yet, and not an
 // outdated version of a note.
@@ -11,11 +12,6 @@ export interface RowFilters {
   source: string;
   // Matches the masked name or NAM the list shows ("Roch D.", "DESR ******01").
   patient: string;
-}
-
-// Accents and case don't matter: "fred" finds "Frédéric".
-function fold(text: string): string {
-  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
 
 export function matches(row: EncounterRow, filters: RowFilters): boolean {
