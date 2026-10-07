@@ -40,11 +40,12 @@ variant. This is what makes the panel-size-ambiguous entries in the default
 fixture (label_notes admitting "picked arbitrarily") actually gradeable: set the context and
 the right variant becomes the only one offered.
 
-Defaults to tests/fixtures/eval_billing_codes.jsonl, which is a *draft* fixture — most
-entries have label_status "needs_physician_label" rather than real expected_codes, since
-picking correct RAMQ billing codes requires domain expertise this script doesn't have.
-Entries with expected_codes == [] are skipped for scoring (there's nothing to compare
-against) but still run.
+Defaults to tests/fixtures/eval_billing_codes.jsonl, a *draft* fixture: labels are
+best-effort readings of the RAMQ manual, not physician-verified — label_status is
+"draft-unverified" or "to_review" (with a review_reason saying what a physician must decide).
+An entry with expected_codes == [] is a labeled negative (the right answer is no code: a
+no-show, a non-insured form...) and is scored on whether the model returned nothing — except
+under label_status "needs_physician_label", where [] only means "not labeled yet".
 """
 
 import argparse
@@ -77,6 +78,10 @@ DEFAULT_EVAL_PATH = Path(__file__).parent.parent / "tests" / "fixtures" / "eval_
 def load_eval_set(path: Path) -> list[dict]:
     with path.open() as f:
         return [json.loads(line) for line in f if line.strip()]
+
+
+def _is_labeled_negative(entry: dict) -> bool:
+    return not entry.get("expected_codes") and entry.get("label_status") != "needs_physician_label"
 
 
 def _context_from_entry(entry: dict) -> BillingContext:
@@ -147,6 +152,7 @@ async def main() -> None:
     scored_selection = 0
     total_precision = 0.0
     total_recall = 0.0
+    negatives_scored = negatives_clean = 0
     model = None
 
     async with application_services() as db:
@@ -179,7 +185,7 @@ async def main() -> None:
                     f"  candidate recall: exact={sorted(recall.exact)} "
                     f"family-only={sorted(recall.family_only)} missing={sorted(recall.missing)}"
                 )
-            else:
+            elif not _is_labeled_negative(entry):
                 print(f"  expected: (none labeled — {entry.get('label_notes', '')[:100]}...)")
 
             if args.retrieval_only:
@@ -191,6 +197,12 @@ async def main() -> None:
             returned_codes = {c.code for c in billing_result.result.codes}
             print(f"  returned: {sorted(returned_codes) or '(none)'}")
 
+            if _is_labeled_negative(entry):
+                negatives_scored += 1
+                if not returned_codes:
+                    negatives_clean += 1
+                print(f"  expected: (none) -> {'clean' if not returned_codes else 'over-billed'}")
+                continue
             if not expected_codes:
                 continue
 
@@ -225,6 +237,8 @@ async def main() -> None:
         )
     else:
         print("selection: no entries scored — see label_status/label_notes in the fixture")
+    if negatives_scored:
+        print(f"negatives: {negatives_clean}/{negatives_scored} clean (no code returned when none was expected)")
 
 
 if __name__ == "__main__":
