@@ -108,14 +108,15 @@
 
 ## 🧹 Cleanup / Dead code
 
-- [ ] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests*
-  - Only one tab is mounted at a time, so the tab the physician switches to remounts and fetches fresh anyway; bumping `reloadSignal` after a bill is created or deleted changes nothing observable (removing `onChanged` in `BillsTab` leaves every test green). Drop the signal, or keep both tabs mounted if the intent was to avoid refetching on every switch.
+- [ ] 🟢 Flaky frontend tests under full-suite load — *added 10/7, from the `reloadSignal` cleanup*
+  - `FacturationPage.test.tsx`'s first test ("marks a claim billed without an encounter…") takes ~0.7s alone but often hits vitest's 5s timeout in a full `npm test` run, with or without the 10/7 change. `EncounterPage.test.tsx`'s "saves and opens the next encounter, saying whose claim was saved" failed once the same way. Find what the first test is waiting on (cold module/portal import under 37 parallel jsdom workers?) before reaching for a bigger `testTimeout`.
 
 - [ ] 🟢 `formatClinicTime`'s comment says "HH:MM" but it renders "09 h 05" — *added 10/4, from the frontend tests*
   - `frontend/src/utils/date.ts` uses the `fr-CA` locale, so the output is `09 h 05` (and the separator whitespace varies by ICU version). Probably intended for a French UI; fix the comment, or switch to `hour12: false` with `en-CA` if a strict HH:MM is wanted. `date.test.ts` asserts the current output.
 
 ## ✅ Done
 
+- [x] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests, done 10/7*
 - [x] 🟢 Replace the remaining `window.confirm` calls with `useConfirm` — *added 10/6, from the review-page rework, done 10/6*
 - [x] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
 - [x] 🔴 The public site is behind the IP allowlist — *added 10/2, from the public-site work, done 10/6*

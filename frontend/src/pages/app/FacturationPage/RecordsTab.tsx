@@ -11,7 +11,6 @@ import { SelectionBar } from "./SelectionBar";
 import { useClaims } from "./useClaims";
 
 interface RecordsTabProps {
-  reloadSignal: number;
   // Kept in the URL by the page, so the dashboard can link to the drafts.
   period: Period;
   onPeriodChange: (period: Period) => void;
@@ -27,7 +26,6 @@ interface RecordsTabProps {
 // The claims over a period, filtered like the inbox; the drafts are ticked straight in the
 // list and billed together.
 export function RecordsTab({
-  reloadSignal,
   period,
   onPeriodChange,
   filters,
@@ -37,7 +35,7 @@ export function RecordsTab({
   onBillCreated,
 }: RecordsTabProps) {
   const { confirm, dialog } = useConfirm();
-  const { claims, loading, error, reload } = useClaims(period, reloadSignal);
+  const { claims, loading, error, reload } = useClaims(period);
   const [actionError, setActionError] = useState<string | null>(null);
   const [selection, setSelection] = useState<Set<number>>(new Set());
   const today = clinicToday();
@@ -162,6 +160,8 @@ export function RecordsTab({
                 onClear={() => setSelection(new Set())}
                 onCreated={(bill) => {
                   setSelection(new Set());
+                  // The billed drafts are now submitted.
+                  void reload();
                   onBillCreated(bill);
                 }}
                 onStale={() => {

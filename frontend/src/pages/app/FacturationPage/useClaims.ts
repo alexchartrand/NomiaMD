@@ -3,9 +3,9 @@ import { describeError, listAllClaims, type Claim } from "../../../api";
 import type { Period } from "../../../utils/periods";
 
 // Every claim in a period, whatever its status: the status, patient and source are
-// filtered on the page so each status tab can count its claims. `reloadSignal` re-reads
-// them after a change made elsewhere (a bill generated or deleted).
-export function useClaims(period: Period, reloadSignal: number) {
+// filtered on the page so each status tab can count its claims. `reload` re-reads them in
+// place, without blanking the list.
+export function useClaims(period: Period) {
   const from = period.date_from ?? null;
   const to = period.date_to ?? null;
   const key = `${from}|${to}`;
@@ -36,13 +36,6 @@ export function useClaims(period: Period, reloadSignal: number) {
     setClaims([]);
     void reload();
   }, [reload]);
-
-  // A change made elsewhere: re-read in place, without blanking the list.
-  const firstSignal = useRef(reloadSignal);
-  useEffect(() => {
-    if (reloadSignal !== firstSignal.current) void reload();
-    // Not on `reload`: a period change already re-reads above.
-  }, [reloadSignal]);
 
   return { claims, loading, error, reload };
 }

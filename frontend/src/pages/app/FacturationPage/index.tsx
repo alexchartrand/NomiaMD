@@ -19,9 +19,6 @@ export default function FacturationPage() {
   const tab: Tab = params.get("tab") === "factures" ? "factures" : "reclamations";
   const period = readPeriodParams(params, "all");
   const filters = readClaimFilters(params);
-  // Bumped whenever a bill is created or deleted, so whichever tab is mounted refetches —
-  // claim statuses and the bills list can each change from the other tab's actions.
-  const [reloadSignal, setReloadSignal] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
 
   function show(next: { tab?: Tab; period: Period; filters?: ClaimFilters }, options?: { replace?: boolean }) {
@@ -57,7 +54,6 @@ export default function FacturationPage() {
   }, []);
 
   function handleBillCreated(bill: Bill) {
-    setReloadSignal((n) => n + 1);
     toast.success(`Facture ${bill.number} générée.`, {
       action: { label: "Voir les factures", onClick: () => setParams({ tab: "factures" }) },
     });
@@ -98,7 +94,6 @@ export default function FacturationPage() {
 
       {tab === "reclamations" ? (
         <RecordsTab
-          reloadSignal={reloadSignal}
           period={period}
           onPeriodChange={changePeriod}
           filters={filters}
@@ -109,7 +104,7 @@ export default function FacturationPage() {
           onBillCreated={handleBillCreated}
         />
       ) : (
-        <BillsTab reloadSignal={reloadSignal} onChanged={() => setReloadSignal((n) => n + 1)} period={period} onPeriodChange={changePeriod} />
+        <BillsTab period={period} onPeriodChange={changePeriod} />
       )}
     </AppPage>
   );

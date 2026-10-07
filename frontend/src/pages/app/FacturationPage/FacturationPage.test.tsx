@@ -426,6 +426,23 @@ describe("billing from the list", () => {
     expect(screen.getByRole("tab", { name: "Réclamations" })).toHaveAttribute("aria-selected", "true");
   });
 
+  it("re-reads the list once billed, so the billed claims show as submitted", async () => {
+    let claims = [claimFor(1, "Jeanne Dupont"), claimFor(2, "Marc Roy")];
+    serveClaims(() => claims);
+    server.use(
+      http.post("/api/bills", () => {
+        claims = [claimFor(1, "Jeanne Dupont", { status: "soumis", bill_id: 1 }), claimFor(2, "Marc Roy")];
+        return HttpResponse.json(makeBill());
+      }),
+    );
+    const { user } = renderPage();
+    await user.click(await screen.findByLabelText("Sélectionner la réclamation de Jeanne Dupont"));
+    await user.click(within(selectionBar()).getByRole("button", { name: "Générer la facture" }));
+    const jeanne = screen.getByText("Jeanne Dupont").closest("tr")!;
+    expect(await within(jeanne).findByText("Soumis")).toBeInTheDocument();
+    expect(within(screen.getByText("Marc Roy").closest("tr")!).getByText("Brouillon")).toBeInTheDocument();
+  });
+
   it("ticks every draft shown with the header box, and only those", async () => {
     serveClaims([
       claimFor(1, "Jeanne Dupont"),

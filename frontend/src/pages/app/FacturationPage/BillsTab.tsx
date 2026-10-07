@@ -32,8 +32,6 @@ import { formatMoney } from "../../../utils/money";
 import type { Period } from "../../../utils/periods";
 
 interface BillsTabProps {
-  reloadSignal: number;
-  onChanged: () => void;
   period: Period;
   onPeriodChange: (period: Period) => void;
 }
@@ -45,7 +43,7 @@ function overlaps(bill: Bill, period: Period): boolean {
   return true;
 }
 
-export function BillsTab({ reloadSignal, onChanged, period, onPeriodChange }: BillsTabProps) {
+export function BillsTab({ period, onPeriodChange }: BillsTabProps) {
   const { confirm, dialog } = useConfirm();
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +64,7 @@ export function BillsTab({ reloadSignal, onChanged, period, onPeriodChange }: Bi
       .finally(() => setLoading(false));
   }
 
-  useEffect(loadBills, [reloadSignal]);
+  useEffect(loadBills, []);
 
   const shown = useMemo(() => bills.filter((bill) => overlaps(bill, period)), [bills, period.date_from, period.date_to]);
   const shownTotal = shown.reduce((sum, bill) => sum + (bill.total_amount ?? 0), 0);
@@ -103,7 +101,6 @@ export function BillsTab({ reloadSignal, onChanged, period, onPeriodChange }: Bi
         setExpandedDetail(null);
       }
       loadBills();
-      onChanged();
     } catch (err) {
       setDeleteError(describeError(err));
     }
