@@ -21,7 +21,7 @@ export { Spinner } from "./Spinner";
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./Table";
 export { PageHeader } from "./PageHeader";
 export { SiteHeader } from "./SiteHeader";
-export { Sidebar, NavItem, NavSection } from "./Sidebar";
+export { Sidebar, NavItem, NavSection, useSidebarCollapsed } from "./Sidebar";
 export { ChatBubble } from "./ChatBubble";
 export { RamqChatPanel } from "./RamqChatPanel";
 export { Badge, type BadgeTone } from "./Badge";
