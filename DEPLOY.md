@@ -205,7 +205,20 @@ git fetch --tags && git checkout vX.Y.Z
 docker rm -f caddy                                  # frees 80/443
 docker compose -f edge/docker-compose.yml up -d     # new caddy + the nomiamd-edge network
 docker compose up --build -d --remove-orphans       # prod rejoins via the edge network
+# ufw: let public traffic through to the new caddy (see below)
+sudo ufw route allow proto tcp from any to 172.30.0.11 port 80
+sudo ufw route allow proto tcp from any to 172.30.0.11 port 443
+sudo ufw route allow proto udp from any to 172.30.0.11 port 443   # HTTP/3
 ```
+
+**Firewall:** ufw only lets traffic through to a container that a `ufw route allow` rule
+names by IP, and the old rules (added with `ufw-docker allow caddy …`) point at the old
+`caddy` container's address. Until the new caddy's static address (`172.30.0.11`,
+`edge/docker-compose.yml`) is allowed, every request — Let's Encrypt's HTTP challenge
+included — times out (`Timeout during connect (likely firewall problem)` in `docker
+compose -f edge/docker-compose.yml logs caddy`). Then delete the stale rules for the old
+address (`sudo ufw status numbered`, `sudo ufw delete <n>`). If you change the edge
+subnet or caddy's address, update these rules too.
 
 Every prod container is recreated (they lose their fixed `container_name`s); data lives
 in the `nomiamd_postgres_data` volume and is kept. The new `caddy` has its own
