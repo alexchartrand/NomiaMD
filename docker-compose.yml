@@ -115,6 +115,9 @@ services:
       context: ./backend
     restart: unless-stopped
     command: ["arq", "app.worker.WorkerSettings"]
+    # The image's HEALTHCHECK probes the backend's /health, which nothing serves here.
+    healthcheck:
+      disable: true
     networks: [internal]
     env_file: .env
     environment:
