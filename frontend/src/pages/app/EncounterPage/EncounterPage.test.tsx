@@ -4,7 +4,9 @@ import { Route, Routes } from "react-router-dom";
 import {
   makeClaim,
   makeClaimLine,
+  makeCodeHit,
   makeEncounterDetail,
+  makeEncounterPatient,
   makeEncounterRow,
   makeExtraction,
   makeFee,
@@ -15,7 +17,11 @@ import { server } from "../../../test/server";
 import type { EncounterDetail } from "../../../api";
 import EncounterPage from ".";
 
-beforeEach(() => serveSession(makeUser()));
+beforeEach(() => {
+  serveSession(makeUser());
+  // No frequent codes unless a test serves some.
+  server.use(http.get("/api/codes/search", () => HttpResponse.json([])));
+});
 
 function serveEncounter(detail: EncounterDetail | (() => EncounterDetail)) {
   let loads = 0;
@@ -62,7 +68,16 @@ describe("loading", () => {
     serveEncounter(withCodes({ batch_label: "Garde du soir", note_text: "Texte de la note." }));
     renderEncounter();
     expect(await screen.findByRole("heading", { level: 1, name: "Patient Test" })).toBeInTheDocument();
-    expect(screen.getByText(/sample · 01\/10\/2026 · reçue à .* · Garde du soir/)).toBeInTheDocument();
+    const visit = within(screen.getByLabelText("Rencontre"));
+    expect(visit.getByText("01/10/2026")).toBeInTheDocument();
+    expect(visit.getByText(/^Reçue à /)).toBeInTheDocument();
+    expect(visit.getByText("sample")).toBeInTheDocument();
+    expect(visit.getByText("Garde du soir")).toBeInTheDocument();
+    // What the billing context was built from: the patient's file, at the visit's date.
+    const context = within(screen.getByLabelText("Contexte de facturation"));
+    expect(context.getByText("46 ans")).toBeInTheDocument();
+    expect(context.getByText("Inscrit auprès de vous")).toBeInTheDocument();
+    expect(context.getByText("Non vulnérable")).toBeInTheDocument();
     expect(screen.getByText("TEST12345678")).toBeInTheDocument();
     expect(screen.getByText("Texte de la note.")).toBeInTheDocument();
   });
@@ -77,14 +92,14 @@ describe("loading", () => {
     serveEncounter(withCodes());
     renderEncounter({ inboxSearch: "?status=revu&from=2026-10-01" });
     await screen.findByRole("heading", { level: 1 });
-    expect(screen.getByRole("link", { name: "← Rencontres" })).toHaveAttribute("href", "/app/inbox?status=revu&from=2026-10-01");
+    expect(screen.getByRole("link", { name: "Rencontres" })).toHaveAttribute("href", "/app/inbox?status=revu&from=2026-10-01");
   });
 
   it("links back to the plain inbox otherwise", async () => {
     serveEncounter(withCodes());
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
-    expect(screen.getByRole("link", { name: "← Rencontres" })).toHaveAttribute("href", "/app/inbox");
+    expect(screen.getByRole("link", { name: "Rencontres" })).toHaveAttribute("href", "/app/inbox");
   });
 });
 
@@ -99,7 +114,7 @@ describe("reviewing the proposed codes", () => {
     expect(checkbox("09001")).not.toBeChecked();
     expect(checkbox("00200")).not.toBeChecked();
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeEnabled();
-    expect(total()).toHaveTextContent("50.00 $");
+    expect(total()).toHaveTextContent("50,00 $");
   });
 
   it("starts with nothing ticked once the physician un-ticks it, and saving is disabled", async () => {
@@ -108,7 +123,7 @@ describe("reviewing the proposed codes", () => {
     await screen.findByRole("heading", { level: 1 });
     await user.click(checkbox("00103"));
     expect(screen.getByRole("button", { name: "Enregistrer la facturation" })).toBeDisabled();
-    expect(total()).toHaveTextContent("0.00 $");
+    expect(total()).toHaveTextContent("0,00 $");
   });
 
   it("ticks a code from its description too", async () => {
@@ -117,6 +132,44 @@ describe("reviewing the proposed codes", () => {
     await screen.findByRole("heading", { level: 1 });
     await user.click(screen.getByText("Consultation"));
     expect(checkbox("00200")).toBeChecked();
+  });
+
+  it("adds one of the patient's frequent codes in one click, and ticks a proposed one instead of adding it twice", async () => {
+    serveEncounter(withCodes());
+    const searches: URLSearchParams[] = [];
+    let body: unknown;
+    server.use(
+      http.get("/api/codes/search", ({ request }) => {
+        searches.push(new URL(request.url).searchParams);
+        return HttpResponse.json([
+          makeCodeHit({ number: "00103" }),
+          makeCodeHit({ number: "00200" }),
+          makeCodeHit({ number: "00059" }),
+        ]);
+      }),
+      http.post("/api/claims", async ({ request }) => ((body = await request.json()), HttpResponse.json(makeClaim()))),
+    );
+    const { user } = renderEncounter();
+
+    // 00103 is already ticked: not offered.
+    await user.click(await screen.findByRole("button", { name: /Ajouter le code 00059/ }));
+    expect(screen.queryByRole("button", { name: /Ajouter le code 00103/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Retirer le code 00059" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Ajouter le code 00200/ }));
+    expect(checkbox("00200")).toBeChecked();
+    expect(screen.queryByRole("button", { name: "Retirer le code 00200" })).not.toBeInTheDocument();
+    // The frequent codes are the ones this patient may be billed on the encounter's date.
+    const latest = searches[searches.length - 1];
+    expect(latest.has("q")).toBe(false);
+    expect(latest.get("service_date")).toBe("2026-10-01");
+
+    await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
+    await waitFor(() => expect(body).toBeDefined());
+    expect((body as { selected_codes: { code: string }[] }).selected_codes.map((c) => c.code)).toEqual([
+      "00200",
+      "00103",
+      "00059",
+    ]);
   });
 
   it("marks a hovered code's supporting quote in the note, without showing it on the card", async () => {
@@ -141,11 +194,11 @@ describe("reviewing the proposed codes", () => {
     const { user } = renderEncounter();
     await screen.findByRole("heading", { level: 1 });
     await user.click(checkbox("00200"));
-    expect(total()).toHaveTextContent("130.00 $");
+    expect(total()).toHaveTextContent("130,00 $");
     await user.selectOptions(screen.getByLabelText("Tarif pour le code 00200"), "1");
-    expect(total()).toHaveTextContent("145.00 $");
+    expect(total()).toHaveTextContent("145,00 $");
     await user.click(checkbox("09001"));
-    expect(total()).toHaveTextContent("145.00 $");
+    expect(total()).toHaveTextContent("145,00 $");
     expect(screen.getByText("(1 code sans montant en $)")).toBeInTheDocument();
   });
 
@@ -175,8 +228,8 @@ describe("reviewing the proposed codes", () => {
     extraction.billing.result.notes = "Note incomplète";
     serveEncounter(makeEncounterDetail({ id: 5, extraction }));
     renderEncounter();
-    expect(await screen.findByText("⚠ Lieu de consultation à confirmer")).toBeInTheDocument();
-    expect(screen.getByText("⚠ Note incomplète")).toBeInTheDocument();
+    expect(await screen.findByText("Lieu de consultation à confirmer")).toBeInTheDocument();
+    expect(screen.getByText("Note incomplète")).toBeInTheDocument();
   });
 
   it("says when no code is supported by the note", async () => {
@@ -229,9 +282,19 @@ describe("saving", () => {
       ],
     });
     expect((await screen.findAllByText(/Facturation enregistrée\./)).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "Voir la facturation" })[0]).toHaveAttribute("href", "/app/facturation");
+    expect(screen.getByRole("button", { name: "Voir la facturation" })).toBeInTheDocument();
     // The reload brought the saved claim back, so the review now starts from it, unchanged.
     expect(screen.getByRole("button", { name: "Enregistrer les modifications" })).toBeDisabled();
+  });
+
+  it("saves with Ctrl+Enter, from anywhere on the page", async () => {
+    serveEncounter(withCodes());
+    let posted = false;
+    server.use(http.post("/api/claims", () => ((posted = true), HttpResponse.json(makeClaim()))));
+    const { user } = renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    await user.keyboard("{Control>}{Enter}{/Control}");
+    await waitFor(() => expect(posted).toBe(true));
   });
 
   it("shows the server's error and lets the physician try again", async () => {
@@ -297,12 +360,12 @@ describe("an encounter with a saved claim", () => {
     serveEncounter(saved());
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
-    expect(checkbox("00200")).toBeChecked();
+    await waitFor(() => expect(checkbox("00200")).toBeChecked());
     expect(checkbox("00103")).not.toBeChecked();
     expect(screen.getByLabelText("Tarif pour le code 00200")).toHaveValue("1");
     expect(screen.getByText(/Facturation enregistrée \(brouillon\)/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Enregistrer les modifications" })).toBeDisabled();
-    expect(total()).toHaveTextContent("95.00 $");
+    expect(total()).toHaveTextContent("95,00 $");
   });
 
   it("replaces the claim (PUT) once the physician changes something", async () => {
@@ -339,11 +402,13 @@ describe("read-only reviews", () => {
     ["an outdated note", { status: "modifié" as const }, /version plus récente/],
   ])("%s is shown but not editable", async (_name, extra, message) => {
     serveEncounter(withCodes(extra));
+    server.use(http.get("/api/codes/search", () => HttpResponse.json([makeCodeHit()])));
     renderEncounter();
     expect(await screen.findByText(message)).toBeInTheDocument();
     for (const box of screen.getAllByRole("checkbox")) expect(box).toBeDisabled();
     expect(screen.queryByRole("button", { name: /Enregistrer/ })).not.toBeInTheDocument();
     expect(screen.getByLabelText("Date de la consultation")).toBeDisabled();
+    expect(screen.queryByText("Codes fréquents")).not.toBeInTheDocument();
   });
 
   it("ticks nothing it can't save", async () => {
@@ -468,7 +533,8 @@ describe("deleting", () => {
       }),
     );
     const { user } = renderEncounter();
-    await user.click(await screen.findByRole("button", { name: "Supprimer la rencontre" }));
+    await user.click(await screen.findByRole("button", { name: "Plus d'actions sur la rencontre" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Supprimer la rencontre" }));
     const dialog = await screen.findByRole("dialog", { name: "Supprimer la rencontre ?" });
     expect(deleted).toBe(false);
     await user.click(within(dialog).getByRole("button", { name: "Supprimer" }));
@@ -485,8 +551,8 @@ describe("stepping between encounters", () => {
     serveList(9, 5, 2);
     renderEncounter({ inboxSearch: "?all=1" });
     expect(await screen.findByText("2 / 3")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "← Précédente" })).toHaveAttribute("href", "/app/inbox/9");
-    expect(screen.getByRole("link", { name: "Suivante →" })).toHaveAttribute("href", "/app/inbox/2");
+    expect(screen.getByRole("link", { name: "Précédente" })).toHaveAttribute("href", "/app/inbox/9");
+    expect(screen.getByRole("link", { name: "Suivante" })).toHaveAttribute("href", "/app/inbox/2");
   });
 
   it("disables the step that has nowhere to go", async () => {
@@ -494,7 +560,7 @@ describe("stepping between encounters", () => {
     serveList(5, 2);
     renderEncounter({ inboxSearch: "?all=1" });
     expect(await screen.findByText("1 / 2")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "← Précédente" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Précédente" })).toBeDisabled();
   });
 
   it("saves and opens the next encounter, saying whose claim was saved", async () => {
@@ -507,11 +573,13 @@ describe("stepping between encounters", () => {
       </Routes>,
       { route: "/app/inbox/5", state: { inboxSearch: "?all=1" } },
     );
-    const saveAndNext = await screen.findByRole("button", { name: "Enregistrer et suivante →" });
+    const saveAndNext = await screen.findByRole("button", { name: "Enregistrer et suivante" });
+    // The high-confidence code is ticked once the review loads.
+    await waitFor(() => expect(saveAndNext).toBeEnabled());
     server.use(
       http.get("/api/encounters/:id", ({ params }) =>
         HttpResponse.json(
-          makeEncounterDetail({ id: Number(params.id), patient: { id: 8, full_name: "Suivant Patient", nam: null } }),
+          makeEncounterDetail({ id: Number(params.id), patient: makeEncounterPatient({ id: 8, full_name: "Suivant Patient", nam: null }) }),
         ),
       ),
     );
@@ -527,8 +595,8 @@ describe("stepping between encounters", () => {
     );
     serveList(5, 2);
     renderEncounter({ inboxSearch: "?all=1" });
-    expect(await screen.findByRole("button", { name: "Suivante →" })).toBeEnabled();
-    expect(screen.queryByRole("button", { name: "Enregistrer et suivante →" })).not.toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Suivante" })).toBeEnabled();
+    expect(screen.queryByRole("button", { name: "Enregistrer et suivante" })).not.toBeInTheDocument();
   });
 
   it("shows no steps when the encounter isn't in the list it was opened from", async () => {

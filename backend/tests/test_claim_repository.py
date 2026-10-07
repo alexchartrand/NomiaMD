@@ -261,7 +261,18 @@ async def test_purging_the_source_extraction_keeps_the_claim(db_session, physici
 
     [detail] = await repo.list_by_ids(physician_id, [created.claim.id])
     assert detail.claim.extraction_run_id is None
+    assert detail.encounter_id is None
     assert [c.code for c in detail.codes] == ["TEST-BP-MGMT"]
+
+
+async def test_a_listed_claim_carries_its_runs_encounter(db_session, physician_id):
+    patient = await _seed_patient(db_session)
+    run = await _seed_run(db_session, physician_id, patient.id)
+    repo = ClaimRepository(db_session)
+    await repo.create(await _claim_input(db_session, physician_id, patient.id, run_id=run.id))
+
+    [detail] = await repo.list_for_physician(physician_id)
+    assert detail.encounter_id == run.encounter_id
 
 
 async def test_list_by_ids_returns_only_the_physicians_own_claims_with_their_codes(db_session, physician_id):

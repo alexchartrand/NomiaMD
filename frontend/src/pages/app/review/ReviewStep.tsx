@@ -4,14 +4,15 @@ import type { BillingExtractionResponse } from "../../../api";
 import { useMediaQuery } from "../../../lib/useMediaQuery";
 import { AddedCodes } from "./AddedCodes";
 import { CodesReview } from "./CodesReview";
+import { FrequentCodes } from "./FrequentCodes";
 import { manualEntries } from "./manualCodes";
 import { NotePanel } from "./NotePanel";
 import { SaveSummary } from "./SaveSummary";
 import { locateQuote } from "./quoteLocator";
 import type { CodeReview } from "./useCodeReview";
 
-// Wide enough, beside the sidebar, for the note and the codes side by side.
-const SIDE_BY_SIDE = "(min-width: 1400px)";
+// Wide enough, beside the sidebar, for the note and the codes side by side: a 1280px laptop.
+const SIDE_BY_SIDE = "(min-width: 1200px)";
 
 interface ReviewStepProps {
   result: BillingExtractionResponse;
@@ -32,6 +33,8 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
   const quotes = useMemo(() => codes.map((c) => locateQuote(noteText, c.supporting_quote)), [codes, noteText]);
   // The code whose supporting quote is marked in the note: the last one hovered or focused.
   const [focused, setFocused] = useState<number | null>(null);
+  const added = manualEntries(state.manual);
+  const ticked = codes.filter((_, i) => state.selection.has(i)).map((c) => c.code);
 
   const note = (
     <NotePanel
@@ -42,12 +45,12 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
   );
 
   return (
-    <div className={docked ? "grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start gap-6" : "flex flex-col gap-4"}>
+    <div className={docked ? "grid grid-cols-[minmax(300px,2fr)_minmax(0,3fr)] items-start gap-5" : "flex flex-col gap-4"}>
       {docked && note}
 
       <Card className="overflow-visible">
         <CardHeader className="flex flex-wrap items-start justify-between gap-3">
-          <CardTitle className="text-[1.3rem] font-bold">Codes proposés</CardTitle>
+          <CardTitle className="font-heading text-lg font-bold">Codes proposés</CardTitle>
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-2">
               <label htmlFor="service-date" className="text-sm text-muted-foreground">
@@ -70,7 +73,7 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-[0.85rem]">
-          {result.billing.result.notes && <Banner tone="warning">⚠ {result.billing.result.notes}</Banner>}
+          {result.billing.result.notes && <Banner tone="warning">{result.billing.result.notes}</Banner>}
 
           <CodesReview
             codes={codes}
@@ -83,14 +86,24 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
             disabled={review.readOnly}
           />
 
+          {!review.readOnly && (
+            // A frequent code the extraction proposed, unticked, gets ticked rather than added twice.
+            <FrequentCodes
+              patientId={patientId}
+              serviceDate={state.serviceDate || null}
+              onAdd={review.addCode}
+              excludeNumbers={[...ticked, ...added.map((e) => e.hit.number)]}
+            />
+          )}
+
           <AddedCodes
-            entries={manualEntries(state.manual)}
+            entries={added}
             onAdd={review.addCode}
             onRemove={review.removeCode}
             onFeeSelected={review.selectAddedFee}
             patientId={patientId}
             serviceDate={state.serviceDate || null}
-            excludeNumbers={codes.filter((_, i) => state.selection.has(i)).map((c) => c.code)}
+            excludeNumbers={ticked}
             searchLabel="Ajouter un code non proposé"
             disabled={review.readOnly}
           />

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   createManualClaim,
   describeError,
@@ -11,7 +11,8 @@ import {
   type CodeHit,
   type Patient,
 } from "../../../api";
-import { Banner, Card, CardContent, CardHeader, CardTitle, PatientSearchSelect, TextField } from "../../../components";
+import { toast } from "sonner";
+import { AppPage, AppPageHeader, Banner, Card, CardContent, CardHeader, CardTitle, PatientSearchSelect, Skeleton, TextField } from "../../../components";
 import { clinicToday } from "../../../utils/date";
 import { AddedCodes } from "../review/AddedCodes";
 import { feeTotals } from "../review/feeOptions";
@@ -85,6 +86,7 @@ export default function FacturerPage() {
     const payload = { patient_id: patient.id, service_date: serviceDate, selected_codes: manualSelectedCodes(manual) };
     try {
       await (editingId !== null ? replaceManualClaim(editingId, payload) : createManualClaim(payload));
+      toast.success(`Facturation de ${patient.full_name} enregistrée.`);
       navigate("/app/facturation");
     } catch (err) {
       setSaveError(describeError(err));
@@ -94,26 +96,33 @@ export default function FacturerPage() {
 
   const title = editingId !== null ? "Modifier une facturation sans rencontre" : "Facturer sans rencontre";
 
-  if (loading) return <p className="text-sm text-muted-foreground">Chargement...</p>;
+  const back = { to: "/app/facturation", label: "Facturation" };
+  if (loading) {
+    return (
+      <AppPage width="narrow">
+        <div aria-busy="true" aria-label="Chargement" className="flex flex-col gap-4">
+          <Skeleton className="h-9 w-80" />
+          <Skeleton className="h-72 rounded-xl" />
+        </div>
+      </AppPage>
+    );
+  }
   if (loadError) {
     return (
-      <section className="flex max-w-[860px] flex-col gap-4">
-        <h1 className="font-heading text-2xl font-semibold">{title}</h1>
+      <AppPage width="narrow">
+        <AppPageHeader back={back} title={title} />
         <Banner tone="error">{loadError}</Banner>
-        <Link to="/app/facturation">← Retour à la facturation</Link>
-      </section>
+      </AppPage>
     );
   }
 
   return (
-    <section className="flex max-w-[860px] flex-col gap-6">
-      <div>
-        <h1 className="font-heading text-2xl font-semibold">{title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Choisissez le patient et la date, puis ajoutez les codes à facturer. Seuls les codes admissibles pour ce
-          patient sont proposés.
-        </p>
-      </div>
+    <AppPage width="narrow" className="flex flex-col">
+      <AppPageHeader
+        back={back}
+        title={title}
+        description="Pour un acte sans note à lire : choisissez le patient et la date, puis ajoutez les codes. Seuls les codes admissibles pour ce patient sont proposés."
+      />
 
       <Card className="overflow-visible">
         <CardHeader className="flex flex-wrap items-end gap-6">
@@ -137,10 +146,10 @@ export default function FacturerPage() {
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-[0.85rem]">
-          <CardTitle className="text-[1.1rem] font-bold">Codes</CardTitle>
+          <CardTitle className="font-heading text-lg font-bold">Codes</CardTitle>
           {retired.length > 0 && (
             <Banner tone="warning">
-              ⚠ Code(s) retiré(s) du manuel en vigueur, qui ne seront pas conservés : {retired.join(", ")}
+              Code(s) retiré(s) du manuel en vigueur, qui ne seront pas conservés : {retired.join(", ")}
             </Banner>
           )}
           {patient ? (
@@ -177,6 +186,6 @@ export default function FacturerPage() {
           />
         </CardContent>
       </Card>
-    </section>
+    </AppPage>
   );
 }

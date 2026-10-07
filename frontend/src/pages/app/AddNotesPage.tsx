@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
 import {
   describeError,
   getEpicSandboxStatus,
@@ -10,7 +9,8 @@ import {
   type EpicSandboxStatus,
   type ReceiveOutcome,
 } from "../../api";
-import { Banner, Button, Card, TextArea, TextField } from "../../components";
+import { CloudDownload, FileUp } from "lucide-react";
+import { AppPage, AppPageHeader, Banner, Button, Card, FormField, Spinner, Tabs, TextArea, TextField } from "../../components";
 
 // What the inbox shows once it's done: see InboxPage's ReceivedBanner.
 export interface ReceivedSummary {
@@ -24,9 +24,6 @@ function summarize(outcomes: ReceiveOutcome[]): ReceivedSummary {
 }
 
 type Mode = "paste" | "upload" | "epic";
-
-const modeTabClasses =
-  "cursor-pointer rounded-lg border border-border bg-card px-4 py-2 text-sm text-foreground hover:border-primary";
 
 // Notes that come from nowhere automated: pasted, or a .txt/.md file. A whole ER shift can
 // go in at once — the server splits it into one note per `**NAM :**` header. Each note goes
@@ -83,79 +80,66 @@ export default function AddNotesPage() {
     }
   }
 
-  return (
-    <section className="max-w-[860px]">
-      <h1 className="font-heading text-2xl font-semibold">Ajouter manuellement</h1>
-      <p className="mt-2 mb-6 text-sm text-muted-foreground">
-        Collez une ou plusieurs notes signées, ou téléversez un fichier. Chaque note commençant par un en-tête
-        &laquo; **NAM :** &raquo; devient une rencontre dans la boîte de réception.
-      </p>
+  const tabs = [
+    { id: "paste" as const, label: "Coller" },
+    { id: "upload" as const, label: "Téléverser un fichier" },
+    ...(epicSandbox ? [{ id: "epic" as const, label: "Epic — démo (sandbox)" }] : []),
+  ];
 
-      <div className="mb-4 flex gap-2" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "paste"}
-          className={cn(modeTabClasses, mode === "paste" && "border-primary bg-[color:var(--color-primary-tint)]")}
-          onClick={() => setMode("paste")}
-        >
-          Coller
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "upload"}
-          className={cn(modeTabClasses, mode === "upload" && "border-primary bg-[color:var(--color-primary-tint)]")}
-          onClick={() => setMode("upload")}
-        >
-          Téléverser un fichier
-        </button>
-        {epicSandbox && (
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "epic"}
-            className={cn(modeTabClasses, mode === "epic" && "border-primary bg-[color:var(--color-primary-tint)]")}
-            onClick={() => setMode("epic")}
-          >
-            Epic — démo (sandbox)
-          </button>
-        )}
-      </div>
+  return (
+    <AppPage width="narrow">
+      <AppPageHeader
+        back={{ to: "/app/inbox", label: "Rencontres" }}
+        title="Ajouter des notes"
+        description={
+          <>
+            Collez une ou plusieurs notes signées, ou téléversez un fichier. Chaque note commence par la ligne du NAM du
+            patient (&laquo;&nbsp;**NAM :**&nbsp;&raquo;) : un quart de travail collé d&apos;un coup devient autant de
+            rencontres, et leurs codes sont extraits aussitôt.
+          </>
+        }
+      />
+
+      <Tabs<Mode> ariaLabel="Source des notes" className="mb-5" items={tabs} value={mode} onChange={setMode} />
 
       {mode === "epic" && epicSandbox ? (
         <Card className="gap-4 p-6">
           <p className="text-sm text-muted-foreground">
             Importe une sélection de notes signées des {epicSandbox.patients} patients fictifs du bac à sable
             d&apos;Epic (fhir.epic.com). Ces notes sont en anglais, de style américain et datées de 2006 à 2023 :
-            elles montrent le parcours complet Epic → boîte de réception → codes, pas la qualité des codes sur une
+            elles montrent le parcours complet Epic → rencontres → codes, pas la qualité des codes sur une
             vraie note québécoise. Une note déjà importée n&apos;est pas reçue deux fois.
           </p>
           <div>
             <Button type="button" onClick={handleEpicImport} disabled={sending || epicSandbox.patients === 0}>
-              {sending ? "Importation et extraction en cours..." : "Importer les notes"}
+              {sending ? <Spinner label="Importation et extraction en cours…" /> : (
+                <>
+                  <CloudDownload aria-hidden />
+                  Importer les notes
+                </>
+              )}
             </Button>
           </div>
         </Card>
       ) : (
         <Card className="gap-4 p-6">
-          <form onSubmit={handleSubmit} className="flex flex-col items-start gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {mode === "paste" ? (
               <TextArea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 rows={14}
-                className="w-full"
+                className="min-h-72 w-full text-[0.85rem]"
                 aria-label="Notes à ajouter"
                 placeholder="Collez la note signée ici, ou toutes les notes d'un quart de travail..."
               />
             ) : (
-              <div className="flex flex-col gap-[0.35rem]">
-                <span id="notes-file-label" className="text-sm text-muted-foreground">
+              <div className="flex flex-col gap-2">
+                <span id="notes-file-label" className="text-sm font-medium">
                   Fichier texte (.txt ou .md, 2 Mo maximum)
                 </span>
                 {/* The native picker's button reads in the browser's language ("Choose file"),
-                  whatever the page's: it stays hidden, and this button opens it. */}
+                  whatever the page's: it stays hidden, and this drop zone opens it. */}
                 <input
                   ref={fileInput}
                   id="notes-file"
@@ -165,19 +149,24 @@ export default function AddNotesPage() {
                   className="hidden"
                   aria-labelledby="notes-file-label"
                 />
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button type="button" variant="secondary" onClick={() => fileInput.current?.click()}>
-                    Parcourir...
-                  </Button>
-                  <span className="text-sm text-muted-foreground">{file ? file.name : "Aucun fichier choisi"}</span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => fileInput.current?.click()}
+                  className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/30 px-6 py-10 text-center transition-colors hover:border-primary hover:bg-[color:var(--color-primary-tint)]"
+                >
+                  <FileUp aria-hidden className="size-6 text-primary" />
+                  <span className="text-sm font-semibold">{file ? file.name : "Parcourir..."}</span>
+                  <span className="text-xs text-muted-foreground">{file ? "Cliquez pour en choisir un autre" : "Aucun fichier choisi"}</span>
+                </button>
               </div>
             )}
 
-            <div className="flex w-full max-w-sm flex-col gap-[0.35rem]">
-              <label htmlFor="batch-label" className="text-sm text-muted-foreground">
-                Lot (facultatif)
-              </label>
+            <FormField
+              id="batch-label"
+              label="Lot (facultatif)"
+              hint="Regroupe ces rencontres sous un même titre dans la liste."
+              className="max-w-sm"
+            >
               <TextField
                 id="batch-label"
                 value={batchLabel}
@@ -185,12 +174,13 @@ export default function AddNotesPage() {
                 maxLength={64}
                 placeholder="ex. Urgence nuit du 30 sept."
               />
-              <span className="text-xs text-muted-foreground">Regroupe ces rencontres dans la boîte de réception.</span>
-            </div>
+            </FormField>
 
-            <Button type="submit" disabled={sending || !ready}>
-              {sending ? "Réception et extraction en cours..." : "Ajouter à la boîte de réception"}
-            </Button>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={sending || !ready}>
+                {sending ? <Spinner label="Réception et extraction en cours…" /> : "Ajouter aux rencontres"}
+              </Button>
+            </div>
           </form>
         </Card>
       )}
@@ -200,6 +190,6 @@ export default function AddNotesPage() {
           {error}
         </Banner>
       )}
-    </section>
+    </AppPage>
   );
 }

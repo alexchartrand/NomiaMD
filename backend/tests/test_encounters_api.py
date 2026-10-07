@@ -50,14 +50,15 @@ def client():
         yield client
 
 
-async def _seed_patient(full_name: str = "Roch Desjardins"):
+async def _seed_patient(full_name: str = "Roch Desjardins", **fields):
     async with session_scope() as session:
         return await PatientRepository(session).create(
             full_name=full_name,
             ramq_number=f"ENCA{next(_ramq_numbers):08d}",
             date_of_birth=date(1981, 2, 10),
             gender=Gender.MALE,
-            is_vulnerable=False,
+            is_vulnerable=fields.pop("is_vulnerable", False),
+            **fields,
         )
 
 
@@ -136,6 +137,9 @@ async def test_push_a_note_with_a_known_nam_is_extracted_and_ready(me, client):
     row = _row(client, outcome["encounter_id"])
     assert row["status"] == "prêt"
     assert row["code_count"] == 2
+    # The high-confidence code only (what the review starts with ticked), at its fee.
+    assert row["codes"] == ["TEST-BP-MGMT"]
+    assert row["indicative_total"] == 33.15
     assert row["batch_label"] == "Urgence nuit"
     assert row["source_system"] == "manual"
     assert row["channel"] == "paste"
@@ -149,6 +153,10 @@ async def test_push_a_note_with_a_known_nam_is_extracted_and_ready(me, client):
     detail = client.get(f"/encounters/{outcome['encounter_id']}").json()
     assert detail["patient"]["full_name"] == "Roch Desjardins"
     assert detail["patient"]["nam"] == patient.ramq_number
+    # The patient's billing facts, registration unknown without practice numbers.
+    assert detail["patient"]["date_of_birth"] == "1981-02-10"
+    assert detail["patient"]["is_vulnerable"] is False
+    assert detail["patient"]["is_registered"] is None
     assert detail["status"] == "prêt"
     assert detail["extraction"]["billing"]["task"] == "billing_codes"
     assert [c["code"] for c in detail["extraction"]["billing"]["result"]["codes"]] == [
@@ -203,6 +211,20 @@ async def test_push_structured_source_notes(me, client):
     assert client.get("/encounters", params={"date_from": today, "date_to": today}).json() == []
 
 
+async def test_the_detail_derives_registration_against_the_viewing_physician(me, client):
+    me.practice_number = "12345"
+    mine = await _seed_patient(family_doctor_practice_number="12345", is_vulnerable=True)
+    theirs = await _seed_patient("Marie Tremblay", family_doctor_practice_number="99999")
+
+    def patient_of(patient):
+        encounter_id = _push(client, patient)
+        return client.get(f"/encounters/{encounter_id}").json()["patient"]
+
+    assert patient_of(mine)["is_registered"] is True
+    assert patient_of(mine)["is_vulnerable"] is True
+    assert patient_of(theirs)["is_registered"] is False
+
+
 async def test_push_with_an_unknown_nam_waits_for_a_patient_then_a_manual_pick_extracts_it(me, client):
     response = _paste(client, _note_text("ZZZZ99999999"))
 
@@ -213,6 +235,8 @@ async def test_push_with_an_unknown_nam_waits_for_a_patient_then_a_manual_pick_e
     assert row["status"] == "à associer"
     assert row["patient"] is None
     assert row["code_count"] is None
+    assert row["codes"] is None
+    assert row["indicative_total"] is None
     assert row["all_clean"] is False
 
     patient = await _seed_patient()
@@ -350,17 +374,25 @@ async def test_a_reviewed_encounter_shows_the_codes_billed_not_the_codes_propose
     patient = await _seed_patient()
     encounter_id = _push(client, patient)  # proposes two codes
     run_id = _row(client, encounter_id)["extraction_run_id"]
-    assert _row(client, encounter_id)["code_count"] == 2
+    assert _row(client, encounter_id)["codes"] == ["TEST-BP-MGMT"]
 
+    # The physician bills the medium-confidence code instead, which has no fee in the table.
     claim = client.post(
         "/claims",
-        json={"extraction_run_id": run_id, "service_date": "2026-03-04", "selected_codes": [{"code": "TEST-BP-MGMT"}]},
+        json={
+            "extraction_run_id": run_id,
+            "service_date": "2026-03-04",
+            "selected_codes": [{"code": "TEST-BLOODWORK-ORDER"}],
+        },
     )
 
     assert claim.status_code == 201
-    assert _row(client, encounter_id)["code_count"] == 1
+    row = _row(client, encounter_id)
+    assert row["code_count"] == 1
+    assert row["codes"] == ["TEST-BLOODWORK-ORDER"]
+    assert row["indicative_total"] is None
     detail = client.get(f"/encounters/{encounter_id}").json()
-    assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BP-MGMT"]
+    assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BLOODWORK-ORDER"]
     assert len(detail["extraction"]["billing"]["result"]["codes"]) == 2
 
 
@@ -440,7 +472,7 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
     assert [c["code"] for c in response.json()["billing"]["result"]["codes"]] == ["TEST-BP-MGMT"]
     row = _row(client, outcome["encounter_id"])
     assert row["status"] == "prêt"
-    assert row["code_count"] == 1
+    assert row["codes"] == ["TEST-BP-MGMT"]
 
 
 async def test_extract_on_demand_refuses_an_encounter_without_a_patient(me, client):

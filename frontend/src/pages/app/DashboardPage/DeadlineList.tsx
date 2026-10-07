@@ -1,7 +1,7 @@
 import { CircleAlert, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
 import type { DeadlineItem } from "../../../api";
+import { Badge } from "../../../components";
 import { formatDate } from "../../../utils/date";
 
 const SHOWN = 5;
@@ -9,19 +9,10 @@ const SHOWN = 5;
 function DaysLeft({ days }: { days: number }) {
   const overdue = days <= 0;
   const label = days < 0 ? `Délai dépassé de ${days * -1} j` : days === 0 ? "Dernier jour" : `${days} j restants`;
-  const Icon = overdue ? CircleAlert : Clock;
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-[0.6rem] py-[0.15rem] text-[0.8rem] font-[650]",
-        overdue
-          ? "bg-[color:var(--color-danger-bg)] text-destructive"
-          : "bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-text)]",
-      )}
-    >
-      <Icon aria-hidden className="size-3.5" />
+    <Badge tone={overdue ? "danger" : "warning"} icon={overdue ? CircleAlert : Clock}>
       {label}
-    </span>
+    </Badge>
   );
 }
 

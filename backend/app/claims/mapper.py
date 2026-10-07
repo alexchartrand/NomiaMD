@@ -20,7 +20,9 @@ class ClaimMapper:
         return sum(amounts) if amounts else None
 
     @classmethod
-    def to_out(cls, claim: Claim, patient_full_name: str, codes: Iterable[ClaimCode]) -> ClaimOut:
+    def to_out(
+        cls, claim: Claim, patient_full_name: str, codes: Iterable[ClaimCode], encounter_id: int | None = None
+    ) -> ClaimOut:
         codes_out = cls.codes_out(codes)
         return ClaimOut(
             id=claim.id,
@@ -30,6 +32,7 @@ class ClaimMapper:
             status=ClaimLifecycle.status_of(claim),
             bill_id=claim.bill_id,
             source_system=claim.source_system,
+            encounter_id=encounter_id,
             codes=codes_out,
             total_amount=cls.total_amount(codes_out),
             created_at=claim.created_at,
@@ -38,4 +41,4 @@ class ClaimMapper:
 
     @classmethod
     def from_detail(cls, detail: ClaimDetail) -> ClaimOut:
-        return cls.to_out(detail.claim, detail.patient_full_name, detail.codes)
+        return cls.to_out(detail.claim, detail.patient_full_name, detail.codes, detail.encounter_id)

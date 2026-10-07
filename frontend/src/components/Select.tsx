@@ -16,7 +16,7 @@ export function Select({ className, containerClassName, ...rest }: SelectProps) 
     <div className={cn("relative w-full max-w-xs", containerClassName)}>
       <select
         className={cn(
-          "h-8 w-full appearance-none rounded-lg border border-input bg-transparent px-2.5 py-1 pr-7 text-base text-foreground transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
+          "h-9 w-full cursor-pointer appearance-none rounded-lg border border-input bg-card px-3 py-1 pr-7 text-base text-foreground transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
           className,
         )}
         {...rest}

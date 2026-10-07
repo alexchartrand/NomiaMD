@@ -36,7 +36,9 @@
   --color-bg: #f2efe7;
   --color-surface: #ffffff;
   --color-text: #33474c;
-  --color-text-muted: #7c8f92;
+  /* Muted text and danger are dark enough to read as text on the cream background and on
+     white cards (WCAG AA, 4.5:1), not just as tints. */
+  --color-text-muted: #607377;
   --color-primary: #1b5e6f;
   --color-primary-strong: #123e49;
   /* Named --color-brand-accent (not --color-accent) because Tailwind auto-derives its own
@@ -47,8 +49,8 @@
   /* Ink on the gold "MD" block of the wordmark: the same in both themes, since the block is gold in both. */
   --color-brand-ink: #123e49;
   --color-border: rgba(18, 35, 44, 0.16);
-  --color-danger: #d98f86;
-  --color-danger-bg: rgba(217, 143, 134, 0.16);
+  --color-danger: #b0463b;
+  --color-danger-bg: rgba(176, 70, 59, 0.1);
   --color-warning-bg: rgba(240, 196, 138, 0.16);
   --color-warning-text: #8a5a1a;
   --color-success-bg: rgba(107, 163, 97, 0.16);
@@ -82,10 +84,10 @@
   --secondary: #ffffff;
   --secondary-foreground: #1b5e6f;
   --muted: rgba(27, 94, 111, 0.08);
-  --muted-foreground: #7c8f92;
+  --muted-foreground: #607377;
   --accent: rgba(27, 94, 111, 0.08);
   --accent-foreground: #33474c;
-  --destructive: #d98f86;
+  --destructive: #b0463b;
   --border: rgba(18, 35, 44, 0.16);
   --input: rgba(18, 35, 44, 0.16);
   --ring: #1b5e6f;

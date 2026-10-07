@@ -8,6 +8,7 @@ import type {
   DashboardKpis,
   DashboardTasks,
   EncounterDetail,
+  EncounterPatient,
   EncounterRow,
   ExtractedCode,
   ExtractedFee,
@@ -89,6 +90,7 @@ export function makeClaim(overrides: Partial<Claim> = {}): Claim {
     status: "brouillon",
     bill_id: null,
     source_system: null,
+    encounter_id: null,
     codes: [makeClaimLine()],
     total_amount: 50,
     created_at: "2026-10-01T12:00:00Z",
@@ -136,6 +138,8 @@ export function makeEncounterRow(overrides: Partial<EncounterRow> = {}): Encount
     service_date: "2026-10-01",
     received_at: "2026-10-01T12:00:00Z",
     code_count: 1,
+    codes: ["00103"],
+    indicative_total: 50,
     extraction_run_id: 1,
     possible_duplicate_ids: [],
     all_clean: false,
@@ -174,11 +178,23 @@ export function makeDashboard(
   };
 }
 
+export function makeEncounterPatient(overrides: Partial<EncounterPatient> = {}): EncounterPatient {
+  return {
+    id: 1,
+    full_name: "Patient Test",
+    nam: "TEST12345678",
+    date_of_birth: "1980-05-20",
+    is_vulnerable: false,
+    is_registered: true,
+    ...overrides,
+  };
+}
+
 export function makeEncounterDetail(overrides: Partial<EncounterDetail> = {}): EncounterDetail {
   return {
     id: 1,
     status: "prêt",
-    patient: { id: 1, full_name: "Patient Test", nam: "TEST12345678" },
+    patient: makeEncounterPatient(),
     source_system: "sample",
     channel: "paste",
     external_note_id: null,

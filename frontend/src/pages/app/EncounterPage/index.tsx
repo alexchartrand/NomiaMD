@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { ChevronLeft, ChevronRight, FileClock, Info, RotateCw, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   deleteEncounter,
   describeError,
@@ -8,21 +10,27 @@ import {
   type EncounterDetail,
 } from "../../../api";
 import {
+  AppPage,
+  AppPageHeader,
+  Badge,
   Banner,
   Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  RowActions,
+  Skeleton,
   Spinner,
   useConfirm,
 } from "../../../components";
-import { formatClinicTime, formatDate } from "../../../utils/date";
 import { AssociatePatient } from "../InboxPage/AssociatePatient";
 import { StatusChip } from "../InboxPage/StatusChip";
 import { NotePanel } from "../review/NotePanel";
 import { ReviewStep } from "../review/ReviewStep";
 import { useCodeReview } from "../review/useCodeReview";
+import { useSaveShortcut } from "../review/useSaveShortcut";
+import { EncounterFacts } from "./EncounterFacts";
 import { useEncounterNeighbours } from "./useEncounterNeighbours";
 
 // A step to a neighbouring encounter, carrying the inbox's period and filters along; inert
@@ -30,23 +38,36 @@ import { useEncounterNeighbours } from "./useEncounterNeighbours";
 function StepButton({
   id,
   inboxSearch,
-  children,
+  direction,
 }: {
   id: number | null;
   inboxSearch: string;
-  children: ReactNode;
+  direction: "previous" | "next";
 }) {
+  const label = direction === "previous" ? "Précédente" : "Suivante";
+  const content =
+    direction === "previous" ? (
+      <>
+        <ChevronLeft aria-hidden />
+        {label}
+      </>
+    ) : (
+      <>
+        {label}
+        <ChevronRight aria-hidden />
+      </>
+    );
   if (id === null) {
     return (
-      <Button type="button" variant="secondary" disabled>
-        {children}
+      <Button type="button" variant="ghost" disabled>
+        {content}
       </Button>
     );
   }
   return (
-    <Button asChild variant="secondary">
+    <Button asChild variant="ghost">
       <Link to={`/app/inbox/${id}`} replace state={{ inboxSearch }}>
-        {children}
+        {content}
       </Link>
     </Button>
   );
@@ -58,7 +79,7 @@ function readOnlyReason(encounter: EncounterDetail): string | null {
     return "Cette rencontre a été marquée comme doublon d'une autre visite : elle n'est pas facturée.";
   }
   if (encounter.claim?.status === "soumis") {
-    return "Cette facturation fait partie d'une facture générée : supprimez d'abord la facture pour la modifier.";
+    return "Cette rencontre fait partie d'une facture : supprimez d'abord la facture pour la modifier.";
   }
   if (encounter.status === "modifié")
     return "Une version plus récente de cette note a été reçue.";
@@ -84,7 +105,6 @@ export default function EncounterPage() {
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
   const [extracting, setExtracting] = useState(false);
-  const [savedNotice, setSavedNotice] = useState(false);
   const neighbours = useEncounterNeighbours(encounterId, inboxSearch);
   // The encounter on screen, so a load still in flight for the previous one is dropped.
   const shownId = useRef(encounterId);
@@ -105,9 +125,23 @@ export default function EncounterPage() {
     shownId.current = encounterId;
     setEncounter(null);
     setError(null);
-    setSavedNotice(false);
     void load();
   }, [encounterId, load]);
+
+  // Saved, with a way to the claims. One id per encounter, so a re-render never stacks two.
+  const announceSaved = useCallback(
+    (message: string) =>
+      toast.success(message, {
+        id: `saved-${encounterId}`,
+        action: { label: "Voir la facturation", onClick: () => navigate("/app/facturation") },
+      }),
+    [encounterId, navigate],
+  );
+
+  // Arrived from "Enregistrer et suivante": the previous encounter's save is announced here.
+  useEffect(() => {
+    if (opened?.savedFor) announceSaved(`Facturation de ${opened.savedFor} enregistrée.`);
+  }, [opened?.savedFor, announceSaved]);
 
   const { confirm, dialog } = useConfirm();
   const readOnly = encounter ? readOnlyReason(encounter) : null;
@@ -117,7 +151,7 @@ export default function EncounterPage() {
     // A saved claim (first save or a draft's changes) changes the status and the claim the
     // review starts from, so reload rather than keep the stale encounter.
     onSaved: () => {
-      setSavedNotice(true);
+      announceSaved("Facturation enregistrée.");
       void load();
     },
     confirmDuplicate: (message) =>
@@ -165,6 +199,7 @@ export default function EncounterPage() {
     setError(null);
     try {
       await deleteEncounter(encounterId);
+      toast.success("Rencontre supprimée.");
       navigate(backTo);
     } catch (err) {
       setError(describeError(err));
@@ -190,154 +225,144 @@ export default function EncounterPage() {
     (encounter.status === "reçu" || encounter.status === "échec");
   // A new reading of a note whose codes can still change.
   const canRerun = reviewing && readOnly === null;
+  const savable = review.canSave && !review.state.saved && !review.state.saving;
+  useSaveShortcut(savable ? (nextId !== null ? handleSaveAndNext : review.save) : null);
+
+
+  if (!encounter) {
+    return (
+      <AppPage width="narrow">
+        {error ? (
+          <>
+            <AppPageHeader back={{ to: backTo, label: "Rencontres" }} title="Rencontre" className="mb-4" />
+            <Banner tone="error">{error}</Banner>
+          </>
+        ) : (
+          // No heading until the encounter is here: the page's h1 is the patient's name.
+          <div aria-busy="true" aria-label="Chargement de la rencontre" className="flex flex-col gap-4">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-9 w-72" />
+            <Skeleton className="h-[60vh] rounded-xl" />
+          </div>
+        )}
+      </AppPage>
+    );
+  }
 
   return (
-    <section className={reviewing ? "max-w-[1500px]" : "max-w-[860px]"}>
+    <AppPage width={reviewing ? "wide" : "narrow"}>
       {dialog}
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <Button asChild variant="link">
-          <Link to={backTo}>← Rencontres</Link>
-        </Button>
-        {neighbours && (
-          <nav
-            aria-label="Navigation entre les rencontres"
-            className="flex items-center gap-2 text-sm text-muted-foreground"
-          >
-            <StepButton id={neighbours.previousId} inboxSearch={inboxSearch}>
-              ← Précédente
-            </StepButton>
-            <span>
-              {neighbours.position} / {neighbours.total}
-            </span>
-            <StepButton id={neighbours.nextId} inboxSearch={inboxSearch}>
-              Suivante →
-            </StepButton>
-          </nav>
-        )}
-      </div>
-
-      {error && <Banner tone="error">{error}</Banner>}
-      {!encounter && !error && <Spinner label="Chargement..." />}
-
-      {encounter && (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="m-0 font-heading text-2xl font-semibold">
-              {encounter.patient?.full_name ?? "Patient à associer"}
-            </h1>
+      <AppPageHeader
+        back={{ to: backTo, label: "Rencontres" }}
+        title={encounter.patient?.full_name ?? "Patient à associer"}
+        documentTitle={encounter.patient?.full_name ?? "Rencontre"}
+        className="mb-4"
+        aside={
+          <>
             {encounter.patient?.nam && (
-              <span className="font-mono text-sm text-muted-foreground">
-                {encounter.patient.nam}
-              </span>
+              <span className="font-mono text-sm text-muted-foreground">{encounter.patient.nam}</span>
             )}
             <StatusChip status={encounter.status} />
-            {canRerun && (
-              <Button
-                type="button"
-                variant="ghost"
-                className="ml-auto"
-                onClick={handleRerun}
-                disabled={extracting}
+            {!readOnly && encounter.claim && (
+              <Badge tone="primary" icon={FileClock}>
+                Brouillon enregistré
+              </Badge>
+            )}
+          </>
+        }
+        actions={
+          <>
+            {neighbours && (
+              <nav
+                aria-label="Navigation entre les rencontres"
+                className="mr-2 flex items-center gap-1 text-sm text-muted-foreground"
               >
-                {extracting ? "Extraction en cours..." : "Relancer l'extraction"}
+                <StepButton id={neighbours.previousId} inboxSearch={inboxSearch} direction="previous" />
+                <span className="tabular-nums">
+                  {neighbours.position} / {neighbours.total}
+                </span>
+                <StepButton id={neighbours.nextId} inboxSearch={inboxSearch} direction="next" />
+              </nav>
+            )}
+            {canRerun && (
+              <Button type="button" variant="secondary" onClick={handleRerun} disabled={extracting}>
+                {extracting ? (
+                  <Spinner label="Extraction en cours…" />
+                ) : (
+                  <>
+                    <RotateCw aria-hidden />
+                    Relancer l&apos;extraction
+                  </>
+                )}
               </Button>
             )}
-          </div>
-          <p className="m-0 text-sm text-muted-foreground">
-            {[
-              encounter.source_system,
-              encounter.service_date
-                ? formatDate(encounter.service_date)
-                : null,
-              `reçue à ${formatClinicTime(encounter.received_at)}`,
-              encounter.batch_label,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
+            <RowActions
+              label="Plus d'actions sur la rencontre"
+              actions={[
+                {
+                  label: "Supprimer la rencontre",
+                  icon: Trash2,
+                  danger: true,
+                  onSelect: handleDelete,
+                  disabled: encounter.claim !== null || deleting,
+                },
+              ]}
+            />
+          </>
+        }
+      />
+
+      {error && <Banner tone="error">{error}</Banner>}
+
+      <div className="flex flex-col gap-4">
+        <EncounterFacts encounter={encounter} />
+
+        {encounter.status === "à associer" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Associer un patient</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AssociatePatient encounterId={encounter.id} onAssigned={load} />
+            </CardContent>
+          </Card>
+        )}
+
+        {encounter.status === "échec" && encounter.extraction_error && (
+          <Banner tone="error">L&rsquo;extraction a échoué : {encounter.extraction_error}</Banner>
+        )}
+        {canExtract && (
+          <Button type="button" className="self-start" onClick={handleExtract} disabled={extracting}>
+            {extracting ? (
+              <Spinner label="Extraction en cours…" />
+            ) : encounter.status === "échec" ? (
+              "Réessayer"
+            ) : (
+              "Extraire les codes"
+            )}
+          </Button>
+        )}
+
+        {readOnly && <Banner tone="warning">{readOnly}</Banner>}
+        {!readOnly && encounter.claim && (
+          <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
+            <Info aria-hidden className="size-4 shrink-0" />
+            Facturation enregistrée (brouillon). Vos modifications remplaceront la facturation existante.
           </p>
-
-          {encounter.status === "à associer" && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Associer un patient</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AssociatePatient
-                  encounterId={encounter.id}
-                  onAssigned={load}
-                />
-              </CardContent>
-            </Card>
-          )}
-
-          {encounter.status === "échec" && encounter.extraction_error && (
-            <Banner tone="error">
-              L&rsquo;extraction a échoué : {encounter.extraction_error}
-            </Banner>
-          )}
-          {canExtract && (
-            <Button
-              type="button"
-              className="self-start"
-              onClick={handleExtract}
-              disabled={extracting}
-            >
-              {extracting
-                ? "Extraction en cours..."
-                : encounter.status === "échec"
-                  ? "Réessayer"
-                  : "Extraire les codes"}
-            </Button>
-          )}
-
-          {readOnly && <Banner tone="warning">{readOnly}</Banner>}
-          {!readOnly && encounter.claim && !savedNotice && (
-            <p className="m-0 text-sm text-muted-foreground">
-              Facturation enregistrée (brouillon). Vos modifications
-              remplaceront la facturation existante.
-            </p>
-          )}
-          {savedNotice && (
-            <Banner tone="success">
-              Facturation enregistrée.{" "}
-              <Link to="/app/facturation">Voir la facturation</Link>
-            </Banner>
-          )}
-          {!savedNotice && opened?.savedFor && (
-            <Banner tone="success">
-              Facturation de {opened.savedFor} enregistrée.{" "}
-              <Link to="/app/facturation">Voir la facturation</Link>
-            </Banner>
-          )}
-          {reviewing ? (
-            <ReviewStep
-              result={encounter.extraction!}
-              noteText={encounter.note_text}
-              patientId={encounter.patient!.id}
-              review={review}
-              onSaveAndNext={nextId !== null ? handleSaveAndNext : undefined}
-              onNext={nextId !== null ? () => goToNext() : undefined}
-            />
-          ) : (
-            <NotePanel
-              text={encounter.note_text}
-              defaultOpen={!encounter.extraction}
-            />
-          )}
-
-          {!encounter.claim && (
-            <Button
-              type="button"
-              variant="danger"
-              className="self-start"
-              onClick={handleDelete}
-              disabled={deleting}
-            >
-              {deleting ? "Suppression..." : "Supprimer la rencontre"}
-            </Button>
-          )}
-        </div>
-      )}
-    </section>
+        )}
+        {reviewing ? (
+          <ReviewStep
+            result={encounter.extraction!}
+            noteText={encounter.note_text}
+            patientId={encounter.patient!.id}
+            review={review}
+            onSaveAndNext={nextId !== null ? handleSaveAndNext : undefined}
+            onNext={nextId !== null ? () => goToNext() : undefined}
+          />
+        ) : (
+          <NotePanel text={encounter.note_text} defaultOpen={!encounter.extraction} />
+        )}
+      </div>
+    </AppPage>
   );
 }

@@ -1,5 +1,5 @@
 import { useAuth } from "../../../AuthContext";
-import { Banner, Spinner } from "../../../components";
+import { AppPage, AppPageHeader, Banner, Skeleton } from "../../../components";
 import { formatLongDate } from "../../../utils/date";
 import { ChatCard } from "./ChatCard";
 import { KpiTiles } from "./KpiTiles";
@@ -9,6 +9,21 @@ import { TaskList } from "./TaskList";
 import { useDashboard } from "./useDashboard";
 import { WeeklyActivityChart } from "./WeeklyActivityChart";
 
+// The dashboard's shape while it loads, so nothing jumps when it arrives.
+function DashboardSkeleton() {
+  return (
+    <div aria-busy="true" aria-label="Chargement du tableau de bord" className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-[104px] rounded-xl" />
+        ))}
+      </div>
+      <Skeleton className="h-64 rounded-xl" />
+      <Skeleton className="h-56 rounded-xl" />
+    </div>
+  );
+}
+
 // The landing page after login: what's left to do, how billing is going, the latest
 // encounters, and the RAMQ assistant on the side.
 export default function DashboardPage() {
@@ -16,31 +31,22 @@ export default function DashboardPage() {
   const { dashboard, error } = useDashboard();
 
   return (
-    <section className="mx-auto max-w-[1280px]">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-heading text-2xl font-semibold">Bonjour{user ? `, ${user.full_name}` : ""}</h1>
-          {dashboard && (
-            <p className="mt-1 text-sm text-muted-foreground first-letter:uppercase">{formatLongDate(dashboard.today)}</p>
-          )}
-        </div>
-        <QuickActions />
-      </div>
+    <AppPage className="max-w-[1280px]">
+      <AppPageHeader
+        title={`Bonjour${user ? `, ${user.full_name}` : ""}`}
+        documentTitle="Tableau de bord"
+        description={
+          dashboard ? <span className="inline-block first-letter:uppercase">{formatLongDate(dashboard.today)}</span> : undefined
+        }
+        actions={<QuickActions />}
+      />
 
-      {error && (
-        <div className="mt-6">
-          <Banner tone="error">{error}</Banner>
-        </div>
-      )}
-      {dashboard && (
-        <div className="mt-6">
-          <KpiTiles dashboard={dashboard} />
-        </div>
-      )}
+      {error && <Banner tone="error">{error}</Banner>}
+      {!dashboard && !error && <DashboardSkeleton />}
+      {dashboard && <KpiTiles dashboard={dashboard} />}
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex min-w-0 flex-col gap-6">
-          {!dashboard && !error && <Spinner label="Chargement…" />}
           {dashboard && (
             <>
               <TaskList dashboard={dashboard} />
@@ -51,6 +57,6 @@ export default function DashboardPage() {
         </div>
         <ChatCard />
       </div>
-    </section>
+    </AppPage>
   );
 }

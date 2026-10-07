@@ -6,6 +6,7 @@ import { MemoryRouter } from "react-router-dom";
 import type { UserOut } from "../api";
 import { AuthProvider } from "../AuthContext";
 import { RamqChatProvider } from "../chat/RamqChatProvider";
+import { Toaster } from "../components";
 import { server } from "./server";
 
 export function makeUser(overrides: Partial<UserOut> = {}): UserOut {
@@ -41,6 +42,8 @@ export function renderWithProviders(ui: ReactElement, { route = "/", state }: { 
       <MemoryRouter initialEntries={[{ pathname: route.split("?")[0], search: route.includes("?") ? `?${route.split("?")[1]}` : "", state }]}>
         <AuthProvider>
           <RamqChatProvider>{ui}</RamqChatProvider>
+          {/* As in main.tsx: toasts land outside the page. */}
+          <Toaster />
         </AuthProvider>
       </MemoryRouter>,
     ),

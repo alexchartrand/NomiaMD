@@ -66,7 +66,7 @@ async def get_encounter(
     current_user: User = Depends(get_current_user),
     inbox: EncounterInbox = Depends(get_encounter_inbox),
 ) -> EncounterDetailOut:
-    detail = await inbox.detail(current_user.id, encounter_id)
+    detail = await inbox.detail(current_user, encounter_id)
     if detail is None:
         raise HTTPException(status_code=404, detail=_NOT_FOUND)
     return detail
@@ -107,7 +107,7 @@ async def assign_patient(
     except PatientAlreadyAssignedError as exc:
         raise HTTPException(status_code=409, detail="Cette rencontre est déjà associée à un patient") from exc
     async with session_scope() as session:
-        detail = await EncounterInbox(session).detail(current_user.id, encounter_id)
+        detail = await EncounterInbox(session).detail(current_user, encounter_id)
     assert detail is not None
     return detail
 

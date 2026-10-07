@@ -1,235 +1,179 @@
-import { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  CLAIM_STATUSES,
-  deleteClaim,
-  describeError,
-  listClaims,
-  listRoster,
-  MANUAL_SOURCE_SYSTEM,
-  type Claim,
-  type ClaimFilters,
-  type ClaimStatus,
-  type Patient,
-} from "../../../api";
-import {
-  Banner,
-  Button,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TextField,
-} from "../../../components";
-import { cn } from "@/lib/utils";
-import { formatDate } from "../../../utils/date";
-import { ClaimCodeList } from "./ClaimCodeList";
-import { STATUS_LABELS } from "./constants";
+import { useEffect, useMemo, useState } from "react";
+import { CalendarSearch, SearchX } from "lucide-react";
+import { deleteClaim, describeError, type Bill, type Claim } from "../../../api";
+import { Banner, Button, EmptyState, Skeleton, Tabs, useConfirm } from "../../../components";
+import { clinicToday, formatDate } from "../../../utils/date";
+import type { Period } from "../../../utils/periods";
+import { ClaimFiltersBar } from "./ClaimFiltersBar";
+import { matches, NO_FILTERS, statusTabs, type ClaimFilters, type ClaimStatusFilter } from "./claimFilters";
+import { ClaimsTable } from "./ClaimsTable";
+import { SelectionBar } from "./SelectionBar";
+import { useClaims } from "./useClaims";
 
 interface RecordsTabProps {
-  reloadSignal: number;
+  // Kept in the URL by the page, so the dashboard can link to the drafts.
+  period: Period;
+  onPeriodChange: (period: Period) => void;
+  filters: ClaimFilters;
+  onFiltersChange: (filters: ClaimFilters) => void;
+  // Asked by "Créer une facture" (or the dashboard's link): tick every draft shown, once
+  // the claims are in, then say how many with `onSelectAllDone`.
+  selectAll: boolean;
+  onSelectAllDone: (count: number) => void;
+  onBillCreated: (bill: Bill) => void;
 }
 
-export function RecordsTab({ reloadSignal }: RecordsTabProps) {
-  const [claims, setClaims] = useState<Claim[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [listError, setListError] = useState<string | null>(null);
+// The claims over a period, filtered like the inbox; the drafts are ticked straight in the
+// list and billed together.
+export function RecordsTab({
+  period,
+  onPeriodChange,
+  filters,
+  onFiltersChange,
+  selectAll,
+  onSelectAllDone,
+  onBillCreated,
+}: RecordsTabProps) {
+  const { confirm, dialog } = useConfirm();
+  const { claims, loading, error, reload } = useClaims(period);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [selection, setSelection] = useState<Set<number>>(new Set());
+  const today = clinicToday();
 
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [patientFilter, setPatientFilter] = useState("");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ClaimStatus | "">("");
-
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const sources = useMemo(
+    () => [...new Set(claims.map((claim) => claim.source_system).filter((source): source is string => Boolean(source)))].sort(),
+    [claims],
+  );
+  const shown = useMemo(
+    () => claims.filter((claim) => matches(claim, filters, today)),
+    [claims, filters.status, filters.source, filters.patient, today],
+  );
+  const tabs = useMemo(() => statusTabs(claims, filters, today), [claims, filters.status, filters.source, filters.patient, today]);
+  const shownDrafts = useMemo(() => shown.filter((claim) => claim.status === "brouillon"), [shown]);
+  // What you see is what you bill: a claim ticked, then filtered out of view, isn't billed.
+  const selected = shownDrafts.filter((claim) => selection.has(claim.id));
 
   useEffect(() => {
-    // Roster-scoped, not every known patient: claims are no longer roster-gated (see
-    // app/postgresdb/models.py's Patient), so a patient billed here but never added to
-    // "my patients" won't appear in this filter dropdown yet — a known minor gap.
-    listRoster()
-      .then(setPatients)
-      .catch((err) => setListError(describeError(err)));
-  }, []);
+    if (!selectAll || loading) return;
+    setSelection(new Set(shownDrafts.map((claim) => claim.id)));
+    onSelectAllDone(shownDrafts.length);
+  }, [selectAll, loading, shownDrafts, onSelectAllDone]);
 
-  function loadClaims() {
-    setLoading(true);
-    setListError(null);
-    const filters: ClaimFilters = {};
-    if (patientFilter) filters.patient_id = Number(patientFilter);
-    if (dateFrom) filters.date_from = dateFrom;
-    if (dateTo) filters.date_to = dateTo;
-    if (statusFilter) filters.status = statusFilter;
-
-    listClaims(filters)
-      .then(setClaims)
-      .catch((err) => setListError(describeError(err)))
-      .finally(() => setLoading(false));
+  function toggle(id: number) {
+    setSelection((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }
 
-  // reloadSignal changes after a bill is generated/deleted on the other tab — claims may
-  // have moved between "brouillon" and "soumis" without this tab knowing.
-  useEffect(loadClaims, [patientFilter, dateFrom, dateTo, statusFilter, reloadSignal]);
+  function toggleAll() {
+    const allTicked = selected.length === shownDrafts.length;
+    setSelection((prev) => {
+      const next = new Set(prev);
+      for (const claim of shownDrafts) {
+        if (allTicked) next.delete(claim.id);
+        else next.add(claim.id);
+      }
+      return next;
+    });
+  }
 
   async function handleDelete(claim: Claim) {
-    if (!window.confirm(`Supprimer la réclamation de ${claim.patient_full_name} ? Cette action est irréversible.`))
-      return;
+    const confirmed = await confirm({
+      title: "Supprimer la réclamation ?",
+      message: `La réclamation de ${claim.patient_full_name} du ${formatDate(claim.service_date)} sera supprimée. Cette action est irréversible.`,
+      confirmLabel: "Supprimer",
+      tone: "danger",
+    });
+    if (!confirmed) return;
+    setActionError(null);
     try {
       await deleteClaim(claim.id);
-      loadClaims();
+      await reload();
     } catch (err) {
-      setListError(describeError(err));
+      setActionError(describeError(err));
     }
   }
 
+  const clearFilters = () => onFiltersChange(NO_FILTERS);
+
   return (
     <>
-      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <label htmlFor="filter-patient" className="text-sm text-muted-foreground">
-          Patient
-        </label>
-        <Select id="filter-patient" value={patientFilter} onChange={(e) => setPatientFilter(e.target.value)}>
-          <option value="">Tous les patients</option>
-          {patients.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.full_name}
-            </option>
-          ))}
-        </Select>
+      {dialog}
+      <ClaimFiltersBar
+        period={period}
+        onPeriodChange={onPeriodChange}
+        filters={filters}
+        onFiltersChange={onFiltersChange}
+        sources={sources}
+      />
 
-        <label htmlFor="filter-date-from" className="text-sm text-muted-foreground">
-          Du
-        </label>
-        <TextField
-          id="filter-date-from"
-          type="date"
-          className="w-auto"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-        />
+      <Tabs<ClaimStatusFilter>
+        ariaLabel="Statut"
+        className="mt-5"
+        items={tabs.map((tab) => ({ id: tab.id, label: tab.label, count: loading ? undefined : tab.count }))}
+        value={filters.status}
+        onChange={(status) => onFiltersChange({ ...filters, status })}
+      />
 
-        <label htmlFor="filter-date-to" className="text-sm text-muted-foreground">
-          Au
-        </label>
-        <TextField
-          id="filter-date-to"
-          type="date"
-          className="w-auto"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-        />
+      <div className="mt-5 flex flex-col gap-4">
+        {error && <Banner tone="error">{error}</Banner>}
+        {actionError && <Banner tone="error">{actionError}</Banner>}
 
-        <label htmlFor="filter-status" className="text-sm text-muted-foreground">
-          Statut
-        </label>
-        <Select
-          id="filter-status"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as ClaimStatus | "")}
-        >
-          <option value="">Tous</option>
-          {CLAIM_STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {STATUS_LABELS[s]}
-            </option>
-          ))}
-        </Select>
+        {loading ? (
+          <div aria-busy="true" aria-label="Chargement des réclamations" className="flex flex-col gap-2">
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-12 rounded-lg" />
+            ))}
+          </div>
+        ) : shown.length === 0 ? (
+          claims.length === 0 ? (
+            <EmptyState
+              icon={CalendarSearch}
+              title="Aucune réclamation pour cette période."
+              description="Les réclamations apparaissent ici dès que vous enregistrez la révision d'une rencontre."
+            />
+          ) : (
+            <EmptyState
+              icon={SearchX}
+              title="Aucune réclamation ne correspond aux filtres."
+              action={
+                <Button type="button" variant="secondary" onClick={clearFilters}>
+                  Effacer les filtres
+                </Button>
+              }
+            />
+          )
+        ) : (
+          <ClaimsTable
+            claims={shown}
+            selected={selection}
+            onToggle={toggle}
+            onToggleAll={toggleAll}
+            onDelete={handleDelete}
+            today={today}
+            filtersKey={JSON.stringify([period.date_from, period.date_to, filters])}
+            footer={
+              <SelectionBar
+                selected={selected}
+                onClear={() => setSelection(new Set())}
+                onCreated={(bill) => {
+                  setSelection(new Set());
+                  // The billed drafts are now submitted.
+                  void reload();
+                  onBillCreated(bill);
+                }}
+                onStale={() => {
+                  setSelection(new Set());
+                  void reload();
+                }}
+              />
+            }
+          />
+        )}
       </div>
-
-      {listError && <Banner tone="error">{listError}</Banner>}
-
-      {loading ? (
-        <p className="text-sm text-muted-foreground">Chargement...</p>
-      ) : claims.length === 0 ? (
-        <p>Aucune réclamation enregistrée.</p>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Patient</TableHead>
-              <TableHead>Codes</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {claims.map((claim) => {
-              const deletable = claim.status === "brouillon";
-              // Billed without an encounter: edited on the Facturer page (an encounter's claim
-              // is edited from its review instead).
-              const manual = claim.source_system === MANUAL_SOURCE_SYSTEM;
-              return (
-                <Fragment key={claim.id}>
-                  <TableRow>
-                    <TableCell>{formatDate(claim.service_date)}</TableCell>
-                    <TableCell>
-                      {claim.patient_full_name}
-                      {manual && (
-                        <span className="ml-2 inline-block rounded-full bg-muted px-[0.5rem] py-[0.1rem] text-[0.75rem] text-muted-foreground">
-                          Sans rencontre
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {claim.codes.map((c) => c.code).join(", ")}{" "}
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={() => setExpandedId(expandedId === claim.id ? null : claim.id)}
-                      >
-                        Détails
-                      </Button>
-                    </TableCell>
-                    <TableCell>{claim.total_amount != null ? `${claim.total_amount.toFixed(2)} $` : "—"}</TableCell>
-                    <TableCell>
-                      <span
-                        className={cn(
-                          "inline-block rounded-full px-[0.6rem] py-[0.15rem] text-[0.85rem]",
-                          claim.status === "soumis"
-                            ? "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]"
-                            : "bg-[color:var(--color-primary-tint)] text-primary",
-                        )}
-                      >
-                        {STATUS_LABELS[claim.status]}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        {manual && deletable && (
-                          <Button asChild variant="secondary">
-                            <Link to={`/app/facturer/${claim.id}`}>Modifier</Link>
-                          </Button>
-                        )}
-                        <Button
-                          type="button"
-                          variant="danger"
-                          disabled={!deletable}
-                          title={deletable ? undefined : "Cette réclamation fait partie d'une facture générée."}
-                          onClick={() => handleDelete(claim)}
-                        >
-                          Supprimer
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                  {expandedId === claim.id && (
-                    <TableRow className="bg-[color:var(--color-primary-tint)] hover:bg-[color:var(--color-primary-tint)]">
-                      <TableCell colSpan={6}>
-                        <ClaimCodeList codes={claim.codes} />
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </Fragment>
-              );
-            })}
-          </TableBody>
-        </Table>
-      )}
     </>
   );
 }

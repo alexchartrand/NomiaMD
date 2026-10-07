@@ -1,15 +1,14 @@
 import { cn } from "@/lib/utils";
-import { Checkbox } from "../../../components";
+import { Badge, Checkbox, type BadgeTone } from "../../../components";
 import type { ConfidenceLevel, ExtractedCode } from "../../../api";
 import { defaultLieu } from "./feeOptions";
 import { FeePicker } from "./FeePicker";
 import { NeedsConfirmation } from "./NeedsConfirmation";
 
-const CONFIDENCE_CLASSES: Record<ConfidenceLevel, string> = {
-  high: "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]",
-  medium:
-    "bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-text)]",
-  low: "bg-[color:var(--color-danger-bg)] text-destructive",
+const CONFIDENCE_TONES: Record<ConfidenceLevel, BadgeTone> = {
+  high: "success",
+  medium: "warning",
+  low: "danger",
 };
 
 const CONFIDENCE_LABELS: Record<ConfidenceLevel, string> = {
@@ -90,11 +89,11 @@ export function CodesReview({
         />
 
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="flex items-start gap-3">
-            <label
-              htmlFor={`code-${i}`}
-              className={cn("flex min-w-0 flex-1 items-baseline gap-[0.6rem]", !disabled && "cursor-pointer")}
-            >
+          <label
+            htmlFor={`code-${i}`}
+            className={cn("flex min-w-0 flex-col gap-1.5", !disabled && "cursor-pointer")}
+          >
+            <span className="flex items-center justify-between gap-3">
               <span
                 className={cn(
                   "-rotate-[1.5deg] rounded-lg border-2 border-foreground px-[0.55rem] py-[0.2rem] font-mono text-base font-[650] text-foreground",
@@ -103,19 +102,10 @@ export function CodesReview({
               >
                 {c.code}
               </span>
-              <span className="min-w-0 flex-1 font-heading font-semibold">
-                {c.description}
-              </span>
-            </label>
-            <span
-              className={cn(
-                "inline-flex shrink-0 items-center rounded-full px-[0.55rem] py-[0.15rem] text-[0.82rem] font-[650] whitespace-nowrap",
-                CONFIDENCE_CLASSES[bucket],
-              )}
-            >
-              {CONFIDENCE_LABELS[bucket]}
+              <Badge tone={CONFIDENCE_TONES[bucket]}>{CONFIDENCE_LABELS[bucket]}</Badge>
             </span>
-          </div>
+            <span className="font-heading text-[0.95rem] leading-snug font-semibold">{c.description}</span>
+          </label>
 
           <FeePicker
             code={c.code}

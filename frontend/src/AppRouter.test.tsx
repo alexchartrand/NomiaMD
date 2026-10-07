@@ -81,9 +81,10 @@ describe("the app area", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Bonjour, Dr Test" })).toBeInTheDocument();
     const sidebar = within(screen.getByRole("navigation").closest("aside")!);
     expect(sidebar.getByText("Dr Test")).toBeInTheDocument();
-    for (const name of ["Tableau de bord", "Rencontres", "Facturation", "Clavardage", "Patients", "Profil"]) {
+    for (const name of ["Tableau de bord", "Rencontres", "Facturation", "Patients", "Codes RAMQ", "Assistant RAMQ"]) {
       expect(sidebar.getByRole("link", { name })).toBeInTheDocument();
     }
+    expect(sidebar.getByRole("link", { name: "Profil — Dr Test" })).toBeInTheDocument();
     // Only on the dashboard itself, not on every page under /app.
     expect(sidebar.getByRole("link", { name: "Tableau de bord" })).toHaveClass("text-primary");
     expect(sidebar.getByRole("link", { name: "Rencontres" })).not.toHaveClass("text-primary");
@@ -99,7 +100,7 @@ describe("the app area", () => {
     expect(await assistant.findByText("Le code 00103 s'applique.")).toBeInTheDocument();
 
     await user.click(assistant.getByRole("link", { name: "Agrandir" }));
-    expect(await screen.findByRole("heading", { level: 1, name: "Clavardage de facturation" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Assistant RAMQ" })).toBeInTheDocument();
     expect(screen.getByText("Quel code ?")).toBeInTheDocument();
     expect(screen.getByText("Le code 00103 s'applique.")).toBeInTheDocument();
   });
@@ -113,7 +114,7 @@ describe("the app area", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Patients" })).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Facturation" }));
     expect(await screen.findByRole("heading", { level: 1, name: "Facturation" })).toBeInTheDocument();
-    await user.click(screen.getByRole("link", { name: "Profil" }));
+    await user.click(screen.getByRole("link", { name: /^Profil/ }));
     expect(await screen.findByRole("heading", { level: 1, name: "Profil" })).toBeInTheDocument();
   });
 

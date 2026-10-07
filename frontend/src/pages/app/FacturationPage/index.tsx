@@ -1,70 +1,111 @@
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "../../../components";
-import { RecordsTab } from "./RecordsTab";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { FilePlus2, ReceiptText } from "lucide-react";
+import { toast } from "sonner";
+import type { Bill } from "../../../api";
+import { AppPage, AppPageHeader, Button, Tabs } from "../../../components";
+import { periodToParams, readPeriodParams, type Period } from "../../../utils/periods";
 import { BillsTab } from "./BillsTab";
-import { CreateBillModal } from "./CreateBillModal";
+import { claimFiltersToParams, readClaimFilters, type ClaimFilters } from "./claimFilters";
+import { RecordsTab } from "./RecordsTab";
 
-type Tab = "records" | "bills";
+type Tab = "reclamations" | "factures";
 
+// The URL holds the tab, its period (all of it by default) and, on the claims, the
+// filters — so the dashboard can link to the drafts (`status=brouillon`), and `bill=1` (its
+// "réclamations à facturer" task) lands with every draft ticked.
 export default function FacturationPage() {
-  const [tab, setTab] = useState<Tab>("records");
-  const [modalOpen, setModalOpen] = useState(false);
-  // Bumped whenever a bill is created or deleted, so whichever tab is mounted refetches —
-  // record statuses and the bills list can each change from the other tab's actions.
-  const [reloadSignal, setReloadSignal] = useState(0);
+  const [params, setParams] = useSearchParams();
+  const tab: Tab = params.get("tab") === "factures" ? "factures" : "reclamations";
+  const period = readPeriodParams(params, "all");
+  const filters = readClaimFilters(params);
+  const [selectAll, setSelectAll] = useState(false);
 
-  function handleChanged() {
-    setReloadSignal((n) => n + 1);
+  function show(next: { tab?: Tab; period: Period; filters?: ClaimFilters }, options?: { replace?: boolean }) {
+    setParams(
+      {
+        ...(next.tab === "factures" ? { tab: "factures" } : {}),
+        ...periodToParams(next.period),
+        ...(next.filters ? claimFiltersToParams(next.filters) : {}),
+      },
+      options,
+    );
+  }
+
+  function changePeriod(next: Period) {
+    if (next.date_from && next.date_to && next.date_from > next.date_to) return;
+    show({ tab, period: next, filters: tab === "reclamations" ? filters : undefined });
+  }
+
+  // The drafts, all ticked: what's still to bill in the period shown.
+  function billDrafts(options?: { replace?: boolean }) {
+    show({ period, filters: { ...filters, status: "brouillon" } }, options);
+    setSelectAll(true);
+  }
+
+  useEffect(() => {
+    if (params.get("bill") === "1") billDrafts({ replace: true });
+    // Only the link the page was opened with: `billDrafts` drops `bill` from the URL.
+  }, []);
+
+  const handleSelectAllDone = useCallback((count: number) => {
+    setSelectAll(false);
+    if (count === 0) toast.info("Aucune réclamation en brouillon à facturer pour cette période.");
+  }, []);
+
+  function handleBillCreated(bill: Bill) {
+    toast.success(`Facture ${bill.number} générée.`, {
+      action: { label: "Voir les factures", onClick: () => setParams({ tab: "factures" }) },
+    });
   }
 
   return (
-    <section className="max-w-[860px]">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-heading text-2xl font-semibold">Facturation</h1>
-        <Button type="button" onClick={() => setModalOpen(true)}>
-          Créer une facture
-        </Button>
-      </div>
+    <AppPage>
+      <AppPageHeader
+        title="Facturation"
+        description="Vos réclamations enregistrées, et les factures qui les regroupent pour la RAMQ. Cochez les brouillons à facturer."
+        actions={
+          <>
+            <Button asChild variant="secondary">
+              <Link to="/app/facturer">
+                <ReceiptText aria-hidden />
+                Facturer sans rencontre
+              </Link>
+            </Button>
+            <Button type="button" onClick={() => billDrafts()}>
+              <FilePlus2 aria-hidden />
+              Créer une facture
+            </Button>
+          </>
+        }
+      />
 
-      <div className="mt-6 mb-4 flex gap-1 border-b border-border">
-        <button
-          type="button"
-          className={cn(
-            "cursor-pointer border-b-2 border-transparent px-[0.9rem] py-[0.6rem] text-sm text-muted-foreground hover:text-foreground",
-            tab === "records" && "border-primary font-semibold text-primary",
-          )}
-          onClick={() => setTab("records")}
-        >
-          Réclamations
-        </button>
-        <button
-          type="button"
-          className={cn(
-            "cursor-pointer border-b-2 border-transparent px-[0.9rem] py-[0.6rem] text-sm text-muted-foreground hover:text-foreground",
-            tab === "bills" && "border-primary font-semibold text-primary",
-          )}
-          onClick={() => setTab("bills")}
-        >
-          Factures générées
-        </button>
-      </div>
+      <Tabs<Tab>
+        ariaLabel="Facturation"
+        className="mb-5"
+        items={[
+          { id: "reclamations", label: "Réclamations" },
+          { id: "factures", label: "Factures générées" },
+        ]}
+        value={tab}
+        // Each tab starts on its default period: a bill's period isn't a claim's date.
+        onChange={(id) => setParams(id === "factures" ? { tab: id } : {})}
+      />
 
-      {tab === "records" ? (
-        <RecordsTab reloadSignal={reloadSignal} />
-      ) : (
-        <BillsTab reloadSignal={reloadSignal} onChanged={handleChanged} />
-      )}
-
-      {modalOpen && (
-        <CreateBillModal
-          onClose={() => setModalOpen(false)}
-          onCreated={() => {
-            handleChanged();
-            setTab("bills");
-          }}
+      {tab === "reclamations" ? (
+        <RecordsTab
+          period={period}
+          onPeriodChange={changePeriod}
+          filters={filters}
+          // Typing in the patient search shouldn't stack a history entry per keystroke.
+          onFiltersChange={(next) => show({ period, filters: next }, { replace: true })}
+          selectAll={selectAll}
+          onSelectAllDone={handleSelectAllDone}
+          onBillCreated={handleBillCreated}
         />
+      ) : (
+        <BillsTab period={period} onPeriodChange={changePeriod} />
       )}
-    </section>
+    </AppPage>
   );
 }

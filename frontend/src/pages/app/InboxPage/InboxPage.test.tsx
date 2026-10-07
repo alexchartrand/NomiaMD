@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { Route, Routes, useLocation, useParams } from "react-router-dom";
-import { makeEncounterDetail, makeEncounterRow, makeExtraction, makeFee, makePatient, makeProposedCode } from "../../../test/factories";
+import { makeEncounterDetail, makeEncounterPatient, makeEncounterRow, makeExtraction, makeFee, makePatient, makeProposedCode } from "../../../test/factories";
 import { makeUser, renderWithProviders, serveSession } from "../../../test/render";
 import { server } from "../../../test/server";
 import type { EncounterRow } from "../../../api";
@@ -64,13 +64,33 @@ function renderInbox(route = "/app/inbox", state?: unknown) {
 }
 
 describe("loading the list", () => {
-  it("asks for the current week by default and shows the rows with a counts line", async () => {
+  it("asks for the current week by default and counts the rows per status tab", async () => {
     const requests = serveEncounters([ready(1), ready(2, { status: "à associer", patient: null }), ready(3, { status: "échec" })]);
     renderInbox();
     expect(await screen.findByText("Patient 1")).toBeInTheDocument();
     expect(requests[0].get("date_from")).toBe("2026-10-05");
     expect(requests[0].get("date_to")).toBe("2026-10-11");
-    expect(screen.getByText("3 rencontres · 1 prête · 1 à associer · 1 échec")).toBeInTheDocument();
+    const tabs = screen.getAllByRole("tab").map((tab) => tab.textContent);
+    expect(tabs).toEqual(["Toutes3", "À traiter3", "Prêtes1", "À associer1", "Échecs1", "Revues0"]);
+    expect(screen.getByRole("tab", { name: /Toutes/ })).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("shows each row's codes and indicative total, and what's left to choose", async () => {
+    serveEncounters([
+      ready(1, { codes: ["15804", "15188"], indicative_total: 87.05 }),
+      ready(2, { codes: [], code_count: 2, indicative_total: null }),
+      ready(3, { status: "reçu", codes: null, code_count: null, indicative_total: null }),
+    ]);
+    renderInbox();
+    const row = (name: string) => within(screen.getByText(name).closest("tr")!);
+    expect(await screen.findByText("Patient 1")).toBeInTheDocument();
+    expect(row("Patient 1").getByText("15804")).toBeInTheDocument();
+    expect(row("Patient 1").getByText("15188")).toBeInTheDocument();
+    expect(row("Patient 1").getByText("87,05 $")).toBeInTheDocument();
+    expect(row("Patient 2").getByText("2 codes à confirmer")).toBeInTheDocument();
+    expect(row("Patient 3").getByText("Extraction en attente")).toBeInTheDocument();
+    // The day's total, in its header.
+    expect(screen.getByRole("region", { name: /1 octobre 2026/ })).toHaveTextContent("Total indicatif 87,05 $");
   });
 
   it("groups rows by day, most recent first, with batch labels", async () => {
@@ -105,7 +125,7 @@ describe("loading the list", () => {
     expect(await screen.findByText("Erreur interne")).toBeInTheDocument();
   });
 
-  it("shows the banner of notes just received (from the add-notes page)", async () => {
+  it("toasts the notes just received (from the add-notes page)", async () => {
     serveEncounters([ready(1)]);
     renderInbox("/app/inbox", { received: { received: 3, duplicates: 1 } });
     expect(await screen.findByText("3 notes reçues · 1 déjà reçue (ignorées).")).toBeInTheDocument();
@@ -140,16 +160,43 @@ describe("period and filters", () => {
     expect(requests[0].get("date_from")).toBe("2026-09-01");
     expect(requests[0].get("date_to")).toBe("2026-09-30");
     expect(screen.queryByText("Patient 1")).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Statut")).toHaveValue("revu");
+    expect(screen.getByRole("tab", { name: /Revues/ })).toHaveAttribute("aria-selected", "true");
   });
 
-  it("filters rows client-side without a new request, and says how many are hidden", async () => {
+  it("splits a long list into pages kept in the URL, a day running over carrying its full count", async () => {
+    // 40 encounters on the 6th, then 20 on the 5th: the 5th starts on page 1 and ends on page 2.
+    const rows = Array.from({ length: 60 }, (_, i) => ready(i + 1, { service_date: i < 40 ? "2026-10-06" : "2026-10-05" }));
+    serveEncounters(rows);
+    const { user } = renderInbox("/app/inbox?page=2");
+    await screen.findByText("Patient 51");
+    expect(screen.queryByText("Patient 50")).not.toBeInTheDocument();
+    expect(screen.getByText("Patient 60")).toBeInTheDocument();
+    const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+    expect(headings).toHaveLength(1);
+    expect(headings[0]).toMatch(/^lundi 5 octobre 2026\s*20 rencontres/);
+    expect(screen.getByText("51–60 sur 60")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Page précédente" }));
+    expect(screen.getByText("Patient 1")).toBeInTheDocument();
+    expect(screen.getByText("Patient 50")).toBeInTheDocument();
+    expect(screen.getByTestId("where").textContent).not.toContain("page=");
+
+    await user.click(screen.getByRole("button", { name: "Page 2" }));
+    expect(screen.getByTestId("where").textContent).toContain("page=2");
+    // A new filter starts over from the first page.
+    await user.click(screen.getByRole("tab", { name: /À traiter/ }));
+    expect(screen.getByText("Patient 1")).toBeInTheDocument();
+    expect(screen.getByTestId("where").textContent).not.toContain("page=");
+    // Fifty full rows rendered a few times over: slow under a loaded jsdom run.
+  }, 15_000);
+
+  it("filters rows client-side without a new request, and keeps the status in the URL", async () => {
     const requests = serveEncounters([ready(1), ready(2, { status: "revu" })]);
     const { user } = renderInbox();
     await screen.findByText("Patient 1");
-    await user.selectOptions(screen.getByLabelText("Statut"), "à traiter");
+    await user.click(screen.getByRole("tab", { name: /À traiter/ }));
     expect(screen.queryByText("Patient 2")).not.toBeInTheDocument();
-    expect(screen.getByText(/1 rencontre · 1 prête/)).toHaveTextContent("(sur 2)");
+    expect(decodeURIComponent(screen.getByTestId("where").textContent!)).toContain("status=à+traiter");
     expect(requests).toHaveLength(1);
   });
 
@@ -171,7 +218,8 @@ describe("period and filters", () => {
     const { user } = renderInbox();
     await screen.findByText("Patient 1");
     const source = screen.getByLabelText("Source");
-    expect(within(source).getAllByRole("option").map((o) => o.textContent)).toEqual(["Toutes", "epic", "plume"]);
+    // Known sources by their name, others as sent.
+    expect(within(source).getAllByRole("option").map((o) => o.textContent)).toEqual(["Toutes", "Epic", "plume"]);
     await user.selectOptions(source, "plume");
     expect(screen.queryByText("Patient 1")).not.toBeInTheDocument();
     expect(screen.getByText("Patient 2")).toBeInTheDocument();
@@ -181,8 +229,10 @@ describe("period and filters", () => {
     serveEncounters([ready(1)]);
     const { user } = renderInbox();
     await screen.findByText("Patient 1");
-    await user.selectOptions(screen.getByLabelText("Statut"), "revu");
+    await user.click(screen.getByRole("tab", { name: /Revues/ }));
     expect(screen.getByText("Aucune rencontre ne correspond aux filtres.")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Effacer les filtres" }));
+    expect(screen.getByText("Patient 1")).toBeInTheDocument();
   });
 
   it("ignores a start date after the end date", async () => {
@@ -289,6 +339,34 @@ describe("row actions", () => {
     expect(screen.queryByRole("button", { name: "Associer" })).not.toBeInTheDocument();
   });
 
+  it("deletes an encounter from its row menu, after confirming", async () => {
+    let rows = [ready(6, { status: "reçu" })];
+    serveEncounters(() => rows);
+    let deleted = false;
+    server.use(
+      http.delete("/api/encounters/6", () => {
+        deleted = true;
+        rows = [];
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const { user } = renderInbox();
+    await user.click(await screen.findByRole("button", { name: "Actions — Patient 6" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Supprimer" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByText("Supprimer la rencontre ?")).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Supprimer" }));
+    await waitFor(() => expect(deleted).toBe(true));
+    expect(await screen.findByText("Aucune rencontre pour cette période.")).toBeInTheDocument();
+  });
+
+  it("offers no deletion once the encounter is billed", async () => {
+    serveEncounters([ready(6, { status: "revu", deletable: false })]);
+    renderInbox();
+    await screen.findByText("Patient 6");
+    expect(screen.queryByRole("button", { name: "Actions — Patient 6" })).not.toBeInTheDocument();
+  });
+
   it("can cancel the association", async () => {
     serveEncounters([ready(5, { status: "à associer", patient: null })]);
     const { user } = renderInbox();
@@ -303,24 +381,24 @@ describe("approve all", () => {
   const cleanDetail = (id: number, codes = [makeProposedCode({ code: `0010${id}` })]) =>
     makeEncounterDetail({
       id,
-      patient: { id, full_name: `Patient ${id}`, nam: null },
+      patient: makeEncounterPatient({ id, full_name: `Patient ${id}`, nam: null }),
       extraction: makeExtraction(codes, { extraction_run_id: 100 + id }),
     });
 
-  it("is disabled when nothing is clean, and counts the clean rows otherwise", async () => {
+  it("is not offered when nothing is clean", async () => {
     serveEncounters([ready(1)]);
     renderInbox();
     await screen.findByText("Patient 1");
-    expect(screen.getByRole("button", { name: "Approuver les rencontres prêtes" })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: /Approuver en lot/ })).not.toBeInTheDocument();
   });
 
   it("counts only the rows that pass the current filters", async () => {
     serveEncounters([clean(1), clean(2, ), ready(3, { status: "revu", all_clean: true })]);
     const { user } = renderInbox();
     await screen.findByText("Patient 1");
-    expect(screen.getByRole("button", { name: "Approuver les rencontres prêtes (3)" })).toBeEnabled();
-    await user.selectOptions(screen.getByLabelText("Statut"), "à traiter");
-    expect(screen.getByRole("button", { name: "Approuver les rencontres prêtes (2)" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Approuver en lot (3)" })).toBeEnabled();
+    await user.click(screen.getByRole("tab", { name: /À traiter/ }));
+    expect(screen.getByRole("button", { name: "Approuver en lot (2)" })).toBeEnabled();
   });
 
   it("bills every code at its only fee, one claim per encounter, then re-reads the list", async () => {
@@ -345,7 +423,7 @@ describe("approve all", () => {
       }),
     );
     const { user } = renderInbox();
-    await user.click(await screen.findByRole("button", { name: "Approuver les rencontres prêtes (2)" }));
+    await user.click(await screen.findByRole("button", { name: "Approuver en lot (2)" }));
     expect(await screen.findByText("2 rencontres à facturer")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Approuver et enregistrer" }));
     expect(await screen.findByText("2 facturations enregistrées")).toBeInTheDocument();
@@ -378,7 +456,7 @@ describe("approve all", () => {
     };
     server.use(http.get("/api/encounters/:id", ({ params }) => HttpResponse.json(details[Number(params.id)])));
     const { user } = renderInbox();
-    await user.click(await screen.findByRole("button", { name: /Approuver les rencontres prêtes/ }));
+    await user.click(await screen.findByRole("button", { name: /Approuver en lot/ }));
     expect(await screen.findByText("1 rencontre à facturer")).toBeInTheDocument();
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByText("Patient 1")).toBeInTheDocument();
@@ -397,7 +475,7 @@ describe("approve all", () => {
       }),
     );
     const { user } = renderInbox();
-    await user.click(await screen.findByRole("button", { name: /Approuver les rencontres prêtes/ }));
+    await user.click(await screen.findByRole("button", { name: /Approuver en lot/ }));
     await user.click(await screen.findByRole("button", { name: "Approuver et enregistrer" }));
     expect(await screen.findByText("1 facturation enregistrée")).toBeInTheDocument();
     const dialog = screen.getByRole("dialog");
@@ -411,7 +489,7 @@ describe("approve all", () => {
     serveEncounters([clean(1)]);
     server.use(http.get("/api/encounters/:id", () => HttpResponse.json({ detail: "Introuvable" }, { status: 404 })));
     const { user } = renderInbox();
-    await user.click(await screen.findByRole("button", { name: /Approuver les rencontres prêtes/ }));
+    await user.click(await screen.findByRole("button", { name: /Approuver en lot/ }));
     expect(await screen.findByText("Introuvable")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Approuver et enregistrer" })).toBeDisabled();
   });

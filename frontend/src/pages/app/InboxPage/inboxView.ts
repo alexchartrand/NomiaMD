@@ -1,7 +1,7 @@
 import type { EncounterPeriod, EncounterRow } from "../../../api";
 import { clinicDayOf } from "../../../utils/date";
 import { matches, type RowFilters, type StatusFilter } from "./filters";
-import { DEFAULT_PRESET, presetPeriod } from "./periods";
+import { periodToParams, readPeriodParams, type PresetId } from "../../../utils/periods";
 
 export interface DayGroup {
   day: string;
@@ -38,13 +38,12 @@ export function groupByDay(rows: EncounterRow[]): DayGroup[] {
     }));
 }
 
+const DEFAULT_PRESET: PresetId = "this-week";
+
 // The URL holds the period and the filters, so the encounter page's "back" (and a reload)
 // lands on the same list. No period in the URL is the default preset; `all` is no bounds.
 export function readPeriod(params: URLSearchParams): EncounterPeriod {
-  if (params.has("all")) return {};
-  if (params.has("from") || params.has("to"))
-    return { date_from: params.get("from"), date_to: params.get("to") };
-  return presetPeriod(DEFAULT_PRESET);
+  return readPeriodParams(params, DEFAULT_PRESET);
 }
 
 export function readFilters(params: URLSearchParams): RowFilters {
@@ -55,14 +54,17 @@ export function readFilters(params: URLSearchParams): RowFilters {
   };
 }
 
+// The list's page, kept in the URL so coming back from an encounter lands on it. Changing
+// the period or the filters (`toParams`) leaves it out: back to the first page.
+export function readPage(params: URLSearchParams): number {
+  return Number(params.get("page")) || 1;
+}
+
 export function toParams(
   period: EncounterPeriod,
   filters: RowFilters,
 ): Record<string, string> {
-  const params: Record<string, string> = {};
-  if (!period.date_from && !period.date_to) params.all = "1";
-  if (period.date_from) params.from = period.date_from;
-  if (period.date_to) params.to = period.date_to;
+  const params = periodToParams(period);
   if (filters.status) params.status = filters.status;
   if (filters.source) params.source = filters.source;
   if (filters.patient) params.patient = filters.patient;

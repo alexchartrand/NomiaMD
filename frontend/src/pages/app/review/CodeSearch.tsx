@@ -1,3 +1,4 @@
+import { TriangleAlert } from "lucide-react";
 import { SearchCombobox } from "../../../components";
 import { searchCodes, type CodeHit } from "../../../api";
 import { formatAmount } from "./feeOptions";
@@ -33,8 +34,9 @@ function HitRow({ hit }: { hit: CodeHit }) {
       </div>
       {hit.header_path && <span className="truncate text-xs text-muted-foreground">{hit.header_path}</span>}
       {hit.needs_confirmation.length > 0 && (
-        <span className="text-xs text-[color:var(--color-warning-text)]">
-          ⚠ À confirmer : {hit.needs_confirmation.join(" ; ")}
+        <span className="flex items-start gap-1 text-xs text-[color:var(--color-warning-text)]">
+          <TriangleAlert aria-hidden className="mt-px size-3 shrink-0" />
+          À confirmer : {hit.needs_confirmation.join(" ; ")}
         </span>
       )}
     </div>

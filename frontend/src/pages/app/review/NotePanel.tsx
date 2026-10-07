@@ -28,7 +28,7 @@ export function NotePanel({ text, highlight = null, docked = false, defaultOpen 
   }, [docked, highlight]);
 
   const body = (
-    <pre className="m-0 font-mono text-sm whitespace-pre-wrap">
+    <pre className="m-0 font-sans text-[0.9rem] leading-relaxed whitespace-pre-wrap">
       {highlight ? (
         <>
           {text.slice(0, highlight.start)}

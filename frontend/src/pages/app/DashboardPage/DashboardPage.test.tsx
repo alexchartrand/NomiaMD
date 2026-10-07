@@ -50,8 +50,8 @@ describe("the dashboard", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Bonjour, Dr Test" })).toBeInTheDocument();
     expect(screen.getByText("Notes à traiter").nextSibling).toHaveTextContent("7");
     expect(screen.getByText("Rencontres cette semaine").nextSibling).toHaveTextContent("23");
-    expect(screen.getByText("412.50 $").nextSibling).toHaveTextContent("3 réclamations à facturer");
-    expect(screen.getByText("Facturé en octobre").nextSibling).toHaveTextContent("3120.00 $");
+    expect(screen.getByText("412,50 $").nextSibling).toHaveTextContent("3 réclamations à facturer");
+    expect(screen.getByText("Facturé en octobre").nextSibling).toHaveTextContent("3 120,00 $");
   });
 
   it("lists each kind of task, linking to the inbox filtered on it", async () => {
@@ -69,7 +69,7 @@ describe("the dashboard", () => {
     expect(link(/1 note à associer à un patient/)).toBeInTheDocument();
     expect(link(/1 extraction en échec/)).toBeInTheDocument();
     expect(link(/2 doublons possibles à confirmer/)).toBeInTheDocument();
-    expect(link(/1 réclamation à facturer/)).toHaveTextContent("33.15 $");
+    expect(link(/1 réclamation à facturer/)).toHaveTextContent("33,15 $");
     expect(within(tasks).queryByText(/en attente d'extraction/)).not.toBeInTheDocument();
 
     await user.click(link(/1 note à associer/));

@@ -84,6 +84,8 @@ class ClaimOut(BaseModel):
     status: ClaimStatus
     bill_id: int | None
     source_system: str | None
+    # The encounter it was billed from; None when billed without one or once purged.
+    encounter_id: int | None
     codes: list[ClaimCodeOut]
     total_amount: Money | None
     created_at: datetime

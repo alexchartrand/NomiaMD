@@ -1,28 +1,23 @@
-import { cn } from "@/lib/utils";
+import { CircleAlert, CircleCheck, Copy, type LucideIcon } from "lucide-react";
 import type { EncounterStatus } from "../../../api";
+import { Badge, type BadgeTone } from "../../../components";
 
-const STATUS_LABELS: Record<EncounterStatus, string> = {
-  reçu: "Reçu",
-  prêt: "Prêt",
-  revu: "Revu",
-  modifié: "Modifié",
-  échec: "Échec",
-  "à associer": "À associer",
+const STATUS: Record<EncounterStatus, { label: string; tone: BadgeTone; icon?: LucideIcon }> = {
+  reçu: { label: "Reçu", tone: "neutral" },
+  prêt: { label: "Prêt", tone: "primary" },
+  revu: { label: "Revu", tone: "success", icon: CircleCheck },
+  modifié: { label: "Modifié", tone: "neutral" },
+  échec: { label: "Échec", tone: "danger", icon: CircleAlert },
+  "à associer": { label: "À associer", tone: "warning" },
 };
-
-const STATUS_CLASSES: Record<EncounterStatus, string> = {
-  reçu: "bg-muted text-muted-foreground",
-  prêt: "bg-[color:var(--color-primary-tint)] text-primary",
-  revu: "bg-[color:var(--color-success-bg)] text-[color:var(--color-success-text)]",
-  modifié: "bg-muted text-muted-foreground",
-  échec: "bg-[color:var(--color-danger-bg)] text-destructive",
-  "à associer": "bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-text)]",
-};
-
-const chipClasses = "inline-block whitespace-nowrap rounded-full px-[0.6rem] py-[0.15rem] text-[0.85rem] font-[650]";
 
 export function StatusChip({ status }: { status: EncounterStatus }) {
-  return <span className={cn(chipClasses, STATUS_CLASSES[status])}>{STATUS_LABELS[status]}</span>;
+  const { label, tone, icon } = STATUS[status];
+  return (
+    <Badge tone={tone} icon={icon}>
+      {label}
+    </Badge>
+  );
 }
 
 export function DuplicateBadge({ onClick }: { onClick: () => void }) {
@@ -30,11 +25,9 @@ export function DuplicateBadge({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className={cn(
-        chipClasses,
-        "cursor-pointer border border-[color:var(--color-warning-text)] bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-text)] hover:opacity-80",
-      )}
+      className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-[color:var(--color-warning-text)]/40 bg-[color:var(--color-warning-bg)] px-2.5 py-0.5 text-[0.8rem] font-semibold whitespace-nowrap text-[color:var(--color-warning-text)] transition-colors hover:border-[color:var(--color-warning-text)]"
     >
+      <Copy aria-hidden className="size-3.5" />
       Doublon possible
     </button>
   );

@@ -11,11 +11,11 @@ from app.encounters.duplicates import DuplicateFlagger
 from app.encounters.masking import mask_name, mask_nam
 from app.encounters.models import EncounterDetailOut, EncounterRowOut, MaskedPatientOut, PatientOut
 from app.encounters.readiness import is_all_clean
-from app.extraction.models import BillingExtractionResponse
+from app.encounters.row_billing import RowBillingSummarizer
 from app.extraction.stored import StoredExtractionLoader
 from app.intake import status_of
+from app.patients.registration import resolve_registration
 from app.postgresdb import (
-    ClaimDetail,
     ClaimRepository,
     EncounterActivity,
     EncounterPeriod,
@@ -24,12 +24,14 @@ from app.postgresdb import (
     Patient,
     PatientRepository,
     ReceivedWindow,
+    User,
 )
 
 
 class EncounterInbox:
     def __init__(self, session: AsyncSession, flagger: DuplicateFlagger | None = None) -> None:
         self._flagger = flagger or DuplicateFlagger()
+        self._row_billing = RowBillingSummarizer()
         self._encounters = EncounterRepository(session)
         self._patients = PatientRepository(session)
         self._extractions = StoredExtractionLoader(session)
@@ -65,6 +67,7 @@ class EncounterInbox:
             extraction = extractions.get(encounter.id)
             patient = patients.get(encounter.patient_id) if encounter.patient_id is not None else None
             possible_duplicate_ids = duplicates.get(encounter.id, [])
+            billing = self._row_billing.summarize(claims.get(encounter.id), extraction)
             rows.append(
                 EncounterRowOut(
                     id=encounter.id,
@@ -75,7 +78,9 @@ class EncounterInbox:
                     batch_label=_batch_label(activity),
                     service_date=encounter.service_date,
                     received_at=encounter.created_at,
-                    code_count=_code_count(claims.get(encounter.id), extraction),
+                    code_count=billing.code_count,
+                    codes=billing.codes,
+                    indicative_total=billing.indicative_total,
                     extraction_run_id=extraction.extraction_run_id if extraction is not None else None,
                     possible_duplicate_ids=possible_duplicate_ids,
                     deletable=not activity.has_live_claim,
@@ -89,19 +94,19 @@ class EncounterInbox:
             )
         return rows
 
-    async def detail(self, user_id: int, encounter_id: int) -> EncounterDetailOut | None:
-        activity = await self._encounters.activity_for_user(encounter_id, user_id)
+    async def detail(self, user: User, encounter_id: int) -> EncounterDetailOut | None:
+        activity = await self._encounters.activity_for_user(encounter_id, user.id)
         if activity is None:
             return None
         encounter = activity.encounter
         # Deleted patients included, same as PatientRepository.get_many: what was received
         # stays readable.
         patients = await self._patients.get_many([encounter.patient_id]) if encounter.patient_id is not None else []
-        claim = (await self._claims.live_for_encounters(user_id, [encounter.id])).get(encounter.id)
+        claim = (await self._claims.live_for_encounters(user.id, [encounter.id])).get(encounter.id)
         return EncounterDetailOut(
             id=encounter.id,
             status=status_of(activity),
-            patient=_full(patients[0]) if patients else None,
+            patient=_full(patients[0], user) if patients else None,
             source_system=encounter.source_system,
             channel=encounter.channel,
             external_note_id=encounter.external_note_id,
@@ -126,14 +131,6 @@ def _period(first: date | None, last: date | None) -> EncounterPeriod:
     return EncounterPeriod(first, last, received)
 
 
-def _code_count(claim: ClaimDetail | None, extraction: BillingExtractionResponse | None) -> int | None:
-    """What was billed once a claim exists — the physician may have unchecked some of the
-    proposed codes — else what the latest run proposes."""
-    if claim is not None:
-        return len(claim.codes)
-    return len(extraction.billing.result.codes) if extraction is not None else None
-
-
 def _batch_label(activity: EncounterActivity) -> str | None:
     return (activity.encounter.encounter_meta or {}).get("batch_label")
 
@@ -144,5 +141,12 @@ def _masked(patient: Patient | None) -> MaskedPatientOut | None:
     return MaskedPatientOut(id=patient.id, display_name=mask_name(patient.full_name), nam=mask_nam(patient.ramq_number))
 
 
-def _full(patient: Patient) -> PatientOut:
-    return PatientOut(id=patient.id, full_name=patient.full_name, nam=patient.ramq_number)
+def _full(patient: Patient, physician: User) -> PatientOut:
+    return PatientOut(
+        id=patient.id,
+        full_name=patient.full_name,
+        nam=patient.ramq_number,
+        date_of_birth=patient.date_of_birth,
+        is_vulnerable=patient.is_vulnerable,
+        is_registered=resolve_registration(patient.family_doctor_practice_number, physician.practice_number),
+    )

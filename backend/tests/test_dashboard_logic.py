@@ -35,6 +35,8 @@ def _row(
         service_date=service_date,
         received_at=received_at,
         code_count=None,
+        codes=None,
+        indicative_total=None,
         extraction_run_id=None,
         possible_duplicate_ids=duplicates or [],
         all_clean=all_clean,

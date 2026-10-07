@@ -51,6 +51,9 @@
 
 ## ✨ Features
 
+- [ ] 🟡 Seed demo encounters relative to today — *added 10/6, from the app demo polish*
+  - `scripts/seed_db.py` seeds the `consultations/` notes at the dates written in them (spring–summer 2026), so on a demo day the dashboard shows 0 encounters this week, an empty 8-week activity chart, and every unbilled note at "5 j restants" before the 90-day limit; the inbox's default "Cette semaine" period is empty too. Wanted: an opt-in seed mode (e.g. `--relative-to-today`) that spreads the encounters over the last ~3 weeks, several per day, so the dashboard, the day cards and the bulk-approve callout all have something to show.
+
 - [ ] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework*
   - A `needs_confirmation` like « Confirmer la taille exacte de la clientèle inscrite… » comes back on every encounter dated before the physician's first profile version: `BillingContextBuilder` falls back to the earliest version as an *assumed* panel size, which never filters (`PhysicianContext.is_assumed`). The profile page can't fix it today: `ProfileService.record_practice_facts` is only called with `effective_from = today`.
   - Wanted: (1) put the run's `unresolved_axes` (computed by `UnresolvedAxisDetector`, today only logged in `retriever.py`) on `BillingCodesResult` as a server-only field, so the review page knows deterministically that panel size is the open question instead of matching the model's free text; (2) a "En vigueur depuis" date on the profile form; (3) on the review page, one banner per run linking to the profile, then « Relancer l'extraction » once it's set.
@@ -68,8 +71,14 @@
   - The `code_versions` registry names each table's `manual_rev`. Not carried anywhere yet: `CodeVersionRow` is read, but `Code`/`ExtractedCode`/`claim_codes` don't record which manual edition a suggestion came from.
   - Wanted: `manual_rev` on `Code`/`ExtractedCode` (extraction result JSON, no migration), `get_by_number(number, manual_rev=None)` opening that revision's `table_name` from the registry (explaining a claim billed under an older manual). 9/30: `claim_codes.manual_rev` now exists and `ClaimService` already copies `StoredCandidate.manual_rev` into it — it's NULL only because nothing upstream sets it yet.
 
-- [ ] 🟢 Replace the remaining `window.confirm` calls with `useConfirm` — *added 10/6, from the review-page rework*
-  - The encounter page now asks through `components/ConfirmDialog.tsx`'s `useConfirm`. Still on the browser's dialog: `PatientsPage.tsx` (remove from roster), `FacturationPage/BillsTab.tsx` (delete a bill), `FacturationPage/RecordsTab.tsx` (delete a claim), `InboxPage/EncounterRowItem.tsx` (delete an encounter). Their tests spy on `window.confirm` and need to click the dialog instead.
+- [ ] 🟢 Open an encounter's review from its claim in Facturation — *added 10/6, from the app demo polish*
+  - A claim saved from an encounter can only be edited from its review, but `ClaimOut` carries no `encounter_id`, so the claims table can't link to it (only "Sans rencontre" drafts get a « Modifier »). Add a read-only `encounter_id` (claim → extraction run → encounter, `None` once the run is purged) and a « Ouvrir la rencontre » row action.
+
+- [ ] 🟢 An « Insérer une note d'exemple » button on Ajouter — *added 10/6, from the app demo polish*
+  - Would let a demo show the paste flow without hunting for a note, but every `consultations/` note is already seeded, so pasting one is ignored as a duplicate. Needs demo-only notes kept out of the seed (or a fresh synthetic one generated per click).
+
+- [ ] 🟢 Small screens in the app — *added 10/6, from the app demo polish*
+  - The app targets 1280px+ laptops: the sidebar is a fixed 240px column with no collapse, and the review's note docks beside the codes only from 1200px (below that it folds under them). A collapsible sidebar (sheet under ~1024px) and a scroll-safe table layout would cover tablets.
 
 - [ ] 🟢 Frontend E2E: more journeys, and a nightly run — *added 10/4, from the frontend test plan*
   - Playwright in `frontend/e2e/` covers 3 journeys (extract → pick codes → save the claim; paste a note → associate the patient; bill the saved claims → PDF). `npm run e2e` needs the root `.env`'s `EMBEDDING_API_KEY` and `DB_PATH`, since retrieval embeddings still hit the real Mistral API.
@@ -99,14 +108,16 @@
 
 ## 🧹 Cleanup / Dead code
 
-- [ ] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests*
-  - Only one tab is mounted at a time, so the tab the physician switches to remounts and fetches fresh anyway; bumping `reloadSignal` after a bill is created or deleted changes nothing observable (removing `onChanged` in `BillsTab` leaves every test green). Drop the signal, or keep both tabs mounted if the intent was to avoid refetching on every switch.
+- [ ] 🟢 Flaky frontend tests under full-suite load — *added 10/7, from the `reloadSignal` cleanup*
+  - `FacturationPage.test.tsx`'s first test ("marks a claim billed without an encounter…") takes ~0.7s alone but often hits vitest's 5s timeout in a full `npm test` run, with or without the 10/7 change. `EncounterPage.test.tsx`'s "saves and opens the next encounter, saying whose claim was saved" failed once the same way. Find what the first test is waiting on (cold module/portal import under 37 parallel jsdom workers?) before reaching for a bigger `testTimeout`.
 
 - [ ] 🟢 `formatClinicTime`'s comment says "HH:MM" but it renders "09 h 05" — *added 10/4, from the frontend tests*
   - `frontend/src/utils/date.ts` uses the `fr-CA` locale, so the output is `09 h 05` (and the separator whitespace varies by ICU version). Probably intended for a French UI; fix the comment, or switch to `hour12: false` with `en-CA` if a strict HH:MM is wanted. `date.test.ts` asserts the current output.
 
 ## ✅ Done
 
+- [x] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests, done 10/7*
+- [x] 🟢 Replace the remaining `window.confirm` calls with `useConfirm` — *added 10/6, from the review-page rework, done 10/6*
 - [x] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
 - [x] 🔴 The public site is behind the IP allowlist — *added 10/2, from the public-site work, done 10/6*
 - [x] 🟡 Rate limits see every visitor as Caddy — *added 10/2, from the public-site work, done 10/6*

@@ -41,7 +41,7 @@ describe("CodeSearch", () => {
       service_date: "2026-10-01",
       limit: "20",
     });
-    expect(option).toHaveTextContent("52.40 $ (+1 tarif)");
+    expect(option).toHaveTextContent("52,40 $ (+1 tarif)");
     expect(option).toHaveTextContent("À confirmer : le statut d'inscription du patient");
 
     await user.click(option);

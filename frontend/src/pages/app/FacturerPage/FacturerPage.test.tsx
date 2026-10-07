@@ -77,7 +77,7 @@ describe("FacturerPage", { timeout: 20_000 }, () => {
     await user.selectOptions(screen.getByLabelText("Tarif pour le code 15801"), screen.getByRole("option", { name: /À domicile/ }));
     await pickOption(user, codeField(), /00059/);
 
-    expect(screen.getByText("86.10 $")).toBeInTheDocument();
+    expect(screen.getByText("86,10 $")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
 
     expect(await screen.findByText("Page facturation")).toBeInTheDocument();

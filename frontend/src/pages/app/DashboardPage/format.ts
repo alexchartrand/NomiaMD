@@ -4,9 +4,7 @@ export function plural(count: number, singular: string, pluralForm: string): str
   return `${count} ${count > 1 ? pluralForm : singular}`;
 }
 
-export function formatMoney(amount: number): string {
-  return `${amount.toFixed(2)} $`;
-}
+export { formatMoney } from "../../../utils/money";
 
 // "octobre" for an ISO date.
 export function monthName(isoDate: string): string {
