@@ -79,7 +79,7 @@ function readOnlyReason(encounter: EncounterDetail): string | null {
     return "Cette rencontre a été marquée comme doublon d'une autre visite : elle n'est pas facturée.";
   }
   if (encounter.claim?.status === "soumis") {
-    return "Cette facturation fait partie d'une facture générée : supprimez d'abord la facture pour la modifier.";
+    return "Cette rencontre fait partie d'une facture : supprimez d'abord la facture pour la modifier.";
   }
   if (encounter.status === "modifié")
     return "Une version plus récente de cette note a été reçue.";
