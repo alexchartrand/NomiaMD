@@ -86,6 +86,9 @@ class ClaimDetail:
     claim: Claim
     patient_full_name: str
     codes: list[ClaimCode]
+    # The encounter its extraction run belongs to: None for a claim billed without one, or
+    # once the retention purge has deleted the run.
+    encounter_id: int | None = None
 
 
 class ClaimRepository(SessionRepository):
@@ -138,10 +141,12 @@ class ClaimRepository(SessionRepository):
 
     def _details_query(self, physician_id: int) -> Select:
         # Joins Patient for the name without filtering deleted_at — a soft-deleted
-        # patient's name must still render on an existing claim.
+        # patient's name must still render on an existing claim. The run is outer-joined for
+        # its encounter: a manual or purged claim has none.
         return (
-            select(Claim, Patient.full_name)
+            select(Claim, Patient.full_name, ExtractionRun.encounter_id)
             .join(Patient, Patient.id == Claim.patient_id)
+            .outerjoin(ExtractionRun, ExtractionRun.id == Claim.extraction_run_id)
             .where(Claim.physician_id == physician_id, Claim.voided_at.is_(None))
             # id breaks ties: created_at comes from the DB clock, which SQLite only keeps
             # to the second.
@@ -154,7 +159,7 @@ class ClaimRepository(SessionRepository):
         return await self._with_codes((await self._session.execute(query)).all())
 
     async def _with_codes(self, rows: Sequence) -> list[ClaimDetail]:
-        """`rows` start with (Claim, patient full name); any further columns are ignored."""
+        """`rows` are `_details_query`'s (Claim, patient full name, encounter id)."""
         if not rows:
             return []
         code_rows = (
@@ -167,7 +172,9 @@ class ClaimRepository(SessionRepository):
             codes_by_claim.setdefault(code_row.claim_id, []).append(code_row)
 
         return [
-            ClaimDetail(claim=row[0], patient_full_name=row[1], codes=codes_by_claim.get(row[0].id, []))
+            ClaimDetail(
+                claim=row[0], patient_full_name=row[1], codes=codes_by_claim.get(row[0].id, []), encounter_id=row[2]
+            )
             for row in rows
         ]
 
@@ -214,17 +221,13 @@ class ClaimRepository(SessionRepository):
         one are absent; if several runs were claimed, the most recent claim wins."""
         if not encounter_ids:
             return {}
-        query = (
-            self._details_query(physician_id)
-            .add_columns(ExtractionRun.encounter_id)
-            .join(ExtractionRun, ExtractionRun.id == Claim.extraction_run_id)
-            .where(ExtractionRun.encounter_id.in_(encounter_ids))
+        details = await self._load_details(
+            self._details_query(physician_id).where(ExtractionRun.encounter_id.in_(encounter_ids))
         )
-        rows = (await self._session.execute(query)).all()
         by_encounter: dict[int, ClaimDetail] = {}
         # Newest first, so the first claim per encounter wins.
-        for detail, (_, _, encounter_id) in zip(await self._with_codes(rows), rows):
-            by_encounter.setdefault(encounter_id, detail)
+        for detail in details:
+            by_encounter.setdefault(detail.encounter_id, detail)
         return by_encounter
 
     async def list_for_bill(self, bill_id: int, physician_id: int) -> list[ClaimDetail]:

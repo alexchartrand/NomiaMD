@@ -48,6 +48,7 @@ async def test_create_bills_hand_picked_codes_with_no_encounter():
         claim = response.json()
         assert claim["patient_id"] == patient.id
         assert claim["source_system"] == "manual"
+        assert claim["encounter_id"] is None
         assert claim["status"] == "brouillon"
         assert [(c["code"], c["origin"]) for c in claim["codes"]] == [("00059", "manual"), ("15801", "manual")]
         assert claim["total_amount"] == 25.0 + 52.4

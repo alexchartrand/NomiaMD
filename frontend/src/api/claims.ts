@@ -41,6 +41,8 @@ export interface Claim {
   status: ClaimStatus;
   bill_id: number | null;
   source_system: string | null;
+  // The encounter it was billed from; null when billed without one or once purged.
+  encounter_id: number | null;
   codes: ClaimCodeLine[];
   total_amount: number | null;
   created_at: string;

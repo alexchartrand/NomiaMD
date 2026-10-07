@@ -115,6 +115,7 @@ async def test_create_then_list_then_filter_then_void():
         assert created["status"] == "brouillon"
         assert created["bill_id"] is None
         assert created["source_system"] == "simule"
+        assert created["encounter_id"] == run.encounter_id
         async with session_scope() as session:
             stored = await session.get(Claim, created["id"])
         assert stored.source_note_hash == content_hash("transcript de test")
@@ -128,6 +129,7 @@ async def test_create_then_list_then_filter_then_void():
 
         filtered_by_patient = client.get("/claims", params={"patient_id": patient.id})
         assert [r["id"] for r in filtered_by_patient.json()] == [created["id"]]
+        assert filtered_by_patient.json()[0]["encounter_id"] == run.encounter_id
 
         filtered_out_by_date = client.get("/claims", params={"date_from": "2026-03-01"})
         assert created["id"] not in [r["id"] for r in filtered_out_by_date.json()]

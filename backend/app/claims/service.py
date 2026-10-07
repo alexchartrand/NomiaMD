@@ -114,7 +114,7 @@ class ClaimService:
         except ExtractionAlreadyClaimedError as exc:
             raise DuplicateClaimError(EXTRACTION_ALREADY_CLAIMED) from exc
 
-        return ClaimMapper.to_out(created.claim, patient.full_name, created.codes)
+        return ClaimMapper.to_out(created.claim, patient.full_name, created.codes, encounter.id)
 
     async def replace(
         self,
