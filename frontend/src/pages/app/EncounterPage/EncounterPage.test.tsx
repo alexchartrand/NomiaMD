@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import {
   makeClaim,
   makeClaimLine,
+  makeCodeHit,
   makeEncounterDetail,
   makeEncounterPatient,
   makeEncounterRow,
@@ -16,7 +17,11 @@ import { server } from "../../../test/server";
 import type { EncounterDetail } from "../../../api";
 import EncounterPage from ".";
 
-beforeEach(() => serveSession(makeUser()));
+beforeEach(() => {
+  serveSession(makeUser());
+  // No frequent codes unless a test serves some.
+  server.use(http.get("/api/codes/search", () => HttpResponse.json([])));
+});
 
 function serveEncounter(detail: EncounterDetail | (() => EncounterDetail)) {
   let loads = 0;
@@ -127,6 +132,44 @@ describe("reviewing the proposed codes", () => {
     await screen.findByRole("heading", { level: 1 });
     await user.click(screen.getByText("Consultation"));
     expect(checkbox("00200")).toBeChecked();
+  });
+
+  it("adds one of the patient's frequent codes in one click, and ticks a proposed one instead of adding it twice", async () => {
+    serveEncounter(withCodes());
+    const searches: URLSearchParams[] = [];
+    let body: unknown;
+    server.use(
+      http.get("/api/codes/search", ({ request }) => {
+        searches.push(new URL(request.url).searchParams);
+        return HttpResponse.json([
+          makeCodeHit({ number: "00103" }),
+          makeCodeHit({ number: "00200" }),
+          makeCodeHit({ number: "00059" }),
+        ]);
+      }),
+      http.post("/api/claims", async ({ request }) => ((body = await request.json()), HttpResponse.json(makeClaim()))),
+    );
+    const { user } = renderEncounter();
+
+    // 00103 is already ticked: not offered.
+    await user.click(await screen.findByRole("button", { name: /Ajouter le code 00059/ }));
+    expect(screen.queryByRole("button", { name: /Ajouter le code 00103/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Retirer le code 00059" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Ajouter le code 00200/ }));
+    expect(checkbox("00200")).toBeChecked();
+    expect(screen.queryByRole("button", { name: "Retirer le code 00200" })).not.toBeInTheDocument();
+    // The frequent codes are the ones this patient may be billed on the encounter's date.
+    const latest = searches[searches.length - 1];
+    expect(latest.has("q")).toBe(false);
+    expect(latest.get("service_date")).toBe("2026-10-01");
+
+    await user.click(screen.getByRole("button", { name: "Enregistrer la facturation" }));
+    await waitFor(() => expect(body).toBeDefined());
+    expect((body as { selected_codes: { code: string }[] }).selected_codes.map((c) => c.code)).toEqual([
+      "00200",
+      "00103",
+      "00059",
+    ]);
   });
 
   it("marks a hovered code's supporting quote in the note, without showing it on the card", async () => {
@@ -317,7 +360,7 @@ describe("an encounter with a saved claim", () => {
     serveEncounter(saved());
     renderEncounter();
     await screen.findByRole("heading", { level: 1 });
-    expect(checkbox("00200")).toBeChecked();
+    await waitFor(() => expect(checkbox("00200")).toBeChecked());
     expect(checkbox("00103")).not.toBeChecked();
     expect(screen.getByLabelText("Tarif pour le code 00200")).toHaveValue("1");
     expect(screen.getByText(/Facturation enregistrée \(brouillon\)/)).toBeInTheDocument();
@@ -359,11 +402,13 @@ describe("read-only reviews", () => {
     ["an outdated note", { status: "modifié" as const }, /version plus récente/],
   ])("%s is shown but not editable", async (_name, extra, message) => {
     serveEncounter(withCodes(extra));
+    server.use(http.get("/api/codes/search", () => HttpResponse.json([makeCodeHit()])));
     renderEncounter();
     expect(await screen.findByText(message)).toBeInTheDocument();
     for (const box of screen.getAllByRole("checkbox")) expect(box).toBeDisabled();
     expect(screen.queryByRole("button", { name: /Enregistrer/ })).not.toBeInTheDocument();
     expect(screen.getByLabelText("Date de la consultation")).toBeDisabled();
+    expect(screen.queryByText("Codes fréquents")).not.toBeInTheDocument();
   });
 
   it("ticks nothing it can't save", async () => {
@@ -529,6 +574,8 @@ describe("stepping between encounters", () => {
       { route: "/app/inbox/5", state: { inboxSearch: "?all=1" } },
     );
     const saveAndNext = await screen.findByRole("button", { name: "Enregistrer et suivante" });
+    // The high-confidence code is ticked once the review loads.
+    await waitFor(() => expect(saveAndNext).toBeEnabled());
     server.use(
       http.get("/api/encounters/:id", ({ params }) =>
         HttpResponse.json(

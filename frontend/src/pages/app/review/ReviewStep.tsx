@@ -4,6 +4,7 @@ import type { BillingExtractionResponse } from "../../../api";
 import { useMediaQuery } from "../../../lib/useMediaQuery";
 import { AddedCodes } from "./AddedCodes";
 import { CodesReview } from "./CodesReview";
+import { FrequentCodes } from "./FrequentCodes";
 import { manualEntries } from "./manualCodes";
 import { NotePanel } from "./NotePanel";
 import { SaveSummary } from "./SaveSummary";
@@ -32,6 +33,8 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
   const quotes = useMemo(() => codes.map((c) => locateQuote(noteText, c.supporting_quote)), [codes, noteText]);
   // The code whose supporting quote is marked in the note: the last one hovered or focused.
   const [focused, setFocused] = useState<number | null>(null);
+  const added = manualEntries(state.manual);
+  const ticked = codes.filter((_, i) => state.selection.has(i)).map((c) => c.code);
 
   const note = (
     <NotePanel
@@ -83,14 +86,24 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
             disabled={review.readOnly}
           />
 
+          {!review.readOnly && (
+            // A frequent code the extraction proposed, unticked, gets ticked rather than added twice.
+            <FrequentCodes
+              patientId={patientId}
+              serviceDate={state.serviceDate || null}
+              onAdd={review.addCode}
+              excludeNumbers={[...ticked, ...added.map((e) => e.hit.number)]}
+            />
+          )}
+
           <AddedCodes
-            entries={manualEntries(state.manual)}
+            entries={added}
             onAdd={review.addCode}
             onRemove={review.removeCode}
             onFeeSelected={review.selectAddedFee}
             patientId={patientId}
             serviceDate={state.serviceDate || null}
-            excludeNumbers={codes.filter((_, i) => state.selection.has(i)).map((c) => c.code)}
+            excludeNumbers={ticked}
             searchLabel="Ajouter un code non proposé"
             disabled={review.readOnly}
           />

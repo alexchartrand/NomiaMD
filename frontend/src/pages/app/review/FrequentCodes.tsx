@@ -21,18 +21,17 @@ export function FrequentCodes({ patientId, serviceDate, onAdd, excludeNumbers = 
       {offered.length === 0 ? (
         <p className="m-0 text-sm text-muted-foreground">Tous vos codes fréquents sont déjà ajoutés.</p>
       ) : (
-        <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+        <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {offered.map((hit) => (
             <li key={hit.number}>
               <button
                 type="button"
-                className="flex max-w-[22rem] cursor-pointer items-baseline gap-2 rounded-full border border-border bg-card px-3 py-1 text-left text-sm transition-colors hover:border-primary hover:bg-[color:var(--color-primary-tint)]"
-                title={hit.description}
+                className="flex w-full cursor-pointer items-baseline gap-3 rounded-lg border border-border bg-card px-3 py-2 text-left text-sm transition-colors hover:border-primary hover:bg-[color:var(--color-primary-tint)]"
                 aria-label={`Ajouter le code ${hit.number} — ${hit.description}`}
                 onClick={() => onAdd(hit)}
               >
-                <span className="font-mono font-[650] text-primary">+ {hit.number}</span>
-                <span className="truncate text-muted-foreground">{hit.description}</span>
+                <span className="shrink-0 font-mono font-[650] whitespace-nowrap text-primary">+ {hit.number}</span>
+                <span className="min-w-0 flex-1 text-muted-foreground">{hit.description}</span>
               </button>
             </li>
           ))}
