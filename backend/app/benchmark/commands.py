@@ -31,8 +31,9 @@ from app.lancedb.database import vector_dimension
 from app.lancedb.fusion import DEFAULT_K
 from app.lancedb.models import CodeVersionRow
 from app.llm import EmbeddingDimensionGuard, chat_provider, get_embedding_client
-from app.ramq_codes import build_ramq_retriever
-from app.ramq_codes.retriever import DEFAULT_FUSED_TOP_K, DEFAULT_SIMILARITY_TOP_K
+from app.ramq_codes import build_candidate_fuser, build_code_query_runner
+from app.ramq_codes.candidate_fuser import DEFAULT_FUSED_TOP_K
+from app.ramq_codes.query_runner import DEFAULT_SIMILARITY_TOP_K
 from app.summary import ConsultationSummaryTask
 
 BACKEND_DIR = Path(__file__).parent.parent.parent
@@ -129,14 +130,13 @@ class RunCommand:
             if "summary" in stages:
                 pipeline.append(SummaryStage(model=summary_model))
             if "retrieval" in stages:
-                retriever = build_ramq_retriever(
+                query_runner = build_code_query_runner(
                     codes,
                     embedding_client=CachedEmbeddingClient(get_embedding_client(), self._cache_dir),
                     similarity_top_k=params.similarity_top_k,
-                    fused_top_k=params.fused_top_k,
-                    rrf_k=params.rrf_k,
                 )
-                pipeline.append(RetrievalStage(retriever, source, summaries=summary_run))
+                candidate_fuser = build_candidate_fuser(fused_top_k=params.fused_top_k, rrf_k=params.rrf_k)
+                pipeline.append(RetrievalStage(query_runner, candidate_fuser, source, summaries=summary_run))
 
             runner = BenchmarkRunner(pipeline, concurrency=concurrency, force=force, on_record=on_record)
             progress = await runner.run(run, selected)

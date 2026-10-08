@@ -1,5 +1,5 @@
 """app/benchmark/runner.py and stages.py end to end in a temp run directory: a mocked chat
-model for the summary, a real RAMQCodesRetriever over a fixed-ranking code repository and a
+model for the summary, the real retrieval steps over a fixed-ranking code repository and a
 fake embedding client — no network, no LanceDB."""
 
 from unittest.mock import AsyncMock, patch
@@ -12,7 +12,8 @@ from app.benchmark.records import RetrievalRecord, SummaryRecord
 from app.benchmark.runner import BenchmarkRunner
 from app.benchmark.stages import RetrievalStage, SummaryStage
 from app.benchmark.store import RunStore
-from app.ramq_codes import build_ramq_retriever
+from app.ramq_codes import BillingContext, build_candidate_fuser, build_code_query_runner, build_ramq_retriever
+from app.summary import ConsultationSummaryResult
 from tests.benchmark_helpers import RankedCodeRepository, case, row
 from tests.llm_helpers import FakeEmbeddingClient, fake_chat_result
 from tests.test_consultation_summary import MOCK_RESULT as MOCK_SUMMARY
@@ -23,9 +24,13 @@ CASES = [
 ]
 
 
-def _retriever(embedding_client=None):
-    codes = RankedCodeRepository([row("A", "Visites"), row("B", "Visites"), row("C", "Procédures")])
-    return build_ramq_retriever(codes, embedding_client=embedding_client or FakeEmbeddingClient()), codes
+def _codes():
+    return RankedCodeRepository([row("A", "Visites"), row("B", "Visites"), row("C", "Procédures")])
+
+
+def _retrieval(source, codes=None, *, summaries=None):
+    query_runner = build_code_query_runner(codes or _codes(), embedding_client=FakeEmbeddingClient())
+    return RetrievalStage(query_runner, build_candidate_fuser(), query_source(source), summaries=summaries)
 
 
 def _chat(*responses):
@@ -37,11 +42,10 @@ def _chat(*responses):
 
 async def test_a_run_stores_each_notes_summary_and_retrieval(tmp_path):
     run = RunStore(tmp_path).create("base")
-    retriever, _ = _retriever()
     patcher, _ = _chat(fake_chat_result(MOCK_SUMMARY), fake_chat_result(MOCK_SUMMARY))
     try:
         progress = await BenchmarkRunner(
-            [SummaryStage(), RetrievalStage(retriever, query_source("summary"))], concurrency=1
+            [SummaryStage(), _retrieval("summary")], concurrency=1
         ).run(run, CASES)
     finally:
         patcher.stop()
@@ -58,10 +62,29 @@ async def test_a_run_stores_each_notes_summary_and_retrieval(tmp_path):
     assert retrieval.candidates[0].rank == 1 and retrieval.candidates[0].rrf_score > 0
 
 
+async def test_the_summary_source_retrieves_what_the_production_retriever_does(tmp_path):
+    """RetrievalStage composes the retrieval steps itself; this pins it to the facade's
+    composition, so the benchmark keeps measuring what the pipeline actually runs."""
+    base = RunStore(tmp_path).create("base")
+    patcher, _ = _chat(fake_chat_result(MOCK_SUMMARY))
+    try:
+        await BenchmarkRunner([SummaryStage(), _retrieval("summary")]).run(base, CASES[:1])
+    finally:
+        patcher.stop()
+
+    production = await build_ramq_retriever(_codes(), embedding_client=FakeEmbeddingClient()).aretrieve(
+        ConsultationSummaryResult.model_validate(MOCK_SUMMARY), BillingContext()
+    )
+
+    record = base.read("retrieval", "CLI-1", RetrievalRecord)
+    assert [c.number for c in record.candidates] == [c.number for c in production.candidates]
+    assert record.unresolved_axes == list(production.unresolved_axes)
+
+
 async def test_a_rerun_skips_recorded_notes_unless_forced(tmp_path):
     run = RunStore(tmp_path).create("base")
-    retriever, codes = _retriever()
-    stages = [RetrievalStage(retriever, query_source("transcript"))]
+    codes = _codes()
+    stages = [_retrieval("transcript", codes)]
 
     await BenchmarkRunner(stages).run(run, CASES)
     second = await BenchmarkRunner(stages).run(run, CASES)
@@ -74,9 +97,8 @@ async def test_a_rerun_skips_recorded_notes_unless_forced(tmp_path):
 
 async def test_the_transcript_source_needs_no_summary_and_redacts_the_nam(tmp_path):
     run = RunStore(tmp_path).create("transcript-q")
-    retriever, codes = _retriever()
 
-    await BenchmarkRunner([RetrievalStage(retriever, query_source("transcript"))]).run(run, CASES[:1])
+    await BenchmarkRunner([_retrieval("transcript")]).run(run, CASES[:1])
 
     record = run.read("retrieval", "CLI-1", RetrievalRecord)
     assert record.error is None and record.summary_run is None
@@ -86,7 +108,6 @@ async def test_the_transcript_source_needs_no_summary_and_redacts_the_nam(tmp_pa
 async def test_retrieval_reads_summaries_from_another_run(tmp_path):
     store = RunStore(tmp_path)
     base = store.create("base")
-    retriever, _ = _retriever()
     patcher, _ = _chat(fake_chat_result(MOCK_SUMMARY))
     try:
         await BenchmarkRunner([SummaryStage()]).run(base, CASES[:1])
@@ -94,7 +115,7 @@ async def test_retrieval_reads_summaries_from_another_run(tmp_path):
         patcher.stop()
 
     sweep = store.create("sweep")
-    await BenchmarkRunner([RetrievalStage(retriever, query_source("summary+transcript"), summaries=base)]).run(sweep, CASES[:1])
+    await BenchmarkRunner([_retrieval("summary+transcript", summaries=base)]).run(sweep, CASES[:1])
 
     record = sweep.read("retrieval", "CLI-1", RetrievalRecord)
     assert record.summary_run == "base"
@@ -104,11 +125,10 @@ async def test_retrieval_reads_summaries_from_another_run(tmp_path):
 
 async def test_a_note_without_a_usable_summary_gets_an_error_record_not_a_crash(tmp_path):
     run = RunStore(tmp_path).create("base")
-    retriever, _ = _retriever()
     patcher, _ = _chat(fake_chat_result("{not json"), fake_chat_result(MOCK_SUMMARY))
     try:
         progress = await BenchmarkRunner(
-            [SummaryStage(), RetrievalStage(retriever, query_source("summary"))], concurrency=1
+            [SummaryStage(), _retrieval("summary")], concurrency=1
         ).run(run, CASES)
     finally:
         patcher.stop()

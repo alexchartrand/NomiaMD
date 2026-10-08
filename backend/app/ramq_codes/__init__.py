@@ -10,7 +10,7 @@ from app.ramq_codes.converter import CodesRowConverter
 from app.ramq_codes.eligibility import EligibilityFilterFactory, UnresolvedAxisDetector
 from app.ramq_codes.models import BillingCodesResult, CodeFeeOut, ExtractedCode, FeeUnit
 from app.ramq_codes.task import BillingCodesInput, BillingCodesTask
-from app.ramq_codes.factory import build_ramq_retriever
+from app.ramq_codes.factory import build_candidate_fuser, build_code_query_runner, build_ramq_retriever
 
 __all__ = [
     "AXIS_LABELS_FR",
@@ -18,6 +18,8 @@ __all__ = [
     "EligibilityFilterFactory",
     "UnresolvedAxisDetector",
     "BillingCodesResult",
+    "build_candidate_fuser",
+    "build_code_query_runner",
     "build_ramq_retriever",
     "BillingCodesTask",
     "BillingCodesInput",

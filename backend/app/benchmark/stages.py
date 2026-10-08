@@ -24,7 +24,9 @@ from app.benchmark.records import (
 from app.benchmark.store import Run
 from app.extraction.engine import ExtractionOutputError, run_extraction
 from app.llm import usage_scope
-from app.ramq_codes.retriever import RAMQCodesRetriever
+from app.ramq_codes.candidate_fuser import CandidateFuser
+from app.ramq_codes.eligibility import EligibilityFilterFactory
+from app.ramq_codes.query_runner import CodeQueryRunner
 from app.summary import ConsultationSummaryTask
 
 
@@ -85,14 +87,27 @@ class SummaryStage(Stage):
 
 
 class RetrievalStage(Stage):
+    """Composes the retrieval steps RAMQCodesRetriever does (app/ramq_codes/retriever.py),
+    with the query source in place of its SummaryQueryPlanner, and stores what each step
+    produced: every query's hits, the fused ranking, the eligibility filter they ran under."""
+
     name = "retrieval"
 
-    def __init__(self, retriever: RAMQCodesRetriever, query_source: IQuerySource, summaries: Run | None = None):
+    def __init__(
+        self,
+        query_runner: CodeQueryRunner,
+        candidate_fuser: CandidateFuser,
+        query_source: IQuerySource,
+        summaries: Run | None = None,
+        filter_factory: EligibilityFilterFactory | None = None,
+    ):
         """`summaries`: the run to read each note's summary from; None = the run being
         written (its own summary stage ran first)."""
-        self._retriever = retriever
+        self._query_runner = query_runner
+        self._candidate_fuser = candidate_fuser
         self._query_source = query_source
         self._summaries = summaries
+        self._filter_factory = filter_factory or EligibilityFilterFactory()
 
     async def run(self, case: BenchmarkCase, run: Run) -> RetrievalRecord:
         start = time.perf_counter()
@@ -113,38 +128,40 @@ class RetrievalStage(Stage):
                 return record
             summary = summary_record.result
 
+        eligibility = self._filter_factory.from_context(case.context)
         with usage_scope() as scope:
             try:
-                trace = await self._retriever.aretrieve_queries(self._query_source.plan(case, summary), case.context)
+                query_run = await self._query_runner.run(self._query_source.plan(case, summary), eligibility)
+                fused = self._candidate_fuser.fuse(query_run.results, case.context)
             except Exception as exc:
                 record.error = _error(exc)
-                trace = None
+                query_run = fused = None
 
         record.calls = scope.records
         record.totals = StageTotals.from_calls(scope.records, (time.perf_counter() - start) * 1000)
-        if trace is None:
+        if query_run is None or fused is None:
             return record
 
         record.queries = [
             QueryRecord(
-                source=q.query.source,
-                text=q.query.text,
-                hits=[QueryHitRecord(number=h.number, relevance=h.relevance) for h in q.hits],
+                source=result.query.source,
+                text=result.query.text,
+                hits=[QueryHitRecord(number=hit.code.number, relevance=hit.relevance) for hit in result.hits],
             )
-            for q in trace.queries
+            for result in query_run.results
         ]
         record.candidates = [
             CandidateRecord(
                 rank=rank,
-                number=f.code.number,
-                rrf_score=f.rrf_score,
-                header_path=f.code.header_path,
-                description=f.code.description,
+                number=candidate.code.number,
+                rrf_score=candidate.rrf_score,
+                header_path=candidate.code.header_path,
+                description=candidate.code.description,
             )
-            for rank, f in enumerate(trace.fused, start=1)
+            for rank, candidate in enumerate(fused.ranked, start=1)
         ]
-        record.unresolved_axes = list(trace.candidate_set.unresolved_axes)
-        record.eligibility = asdict(trace.eligibility)
-        record.embedding_ms = trace.embedding_ms
-        record.db_ms = trace.db_ms
+        record.unresolved_axes = list(fused.unresolved_axes)
+        record.eligibility = asdict(eligibility)
+        record.embedding_ms = query_run.embedding_ms
+        record.db_ms = query_run.db_ms
         return record
