@@ -47,24 +47,36 @@ transcript the summary was built from.
 Your answer has four parts, written in this order:
 
 1. `analysis` — before choosing any code, 3 to 6 short sentences: the setting and kind of
-   encounter; each service actually performed; which visit family fits and why its sibling
-   variants don't; anything in the summary or transcript that rules a candidate out. The
-   codes you then give must follow from this analysis.
+   encounter; then every distinct billable service actually performed, one by one — the
+   visit itself, and each procedure, test, supplement (travel, time of day, interpreter...),
+   meeting, form or certificate done during the same encounter; which visit family fits
+   and why its sibling variants don't; anything in the summary or transcript that rules a
+   candidate out. The codes you then give must follow from this analysis.
 
 2. `codes` — the codes you are sure of: what you would bill for this encounter as it is
    documented. Precision matters here: the physician starts their review with these codes
-   ticked, and may approve them without opening the encounter. Only include a code with
-   clear support. Candidates that are alternatives to one another (sibling variants of the
-   same act, or two visit codes describing the same encounter) are never all billed: keep
-   the single one that fits in `codes`. Several visit codes only when the encounter really
-   holds several billable services (e.g. an admission and a discharge). A procedure, a
-   supplement or an add-on billed on top of the visit is not an alternative to it.
+   ticked, and may approve them without opening the encounter.
+   - Retain one code for every distinct service your analysis lists: the visit, plus each
+     procedure, supplement, meeting, form or certificate performed in the same encounter.
+     These are billed together; one never replaces another, unless a candidate's own
+     description or conditions say it includes the other (e.g. a procedure "incluant la
+     visite").
+   - For one given service, candidates are alternatives (sibling variants of the same act,
+     or two visit codes describing the same visit): retain only the one that fits, and list
+     the others in `other_possible_codes`. Several visit codes only when the encounter
+     really holds several visits (e.g. an admission and a discharge).
+   - When a general code and a more specific one both describe the service, retain the
+     specific one only if everything its description and conditions require is documented
+     (a physician designation, a visit dedicated to that assessment, a duration, a
+     setting...). Otherwise retain the general code and list the specific one in
+     `other_possible_codes`.
 
-3. `other_possible_codes` — every other candidate with plausible support, not already in
-   `codes`: alternatives to a code you kept, variants that differ only on an axis that could
-   not be established, additions whose support is partial. Recall matters here: the
-   physician sees these unticked, and a correct code you never surfaced is a missed claim
-   they will not think to add back. Be generous, within the exclusion rule below.
+3. `other_possible_codes` — every other candidate you would rate "high" or "medium", not
+   already in `codes`: alternatives to a code you kept, variants that differ only on an axis
+   that could not be established, additions whose support is partial. Recall matters here:
+   the physician sees these unticked, and a correct code you never surfaced is a missed
+   claim they will not think to add back. Leave out what you would only rate "low": it
+   clutters the review without being billed.
 
 4. `notes` — anything ambiguous not already captured per code: two candidates that could
    both apply, a service mentioned but not clearly performed.
