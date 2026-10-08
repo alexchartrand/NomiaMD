@@ -18,6 +18,7 @@ from app.lancedb.fusion import ReciprocalRankFuser
 from app.lancedb.models import CodeRow
 from app.ramq_codes.context import BillingContext
 from app.ramq_codes.models import Code
+from app.ramq_codes.query_planner import PlannedQuery
 from app.ramq_codes.retriever import RAMQCodesRetriever
 from tests.test_consultation_summary import MOCK_RESULT
 from app.summary import ConsultationSummaryResult
@@ -48,9 +49,9 @@ class _FakeQueryPlanner:
         self._queries = queries
         self.plan_calls: list[ConsultationSummaryResult] = []
 
-    def plan(self, summary: ConsultationSummaryResult) -> list[str]:
+    def plan_labeled(self, summary: ConsultationSummaryResult) -> list[PlannedQuery]:
         self.plan_calls.append(summary)
-        return self._queries
+        return [PlannedQuery(text, "visit") for text in self._queries]
 
 
 _FILTER = CodeEligibilityFilter(age=45)
@@ -86,7 +87,7 @@ def _retriever(
     **kwargs: Any,
 ) -> tuple[RAMQCodesRetriever, _FakeCodeRepository, _FakeAxisDetector]:
     codes = _FakeCodeRepository(hits_by_query)
-    embedding_client = FakeEmbeddingClient()
+    embedding_client = kwargs.pop("embedding_client", None) or FakeEmbeddingClient()
     detector = _FakeAxisDetector()
     retriever = RAMQCodesRetriever(
         codes,
@@ -179,3 +180,53 @@ def test_default_fuser_keys_on_code_number():
     fused = fuser.fuse([[a], [a]], top_k=10)
 
     assert [c.number for c in fused] == ["A"]
+
+
+# -- the traced path (what the benchmark stores) -------------------------------------------
+
+
+async def test_trace_records_every_query_with_its_source_and_hits():
+    retriever, _, _ = _retriever(
+        {"visite": [(_row("A"), 0.9), (_row("B"), 0.4)], "ECG": [(_row("C"), 0.7)]},
+        planner_queries=[],
+    )
+
+    trace = await retriever.aretrieve_queries(
+        [PlannedQuery("visite", "visit"), PlannedQuery("ECG", "procedure")], BillingContext()
+    )
+
+    assert [(q.query.source, [(h.number, h.relevance) for h in q.hits]) for q in trace.queries] == [
+        ("visit", [("A", 0.9), ("B", 0.4)]),
+        ("procedure", [("C", 0.7)]),
+    ]
+    assert trace.eligibility == _FILTER
+
+
+async def test_trace_fused_scores_follow_the_candidate_order():
+    retriever, _, _ = _retriever(
+        {"visite": [(_row("A"), 0.9), (_row("B"), 0.4)], "ECG": [(_row("B"), 0.7)]},
+        planner_queries=["visite", "ECG"],
+    )
+
+    trace = await retriever.aretrieve_traced(SUMMARY, BillingContext())
+
+    assert [f.code.number for f in trace.fused] == [c.number for c in trace.candidate_set.candidates] == ["B", "A"]
+    assert trace.fused[0].rrf_score > trace.fused[1].rrf_score
+
+
+async def test_every_planned_query_is_embedded_in_one_batch():
+    embedding_client = FakeEmbeddingClient()
+    retriever, _, _ = _retriever({}, planner_queries=["visite", "ECG", "frais"], embedding_client=embedding_client)
+
+    await retriever.aretrieve(SUMMARY, BillingContext())
+
+    assert embedding_client.calls == [["visite", "ECG", "frais"]]
+
+
+async def test_aretrieve_returns_the_traced_candidate_set():
+    retriever, _, _ = _retriever({"visite": [(_row("A"), 0.9)]}, planner_queries=["visite"])
+
+    trace = await retriever.aretrieve_traced(SUMMARY, BillingContext())
+    result = await retriever.aretrieve(SUMMARY, BillingContext())
+
+    assert result == trace.candidate_set

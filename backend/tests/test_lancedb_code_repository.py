@@ -26,7 +26,12 @@ import lancedb
 import pyarrow as pa
 import pytest
 
-from app.lancedb.code_versions import CurrentCodeTableProvider, NoCurrentCodesTableError
+from app.lancedb.code_versions import (
+    CurrentCodeTableProvider,
+    NoCurrentCodesTableError,
+    PinnedCodeTableProvider,
+    UnknownCodesTableError,
+)
 from app.lancedb.eligibility import CodeEligibilityFilter
 from app.lancedb.models import CodeRow
 from app.lancedb.repository import CodeRepository, ICodeRepository
@@ -429,4 +434,36 @@ async def test_raises_when_more_than_one_table_is_current():
         provider = await _provider(persist_dir)
 
         with pytest.raises(NoCurrentCodesTableError):
+            await provider.current()
+
+
+# -- pinned table (the benchmark's --codes-table) ------------------------------------------
+
+
+async def _pinned(persist_dir: str, table_name: str) -> PinnedCodeTableProvider:
+    connection = await lancedb.connect_async(persist_dir)
+    registry = await connection.open_table(REGISTRY_TABLE_NAME)
+    return PinnedCodeTableProvider(connection, registry, table_name)
+
+
+async def test_a_pinned_provider_reads_a_table_that_is_not_current():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        _seed(
+            persist_dir,
+            {"codes_2026-01-01": [_record("OLD")], "codes_2026-06-05": [_record("NEW")]},
+            current="codes_2026-06-05",
+        )
+        provider = await _pinned(persist_dir, "codes_2026-01-01")
+        repository = CodeRepository(provider)
+
+        assert [r.number for r in await repository.list_by_numbers(["OLD", "NEW"])] == ["OLD"]
+        assert (await provider.current_version()).manual_rev == "2026-01-01"
+
+
+async def test_a_pinned_provider_refuses_an_unregistered_table():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        _seed(persist_dir, {TABLE_NAME: [_record("A")]}, current=TABLE_NAME)
+        provider = await _pinned(persist_dir, "codes_nope")
+
+        with pytest.raises(UnknownCodesTableError, match="codes_nope"):
             await provider.current()

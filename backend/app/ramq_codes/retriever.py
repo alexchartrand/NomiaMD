@@ -3,7 +3,6 @@ import logging
 import time
 from abc import ABC, abstractmethod
 from dataclasses import asdict
-from typing import List
 
 from app.lancedb.converter import IConverter
 from app.lancedb.models import CodeRow
@@ -13,10 +12,14 @@ from app.llm import IEmbeddingClient, call_purpose
 from app.ramq_codes.context import BillingContext
 from app.ramq_codes.eligibility import CandidateSet, EligibilityFilterFactory, UnresolvedAxisDetector
 from app.ramq_codes.models import Code
-from app.ramq_codes.query_planner import SummaryQueryPlanner
+from app.ramq_codes.query_planner import PlannedQuery, SummaryQueryPlanner
+from app.ramq_codes.retrieval_trace import FusedCandidate, QueryHit, QueryTrace, RetrievalTrace
 from app.summary.models import ConsultationSummaryResult
 
 __all__ = ["ICodesRetriever", "RAMQCodesRetriever"]
+
+DEFAULT_SIMILARITY_TOP_K = 20
+DEFAULT_FUSED_TOP_K = 40
 
 logger = logging.getLogger(__name__)
 
@@ -51,8 +54,8 @@ class RAMQCodesRetriever(ICodesRetriever):
         fuser: ReciprocalRankFuser[Code] | None = None,
         filter_factory: EligibilityFilterFactory | None = None,
         axis_detector: UnresolvedAxisDetector | None = None,
-        similarity_top_k: int = 20,
-        fused_top_k: int = 40,
+        similarity_top_k: int = DEFAULT_SIMILARITY_TOP_K,
+        fused_top_k: int = DEFAULT_FUSED_TOP_K,
     ):
         self._codes = codes
         self._embedding_client = embedding_client
@@ -65,50 +68,65 @@ class RAMQCodesRetriever(ICodesRetriever):
         self._fused_top_k = fused_top_k
 
     async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> CandidateSet:
-        retriever_start = time.perf_counter()
+        return (await self.aretrieve_traced(summary, context)).candidate_set
 
-        queries = self._query_planner.plan(summary)
+    async def aretrieve_traced(self, summary: ConsultationSummaryResult, context: BillingContext) -> RetrievalTrace:
+        return await self.aretrieve_queries(self._query_planner.plan_labeled(summary), context)
+
+    async def aretrieve_queries(self, queries: list[PlannedQuery], context: BillingContext) -> RetrievalTrace:
+        """The retrieval itself, over whatever queries the caller planned — the summary's
+        (aretrieve), the raw transcript's, or both (the benchmark's control runs)."""
+        retriever_start = time.perf_counter()
+        texts = [query.text for query in queries]
         eligibility = self._filter_factory.from_context(context)
+
         # One embedding call for every planned query.
         with call_purpose("billing_codes.retrieval"):
-            vectors = await self._embedding_client.embed(queries)
+            vectors = await self._embedding_client.embed(texts)
+        embedding_ms = (time.perf_counter() - retriever_start) * 1000
 
         db_start = time.perf_counter()
         per_query_hits = await asyncio.gather(
             *(
                 self._codes.hybrid_search(
-                    text=query, vector=vector, k=self._similarity_top_k, eligibility=eligibility
+                    text=text, vector=vector, k=self._similarity_top_k, eligibility=eligibility
                 )
-                for query, vector in zip(queries, vectors)
+                for text, vector in zip(texts, vectors)
             )
         )
-        db_duration_ms = (time.perf_counter() - db_start) * 1000
+        db_ms = (time.perf_counter() - db_start) * 1000
 
         per_query_codes = [[self._converter.convert(row) for row, _score in hits] for hits in per_query_hits]
+        fused = self._fuser.fuse_scored(per_query_codes, top_k=self._fused_top_k)
+        candidates = [code for code, _score in fused]
+        trace = RetrievalTrace(
+            candidate_set=CandidateSet(candidates=candidates, unresolved_axes=self._axis_detector.detect(candidates, context)),
+            queries=[
+                QueryTrace(query=query, hits=[QueryHit(number=row.number, relevance=score) for row, score in hits])
+                for query, hits in zip(queries, per_query_hits)
+            ],
+            fused=[FusedCandidate(code=code, rrf_score=score) for code, score in fused],
+            eligibility=eligibility,
+            embedding_ms=embedding_ms,
+            db_ms=db_ms,
+        )
 
-        fused = self._fuser.fuse(per_query_codes, top_k=self._fused_top_k)
-        result = CandidateSet(candidates=fused, unresolved_axes=self._axis_detector.detect(fused, context))
-
-        retriever_duration_ms = (time.perf_counter() - retriever_start) * 1000
         logger.debug(
             "RAMQCodesRetriever.aretrieve timing",
             extra={
-                "retriever_duration_ms": round(retriever_duration_ms, 1),
-                "db_duration_ms": round(db_duration_ms, 1),
+                "retriever_duration_ms": round((time.perf_counter() - retriever_start) * 1000, 1),
+                "db_duration_ms": round(db_ms, 1),
                 "query_count": len(queries),
             },
         )
         logger.debug(
             "RAMQCodesRetriever.aretrieve result",
             extra={
-                "candidates": [
-                    {"number": code.number, "description": code.description}
-                    for code in result.candidates
-                ],
-                "candidate_count": len(result.candidates),
+                "candidates": [{"number": code.number, "description": code.description} for code in candidates],
+                "candidate_count": len(candidates),
                 "eligibility": asdict(eligibility),
-                "unresolved_axes": list(result.unresolved_axes),
+                "unresolved_axes": list(trace.candidate_set.unresolved_axes),
             },
         )
 
-        return result
+        return trace

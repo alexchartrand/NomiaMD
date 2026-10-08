@@ -11,10 +11,11 @@ import itertools
 from datetime import date
 from unittest.mock import AsyncMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
-from app.extraction.engine import run_extraction
+from app.extraction.engine import ExtractionOutputError, run_extraction
 from app.main import app
 from app.intake import content_hash
 from app.postgresdb import Encounter, ExtractionRun, ExtractionRunResult, Gender, PatientRepository, session_scope
@@ -295,3 +296,54 @@ def test_unknown_task_returns_400():
             "/extract", json={"transcript": "hello", "task": "not_a_real_task", "patient_id": 1}
         )
     assert response.status_code == 400
+
+
+# -- model resolution and unusable output (app/extraction/engine.py) -----------------------
+
+
+async def test_run_extraction_uses_the_task_default_model():
+    task = get_task("consultation_summary")
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(return_value=fake_chat_result(MOCK_SUMMARY_RESULT))
+        await run_extraction(task, SAMPLE_TRANSCRIPT)
+
+    mock_get_client.assert_called_once_with(task.model)
+
+
+async def test_run_extraction_model_env_override_beats_the_task_default(monkeypatch):
+    monkeypatch.setenv("LLM_MODEL_CONSULTATION_SUMMARY", "qwen3-32b")
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(return_value=fake_chat_result(MOCK_SUMMARY_RESULT))
+        await run_extraction(get_task("consultation_summary"), SAMPLE_TRANSCRIPT)
+
+    mock_get_client.assert_called_once_with("qwen3-32b")
+
+
+async def test_run_extraction_explicit_model_beats_the_env_override(monkeypatch):
+    monkeypatch.setenv("LLM_MODEL_CONSULTATION_SUMMARY", "qwen3-32b")
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(return_value=fake_chat_result(MOCK_SUMMARY_RESULT))
+        await run_extraction(get_task("consultation_summary"), SAMPLE_TRANSCRIPT, model="llama-70b")
+
+    mock_get_client.assert_called_once_with("llama-70b")
+
+
+@pytest.mark.parametrize(
+    ("content", "finish_reason"),
+    [
+        ("{not json", "stop"),
+        ('{"short_description": 3}', "stop"),
+        ('{"codes": [', "length"),
+        ("{}", "content_filter"),
+    ],
+)
+async def test_unusable_output_raises_extraction_output_error_with_the_raw_content(content, finish_reason):
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(
+            return_value=fake_chat_result(content, finish_reason=finish_reason)
+        )
+        with pytest.raises(ExtractionOutputError) as excinfo:
+            await run_extraction(get_task("consultation_summary"), SAMPLE_TRANSCRIPT)
+
+    assert excinfo.value.raw_content == content
+    assert excinfo.value.finish_reason == finish_reason

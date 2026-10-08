@@ -11,7 +11,7 @@ import pyarrow as pa
 from lancedb import AsyncConnection, AsyncTable
 
 from app.config import settings
-from app.lancedb.code_versions import CurrentCodeTableProvider, ICodeTableProvider
+from app.lancedb.code_versions import CurrentCodeTableProvider, ICodeTableProvider, PinnedCodeTableProvider
 
 CODE_VERSIONS_TABLE_NAME = "code_versions"
 DOCUMENTS_TABLE_NAME = "documents-embeddings"
@@ -41,10 +41,12 @@ class LanceDB:
         connection: AsyncConnection,
         code_tables: ICodeTableProvider,
         documents_table: AsyncTable,
+        registry_table: AsyncTable,
     ) -> None:
         self._connection = connection
         self._code_tables = code_tables
         self._documents_table = documents_table
+        self._registry_table = registry_table
 
     @classmethod
     async def open(cls) -> "LanceDB":
@@ -62,11 +64,16 @@ class LanceDB:
             connection.close()
             raise
 
-        return cls(connection, code_tables, documents_table)
+        return cls(connection, code_tables, documents_table, registry_table)
 
     @property
     def code_tables(self) -> ICodeTableProvider:
         return self._code_tables
+
+    def pinned_code_tables(self, table_name: str) -> PinnedCodeTableProvider:
+        """A provider fixed on one registered `codes_<rev>` table, current or not (the
+        benchmark's --codes-table)."""
+        return PinnedCodeTableProvider(self._connection, self._registry_table, table_name)
 
     @property
     def documents_table(self) -> AsyncTable:

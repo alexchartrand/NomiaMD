@@ -210,6 +210,7 @@ def no_real_api_keys(monkeypatch):
     # at a real openai_compatible host must not leak into tests either.
     for name in (
         "LLM_PROVIDER", "LLM_ENDPOINT", "LLM_API_KEY",
+        "LLM_MODEL_CONSULTATION_SUMMARY", "LLM_MODEL_BILLING_CODES", "LLM_MODEL_RAMQ_CHATBOT",
         "EMBEDDING_PROVIDER", "EMBEDDING_ENDPOINT", "EMBEDDING_MODEL", "EMBEDDING_API_KEY",
         # And the Epic sandbox demo: a developer's flag/credentials must not turn its routes
         # on, or let a test reach fhir.epic.com (the contract test opts back in itself).

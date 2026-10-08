@@ -1,7 +1,7 @@
-"""Unit tests for SummaryQueryPlanner (app/ramq_codes/query_planner.py) — pure data
-transformation off ConsultationSummaryResult's own fields, no LLM, no DB."""
+"""Unit tests for SummaryQueryPlanner and TranscriptQueryPlanner
+(app/ramq_codes/query_planner.py) — pure data transformation, no LLM, no DB."""
 
-from app.ramq_codes.query_planner import SummaryQueryPlanner
+from app.ramq_codes.query_planner import PlannedQuery, SummaryQueryPlanner, TranscriptQueryPlanner
 from app.summary import ConsultationSummaryResult, render_for_billing_codes
 from tests.test_consultation_summary import MOCK_RESULT
 
@@ -58,3 +58,31 @@ def test_the_base_query_is_always_first():
     queries = SummaryQueryPlanner().plan(summary)
 
     assert queries[0] == render_for_billing_codes(summary)
+
+
+def test_labeled_queries_name_where_each_query_came_from():
+    summary = _summary(
+        procedures_performed=[
+            {
+                "procedure_description": "ECG réalisé et interprété",
+                "body_site": None,
+                "technique_or_approach_mentioned": None,
+                "anesthesia_used": "aucun",
+                "diagnostic_or_therapeutic": "diagnostique",
+            }
+        ],
+        possible_billable_add_ons=["frais_kilometrage"],
+    )
+
+    queries = SummaryQueryPlanner().plan_labeled(summary)
+
+    assert [q.source for q in queries] == ["visit", "procedure", "add_on"]
+    assert [q.text for q in queries] == SummaryQueryPlanner().plan(summary)
+
+
+def test_the_transcript_planner_makes_one_query_with_the_nam_redacted():
+    transcript = "**NAM :** TREM 5802 1518\nSuivi de diabète."
+
+    [query] = TranscriptQueryPlanner().plan(transcript)
+
+    assert query == PlannedQuery(text="**NAM :** [NAM]\nSuivi de diabète.", source="transcript")
