@@ -29,7 +29,8 @@ uv run pytest -m epic_sandbox    # opt-in contract test against the live Epic sa
 Benchmark (`scripts/benchmark.py`, `make bench ARGS=...` from the root): stores each labeled
 note's summary, retrieval result and selected codes, with every call's tokens and latency, under
 `backend/benchmarks/runs/<name>/` (gitignored; `promote` copies one to the committed
-`benchmarks/baselines/`):
+`benchmarks/baselines/`). Results so far, run-to-run variance and how to compare runs fairly:
+`backend/benchmarks/README.md`.
 ```bash
 uv run python scripts/benchmark.py run --name mistral-base               # summary + retrieval, all 58 notes
 uv run python scripts/benchmark.py run --name t --stages retrieval --query-source transcript   # control run

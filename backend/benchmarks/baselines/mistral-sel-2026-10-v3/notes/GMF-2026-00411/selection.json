@@ -1,0 +1,109 @@
+{
+  "patient_id": "GMF-2026-00411",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 7505,
+      "output_tokens": 863,
+      "latency_ms": 6757.901433011284,
+      "started_at": "2026-10-08T17:06:55.086209Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 7505,
+    "output_tokens": 863,
+    "llm_latency_ms": 6757.901433011284,
+    "wall_ms": 6768.209336994914
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15804",
+    "15766",
+    "15802",
+    "15812",
+    "15774",
+    "08776",
+    "15806",
+    "15789",
+    "08848",
+    "15808",
+    "08819",
+    "08777",
+    "15790",
+    "15145",
+    "15832",
+    "15814",
+    "08775",
+    "15830",
+    "15626",
+    "08800",
+    "08802",
+    "08803",
+    "08805",
+    "15144",
+    "15762",
+    "15627",
+    "98010",
+    "15810",
+    "15639",
+    "15638",
+    "15640",
+    "15641",
+    "15642",
+    "15643"
+  ],
+  "prompt_chars": 29490,
+  "raw_code_count": 3,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15802",
+        "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "high",
+        "explanation": "Première visite de prise en charge d'une patiente inscrite, non vulnérable, de 45 ans, avec rendez-vous, dans une clientèle de 1240 patients. Le résumé et le transcript confirment qu'il s'agit d'une première visite complète avec examen physique et planification de suivi.",
+        "supporting_quote": "Première visite d'une nouvelle patiente de 45 ans sans médecin de famille depuis 2022. Consultation de bilan de santé avec examen physique complet, bilan sanguin demandé, mammographie prescrite et suivi prévu dans 6 semaines pour revue des résultats.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15766",
+        "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Bien que la patiente soit nouvelle, elle est maintenant inscrite et la visite est une prise en charge initiale, pas une visite ponctuelle. Cependant, si le rendez-vous n'était pas confirmé comme tel, ce code pourrait être envisagé.",
+        "supporting_quote": "Première visite — nouvelle patiente attribuée via le GAMF, inscription ce jour.",
+        "needs_confirmation": [
+          "Confirmer si le rendez-vous était bien planifié (sinon, 15766 pourrait s'appliquer)."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15774",
+        "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "La complexité de la visite (multi-systèmes, examen complet) pourrait justifier ce code, mais la patiente est maintenant inscrite et il s'agit d'une prise en charge initiale, pas d'une visite ponctuelle.",
+        "supporting_quote": "Consultation de bilan de santé avec examen physique complet, bilan sanguin demandé, mammographie prescrite et suivi prévu dans 6 semaines pour revue des résultats.",
+        "needs_confirmation": [
+          "Confirmer si la visite était ponctuelle plutôt qu'une prise en charge initiale (sinon, 15774 ne s'applique pas)."
+        ],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la consultation n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code principal. Le type de rendez-vous (avec ou sans) est déduit du contexte (nouvelle patiente attribuée via le GAMF et présence d'un dossier), mais n'est pas explicitement confirmé dans le transcript. Aucun autre service (procédure, test, supplément) n'est documenté comme ayant été réalisé pendant cette rencontre.",
+    "analysis": "Rencontre en cabinet au GMF des Rivières, avec rendez-vous, pour une première visite de prise en charge d'une patiente de 45 ans, inscrite, non vulnérable, dans une clientèle de 1240 patients. L'acte principal est une visite de prise en charge initiale, incluant un examen physique complet, une anamnèse détaillée, et la planification d'un suivi. Aucune procédure, test ou supplément (trajet, heure, interprète) n'est documenté comme ayant été réalisé pendant cette rencontre. Les codes de suivi de grossesse, de visite ponctuelle ou de suivi musculo-squelettique sont exclus car non pertinents. La visite est clairement une prise en charge initiale, ce qui élimine les codes de suivi ou de visite ponctuelle."
+  }
+}

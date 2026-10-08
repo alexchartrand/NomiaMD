@@ -1,0 +1,173 @@
+{
+  "patient_id": "CHSLD-2026-00052",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 11261,
+      "output_tokens": 1442,
+      "latency_ms": 9780.424003009102,
+      "started_at": "2026-10-08T17:07:39.580355Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 11261,
+    "output_tokens": 1442,
+    "llm_latency_ms": 9780.424003009102,
+    "wall_ms": 9789.923235992319
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15619",
+    "15818",
+    "15790",
+    "15816",
+    "15616",
+    "15618",
+    "15617",
+    "15615",
+    "15667",
+    "15621",
+    "15836",
+    "15668",
+    "15838",
+    "09063",
+    "09100",
+    "15642",
+    "15638",
+    "15639",
+    "15640",
+    "15641",
+    "15643",
+    "15885",
+    "15886",
+    "15887",
+    "15780",
+    "01214",
+    "01208",
+    "01209",
+    "15622",
+    "08994",
+    "15840",
+    "15160",
+    "09067",
+    "15967",
+    "15627",
+    "08996",
+    "15626",
+    "09101",
+    "15628",
+    "15068",
+    "15624",
+    "15880",
+    "15881",
+    "15882",
+    "15789",
+    "15060",
+    "08777",
+    "15629",
+    "15630",
+    "15651"
+  ],
+  "prompt_chars": 44431,
+  "raw_code_count": 7,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15615",
+        "description": "Évaluation médicale globale en soins de longue durée dans un CHSLD",
+        "confidence": "high",
+        "explanation": "La visite correspond à une évaluation médicale globale en CHSLD, incluant examen complet, révision de la médication et évaluation fonctionnelle, comme décrit dans le résumé et le transcript.",
+        "supporting_quote": "Évaluation médicale globale d'une patiente de 87 ans admise au CHSLD Saint-Jude pour épuisement de l'aidant, incluant examen complet, révision de la médication, évaluation fonctionnelle et détermination du niveau d'intervention médicale (NIM 3).",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15618",
+        "description": "Rédaction du formulaire du niveau d'intervention médicale (NIM) en CHSLD",
+        "confidence": "high",
+        "explanation": "Le formulaire NIM a été rempli et signé lors de cette visite, comme mentionné explicitement dans le transcript.",
+        "supporting_quote": "formulaire NIM complété et signé — niveau 3",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15617",
+        "description": "Visite de suivi exigeant un examen en CHSLD",
+        "confidence": "medium",
+        "explanation": "Bien que la visite inclue un examen complet, elle est explicitement décrite comme une évaluation médicale globale (15615) et non comme un suivi exigeant un examen. Le code 15615 est plus spécifique et prioritaire.",
+        "supporting_quote": "Évaluation médicale globale d'une patiente de 87 ans admise au CHSLD Saint-Jude",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15816",
+        "description": "Visite de prise en charge d'un patient non vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle de 500+ patients",
+        "confidence": "medium",
+        "explanation": "La visite pourrait correspondre à une prise en charge si le statut d'inscription et de non-vulnérabilité de la patiente étaient confirmés. Cependant, ces axes ne sont pas établis, et le code 15615 (évaluation globale) est plus précis pour cette visite.",
+        "supporting_quote": "Évaluation médicale globale suite à l'admission au CHSLD",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour valider l'applicabilité de ce code.",
+          "Confirmer si la patiente est non vulnérable au sens de la RAMQ pour valider l'applicabilité de ce code."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15818",
+        "description": "Visite de suivi d'un patient non vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle de 500+ patients",
+        "confidence": "medium",
+        "explanation": "Similaire à 15816, mais pour un suivi plutôt qu'une prise en charge. La visite est une évaluation globale à l'admission, pas un suivi, et les axes inscription/non-vulnérabilité ne sont pas établis.",
+        "supporting_quote": "Évaluation médicale globale suite à l'admission au CHSLD",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour valider l'applicabilité de ce code.",
+          "Confirmer si la patiente est non vulnérable au sens de la RAMQ pour valider l'applicabilité de ce code."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15836",
+        "description": "Visite de prise en charge d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle de 500+ patients",
+        "confidence": "medium",
+        "explanation": "Si la patiente était vulnérable et inscrite, ce code pourrait s'appliquer. Cependant, ces axes ne sont pas établis, et le code 15615 reste prioritaire pour une évaluation globale.",
+        "supporting_quote": "Évaluation médicale globale suite à l'admission au CHSLD",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour valider l'applicabilité de ce code.",
+          "Confirmer si la patiente est vulnérable au sens de la RAMQ pour valider l'applicabilité de ce code."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15838",
+        "description": "Visite de suivi d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle de 500+ patients",
+        "confidence": "medium",
+        "explanation": "Similaire à 15836, mais pour un suivi. La visite est une évaluation globale à l'admission, pas un suivi, et les axes inscription/vulnérabilité ne sont pas établis.",
+        "supporting_quote": "Évaluation médicale globale suite à l'admission au CHSLD",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour valider l'applicabilité de ce code.",
+          "Confirmer si la patiente est vulnérable au sens de la RAMQ pour valider l'applicabilité de ce code."
+        ],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Le niveau d'intervention médicale (NIM 3) est explicitement mentionné comme ayant été déterminé et le formulaire rempli, ce qui justifie le code 15618. Aucune autre procédure ou supplément (déplacement, heure, etc.) n'est documenté. Les codes 15816, 15818, 15836 et 15838 dépendent du statut d'inscription et de vulnérabilité de la patiente, qui n'est pas établi.",
+    "analysis": "L'encounter a eu lieu dans un CHSLD (Saint-Jude, Unité 3 Ouest) pour une patiente de 87 ans admise en soins de longue durée. Une évaluation médicale globale a été réalisée, incluant un examen complet, une révision de la médication, une évaluation fonctionnelle et la détermination du niveau d'intervention médicale (NIM 3). Le formulaire NIM a été rempli et signé. La visite était sur rendez-vous. La clientèle du médecin est de 900 patients (inscrits). Le statut d'inscription de la patiente et sa vulnérabilité RAMQ ne sont pas établis. Aucune autre procédure, test ou supplément n'est mentionné comme ayant été effectué pendant cette visite."
+  }
+}

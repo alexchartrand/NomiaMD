@@ -1,0 +1,4346 @@
+{
+  "metrics": {
+    "summary": null,
+    "retrieval": null,
+    "retrieval_by_difficulty": {},
+    "retrieval_by_label_status": {},
+    "selection": {
+      "notes": 58,
+      "errors": 0,
+      "positive_notes": 54,
+      "expected_positions": 75,
+      "returned_codes": 84,
+      "true_positives": 48,
+      "precision": 0.5714285714285714,
+      "recall": 0.64,
+      "f1": 0.6037735849056605,
+      "macro_precision": 0.6311728395061729,
+      "macro_recall": 0.654320987654321,
+      "exact_match_rate": 0.5,
+      "overall_recall": 0.76,
+      "mean_retained": 1.4482758620689655,
+      "mean_possible": 2.2758620689655173,
+      "status_counts": {
+        "retained": 48,
+        "possible": 9,
+        "offered_not_selected": 9,
+        "not_offered": 9
+      },
+      "wrong_variants": 3,
+      "negatives": 4,
+      "clean_negatives": 4,
+      "needs_confirmation_rate": 0.125,
+      "by_confidence": {
+        "retained": {
+          "high": {
+            "returned": 70,
+            "correct": 48,
+            "precision": 0.6857142857142857
+          },
+          "medium": {
+            "returned": 11,
+            "correct": 0,
+            "precision": 0.0
+          },
+          "low": {
+            "returned": 3,
+            "correct": 0,
+            "precision": 0.0
+          }
+        },
+        "possible": {
+          "high": {
+            "returned": 2,
+            "correct": 0,
+            "precision": 0.0
+          },
+          "medium": {
+            "returned": 79,
+            "correct": 9,
+            "precision": 0.11392405063291139
+          },
+          "low": {
+            "returned": 51,
+            "correct": 0,
+            "precision": 0.0
+          }
+        }
+      },
+      "invented_codes": 0,
+      "notes_with_invented_codes": 0,
+      "malformed_codes": 0,
+      "invented_rate": 0.0
+    },
+    "selection_by_difficulty": {
+      "easy": {
+        "notes": 10,
+        "errors": 0,
+        "positive_notes": 10,
+        "expected_positions": 10,
+        "returned_codes": 10,
+        "true_positives": 8,
+        "precision": 0.8,
+        "recall": 0.8,
+        "f1": 0.8000000000000002,
+        "macro_precision": 0.8,
+        "macro_recall": 0.8,
+        "exact_match_rate": 0.8,
+        "overall_recall": 0.9,
+        "mean_retained": 1.0,
+        "mean_possible": 2.3,
+        "status_counts": {
+          "retained": 8,
+          "possible": 1,
+          "offered_not_selected": 0,
+          "not_offered": 1
+        },
+        "wrong_variants": 1,
+        "negatives": 0,
+        "clean_negatives": 0,
+        "needs_confirmation_rate": 0.24242424242424243,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 10,
+              "correct": 8,
+              "precision": 0.8
+            },
+            "medium": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 15,
+              "correct": 1,
+              "precision": 0.06666666666666667
+            },
+            "low": {
+              "returned": 8,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      },
+      "hard": {
+        "notes": 8,
+        "errors": 0,
+        "positive_notes": 8,
+        "expected_positions": 16,
+        "returned_codes": 19,
+        "true_positives": 9,
+        "precision": 0.47368421052631576,
+        "recall": 0.5625,
+        "f1": 0.5142857142857142,
+        "macro_precision": 0.53125,
+        "macro_recall": 0.5416666666666666,
+        "exact_match_rate": 0.375,
+        "overall_recall": 0.625,
+        "mean_retained": 2.375,
+        "mean_possible": 2.75,
+        "status_counts": {
+          "retained": 9,
+          "possible": 1,
+          "offered_not_selected": 2,
+          "not_offered": 4
+        },
+        "wrong_variants": 1,
+        "negatives": 0,
+        "clean_negatives": 0,
+        "needs_confirmation_rate": 0.0975609756097561,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 17,
+              "correct": 9,
+              "precision": 0.5294117647058824
+            },
+            "medium": {
+              "returned": 2,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 12,
+              "correct": 1,
+              "precision": 0.08333333333333333
+            },
+            "low": {
+              "returned": 10,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      },
+      "medium": {
+        "notes": 12,
+        "errors": 0,
+        "positive_notes": 12,
+        "expected_positions": 22,
+        "returned_codes": 20,
+        "true_positives": 15,
+        "precision": 0.75,
+        "recall": 0.6818181818181818,
+        "f1": 0.7142857142857143,
+        "macro_precision": 0.75,
+        "macro_recall": 0.7083333333333334,
+        "exact_match_rate": 0.4166666666666667,
+        "overall_recall": 0.8636363636363636,
+        "mean_retained": 1.6666666666666667,
+        "mean_possible": 2.5833333333333335,
+        "status_counts": {
+          "retained": 15,
+          "possible": 4,
+          "offered_not_selected": 2,
+          "not_offered": 1
+        },
+        "wrong_variants": 1,
+        "negatives": 0,
+        "clean_negatives": 0,
+        "needs_confirmation_rate": 0.23529411764705882,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 19,
+              "correct": 15,
+              "precision": 0.7894736842105263
+            },
+            "medium": {
+              "returned": 1,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 17,
+              "correct": 4,
+              "precision": 0.23529411764705882
+            },
+            "low": {
+              "returned": 14,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      },
+      "negative": {
+        "notes": 3,
+        "errors": 0,
+        "positive_notes": 0,
+        "expected_positions": 0,
+        "returned_codes": 0,
+        "true_positives": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "macro_precision": 0.0,
+        "macro_recall": 0.0,
+        "exact_match_rate": 0.0,
+        "overall_recall": 0.0,
+        "mean_retained": 0.0,
+        "mean_possible": 0.0,
+        "status_counts": {
+          "retained": 0,
+          "possible": 0,
+          "offered_not_selected": 0,
+          "not_offered": 0
+        },
+        "wrong_variants": 0,
+        "negatives": 3,
+        "clean_negatives": 3,
+        "needs_confirmation_rate": 0.0,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      },
+      "original": {
+        "notes": 25,
+        "errors": 0,
+        "positive_notes": 24,
+        "expected_positions": 27,
+        "returned_codes": 35,
+        "true_positives": 16,
+        "precision": 0.45714285714285713,
+        "recall": 0.5925925925925926,
+        "f1": 0.5161290322580645,
+        "macro_precision": 0.5347222222222222,
+        "macro_recall": 0.6041666666666666,
+        "exact_match_rate": 0.4583333333333333,
+        "overall_recall": 0.7037037037037037,
+        "mean_retained": 1.4,
+        "mean_possible": 2.24,
+        "status_counts": {
+          "retained": 16,
+          "possible": 3,
+          "offered_not_selected": 5,
+          "not_offered": 3
+        },
+        "wrong_variants": 0,
+        "negatives": 1,
+        "clean_negatives": 1,
+        "needs_confirmation_rate": 0.03296703296703297,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 24,
+              "correct": 16,
+              "precision": 0.6666666666666666
+            },
+            "medium": {
+              "returned": 8,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 3,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 2,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 35,
+              "correct": 3,
+              "precision": 0.08571428571428572
+            },
+            "low": {
+              "returned": 19,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      }
+    },
+    "selection_by_label_status": {
+      "draft-unverified": {
+        "notes": 41,
+        "errors": 0,
+        "positive_notes": 38,
+        "expected_positions": 54,
+        "returned_codes": 55,
+        "true_positives": 39,
+        "precision": 0.7090909090909091,
+        "recall": 0.7222222222222222,
+        "f1": 0.7155963302752293,
+        "macro_precision": 0.756578947368421,
+        "macro_recall": 0.7456140350877193,
+        "exact_match_rate": 0.6578947368421053,
+        "overall_recall": 0.8333333333333334,
+        "mean_retained": 1.3414634146341464,
+        "mean_possible": 2.1463414634146343,
+        "status_counts": {
+          "retained": 39,
+          "possible": 6,
+          "offered_not_selected": 5,
+          "not_offered": 4
+        },
+        "wrong_variants": 2,
+        "negatives": 3,
+        "clean_negatives": 3,
+        "needs_confirmation_rate": 0.08391608391608392,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 50,
+              "correct": 39,
+              "precision": 0.78
+            },
+            "medium": {
+              "returned": 4,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 1,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 53,
+              "correct": 6,
+              "precision": 0.11320754716981132
+            },
+            "low": {
+              "returned": 35,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      },
+      "reviewed": {
+        "notes": 14,
+        "errors": 0,
+        "positive_notes": 13,
+        "expected_positions": 17,
+        "returned_codes": 24,
+        "true_positives": 8,
+        "precision": 0.3333333333333333,
+        "recall": 0.47058823529411764,
+        "f1": 0.39024390243902435,
+        "macro_precision": 0.37179487179487175,
+        "macro_recall": 0.5,
+        "exact_match_rate": 0.15384615384615385,
+        "overall_recall": 0.6470588235294118,
+        "mean_retained": 1.7142857142857142,
+        "mean_possible": 2.5,
+        "status_counts": {
+          "retained": 8,
+          "possible": 3,
+          "offered_not_selected": 2,
+          "not_offered": 4
+        },
+        "wrong_variants": 1,
+        "negatives": 1,
+        "clean_negatives": 1,
+        "needs_confirmation_rate": 0.23728813559322035,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 18,
+              "correct": 8,
+              "precision": 0.4444444444444444
+            },
+            "medium": {
+              "returned": 5,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 1,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 0,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 22,
+              "correct": 3,
+              "precision": 0.13636363636363635
+            },
+            "low": {
+              "returned": 13,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      },
+      "to_review": {
+        "notes": 3,
+        "errors": 0,
+        "positive_notes": 3,
+        "expected_positions": 4,
+        "returned_codes": 5,
+        "true_positives": 1,
+        "precision": 0.2,
+        "recall": 0.25,
+        "f1": 0.22222222222222224,
+        "macro_precision": 0.16666666666666666,
+        "macro_recall": 0.16666666666666666,
+        "exact_match_rate": 0.0,
+        "overall_recall": 0.25,
+        "mean_retained": 1.6666666666666667,
+        "mean_possible": 3.0,
+        "status_counts": {
+          "retained": 1,
+          "possible": 0,
+          "offered_not_selected": 2,
+          "not_offered": 1
+        },
+        "wrong_variants": 0,
+        "negatives": 0,
+        "clean_negatives": 0,
+        "needs_confirmation_rate": 0.07142857142857142,
+        "by_confidence": {
+          "retained": {
+            "high": {
+              "returned": 2,
+              "correct": 1,
+              "precision": 0.5
+            },
+            "medium": {
+              "returned": 2,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 1,
+              "correct": 0,
+              "precision": 0.0
+            }
+          },
+          "possible": {
+            "high": {
+              "returned": 2,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "medium": {
+              "returned": 4,
+              "correct": 0,
+              "precision": 0.0
+            },
+            "low": {
+              "returned": 3,
+              "correct": 0,
+              "precision": 0.0
+            }
+          }
+        },
+        "invented_codes": 0,
+        "notes_with_invented_codes": 0,
+        "malformed_codes": 0,
+        "invented_rate": 0.0
+      }
+    },
+    "calls": [
+      {
+        "stage": "selection",
+        "kind": "chat",
+        "purpose": "billing_codes",
+        "model": "mistral-medium-latest",
+        "cached": false,
+        "calls": 58,
+        "errors": 0,
+        "input_tokens": 647996,
+        "output_tokens": 53802,
+        "mean_input_tokens": 11172.344827586207,
+        "mean_output_tokens": 927.6206896551724,
+        "latency_ms": {
+          "n": 58,
+          "mean": 7817.675450206824,
+          "p50": 7628.564309998183,
+          "p95": 12359.250124005484,
+          "max": 12965.782519997447
+        }
+      }
+    ],
+    "stage_wall_ms": {
+      "selection": {
+        "n": 58,
+        "mean": 7828.884233481748,
+        "p50": 7636.934909998672,
+        "p95": 12366.33908499789,
+        "max": 12976.368545991136
+      }
+    }
+  },
+  "scores": [],
+  "selection_scores": [
+    {
+      "patient_id": "URG-2026-04471",
+      "difficulty": "original",
+      "label_status": "to_review",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15058",
+          "status": "not_offered"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15192",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00474",
+          "retained": true,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08800",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15847",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08966",
+          "retained": false,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15633",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 61,
+      "raw_code_count": 6,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04512",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "01323",
+          "status": "possible"
+        },
+        {
+          "code": "15052",
+          "status": "not_offered"
+        }
+      ],
+      "returned": [
+        {
+          "code": "02704",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01320",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01322",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01325",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01323",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "02014",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "02015",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 74,
+      "raw_code_count": 7,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04538",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15058",
+          "status": "not_offered"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15773",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 86,
+      "raw_code_count": 1,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01187",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15823",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15823",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15821",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15819",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 61,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01203",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15803",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15790",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00604",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15789",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00113",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00118",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 80,
+      "raw_code_count": 5,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01220",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15801",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15801",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15765",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 48,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01221",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15803",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15803",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 43,
+      "raw_code_count": 1,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00301",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15805",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15805",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15807",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15159",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 40,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00302",
+      "difficulty": "original",
+      "label_status": "to_review",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15144",
+          "status": "offered_not_selected"
+        },
+        {
+          "code": "15811",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15811",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00474",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15809",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15831",
+          "retained": false,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 57,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00303",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15813",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15833",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00400",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15803",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08877",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 53,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01222",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15767",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15767",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15775",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 61,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01223",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15765",
+          "status": "possible"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08775",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15765",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08776",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08777",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 59,
+      "raw_code_count": 5,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01224",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15803",
+          "status": "possible"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08776",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "09928",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15803",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08775",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08777",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "09971",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 54,
+      "raw_code_count": 6,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01225",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "08777",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08776",
+          "retained": true,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08777",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00431",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15789",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15790",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00201",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 66,
+      "raw_code_count": 6,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01226",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15765",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15765",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00553",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15789",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 72,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00304",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15790",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15790",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08777",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 62,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01227",
+      "difficulty": "original",
+      "label_status": "to_review",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "08857",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15775",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15819",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15821",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15823",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 66,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01228",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15803",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15803",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15801",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08776",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 42,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00305",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15783",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15783",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15835",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15837",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15839",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 56,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00306",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15839",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15839",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15835",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15837",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 60,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01229",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15803",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08882",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00474",
+          "retained": true,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08994",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08996",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 48,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00307",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15188",
+          "status": "retained"
+        },
+        {
+          "code": "15823",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15823",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15188",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15819",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 64,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01230",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": true,
+      "is_labeled": true,
+      "expected": [],
+      "returned": [],
+      "candidate_count": 56,
+      "raw_code_count": 0,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "TEL-2026-00090",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15765",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15765",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15894",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 56,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01231",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15823",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15823",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15819",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15821",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15775",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 41,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00410",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15804",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15804",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15802",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 29,
+      "raw_code_count": 2,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00311",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15823",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15823",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15819",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15775",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 38,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01240",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15765",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15765",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 81,
+      "raw_code_count": 2,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01241",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15837",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15837",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15839",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15835",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 45,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00411",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15802",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15802",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15766",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15774",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 34,
+      "raw_code_count": 3,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00051",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15616",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15616",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15617",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": "15616"
+        }
+      ],
+      "candidate_count": 38,
+      "raw_code_count": 2,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00731",
+      "difficulty": "easy",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15639",
+          "status": "possible"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15640",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": "15639"
+        },
+        {
+          "code": "15648",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15639",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15638",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": "15639"
+        },
+        {
+          "code": "15766",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15774",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15768",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 46,
+      "raw_code_count": 7,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04620",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15052",
+          "status": "not_offered"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08775",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08776",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 58,
+      "raw_code_count": 2,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "DOM-2026-00021",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15783",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15783",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15784",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": "15783"
+        },
+        {
+          "code": "09100",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "09063",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15763",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 37,
+      "raw_code_count": 5,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLSC-2026-00133",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15812",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15812",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15832",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15144",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00059",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 40,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00412",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "00341",
+          "status": "retained"
+        },
+        {
+          "code": "15804",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15804",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00341",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00340",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": "00341"
+        },
+        {
+          "code": "15802",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 58,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01242",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "01323",
+          "status": "retained"
+        },
+        {
+          "code": "15765",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15765",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01323",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01320",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 67,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00312",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15785",
+          "status": "retained"
+        },
+        {
+          "code": "15786",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15785",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15786",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08862",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08863",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15821",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15823",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 48,
+      "raw_code_count": 6,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00413",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "00431",
+          "status": "retained"
+        },
+        {
+          "code": "15804",
+          "status": "possible"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08776",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00431",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15804",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15774",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 66,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01243",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "01005",
+          "status": "possible"
+        },
+        {
+          "code": "15765",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15765",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01006",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": "01005"
+        },
+        {
+          "code": "15773",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01005",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01451",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 84,
+      "raw_code_count": 5,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00052",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15615",
+          "status": "retained"
+        },
+        {
+          "code": "15618",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15615",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15618",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15617",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": "15618"
+        },
+        {
+          "code": "15816",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15818",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15836",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15838",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 50,
+      "raw_code_count": 7,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00053",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15617",
+          "status": "possible"
+        },
+        {
+          "code": "15624",
+          "status": "possible"
+        }
+      ],
+      "returned": [
+        {
+          "code": "09245",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15616",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": "15624"
+        },
+        {
+          "code": "15617",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15624",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 63,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00732",
+      "difficulty": "medium",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15638",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15638",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "09234",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15639",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": "15638"
+        },
+        {
+          "code": "15053",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15056",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "09231",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "09237",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15642",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": "15638"
+        }
+      ],
+      "candidate_count": 73,
+      "raw_code_count": 8,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00733",
+      "difficulty": "medium",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15158",
+          "status": "retained"
+        },
+        {
+          "code": "15639",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15158",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 58,
+      "raw_code_count": 1,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04621",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "01323",
+          "status": "retained"
+        },
+        {
+          "code": "15059",
+          "status": "not_offered"
+        }
+      ],
+      "returned": [
+        {
+          "code": "01323",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 62,
+      "raw_code_count": 1,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "DOM-2026-00022",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "00344",
+          "status": "retained"
+        },
+        {
+          "code": "15781",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15770",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00344",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15778",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00341",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": "00344"
+        },
+        {
+          "code": "00340",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": "00344"
+        },
+        {
+          "code": "09063",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 62,
+      "raw_code_count": 6,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00414",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "08848",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08848",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 58,
+      "raw_code_count": 1,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00313",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15803",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "08819",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15790",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08848",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15789",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 50,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01244",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "00215",
+          "status": "retained"
+        },
+        {
+          "code": "01166",
+          "status": "retained"
+        },
+        {
+          "code": "15803",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15803",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01166",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00215",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01300",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01225",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01222",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "01184",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15801",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 70,
+      "raw_code_count": 8,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04622",
+      "difficulty": "hard",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15054",
+          "status": "not_offered"
+        },
+        {
+          "code": "15060",
+          "status": "not_offered"
+        },
+        {
+          "code": "15637",
+          "status": "not_offered"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15777",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00340",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00478",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15646",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00341",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15655",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00474",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 76,
+      "raw_code_count": 7,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00054",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "00014",
+          "status": "possible"
+        },
+        {
+          "code": "15265",
+          "status": "retained"
+        },
+        {
+          "code": "15622",
+          "status": "offered_not_selected"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15234",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": "15265"
+        },
+        {
+          "code": "15265",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15624",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": "15622"
+        },
+        {
+          "code": "00014",
+          "retained": false,
+          "correct": true,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 60,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00314",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15188",
+          "status": "retained"
+        },
+        {
+          "code": "15821",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15821",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15188",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15775",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15767",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 56,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01245",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "00205",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "00205",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 51,
+      "raw_code_count": 1,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00734",
+      "difficulty": "hard",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15641",
+          "status": "retained"
+        },
+        {
+          "code": "15643",
+          "status": "retained"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15641",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15643",
+          "retained": true,
+          "correct": true,
+          "confidence": "high",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15650",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15652",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": true,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 40,
+      "raw_code_count": 4,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04623",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "is_labeled": true,
+      "expected": [
+        {
+          "code": "15064",
+          "status": "not_offered"
+        }
+      ],
+      "returned": [
+        {
+          "code": "15646",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "30010",
+          "retained": true,
+          "correct": false,
+          "confidence": "high",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08802",
+          "retained": true,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15645",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "15644",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "08805",
+          "retained": false,
+          "correct": false,
+          "confidence": "medium",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00340",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00341",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        },
+        {
+          "code": "00344",
+          "retained": false,
+          "correct": false,
+          "confidence": "low",
+          "needs_confirmation": false,
+          "wrong_variant_of": null
+        }
+      ],
+      "candidate_count": 74,
+      "raw_code_count": 9,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01246",
+      "difficulty": "negative",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": true,
+      "is_labeled": true,
+      "expected": [],
+      "returned": [],
+      "candidate_count": 51,
+      "raw_code_count": 0,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00415",
+      "difficulty": "negative",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": true,
+      "is_labeled": true,
+      "expected": [],
+      "returned": [],
+      "candidate_count": 42,
+      "raw_code_count": 0,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00315",
+      "difficulty": "negative",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": true,
+      "is_labeled": true,
+      "expected": [],
+      "returned": [],
+      "candidate_count": 35,
+      "raw_code_count": 0,
+      "dropped_not_offered": 0,
+      "dropped_malformed": 0,
+      "error": null
+    }
+  ],
+  "comparison": null,
+  "selection_comparison": {
+    "baseline": "mistral-sel-v2",
+    "candidate": "mistral-sel-v3",
+    "notes": [
+      {
+        "patient_id": "URG-2026-04512",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [
+          "01323"
+        ],
+        "new_wrong": [
+          "02704"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01222",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "15775"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01224",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "09928"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01225",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "08776"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01226",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "00553"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01229",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "00474"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00302",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "00474"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00313",
+        "difficulty": "hard",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": [
+          "15803"
+        ]
+      },
+      {
+        "patient_id": "HOP-2026-00732",
+        "difficulty": "medium",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "09234"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "URG-2026-04471",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "00474"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "URG-2026-04623",
+        "difficulty": "hard",
+        "verdict": "regressed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "08802"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01227",
+        "difficulty": "original",
+        "verdict": "mixed",
+        "gained": [],
+        "lost": [
+          "08857"
+        ],
+        "new_wrong": [
+          "15775"
+        ],
+        "fixed_wrong": [
+          "15819"
+        ],
+        "gained_overall": [],
+        "lost_overall": [
+          "08857"
+        ]
+      },
+      {
+        "patient_id": "CLI-2026-01203",
+        "difficulty": "original",
+        "verdict": "mixed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "00604",
+          "15790"
+        ],
+        "fixed_wrong": [
+          "00113",
+          "00118",
+          "15789"
+        ],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01243",
+        "difficulty": "medium",
+        "verdict": "mixed",
+        "gained": [
+          "15765"
+        ],
+        "lost": [
+          "01005"
+        ],
+        "new_wrong": [
+          "01006"
+        ],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00303",
+        "difficulty": "original",
+        "verdict": "mixed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "00400"
+        ],
+        "fixed_wrong": [
+          "00474"
+        ],
+        "gained_overall": [],
+        "lost_overall": [
+          "15813"
+        ]
+      },
+      {
+        "patient_id": "URG-2026-04622",
+        "difficulty": "hard",
+        "verdict": "mixed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "00340",
+          "15777"
+        ],
+        "fixed_wrong": [
+          "00341"
+        ],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CHSLD-2026-00054",
+        "difficulty": "hard",
+        "verdict": "mixed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "15234"
+        ],
+        "fixed_wrong": [
+          "15617",
+          "15624"
+        ],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00413",
+        "difficulty": "medium",
+        "verdict": "mixed",
+        "gained": [
+          "00431"
+        ],
+        "lost": [],
+        "new_wrong": [
+          "08776"
+        ],
+        "fixed_wrong": [
+          "00430"
+        ],
+        "gained_overall": [
+          "15804"
+        ],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "URG-2026-04538",
+        "difficulty": "original",
+        "verdict": "mixed",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [
+          "15773"
+        ],
+        "fixed_wrong": [
+          "15192"
+        ],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CHSLD-2026-00053",
+        "difficulty": "medium",
+        "verdict": "improved",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [
+          "01320"
+        ],
+        "gained_overall": [
+          "15617",
+          "15624"
+        ],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01244",
+        "difficulty": "hard",
+        "verdict": "improved",
+        "gained": [
+          "00215"
+        ],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [
+          "01184"
+        ],
+        "gained_overall": [
+          "00215"
+        ],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLSC-2026-00133",
+        "difficulty": "easy",
+        "verdict": "improved",
+        "gained": [
+          "15812"
+        ],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [
+          "15832"
+        ],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00305",
+        "difficulty": "original",
+        "verdict": "improved",
+        "gained": [
+          "15783"
+        ],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [
+          "15837"
+        ],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "HOP-2026-00734",
+        "difficulty": "hard",
+        "verdict": "improved",
+        "gained": [
+          "15643"
+        ],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "TEL-2026-00090",
+        "difficulty": "original",
+        "verdict": "improved",
+        "gained": [
+          "15765"
+        ],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [
+          "15789"
+        ],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CHSLD-2026-00051",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CHSLD-2026-00052",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01187",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01220",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01221",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01223",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01228",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01230",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01231",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01240",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01241",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01242",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01245",
+        "difficulty": "hard",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "CLI-2026-01246",
+        "difficulty": "negative",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "DOM-2026-00021",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "DOM-2026-00022",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00301",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00304",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00306",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00307",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00311",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00312",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00314",
+        "difficulty": "hard",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00315",
+        "difficulty": "negative",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00410",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00411",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00412",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00414",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "GMF-2026-00415",
+        "difficulty": "negative",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "HOP-2026-00731",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "HOP-2026-00733",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "URG-2026-04620",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      },
+      {
+        "patient_id": "URG-2026-04621",
+        "difficulty": "medium",
+        "verdict": "unchanged",
+        "gained": [],
+        "lost": [],
+        "new_wrong": [],
+        "fixed_wrong": [],
+        "gained_overall": [],
+        "lost_overall": []
+      }
+    ],
+    "counts": {
+      "regressed": 11,
+      "mixed": 8,
+      "improved": 6,
+      "unchanged": 33
+    }
+  }
+}

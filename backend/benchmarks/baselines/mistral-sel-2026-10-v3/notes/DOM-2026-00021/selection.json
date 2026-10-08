@@ -1,0 +1,130 @@
+{
+  "patient_id": "DOM-2026-00021",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 8798,
+      "output_tokens": 1135,
+      "latency_ms": 8643.979945001774,
+      "started_at": "2026-10-08T17:07:14.221629Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 8798,
+    "output_tokens": 1135,
+    "llm_latency_ms": 8643.979945001774,
+    "wall_ms": 8653.81452399015
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15789",
+    "08777",
+    "15790",
+    "15784",
+    "15783",
+    "09063",
+    "15668",
+    "08776",
+    "09100",
+    "15619",
+    "15763",
+    "15642",
+    "15638",
+    "15639",
+    "15640",
+    "15641",
+    "15643",
+    "15651",
+    "15776",
+    "08948",
+    "15630",
+    "15768",
+    "08819",
+    "15824",
+    "15820",
+    "09101",
+    "15615",
+    "15890",
+    "98010",
+    "15822",
+    "08848",
+    "15808",
+    "15617",
+    "15806",
+    "08994",
+    "08996",
+    "15828"
+  ],
+  "prompt_chars": 35071,
+  "raw_code_count": 5,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15783",
+        "description": "Visite à domicile d'un patient vulnérable en perte sévère d'autonomie, premier patient",
+        "confidence": "high",
+        "explanation": "Visite à domicile planifiée pour un patient vulnérable en perte sévère d'autonomie, premier patient vu sous ce toit. Le patient est inscrit, vulnérable et présente une perte sévère d'autonomie confirmée par le diagnostic de SLA et les limitations fonctionnelles décrites.",
+        "supporting_quote": "Visite à domicile planifiée pour un patient de 71 ans atteint de SLA (forme bulbaire) avec perte sévère d'autonomie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15784",
+        "description": "Visite à domicile d'un patient vulnérable en perte sévère d'autonomie, patient additionnel en perte sévère d'autonomie",
+        "confidence": "medium",
+        "explanation": "Ce code s'applique pour un patient additionnel vu sous le même toit. Cependant, le résumé et le transcript indiquent que c'est la première visite de la journée à ce domicile, ce qui exclut ce code. Inclus ici car l'axe 'nombre de patients vus sous le même toit' n'est pas explicitement confirmé comme étant uniquement ce patient.",
+        "supporting_quote": "Visite à domicile planifiée pour un patient de 71 ans atteint de SLA (forme bulbaire) avec perte sévère d'autonomie.",
+        "needs_confirmation": [
+          "Confirmer si d'autres patients en perte sévère d'autonomie ont été vus sous le même toit ce jour-là pour justifier le code 15784."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "09100",
+        "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié",
+        "confidence": "low",
+        "explanation": "Aucune mention explicite dans le résumé ou le transcript d'un examen d'évaluation médicale formel en vue d'allocation de ressources ou de rédaction d'un formulaire. La visite semble plutôt une évaluation clinique et un suivi.",
+        "supporting_quote": "Évaluation de la dysphagie, sialorrhée, dénutrition et hypoventilation. Références en orthophonie et nutrition, ajustement du traitement (glycopyrrolate).",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "09063",
+        "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie lorsqu'effectué à domicile",
+        "confidence": "low",
+        "explanation": "Ce code est un supplément à l'examen d'évaluation médicale (code 09100). Comme ce dernier n'est pas clairement documenté, ce supplément ne peut pas être retenu.",
+        "supporting_quote": "Évaluation de la dysphagie, sialorrhée, dénutrition et hypoventilation.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15763",
+        "description": "Examen à domicile du premier patient en perte sévère d'autonomie de 70 ans ou plus par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD",
+        "confidence": "low",
+        "explanation": "Ce code s'applique uniquement dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD. Le lieu de la visite est le domicile dans le cadre du GMF, ce qui exclut ce code.",
+        "supporting_quote": "Lieu (détail): GMF des Rivières — soins à domicile",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la visite n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code principal. Aucun examen d'évaluation médicale formel (code 09100) ou rédaction de formulaire (code 09101) n'est documenté, donc ces codes sont exclus. Le code 15783 est retenu car il s'agit du premier patient vu sous ce toit pour une visite à domicile en perte sévère d'autonomie.",
+    "analysis": "L'encounter est une visite à domicile planifiée pour un patient de 71 ans, inscrit et désigné vulnérable, souffrant de SLA avec perte sévère d'autonomie. La visite inclut une évaluation complexe de problèmes multiples (dysphagie, sialorrhée, dénutrition, hypoventilation) avec examen physique, ajustement de traitement et recommandations. Le lieu est le domicile, ce qui exclut les codes pour CHSGS, CHSP ou CHSLD. La visite est dédiée à un patient en perte sévère d'autonomie, ce qui oriente vers les codes spécifiques pour ce contexte. Aucun examen d'évaluation médicale (code 09100) ou rédaction de formulaire (code 09101) n'est explicitement mentionné. La visite est la première de la journée à ce domicile, ce qui favorise le code 15783 plutôt que 15784."
+  }
+}
