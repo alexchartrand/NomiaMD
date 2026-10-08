@@ -1,0 +1,451 @@
+{
+  "patient_id": "URG-2026-04621",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 673,
+      "output_tokens": null,
+      "latency_ms": 287.914376007393,
+      "started_at": "2026-10-08T14:19:49.392762Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 673,
+    "output_tokens": 0,
+    "llm_latency_ms": 287.914376007393,
+    "wall_ms": 315.52286200167146
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Patient de 73 ans non inscrit à l'urgence pour chute dans l'escalier avec plaie au cuir chevelu. Réparation de lacération occipitale de 4 cm par 6 agrafes. TCC léger sans lésion intracrânienne confirmé par TDM. Congé avec surveillance et instructions de suivi.\nLieu (détail): Hôpital régional du Haut-Fleuve, urgence\nDate: 2026-09-26\nHeure de début: 22:15\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Chute dans l'escalier avec plaie au cuir chevelu et céphalée légère.\nSystèmes/régions concernés: tête; cou; thorax; abdomen; neurologique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: TCC léger sans lésion intracrânienne; lacération simple du cuir chevelu de 4 cm.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: oui\nRégions examinées: tête; cou; thorax; abdomen; neurologique\nConstatations: Lacération occipitale linéaire de 4 cm, bords nets, pas d'embarrure palpable; TA 156/88, FC 82 rég., SatO2 97 %, glycémie 6,4, GCS 15, pupilles égales réactives, nerfs crâniens N, force/sensibilité N, Romberg négatif, marche normale.\nActe réalisé 1 - Description: Réparation de lacération occipitale de 4 cm par irrigation et fermeture en un plan avec 6 agrafes\nActe réalisé 1 - Site: occiput\nActe réalisé 1 - Technique/approche: irrigation, fermeture en un plan par agrafes\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de l'encounter non explicitement mentionnée dans le transcript.; Heure de fin de l'encounter non précisée.",
+      "hits": [
+        {
+          "number": "01320",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "07501",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01322",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "04588",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07506",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15765",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07507",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15773",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07566",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07504",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15811",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07560",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01188",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01323",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01189",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07505",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01238",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07500",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01239",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Réparation de lacération occipitale de 4 cm par irrigation et fermeture en un plan avec 6 agrafes",
+      "hits": [
+        {
+          "number": "01323",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "01320",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "07678",
+          "relevance": 0.0279720276594162
+        },
+        {
+          "number": "01322",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "05389",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01325",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "05327",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07504",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05328",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07413",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07501",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01342",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07410",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04588",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07533",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04251",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01169",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07386",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07534",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "05390",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "01320",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > face et cou",
+      "description": "Réparation d'une lacération simple de moins de un (1) centimètre à la face ou au cou, débridement compris, avec addition des centimètres supplémentaires à la valeur de base payable une seule fois"
+    },
+    {
+      "rank": 2,
+      "number": "01322",
+      "rrf_score": 0.031746031746031744,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation d'une lacération compliquée de moins de deux centimètres et demi (2,5 cm) à la face ou au cou, débridement compris, avec techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut et les procédures nécessaires, avec addition des deux centimètres et demi (2,5 cm) supplémentaires"
+    },
+    {
+      "rank": 3,
+      "number": "07501",
+      "rrf_score": 0.030679156908665108,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne, avec déchirure de la dure-mère, non soumis au paragraphe 2.06 de l'appareil musculo-squelettique"
+    },
+    {
+      "rank": 4,
+      "number": "01323",
+      "rrf_score": 0.03018018018018018,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > autres localisations",
+      "description": "Réparation d'une lacération simple de moins de un (1) centimètre à d'autres localisations que la face ou le cou, débridement compris, avec addition des centimètres supplémentaires à la valeur de base payable une seule fois"
+    },
+    {
+      "rank": 5,
+      "number": "04588",
+      "rrf_score": 0.0293236301369863,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Cardiorraphie : suture pour lacération cardiaque non iatrogénique, au niveau des ventricules"
+    },
+    {
+      "rank": 6,
+      "number": "07504",
+      "rrf_score": 0.029211087420042643,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne avec plastie de la dure-mère avec greffe pour hydrorrhée, non soumis au paragraphe 2.06 de l'appareil musculo-squelettique"
+    },
+    {
+      "rank": 7,
+      "number": "00953",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 8,
+      "number": "07678",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens > Divers > Crâniectomie décompressive sans autre intervention dans le même temps opératoire",
+      "description": "Crâniectomie décompressive sous-occipitale sans autre intervention dans le même temps opératoire, divers, neurochirurgie des nerfs crâniens"
+    },
+    {
+      "rank": 9,
+      "number": "05389",
+      "rrf_score": 0.015625,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Réparation > Suture intestinale (lacération de part en part)",
+      "description": "Réparation, suture intestinale (lacération de part en part)"
+    },
+    {
+      "rank": 10,
+      "number": "07506",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture ouverte avec enfoncement",
+      "description": "Traitement opératoire d'une fracture ouverte avec enfoncement du crâne, avec déchirure de la dure-mère, non soumis au paragraphe 2.06 de l'appareil musculo-squelettique"
+    },
+    {
+      "rank": 11,
+      "number": "01325",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) de plaies étendues, multiples ou compliquées à la face et au cou, utilisant des techniques spéciales de réparation en vue d'obtenir un résultat esthétique ou fonctionnel au maximum"
+    },
+    {
+      "rank": 12,
+      "number": "15765",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 13,
+      "number": "05327",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Lacération mineure de la langue, réparation (P.G. 2.4.7.7 A) (P.C. 13)"
+    },
+    {
+      "rank": 14,
+      "number": "07507",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture ouverte avec enfoncement",
+      "description": "Traitement opératoire d'une fracture ouverte avec enfoncement du crâne, avec traumatisme cérébral important (corps étranger, hématome, etc.), non soumis au paragraphe 2.06 de l'appareil musculo-squelettique"
+    },
+    {
+      "rank": 15,
+      "number": "15773",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 16,
+      "number": "05328",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Lacération étendue de la langue, réparation"
+    },
+    {
+      "rank": 17,
+      "number": "07566",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Lésions infectieuses & parasitaires > Sous-tentorielles > Abcès, parasitose, granulome ou corps étranger, primaire ou au-delà de 30 jours d'une chirurgie crânienne",
+      "description": "Exérèse de volet infecté et/ou de plaque de crânioplastie ou de duroplastie sans autre intervention, lésions infectieuses & parasitaires sous-tentorielles, primaire ou au-delà de 30 jours d'une chirurgie crânienne"
+    },
+    {
+      "rank": 18,
+      "number": "07413",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Réparation de plaie traumatique de la conjonctive, fermeture secondaire d'une plaie opératoire"
+    },
+    {
+      "rank": 19,
+      "number": "15811",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 20,
+      "number": "01342",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffe libre > autres régions > de six (6) cm carrés à soixante (60) cm carrés",
+      "description": "Greffe libre d'autres régions de six (6) cm carrés à soixante (60) cm carrés"
+    },
+    {
+      "rank": 21,
+      "number": "07560",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Lésions infectieuses & parasitaires > Sus-tentorielles > Abcès, parasitose, granulome ou corps étranger, primaire ou au-delà de 30 jours d'une chirurgie crânienne",
+      "description": "Exérèse de volet infecté et/ou de plaque de crânioplastie ou de duroplastie, sans autre intervention, lésions infectieuses & parasitaires sus-tentorielles, primaire ou au-delà de 30 jours d'une chirurgie crânienne"
+    },
+    {
+      "rank": 22,
+      "number": "07410",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Réparation de plaie traumatique de la conjonctive, suture simple sous anesthésie locale"
+    },
+    {
+      "rank": 23,
+      "number": "01188",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs cancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux > diamètre de un (1) cm ou moins",
+      "description": "Excision d'une tumeur cancéreuse de la peau (biopsies comprises) de la face, cuir chevelu, oreilles, cou, mains, pieds ou organes génitaux, diamètre de un (1) cm ou moins"
+    },
+    {
+      "rank": 24,
+      "number": "07533",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Lésions expansives tumorales : (incluant les lésions kystiques tumorales) > Sous-tentorielles > Tumeur extraparenchymateuse de l'angle pontocérébelleux ou du trou déchiré postérieur",
+      "description": "Tumeur extraparenchymateuse de l'angle pontocérébelleux ou du trou déchiré postérieur, 5 cm ou moins, lésions expansives tumorales (incluant les lésions kystiques tumorales) sous-tentorielles, crâne et encéphale"
+    },
+    {
+      "rank": 25,
+      "number": "01189",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs cancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux > diamètre de plus de un (1) cm",
+      "description": "Excision d'une tumeur cancéreuse de la peau (biopsies comprises) de la face, cuir chevelu, oreilles, cou, mains, pieds ou organes génitaux, diamètre de plus de un (1) cm"
+    },
+    {
+      "rank": 26,
+      "number": "04251",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "K — Système lymphatique et hématopoïétique > Rupture de la rate, réparation par",
+      "description": "Réparation de rupture de la rate par splénectomie partielle avec ou sans suture de lacération"
+    },
+    {
+      "rank": 27,
+      "number": "07505",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture ouverte avec enfoncement",
+      "description": "Traitement opératoire d'une fracture ouverte avec enfoncement du crâne, dure-mère intacte, non soumis au paragraphe 2.06 de l'appareil musculo-squelettique"
+    },
+    {
+      "rank": 28,
+      "number": "01169",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Kystes sébacés > face, cuir chevelu, cou",
+      "description": "Excision chirurgicale d'un kyste sébacé de la face, du cuir chevelu ou du cou, incluant fermeture simple."
+    },
+    {
+      "rank": 29,
+      "number": "01238",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de un (1) cm ou moins, biopsies comprises"
+    },
+    {
+      "rank": 30,
+      "number": "07386",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Réparation > Lacération de la paupière > n'intéressant pas le bord libre",
+      "description": "Réparation d'une lacération de la paupière n'intéressant pas le bord libre (paupières et sourcils)"
+    },
+    {
+      "rank": 31,
+      "number": "07500",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne, dure-mère intacte, non soumis au paragraphe 2.06 de l'appareil musculo-squelettique"
+    },
+    {
+      "rank": 32,
+      "number": "07534",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Lésions expansives tumorales : (incluant les lésions kystiques tumorales) > Sous-tentorielles > Tumeur extraparenchymateuse de l'angle pontocérébelleux ou du trou déchiré postérieur",
+      "description": "Tumeur extraparenchymateuse de l'angle pontocérébelleux ou du trou déchiré postérieur, plus de 5 cm, lésions expansives tumorales (incluant les lésions kystiques tumorales) sous-tentorielles, crâne et encéphale"
+    },
+    {
+      "rank": 33,
+      "number": "01239",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de plus de un (1) cm, biopsies comprises"
+    },
+    {
+      "rank": 34,
+      "number": "05390",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Réparation > Fermeture d'entérostomie",
+      "description": "Réparation, fermeture d'entérostomie"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 73,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 289.45231399848126,
+  "db_ms": 25.47533500182908
+}

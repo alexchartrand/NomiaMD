@@ -1,0 +1,267 @@
+{
+  "patient_id": "GMF-2026-00410",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 460,
+      "output_tokens": null,
+      "latency_ms": 932.35101600294,
+      "started_at": "2026-10-08T14:19:18.561837Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 460,
+    "output_tokens": 0,
+    "llm_latency_ms": 932.35101600294,
+    "wall_ms": 959.8127439967357
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi de routine pour hypertension artérielle essentielle sous amlodipine 5 mg die. Patient asymptomatique avec tension artérielle bien contrôlée (134/82) et poids stable. Pas de changement thérapeutique, recommandations de maintien des habitudes de vie et bilan sanguin annuel.\nLieu (détail): GMF des Rivières\nDate: 2026-08-04\nHeure de début: 09:20\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi d'hypertension artérielle (HTA) avec rendez-vous prévu\nSystèmes/régions concernés: cardiovasculaire; général\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Hypertension artérielle essentielle bien contrôlée sous monothérapie (amlodipine 5 mg die)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; membres_inférieurs\nConstatations: TA 134/82 (moyenne de 2 lectures), FC 70 rég., poids 88 kg (−2 kg vs avril), pas d'œdème des membres inférieurs, cœur B1B2 N sans souffle\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript; Absence de mention explicite de la fin de la consultation (heure de fin non indiquée)",
+      "hits": [
+        {
+          "number": "15804",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15802",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "15812",
+          "relevance": 0.029726775363087654
+        },
+        {
+          "number": "08776",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "15766",
+          "relevance": 0.028693528845906258
+        },
+        {
+          "number": "00125",
+          "relevance": 0.028258707374334335
+        },
+        {
+          "number": "15145",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00546",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15774",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15832",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01900",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15830",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00132",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08800",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00988",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15814",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00780",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15834",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00989",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08848",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15804",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 2,
+      "number": "15802",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 3,
+      "number": "15812",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 4,
+      "number": "08776",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 5,
+      "number": "15766",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 6,
+      "number": "00125",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Monitoring continu de la pression artérielle, par technique non invasive, par période de vingt-quatre (24) heures, interprétation"
+    },
+    {
+      "rank": 7,
+      "number": "15145",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 8,
+      "number": "00546",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Ophtalmodynamométrie (avec étude comparative de la pression moyenne de l'artère centrale de la rétine et de la pression moyenne de l'artère brachiale, inscrite au dossier), pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 9,
+      "number": "15774",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 10,
+      "number": "15832",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 11,
+      "number": "01900",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, par jour, supplément"
+    },
+    {
+      "rank": 12,
+      "number": "15830",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 13,
+      "number": "00132",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiologie > Angiographie artérielle > par dissection artérielle > aortographie non sélective (y compris l'aorte ascendante)",
+      "description": "Angiographie artérielle par dissection artérielle d'une aortographie non sélective (y compris l'aorte ascendante) d'un patient de deux (2) ans ou plus, en établissement"
+    },
+    {
+      "rank": 14,
+      "number": "08800",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 15,
+      "number": "00988",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de 24 heures ou moins"
+    },
+    {
+      "rank": 16,
+      "number": "15814",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 17,
+      "number": "00780",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, en milieu hospitalier ou en gymnase, effectuée par le médecin, maximum quinze (15) patients"
+    },
+    {
+      "rank": 18,
+      "number": "15834",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique de prise en charge et suivi pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 19,
+      "number": "00989",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 24 heures"
+    },
+    {
+      "rank": 20,
+      "number": "08848",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 52,
+    "panel_size": 1240,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 933.1451070029289,
+  "db_ms": 26.02740099246148
+}

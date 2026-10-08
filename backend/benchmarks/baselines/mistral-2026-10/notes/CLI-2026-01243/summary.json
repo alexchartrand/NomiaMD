@@ -1,0 +1,109 @@
+{
+  "patient_id": "CLI-2026-01243",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1711,
+      "output_tokens": 589,
+      "latency_ms": 3508.2325950061204,
+      "started_at": "2026-10-08T14:19:37.789254Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1711,
+    "output_tokens": 589,
+    "llm_latency_ms": 3508.2325950061204,
+    "wall_ms": 3508.649322000565
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient non inscrit consulte en plage sans rendez-vous pour un abcès douloureux à la cuisse gauche. Le médecin procède à une incision et drainage sous anesthésie locale, avec envoi d'une culture. Diagnostic d'abcès cutané posé et plan de suivi établi.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls — plage sans rendez-vous",
+      "date": "2026-09-21",
+      "time_start": "19:05",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Bouton douloureux à la cuisse gauche depuis 5 jours, évoluant en abcès fluctuant",
+      "systems_or_body_regions_involved": [
+        "cutané",
+        "cuisse_gauche"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "abcès cutané cuisse gauche (R/O SARM-AC)",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cutané",
+        "cuisse_gauche"
+      ],
+      "notable_findings": "abcès fluctuant 3 x 2,5 cm face interne cuisse gauche, érythème périphérique 1 cm, pas de lymphangite, pas d'adénopathie inguinale, température 37,4°C"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "incision et drainage d'abcès sous anesthésie locale",
+        "body_site": "cuisse gauche",
+        "technique_or_approach_mentioned": "incision 1,5 cm, rupture des loculations, irrigation au sérum physiologique, mèche iodoformée",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "durée de l'intervention non précisée",
+      "heure de fin de consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-21",
+      "actual": "2026-09-21"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "19:05",
+      "actual": "19:05"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

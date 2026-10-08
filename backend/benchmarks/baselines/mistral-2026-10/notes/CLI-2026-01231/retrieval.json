@@ -1,0 +1,486 @@
+{
+  "patient_id": "CLI-2026-01231",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 551,
+      "output_tokens": null,
+      "latency_ms": 1208.6448000045493,
+      "started_at": "2026-10-08T14:19:18.942963Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 551,
+    "output_tokens": 0,
+    "llm_latency_ms": 1208.6448000045493,
+    "wall_ms": 1236.0492139996495
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi de cessation tabagique chez une patiente de 55 ans avec succès à 6 semaines. Découverte d'une MPOC légère (GOLD 1) à la spirométrie. Plan de sevrage progressif de la nicotine, counseling nutritionnel, vaccination à mettre à jour et suivi dans 4 semaines.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-07-28\nHeure de début: 10:45\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de démarche de cessation tabagique amorcée il y a 2 mois\nSystèmes/régions concernés: pulmonaire; cardiovasculaire; métabolique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Cessation tabagique réussie à 6 semaines; MPOC légère (GOLD 1) nouvellement objectivée par spirométrie\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: pulmonaire; cardiovasculaire\nConstatations: Sibilances expiratoires légères en fin d'expiration forcée, sans détresse; TA 122/76, FC 70, gain de poids de 2 kg depuis 2 mois\nActe réalisé 1 - Description: Interprétation des résultats de spirométrie\nActe réalisé 1 - Technique/approche: spirométrie\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript; Heure de fin de la consultation non indiquée",
+      "hits": [
+        {
+          "number": "15811",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "15805",
+          "relevance": 0.029009880498051643
+        },
+        {
+          "number": "15807",
+          "relevance": 0.028985507786273956
+        },
+        {
+          "number": "15827",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08776",
+          "relevance": 0.027402402833104134
+        },
+        {
+          "number": "09353",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15823",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15630",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "20025",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15627",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06952",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00753",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00205",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09352",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00638",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00991",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09582",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15631",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06953",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Interprétation des résultats de spirométrie",
+      "hits": [
+        {
+          "number": "00783",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00384",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "00382",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "00160",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "09398",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00618",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08408",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08409",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09395",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08413",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00638",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09323",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09396",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00137",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09397",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00127",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09399",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08418",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00157",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00147",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00638",
+      "rrf_score": 0.02761904761904762,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 2,
+      "number": "15811",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 3,
+      "number": "00783",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 4,
+      "number": "15805",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 5,
+      "number": "00384",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Épreuves de fonction respiratoire > Débits > Débits expiratoires forcés",
+      "description": "Débits expiratoires forcés (volume expiratoire maximal seconde, capacité vitale forcée, débit maximal médian 25-75) avant bronchodilatateur, en cabinet seulement"
+    },
+    {
+      "rank": 6,
+      "number": "15807",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 7,
+      "number": "00382",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Épreuves de fonction respiratoire > Débits > Débits expiratoires forcés",
+      "description": "Débits expiratoires forcés (volume expiratoire maximal seconde, capacité vitale forcée, débit maximal médian 25-75) après bronchodilatateur, en cabinet seulement"
+    },
+    {
+      "rank": 8,
+      "number": "15827",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente vulnérable inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 9,
+      "number": "00160",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tonale",
+      "description": "Interprétation d'une audiométrie tonale"
+    },
+    {
+      "rank": 10,
+      "number": "08776",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 11,
+      "number": "09398",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Oxymétrie transcutanée uni ou multi sites, incluant au besoin pour le membre inférieur l'indice bras-cheville et l'indice orteil-bras par doppler ou pléthysmographie et incluant au besoin pour toute partie du corps l'analyse artérielle doppler avec provocation, en établissement > Pneumopléthysmographie digitale, un ou plusieurs doigts > mesure du débit sanguin digital au repos avec manoeuvre",
+      "description": "Interprétation de la pneumopléthysmographie digitale, mesure du débit sanguin digital au repos avec manoeuvre, un ou plusieurs doigts, en établissement"
+    },
+    {
+      "rank": 12,
+      "number": "09353",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, résection palliative d'une tumeur maligne sténosante"
+    },
+    {
+      "rank": 13,
+      "number": "00618",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Néphrologie > Dialyse (sans égard au lieu, n'incluant pas les techniques pour accès) > Mesure de Tm (glucose, phosphates, bicarbonates",
+      "description": "Mesure de Tm (glucose, phosphates, bicarbonates) en néphrologie, service professionnel incluant surveillance, interprétation et rapport écrit"
+    },
+    {
+      "rank": 14,
+      "number": "00953",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 15,
+      "number": "08408",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > non sélective",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, non sélective, interprétation, angioradiologie"
+    },
+    {
+      "rank": 16,
+      "number": "15823",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 17,
+      "number": "08409",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective autre que spinale, par vaisseau, maximum 4",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective autre que spinale, par vaisseau, maximum 4, interprétation, angioradiologie"
+    },
+    {
+      "rank": 18,
+      "number": "15630",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 19,
+      "number": "09395",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Oxymétrie transcutanée uni ou multi sites, incluant au besoin pour le membre inférieur l'indice bras-cheville et l'indice orteil-bras par doppler ou pléthysmographie et incluant au besoin pour toute partie du corps l'analyse artérielle doppler avec provocation, en établissement > Pneumopléthysmographie segmentaire > Enregistrement du volume du pouls à au moins quatre (4) niveaux des deux (2) membres supérieurs et/ou enregistrement du volume du pouls à au moins six (6) niveaux des deux (2) membres inférieurs et interprétation du tracé > au repos",
+      "description": "Interprétation de la pneumopléthysmographie segmentaire au repos, enregistrement du volume du pouls à au moins quatre (4) niveaux des deux (2) membres supérieurs et/ou enregistrement du volume du pouls à au moins six (6) niveaux des deux (2) membres inférieurs, en établissement"
+    },
+    {
+      "rank": 20,
+      "number": "20025",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Extraction de stérilet, acte compliqué en gynécologie (P.G. 2.4.7.7 A) (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 21,
+      "number": "08413",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective, spinale, par vaisseau, maximum 8 vaisseaux",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective, spinale, par vaisseau, maximum 8 vaisseaux, interprétation, angioradiologie"
+    },
+    {
+      "rank": 22,
+      "number": "15627",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 23,
+      "number": "06952",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet",
+      "description": "Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet"
+    },
+    {
+      "rank": 24,
+      "number": "09323",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve de",
+      "description": "Épreuve de dépistage clinique de phéochromocytome comprenant les examens, les visites, les consultations, la surveillance médicale, l'interprétation des résultats et l'injection lorsque nécessaire des substances pharmacologiques (ex. phentolamine, glucagon, métoclopramide, etc.)"
+    },
+    {
+      "rank": 25,
+      "number": "00753",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie",
+      "description": "Localisation bronchoscopique d'un cancer occulte de l'arbre respiratoire, incluant biopsies multiples et aspirations cytologiques multiples, au niveau de toutes les bronches segmentaires"
+    },
+    {
+      "rank": 26,
+      "number": "09396",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Oxymétrie transcutanée uni ou multi sites, incluant au besoin pour le membre inférieur l'indice bras-cheville et l'indice orteil-bras par doppler ou pléthysmographie et incluant au besoin pour toute partie du corps l'analyse artérielle doppler avec provocation, en établissement > Pneumopléthysmographie segmentaire > Enregistrement du volume du pouls à au moins quatre (4) niveaux des deux (2) membres supérieurs et/ou enregistrement du volume du pouls à au moins six (6) niveaux des deux (2) membres inférieurs et interprétation du tracé > au repos",
+      "description": "Technique et interprétation de la pneumopléthysmographie segmentaire au repos, enregistrement du volume du pouls à au moins quatre (4) niveaux des deux (2) membres supérieurs et/ou enregistrement du volume du pouls à au moins six (6) niveaux des deux (2) membres inférieurs, en établissement"
+    },
+    {
+      "rank": 27,
+      "number": "00205",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Insertion de stérilet incluant l'examen, la visite ou la consultation effectué antérieurement ou concurremment à cet égard en gynécologie (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 28,
+      "number": "00137",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Pneumopléthysmographie pénienne, toutes techniques",
+      "description": "Interprétation de la pneumopléthysmographie pénienne, toutes techniques, en établissement"
+    },
+    {
+      "rank": 29,
+      "number": "09352",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, cure de sténose trachéale inflammatoire"
+    },
+    {
+      "rank": 30,
+      "number": "09397",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Oxymétrie transcutanée uni ou multi sites, incluant au besoin pour le membre inférieur l'indice bras-cheville et l'indice orteil-bras par doppler ou pléthysmographie et incluant au besoin pour toute partie du corps l'analyse artérielle doppler avec provocation, en établissement > Pneumopléthysmographie segmentaire > Enregistrement du volume du pouls à au moins quatre (4) niveaux des deux (2) membres supérieurs et/ou enregistrement du volume du pouls à au moins six (6) niveaux des deux (2) membres inférieurs et interprétation du tracé > à l'effort",
+      "description": "Technique et interprétation de la pneumopléthysmographie segmentaire à l'effort, enregistrement du volume du pouls à au moins quatre (4) niveaux des deux (2) membres supérieurs et/ou enregistrement du volume du pouls à au moins six (6) niveaux des deux (2) membres inférieurs, en établissement"
+    },
+    {
+      "rank": 31,
+      "number": "00127",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Examen microscopique du sédiment urinaire et interprétation en cabinet ou à domicile"
+    },
+    {
+      "rank": 32,
+      "number": "00991",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau II > Soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "description": "Contrôle subséquent, par examen, pour des soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle"
+    },
+    {
+      "rank": 33,
+      "number": "09399",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Oxymétrie transcutanée uni ou multi sites, incluant au besoin pour le membre inférieur l'indice bras-cheville et l'indice orteil-bras par doppler ou pléthysmographie et incluant au besoin pour toute partie du corps l'analyse artérielle doppler avec provocation, en établissement > Pneumopléthysmographie digitale, un ou plusieurs doigts > mesure du débit sanguin digital au repos avec manoeuvre",
+      "description": "Technique et interprétation de la pneumopléthysmographie digitale, mesure du débit sanguin digital au repos avec manoeuvre, un ou plusieurs doigts, en établissement"
+    },
+    {
+      "rank": 34,
+      "number": "09582",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Tendon > pollicisation ou transfert d'un (1) doigt à un (1) doigt non adjacent",
+      "description": "Pollicisation ou transfert d'un (1) tendon d'un (1) doigt à un (1) doigt non adjacent, extrémités - membres supérieurs, main et poignet"
+    },
+    {
+      "rank": 35,
+      "number": "08418",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Spléno-portographie ou ombilico-portographie",
+      "description": "Spléno-portographie ou ombilico-portographie, interprétation, angioradiologie"
+    },
+    {
+      "rank": 36,
+      "number": "15631",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 37,
+      "number": "00157",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 38,
+      "number": "06953",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "P — Gynécologie > Utérus et col utérin",
+      "description": "Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet, en cabinet, supplément"
+    },
+    {
+      "rank": 39,
+      "number": "00147",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Néphrologie > Dialyse > Dialyse (sans égard au lieu, n'incluant pas les techniques pour accès) > Visites pour le contrôle du traitement par hémodialyse en centre satellite",
+      "description": "Dialyse (sans égard au lieu, n'incluant pas les techniques pour accès), visites pour le contrôle du traitement par hémodialyse en centre satellite comprenant la revue du dossier de chaque dialyse, l'interprétation des résultats sanguins avant ou après chaque dialyse, le contrôle de l'anticoagulothérapie, la surveillance hebdomadaire d'une dialyse et le contrôle à distance des traitements, par mois, par patient"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 55,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 1209.6862820035312,
+  "db_ms": 25.74686201114673
+}

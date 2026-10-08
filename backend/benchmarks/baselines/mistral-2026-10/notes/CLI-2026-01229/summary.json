@@ -1,0 +1,125 @@
+{
+  "patient_id": "CLI-2026-01229",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2220,
+      "output_tokens": 736,
+      "latency_ms": 5100.87953999755,
+      "started_at": "2026-10-08T14:19:08.173241Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2220,
+    "output_tokens": 736,
+    "llm_latency_ms": 5100.87953999755,
+    "wall_ms": 5101.288610996562
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Bilan de santé périodique annuel pour un patient de 76 ans en bonne santé générale, avec examen physique complet, bilan sanguin demandé, vaccinations administrées et ajustement des conseils préventifs. Aucune nouvelle problématique médicale identifiée.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-06-02",
+      "time_start": "09:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Bilan de santé périodique annuel chez un patient de 76 ans en bonne santé générale",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "uro-génital",
+        "cutané",
+        "musculo-squelettique",
+        "neurologique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Patient de 76 ans en bon état de santé général, HTA et hypertrophie bénigne de la prostate stables, aucune nouvelle problématique identifiée à ce bilan",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes vitaux",
+        "cardiovasculaire",
+        "pulmonaire",
+        "abdomen",
+        "prostate (toucher rectal)",
+        "peau",
+        "pieds et démarche",
+        "cicatrice de hanche"
+      ],
+      "notable_findings": "TA 134/80, FC 72, IMC 25,1; prostate légèrement augmentée de volume, régulière, sans nodule suspect; quelques kératoses séborrhéiques bénignes; cicatrice de hanche droite bien guérie, mobilité normale"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Vaccination antigrippale administrée",
+        "body_site": null,
+        "technique_or_approach_mentioned": "intramusculaire",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Examen de la prostate (toucher rectal)",
+        "body_site": "prostate",
+        "technique_or_approach_mentioned": "toucher rectal",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript",
+      "Vaccin contre le zona et anti-pneumococcique vérifiés à jour mais non administrés lors de cette visite — facturation possible si facture distincte pour counseling ou vérification?"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-06-02",
+      "actual": "2026-06-02"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:00",
+      "actual": "09:00"
+    }
+  ],
+  "stats": {
+    "procedures": 2,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 5,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

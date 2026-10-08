@@ -1,0 +1,102 @@
+{
+  "patient_id": "CLI-2026-01220",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2262,
+      "output_tokens": 578,
+      "latency_ms": 3538.327196991304,
+      "started_at": "2026-10-08T14:18:40.797033Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2262,
+    "output_tokens": 578,
+    "llm_latency_ms": 3538.327196991304,
+    "wall_ms": 3538.620280000032
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Première consultation pour découverte fortuite d'hypertension artérielle chez un homme de 45 ans sans suivi médical régulier. Bilan initial demandé (laboratoire, ECG, analyse d'urine) et counseling hygiéno-diététique instauré. Aucune médication antihypertensive débutée avant confirmation diagnostique.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-02-10",
+      "time_start": "09:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Découverte fortuite d'hypertension artérielle lors d'un don de sang il y a 3 semaines; première visite de prise en charge pour un patient sans médecin de famille depuis l'âge adulte.",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Hypertension artérielle de grade 1 probable (à confirmer par mesures ambulatoires), surcharge pondérale avec obésité classe I (IMC 30,3), profil de risque cardiovasculaire à établir.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pulmonaire",
+        "général"
+      ],
+      "notable_findings": "TA mesurée à 158/96 puis 154/94 après 5 minutes de repos (moyenne de 2 mesures), IMC 30,3, tour de taille 104 cm. Cardio et pulmonaire sans particularité."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Temps de fin de consultation non précisé."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-02-10",
+      "actual": "2026-02-10"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:15",
+      "actual": "09:15"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

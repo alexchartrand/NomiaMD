@@ -1,0 +1,120 @@
+{
+  "patient_id": "CLI-2026-01226",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2108,
+      "output_tokens": 770,
+      "latency_ms": 4745.770666995668,
+      "started_at": "2026-10-08T14:18:57.887687Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2108,
+    "output_tokens": 770,
+    "llm_latency_ms": 4745.770666995668,
+    "wall_ms": 4746.089241991285
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en médecine familiale pour une lésion pigmentée suspecte au dos chez une patiente de 51 ans. Le médecin a évalué les critères ABCDE, utilisé un dermoscope et recommandé une référence urgente en dermatologie pour exérèse-biopsie. Aucun traitement initié sur place, counseling sur la protection solaire et l'auto-examen fourni.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-04-21",
+      "time_start": "15:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Isabelle Roy, MD, médecine familiale",
+      "reason_for_referral": "Lésion pigmentée suspecte de mélanome au dos avec critères ABCDE positifs et changement rapporté par l'entourage",
+      "written_report_back_required_or_produced": true
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Opinion sur un grain de beauté changeant d'aspect au dos, remarqué par le conjoint",
+      "systems_or_body_regions_involved": [
+        "tégument",
+        "dos",
+        "région scapulaire droite"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Lésion pigmentée suspecte de mélanome (critères ABCDE positifs, changement rapporté)",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "tégument",
+        "dos",
+        "région scapulaire droite"
+      ],
+      "notable_findings": "Lésion pigmentée de 8 mm de diamètre au dos avec asymétrie, bords irréguliers, coloration hétérogène, diamètre > 6 mm et évolution rapportée. Réseau pigmentaire atypique et zones de régression notés au dermoscope. Plusieurs nævus banals dispersés, aucun autre suspect. Pas d'adénopathie palpable régionale."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Examen dermatologique dirigé de la lésion au dos avec dermoscope de bureau",
+        "body_site": "dos, région scapulaire droite",
+        "technique_or_approach_mentioned": "Critères ABCDE évalués, réseau pigmentaire atypique et zones de régression notés",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Photographie clinique de la lésion prise et conservée au dossier",
+        "body_site": "dos",
+        "technique_or_approach_mentioned": null,
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "communication_specialiste"
+    ],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Aucune mention de l'heure de fin de la consultation."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-04-21",
+      "actual": "2026-04-21"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "15:00",
+      "actual": "15:00"
+    }
+  ],
+  "stats": {
+    "procedures": 2,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

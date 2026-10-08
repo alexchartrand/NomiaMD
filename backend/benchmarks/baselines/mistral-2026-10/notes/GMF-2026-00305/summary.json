@@ -1,0 +1,110 @@
+{
+  "patient_id": "GMF-2026-00305",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2294,
+      "output_tokens": 639,
+      "latency_ms": 3721.239770995453,
+      "started_at": "2026-10-08T14:19:04.432764Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2294,
+    "output_tokens": 639,
+    "llm_latency_ms": 3721.239770995453,
+    "wall_ms": 3721.6098270000657
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Visite à domicile de suivi pour un patient de 84 ans atteint de maladie de Parkinson avancée. Aggravation de la rigidité, dysphagie aux liquides et risque de chute. Examen physique réalisé, ajustement du traitement laxatif et référence en orthophonie. Discussion sur les objectifs de soins et communication avec le neurologue traitant.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres (visite à domicile)",
+      "date": "2026-05-19",
+      "time_start": "13:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Naomi Fortier, MD",
+      "reason_for_referral": "Référence en orthophonie à domicile pour évaluation formelle de la déglutition",
+      "written_report_back_required_or_produced": true
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi à domicile d'un patient en perte sévère d'autonomie avec maladie de Parkinson avancée, aggravation de la rigidité, dysphagie aux liquides et risque de chute.",
+      "systems_or_body_regions_involved": [
+        "neurologique",
+        "digestif",
+        "cardiovasculaire",
+        "musculo-squelettique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Maladie de Parkinson avancée avec aggravation de la dysphagie et du risque de chute; hypotension orthostatique légère; constipation chronique mal contrôlée.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes_vitaux",
+        "apparence_générale",
+        "mobilité",
+        "déglutition",
+        "cardio-pulmonaire",
+        "abdomen",
+        "peau"
+      ],
+      "notable_findings": "Rigidité axiale marquée, tremblement de repos bilatéral, bradykinésie importante, hypotension orthostatique légère, ralentissement à la déglutition des liquides, stase stercorale au cadre colique."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la visite non précisée dans le document.",
+      "Heure de fin de la visite non mentionnée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-05-19",
+      "actual": "2026-05-19"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "13:00",
+      "actual": "13:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

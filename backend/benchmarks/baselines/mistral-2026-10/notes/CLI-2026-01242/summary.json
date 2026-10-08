@@ -1,0 +1,108 @@
+{
+  "patient_id": "CLI-2026-01242",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1729,
+      "output_tokens": 663,
+      "latency_ms": 3955.838134002988,
+      "started_at": "2026-10-08T14:19:33.537153Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1729,
+    "output_tokens": 663,
+    "llm_latency_ms": 3955.838134002988,
+    "wall_ms": 3956.2231059971964
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient non inscrit se présente en clinique sans rendez-vous pour une lacération de 3 cm à l'avant-bras droit causée par une tôle. Une suture simple sous anesthésie locale a été réalisée après exploration et irrigation. Vaccin dT à jour, pas de rappel nécessaire. Suivi prévu au CLSC ou à la clinique.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls — plage sans rendez-vous",
+      "date": "2026-09-16",
+      "time_start": "17:50",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Lacération linéaire de 3 cm à l'avant-bras droit causée par une tôle il y a 1 heure, avec saignement contrôlé par pression.",
+      "systems_or_body_regions_involved": [
+        "cutané",
+        "avant-bras_droit"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Lacération simple de 3 cm à l'avant-bras droit",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "avant-bras_droit"
+      ],
+      "notable_findings": "Lacération linéaire face dorsale tiers moyen avant-bras droit, 3 cm, bords nets, profondeur sous-cutanée, pas d'exposition tendineuse. Mobilité complète poignet/doigts, force normale, sensibilité normale (nerfs radial, médian, cubital). Pouls radial présent."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Suture d'une lacération de 3 cm à l'avant-bras droit sous anesthésie locale",
+        "body_site": "avant-bras droit",
+        "technique_or_approach_mentioned": "anesthésie locale lidocaïne 1 % 3 mL, irrigation au sérum physiologique 250 mL, exploration, fermeture en plan unique avec 5 points simples nylon 4-0",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "les_deux"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'intervention non explicitement mentionnée dans le transcript.",
+      "Heure de fin de la consultation non précisée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-16",
+      "actual": "2026-09-16"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "17:50",
+      "actual": "17:50"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -1,0 +1,665 @@
+{
+  "patient_id": "URG-2026-04538",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 825,
+      "output_tokens": null,
+      "latency_ms": 1815.9195049956907,
+      "started_at": "2026-10-08T14:18:38.858988Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 825,
+    "output_tokens": 0,
+    "llm_latency_ms": 1815.9195049956907,
+    "wall_ms": 1873.4574660047656
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation à l'urgence pour un enfant de 8 ans présentant une douleur abdominale évolutive avec fièvre et vomissements. Diagnostic d'appendicite aiguë confirmé par échographie, suivi d'une admission en chirurgie pédiatrique pour appendicectomie.\nLieu (détail): CHU fictif, service d'urgence\nDate: 2026-07-13\nHeure de début: 19:20\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Douleur abdominale progressive depuis 18 heures avec fièvre et vomissements chez un enfant de 8 ans.\nSystèmes/régions concernés: abdominal; digestif\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Appendicite aiguë probable.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: abdomen; signes vitaux\nConstatations: Sensibilité marquée au point de McBurney, défense volontaire, signe de Rovsing positif, fièvre à 38,4 °C, leucocytose à 14,2 x10⁹/L avec déviation gauche, CRP élevée à 48 mg/L.\nActe réalisé 1 - Description: Évaluation clinique complète incluant examen physique et interprétation des signes vitaux\nActe réalisé 1 - Technique/approche: Examen abdominal ciblé (point de McBurney, signe de Rovsing), évaluation des signes vitaux\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 2 - Description: Administration d'antipyrétique (acétaminophène) et d'antibiotique prophylactique IV\nActe réalisé 2 - Technique/approche: Voie intraveineuse\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: thérapeutique\nActe réalisé 3 - Description: Pose de soluté IV NaCl 0,9 % pour réhydratation\nActe réalisé 3 - Technique/approche: Voie intraveineuse\nActe réalisé 3 - Anesthésie: aucun\nActe réalisé 3 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de la consultation non explicitement indiquée dans le transcript.; Heure de fin de la consultation non mentionnée.",
+      "hits": [
+        {
+          "number": "05201",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "05036",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06220",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09530",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06390",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00952",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05463",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09531",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05196",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20179",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "05011",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00302",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "05077",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00935",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06003",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15795",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00689",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "20025",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Évaluation clinique complète incluant examen physique et interprétation des signes vitaux",
+      "hits": [
+        {
+          "number": "08903",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "08904",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "08806",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "08811",
+          "relevance": 0.028893442824482918
+        },
+        {
+          "number": "08907",
+          "relevance": 0.027863776311278343
+        },
+        {
+          "number": "09323",
+          "relevance": 0.027212142944335938
+        },
+        {
+          "number": "09417",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00023",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08812",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08913",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00026",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09100",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15630",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15615",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15642",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08140",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15651",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08141",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09070",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Administration d'antipyrétique (acétaminophène) et d'antibiotique prophylactique IV",
+      "hits": [
+        {
+          "number": "09335",
+          "relevance": 0.02752639539539814
+        },
+        {
+          "number": "00928",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "01900",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00988",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00479",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00989",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00704",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07568",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08181",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07562",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08165",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00997",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "98012",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00998",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00999",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00583",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06288",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07566",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Pose de soluté IV NaCl 0,9 % pour réhydratation",
+      "hits": [
+        {
+          "number": "09309",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02899",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00591",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00479",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00996",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00704",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09354",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08181",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00661",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02894",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00566",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "05363",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07408",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00152",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01900",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15234",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09328",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06985",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00675",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02093",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00479",
+      "rrf_score": 0.03125763125763126,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > injection intraveineuse",
+      "description": "Injection intraveineuse au cuir chevelu, en cabinet ou à domicile, dans le cadre d'hyperalimentation, injection, insufflation ou ponction."
+    },
+    {
+      "rank": 2,
+      "number": "00704",
+      "rrf_score": 0.030309988518943745,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve à (au)",
+      "description": "Épreuve à dipyridamole par voie intraveineuse incluant la surveillance immédiate et l'interprétation des modifications électrocardiographiques"
+    },
+    {
+      "rank": 3,
+      "number": "01900",
+      "rrf_score": 0.02964254577157803,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, par jour, supplément"
+    },
+    {
+      "rank": 4,
+      "number": "00152",
+      "rrf_score": 0.029571646010002173,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie"
+    },
+    {
+      "rank": 5,
+      "number": "08181",
+      "rrf_score": 0.029418126757516764,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies génito-urinaires > Pyélographie",
+      "description": "Pyélographie intraveineuse incluant injection, abdomen simple et films post-mictionnels"
+    },
+    {
+      "rank": 6,
+      "number": "05201",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "L — Système digestif > Appendice > Excision",
+      "description": "Appendicectomie, toute voie d'approche, excision"
+    },
+    {
+      "rank": 7,
+      "number": "08903",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet sans déplacement en clinique externe, patient admis, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 8,
+      "number": "09335",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour"
+    },
+    {
+      "rank": 9,
+      "number": "09309",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Supplément pour reprise de la technique de mise en place d'un cathéter veineux permanent avec réservoir sous-cutané en deçà de trente jours"
+    },
+    {
+      "rank": 10,
+      "number": "00638",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 11,
+      "number": "08904",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur sans déplacement en clinique externe, patient admis, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 12,
+      "number": "00928",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau I > Soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "description": "Installation de l'équipement de ventilation pour des soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort (la valeur de durée de l'acte se calcule depuis le début de la mise en marche du traitement)"
+    },
+    {
+      "rank": 13,
+      "number": "02899",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Fémur",
+      "description": "Pose de plaque et vis au fémur"
+    },
+    {
+      "rank": 14,
+      "number": "05036",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "L — Système digestif > Appendice > Incision",
+      "description": "Drainage d'abcès appendiculaire, incision"
+    },
+    {
+      "rank": 15,
+      "number": "08806",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement en clinique externe, patient admis, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 16,
+      "number": "00591",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Ponctions (incluant injection s'il y a lieu)",
+      "description": "Ponction pour réinfusion d'ascite intraveineuse"
+    },
+    {
+      "rank": 17,
+      "number": "00953",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 18,
+      "number": "08811",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 19,
+      "number": "06220",
+      "rrf_score": 0.015625,
+      "header_path": "M — Appareil urinaire > Vessie > Excision > Excision d'un kyste ou d'un sinus de l'ouraque",
+      "description": "Excision d'un kyste ou d'un sinus de l'ouraque avec ou sans réparation d'hernie ombilicale"
+    },
+    {
+      "rank": 20,
+      "number": "08907",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur d'urgence avec déplacement en clinique externe, patient admis, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 21,
+      "number": "00988",
+      "rrf_score": 0.015625,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de 24 heures ou moins"
+    },
+    {
+      "rank": 22,
+      "number": "00996",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Supplément pour mise en place par voie rétrograde et maintien dans la veine jugulaire interne d'un cathéter destiné à mesurer la saturation en oxygène du sang veineux cérébral (P.A.R. 3.02)"
+    },
+    {
+      "rank": 23,
+      "number": "09530",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Pied > Reconstruction > transposition et réinsertion tendineuse, pied",
+      "description": "Transposition et réinsertion tendineuse du pied, un (1)"
+    },
+    {
+      "rank": 24,
+      "number": "09323",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve de",
+      "description": "Épreuve de dépistage clinique de phéochromocytome comprenant les examens, les visites, les consultations, la surveillance médicale, l'interprétation des résultats et l'injection lorsque nécessaire des substances pharmacologiques (ex. phentolamine, glucagon, métoclopramide, etc.)"
+    },
+    {
+      "rank": 25,
+      "number": "06390",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "N — Appareil génital mâle > Scrotum",
+      "description": "Exérèse chirurgicale totale ou partielle de l'épididyme, de spermatocèle, d'hydrocèle, d'hématocèle, de kyste du cordon, et/ou d'appendice testiculaire ou épididymaire, unilatérale, scrotum"
+    },
+    {
+      "rank": 26,
+      "number": "09417",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test à l'exercice physique (retard de croissance), incluant l'interprétation des épreuves sanguines"
+    },
+    {
+      "rank": 27,
+      "number": "00989",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 24 heures"
+    },
+    {
+      "rank": 28,
+      "number": "09354",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test d'infusion de sulfate de sodium, incluant les examens, les visites et les consultations"
+    },
+    {
+      "rank": 29,
+      "number": "00952",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Épidurale différentielle incluant les examens, les visites et consultations, les injections et la surveillance, anesthésie diagnostique et thérapeutique (P.G. 2.4.7.3 C)"
+    },
+    {
+      "rank": 30,
+      "number": "00023",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, complet"
+    },
+    {
+      "rank": 31,
+      "number": "05463",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision > Herniotomie ombilicale (incluant l'omphaloplastie)",
+      "description": "Herniotomie ombilicale (incluant l'omphaloplastie) chez un patient de seize (16) ans ou moins, abdomen, péritoine et épiploon"
+    },
+    {
+      "rank": 32,
+      "number": "08812",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 33,
+      "number": "07568",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Lésions infectieuses & parasitaires > Sous-tentorielles > Abcès, parasitose, granulome ou corps étranger, primaire ou au-delà de 30 jours d'une chirurgie crânienne",
+      "description": "Aspiration ou biopsie d'abcès intraparenchymateux (quelque soit la technique sauf pour la stéréotaxie), lésions infectieuses & parasitaires sous-tentorielles, primaire ou au-delà de 30 jours d'une chirurgie crânienne"
+    },
+    {
+      "rank": 34,
+      "number": "00661",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve à (au) > Épreuve de > dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation",
+      "description": "Épreuve à (au) dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation, réabsorption phosphatique"
+    },
+    {
+      "rank": 35,
+      "number": "09531",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Pied > Reconstruction > transposition et réinsertion tendineuse, pied",
+      "description": "Transposition et réinsertion tendineuse du pied, plusieurs"
+    },
+    {
+      "rank": 36,
+      "number": "08913",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 37,
+      "number": "02894",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Fémur",
+      "description": "Pose de plaque et vis lors d'une autre intervention au fémur, supplément"
+    },
+    {
+      "rank": 38,
+      "number": "05196",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées de la paroi abdominale de l'abdomen, du péritoine et de l'épiploon, sous anesthésie générale et révision de toute la plaie, par incision"
+    },
+    {
+      "rank": 39,
+      "number": "00026",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, complet majeur"
+    },
+    {
+      "rank": 40,
+      "number": "07562",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Lésions infectieuses & parasitaires > Sus-tentorielles > Abcès, parasitose, granulome ou corps étranger, primaire ou au-delà de 30 jours d'une chirurgie crânienne",
+      "description": "Aspiration ou biopsie d'abcès intraparenchymateux (quelque soit la technique sauf pour la stéréotaxie), lésions infectieuses & parasitaires sus-tentorielles, primaire ou au-delà de 30 jours d'une chirurgie crânienne"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 8,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1817.4557910097064,
+  "db_ms": 55.2522149955621
+}

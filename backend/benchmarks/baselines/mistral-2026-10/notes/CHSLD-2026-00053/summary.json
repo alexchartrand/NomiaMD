@@ -1,0 +1,115 @@
+{
+  "patient_id": "CHSLD-2026-00053",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1807,
+      "output_tokens": 651,
+      "latency_ms": 4111.053999004071,
+      "started_at": "2026-10-08T14:19:40.033147Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1807,
+    "output_tokens": 651,
+    "llm_latency_ms": 4111.053999004071,
+    "wall_ms": 4111.4830630103825
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en urgence au CHSLD pour chute avec plaie frontale chez un patient de 89 ans sous anticoagulant. Évaluation clinique, soins locaux de la plaie et ajustement temporaire de l'anticoagulation. Surveillance neurologique renforcée sur place.",
+    "encounter_setting": {
+      "location_detail": "CHSLD Saint-Jude — Unité 2 Est",
+      "date": "2026-09-23",
+      "time_start": "21:40",
+      "time_end": null,
+      "duration_minutes": 30.0,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Chute avec plaie au front chez patient sous apixaban",
+      "systems_or_body_regions_involved": [
+        "tête",
+        "système_nerveux",
+        "anticoagulation"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Chute mécanique avec traumatisme crânien léger (TCC léger) chez patient anticoagulé",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "neurologique",
+        "tête",
+        "cervical",
+        "hanches",
+        "moteur"
+      ],
+      "notable_findings": "Plaie frontale gauche de 2 cm superficielle, hématome, GCS 14, TA 148/82, FC 88 irrégulière, glycémie 7,1, pas de déficit moteur ni dlr cervicale"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Nettoyage et rapprochement de la plaie frontale avec bandelettes adhésives (Steri-Strip)",
+        "body_site": "front gauche",
+        "technique_or_approach_mentioned": "nettoyage, rapprochement avec bandelettes adhésives",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non explicitement mentionnée dans le texte (estimée à 30 minutes).",
+      "Absence de mention explicite de la reprise de l'apixaban après 24h (seulement 'si stable')."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-23",
+      "actual": "2026-09-23"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "21:40",
+      "actual": "21:40"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}
