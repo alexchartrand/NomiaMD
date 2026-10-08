@@ -12,12 +12,13 @@ from app.benchmark.records import (
     RetrievalRecord,
     RunConfig,
     RunManifest,
+    SelectionRecord,
     StageTotals,
 )
 from app.lancedb.eligibility import CodeEligibilityFilter
 from app.lancedb.models import CodeRow
 from app.llm import LLMCallRecord
-from app.ramq_codes import BillingContext, PatientContext
+from app.ramq_codes import BillingCodesResult, BillingContext, PatientContext
 from tests.conftest import StubCodeRepository
 
 
@@ -120,4 +121,32 @@ def manifest(name: str = "run", **config) -> RunManifest:
         case_ids=[],
         created_at=now,
         updated_at=now,
+    )
+
+
+def extracted(code: str, confidence: str = "high", needs_confirmation=(), *, retained: bool = True) -> dict:
+    """One code as a stored result holds it: `retained` = the model is sure of it."""
+    return {
+        "code": code,
+        "description": f"description {code}",
+        "confidence": confidence,
+        "explanation": "parce que",
+        "supporting_quote": "Suivi.",
+        "needs_confirmation": list(needs_confirmation),
+        "retained": retained,
+    }
+
+
+def selection_record(patient_id: str, offered: list[str], returned: list[dict], *, dropped_not_offered=(), error=None) -> SelectionRecord:
+    """`returned`: extracted(...) dicts; None result when `error` is set."""
+    return SelectionRecord(
+        patient_id=patient_id,
+        totals=StageTotals.from_calls([], 10.0),
+        candidates_run="base",
+        summary_run="base",
+        offered=offered,
+        raw_code_count=len(returned) + len(dropped_not_offered),
+        dropped_not_offered=list(dropped_not_offered),
+        result=None if error else BillingCodesResult.model_validate({"codes": returned}),
+        error=error,
     )

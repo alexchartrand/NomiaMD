@@ -27,16 +27,17 @@ uv run pytest tests/test_patients.py::test_name -v   # one test
 uv run pytest -m epic_sandbox    # opt-in contract test against the live Epic sandbox (EPIC_SANDBOX_* set)
 ```
 Benchmark (`scripts/benchmark.py`, `make bench ARGS=...` from the root): stores each labeled
-note's summary and retrieval result, with every call's tokens and latency, under
+note's summary, retrieval result and selected codes, with every call's tokens and latency, under
 `backend/benchmarks/runs/<name>/` (gitignored; `promote` copies one to the committed
 `benchmarks/baselines/`):
 ```bash
 uv run python scripts/benchmark.py run --name mistral-base               # summary + retrieval, all 58 notes
 uv run python scripts/benchmark.py run --name t --stages retrieval --query-source transcript   # control run
 uv run python scripts/benchmark.py sweep --summaries-from mistral-base --similarity-top-k 20,30 --fused-top-k 40,60
+uv run python scripts/benchmark.py run --name sel --stages selection --candidates-from mistral-base --selection-model M   # billing_codes on stored candidates
 uv run python scripts/benchmark.py report <run> --baseline mistral-base  # metrics.json + report.md
 ```
-Real-API smoke scripts (`try_extraction.py`, `eval_extraction.py`) need `LLM_API_KEY`,
+The real-API smoke script (`try_extraction.py`) needs `LLM_API_KEY`,
 `EMBEDDING_API_KEY` and `DB_PATH`; set `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1
 LLM_API_KEY=fake` to point chat calls at `scripts/fake_llm_server.py` (`make fake-llm`)
 instead of spending real API calls. There's no lint/typecheck config on the
@@ -82,7 +83,7 @@ Backend modules (`backend/app/`):
 | `summary/` | `consultation_summary` task — transcript → structured French clinical facts, no codes |
 | `ramq_codes/` | `billing_codes` task — billing context, candidate retrieval, eligibility, code selection |
 | `code_catalog/` | hand code search/lookup, no LLM and no embedding: `GET /codes/search` (digits = number prefix, else French FTS; empty = the physician's most billed codes; with `patient_id`, eligibility-filtered like retrieval + per-code `needs_confirmation`), `GET /codes/{number}`; `registry.py` holds the process's `ICodeCatalogRepository` (set by `application_services()`), which `claims/` reads hand-picked codes through |
-| `benchmark/` | stage-by-stage benchmark over the labeled `consultations/` notes, never imported by the app: `EvalSetLoader` (fixture → cases), `SummaryStage`/`RetrievalStage` (one record per note, calls metered), query sources (`summary` \| `transcript` \| `summary+transcript`), `RunStore` (`benchmarks/runs/`), `RetrievalScorer` (exact / family_only / ineligible / not_in_table / not_retrieved, scored at report time against the current labels), `RunAggregator`, `RunComparator`, `MarkdownReport`; `commands.py` wires them (opens LanceDB itself, so a non-current `--codes-table` can be benchmarked) |
+| `benchmark/` | stage-by-stage benchmark over the labeled `consultations/` notes, never imported by the app: `EvalSetLoader` (fixture → cases), `SummaryStage`/`RetrievalStage`/`SelectionStage` (one record per note, calls metered; selection runs the real `BillingCodesTask` over a `FrozenCandidatesRetriever` replaying a stored retrieval, so `--candidates-from` cross-wires models), query sources (`summary` \| `transcript` \| `summary+transcript`), `RunStore` (`benchmarks/runs/`), `RetrievalScorer` (exact / family_only / ineligible / not_in_table / not_retrieved) and `SelectionScorer` (retained / possible / offered_not_selected / not_offered: precision on the retained codes, overall recall on both tiers; wrong variants, clean negatives), both scored at report time against the current labels, `RunAggregator`, `RunComparator`/`SelectionComparator`, `MarkdownReport`; `commands.py` wires them (opens LanceDB itself, so a non-current `--codes-table` can be benchmarked) |
 | `ramq_chatbot/` | `POST /query` — stateless RAMQ manual chatbot (hybrid search + reference expansion) |
 | `tasks/` | `ExtractionTask` base, task registry, strict JSON schema generation |
 | `lancedb/` | read side of the RAMQ LanceDB tables (generic, never imports a domain package) |
@@ -103,7 +104,8 @@ cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
 (physician practice facts + patient age/vulnerability/registration) → `billing_codes`
 (multi-query hybrid retrieval: a visit query rendered from the encounter's form only and scoped to the
 manual's visit section, the full summary, one per procedure/add-on; eligibility-filtered, RRF-fused with every
-visit hit kept, small code families completed → LLM picks from candidates).
+visit hit kept, small code families completed → LLM picks from candidates: a short `analysis`, then the codes it is sure of
+(`codes`, stored `retained`: preselected in the review, what inbox approve-all bills) and `other_possible_codes`).
 The physician reviews (and may add codes from the code search), then `POST /claims` saves from
 the stored extraction run. Billing without an encounter (`/app/facturer`) skips all of it:
 patient + date + hand-picked codes → `POST /claims/manual`.

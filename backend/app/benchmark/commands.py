@@ -8,21 +8,29 @@ table it actually reads."""
 import itertools
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
 from app.benchmark.aggregate import RunAggregator, RunMetrics
-from app.benchmark.compare import RunComparator, RunComparison
+from app.benchmark.compare import RunComparator, RunComparison, SelectionComparator, SelectionComparison
 from app.benchmark.dataset import BenchmarkCase, EvalSetLoader
 from app.benchmark.embedding_cache import CachedEmbeddingClient
 from app.benchmark.provenance import GitProvenance
 from app.benchmark.query_sources import query_source
-from app.benchmark.records import RetrievalRecord, RunConfig, RunManifest, StageName, SummaryRecord
+from app.benchmark.records import (
+    RetrievalRecord,
+    RunConfig,
+    RunManifest,
+    SelectionRecord,
+    StageName,
+    SummaryRecord,
+)
 from app.benchmark.report import MarkdownReport
 from app.benchmark.runner import BenchmarkRunner, RunProgress
 from app.benchmark.scoring import RetrievalScore, RetrievalScorer
-from app.benchmark.stages import RetrievalStage, Stage, SummaryStage
+from app.benchmark.selection_scoring import SelectionScore, SelectionScorer
+from app.benchmark.stages import RetrievalStage, SelectionStage, Stage, SummaryStage
 from app.benchmark.store import Run, RunStore
 from app.config import settings
 from app.extraction.engine import resolve_model
@@ -31,7 +39,7 @@ from app.lancedb.database import vector_dimension
 from app.lancedb.fusion import DEFAULT_K
 from app.lancedb.models import CodeVersionRow
 from app.llm import EmbeddingDimensionGuard, chat_provider, get_embedding_client
-from app.ramq_codes import build_candidate_fuser, build_code_query_runner, build_family_expander
+from app.ramq_codes import BillingCodesTask, build_candidate_fuser, build_code_query_runner, build_family_expander
 from app.ramq_codes.candidate_fuser import DEFAULT_FUSED_TOP_K, DEFAULT_KEPT_SOURCES
 from app.ramq_codes.family_expander import DEFAULT_MAX_FAMILY_SIZE
 from app.ramq_codes.query_runner import DEFAULT_SIMILARITY_TOP_K
@@ -93,6 +101,8 @@ class RunCommand:
         query_source_name: str = "summary",
         summaries_from: str | None = None,
         summary_model: str | None = None,
+        candidates_from: str | None = None,
+        selection_model: str | None = None,
         params: RetrievalParams = RetrievalParams(),
         codes_table: str | None = None,
         cases: CaseFilter = CaseFilter(),
@@ -102,15 +112,36 @@ class RunCommand:
         on_record: Callable | None = None,
     ) -> tuple[Run, RunProgress]:
         source = query_source(query_source_name)
-        self._validate(stages, source.needs_summary, summaries_from)
+        self._validate(stages, source.needs_summary, summaries_from, candidates_from)
         selected = self._loader.load(
             patient_ids=cases.patient_ids, label_statuses=cases.label_statuses, difficulties=cases.difficulties
         )
-        if "summary" in stages:
+        if "summary" in stages or "selection" in stages:
             chat_provider()  # an unknown LLM_PROVIDER fails now, not on every note
-            # Recorded resolved (argument, else LLM_MODEL_CONSULTATION_SUMMARY, else the
-            # task default), so two runs on different env-selected models never look alike.
+        # Recorded resolved (argument, else LLM_MODEL_<TASK>, else the task default), so two
+        # runs on different env-selected models never look alike.
+        if "summary" in stages:
             summary_model = resolve_model(ConsultationSummaryTask(), summary_model)
+        if "selection" in stages:
+            selection_model = resolve_model(BillingCodesTask, selection_model)
+
+        embedding_provider, embedding_model = settings.embedding_provider, settings.embedding_model
+        candidates_run = self._store.open(candidates_from) if candidates_from else None
+        if candidates_run is not None:
+            # A selection-only run inherits how its candidates were retrieved, so its
+            # manifest describes them rather than this command's unused retrieval defaults.
+            retrieved = candidates_run.read_manifest().config
+            summaries_from = summaries_from or self._summaries_of(candidates_run.name, retrieved)
+            codes_table = self._candidates_table(codes_table, retrieved)
+            source = query_source(retrieved.query_source)
+            embedding_provider, embedding_model = retrieved.embedding_provider, retrieved.embedding_model
+            params = RetrievalParams(
+                retrieved.similarity_top_k,
+                retrieved.fused_top_k,
+                retrieved.rrf_k,
+                retrieved.max_family_size,
+                tuple(retrieved.kept_sources),
+            )
         summary_run = self._store.open(summaries_from) if summaries_from else None
 
         async with codes_repository(codes_table, check_embedding_dimension="retrieval" in stages) as (codes, version):
@@ -120,14 +151,16 @@ class RunCommand:
                 summaries_from=summaries_from,
                 summary_model=summary_model,
                 llm_provider=settings.llm_provider,
-                embedding_provider=settings.embedding_provider,
-                embedding_model=settings.embedding_model,
+                embedding_provider=embedding_provider,
+                embedding_model=embedding_model,
                 codes_table=version.table_name,
                 similarity_top_k=params.similarity_top_k,
                 fused_top_k=params.fused_top_k,
                 rrf_k=params.rrf_k,
                 max_family_size=params.max_family_size,
                 kept_sources=list(params.kept_sources),
+                candidates_from=candidates_from,
+                selection_model=selection_model,
             )
             run = self._open_run(name, config, version.manual_rev, selected, argv or [])
 
@@ -149,6 +182,10 @@ class RunCommand:
                         query_runner, candidate_fuser, source, summaries=summary_run, family_expander=family_expander
                     )
                 )
+            if "selection" in stages:
+                pipeline.append(
+                    SelectionStage(codes, candidates=candidates_run, summaries=summary_run, model=selection_model)
+                )
 
             runner = BenchmarkRunner(pipeline, concurrency=concurrency, force=force, on_record=on_record)
             progress = await runner.run(run, selected)
@@ -159,7 +196,9 @@ class RunCommand:
         return run, progress
 
     @staticmethod
-    def _validate(stages: list[StageName], needs_summary: bool, summaries_from: str | None) -> None:
+    def _validate(
+        stages: list[StageName], needs_summary: bool, summaries_from: str | None, candidates_from: str | None = None
+    ) -> None:
         if not stages:
             raise BenchmarkConfigError("No stage to run")
         if summaries_from and "summary" in stages:
@@ -168,6 +207,34 @@ class RunCommand:
             raise BenchmarkConfigError(
                 "This query source needs summaries: add the summary stage or pass --summaries-from"
             )
+        if candidates_from and "selection" not in stages:
+            raise BenchmarkConfigError("--candidates-from only feeds the selection stage: add it")
+        if candidates_from and "retrieval" in stages:
+            raise BenchmarkConfigError("--candidates-from reuses another run's candidates: drop the retrieval stage")
+        if "selection" in stages and "retrieval" not in stages and not candidates_from:
+            raise BenchmarkConfigError("Selection needs candidates: add the retrieval stage or pass --candidates-from")
+        if "selection" in stages and "summary" not in stages and not summaries_from and not candidates_from:
+            raise BenchmarkConfigError("Selection needs summaries: add the summary stage or pass --summaries-from")
+
+    @staticmethod
+    def _summaries_of(candidates_name: str, retrieved: RunConfig) -> str:
+        """Where the candidates run's own retrieval read its summaries: the selection prompt
+        then carries the very summary its candidates were planned from."""
+        if "summary" in retrieved.stages:
+            return candidates_name
+        if retrieved.summaries_from:
+            return retrieved.summaries_from
+        raise BenchmarkConfigError(
+            f"Run {candidates_name!r} has no summaries (query source {retrieved.query_source!r}): pass --summaries-from"
+        )
+
+    @staticmethod
+    def _candidates_table(codes_table: str | None, retrieved: RunConfig) -> str:
+        if codes_table and codes_table != retrieved.codes_table:
+            raise BenchmarkConfigError(
+                f"The candidates were retrieved from {retrieved.codes_table}, not {codes_table}: drop --codes-table"
+            )
+        return retrieved.codes_table
 
     def _open_run(
         self, name: str, config: RunConfig, manual_rev: str, cases: list[BenchmarkCase], argv: list[str]
@@ -207,6 +274,12 @@ class RunCommand:
 
 
 @dataclass(frozen=True)
+class RunScores:
+    retrieval: list[RetrievalScore]
+    selection: list[SelectionScore]
+
+
+@dataclass(frozen=True)
 class RunReport:
     run: Run
     manifest: RunManifest
@@ -214,6 +287,8 @@ class RunReport:
     scores: list[RetrievalScore]
     comparison: RunComparison | None
     fixture_changed: bool
+    selection_scores: list[SelectionScore] = field(default_factory=list)
+    selection_comparison: SelectionComparison | None = None
 
 
 class ReportCommand:
@@ -233,46 +308,71 @@ class ReportCommand:
 
         summaries = [r for c in cases if (r := run.read("summary", c.patient_id, SummaryRecord))]
         retrievals = [r for c in cases if (r := run.read("retrieval", c.patient_id, RetrievalRecord))]
-        metrics = RunAggregator().aggregate(summaries, retrievals, scores)
+        selections = [r for c in cases if (r := run.read("selection", c.patient_id, SelectionRecord))]
+        metrics = RunAggregator().aggregate(summaries, retrievals, scores.retrieval, selections, scores.selection)
 
-        comparison = None
+        comparison = selection_comparison = None
         if baseline:
             baseline_run = self._store.open(baseline)
             baseline_manifest = baseline_run.read_manifest()
             baseline_scores = await self._scores(
                 baseline_run, baseline_manifest, self._loader.load(patient_ids=baseline_manifest.case_ids)
             )
-            comparison = RunComparator().compare(baseline, baseline_scores, name, scores)
+            if scores.retrieval and baseline_scores.retrieval:
+                comparison = RunComparator().compare(baseline, baseline_scores.retrieval, name, scores.retrieval)
+            if scores.selection and baseline_scores.selection:
+                selection_comparison = SelectionComparator().compare(
+                    baseline, baseline_scores.selection, name, scores.selection
+                )
 
         run.write_json(
             "metrics.json",
             {
                 "metrics": metrics.model_dump(mode="json"),
-                "scores": [s.model_dump(mode="json") for s in scores],
+                "scores": [s.model_dump(mode="json") for s in scores.retrieval],
+                "selection_scores": [s.model_dump(mode="json") for s in scores.selection],
                 "comparison": comparison.model_dump(mode="json") if comparison else None,
+                "selection_comparison": selection_comparison.model_dump(mode="json") if selection_comparison else None,
             },
         )
-        run.write_text("report.md", MarkdownReport().render(manifest, metrics, scores, comparison))
+        run.write_text(
+            "report.md",
+            MarkdownReport().render(
+                manifest, metrics, scores.retrieval, comparison, scores.selection, selection_comparison
+            ),
+        )
         return RunReport(
             run=run,
             manifest=manifest,
             metrics=metrics,
-            scores=scores,
+            scores=scores.retrieval,
             comparison=comparison,
             fixture_changed=manifest.fixture_sha256 != self._loader.sha256(),
+            selection_scores=scores.selection,
+            selection_comparison=selection_comparison,
         )
 
     @staticmethod
-    async def _scores(run: Run, manifest: RunManifest, cases: list[BenchmarkCase]) -> list[RetrievalScore]:
-        if "retrieval" not in manifest.config.stages:
-            return []
+    async def _scores(run: Run, manifest: RunManifest, cases: list[BenchmarkCase]) -> RunScores:
+        stages = manifest.config.stages
+        if "retrieval" not in stages and "selection" not in stages:
+            return RunScores(retrieval=[], selection=[])
         # Scored against the codes table the run retrieved from, even if another one has
         # been promoted since.
         async with codes_repository(manifest.config.codes_table, check_embedding_dimension=False) as (codes, _version):
-            scorer = RetrievalScorer(codes)
-            return [
-                await scorer.score(case, run.read("retrieval", case.patient_id, RetrievalRecord)) for case in cases
-            ]
+            retrieval, selection = [], []
+            if "retrieval" in stages:
+                scorer = RetrievalScorer(codes)
+                retrieval = [
+                    await scorer.score(case, run.read("retrieval", case.patient_id, RetrievalRecord)) for case in cases
+                ]
+            if "selection" in stages:
+                selection_scorer = SelectionScorer(codes)
+                selection = [
+                    await selection_scorer.score(case, run.read("selection", case.patient_id, SelectionRecord))
+                    for case in cases
+                ]
+            return RunScores(retrieval=retrieval, selection=selection)
 
 
 class SweepCommand:

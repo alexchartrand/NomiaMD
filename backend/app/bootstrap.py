@@ -1,7 +1,7 @@
 """The process's single composition root: opens the relational database and the RAMQ
 LanceDB, and wires everything built on top of them (the extraction task registry, the RAMQ
 chatbot engine). Used by app/main.py's FastAPI lifespan and by the scripts — the real-API
-ones (try_extraction.py, eval_extraction.py) take `application_services()`, the DB-only
+one (try_extraction.py) takes `application_services()`, the DB-only
 ones (create_user.py, seed_db.py, reset_password.py) just `postgres_database()`.
 
 Deferred to here, rather than done at import time, because lancedb.connect_async needs a

@@ -1,10 +1,17 @@
 """Benchmarks the extraction pipeline stage by stage over the labeled consultations/ notes
-(tests/fixtures/eval_billing_codes.jsonl), storing each note's summary and retrieval result
-— with every chat/embedding call's tokens and latency — under backend/benchmarks/runs/<name>/.
-See app/benchmark/.
+(tests/fixtures/eval_billing_codes.jsonl), storing each note's summary, retrieval result and
+selected codes — with every chat/embedding call's tokens and latency — under
+backend/benchmarks/runs/<name>/. See app/benchmark/.
 
     # summaries + retrieval, the production configuration
     python scripts/benchmark.py run --name mistral-base
+
+    # the whole pipeline, selection (the billing_codes call) included
+    python scripts/benchmark.py run --name mistral-full --stages summary,retrieval,selection
+
+    # selection only, on another run's stored candidates (and the summaries they came from)
+    python scripts/benchmark.py run --name qwen-sel --stages selection \\
+        --candidates-from mistral-base --selection-model qwen3-32b
 
     # control runs: retrieve from the raw note, or from summary + note
     python scripts/benchmark.py run --name transcript-q --stages retrieval --query-source transcript
@@ -22,9 +29,9 @@ See app/benchmark/.
     python scripts/benchmark.py promote mistral-base --as mistral-2026-10
 
 A summary model on another host: LLM_PROVIDER=openai_compatible LLM_ENDPOINT=... LLM_API_KEY=...
-then --summary-model <name>. A re-embedded codes table: EMBEDDING_* for its model, then
---codes-table codes_<rev>. Needs DB_PATH and the embedding provider's key; chat calls only
-for the summary stage. `run` re-run with the same name resumes (recorded notes are
+then --summary-model <name> / --selection-model <name>. A re-embedded codes table:
+EMBEDDING_* for its model, then --codes-table codes_<rev>. Needs DB_PATH; the embedding
+provider's key for the retrieval stage, the chat provider's for summary and selection. `run` re-run with the same name resumes (recorded notes are
 skipped; --force redoes them)."""
 
 import argparse
@@ -50,7 +57,8 @@ from app.benchmark.dataset import EvalSetLoader  # noqa: E402
 from app.benchmark.store import RunStore  # noqa: E402
 from app.logging_config import configure_logging  # noqa: E402
 
-STAGES = ("summary", "retrieval")
+STAGES = ("summary", "retrieval", "selection")
+DEFAULT_STAGES = ["summary", "retrieval"]
 
 
 def _csv(cast):
@@ -76,10 +84,14 @@ def _parser() -> argparse.ArgumentParser:
 
     run = commands.add_parser("run", help="run stages over the notes and report")
     run.add_argument("--name", required=True)
-    run.add_argument("--stages", type=_csv(str), default=list(STAGES), help="comma-separated: summary,retrieval")
+    run.add_argument(
+        "--stages", type=_csv(str), default=DEFAULT_STAGES, help="comma-separated: summary,retrieval,selection"
+    )
     run.add_argument("--query-source", default="summary", choices=["summary", "transcript", "summary+transcript"])
     run.add_argument("--summaries-from", help="reuse this run's summaries (retrieval only)")
     run.add_argument("--summary-model", help="chat model for the summary (default: the task's)")
+    run.add_argument("--candidates-from", help="select from this run's stored candidates (selection only)")
+    run.add_argument("--selection-model", help="chat model for the selection (default: the task's)")
     run.add_argument("--similarity-top-k", type=int, default=RetrievalParams.similarity_top_k)
     run.add_argument("--fused-top-k", type=int, default=RetrievalParams.fused_top_k)
     run.add_argument("--rrf-k", type=float, default=RetrievalParams.rrf_k)
@@ -133,6 +145,19 @@ def _print_headline(report: RunReport) -> None:
         counts = ", ".join(f"{k} {v}" for k, v in r.status_counts.items() if v)
         print(f"   retrieval over {r.expected_positions} expected codes: {recall_at}  MRR {r.mrr:.2f}")
         print(f"     {counts}; {r.mean_candidates:.0f} candidates/note, {r.errors} errors")
+    if m.selection:
+        s = m.selection
+        print(
+            f"   selection over {s.expected_positions} expected codes, retained: precision {s.precision:.0%}  "
+            f"recall {s.recall:.0%}  F1 {s.f1:.0%}  exact notes {s.exact_match_rate:.0%}; "
+            f"overall recall {s.overall_recall:.0%}"
+        )
+        print(
+            f"     left out {s.status_counts['offered_not_selected']}, not offered {s.status_counts['not_offered']}, "
+            f"wrong variant {s.wrong_variants}; clean negatives {s.clean_negatives}/{s.negatives}; "
+            f"{s.mean_retained:.1f} retained + {s.mean_possible:.1f} possible per note; "
+            f"invented {s.invented_codes}; {s.errors} errors"
+        )
     for group in m.calls:
         cached = " cached" if group.cached else ""
         print(
@@ -142,6 +167,9 @@ def _print_headline(report: RunReport) -> None:
         )
     if report.comparison:
         print(f"   vs {report.comparison.baseline}: " + ", ".join(f"{k} {v}" for k, v in report.comparison.counts.items()))
+    if report.selection_comparison:
+        counts = ", ".join(f"{k} {v}" for k, v in report.selection_comparison.counts.items())
+        print(f"   selection vs {report.selection_comparison.baseline}: {counts}")
     print(f"   report: {report.run.path / 'report.md'}")
 
 
@@ -180,6 +208,8 @@ async def main() -> None:
             query_source_name=args.query_source,
             summaries_from=args.summaries_from,
             summary_model=args.summary_model,
+            candidates_from=args.candidates_from,
+            selection_model=args.selection_model,
             params=RetrievalParams(
                 args.similarity_top_k,
                 args.fused_top_k,

@@ -1,5 +1,6 @@
-"""Per-note comparison of two runs' retrieval: for every expected code, did it get better or
-worse? An average recall can stay flat while one note gains a code and another loses one —
+"""Per-note comparison of two runs: for retrieval, did every expected code rank better or
+worse; for selection, which right codes were gained or lost and which wrong ones appeared or
+went away. An average can stay flat while one note gains a code and another loses one —
 exactly the "a fix on one transcript regresses another" failure — so regressions are listed
 note by note, worst first."""
 
@@ -8,9 +9,19 @@ from typing import Literal
 from pydantic import BaseModel
 
 from app.benchmark.scoring import CodeStatus, RetrievalScore
+from app.benchmark.selection_scoring import SelectionScore
 
 Change = Literal["regressed", "improved", "unchanged"]
 Verdict = Literal["regressed", "mixed", "improved", "unchanged"]
+_VERDICT_ORDER = {"regressed": 0, "mixed": 1, "improved": 2, "unchanged": 3}
+
+
+def _verdict(regressed: bool, improved: bool) -> Verdict:
+    if regressed and improved:
+        return "mixed"
+    if regressed:
+        return "regressed"
+    return "improved" if improved else "unchanged"
 
 # Lower is better: an exact hit is worth its rank; a same-family hit beats nothing at all.
 _FAMILY_ONLY_COST = 1_000
@@ -58,9 +69,8 @@ class RunComparator:
         notes = [
             self._note(before_by_id[after.patient_id], after) for after in candidate if after.patient_id in before_by_id
         ]
-        order = {"regressed": 0, "mixed": 1, "improved": 2, "unchanged": 3}
-        notes.sort(key=lambda n: (order[n.verdict], -self._severity(n), n.patient_id))
-        counts = {verdict: sum(1 for n in notes if n.verdict == verdict) for verdict in order}
+        notes.sort(key=lambda n: (_VERDICT_ORDER[n.verdict], -self._severity(n), n.patient_id))
+        counts = {verdict: sum(1 for n in notes if n.verdict == verdict) for verdict in _VERDICT_ORDER}
         return RunComparison(baseline=baseline_name, candidate=candidate_name, notes=notes, counts=counts)
 
     @staticmethod
@@ -82,18 +92,10 @@ class RunComparator:
             change.change = "regressed" if delta > 0 else "improved" if delta < 0 else "unchanged"
             changes.append(change)
         kinds = {c.change for c in changes}
-        if "regressed" in kinds and "improved" in kinds:
-            verdict: Verdict = "mixed"
-        elif "regressed" in kinds:
-            verdict = "regressed"
-        elif "improved" in kinds:
-            verdict = "improved"
-        else:
-            verdict = "unchanged"
         return NoteComparison(
             patient_id=after.patient_id,
             difficulty=after.difficulty,
-            verdict=verdict,
+            verdict=_verdict("regressed" in kinds, "improved" in kinds),
             changes=changes,
             before_candidates=before.candidate_count,
             after_candidates=after.candidate_count,
@@ -103,4 +105,77 @@ class RunComparator:
     def _severity(note: NoteComparison) -> int:
         return sum(
             abs(_cost(c.after_status, c.after_rank) - _cost(c.before_status, c.before_rank)) for c in note.changes
+        )
+
+
+class SelectionNoteComparison(BaseModel):
+    patient_id: str
+    difficulty: str
+    verdict: Verdict
+    # Among the codes the model is sure of (retained): expected codes the candidate run
+    # retained and the baseline didn't, and the reverse; wrong retained codes only the
+    # candidate run has, and the ones it no longer has.
+    gained: list[str]
+    lost: list[str]
+    new_wrong: list[str]
+    fixed_wrong: list[str]
+    # Expected codes that entered or left the answer altogether (either tier).
+    gained_overall: list[str]
+    lost_overall: list[str]
+
+
+class SelectionComparison(BaseModel):
+    baseline: str
+    candidate: str
+    notes: list[SelectionNoteComparison]
+    counts: dict[str, int]
+
+
+class SelectionComparator:
+    """Unlabeled notes are skipped: without expected codes, a change is neither better nor
+    worse."""
+
+    def compare(
+        self, baseline_name: str, baseline: list[SelectionScore], candidate_name: str, candidate: list[SelectionScore]
+    ) -> SelectionComparison:
+        before_by_id = {s.patient_id: s for s in baseline}
+        notes = [
+            self._note(before_by_id[after.patient_id], after)
+            for after in candidate
+            if after.patient_id in before_by_id and after.is_labeled
+        ]
+        notes.sort(
+            key=lambda n: (
+                _VERDICT_ORDER[n.verdict],
+                -(len(n.lost) + len(n.new_wrong) + len(n.lost_overall)),
+                n.patient_id,
+            )
+        )
+        counts = {verdict: sum(1 for n in notes if n.verdict == verdict) for verdict in _VERDICT_ORDER}
+        return SelectionComparison(baseline=baseline_name, candidate=candidate_name, notes=notes, counts=counts)
+
+    @staticmethod
+    def _note(before: SelectionScore, after: SelectionScore) -> SelectionNoteComparison:
+        def right(score: SelectionScore) -> set[str]:
+            return {o.code for o in score.retained if o.correct}
+
+        def wrong(score: SelectionScore) -> set[str]:
+            return {o.code for o in score.retained if o.correct is False}
+
+        def found(score: SelectionScore) -> set[str]:
+            return {o.code for o in score.returned if o.correct}
+
+        gained, lost = sorted(right(after) - right(before)), sorted(right(before) - right(after))
+        new_wrong, fixed_wrong = sorted(wrong(after) - wrong(before)), sorted(wrong(before) - wrong(after))
+        gained_overall, lost_overall = sorted(found(after) - found(before)), sorted(found(before) - found(after))
+        return SelectionNoteComparison(
+            patient_id=after.patient_id,
+            difficulty=after.difficulty,
+            verdict=_verdict(bool(lost or new_wrong or lost_overall), bool(gained or fixed_wrong or gained_overall)),
+            gained=gained,
+            lost=lost,
+            new_wrong=new_wrong,
+            fixed_wrong=fixed_wrong,
+            gained_overall=gained_overall,
+            lost_overall=lost_overall,
         )

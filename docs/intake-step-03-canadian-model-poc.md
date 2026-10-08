@@ -27,8 +27,8 @@ backed by eval numbers rather than impressions. Write the decision down.
 
 ### Benchmark workflow
 
-Phase 1 covers the summary and retrieval. Phase 2, selection (the `billing_codes` call over frozen
-candidates), comes next.
+Phase 1 covers the summary and retrieval. Phase 2 covers selection: the `billing_codes` call, run
+on a retrieval run's stored candidates (steps 6–7).
 
 1. **Baseline:** `run --name mistral-base`. 58 `mistral-small` summary calls, plus embeddings.
 2. **Control runs:**
@@ -39,6 +39,8 @@ candidates), comes next.
    - `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=... run --name <model>-sum --summary-model <model>`, then `report <model>-sum --baseline mistral-base`.
    - Watch the summary's failed count: `ExtractionOutputError` is a parse or schema failure, and its raw output is stored.
 5. **Candidate embedding model:** `EMBEDDING_PROVIDER=openai_compatible EMBEDDING_MODEL=... run --name <emb>-ret --stages retrieval --summaries-from mistral-base --codes-table codes_<rev>`, on a table re-embedded by ramq-ingestion.
+6. **Selection baseline:** `run --name mistral-sel --stages selection --candidates-from mistral-base`. 58 `mistral-medium` calls on the stored candidates and summaries, no embedding call. The model answers in two tiers: the codes it is sure of (*retained*, preselected in the review) and other possible ones. The report gives precision, recall and F1 on the retained codes, recall over both tiers (*overall recall*), and splits each missed code into *left out* (offered, not picked: the model) and *not offered* (retrieval). It also counts wrong variants, clean negatives, invented codes dropped, the `needs_confirmation` rate and precision by confidence level.
+7. **Candidate selection model:** `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=... run --name <model>-sel --stages selection --candidates-from mistral-base --selection-model <model>`, then `report <model>-sel --baseline mistral-sel`. Both runs select from the same candidates, so the per-note comparison (codes gained, lost, new wrong ones) only measures the model. For the whole pipeline on one host, use `--stages summary,retrieval,selection`.
 - [ ] Fill in the `decision-llm-hosting.docx` working document (OneDrive, not in the repo): hosting options and prices,
   model candidates, the eval table, the cost estimate, and the final decision.
 

@@ -191,14 +191,16 @@ uv run python scripts/try_extraction.py
 
 To measure the pipeline, `scripts/benchmark.py` runs it stage by stage over every labeled note
 (`tests/fixtures/eval_billing_codes.jsonl`, best-effort labels pending physician review). Each
-note's summary and retrieval result go under `backend/benchmarks/runs/<name>/`, along with the
-tokens and latency of every chat and embedding call. `report` then scores a run against the
+note's summary, retrieval result and selected codes go under `backend/benchmarks/runs/<name>/`,
+along with the tokens and latency of every chat and embedding call. `report` then scores a run against the
 labels, optionally compared note by note with a baseline run:
 
 ```bash
 uv run python scripts/benchmark.py run --name mistral-base           # summary + retrieval
 uv run python scripts/benchmark.py sweep --summaries-from mistral-base \
     --similarity-top-k 20,30,40 --fused-top-k 40,60                    # no chat call, cached embeddings
+uv run python scripts/benchmark.py run --name mistral-sel --stages selection \
+    --candidates-from mistral-base                                     # billing_codes on the stored candidates
 uv run python scripts/benchmark.py report <run> --baseline mistral-base
 ```
 

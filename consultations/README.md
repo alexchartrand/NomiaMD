@@ -39,7 +39,7 @@ disposition, dictated prose.
 ## RAMQ code labels — read before trusting them
 
 Labels live in `backend/tests/fixtures/eval_billing_codes.jsonl` (the file
-`backend/scripts/eval_extraction.py` reads by default), one entry per note, keyed by the
+`backend/scripts/benchmark.py` reads by default), one entry per note, keyed by the
 note's dossier number. Each carries the `physician_context` / `patient_context` facts the
 eval feeds the eligibility filter (panel size, remuneration, age, registration,
 vulnerability) — they're part of the label: the same note can have a different right

@@ -8,9 +8,10 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from app.llm import LLMCallRecord
+from app.ramq_codes import BillingCodesResult
 from app.summary import ConsultationSummaryResult
 
-StageName = Literal["summary", "retrieval"]
+StageName = Literal["summary", "retrieval", "selection"]
 QuerySourceName = Literal["summary", "transcript", "summary+transcript"]
 
 
@@ -98,6 +99,24 @@ class RetrievalRecord(StageRecord):
     db_ms: float = 0.0
 
 
+class SelectionRecord(StageRecord):
+    # The runs the candidates (retrieval.json) and the summary were read from.
+    candidates_run: str
+    summary_run: str
+    model: str | None = None
+    # The candidate numbers offered to the model, in rank order.
+    offered: list[str] = Field(default_factory=list)
+    # System prompt + user message, in characters (the tokens are on the call).
+    prompt_chars: int = 0
+    # What the model returned before BillingCodesTask.parse dropped anything: its code
+    # count, the codes that were never offered (invented), and the entries that weren't
+    # even code objects.
+    raw_code_count: int = 0
+    dropped_not_offered: list[str] = Field(default_factory=list)
+    dropped_malformed: int = 0
+    result: BillingCodesResult | None = None
+
+
 class RunConfig(BaseModel):
     """Everything that determines a run's outputs. Re-running into an existing run with a
     different config is refused: its records would mix two configurations."""
@@ -117,6 +136,9 @@ class RunConfig(BaseModel):
     max_family_size: int = 0
     # Query sources whose every hit is kept past fused_top_k; [] before it existed.
     kept_sources: list[str] = []
+    # The run whose retrieval records the selection stage reads; None = this run's own.
+    candidates_from: str | None = None
+    selection_model: str | None = None
 
 
 class RunManifest(BaseModel):

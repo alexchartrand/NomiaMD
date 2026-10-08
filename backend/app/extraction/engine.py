@@ -30,9 +30,10 @@ class ExtractionOutputError(RuntimeError):
         self.finish_reason = finish_reason
 
 
-def resolve_model(task: ExtractionTask, model: str | None = None) -> str:
+def resolve_model(task: ExtractionTask | type[ExtractionTask], model: str | None = None) -> str:
     """Explicit argument, else the task's LLM_MODEL_<TASK> env override (a host whose model
-    names differ from Mistral's), else the task's own default."""
+    names differ from Mistral's), else the task's own default. Takes the task class too:
+    only its `name` and `model` are read."""
     return model or settings.chat_model_for(task.name) or task.model
 
 
