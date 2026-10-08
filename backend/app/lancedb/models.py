@@ -79,7 +79,7 @@ class DocumentRow(BaseModel):
     src/embedding/documents_embedding/document_table_schema.py, selecting only the columns
     the read side actually uses. Deliberately omits `vector`: DocumentRepository always
     `.select()`s this row's columns explicitly, so the ~4KB embedding never crosses the wire
-    for a hit that's about to be converted to a TextNode and thrown away."""
+    for a hit that's about to be converted to a ManualChunk and thrown away."""
 
     id: str
     text: str

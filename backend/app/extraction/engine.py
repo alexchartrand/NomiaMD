@@ -4,14 +4,10 @@ requires touching this file."""
 
 import json
 import logging
-import time
 from typing import TypeVar
 
-from llama_index.core.base.llms.types import ChatMessage, MessageRole
-from llama_index.core.llms import LLM
-
 from app.extraction.models import ExtractionResult
-from app.llm import ChatResponseReader, get_chat_llm
+from app.llm import ChatMessage, IChatClient, call_purpose, get_chat_client
 from app.tasks.base import ExtractionTask
 
 TInput = TypeVar("TInput")
@@ -19,13 +15,10 @@ TInput = TypeVar("TInput")
 logger = logging.getLogger(__name__)
 
 
-_reader = ChatResponseReader()
-
-
-def get_client(model: str) -> LLM:
+def get_client(model: str) -> IChatClient:
     """The seam tests patch (app.extraction.engine.get_client). Caching and the
-    deterministic temperature=0 default live in get_chat_llm."""
-    return get_chat_llm(model)
+    deterministic temperature=0 default live in get_chat_client."""
+    return get_chat_client(model)
 
 
 async def run_extraction(task: ExtractionTask[TInput], task_input: TInput) -> ExtractionResult:
@@ -43,21 +36,16 @@ async def run_extraction(task: ExtractionTask[TInput], task_input: TInput) -> Ex
         extra={"task": task.name, "model": task.model, "user_message": prepared.user_message},
     )
 
-    llm_start = time.perf_counter()
-    response = await client.achat(
-        messages=[
-            ChatMessage(role=MessageRole.SYSTEM, content=prepared.system_prompt),
-            ChatMessage(role=MessageRole.USER, content=prepared.user_message),
-        ],
-        response_format=response_format,
-    )
-    llm_duration_ms = (time.perf_counter() - llm_start) * 1000
-    logger.debug(
-        "run_extraction llm call timing",
-        extra={"task": task.name, "model": task.model, "llm_duration_ms": round(llm_duration_ms, 1)},
-    )
+    # Latency and token usage are metered per call by the client itself (app/llm/usage.py).
+    with call_purpose(task.name):
+        completion = await client.chat(
+            messages=[
+                ChatMessage(role="system", content=prepared.system_prompt),
+                ChatMessage(role="user", content=prepared.user_message),
+            ],
+            response_format=response_format,
+        )
 
-    completion = _reader.read(response)
     if completion.finish_reason not in ("stop", "length"):
         raise RuntimeError(f"Model did not return a normal completion (finish_reason={completion.finish_reason!r})")
 

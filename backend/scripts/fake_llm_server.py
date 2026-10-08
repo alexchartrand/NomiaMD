@@ -171,9 +171,9 @@ def list_models():
 
 
 def _content_to_text(content) -> str:
-    """Message content is a bare string over the OpenAI wire format, but the Mistral
-    client (llama_index's MistralAI) always sends it as a list of {"type": "text", ...}
-    chunks instead — handle both."""
+    """Message content is a bare string over the OpenAI wire format (what the backend's
+    own client sends), but OpenAI's spec also allows a list of {"type": "text", ...} chunks
+    (what the Mistral SDK sends) — handle both."""
     if isinstance(content, str):
         return content
     if isinstance(content, list):

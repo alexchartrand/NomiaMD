@@ -5,12 +5,11 @@ from abc import ABC, abstractmethod
 from dataclasses import asdict
 from typing import List
 
-from llama_index.core.base.embeddings.base import BaseEmbedding
-
 from app.lancedb.converter import IConverter
 from app.lancedb.models import CodeRow
 from app.lancedb.fusion import ReciprocalRankFuser
 from app.lancedb.repository import ICodeRepository
+from app.llm import IEmbeddingClient, call_purpose
 from app.ramq_codes.context import BillingContext
 from app.ramq_codes.eligibility import CandidateSet, EligibilityFilterFactory, UnresolvedAxisDetector
 from app.ramq_codes.models import Code
@@ -46,7 +45,7 @@ class RAMQCodesRetriever(ICodesRetriever):
     def __init__(
         self,
         codes: ICodeRepository,
-        embed_model: BaseEmbedding,
+        embedding_client: IEmbeddingClient,
         converter: IConverter[CodeRow, Code],
         query_planner: SummaryQueryPlanner | None = None,
         fuser: ReciprocalRankFuser[Code] | None = None,
@@ -56,7 +55,7 @@ class RAMQCodesRetriever(ICodesRetriever):
         fused_top_k: int = 40,
     ):
         self._codes = codes
-        self._embed_model = embed_model
+        self._embedding_client = embedding_client
         self._converter = converter
         self._query_planner = query_planner or SummaryQueryPlanner()
         self._fuser = fuser or ReciprocalRankFuser(key=lambda code: code.number)
@@ -70,7 +69,9 @@ class RAMQCodesRetriever(ICodesRetriever):
 
         queries = self._query_planner.plan(summary)
         eligibility = self._filter_factory.from_context(context)
-        vectors = await asyncio.gather(*(self._embed_model.aget_query_embedding(q) for q in queries))
+        # One embedding call for every planned query.
+        with call_purpose("billing_codes.retrieval"):
+            vectors = await self._embedding_client.embed(queries)
 
         db_start = time.perf_counter()
         per_query_hits = await asyncio.gather(

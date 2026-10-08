@@ -4,13 +4,11 @@ environment. Once LLM_API_KEY and EMBEDDING_API_KEY are configured, see scripts/
 live smoke test.
 
 Uses the small tests/fixtures/reference_data_test.json table (via the small_reference_table
-fixture in conftest.py) rather than the real llama_index vector store, so these tests don't
+fixture in conftest.py) rather than the real LanceDB codes table, so these tests don't
 depend on its size, network access, or exact content."""
 
 import itertools
-import json
 from datetime import date
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
@@ -23,6 +21,7 @@ from app.postgresdb import Encounter, ExtractionRun, ExtractionRunResult, Gender
 from app.ramq_codes import BillingCodesInput, BillingContext
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
+from tests.llm_helpers import fake_chat_result
 
 SAMPLE_TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "
@@ -109,19 +108,13 @@ def _billing_codes_input() -> BillingCodesInput:
 
 
 def _mock_response(payload=MOCK_RESULT):
-    return SimpleNamespace(
-        message=SimpleNamespace(content=json.dumps(payload)),
-        raw={
-            "model": "mistral-small-latest",
-            "choices": [SimpleNamespace(finish_reason="stop")],
-        },
-    )
+    return fake_chat_result(payload)
 
 
 async def test_run_extraction_parses_mocked_response():
     task = get_task("billing_codes")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response())
+        mock_get_client.return_value.chat = AsyncMock(return_value=_mock_response())
         result = await run_extraction(task, _billing_codes_input())
 
     assert result.task == "billing_codes"
@@ -131,7 +124,7 @@ async def test_run_extraction_parses_mocked_response():
     ]
     # The prompt actually sent to the model should have narrowed candidates via keyword
     # match, not dumped the whole reference table — confirm the call args reflect that.
-    call_kwargs = mock_get_client.return_value.achat.call_args.kwargs
+    call_kwargs = mock_get_client.return_value.chat.call_args.kwargs
     user_message = call_kwargs["messages"][1].content
     assert "TEST-BP-MGMT" in user_message
     assert "TEST-CONSULT-NEW" not in user_message  # not relevant to this transcript
@@ -158,7 +151,7 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
         "notes": None,
     }
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response(mock_result))
+        mock_get_client.return_value.chat = AsyncMock(return_value=_mock_response(mock_result))
         result = await run_extraction(task, _billing_codes_input())
 
     assert [c.code for c in result.result.codes] == ["TEST-BLOODWORK-ORDER"]
@@ -168,7 +161,7 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
 
 def _extract(client: TestClient, *, patient_id: int, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT, side_effect=None):
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(
+        mock_get_client.return_value.chat = AsyncMock(
             side_effect=side_effect or [_mock_response(summary), _mock_response(billing)]
         )
         return client.post(

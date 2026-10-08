@@ -40,7 +40,7 @@ _CODE_ROW_COLUMNS = [
 _CODE_FTS_COLUMNS = ["number", "description", "lexical_terms", "expansion_terms"]
 
 # DocumentRow's fields, minus `vector` — every DocumentRepository query selects exactly
-# these columns so the embedding never crosses the wire for a hit about to become a TextNode.
+# these columns so the embedding never crosses the wire for a hit about to become a ManualChunk.
 _DOCUMENT_ROW_COLUMNS = [
     "id",
     "text",

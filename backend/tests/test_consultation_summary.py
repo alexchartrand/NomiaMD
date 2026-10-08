@@ -1,8 +1,6 @@
 """Exercises the consultation_summary task against a mocked model response — same pattern
 as test_extraction.py's billing_codes tests."""
 
-import json
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
@@ -11,6 +9,7 @@ from app.extraction.engine import run_extraction
 from app.main import app
 from app.summary import ConsultationSummaryResult, render_for_billing_codes
 from app.tasks.registry import get_task
+from tests.llm_helpers import fake_chat_result
 
 SAMPLE_TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "
@@ -63,19 +62,13 @@ MOCK_RESULT = {
 
 
 def _mock_response():
-    return SimpleNamespace(
-        message=SimpleNamespace(content=json.dumps(MOCK_RESULT)),
-        raw={
-            "model": "mistral-small-latest",
-            "choices": [SimpleNamespace(finish_reason="stop")],
-        },
-    )
+    return fake_chat_result(MOCK_RESULT)
 
 
 async def test_run_extraction_parses_mocked_response():
     task = get_task("consultation_summary")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response())
+        mock_get_client.return_value.chat = AsyncMock(return_value=_mock_response())
         result = await run_extraction(task, SAMPLE_TRANSCRIPT)
 
     assert result.task == "consultation_summary"

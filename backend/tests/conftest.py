@@ -120,7 +120,7 @@ _ELIGIBILITY_AXES = (
 @pytest.fixture(autouse=True)
 def small_reference_table():
     """Points RAMQ candidate retrieval and code lookup at a tiny, stable fixture rather than
-    the real (large, network-backed) llama_index vector store and LanceDB `codes` table —
+    the real (large, network-backed) embedding API and LanceDB `codes` table —
     tests need candidate narrowing to behave predictably without a real vector index,
     API key, or network call.
 

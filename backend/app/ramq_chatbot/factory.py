@@ -1,6 +1,5 @@
-from app.llm import get_embedding_model
 from app.lancedb import ICodeRepository, IDocumentRepository
-from app.llm import get_chat_llm
+from app.llm import get_chat_client, get_embedding_client
 from app.ramq_chatbot.converter import DocumentRowConverter
 from app.ramq_codes.converter import CodesRowConverter
 from app.ramq_chatbot.engine import RAMQManualQueryEngine
@@ -17,18 +16,18 @@ def init_ramq_query_engine(codes: ICodeRepository, documents: IDocumentRepositor
     return. Called once by the app lifespan (app/bootstrap.py's application_services()),
     which is also what opens `documents`/`codes` in the first place (app/lancedb/database.py)."""
     global _engine
-    llm = get_chat_llm("mistral-medium-latest", temperature=0.5)
+    chat_client = get_chat_client("mistral-medium-latest", temperature=0.5)
     reference_expander = ReferenceExpander(
         section_lookup=ManualSectionLookup(documents, DocumentRowConverter()),
         codes_data=CodesData(codes, CodesRowConverter()),
     )
     retriever = RAMQManualRetriever(
         documents=documents,
-        embed_model=get_embedding_model(),
+        embedding_client=get_embedding_client(),
         converter=DocumentRowConverter(),
         reference_expander=reference_expander,
     )
-    _engine = RAMQManualQueryEngine(retriever=retriever, llm=llm)
+    _engine = RAMQManualQueryEngine(retriever=retriever, chat_client=chat_client)
 
 
 def get_ramq_query_engine() -> RAMQManualQueryEngine:

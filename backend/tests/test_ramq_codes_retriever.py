@@ -1,6 +1,6 @@
 """Unit tests for RAMQCodesRetriever (app/ramq_codes/retriever.py).
 
-Exercised against fakes for every collaborator (ICodeRepository, embedding model,
+Exercised against fakes for every collaborator (ICodeRepository, embedding client,
 converter, SummaryQueryPlanner, ReciprocalRankFuser, EligibilityFilterFactory,
 UnresolvedAxisDetector) — this file only pins RAMQCodesRetriever's own responsibility: plan
 queries from the summary, build one eligibility filter from the caller's BillingContext,
@@ -13,8 +13,6 @@ tests/test_lancedb_code_repository.py."""
 
 from typing import Any
 
-from llama_index.core.base.embeddings.base import BaseEmbedding
-
 from app.lancedb.eligibility import CodeEligibilityFilter
 from app.lancedb.fusion import ReciprocalRankFuser
 from app.lancedb.models import CodeRow
@@ -23,6 +21,7 @@ from app.ramq_codes.models import Code
 from app.ramq_codes.retriever import RAMQCodesRetriever
 from tests.test_consultation_summary import MOCK_RESULT
 from app.summary import ConsultationSummaryResult
+from tests.llm_helpers import FakeEmbeddingClient
 
 SUMMARY = ConsultationSummaryResult.model_validate(MOCK_RESULT)
 
@@ -37,25 +36,6 @@ class _FakeCodeRepository:
     ) -> list[tuple[CodeRow, float]]:
         self.calls.append({"text": text, "vector": vector, "k": k, "eligibility": eligibility})
         return self._hits_by_query.get(text, [])
-
-
-class _LookupEmbedding(BaseEmbedding):
-    vectors: dict[str, list[float]]
-
-    def __init__(self, vectors: dict[str, list[float]], **kwargs: Any):
-        super().__init__(vectors=vectors, **kwargs)
-
-    def _get_query_embedding(self, query: str) -> list[float]:
-        return self.vectors.get(query, [0.0])
-
-    async def _aget_query_embedding(self, query: str) -> list[float]:
-        return self.vectors.get(query, [0.0])
-
-    def _get_text_embedding(self, text: str) -> list[float]:
-        return self.vectors.get(text, [0.0])
-
-    async def _aget_text_embedding(self, text: str) -> list[float]:
-        return self.vectors.get(text, [0.0])
 
 
 class _FakeConverter:
@@ -106,11 +86,11 @@ def _retriever(
     **kwargs: Any,
 ) -> tuple[RAMQCodesRetriever, _FakeCodeRepository, _FakeAxisDetector]:
     codes = _FakeCodeRepository(hits_by_query)
-    embed_model = _LookupEmbedding({})
+    embedding_client = FakeEmbeddingClient()
     detector = _FakeAxisDetector()
     retriever = RAMQCodesRetriever(
         codes,
-        embed_model,
+        embedding_client,
         _FakeConverter(),
         query_planner=_FakeQueryPlanner(planner_queries),
         filter_factory=filter_factory or _FakeFilterFactory(),

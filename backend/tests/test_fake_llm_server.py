@@ -19,8 +19,8 @@ client = TestClient(fake_llm_server.app)
 
 
 def _request_body(user_message: str, system_message: str = "system prompt") -> dict:
-    # content-as-list-of-chunks, matching what the Mistral client (llama_index's
-    # MistralAI) actually sends over the wire — see fake_llm_server._content_to_text.
+    # content-as-list-of-chunks, the other shape OpenAI's spec allows (the Mistral SDK
+    # sends it) — see fake_llm_server._content_to_text.
     return {
         "model": "fake-llm",
         "messages": [

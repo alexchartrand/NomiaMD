@@ -72,7 +72,7 @@ def _model(billing=MOCK_RESULT, extractions: int = 1):
     """The chat model, answering `extractions` pipeline runs (summary, then codes)."""
     patcher = patch("app.extraction.engine.get_client")
     mock_get_client = patcher.start()
-    mock_get_client.return_value.achat = AsyncMock(
+    mock_get_client.return_value.chat = AsyncMock(
         side_effect=[_mock_response(MOCK_SUMMARY_RESULT), _mock_response(billing)] * extractions
     )
     return patcher
@@ -455,7 +455,7 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
     patient = await _seed_patient()
     patcher = patch("app.extraction.engine.get_client")
     mock_get_client = patcher.start()
-    mock_get_client.return_value.achat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
+    mock_get_client.return_value.chat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
     try:
         [outcome] = client.post("/intake/notes", json={"text": _note_text(patient.ramq_number)}).json()
     finally:

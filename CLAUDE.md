@@ -64,7 +64,7 @@ Backend modules (`backend/app/`):
 
 | Module | Role |
 |---|---|
-| `llm/` | chat and embedding model provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), raw-response reading, startup embedding-dimension guard |
+| `llm/` | chat and embedding clients (`IChatClient`/`IEmbeddingClient`, one `openai`-SDK adapter in `openai_client.py` — no llama-index), provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), per-call metering (`usage.py`: tokens in/out + latency of every call, logged as `llm_call`, collected by `usage_scope()`, tagged by `call_purpose()`), startup embedding-dimension guard |
 | `intake/` | where notes come from: connectors (sample, paste/upload + ER-shift splitter, Epic FHIR — `connectors/epic_fhir/`, sandbox demo behind `EPIC_SANDBOX_ENABLED`) → `IntakeService.receive(SourceNote)` — per-source normalizers (+ date order), NAM-only patient resolution, dedup, `ExtractionQueue`; derived encounter status (`status.py`), `POST /intake/notes`/`/intake/upload`. Never imports `ramq_codes` |
 | `encounters/` | the inbox: `/encounters` (list over a service-date range, with derived status + `all_clean`, detail with latest run, manual patient pick, on-demand extract, "doublon possible" flags derived over the listed encounters + the physician's confirm/dismiss); wires `IntakeService` to the extraction pipeline |
 | `dashboard/` | `GET /dashboard` — the landing page's read-only summary over the inbox's derived rows: to-do counts, unbilled work near RAMQ's 90-day billing deadline (`deadline.py`), draft/billed totals, weekly activity, latest encounters. Today comes from `get_clock` |

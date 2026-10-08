@@ -1,4 +1,4 @@
-from app.llm import get_embedding_model
+from app.llm import get_embedding_client
 from app.ramq_codes.retriever import RAMQCodesRetriever
 from app.lancedb import ICodeRepository
 from app.ramq_codes.converter import CodesRowConverter
@@ -6,4 +6,4 @@ from app.ramq_codes.converter import CodesRowConverter
 
 def build_ramq_retriever(codes: ICodeRepository) -> RAMQCodesRetriever:
     """The ICodesRetriever BillingCodesTask is constructed with (see app/tasks/registry.py)."""
-    return RAMQCodesRetriever(codes, get_embedding_model(), CodesRowConverter())
+    return RAMQCodesRetriever(codes, get_embedding_client(), CodesRowConverter())
