@@ -183,12 +183,23 @@ uv run pytest
 
 To try it against the real Mistral API once `LLM_API_KEY`, `EMBEDDING_API_KEY` and `DB_PATH` are configured,
 `scripts/try_extraction.py` runs the pipeline against a sample transcript pulled from
-`consultations/` (see "Layout" above), and `scripts/eval_extraction.py` scores retrieval and
-selection against a hand-labeled set (default `tests/fixtures/eval_billing_codes.jsonl`, still
-a draft pending physician labeling):
+`consultations/` (see "Layout" above):
 
 ```bash
 uv run python scripts/try_extraction.py
+```
+
+To measure the pipeline, `scripts/benchmark.py` runs it stage by stage over every labeled note
+(`tests/fixtures/eval_billing_codes.jsonl`, best-effort labels pending physician review). Each
+note's summary and retrieval result go under `backend/benchmarks/runs/<name>/`, along with the
+tokens and latency of every chat and embedding call. `report` then scores a run against the
+labels, optionally compared note by note with a baseline run:
+
+```bash
+uv run python scripts/benchmark.py run --name mistral-base           # summary + retrieval
+uv run python scripts/benchmark.py sweep --summaries-from mistral-base \
+    --similarity-top-k 20,30,40 --fused-top-k 40,60                    # no chat call, cached embeddings
+uv run python scripts/benchmark.py report <run> --baseline mistral-base
 ```
 
 Storage defaults to a local SQLite file (`backend/nomiamd.db`); set `DATABASE_URL` to point

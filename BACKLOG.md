@@ -66,6 +66,9 @@
 - [ ] 🟢 Prompt injection surface is unhardened — *added 8/19, from codebase audit*
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
+- [ ] 🟢 Lance prints a deprecation warning on every hybrid code search — *added 10/8, from the benchmark work*
+  - `CodeRepository.hybrid_search` (`app/lancedb/repository.py`) selects explicit columns without `_score`/`_distance`, so lance logs "This search specified output columns but did not include `_score`… Call `disable_scoring_autoprojection`" to stderr on each query (several per extraction, dozens per benchmark run). `LANCE_LOG`/`RUST_LOG` don't silence it. Fix: call `disable_scoring_autoprojection()` on the hybrid query (check that the relevance score `hybrid_search` returns is still selected), and the same in `DocumentRepository.hybrid_search`.
+
 ## ✨ Features
 
 - [ ] 🟡 Seed demo encounters relative to today — *added 10/6, from the app demo polish*
@@ -82,7 +85,7 @@
   - The pricing page (`frontend/src/site/pricing.ts`) advertises a Gratuit plan limited to 1 extraction per day, but nothing enforces it. Needs a plan on `User` (or a dated plan history, like practice facts) and a daily quota check on `POST /extract` and in the extraction worker, counted per physician over the Montreal day (`Clock`), with a clear message in the app when the limit is reached.
 
 - [ ] 🟡 Retune `similarity_top_k`/`fused_top_k` for the full-manual codes table — *added 9/30, from the versioned-codes-table migration*
-  - `RAMQCodesRetriever` still uses `similarity_top_k=20`, `fused_top_k=40`, sized for the old 362-row, section-B-only table; `codes_2026-06-05` is 4,070 rows across B–V. The eligibility prefilter frees slots that ineligible variants used to take, but that's no substitute for measuring. Run `scripts/eval_extraction.py --retrieval-only` on 2+ cases (per the "a fix validated on one transcript can regress another" rule) before changing either number — `URG-2026-04512`'s `01320…` procedure codes can now appear at all.
+  - `RAMQCodesRetriever` still uses `similarity_top_k=20`, `fused_top_k=40`, sized for the old 362-row, section-B-only table; `codes_2026-06-05` is 4,070 rows across B–V. The eligibility prefilter frees slots that ineligible variants used to take, but that's no substitute for measuring. Measure with `scripts/benchmark.py sweep --summaries-from <run> --similarity-top-k … --fused-top-k …` over all labeled notes, and check `report --baseline` for per-note regressions (the "a fix validated on one transcript can regress another" rule) before changing either number — `URG-2026-04512`'s `01320…` procedure codes can now appear at all.
 
 - [ ] 🟡 Carry `manual_rev` on code results and claims — *added 9/30, deferred from the versioned-codes-table migration*
   - The `code_versions` registry names each table's `manual_rev`. Not carried anywhere yet: `CodeVersionRow` is read, but `Code`/`ExtractedCode`/`claim_codes` don't record which manual edition a suggestion came from.
