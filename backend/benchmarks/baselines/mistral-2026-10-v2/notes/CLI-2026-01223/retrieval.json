@@ -1,0 +1,863 @@
+{
+  "patient_id": "CLI-2026-01223",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 638,
+      "output_tokens": null,
+      "latency_ms": 358.05293699377216,
+      "started_at": "2026-10-08T15:43:40.678707Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 638,
+    "output_tokens": 0,
+    "llm_latency_ms": 358.05293699377216,
+    "wall_ms": 414.56343499885406
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15765",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15773",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "15789",
+          "relevance": 0.030621785670518875
+        },
+        {
+          "number": "15811",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "08776",
+          "relevance": 0.030414747074246407
+        },
+        {
+          "number": "08848",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "15790",
+          "relevance": 0.029571646824479103
+        },
+        {
+          "number": "08775",
+          "relevance": 0.0295138880610466
+        },
+        {
+          "number": "08777",
+          "relevance": 0.02803921513259411
+        },
+        {
+          "number": "15805",
+          "relevance": 0.02758360095322132
+        },
+        {
+          "number": "08819",
+          "relevance": 0.02744360826909542
+        },
+        {
+          "number": "15807",
+          "relevance": 0.027071520686149597
+        },
+        {
+          "number": "15809",
+          "relevance": 0.026685643941164017
+        },
+        {
+          "number": "08913",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15617",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08861",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15626",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15627",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09977",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation pour lombalgie mécanique aiguë chez un homme de 38 ans, apparue suite à un effort de soulèvement. Examen physique sans signe de radiculopathie ni drapeau rouge. Prise en charge avec analgésie, recommandations d'activité, arrêt de travail de 5 jours et référence en physiothérapie si nécessaire.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-03-17\nHeure de début: 08:50\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Douleur lombaire basse aiguë depuis 3 jours suite à un effort de soulèvement, cotée 6/10, aggravée par la flexion et la position assise, améliorée par le repos.\nSystèmes/régions concernés: musculo-squelettique; lombaire\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Lombalgie mécanique aiguë (entorse lombaire), sans signe de radiculopathie ni de drapeau rouge.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signe_vitaux; posture; palpation_paravertébrale; amplitude_articulaire_lombaire; neurologique_membres_inférieurs; Lasègue\nConstatations: Posture antalgique légère, sensibilité paravertébrale lombaire basse bilatérale, spasme musculaire palpable, amplitude articulaire limitée à 50% en flexion par la douleur, force 5/5 aux membres inférieurs, réflexes et sensibilité conservés, Lasègue négatif bilatéralement.\nAjouts possiblement facturables: arrêt_travail; formulaire_employeur\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Heure de fin de la consultation non indiquée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08775",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "08776",
+          "relevance": 0.029213955625891685
+        },
+        {
+          "number": "08777",
+          "relevance": 0.02904040366411209
+        },
+        {
+          "number": "06007",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "00999",
+          "relevance": 0.028612013906240463
+        },
+        {
+          "number": "06986",
+          "relevance": 0.028006266802549362
+        },
+        {
+          "number": "06987",
+          "relevance": 0.027619047090411186
+        },
+        {
+          "number": "15805",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08097",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00280",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15807",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00997",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15765",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15773",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00998",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09910",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00268",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08059",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15896",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09938",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "arrêt_travail",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09971",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "09973",
+          "relevance": 0.029386529698967934
+        },
+        {
+          "number": "06990",
+          "relevance": 0.026856524869799614
+        },
+        {
+          "number": "09942",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "09978",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04560",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09970",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15795",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00828",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09946",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00829",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06942",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09944",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06921",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09908",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00921",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09927",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09914",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06988",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09915",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "formulaire_employeur",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09971",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "09909",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "15888",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "15885",
+          "relevance": 0.02964254654943943
+        },
+        {
+          "number": "09101",
+          "relevance": 0.029236022382974625
+        },
+        {
+          "number": "09826",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "09929",
+          "relevance": 0.027799228206276894
+        },
+        {
+          "number": "09930",
+          "relevance": 0.02704678289592266
+        },
+        {
+          "number": "09928",
+          "relevance": 0.02699275314807892
+        },
+        {
+          "number": "15795",
+          "relevance": 0.025645241141319275
+        },
+        {
+          "number": "15618",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15265",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09973",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00023",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09825",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15160",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09820",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15886",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09978",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09100",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "09971",
+      "rrf_score": 0.03333333333333333,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 15. Assignation temporaire > A) Assignation temporaire",
+      "description": "Rémunération pour la rédaction complète de la partie du formulaire d'assignation temporaire où il est demandé au médecin de se prononcer sur le travail préalablement proposé par l'employeur, remise de la copie au travailleur et expédition sans délai du formulaire d'assignation temporaire prévu par la Commission ou identique à celui-ci, dans le cadre des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "08776",
+      "rrf_score": 0.032018442622950824,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "08775",
+      "rrf_score": 0.03159203980099502,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "08777",
+      "rrf_score": 0.030834914611005692,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15765",
+      "rrf_score": 0.030555555555555555,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "09973",
+      "rrf_score": 0.03028233151183971,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 15. Assignation temporaire > B) Certificat en cas d'exposition à un contaminant",
+      "description": "Rémunération pour la rédaction du formulaire attestant des signes d'altération de la santé du travailleur exposé à un contaminant ou une matière dangereuse et visant son affectation ou son retrait préventif, en vertu de la Loi sur la santé et la sécurité du travail, dans le cadre des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15773",
+      "rrf_score": 0.03009207275993712,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15805",
+      "rrf_score": 0.029418126757516764,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15795",
+      "rrf_score": 0.029418126757516764,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 20. Rapports pour les victimes d'actes criminels (IVAC) > A) ~~Attestation~~Évaluation médicale IVAC-CIVISME",
+      "description": "Rédaction et remise sans délai à la victime ou au sauveteur du formulaire d'évaluation médicale IVAC-CIVISME prescrit par la Commission, pour les victimes d'actes criminels, en vertu de la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "09978",
+      "rrf_score": 0.02844551282051282,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 1. évaluation faite à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Examen du travailleur, rédaction et expédition sans délai à la Commission du rapport d'évaluation médicale prescrit par un médecin désigné par la Commission, pour une évaluation faite à la demande de la Commission en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "09902",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 1. évaluation faite à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour un rapport d'évaluation médicale par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": "09978"
+    },
+    {
+      "rank": 12,
+      "number": "15807",
+      "rrf_score": 0.028370221327967807,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "09909",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 8. Rapport complémentaire",
+      "description": "Rédaction du formulaire prescrit par la Commission et expédition à celle-ci, dans les trente (30) jours de la réception du rapport du professionnel de la santé, pour un rapport complémentaire en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "15789",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "06990",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, samedi, dimanche ou un jour férié et de 19 h à 7 h du lundi au vendredi (excluant les jours fériés)",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "06989",
+      "rrf_score": 0.0,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, de 7 h à 19 h du lundi au vendredi (excluant les jours fériés)",
+      "expanded_from": "06990"
+    },
+    {
+      "rank": 17,
+      "number": "15888",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaire relatif à la sédation palliative continue",
+      "description": "Formulaire relatif à la sédation palliative continue : Avis de sédation palliative continue",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15811",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "06007",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "M — Appareil urinaire > Rein > Incision ou extraction",
+      "description": "Traitement chirurgical de hernie lombaire, rein",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "09942",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 16. Étude de dossiers particuliers > A) Nature du rapport",
+      "description": "Rémunération pour l'étude de dossier, la rédaction et l'expédition sans délai à la Commission d'un rapport médical, pour chaque médecin, dans le cadre de l'étude de dossiers particuliers visant à déterminer toute question relative notamment à la pathologie ou au décès du travailleur, qu'il s'agisse d'un accident du travail ou d'une maladie professionnelle, dans le cadre des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "15885",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire (partie 1) relatif à une demande d'aide médicale à mourir (médecin accompagnateur) : Demande du patient non finalisée",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "15886",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire et démarches afférentes relatifs à une demande d'aide médicale à mourir (parties 1, 2 et 3) (médecin accompagnateur) : Demande du patient finalisée",
+      "expanded_from": "15885"
+    },
+    {
+      "rank": 23,
+      "number": "15887",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Rapport de consultation relatif à une demande d'aide médicale à mourir (avis du second médecin)",
+      "expanded_from": "15885"
+    },
+    {
+      "rank": 24,
+      "number": "00999",
+      "rrf_score": 0.015625,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par bloc plexique, neuraxial (péridural ou rachidien), intrapleural, incluant les examens, les visites et les consultations, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, douleur aiguë ou douleur chronique, période de plus de 96 heures, par jour, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "09101",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié dans le cadre d'un examen d'évaluation médicale d'un patient en perte d'autonomie",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "09063",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie lorsqu'effectué à domicile",
+      "expanded_from": "09101"
+    },
+    {
+      "rank": 27,
+      "number": "09100",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié",
+      "expanded_from": "09101"
+    },
+    {
+      "rank": 28,
+      "number": "08848",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "06986",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 7 h à 19 h du lundi au vendredi (excluant un jour férié)",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "06988",
+      "rrf_score": 0.0,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 0 h à 7 h tous les jours",
+      "expanded_from": "06986"
+    },
+    {
+      "rank": 31,
+      "number": "04560",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Actes généraux > Hypothermie",
+      "description": "Emploi d'hypothermie profonde (<25º C) avec ou sans arrêt circulatoire, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "04518",
+      "rrf_score": 0.0,
+      "header_path": "J — Système cardiaque > Actes généraux > Hypothermie",
+      "description": "Perfusion cérébrale (antégrade ou rétrograde), supplément",
+      "expanded_from": "04560"
+    },
+    {
+      "rank": 33,
+      "number": "09826",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Santé et des Services sociaux",
+      "description": "Remplir le formulaire intitulé « réévaluation médicale » ou son équivalent pour un patient en vue d'un régime de protection public ou privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "09825",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Santé et des Services sociaux",
+      "description": "Remplir le formulaire intitulé « rapport du directeur-général - évaluation médicale » ou son équivalent pour un patient en vue d'un régime de protection public ou privé",
+      "expanded_from": "09826"
+    },
+    {
+      "rank": 35,
+      "number": "15790",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "06987",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 19 h à 24 h du lundi au vendredi (excluant un jour férié) et de 7 h à 24 h le samedi, dimanche ou un jour férié",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "09970",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > Certificat visant le retrait préventif et l'affectation de la travailleuse enceinte ou qui allaite",
+      "description": "Rédaction, remise de la copie à la travailleuse et expédition sans délai du certificat prescrit par la Commission visant l'affectation ou le retrait préventif de la travailleuse enceinte ou qui allaite, dans le cadre de la Loi sur la santé et la sécurité du travail",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "09929",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 5. Information médicale complémentaire écrite",
+      "description": "Information médicale complémentaire écrite d'un travailleur victime d'une lésion professionnelle, rédaction et expédition à la Commission dans les dix (10) jours de la réception de la demande du formulaire d'information médicale complémentaire écrite prescrit par la Commission",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "09930",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 4. Rapport final",
+      "description": "Rapport final d'un travailleur victime d'une lésion professionnelle, rédaction et expédition à la Commission dès que la lésion professionnelle du travailleur est consolidée du formulaire de rapport final prescrit par la Commission",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "08097",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires",
+      "description": "Myélographie (colonne), incluant la ponction lombaire, avec contraste non ionique, en examen spécial incluant la scopie",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "08096",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires",
+      "description": "Myélographie (colonne), incluant la ponction lombaire, avec contraste huileux, en examen spécial incluant la scopie",
+      "expanded_from": "08097"
+    },
+    {
+      "rank": 42,
+      "number": "00828",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Réanimation",
+      "description": "Réanimation, premier quart d'heure",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "09928",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 3. Rapport d'évolution",
+      "description": "Rapport d'évolution d'un travailleur victime d'une lésion professionnelle, rédaction et expédition immédiate à la Commission du formulaire d'évolution prescrit par la Commission",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "00280",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques",
+      "description": "Bloc paravertébral de nerf somatique sous scopie d'un patient (thoracique, lombaire ou cervical), incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "09946",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport d'évaluation médicale prescrit par un médecin désigné par la Commission, pour une évaluation faite en urgence en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "09980",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": "09946"
+    },
+    {
+      "rank": 47,
+      "number": "08819",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "00829",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Réanimation",
+      "description": "Réanimation, chaque quart d'heure supplémentaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "15618",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Rédaction du formulaire du niveau d'intervention médicale (NIM) dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "00997",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par bloc plexique, neuraxial (péridural ou rachidien), intrapleural, incluant les examens, les visites et les consultations, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, douleur aiguë ou douleur chronique, période de 24 heures ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "06942",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "Q — Obstétrique",
+      "description": "Stress test (vérification durant le troisième trimestre de l'état du foetus, de sa tolérance, de ses réserves à la suite du déclenchement de contractions utérines) (en établissement seulement)",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "15809",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "08913",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "98010",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15617",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "08861",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "description": "Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "15626",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "15627",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "09977",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément lorsque le médecin rend son avis en cabinet privé pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 38,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 359.74155001167674,
+  "db_ms": 44.87606300972402
+}

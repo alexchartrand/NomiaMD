@@ -1,0 +1,97 @@
+{
+  "patient_id": "GMF-2026-00312",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1845,
+      "output_tokens": 481,
+      "latency_ms": 3175.020933005726,
+      "started_at": "2026-10-08T15:44:05.213597Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1845,
+    "output_tokens": 481,
+    "llm_latency_ms": 3175.020933005726,
+    "wall_ms": 3175.4147350002313
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Séance de psychothérapie cognitivo-comportementale (TCC) de 45 minutes pour trouble dépressif majeur, 4e séance d'une série structurée. Revue des devoirs, restructuration cognitive et activation comportementale réalisées. Pas de changement de médication ni de nouvelle évaluation.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-09-17",
+      "time_start": "14:00",
+      "time_end": "14:45",
+      "duration_minutes": 45.0,
+      "duration_explicitly_stated": true,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Séance de psychothérapie (TCC) n°4 pour trouble dépressif majeur",
+      "systems_or_body_regions_involved": [
+        "psychiatrique"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "trouble dépressif majeur en amélioration (PHQ-9 passé de 16 à 9)",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": false,
+      "regions_or_systems_examined": [],
+      "notable_findings": null
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Le type de psychothérapie (TCC) est-il couvert par un code spécifique pour la RAMQ ?",
+      "La durée de 45 minutes est-elle facturable comme séance standard ou nécessite-t-elle un code particulier ?"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-17",
+      "actual": "2026-09-17"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:00",
+      "actual": "14:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 1,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": true
+  }
+}

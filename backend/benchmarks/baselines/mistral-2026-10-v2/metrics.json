@@ -1,0 +1,2601 @@
+{
+  "metrics": {
+    "summary": {
+      "notes": 58,
+      "errors": 0,
+      "error_types": {},
+      "checks": {
+        "date": {
+          "passed": 58,
+          "applicable": 58,
+          "rate": 1.0
+        },
+        "time_start": {
+          "passed": 57,
+          "applicable": 58,
+          "rate": 0.9827586206896551
+        }
+      },
+      "stats_mean": {
+        "add_ons": 0.3793103448275862,
+        "duration_stated": 0.06896551724137931,
+        "pregnancy": 0.05172413793103448,
+        "procedures": 0.7586206896551724,
+        "referral": 0.20689655172413793,
+        "systems": 2.810344827586207,
+        "uncertain_items": 1.9482758620689655
+      }
+    },
+    "retrieval": {
+      "notes": 58,
+      "expected_positions": 75,
+      "status_counts": {
+        "exact": 66,
+        "family_only": 0,
+        "ineligible": 9,
+        "not_in_table": 0,
+        "not_retrieved": 0
+      },
+      "recall_at": {
+        "5": 0.44,
+        "10": 0.5866666666666667,
+        "20": 0.7333333333333333,
+        "40": 0.8266666666666667
+      },
+      "exact_recall": 0.88,
+      "mrr": 0.28854896751602915,
+      "mean_candidates": 56.310344827586206,
+      "mean_queries": 3.896551724137931,
+      "errors": 0
+    },
+    "retrieval_by_difficulty": {
+      "easy": {
+        "notes": 10,
+        "expected_positions": 10,
+        "status_counts": {
+          "exact": 9,
+          "family_only": 0,
+          "ineligible": 1,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.7,
+          "10": 0.8,
+          "20": 0.9,
+          "40": 0.9
+        },
+        "exact_recall": 0.9,
+        "mrr": 0.5058333333333334,
+        "mean_candidates": 44.6,
+        "mean_queries": 2.2,
+        "errors": 0
+      },
+      "hard": {
+        "notes": 8,
+        "expected_positions": 16,
+        "status_counts": {
+          "exact": 12,
+          "family_only": 0,
+          "ineligible": 4,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.1875,
+          "10": 0.375,
+          "20": 0.5,
+          "40": 0.625
+        },
+        "exact_recall": 0.75,
+        "mrr": 0.1315019615800866,
+        "mean_candidates": 59.625,
+        "mean_queries": 6.375,
+        "errors": 0
+      },
+      "medium": {
+        "notes": 12,
+        "expected_positions": 22,
+        "status_counts": {
+          "exact": 21,
+          "family_only": 0,
+          "ineligible": 1,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.36363636363636365,
+          "10": 0.5454545454545454,
+          "20": 0.7727272727272727,
+          "40": 0.9545454545454546
+        },
+        "exact_recall": 0.9545454545454546,
+        "mrr": 0.2001288587331919,
+        "mean_candidates": 62.416666666666664,
+        "mean_queries": 4.0,
+        "errors": 0
+      },
+      "negative": {
+        "notes": 3,
+        "expected_positions": 0,
+        "status_counts": {
+          "exact": 0,
+          "family_only": 0,
+          "ineligible": 0,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.0,
+          "10": 0.0,
+          "20": 0.0,
+          "40": 0.0
+        },
+        "exact_recall": 0.0,
+        "mrr": 0.0,
+        "mean_candidates": 42.666666666666664,
+        "mean_queries": 2.3333333333333335,
+        "errors": 0
+      },
+      "original": {
+        "notes": 25,
+        "expected_positions": 27,
+        "status_counts": {
+          "exact": 24,
+          "family_only": 0,
+          "ineligible": 3,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.5555555555555556,
+          "10": 0.6666666666666666,
+          "20": 0.7777777777777778,
+          "40": 0.8148148148148148
+        },
+        "exact_recall": 0.8888888888888888,
+        "mrr": 0.37318418344286103,
+        "mean_candidates": 58.64,
+        "mean_queries": 3.92,
+        "errors": 0
+      }
+    },
+    "retrieval_by_label_status": {
+      "draft-unverified": {
+        "notes": 41,
+        "expected_positions": 54,
+        "status_counts": {
+          "exact": 50,
+          "family_only": 0,
+          "ineligible": 4,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.5,
+          "10": 0.6851851851851852,
+          "20": 0.8333333333333334,
+          "40": 0.8888888888888888
+        },
+        "exact_recall": 0.9259259259259259,
+        "mrr": 0.353071411900955,
+        "mean_candidates": 53.63414634146341,
+        "mean_queries": 3.3658536585365852,
+        "errors": 0
+      },
+      "reviewed": {
+        "notes": 14,
+        "expected_positions": 17,
+        "status_counts": {
+          "exact": 13,
+          "family_only": 0,
+          "ineligible": 4,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.29411764705882354,
+          "10": 0.35294117647058826,
+          "20": 0.47058823529411764,
+          "40": 0.7058823529411765
+        },
+        "exact_recall": 0.7647058823529411,
+        "mrr": 0.1354245238732905,
+        "mean_candidates": 63.07142857142857,
+        "mean_queries": 4.928571428571429,
+        "errors": 0
+      },
+      "to_review": {
+        "notes": 3,
+        "expected_positions": 4,
+        "status_counts": {
+          "exact": 3,
+          "family_only": 0,
+          "ineligible": 1,
+          "not_in_table": 0,
+          "not_retrieved": 0
+        },
+        "recall_at": {
+          "5": 0.25,
+          "10": 0.25,
+          "20": 0.5,
+          "40": 0.5
+        },
+        "exact_recall": 0.75,
+        "mrr": 0.0682748538011696,
+        "mean_candidates": 61.333333333333336,
+        "mean_queries": 6.333333333333333,
+        "errors": 0
+      }
+    },
+    "calls": [
+      {
+        "stage": "retrieval",
+        "kind": "embedding",
+        "purpose": "billing_codes.retrieval",
+        "model": "mistral-embed",
+        "cached": false,
+        "calls": 52,
+        "errors": 0,
+        "input_tokens": 36219,
+        "output_tokens": 0,
+        "mean_input_tokens": 696.5192307692307,
+        "mean_output_tokens": 0.0,
+        "latency_ms": {
+          "n": 52,
+          "mean": 430.27783609571856,
+          "p50": 375.2680239995243,
+          "p95": 794.9497279914794,
+          "max": 1164.3784979969496
+        }
+      },
+      {
+        "stage": "retrieval",
+        "kind": "embedding",
+        "purpose": "billing_codes.retrieval",
+        "model": "mistral-embed",
+        "cached": true,
+        "calls": 6,
+        "errors": 0,
+        "input_tokens": 3460,
+        "output_tokens": 0,
+        "mean_input_tokens": 576.6666666666666,
+        "mean_output_tokens": 0.0,
+        "latency_ms": {
+          "n": 6,
+          "mean": 0.432229998599117,
+          "p50": 0.41271500231232494,
+          "p95": 0.581294996663928,
+          "max": 0.581294996663928
+        }
+      },
+      {
+        "stage": "summary",
+        "kind": "chat",
+        "purpose": "consultation_summary",
+        "model": "mistral-small-latest",
+        "cached": false,
+        "calls": 58,
+        "errors": 0,
+        "input_tokens": 119250,
+        "output_tokens": 36672,
+        "mean_input_tokens": 2056.0344827586205,
+        "mean_output_tokens": 632.2758620689655,
+        "latency_ms": {
+          "n": 58,
+          "mean": 3947.3276302754853,
+          "p50": 3799.3479930009926,
+          "p95": 5605.4523670027265,
+          "max": 5880.664061987773
+        }
+      }
+    ],
+    "stage_wall_ms": {
+      "summary": {
+        "n": 58,
+        "mean": 3947.674819637855,
+        "p50": 3799.6985019999556,
+        "p95": 5606.311145005748,
+        "max": 5880.93392799783
+      },
+      "retrieval": {
+        "n": 58,
+        "mean": 438.294175638193,
+        "p50": 402.22768900275696,
+        "p95": 840.5078270006925,
+        "max": 1239.4578870007535
+      }
+    }
+  },
+  "scores": [
+    {
+      "patient_id": "URG-2026-04471",
+      "difficulty": "original",
+      "label_status": "to_review",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15058",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 61,
+      "query_count": 11,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04512",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "01323",
+          "status": "exact",
+          "rank": 13,
+          "best_query_source": "overview",
+          "best_query_rank": 5
+        },
+        {
+          "code": "15052",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 74,
+      "query_count": 6,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04538",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15058",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 86,
+      "query_count": 8,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01187",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15823",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "overview",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 61,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01203",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15803",
+          "status": "exact",
+          "rank": 32,
+          "best_query_source": "visit",
+          "best_query_rank": 11
+        }
+      ],
+      "candidate_count": 80,
+      "query_count": 6,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01220",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15801",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 48,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01221",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15803",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 43,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00301",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15805",
+          "status": "exact",
+          "rank": 3,
+          "best_query_source": "visit",
+          "best_query_rank": 3
+        }
+      ],
+      "candidate_count": 40,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00302",
+      "difficulty": "original",
+      "label_status": "to_review",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15144",
+          "status": "exact",
+          "rank": 18,
+          "best_query_source": "overview",
+          "best_query_rank": 7
+        },
+        {
+          "code": "15811",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "overview",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 57,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00303",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15813",
+          "status": "exact",
+          "rank": 7,
+          "best_query_source": "overview",
+          "best_query_rank": 5
+        }
+      ],
+      "candidate_count": 53,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01222",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15767",
+          "status": "exact",
+          "rank": 2,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 61,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01223",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15765",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 59,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01224",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15803",
+          "status": "exact",
+          "rank": 2,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 54,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01225",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "08777",
+          "status": "exact",
+          "rank": 20,
+          "best_query_source": "visit",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 66,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01226",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15765",
+          "status": "exact",
+          "rank": 62,
+          "best_query_source": "visit",
+          "best_query_rank": 11
+        }
+      ],
+      "candidate_count": 72,
+      "query_count": 7,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00304",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15790",
+          "status": "exact",
+          "rank": 3,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 62,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01227",
+      "difficulty": "original",
+      "label_status": "to_review",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "08857",
+          "status": "exact",
+          "rank": 57,
+          "best_query_source": "visit",
+          "best_query_rank": 11
+        }
+      ],
+      "candidate_count": 66,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01228",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15803",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 42,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00305",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15783",
+          "status": "exact",
+          "rank": 3,
+          "best_query_source": "overview",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 56,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00306",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15839",
+          "status": "exact",
+          "rank": 7,
+          "best_query_source": "visit",
+          "best_query_rank": 3
+        }
+      ],
+      "candidate_count": 60,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01229",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15803",
+          "status": "exact",
+          "rank": 7,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 48,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00307",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15188",
+          "status": "exact",
+          "rank": 2,
+          "best_query_source": "add_on",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15823",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "overview",
+          "best_query_rank": 3
+        }
+      ],
+      "candidate_count": 64,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01230",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": true,
+      "outcomes": [],
+      "candidate_count": 56,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "TEL-2026-00090",
+      "difficulty": "original",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15765",
+          "status": "exact",
+          "rank": 2,
+          "best_query_source": "visit",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 56,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01231",
+      "difficulty": "original",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15823",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 41,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00410",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15804",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 29,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00311",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15823",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 38,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01240",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15765",
+          "status": "exact",
+          "rank": 3,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 81,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01241",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15837",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 45,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00411",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15802",
+          "status": "exact",
+          "rank": 3,
+          "best_query_source": "visit",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 34,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00051",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15616",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 38,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00731",
+      "difficulty": "easy",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15639",
+          "status": "exact",
+          "rank": 15,
+          "best_query_source": "visit",
+          "best_query_rank": 8
+        }
+      ],
+      "candidate_count": 46,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04620",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15052",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 58,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "DOM-2026-00021",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15783",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "overview",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 37,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CLSC-2026-00133",
+      "difficulty": "easy",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15812",
+          "status": "exact",
+          "rank": 8,
+          "best_query_source": "overview",
+          "best_query_rank": 3
+        }
+      ],
+      "candidate_count": 40,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00412",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "00341",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "procedure",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15804",
+          "status": "exact",
+          "rank": 4,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 58,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01242",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "01323",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "overview",
+          "best_query_rank": 2
+        },
+        {
+          "code": "15765",
+          "status": "exact",
+          "rank": 19,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 67,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00312",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15785",
+          "status": "exact",
+          "rank": 7,
+          "best_query_source": "overview",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15786",
+          "status": "exact",
+          "rank": 23,
+          "best_query_source": "overview",
+          "best_query_rank": 10
+        }
+      ],
+      "candidate_count": 48,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00413",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "00431",
+          "status": "exact",
+          "rank": 9,
+          "best_query_source": "procedure",
+          "best_query_rank": 4
+        },
+        {
+          "code": "15804",
+          "status": "exact",
+          "rank": 17,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 66,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01243",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "01005",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "procedure",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15765",
+          "status": "exact",
+          "rank": 13,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 84,
+      "query_count": 5,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00052",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15615",
+          "status": "exact",
+          "rank": 8,
+          "best_query_source": "overview",
+          "best_query_rank": 2
+        },
+        {
+          "code": "15618",
+          "status": "exact",
+          "rank": 6,
+          "best_query_source": "overview",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 50,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00053",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15617",
+          "status": "exact",
+          "rank": 27,
+          "best_query_source": "visit",
+          "best_query_rank": 5
+        },
+        {
+          "code": "15624",
+          "status": "exact",
+          "rank": 20,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 63,
+      "query_count": 5,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00732",
+      "difficulty": "medium",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15638",
+          "status": "exact",
+          "rank": 37,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 73,
+      "query_count": 7,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00733",
+      "difficulty": "medium",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15158",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "visit",
+          "best_query_rank": 9
+        },
+        {
+          "code": "15639",
+          "status": "exact",
+          "rank": 27,
+          "best_query_source": "visit",
+          "best_query_rank": 8
+        }
+      ],
+      "candidate_count": 58,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04621",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "01323",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "overview",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15059",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 62,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "DOM-2026-00022",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "00344",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "procedure_detail",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15781",
+          "status": "exact",
+          "rank": 11,
+          "best_query_source": "overview",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 62,
+      "query_count": 5,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00414",
+      "difficulty": "medium",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "08848",
+          "status": "exact",
+          "rank": 3,
+          "best_query_source": "overview",
+          "best_query_rank": 2
+        }
+      ],
+      "candidate_count": 58,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00313",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15803",
+          "status": "exact",
+          "rank": 22,
+          "best_query_source": "overview",
+          "best_query_rank": 6
+        }
+      ],
+      "candidate_count": 50,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01244",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "00215",
+          "status": "exact",
+          "rank": 45,
+          "best_query_source": "procedure",
+          "best_query_rank": 1
+        },
+        {
+          "code": "01166",
+          "status": "exact",
+          "rank": 44,
+          "best_query_source": "procedure_detail",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15803",
+          "status": "exact",
+          "rank": 16,
+          "best_query_source": "visit",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 70,
+      "query_count": 9,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04622",
+      "difficulty": "hard",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15054",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        },
+        {
+          "code": "15060",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        },
+        {
+          "code": "15637",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 76,
+      "query_count": 15,
+      "error": null
+    },
+    {
+      "patient_id": "CHSLD-2026-00054",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "00014",
+          "status": "exact",
+          "rank": 4,
+          "best_query_source": "procedure",
+          "best_query_rank": 2
+        },
+        {
+          "code": "15265",
+          "status": "exact",
+          "rank": 9,
+          "best_query_source": "procedure",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15622",
+          "status": "exact",
+          "rank": 11,
+          "best_query_source": "overview",
+          "best_query_rank": 9
+        }
+      ],
+      "candidate_count": 60,
+      "query_count": 7,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00314",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15188",
+          "status": "exact",
+          "rank": 8,
+          "best_query_source": "add_on",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15821",
+          "status": "exact",
+          "rank": 1,
+          "best_query_source": "visit",
+          "best_query_rank": 3
+        }
+      ],
+      "candidate_count": 56,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01245",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "00205",
+          "status": "exact",
+          "rank": 5,
+          "best_query_source": "overview",
+          "best_query_rank": 1
+        }
+      ],
+      "candidate_count": 51,
+      "query_count": 4,
+      "error": null
+    },
+    {
+      "patient_id": "HOP-2026-00734",
+      "difficulty": "hard",
+      "label_status": "reviewed",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15641",
+          "status": "exact",
+          "rank": 7,
+          "best_query_source": "overview",
+          "best_query_rank": 1
+        },
+        {
+          "code": "15643",
+          "status": "exact",
+          "rank": 32,
+          "best_query_source": "overview",
+          "best_query_rank": 15
+        }
+      ],
+      "candidate_count": 40,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "URG-2026-04623",
+      "difficulty": "hard",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": false,
+      "outcomes": [
+        {
+          "code": "15064",
+          "status": "ineligible",
+          "rank": null,
+          "best_query_source": null,
+          "best_query_rank": null
+        }
+      ],
+      "candidate_count": 74,
+      "query_count": 9,
+      "error": null
+    },
+    {
+      "patient_id": "CLI-2026-01246",
+      "difficulty": "negative",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": true,
+      "outcomes": [],
+      "candidate_count": 51,
+      "query_count": 3,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00415",
+      "difficulty": "negative",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": true,
+      "outcomes": [],
+      "candidate_count": 42,
+      "query_count": 2,
+      "error": null
+    },
+    {
+      "patient_id": "GMF-2026-00315",
+      "difficulty": "negative",
+      "label_status": "draft-unverified",
+      "is_labeled_negative": true,
+      "outcomes": [],
+      "candidate_count": 35,
+      "query_count": 2,
+      "error": null
+    }
+  ],
+  "comparison": {
+    "baseline": "mistral-base",
+    "candidate": "mistral-2026-10-v2",
+    "notes": [
+      {
+        "patient_id": "GMF-2026-00312",
+        "difficulty": "medium",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "15785",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 7,
+            "change": "regressed"
+          },
+          {
+            "code": "15786",
+            "before_status": "exact",
+            "before_rank": 3,
+            "after_status": "exact",
+            "after_rank": 23,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 31,
+        "after_candidates": 48
+      },
+      {
+        "patient_id": "CHSLD-2026-00052",
+        "difficulty": "medium",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "15615",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 8,
+            "change": "regressed"
+          },
+          {
+            "code": "15618",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 6,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 50
+      },
+      {
+        "patient_id": "DOM-2026-00022",
+        "difficulty": "medium",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "00344",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "unchanged"
+          },
+          {
+            "code": "15781",
+            "before_status": "exact",
+            "before_rank": 3,
+            "after_status": "exact",
+            "after_rank": 11,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 38,
+        "after_candidates": 62
+      },
+      {
+        "patient_id": "CLSC-2026-00133",
+        "difficulty": "easy",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "15812",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 8,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 40
+      },
+      {
+        "patient_id": "GMF-2026-00302",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "15144",
+            "before_status": "exact",
+            "before_rank": 15,
+            "after_status": "exact",
+            "after_rank": 18,
+            "change": "regressed"
+          },
+          {
+            "code": "15811",
+            "before_status": "exact",
+            "before_rank": 3,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 57
+      },
+      {
+        "patient_id": "GMF-2026-00306",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "15839",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 7,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 60
+      },
+      {
+        "patient_id": "CLI-2026-01243",
+        "difficulty": "medium",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "01005",
+            "before_status": "exact",
+            "before_rank": 3,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "regressed"
+          },
+          {
+            "code": "15765",
+            "before_status": "exact",
+            "before_rank": 11,
+            "after_status": "exact",
+            "after_rank": 13,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 33,
+        "after_candidates": 84
+      },
+      {
+        "patient_id": "DOM-2026-00021",
+        "difficulty": "easy",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "15783",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 37
+      },
+      {
+        "patient_id": "CLI-2026-01245",
+        "difficulty": "hard",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "00205",
+            "before_status": "exact",
+            "before_rank": 3,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 31,
+        "after_candidates": 51
+      },
+      {
+        "patient_id": "GMF-2026-00412",
+        "difficulty": "medium",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "00341",
+            "before_status": "exact",
+            "before_rank": 5,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "unchanged"
+          },
+          {
+            "code": "15804",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 4,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 39,
+        "after_candidates": 58
+      },
+      {
+        "patient_id": "GMF-2026-00303",
+        "difficulty": "original",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "15813",
+            "before_status": "exact",
+            "before_rank": 6,
+            "after_status": "exact",
+            "after_rank": 7,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 32,
+        "after_candidates": 53
+      },
+      {
+        "patient_id": "GMF-2026-00414",
+        "difficulty": "medium",
+        "verdict": "regressed",
+        "changes": [
+          {
+            "code": "08848",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 3,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 58
+      },
+      {
+        "patient_id": "GMF-2026-00413",
+        "difficulty": "medium",
+        "verdict": "mixed",
+        "changes": [
+          {
+            "code": "00431",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 9,
+            "change": "improved"
+          },
+          {
+            "code": "15804",
+            "before_status": "exact",
+            "before_rank": 12,
+            "after_status": "exact",
+            "after_rank": 17,
+            "change": "regressed"
+          }
+        ],
+        "before_candidates": 29,
+        "after_candidates": 66
+      },
+      {
+        "patient_id": "CLI-2026-01244",
+        "difficulty": "hard",
+        "verdict": "mixed",
+        "changes": [
+          {
+            "code": "00215",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 45,
+            "change": "improved"
+          },
+          {
+            "code": "01166",
+            "before_status": "exact",
+            "before_rank": 22,
+            "after_status": "exact",
+            "after_rank": 44,
+            "change": "regressed"
+          },
+          {
+            "code": "15803",
+            "before_status": "exact",
+            "before_rank": 31,
+            "after_status": "exact",
+            "after_rank": 16,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 70
+      },
+      {
+        "patient_id": "CLI-2026-01242",
+        "difficulty": "medium",
+        "verdict": "mixed",
+        "changes": [
+          {
+            "code": "01323",
+            "before_status": "exact",
+            "before_rank": 4,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "regressed"
+          },
+          {
+            "code": "15765",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 19,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 30,
+        "after_candidates": 67
+      },
+      {
+        "patient_id": "HOP-2026-00734",
+        "difficulty": "hard",
+        "verdict": "mixed",
+        "changes": [
+          {
+            "code": "15641",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 7,
+            "change": "regressed"
+          },
+          {
+            "code": "15643",
+            "before_status": "family_only",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 32,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 40
+      },
+      {
+        "patient_id": "GMF-2026-00314",
+        "difficulty": "hard",
+        "verdict": "mixed",
+        "changes": [
+          {
+            "code": "15188",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 8,
+            "change": "regressed"
+          },
+          {
+            "code": "15821",
+            "before_status": "exact",
+            "before_rank": 16,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 56
+      },
+      {
+        "patient_id": "GMF-2026-00307",
+        "difficulty": "original",
+        "verdict": "mixed",
+        "changes": [
+          {
+            "code": "15188",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 2,
+            "change": "regressed"
+          },
+          {
+            "code": "15823",
+            "before_status": "exact",
+            "before_rank": 6,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 64
+      },
+      {
+        "patient_id": "CLI-2026-01222",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15767",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 2,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 39,
+        "after_candidates": 61
+      },
+      {
+        "patient_id": "GMF-2026-00304",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15790",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 3,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 62
+      },
+      {
+        "patient_id": "URG-2026-04512",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "01323",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 13,
+            "change": "improved"
+          },
+          {
+            "code": "15052",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 74
+      },
+      {
+        "patient_id": "HOP-2026-00731",
+        "difficulty": "easy",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15639",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 15,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 46
+      },
+      {
+        "patient_id": "CLI-2026-01225",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "08777",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 20,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 66
+      },
+      {
+        "patient_id": "GMF-2026-00313",
+        "difficulty": "hard",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15803",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 22,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 50
+      },
+      {
+        "patient_id": "CLI-2026-01203",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15803",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 32,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 80
+      },
+      {
+        "patient_id": "HOP-2026-00732",
+        "difficulty": "medium",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15638",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 37,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 73
+      },
+      {
+        "patient_id": "CLI-2026-01226",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15765",
+            "before_status": "not_retrieved",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 62,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 72
+      },
+      {
+        "patient_id": "CHSLD-2026-00053",
+        "difficulty": "medium",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15617",
+            "before_status": "family_only",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 27,
+            "change": "improved"
+          },
+          {
+            "code": "15624",
+            "before_status": "family_only",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 20,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 63
+      },
+      {
+        "patient_id": "HOP-2026-00733",
+        "difficulty": "medium",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15158",
+            "before_status": "exact",
+            "before_rank": 17,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "improved"
+          },
+          {
+            "code": "15639",
+            "before_status": "family_only",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 27,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 38,
+        "after_candidates": 58
+      },
+      {
+        "patient_id": "CLI-2026-01227",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "08857",
+            "before_status": "family_only",
+            "before_rank": null,
+            "after_status": "exact",
+            "after_rank": 57,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 36,
+        "after_candidates": 66
+      },
+      {
+        "patient_id": "CLI-2026-01223",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15765",
+            "before_status": "exact",
+            "before_rank": 28,
+            "after_status": "exact",
+            "after_rank": 5,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 59
+      },
+      {
+        "patient_id": "CHSLD-2026-00054",
+        "difficulty": "hard",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "00014",
+            "before_status": "exact",
+            "before_rank": 5,
+            "after_status": "exact",
+            "after_rank": 4,
+            "change": "improved"
+          },
+          {
+            "code": "15265",
+            "before_status": "exact",
+            "before_rank": 10,
+            "after_status": "exact",
+            "after_rank": 9,
+            "change": "improved"
+          },
+          {
+            "code": "15622",
+            "before_status": "exact",
+            "before_rank": 29,
+            "after_status": "exact",
+            "after_rank": 11,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 60
+      },
+      {
+        "patient_id": "GMF-2026-00411",
+        "difficulty": "easy",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15802",
+            "before_status": "exact",
+            "before_rank": 23,
+            "after_status": "exact",
+            "after_rank": 3,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 34
+      },
+      {
+        "patient_id": "CLI-2026-01228",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15803",
+            "before_status": "exact",
+            "before_rank": 17,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 37,
+        "after_candidates": 42
+      },
+      {
+        "patient_id": "CLI-2026-01231",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15823",
+            "before_status": "exact",
+            "before_rank": 16,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 39,
+        "after_candidates": 41
+      },
+      {
+        "patient_id": "CLI-2026-01240",
+        "difficulty": "easy",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15765",
+            "before_status": "exact",
+            "before_rank": 12,
+            "after_status": "exact",
+            "after_rank": 3,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 39,
+        "after_candidates": 81
+      },
+      {
+        "patient_id": "CHSLD-2026-00051",
+        "difficulty": "easy",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15616",
+            "before_status": "exact",
+            "before_rank": 7,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 38
+      },
+      {
+        "patient_id": "CLI-2026-01224",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15803",
+            "before_status": "exact",
+            "before_rank": 5,
+            "after_status": "exact",
+            "after_rank": 2,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 54
+      },
+      {
+        "patient_id": "GMF-2026-00311",
+        "difficulty": "easy",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15823",
+            "before_status": "exact",
+            "before_rank": 4,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 38
+      },
+      {
+        "patient_id": "URG-2026-04621",
+        "difficulty": "medium",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "01323",
+            "before_status": "exact",
+            "before_rank": 4,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          },
+          {
+            "code": "15059",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 34,
+        "after_candidates": 62
+      },
+      {
+        "patient_id": "CLI-2026-01229",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15803",
+            "before_status": "exact",
+            "before_rank": 9,
+            "after_status": "exact",
+            "after_rank": 7,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 48
+      },
+      {
+        "patient_id": "CLI-2026-01220",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15801",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 48
+      },
+      {
+        "patient_id": "GMF-2026-00301",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15805",
+            "before_status": "exact",
+            "before_rank": 4,
+            "after_status": "exact",
+            "after_rank": 3,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 40
+      },
+      {
+        "patient_id": "GMF-2026-00305",
+        "difficulty": "original",
+        "verdict": "improved",
+        "changes": [
+          {
+            "code": "15783",
+            "before_status": "exact",
+            "before_rank": 4,
+            "after_status": "exact",
+            "after_rank": 3,
+            "change": "improved"
+          }
+        ],
+        "before_candidates": 39,
+        "after_candidates": 56
+      },
+      {
+        "patient_id": "CLI-2026-01187",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15823",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 61
+      },
+      {
+        "patient_id": "CLI-2026-01221",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15803",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 43
+      },
+      {
+        "patient_id": "CLI-2026-01230",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "changes": [],
+        "before_candidates": 35,
+        "after_candidates": 56
+      },
+      {
+        "patient_id": "CLI-2026-01241",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15837",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 45
+      },
+      {
+        "patient_id": "CLI-2026-01246",
+        "difficulty": "negative",
+        "verdict": "unchanged",
+        "changes": [],
+        "before_candidates": 37,
+        "after_candidates": 51
+      },
+      {
+        "patient_id": "GMF-2026-00315",
+        "difficulty": "negative",
+        "verdict": "unchanged",
+        "changes": [],
+        "before_candidates": 20,
+        "after_candidates": 35
+      },
+      {
+        "patient_id": "GMF-2026-00410",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15804",
+            "before_status": "exact",
+            "before_rank": 1,
+            "after_status": "exact",
+            "after_rank": 1,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 29
+      },
+      {
+        "patient_id": "GMF-2026-00415",
+        "difficulty": "negative",
+        "verdict": "unchanged",
+        "changes": [],
+        "before_candidates": 20,
+        "after_candidates": 42
+      },
+      {
+        "patient_id": "TEL-2026-00090",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15765",
+            "before_status": "exact",
+            "before_rank": 2,
+            "after_status": "exact",
+            "after_rank": 2,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 36,
+        "after_candidates": 56
+      },
+      {
+        "patient_id": "URG-2026-04471",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15058",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 61
+      },
+      {
+        "patient_id": "URG-2026-04538",
+        "difficulty": "original",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15058",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 86
+      },
+      {
+        "patient_id": "URG-2026-04620",
+        "difficulty": "easy",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15052",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 20,
+        "after_candidates": 58
+      },
+      {
+        "patient_id": "URG-2026-04622",
+        "difficulty": "hard",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15054",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          },
+          {
+            "code": "15060",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          },
+          {
+            "code": "15637",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 76
+      },
+      {
+        "patient_id": "URG-2026-04623",
+        "difficulty": "hard",
+        "verdict": "unchanged",
+        "changes": [
+          {
+            "code": "15064",
+            "before_status": "ineligible",
+            "before_rank": null,
+            "after_status": "ineligible",
+            "after_rank": null,
+            "change": "unchanged"
+          }
+        ],
+        "before_candidates": 40,
+        "after_candidates": 74
+      }
+    ],
+    "counts": {
+      "regressed": 12,
+      "mixed": 6,
+      "improved": 26,
+      "unchanged": 14
+    }
+  }
+}

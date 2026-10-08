@@ -1,0 +1,122 @@
+{
+  "patient_id": "CHSLD-2026-00054",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1880,
+      "output_tokens": 756,
+      "latency_ms": 4727.932378998958,
+      "started_at": "2026-10-08T15:44:19.066925Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1880,
+    "output_tokens": 756,
+    "llm_latency_ms": 4727.932378998958,
+    "wall_ms": 4728.2668159896275
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Constat de décès en CHSLD pour un patient en fin de vie sous soins de confort. Décès survenu à 17h52 après appel initial pour détresse respiratoire et ordonnances de médication palliative. Famille présente, bulletin de décès complété.",
+    "encounter_setting": {
+      "location_detail": "CHSLD Saint-Jude (fictif) — Unité 1 Nord",
+      "date": "2026-10-05",
+      "time_start": "17:45",
+      "time_end": "17:52",
+      "duration_minutes": 7.0,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Constat de décès en contexte de fin de vie (soins de confort) pour patient sous médication palliative pour détresse respiratoire.",
+      "systems_or_body_regions_involved": [
+        "respiratoire",
+        "neurologique",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Mode de décès : naturel (pneumonie d'aspiration sur démence avancée).",
+      "recommendations_given_to_patient": false,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "respiratoire",
+        "neurologique"
+      ],
+      "notable_findings": "Absence de pouls carotidien et de bruits cardiaques à l'auscultation x 1 min, absence de respiration, pupilles fixes et dilatées, aucune réponse aux stimuli."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Constat de décès avec examen clinique complet (vérification des signes vitaux, auscultation cardiaque et respiratoire, évaluation neurologique).",
+        "generic_act": "constat de décès",
+        "body_site": null,
+        "technique_or_approach_mentioned": "vérification des pouls carotidiens, auscultation cardiaque et respiratoire, évaluation des pupilles et des stimuli",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Signature du bulletin de décès (SP-3).",
+        "generic_act": "compléter un bulletin de décès",
+        "body_site": null,
+        "technique_or_approach_mentioned": null,
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "les_deux"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "La durée du déplacement au CHSLD n'est pas explicitement mentionnée (estimée à 7 minutes).",
+      "Le rôle exact de l'infirmière (Dubé) dans l'appel initial n'est pas précisé (infirmière du CHSLD ou du GMF)."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-05",
+      "actual": "2026-10-05"
+    },
+    {
+      "name": "time_start",
+      "passed": false,
+      "expected": "10:20",
+      "actual": "17:45"
+    }
+  ],
+  "stats": {
+    "procedures": 2,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

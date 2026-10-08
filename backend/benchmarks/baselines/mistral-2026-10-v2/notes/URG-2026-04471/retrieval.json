@@ -1,0 +1,1488 @@
+{
+  "patient_id": "URG-2026-04471",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 1190,
+      "output_tokens": null,
+      "latency_ms": 498.04387100448366,
+      "started_at": "2026-10-08T15:43:32.359647Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1190,
+    "output_tokens": 0,
+    "llm_latency_ms": 498.04387100448366,
+    "wall_ms": 601.3946980092442
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. urgence. CHU fictif, urgence. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15634",
+          "relevance": 0.02878289483487606
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028484849259257317
+        },
+        {
+          "number": "15635",
+          "relevance": 0.027071520686149597
+        },
+        {
+          "number": "15626",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15847",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15647",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15848",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15638",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15849",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15259",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15628",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15192",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08966",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15627",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08967",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15773",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08968",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15648",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09980",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15639",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Patient de 67 ans se présentant à l'urgence pour douleur thoracique rétrosternale constrictive avec irradiation au bras gauche, associée à diaphorèse et dyspnée légère. Diagnostic de STEMI inférieur aigu confirmé par ECG et troponine. Prise en charge immédiate incluant activation du protocole STEMI, administration d'AAS et ticagrélor, héparine IV, et transfert urgent en salle de cathétérisme pour angioplastie primaire.\nLieu (détail): CHU fictif, urgence\nDate: 2026-07-13\nHeure de début: 08:42\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Douleur thoracique rétrosternale constrictive irradiant au bras gauche, apparue au repos il y a 2 heures, associée à diaphorèse et dyspnée légère.\nSystèmes/régions concernés: cardiovasculaire; thoracique; cutané\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: oui\nDiagnostic/impression: STEMI inférieur aigu\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; pulmonaire; général\nConstatations: TA 152/94, FC 98, FR 20, SpO2 96 % AA, T 37,1 °C, inconfortable et diaphorétique. Cardio : B1-B2 normaux, pas de souffle ni galop. Pulmonaire : murmure vésiculaire symétrique, pas de crépitants.\nActe réalisé 1 - Description: Administration d'AAS 325 mg croqué et de ticagrélor 180 mg par voie orale\nActe réalisé 1 - Acte (générique): administration de médicaments\nActe réalisé 1 - Technique/approche: voie orale pour ticagrélor, croqué pour AAS\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nActe réalisé 2 - Description: Début de perfusion d'héparine IV selon protocole\nActe réalisé 2 - Acte (générique): administration de médicaments\nActe réalisé 2 - Technique/approche: perfusion intraveineuse\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: thérapeutique\nActe réalisé 3 - Description: Activation du protocole STEMI et avis immédiat à la cardiologie d'hémodynamie\nActe réalisé 3 - Acte (générique): consultation spécialisée\nActe réalisé 3 - Technique/approche: communication téléphonique\nActe réalisé 3 - Anesthésie: aucun\nActe réalisé 3 - Diagnostique ou thérapeutique: les_deux\nActe réalisé 4 - Description: Transfert urgent du patient en salle de cathétérisme pour angioplastie primaire\nActe réalisé 4 - Acte (générique): transfert médical urgent\nActe réalisé 4 - Site: salle de cathétérisme\nActe réalisé 4 - Technique/approche: transport médicalisé\nActe réalisé 4 - Anesthésie: aucun\nActe réalisé 4 - Diagnostique ou thérapeutique: thérapeutique\nAjouts possiblement facturables: deplacement_urgence\nÉlément incertain: Durée de l'encounter non explicitement mentionnée dans le transcript.; Heure de fin de l'encounter non précisée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "04601",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04606",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09530",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "04605",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09531",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04602",
+          "relevance": 0.015625
+        },
+        {
+          "number": "20025",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04604",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00407",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04603",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20179",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04609",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00302",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09360",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00566",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00294",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15796",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00648",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07081",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "administration de médicaments",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09335",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "00334",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15883",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "00988",
+          "relevance": 0.028860028833150864
+        },
+        {
+          "number": "00429",
+          "relevance": 0.02881426177918911
+        },
+        {
+          "number": "00480",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "01900",
+          "relevance": 0.028787260875105858
+        },
+        {
+          "number": "00989",
+          "relevance": 0.028445512056350708
+        },
+        {
+          "number": "15884",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "00583",
+          "relevance": 0.027272727340459824
+        },
+        {
+          "number": "00603",
+          "relevance": 0.02633402682840824
+        },
+        {
+          "number": "09334",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00474",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00779",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "98012",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00144",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00432",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00431",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00430",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Administration d'AAS 325 mg croqué et de ticagrélor 180 mg par voie orale",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09335",
+          "relevance": 0.029386529698967934
+        },
+        {
+          "number": "01900",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08161",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00988",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00761",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "03105",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00989",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00152",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00991",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20021",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00144",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20023",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04606",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "03346",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09360",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "20022",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00999",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "20024",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "20294",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00367",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "administration de médicaments",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09335",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "00334",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15883",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "00988",
+          "relevance": 0.028860028833150864
+        },
+        {
+          "number": "00429",
+          "relevance": 0.02881426177918911
+        },
+        {
+          "number": "00480",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "01900",
+          "relevance": 0.028787260875105858
+        },
+        {
+          "number": "00989",
+          "relevance": 0.028445512056350708
+        },
+        {
+          "number": "15884",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "00583",
+          "relevance": 0.027272727340459824
+        },
+        {
+          "number": "00603",
+          "relevance": 0.02633402682840824
+        },
+        {
+          "number": "09334",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00474",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00779",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "98012",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00144",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00432",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00431",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00430",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Début de perfusion d'héparine IV selon protocole",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09316",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "04691",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "00492",
+          "relevance": 0.028717948123812675
+        },
+        {
+          "number": "00152",
+          "relevance": 0.02777777798473835
+        },
+        {
+          "number": "09445",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00808",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09307",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09087",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00295",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00479",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09327",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00334",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05812",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05249",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09328",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00704",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08181",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09306",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00296",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09309",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "consultation spécialisée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09910",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "05345",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "00017",
+          "relevance": 0.0279720276594162
+        },
+        {
+          "number": "15895",
+          "relevance": 0.02654711715877056
+        },
+        {
+          "number": "15887",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "08800",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09411",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08803",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15667",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08802",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09901",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08805",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00205",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15668",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08906",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08113",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09902",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04516",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08909",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09092",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Activation du protocole STEMI et avis immédiat à la cardiologie d'hémodynamie",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15263",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "00545",
+          "relevance": 0.028219396248459816
+        },
+        {
+          "number": "00717",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "00567",
+          "relevance": 0.02765151485800743
+        },
+        {
+          "number": "00566",
+          "relevance": 0.027071520686149597
+        },
+        {
+          "number": "04606",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04605",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06367",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "04601",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00334",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04604",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00673",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04603",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02199",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04602",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00846",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00684",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09360",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00575",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02441",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "transfert médical urgent",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08943",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "15629",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "15634",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028949545696377754
+        },
+        {
+          "number": "09087",
+          "relevance": 0.02881426177918911
+        },
+        {
+          "number": "02863",
+          "relevance": 0.028438886627554893
+        },
+        {
+          "number": "15635",
+          "relevance": 0.02828322723507881
+        },
+        {
+          "number": "19048",
+          "relevance": 0.02678571455180645
+        },
+        {
+          "number": "09946",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15967",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15641",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15650",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00107",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15259",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15644",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09580",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15653",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "19047",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15878",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15646",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Transfert urgent du patient en salle de cathétérisme pour angioplastie primaire",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09301",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "09360",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "15629",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02936",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00639",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08943",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09433",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04601",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15641",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09443",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04604",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06944",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04661",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15878",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09495",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02200",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08421",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00107",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "04605",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15650",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "deplacement_urgence",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15192",
+          "relevance": 0.02985074557363987
+        },
+        {
+          "number": "15847",
+          "relevance": 0.029213955625891685
+        },
+        {
+          "number": "15635",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "15634",
+          "relevance": 0.028985507786273956
+        },
+        {
+          "number": "08966",
+          "relevance": 0.02878289483487606
+        },
+        {
+          "number": "08968",
+          "relevance": 0.028665028512477875
+        },
+        {
+          "number": "08967",
+          "relevance": 0.02804284356534481
+        },
+        {
+          "number": "08802",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08805",
+          "relevance": 0.027212142944335938
+        },
+        {
+          "number": "15625",
+          "relevance": 0.02690502069890499
+        },
+        {
+          "number": "09248",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "15623",
+          "relevance": 0.026491228491067886
+        },
+        {
+          "number": "15624",
+          "relevance": 0.025487013161182404
+        },
+        {
+          "number": "15655",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15646",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15848",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15653",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15849",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15644",
+          "relevance": 0.015625
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00334",
+      "rrf_score": 0.06136414591134357,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Désensibilisation aux médicaments incluant tous les soins, par jour, allergie",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "00152",
+      "rrf_score": 0.05857616678512201,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "09360",
+      "rrf_score": 0.056407482636990844,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiocardiographie > Angioplastie d'une valve cardiaque ou d'un gros vaisseau intrathoracique",
+      "description": "Angioplastie d'une valve cardiaque ou d'un gros vaisseau intrathoracique (artère(s) pulmonaire(s), aorte, veines caves, shunts et conduits centraux), incluant le cathétérisme cardiaque fait le même jour",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "09361",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiocardiographie > Angioplastie d'une valve cardiaque ou d'un gros vaisseau intrathoracique",
+      "description": "Angioplastie d'une valve cardiaque ou d'un gros vaisseau intrathoracique, dilatation additionnelle, supplément",
+      "expanded_from": "09360"
+    },
+    {
+      "rank": 5,
+      "number": "09335",
+      "rrf_score": 0.05,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15634",
+      "rrf_score": 0.04842069892473118,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15633",
+      "rrf_score": 0.04813947436898257,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00988",
+      "rrf_score": 0.047619047619047616,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de 24 heures ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15635",
+      "rrf_score": 0.04740957966764418,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "01900",
+      "rrf_score": 0.04669647292598113,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, par jour, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "04601",
+      "rrf_score": 0.0462979221539362,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne, unique",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "04606",
+      "rrf_score": 0.04540253653156879,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de six artères coronariennes ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "00989",
+      "rrf_score": 0.04500226142017187,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 24 heures",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "04605",
+      "rrf_score": 0.04359702797202797,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de cinq artères coronariennes",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "04604",
+      "rrf_score": 0.04327731092436975,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de quatre artères coronariennes",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "00144",
+      "rrf_score": 0.04060150375939849,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiographie > Introduction d'une substance pharmacologique au cours d'une angiographie > Supplément à la technique d'angiographie effectuée peu importe le nombre",
+      "description": "Introduction d'une substance pharmacologique au cours d'une angiographie, supplément à la technique d'angiographie effectuée peu importe le nombre, pour un patient de deux (2) ans ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "15629",
+      "rrf_score": 0.03252247488101534,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de transfert dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15883",
+      "rrf_score": 0.03225806451612903,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Démarches du médecin accompagnateur pour administrer l'aide médicale à mourir > Démarches consacrées à l'obtention et à la gestion des médicaments",
+      "description": "Forfait pour la première période de quinze (15) minutes pour les démarches du médecin accompagnateur consacrées à l'obtention et à la gestion des médicaments dans le cadre de l'aide médicale à mourir",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "08943",
+      "rrf_score": 0.03205128205128205,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de transfert psychiatrique dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "15847",
+      "rrf_score": 0.032018442622950824,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 7 h à 16 h en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "00429",
+      "rrf_score": 0.03125,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > cornets du nez",
+      "description": "Injection de médicament ou de substance thérapeutique dans les cornets du nez",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "00480",
+      "rrf_score": 0.03076923076923077,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > injection intrathécale de médicaments",
+      "description": "Injection intrathécale de médicaments, dans le cadre d'hyperalimentation, injection, insufflation ou ponction. Si injection de phénol, la rémunération est doublée (MOD 052).",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "15192",
+      "rrf_score": 0.030751173708920186,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans)",
+      "description": "Examen d'urgence avec déplacement d'un patient de moins de 70 ans en centre hospitalier seulement, réservé au médecin exerçant en anesthésie",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "09092",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans)",
+      "description": "Examen préanesthésie d'un patient de moins de 70 ans réservé au médecin exerçant en anesthésie",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 25,
+      "number": "09087",
+      "rrf_score": 0.03055037313432836,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Transfert ambulancier",
+      "description": "Transfert ambulancier, première demi-heure",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "09246",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Transfert ambulancier",
+      "description": "Transfert ambulancier, par quart d'heure supplémentaire",
+      "expanded_from": "09087"
+    },
+    {
+      "rank": 27,
+      "number": "15884",
+      "rrf_score": 0.029411764705882353,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Démarches du médecin accompagnateur pour administrer l'aide médicale à mourir > Démarches consacrées à l'obtention et à la gestion des médicaments",
+      "description": "Forfait par période de quinze (15) minutes supplémentaires pour les démarches du médecin accompagnateur consacrées à l'obtention et à la gestion des médicaments dans le cadre de l'aide médicale à mourir",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "08966",
+      "rrf_score": 0.029273504273504274,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 7 h à 16 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "08802",
+      "rrf_score": 0.02919863597612958,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "08800",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08802"
+    },
+    {
+      "rank": 31,
+      "number": "08803",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08802"
+    },
+    {
+      "rank": 32,
+      "number": "15144",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08802"
+    },
+    {
+      "rank": 33,
+      "number": "15762",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08802"
+    },
+    {
+      "rank": 34,
+      "number": "15641",
+      "rrf_score": 0.028991596638655463,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15641"
+    },
+    {
+      "rank": 36,
+      "number": "15642",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15641"
+    },
+    {
+      "rank": 37,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, par période de quinze (15) minutes",
+      "expanded_from": "15641"
+    },
+    {
+      "rank": 38,
+      "number": "00583",
+      "rrf_score": 0.028985507246376812,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, première injection",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "00566",
+      "rrf_score": 0.028958333333333336,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Supplément pour actes hémodynamiques d'une durée de deux heures et demie (2 ½ h) ou plus, cathétérisme cardiaque et études hémodynamiques",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "04602",
+      "rrf_score": 0.028665028665028666,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de deux artères coronariennes",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "08805",
+      "rrf_score": 0.028577260665441927,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "00603",
+      "rrf_score": 0.02857142857142857,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, chaque injection subséquente à la même séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "08967",
+      "rrf_score": 0.028438886647841874,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 16 h à 24 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "15848",
+      "rrf_score": 0.028309409888357256,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 16 h à 24 h en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "08968",
+      "rrf_score": 0.028309409888357256,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 0 h à 7 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "15259",
+      "rrf_score": 0.02819138376017471,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > support médical à distance > support médical à distance des services préhospitaliers d'urgence - soins avancés",
+      "description": "Support médical à distance des services préhospitaliers d'urgence - soins avancés, forfait par quart de garde au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "04603",
+      "rrf_score": 0.02817460317460317,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de trois artères coronariennes",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "09334",
+      "rrf_score": 0.028169014084507043,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "15849",
+      "rrf_score": 0.027526395173453996,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 0 h à 7 h en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "00474",
+      "rrf_score": 0.0273972602739726,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15626",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "15647",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "15638",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15628",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi exigeant un examen dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15627",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15773",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "15648",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "09980",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "09946",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport d'évaluation médicale prescrit par un médecin désigné par la Commission, pour une évaluation faite en urgence en raison de la complexité du dossier",
+      "expanded_from": "09980"
+    },
+    {
+      "rank": 60,
+      "number": "09977",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément lorsque le médecin rend son avis en cabinet privé pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": "09980"
+    },
+    {
+      "rank": 61,
+      "number": "15639",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 67,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 501.55218700820114,
+  "db_ms": 90.73621498828288
+}

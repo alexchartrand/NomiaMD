@@ -1,0 +1,116 @@
+{
+  "patient_id": "CLI-2026-01245",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1809,
+      "output_tokens": 691,
+      "latency_ms": 4007.071943007759,
+      "started_at": "2026-10-08T15:44:23.604113Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1809,
+    "output_tokens": 691,
+    "llm_latency_ms": 4007.071943007759,
+    "wall_ms": 4007.3592199914856
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Insertion d'un dispositif intra-utérin (DIU) au lévonorgestrel (Kyleena) pour contraception chez une patiente de 27 ans. Procédure réalisée sans complication après évaluation pré-procédure incluant examen gynécologique et counseling. Conseils post-procédure prodigués.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-10-06",
+      "time_start": "11:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Insertion de DIU au lévonorgestrel (Kyleena) pour contraception",
+      "systems_or_body_regions_involved": [
+        "gynécologique",
+        "utérus",
+        "vulve",
+        "vagin"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Insertion réussie de DIU au lévonorgestrel (Kyleena) sans complication",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "gynécologique",
+        "vulve",
+        "vagin",
+        "col utérin",
+        "utérus",
+        "annexes"
+      ],
+      "notable_findings": "Vulve/vagin normaux, col sain, pas d'écoulement. Utérus antéversé, taille normale, mobile, annexes libres."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Insertion d'un dispositif intra-utérin (DIU) au lévonorgestrel (Kyleena) avec hystérométrie, utilisation de spéculum, désinfection du col, pince de Pozzi, et coupe des fils à 3 cm",
+        "generic_act": "insertion de dispositif intra-utérin",
+        "body_site": "utérus",
+        "technique_or_approach_mentioned": "spéculum, désinfection du col, pince de Pozzi, hystérométrie 7 cm, fils coupés à 3 cm",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la procédure non explicitement mentionnée dans le texte.",
+      "Heure de fin de la consultation non indiquée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-06",
+      "actual": "2026-10-06"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "11:00",
+      "actual": "11:00"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

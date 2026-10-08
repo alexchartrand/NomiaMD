@@ -1,0 +1,101 @@
+{
+  "patient_id": "GMF-2026-00414",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1832,
+      "output_tokens": 516,
+      "latency_ms": 3318.6715509946225,
+      "started_at": "2026-10-08T15:44:14.992428Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1832,
+    "output_tokens": 516,
+    "llm_latency_ms": 3318.6715509946225,
+    "wall_ms": 3318.9628360123606
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi en santé mentale pour trouble bipolaire de type II chez un patient de 36 ans, en rémission partielle sous lamotrigine. Examen mental normal. Plan de poursuite du traitement et ajustement progressif du retour au travail.",
+    "encounter_setting": {
+      "location_detail": "GMF des Rivières",
+      "date": "2026-09-30",
+      "time_start": "15:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_specialiste",
+      "requester_identifier_mentioned": "Dr É. Gagnon",
+      "reason_for_referral": "trouble bipolaire de type II (évaluation initiale en juin 2026)",
+      "written_report_back_required_or_produced": true
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi conjoint en santé mentale pour trouble bipolaire de type II",
+      "systems_or_body_regions_involved": [
+        "psychiatrique"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "TB II en rémission partielle, bonne réponse à la lamotrigine",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "psychiatrique"
+      ],
+      "notable_findings": "Examen mental : bien mis, contact adéquat, discours normal, humeur « correcte », affect eutyme, pensée organisée, pas d'idées délirantes, jugement et autocritique adéquats"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "communication_specialiste"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le document.",
+      "Formulaire de l'employeur à compléter mentionné, mais non précisé s'il s'agit d'une procédure facturable."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-30",
+      "actual": "2026-09-30"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "15:30",
+      "actual": "15:30"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 1,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

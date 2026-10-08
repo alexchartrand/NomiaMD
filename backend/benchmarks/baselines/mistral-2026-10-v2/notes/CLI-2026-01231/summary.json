@@ -1,0 +1,102 @@
+{
+  "patient_id": "CLI-2026-01231",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2330,
+      "output_tokens": 588,
+      "latency_ms": 3799.3479930009926,
+      "started_at": "2026-10-08T15:43:53.309895Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2330,
+    "output_tokens": 588,
+    "llm_latency_ms": 3799.3479930009926,
+    "wall_ms": 3799.6985019999556
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de cessation tabagique après 6 semaines de succès, avec découverte d'une MPOC légère (GOLD 1) confirmée par spirométrie. Renforcement positif, ajustement du traitement de remplacement nicotinique, counseling nutritionnel et prescription de bronchodilatateur de secours. Planification de vaccins et suivi dans 4 semaines et 12 mois.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-07-28",
+      "time_start": "10:45",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de démarche de cessation tabagique après 6 semaines de succès, avec évaluation de l'état pulmonaire et ajustement du plan thérapeutique.",
+      "systems_or_body_regions_involved": [
+        "pulmonaire",
+        "cardiovasculaire",
+        "métabolique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "1. Cessation tabagique réussie à 6 semaines, bonne adhésion au traitement de remplacement de la nicotine. 2. Maladie pulmonaire obstructive chronique légère (GOLD 1), nouvellement objectivée par spirométrie.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "pulmonaire",
+        "cardiovasculaire"
+      ],
+      "notable_findings": "Murmure vésiculaire présent bilatéralement, quelques sibilances expiratoires légères en fin d'expiration forcée, sans détresse. TA 122/76, FC 70, poids 71 kg (gain de 2 kg depuis 2 mois)."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Heure de fin de la consultation non indiquée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-28",
+      "actual": "2026-07-28"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:45",
+      "actual": "10:45"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -1,0 +1,1386 @@
+{
+  "patient_id": "CLI-2026-01244",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 1266,
+      "output_tokens": null,
+      "latency_ms": 436.5849770110799,
+      "started_at": "2026-10-08T15:44:23.092328Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1266,
+    "output_tokens": 0,
+    "llm_latency_ms": 436.5849770110799,
+    "wall_ms": 511.13214799261186
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15803",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "15801",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "15765",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "15773",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "15789",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "15790",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "08776",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "15811",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "15813",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "08848",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08777",
+          "relevance": 0.027205882593989372
+        },
+        {
+          "number": "15809",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "08913",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15626",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15617",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15831",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15627",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "08819",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation de suivi pour hypothyroïdie stable et évaluation de lésions cutanées multiples. Excision d'un naevus suspect au dos, biopsie d'une lésion kératosique à l'avant-bras gauche et cryothérapie de verrues vulgaires à la main droite. Anesthésie locale utilisée pour les procédures cutanées. Résultats de pathologie en attente.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-10-01\nHeure de début: 13:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi d'hypothyroïdie asymptomatique sous lévothyroxine et évaluation de lésions cutanées multiples (dos, avant-bras gauche, main droite).\nSystèmes/régions concernés: endocrinien; cutané; dos; avant-bras_gauche; main_droite\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Hypothyroïdie stable sous lévothyroxine 100 mcg (TSH 2,1). Lésions cutanées : naevus suspect au dos, lésion kératosique à l'avant-bras gauche (R/O CBC superficiel vs kératose actinique), verrues vulgaires à la main droite.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cutané; dos; avant-bras_gauche; main_droite\nConstatations: Naevus de 0,8 cm au dos (région scapulaire droite) avec bords irréguliers et 2 teintes, lésion kératosique rosée de 6 mm à l'avant-bras gauche, 3 verrues vulgaires dorsales à la main droite.\nActe réalisé 1 - Description: Excision chirurgicale complète d'un naevus suspect au dos (région scapulaire droite) avec marge de 2 mm, fermeture par suture simple en 3 points.\nActe réalisé 1 - Acte (générique): excision de lésion cutanée\nActe réalisé 1 - Site: dos (région scapulaire droite)\nActe réalisé 1 - Technique/approche: fuseau, fermeture simple en 3 points\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: les_deux\nActe réalisé 2 - Description: Biopsie au punch de 4 mm d'une lésion kératosique rosée à l'avant-bras gauche, fermeture par 1 point.\nActe réalisé 2 - Acte (générique): biopsie cutanée\nActe réalisé 2 - Site: avant-bras gauche\nActe réalisé 2 - Technique/approche: punch 4 mm, 1 point\nActe réalisé 2 - Anesthésie: local\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 3 - Description: Cryothérapie à l'azote liquide de 3 verrues vulgaires dorsales à la main droite (2 cycles).\nActe réalisé 3 - Acte (générique): cryothérapie de verrue\nActe réalisé 3 - Site: main droite\nActe réalisé 3 - Technique/approche: 2 cycles\nActe réalisé 3 - Anesthésie: aucun\nActe réalisé 3 - Diagnostique ou thérapeutique: thérapeutique\nAjouts possiblement facturables: plateau_chirurgie\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le texte.; Heure de fin de la consultation non indiquée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01222",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00242",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09531",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15803",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09530",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01223",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00953",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01153",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20025",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01165",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00407",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04162",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15796",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01240",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00345",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01236",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15795",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01244",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00566",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "excision de lésion cutanée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01188",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "01186",
+          "relevance": 0.029083246365189552
+        },
+        {
+          "number": "01194",
+          "relevance": 0.02741784043610096
+        },
+        {
+          "number": "01199",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00830",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01153",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08510",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01165",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00425",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01452",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00821",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01158",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08511",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01187",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "05138",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01189",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00468",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01181",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08553",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01180",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Excision chirurgicale complète d'un naevus suspect au dos (région scapulaire droite) avec marge de 2 mm, fermeture par suture simple en 3 points.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01166",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "01162",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "01163",
+          "relevance": 0.030414747074246407
+        },
+        {
+          "number": "01155",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "01165",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "01164",
+          "relevance": 0.02943722903728485
+        },
+        {
+          "number": "01169",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "01172",
+          "relevance": 0.028629032894968987
+        },
+        {
+          "number": "01156",
+          "relevance": 0.028219396248459816
+        },
+        {
+          "number": "01153",
+          "relevance": 0.028205128386616707
+        },
+        {
+          "number": "01158",
+          "relevance": 0.028138527646660805
+        },
+        {
+          "number": "01151",
+          "relevance": 0.02765064872801304
+        },
+        {
+          "number": "01157",
+          "relevance": 0.02741784043610096
+        },
+        {
+          "number": "00972",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "07457",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01451",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01185",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09315",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "01184",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "00265",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "biopsie cutanée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00215",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "01188",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "01194",
+          "relevance": 0.029323630034923553
+        },
+        {
+          "number": "01189",
+          "relevance": 0.029236022382974625
+        },
+        {
+          "number": "01182",
+          "relevance": 0.027272727340459824
+        },
+        {
+          "number": "01184",
+          "relevance": 0.026709401980042458
+        },
+        {
+          "number": "01246",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01186",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01240",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01244",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01238",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01187",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01241",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01239",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01195",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01247",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01180",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01181",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00214",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01183",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Biopsie au punch de 4 mm d'une lésion kératosique rosée à l'avant-bras gauche, fermeture par 1 point.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01184",
+          "relevance": 0.02678571455180645
+        },
+        {
+          "number": "01182",
+          "relevance": 0.02651914209127426
+        },
+        {
+          "number": "01183",
+          "relevance": 0.02547874115407467
+        },
+        {
+          "number": "01236",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02991",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01242",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02992",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01180",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02746",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01237",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02996",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01181",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09579",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01243",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08065",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01238",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02278",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01240",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02360",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01239",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "cryothérapie de verrue",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00328",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "01222",
+          "relevance": 0.030117753893136978
+        },
+        {
+          "number": "01223",
+          "relevance": 0.030017921701073647
+        },
+        {
+          "number": "01300",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "01227",
+          "relevance": 0.029236022382974625
+        },
+        {
+          "number": "01236",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "01224",
+          "relevance": 0.02854250930249691
+        },
+        {
+          "number": "01237",
+          "relevance": 0.028138527646660805
+        },
+        {
+          "number": "07400",
+          "relevance": 0.02742537297308445
+        },
+        {
+          "number": "07069",
+          "relevance": 0.026153845712542534
+        },
+        {
+          "number": "01238",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01225",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01244",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01239",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01242",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01245",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "05314",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01243",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00724",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07239",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Cryothérapie à l'azote liquide de 3 verrues vulgaires dorsales à la main droite (2 cycles).",
+      "sections": null,
+      "hits": [
+        {
+          "number": "03208",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "01225",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "03209",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "01222",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "01238",
+          "relevance": 0.02943722903728485
+        },
+        {
+          "number": "01239",
+          "relevance": 0.028577260673046112
+        },
+        {
+          "number": "01227",
+          "relevance": 0.028205128386616707
+        },
+        {
+          "number": "01223",
+          "relevance": 0.02812499925494194
+        },
+        {
+          "number": "01224",
+          "relevance": 0.027799228206276894
+        },
+        {
+          "number": "01244",
+          "relevance": 0.02742537297308445
+        },
+        {
+          "number": "01300",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07316",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01245",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "05142",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06927",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00328",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "05314",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "04582",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "01236",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "08042",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "plateau_chirurgie",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01452",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "01460",
+          "relevance": 0.02982766181230545
+        },
+        {
+          "number": "01454",
+          "relevance": 0.027222221717238426
+        },
+        {
+          "number": "01451",
+          "relevance": 0.027106227353215218
+        },
+        {
+          "number": "01455",
+          "relevance": 0.025816122069954872
+        },
+        {
+          "number": "05305",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02721",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04161",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "05355",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "03238",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "03236",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06356",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "03237",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02795",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "03235",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02369",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07053",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07380",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07054",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06258",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "01238",
+      "rrf_score": 0.0575297619047619,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de un (1) cm ou moins, biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "01236",
+      "rrf_score": 0.05723603881498618,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > paupière, nez, lèvres, muqueuses",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau à la paupière, au nez, aux lèvres ou aux muqueuses, diamètre de un (1) cm ou moins, biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "01244",
+      "rrf_score": 0.05569490895577852,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs cancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Cryochirurgie d'une tumeur cancéreuse de la peau à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de un (1) cm ou moins (centimètres de résection), biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "01239",
+      "rrf_score": 0.05544010350668925,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de plus de un (1) cm, biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "01222",
+      "rrf_score": 0.04893312516263336,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > non faciale",
+      "description": "Excision chirurgicale d'une verrue non faciale, première verrue lors de la même séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "01223",
+      "rrf_score": 0.04620592054390803,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > faciale",
+      "description": "Excision chirurgicale d'une verrue faciale, première verrue lors de la même séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "01184",
+      "rrf_score": 0.04487179487179487,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située au tronc, aux bras ou aux jambes, d'un diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "01185",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située au tronc, aux bras ou aux jambes, d'un diamètre de plus de un (1) cm",
+      "expanded_from": "01184"
+    },
+    {
+      "rank": 9,
+      "number": "01165",
+      "rrf_score": 0.04483608742004264,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de trois (3) cm ou moins",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de trois (3) centimètres ou moins.",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "01153",
+      "rrf_score": 0.044583251360744966,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de plus de cinq (5) cm > premiers cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de plus de cinq (5) centimètres, premiers cinq (5) centimètres.",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "01240",
+      "rrf_score": 0.04120640885346768,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau au tronc, aux bras ou aux jambes, diamètre de un (1) cm ou moins, biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "01241",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau au tronc, aux bras ou aux jambes, diamètre de plus de un (1) cm, biopsies comprises",
+      "expanded_from": "01240"
+    },
+    {
+      "rank": 13,
+      "number": "01180",
+      "rrf_score": 0.04074149571927173,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > paupière, nez, lèvres, muqueuses",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située à la paupière, au nez, aux lèvres ou aux muqueuses, d'un diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "01181",
+      "rrf_score": 0.0400585330162795,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > paupière, nez, lèvres, muqueuses",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située à la paupière, au nez, aux lèvres ou aux muqueuses, d'un diamètre de plus de un (1) cm",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "01188",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs cancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux > diamètre de un (1) cm ou moins",
+      "description": "Excision d'une tumeur cancéreuse de la peau (biopsies comprises) de la face, cuir chevelu, oreilles, cou, mains, pieds ou organes génitaux, diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "15803",
+      "rrf_score": 0.03229166666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "01194",
+      "rrf_score": 0.03225806451612903,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs cancéreuses de la peau (biopsies comprises) > tronc, bras, jambes > diamètre de un (1) cm ou moins",
+      "description": "Excision d'une tumeur cancéreuse de la peau (biopsies comprises) du tronc, des bras ou des jambes, diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "01182",
+      "rrf_score": 0.032018442622950824,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, d'un diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "01186",
+      "rrf_score": 0.03131881575727918,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs cancéreuses de la peau (biopsies comprises) > paupières, nez, lèvres, muqueuses > diamètre de un (1) cm ou moins",
+      "description": "Excision d'une tumeur cancéreuse de la peau (biopsies comprises) des paupières, nez, lèvres ou muqueuses, diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "01452",
+      "rrf_score": 0.03115942028985507,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Chirurgie plastique",
+      "description": "Intervention mineure en chirurgie plastique",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "01227",
+      "rrf_score": 0.030776515151515152,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > en mosaïque (excision totale) par séance",
+      "description": "Excision chirurgicale d'une verrue en mosaïque (excision totale) par séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "01225",
+      "rrf_score": 0.03047794966520434,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > plantaire",
+      "description": "Excision chirurgicale d'une verrue plantaire, première verrue lors de la même séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "01300",
+      "rrf_score": 0.030158730158730156,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Cautérisation > Électrocoagulation",
+      "description": "Cautérisation par électrocoagulation d'une verrue, première lésion",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "00328",
+      "rrf_score": 0.03,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de l'acné par chirurgie et/ou cryothérapie et/ou thérapie physique (excluant le Laser) y compris l'extraction de comédons, un (1) ou plusieurs traitements par séance en dermatologie, chimiothérapie d'une lésion cutanée, cryothérapie d'une lésion",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "00425",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Infiltration intralésionnelle (une (1) ou plusieurs lésions) en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": "00328"
+    },
+    {
+      "rank": 26,
+      "number": "00468",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Injection de substance sclérosante, intralésionnelle (une (1) ou plusieurs lésions) en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": "00328"
+    },
+    {
+      "rank": 27,
+      "number": "00821",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de Goekerman en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": "00328"
+    },
+    {
+      "rank": 28,
+      "number": "00830",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Photochimiothérapie en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": "00328"
+    },
+    {
+      "rank": 29,
+      "number": "01224",
+      "rrf_score": 0.029857397504456328,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale",
+      "description": "Excision chirurgicale d'une verrue avec excision totale et plastie",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "01237",
+      "rrf_score": 0.029418126757516764,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > paupière, nez, lèvres, muqueuses",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau à la paupière, au nez, aux lèvres ou aux muqueuses, diamètre de plus de un (1) cm, biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "01189",
+      "rrf_score": 0.029206349206349208,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs cancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux > diamètre de plus de un (1) cm",
+      "description": "Excision d'une tumeur cancéreuse de la peau (biopsies comprises) de la face, cuir chevelu, oreilles, cou, mains, pieds ou organes génitaux, diamètre de plus de un (1) cm",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "01451",
+      "rrf_score": 0.029206349206349208,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Chirurgie plastique",
+      "description": "Intervention très mineure en chirurgie plastique",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "01242",
+      "rrf_score": 0.0288981288981289,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs cancéreuses de la peau (biopsies comprises) > paupières, nez, lèvres, muqueuses",
+      "description": "Cryochirurgie d'une tumeur cancéreuse de la peau à la paupière, au nez, aux lèvres ou aux muqueuses, diamètre de un (1) cm ou moins (centimètres de résection), biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "01183",
+      "rrf_score": 0.02878726010616578,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, d'un diamètre de plus de un (1) cm",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "01158",
+      "rrf_score": 0.028370221327967807,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de quatre (4) cm ou cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de quatre (4) centimètres ou cinq (5) centimètres.",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "01187",
+      "rrf_score": 0.027783137179239824,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs cancéreuses de la peau (biopsies comprises) > paupières, nez, lèvres, muqueuses > diamètre de plus de un (1) cm",
+      "description": "Excision d'une tumeur cancéreuse de la peau (biopsies comprises) des paupières, nez, lèvres ou muqueuses, diamètre de plus de un (1) cm",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "01245",
+      "rrf_score": 0.027222222222222224,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs cancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Cryochirurgie d'une tumeur cancéreuse de la peau à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de plus de un (1) cm (centimètres de résection), biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "01243",
+      "rrf_score": 0.02668564312399929,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs cancéreuses de la peau (biopsies comprises) > paupières, nez, lèvres, muqueuses",
+      "description": "Cryochirurgie d'une tumeur cancéreuse de la peau à la paupière, au nez, aux lèvres ou aux muqueuses, diamètre de plus de un (1) cm (centimètres de résection), biopsies comprises",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "05314",
+      "rrf_score": 0.02631578947368421,
+      "header_path": "L — Système digestif > Anus > Réparation",
+      "description": "Fulguration de condylomes ou cryochirurgie de condylomes, un ou plusieurs, toute technique de l'anus",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "05303",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Anus > Réparation",
+      "description": "Curetage de fissure ou fistule de l'anus",
+      "expanded_from": "05314"
+    },
+    {
+      "rank": 41,
+      "number": "05310",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Anus > Réparation",
+      "description": "Électrocoagulation d'hémorroïdes ou cryochirurgie d'hémorroïdes de l'anus",
+      "expanded_from": "05314"
+    },
+    {
+      "rank": 42,
+      "number": "05313",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Anus > Réparation",
+      "description": "Cautérisation ou cryochirurgie de l'anus",
+      "expanded_from": "05314"
+    },
+    {
+      "rank": 43,
+      "number": "05420",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Anus > Réparation",
+      "description": "Excision de cicatrice pour sténose de l'anus",
+      "expanded_from": "05314"
+    },
+    {
+      "rank": 44,
+      "number": "01166",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > tronc, bras et jambes > diamètre de trois (3) cm ou moins",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du tronc, des bras ou des jambes, incluant fermeture simple, diamètre de trois (3) centimètres ou moins.",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "00215",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Biopsie avec ou sans guidage échographique (unique ou multiple)",
+      "description": "Biopsie avec ou sans guidage échographique de peau et tissus sous-cutanés",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "03208",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "H — Système respiratoire > Nez > Excision > Cryochirurgie avec azote liquide en circulation ou en jet avec thermocouple ou chirurgie au laser",
+      "description": "Excision du nez, cryochirurgie avec azote liquide en circulation ou en jet avec thermocouple ou chirurgie au laser pour tumeur précancéreuse : nez, bouche, pharynx et larynx",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "03209",
+      "rrf_score": 0.0,
+      "header_path": "H — Système respiratoire > Nez > Excision > Cryochirurgie avec azote liquide en circulation ou en jet avec thermocouple ou chirurgie au laser",
+      "description": "Excision du nez, cryochirurgie avec azote liquide en circulation ou en jet avec thermocouple ou chirurgie au laser pour tumeur maligne du nez, bouche, pharynx et larynx",
+      "expanded_from": "03208"
+    },
+    {
+      "rank": 48,
+      "number": "15801",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "00638",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "00783",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie",
+      "expanded_from": "00638"
+    },
+    {
+      "rank": 51,
+      "number": "01162",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > tronc, bras et jambes > diamètre de quatre (4) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du tronc, des bras ou des jambes, incluant fermeture simple, diamètre de quatre (4) centimètres.",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "01460",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Chirurgie plastique",
+      "description": "Modelage facial en chirurgie plastique",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "15765",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15773",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15789",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15790",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "08776",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "15811",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "08775",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "15813",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "08848",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "08777",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "15809",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "08913",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "98010",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 66,
+      "number": "15626",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 67,
+      "number": "15617",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 68,
+      "number": "15831",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 69,
+      "number": "15627",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 70,
+      "number": "08819",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 62,
+    "panel_size": 420,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 439.58322500111535,
+  "db_ms": 61.211181004182436
+}

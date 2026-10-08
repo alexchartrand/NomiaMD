@@ -1,0 +1,101 @@
+{
+  "patient_id": "GMF-2026-00313",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2028,
+      "output_tokens": 588,
+      "latency_ms": 3570.1560540037462,
+      "started_at": "2026-10-08T15:44:16.229930Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2028,
+    "output_tokens": 588,
+    "llm_latency_ms": 3570.1560540037462,
+    "wall_ms": 3570.5184580001514
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi d'hypertension artérielle avec découverte d'un épisode dépressif majeur modéré et consommation d'alcool à risque. Initiation d'un antidépresseur, plan de sécurité établi et référence en santé mentale.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-10-01",
+      "time_start": "09:00",
+      "time_end": "09:20",
+      "duration_minutes": 20.0,
+      "duration_explicitly_stated": true,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Naomi Fortier, MD",
+      "reason_for_referral": "Référence au guichet d'accès en santé mentale adulte (GASMA) pour psychothérapie",
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi d'hypertension artérielle avec mention d'une baisse de moral depuis 2 mois",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "psychiatrique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "1. HTA contrôlée. 2. Épisode dépressif majeur modéré, réactionnel à une séparation; consommation d'alcool à risque.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "psychiatrique"
+      ],
+      "notable_findings": "TA clinique 132/84, psychomotricité ralentie, discours lent, humeur « à plat », affect restreint congruent, pensée logique centrée sur la séparation, PHQ-9 = 17, GAD-7 = 8, AUDIT-C = 7"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'examen mental non explicitement précisée (estimée à 20 minutes pour l'ensemble du rendez-vous)",
+      "Absence de mention explicite de la production d'un rapport écrit pour la référence en santé mentale"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-01",
+      "actual": "2026-10-01"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:00",
+      "actual": "09:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": true
+  }
+}

@@ -1,0 +1,919 @@
+{
+  "patient_id": "CLI-2026-01227",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 672,
+      "output_tokens": null,
+      "latency_ms": 438.1694940093439,
+      "started_at": "2026-10-08T15:43:47.856698Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 672,
+    "output_tokens": 0,
+    "llm_latency_ms": 438.1694940093439,
+    "wall_ms": 484.78646999865305
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Plusieurs systèmes. Durée 30 minutes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "08858",
+          "relevance": 0.0317460335791111
+        },
+        {
+          "number": "08867",
+          "relevance": 0.029709506779909134
+        },
+        {
+          "number": "15767",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "15823",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "08859",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "15617",
+          "relevance": 0.028205128386616707
+        },
+        {
+          "number": "15821",
+          "relevance": 0.02804284356534481
+        },
+        {
+          "number": "15819",
+          "relevance": 0.028006266802549362
+        },
+        {
+          "number": "15775",
+          "relevance": 0.027863776311278343
+        },
+        {
+          "number": "08776",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08857",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08866",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08860",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08906",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08841",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08775",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08913",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08868",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15785",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15787",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation en clinique médicale pour évaluation initiale d'un trouble anxieux généralisé chez un patient de 22 ans. Entrevue structurée de 30 minutes, questionnaires complétés (GAD-7 et PHQ-9), bilan sanguin demandé, et plan de traitement discuté incluant psychothérapie, hygiène de vie et suivi rapproché.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-05-05\nHeure de début: 17:00\nHeure de fin: 17:30\nDurée (minutes): 30.0\nDurée déclarée explicitement: oui\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Trouble anxieux généralisé nouvellement identifié avec symptômes persistants depuis 8 mois, impactant études, relations et fonctionnement académique\nSystèmes/régions concernés: psychiatrique; neurologique; sommeil\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Trouble anxieux généralisé d'intensité modérée à sévère avec symptomatologie dépressive légère associée\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: général; psychiatrique\nConstatations: Apparence tendue, discours cohérent et pertinent, examen physique sommaire sans particularité, signes vitaux normaux\nActe réalisé 1 - Description: Administration et interprétation des questionnaires GAD-7 et PHQ-9\nActe réalisé 1 - Acte (générique): évaluation psychiatrique structurée\nActe réalisé 1 - Technique/approche: questionnaires standardisés\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Le bilan sanguin demandé (TSH, FSC, glycémie) n'est pas mentionné comme ayant été effectué lors de cette consultation — à confirmer si réalisé ou non.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08819",
+          "relevance": 0.027272727340459824
+        },
+        {
+          "number": "08800",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08948",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08803",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15885",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08811",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06100",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15668",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15795",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08812",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07081",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15642",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00844",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08802",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00401",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08805",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "98003",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06010",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "évaluation psychiatrique structurée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "98001",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "98007",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "98006",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "98008",
+          "relevance": 0.030621785670518875
+        },
+        {
+          "number": "08948",
+          "relevance": 0.03047795034945011
+        },
+        {
+          "number": "98004",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "98003",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "98011",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "98002",
+          "relevance": 0.030017921701073647
+        },
+        {
+          "number": "98010",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "98009",
+          "relevance": 0.027984345331788063
+        },
+        {
+          "number": "98005",
+          "relevance": 0.027863776311278343
+        },
+        {
+          "number": "15668",
+          "relevance": 0.027692895382642746
+        },
+        {
+          "number": "08819",
+          "relevance": 0.02741784043610096
+        },
+        {
+          "number": "08923",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15651",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "08913",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15642",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "08942",
+          "relevance": 0.01315789483487606
+        },
+        {
+          "number": "08811",
+          "relevance": 0.012987012974917889
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Administration et interprétation des questionnaires GAD-7 et PHQ-9",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08811",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08812",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08408",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08842",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08409",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08841",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08413",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08953",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05363",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08843",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "05327",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15066",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "98012",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08948",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00783",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00056",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08807",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09335",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "08948",
+      "rrf_score": 0.045011529386529386,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "08811",
+      "rrf_score": 0.044250267649096287,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "09248",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique d'urgence avec déplacement dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans",
+      "expanded_from": "08811"
+    },
+    {
+      "rank": 4,
+      "number": "08819",
+      "rrf_score": 0.030365296803652967,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "08812",
+      "rrf_score": 0.03021353930031804,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "08841",
+      "rrf_score": 0.028665028665028666,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective visant un groupe de personnes souffrant toutes de problèmes de santé mentale ou d'une condition de vulnérabilité, première période de trente (30) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15668",
+      "rrf_score": 0.028381642512077296,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "98003",
+      "rrf_score": 0.027972027972027972,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Ordonnance traitement / hébergement",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15642",
+      "rrf_score": 0.02668564312399929,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 11,
+      "number": "15639",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 12,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 13,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 14,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, par période de quinze (15) minutes",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 15,
+      "number": "08913",
+      "rrf_score": 0.02631578947368421,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "08858",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique individuelle première période de trente (30) minutes en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "98001",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Garde provisoire",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "08867",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective, première période de trente (30) minutes en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "08800",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 21,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 22,
+      "number": "15144",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 23,
+      "number": "15762",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 24,
+      "number": "98007",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Commission d'examen",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "00152",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15767",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "00638",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "00783",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie",
+      "expanded_from": "00638"
+    },
+    {
+      "rank": 29,
+      "number": "98006",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Responsabilité criminelle",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "15823",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "98008",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Commission des affaires sociales",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "08408",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > non sélective",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, non sélective, interprétation, angioradiologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "08859",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique individuelle, période supplémentaire de quinze (15) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "00953",
+      "rrf_score": 0.015625,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "08842",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective visant un groupe de personnes souffrant toutes de problèmes de santé mentale ou d'une condition de vulnérabilité, première période de trente (30) minutes en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15617",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "08803",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "98004",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Suivi d'ordonnance",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "08409",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective autre que spinale, par vaisseau, maximum 4",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective autre que spinale, par vaisseau, maximum 4, interprétation, angioradiologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "15821",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "15885",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire (partie 1) relatif à une demande d'aide médicale à mourir (médecin accompagnateur) : Demande du patient non finalisée",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "15886",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire et démarches afférentes relatifs à une demande d'aide médicale à mourir (parties 1, 2 et 3) (médecin accompagnateur) : Demande du patient finalisée",
+      "expanded_from": "15885"
+    },
+    {
+      "rank": 43,
+      "number": "15887",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Rapport de consultation relatif à une demande d'aide médicale à mourir (avis du second médecin)",
+      "expanded_from": "15885"
+    },
+    {
+      "rank": 44,
+      "number": "15819",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite périodique",
+      "description": "Visite périodique d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "98011",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Protection de la jeunesse",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "08413",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective, spinale, par vaisseau, maximum 8 vaisseaux",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective, spinale, par vaisseau, maximum 8 vaisseaux, interprétation, angioradiologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "15775",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "06100",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "M — Appareil urinaire > Rein > Excision",
+      "description": "Biopsie du rein non effectuée à la même séance opératoire qu'un autre acte chirurgical associé, faite par lombotomie, rein",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "06204",
+      "rrf_score": 0.0,
+      "header_path": "M — Appareil urinaire > Rein > Excision",
+      "description": "Marsupialisation de kyste rénal, unique ou multiple, ou exérèse ou les deux, unilatéral (ne peut être associé à un code de chirurgie rénale ouverte), rein",
+      "expanded_from": "06100"
+    },
+    {
+      "rank": 50,
+      "number": "06217",
+      "rrf_score": 0.0,
+      "header_path": "M — Appareil urinaire > Rein > Excision",
+      "description": "Traitement percutané de tumeurs malignes du bassinet par résection, électrocoagulation ou Laser incluant les biopsies du bassinet, la néphroscopie, la dilatation ou la néphrostomie percutanée si faites dans la même séance et les tubes de drainage, rein",
+      "expanded_from": "06100"
+    },
+    {
+      "rank": 51,
+      "number": "98002",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Prolongation d'une garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "08953",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Échanges interdisciplinaires avec les intervenants en santé mentale ou avec les proches du patient dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "08776",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "98010",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "05363",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "L — Système digestif > Estomac > Réparation",
+      "description": "Pyloroplastie (P.G. 2.9), réparation de l'estomac",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "05364",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Estomac > Réparation",
+      "description": "Pyloroplastie et vagotomie, réparation de l'estomac",
+      "expanded_from": "05363"
+    },
+    {
+      "rank": 57,
+      "number": "08857",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique individuelle première période de trente (30) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "08866",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective, première période de trente (30) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "08860",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique individuelle, période supplémentaire de quinze (15) minutes en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "08906",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Vacation : Taux du tarif horaire multiplié par trois (3) (réf. : annexe XIV et article 17.03 de l'Entente) > Éthique clinique > Rencontre et entrevue avec une ou des personnes pertinentes dans le cadre d'une consultation en éthique clinique > Individuelle",
+      "description": "Rencontre et entrevue individuelle avec une ou des personnes pertinentes dans le cadre d'une consultation en éthique clinique, en établissement désigné par accord des parties, par demi-heure, vacation (taux du tarif horaire multiplié par trois), jusqu'à concurrence d'un grand total de trois (3) heures, un maximum d'une (1) heure par personne",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "08775",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "08868",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective, période supplémentaire de quinze (15) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "15785",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, première période de trente (30) minutes, patients de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "15786",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, période supplémentaire de quinze (15) minutes, patients de moins de 70 ans",
+      "expanded_from": "15785"
+    },
+    {
+      "rank": 65,
+      "number": "15787",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (collective) > Psychothérapie collective",
+      "description": "Psychothérapie collective, première période de trente (30) minutes, patients de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 66,
+      "number": "15788",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (collective) > Psychothérapie collective",
+      "description": "Psychothérapie collective, période supplémentaire de quinze (15) minutes, patients de moins de 70 ans",
+      "expanded_from": "15787"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 22,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 439.6477000118466,
+  "db_ms": 36.533139005769044
+}

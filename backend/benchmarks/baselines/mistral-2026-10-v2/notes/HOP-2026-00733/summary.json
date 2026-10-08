@@ -1,0 +1,103 @@
+{
+  "patient_id": "HOP-2026-00733",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1888,
+      "output_tokens": 549,
+      "latency_ms": 3517.732899010298,
+      "started_at": "2026-10-08T15:44:10.869116Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1888,
+    "output_tokens": 549,
+    "llm_latency_ms": 3517.732899010298,
+    "wall_ms": 3518.0298240011325
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Congé hospitalier pour patiente de 81 ans avec cellulite de la jambe gauche en résolution sous antibiothérapie. Examen clinique de suivi réalisé avant le retour à domicile avec ordonnances et suivi infirmier organisé.",
+    "encounter_setting": {
+      "location_detail": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)",
+      "date": "2026-09-25",
+      "time_start": "09:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Congé hospitalier après résolution partielle de cellulite de la jambe gauche sous antibiothérapie.",
+      "systems_or_body_regions_involved": [
+        "cutané",
+        "membre_inférieur_gauche"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Cellulite jambe gauche résolue en grande partie sous céfazoline IV puis céphalexine PO (J3).",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cutané",
+        "membre_inférieur_gauche"
+      ],
+      "notable_findings": "Érythème résiduel en régression (délimitation au marqueur dépassée vers l'intérieur), plus de chaleur, œdème léger. Afébrile depuis 72h. TA 132/70. GB 7,9. CRP 22."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "frais_kilometrage"
+    ],
+    "notes_uncertain_items": [
+      "Durée de l'examen ou de la visite non explicitement indiquée dans le texte.",
+      "Heure de fin de la visite non mentionnée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-25",
+      "actual": "2026-09-25"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:00",
+      "actual": "09:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

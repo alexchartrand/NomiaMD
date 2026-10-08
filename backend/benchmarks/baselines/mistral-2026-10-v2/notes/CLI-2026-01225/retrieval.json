@@ -1,0 +1,919 @@
+{
+  "patient_id": "CLI-2026-01225",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 859,
+      "output_tokens": null,
+      "latency_ms": 334.8173549893545,
+      "started_at": "2026-10-08T15:43:45.068676Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 859,
+    "output_tokens": 0,
+    "llm_latency_ms": 334.8173549893545,
+    "wall_ms": 390.2497809904162
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite d'évaluation pour donner une opinion. avec rendez-vous. Clinique médicale Les Tilleuls. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15789",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "08777",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "15790",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "15619",
+          "relevance": 0.03125
+        },
+        {
+          "number": "08948",
+          "relevance": 0.029877368360757828
+        },
+        {
+          "number": "15642",
+          "relevance": 0.02967032976448536
+        },
+        {
+          "number": "15630",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "15651",
+          "relevance": 0.029236022382974625
+        },
+        {
+          "number": "15668",
+          "relevance": 0.02881426177918911
+        },
+        {
+          "number": "08819",
+          "relevance": 0.02744360826909542
+        },
+        {
+          "number": "09944",
+          "relevance": 0.026198629289865494
+        },
+        {
+          "number": "08913",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09908",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08776",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15615",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09063",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15765",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09977",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09100",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation en médecine familiale pour une douleur chronique au genou droit référée par le médecin traitant. Évaluation diagnostique confirmant une gonarthrose modérée à sévère avec retentissement fonctionnel. Réalisation d'une infiltration intra-articulaire de corticostéroïde sous asepsie et transmission d'un rapport au médecin traitant avec recommandation de référence en orthopédie.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-04-14\nHeure de début: 10:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nDemandeur (identifiant): médecin traitant (actuellement en congé)\nMotif de la référence: deuxième opinion sur une douleur chronique au genou droit avant de statuer sur une référence en orthopédie\nRapport écrit requis/produit: oui\nMotif de consultation: douleur chronique au genou droit évoluant depuis 2 ans, aggravation progressive avec retentissement fonctionnel\nSystèmes/régions concernés: musculo-squelettique; genou_droit\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: gonarthrose droite modérée à sévère, compartiment médial prédominant, avec retentissement fonctionnel significatif\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: genou_droit; genou_gauche; marche\nConstatations: légère boiterie antalgique à droite, léger épanchement au genou droit sans chaleur ni érythème, crépitements palpables, amplitude articulaire limitée (flexion à 100°), McMurray équivoque, sensibilité à l'interligne articulaire médial\nActe réalisé 1 - Description: infiltration intra-articulaire de corticostéroïde au genou droit sous asepsie\nActe réalisé 1 - Acte (générique): infiltration intra-articulaire de corticostéroïde\nActe réalisé 1 - Site: genou droit\nActe réalisé 1 - Technique/approche: asepsie\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: durée de la consultation non explicitement mentionnée dans le texte; anesthésie locale non clairement documentée pour l'infiltration (seule l'asepsie est mentionnée)",
+      "sections": null,
+      "hits": [
+        {
+          "number": "02724",
+          "relevance": 0.02938045561313629
+        },
+        {
+          "number": "02577",
+          "relevance": 0.028787260875105858
+        },
+        {
+          "number": "02016",
+          "relevance": 0.028205128386616707
+        },
+        {
+          "number": "02966",
+          "relevance": 0.027783136814832687
+        },
+        {
+          "number": "09540",
+          "relevance": 0.02699275314807892
+        },
+        {
+          "number": "05142",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00431",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01209",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "18161",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02937",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02056",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02253",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04582",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "18162",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00906",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09539",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00639",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02013",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15896",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "infiltration intra-articulaire de corticostéroïde",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00201",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00431",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00425",
+          "relevance": 0.030621785670518875
+        },
+        {
+          "number": "02102",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "07674",
+          "relevance": 0.02830941043794155
+        },
+        {
+          "number": "00953",
+          "relevance": 0.027222221717238426
+        },
+        {
+          "number": "00292",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00293",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02103",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02654",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00473",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09546",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00722",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09547",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00429",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00480",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09475",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00777",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "04502",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04503",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "infiltration intra-articulaire de corticostéroïde au genou droit sous asepsie",
+      "sections": null,
+      "hits": [
+        {
+          "number": "02016",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "00431",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "02102",
+          "relevance": 0.030679157003760338
+        },
+        {
+          "number": "00201",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "09540",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "02013",
+          "relevance": 0.02765151485800743
+        },
+        {
+          "number": "02473",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "02724",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02103",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02056",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02937",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "18160",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02854",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "18161",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02492",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02577",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09547",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02966",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09546",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "05142",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00431",
+      "rrf_score": 0.047712258380229994,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou une articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "02016",
+      "rrf_score": 0.03279569892473118,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrolyse",
+      "description": "Arthrolyse directe du genou, toute voie d'approche",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "00201",
+      "rrf_score": 0.032539682539682535,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > articulation temporo-mandibulaire > médication ou substance thérapeutique intra-articulaire",
+      "description": "Injection de médicament ou de substance thérapeutique dans l'articulation temporo-mandibulaire, médication ou substance thérapeutique intra-articulaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "02102",
+      "rrf_score": 0.03200204813108039,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (technique intra-articulaire)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur (technique intra-articulaire), toute voie d'approche, au genou",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "02110",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (technique intra-articulaire)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur avec tendon rotulien, supplément, toute voie d'approche, au genou",
+      "expanded_from": "02102"
+    },
+    {
+      "rank": 6,
+      "number": "02724",
+      "rrf_score": 0.03159203980099502,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroscopie",
+      "description": "Arthroscopie simple du genou avec un ou plusieurs des procédés thérapeutiques suivants : méniscectomie, débridement articulaire, section de l'aileron externe, exérèse de souris ou de corps étranger (P.C. 13)",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "09540",
+      "rrf_score": 0.03125,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Arthroplastie (incluant tout service médical aux tissus mous, la plastie de la rotule et l'installation de prothèse de la rotule, le cas échéant) > prothèse totale de rotule",
+      "description": "Prothèse totale de rotule, incluant le cas échéant, la synovectomie et le débridement articulaire, au genou",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00953",
+      "rrf_score": 0.030536130536130537,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "02577",
+      "rrf_score": 0.029726775956284153,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroscopie",
+      "description": "Arthroscopie simple du genou, incluant, le cas échéant, la biopsie synoviale, la résection du plica et le lavage (P.C. 13)",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "02103",
+      "rrf_score": 0.029411764705882353,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (techniques intra et extra-articulaires)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur (techniques intra et extra-articulaires), toute voie d'approche, au genou",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "02966",
+      "rrf_score": 0.02886002886002886,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrodèse",
+      "description": "Arthrodèse post-arthroplastie du genou, incluant l'exérèse du matériel, dans un même temps, le cas échéant",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "02056",
+      "rrf_score": 0.028577260665441927,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrotomie ou capsulotomie",
+      "description": "Arthrotomie ou capsulotomie du genou incluant, le cas échéant, l'exploration, le drainage, le rasage, la résection de corps étranger (souris articulaire), l'exérèse de coussinet graisseux, la méniscectomie ou la section de l'aileron externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "02937",
+      "rrf_score": 0.02857142857142857,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrodèse",
+      "description": "Arthrodèse simple du genou",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "02013",
+      "rrf_score": 0.028205128205128206,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrolyse",
+      "description": "Arthrolyse du genou avec correction progressive d'ankylose avec fixateur externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "18161",
+      "rrf_score": 0.02819138376017471,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroplastie de remplacement",
+      "description": "Arthroplastie de remplacement du genou en un seul temps (incluant l'exérèse de prothèse fémorale, tibiale et rotulienne et, le cas échéant, l'ostéotomie fémorale ou tibiale ou la fenêtre)",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "05142",
+      "rrf_score": 0.02804284323271665,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Résection intestinale avec anastomose > iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)",
+      "description": "Résection intestinale avec anastomose de l'iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "09546",
+      "rrf_score": 0.02690501986276634,
+      "header_path": "G — Appareil musculo-squelettique > Divers",
+      "description": "Injection intra-osseuse de corticoïdes avec ou sans scopie pour un os mineur",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "09547",
+      "rrf_score": 0.026856524873828405,
+      "header_path": "G — Appareil musculo-squelettique > Divers",
+      "description": "Injection intra-osseuse de corticoïdes avec ou sans scopie pour un os majeur",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15789",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "08777",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "15790",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "00425",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Infiltration intralésionnelle (une (1) ou plusieurs lésions) en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "00328",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de l'acné par chirurgie et/ou cryothérapie et/ou thérapie physique (excluant le Laser) y compris l'extraction de comédons, un (1) ou plusieurs traitements par séance en dermatologie, chimiothérapie d'une lésion cutanée, cryothérapie d'une lésion",
+      "expanded_from": "00425"
+    },
+    {
+      "rank": 24,
+      "number": "00468",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Injection de substance sclérosante, intralésionnelle (une (1) ou plusieurs lésions) en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": "00425"
+    },
+    {
+      "rank": 25,
+      "number": "00821",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de Goekerman en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": "00425"
+    },
+    {
+      "rank": 26,
+      "number": "00830",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Photochimiothérapie en dermatologie, chimiothérapie d'une lésion cutanée",
+      "expanded_from": "00425"
+    },
+    {
+      "rank": 27,
+      "number": "15619",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "08948",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "07674",
+      "rrf_score": 0.015625,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens",
+      "description": "Thermocoagulation ou infiltration intracrânienne du trijumeau, neurochirurgie des nerfs crâniens",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "07675",
+      "rrf_score": 0.0,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens",
+      "description": "Traitement chirurgical sur un nerf crânien par fosse postérieure (spasme, douleur, vertige, etc.) (rhizolyse, rhizotomie), neurochirurgie des nerfs crâniens",
+      "expanded_from": "07674"
+    },
+    {
+      "rank": 31,
+      "number": "15642",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 33,
+      "number": "15639",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 34,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 35,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 36,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, par période de quinze (15) minutes",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 37,
+      "number": "15630",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "00292",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques > Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "description": "Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée d'un patient, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée, une (1) racine",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "02473",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroplastie de remplacement > manipulation du genou pour ankylose",
+      "description": "Manipulation du genou pour ankylose, sous anesthésie régionale ou générale",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "15651",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "00293",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques > Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "description": "Infiltration dans le foramen sous télévision de deux (2) racines nerveuses lombaires ou sacrées ou plus d'un patient, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "15668",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "01209",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle pour diastasis des grands droits",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "01208",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle abdominale avec ou sans réparation d'hernie ombilicale ou diastasis des grands droits ou les deux (correction de tablier graisseux)",
+      "expanded_from": "01209"
+    },
+    {
+      "rank": 45,
+      "number": "01214",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle d'autres régions",
+      "expanded_from": "01209"
+    },
+    {
+      "rank": 46,
+      "number": "08819",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "02654",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > fracture épiphyse distale - radius et cubitus",
+      "description": "Réduction fermée intra ou extra-articulaire d'une fracture de l'épiphyse distale du radius et du cubitus à l'avant-bras",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "02735",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > fracture épiphyse distale - radius et cubitus",
+      "description": "Réduction fermée et fixation par broches d'une fracture de l'épiphyse distale du radius et du cubitus à l'avant-bras",
+      "expanded_from": "02654"
+    },
+    {
+      "rank": 49,
+      "number": "02736",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > fracture épiphyse distale - radius et cubitus",
+      "description": "Réduction ouverte d'une fracture de l'épiphyse distale du radius et du cubitus à l'avant-bras",
+      "expanded_from": "02654"
+    },
+    {
+      "rank": 50,
+      "number": "09944",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > A) Médecin qui a charge",
+      "description": "Examen du travailleur, rédaction et expédition sans délai à la Commission du rapport d'évaluation médicale prescrit par le médecin qui a charge, pour un rapport d'évaluation médicale en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "09901",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > A) Médecin qui a charge",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour un rapport d'évaluation médicale par le médecin qui a charge en raison de la complexité du dossier",
+      "expanded_from": "09944"
+    },
+    {
+      "rank": 52,
+      "number": "00473",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-artérielle thérapeutique (vasodilatateur)",
+      "description": "Injection intra-artérielle thérapeutique (vasodilatateur)",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "08913",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "18160",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroplastie de remplacement",
+      "description": "Arthroplastie de remplacement du genou avec lavage de prothèse infectée incluant l'arthrotomie, le débridement et, le cas échéant, la synovectomie, le changement de polyéthylène ou la composante modulaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "98010",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "02253",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Réparation (toute voie d'approche) > Synovectomie",
+      "description": "Synovectomie complète du genou, toute voie d'approche",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "09908",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 7. Opinion du médecin avant la consolidation de la lésion professionnelle > A) Maintien du lien d'emploi",
+      "description": "Opinion professionnelle obtenue du médecin dans le cadre du maintien du lien d'emploi pour un travailleur victime d'une lésion professionnelle non consolidée, en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "08776",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "15615",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Évaluation médicale globale en soins de longue durée dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "09063",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie lorsqu'effectué à domicile",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "09101",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié dans le cadre d'un examen d'évaluation médicale d'un patient en perte d'autonomie",
+      "expanded_from": "09063"
+    },
+    {
+      "rank": 62,
+      "number": "15765",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "09977",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément lorsque le médecin rend son avis en cabinet privé pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "09946",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport d'évaluation médicale prescrit par un médecin désigné par la Commission, pour une évaluation faite en urgence en raison de la complexité du dossier",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 65,
+      "number": "09980",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 66,
+      "number": "09100",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 63,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 336.64765499997884,
+  "db_ms": 43.90312300529331
+}

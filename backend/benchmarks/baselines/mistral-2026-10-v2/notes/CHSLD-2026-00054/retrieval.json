@@ -1,0 +1,1135 @@
+{
+  "patient_id": "CHSLD-2026-00054",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 898,
+      "output_tokens": null,
+      "latency_ms": 342.3198689997662,
+      "started_at": "2026-10-08T15:44:23.796173Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 898,
+    "output_tokens": 0,
+    "llm_latency_ms": 342.3198689997662,
+    "wall_ms": 402.22768900275696
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. sans rendez-vous. CHSLD Saint-Jude (fictif) — Unité 1 Nord. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15778",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "15616",
+          "relevance": 0.03047795034945011
+        },
+        {
+          "number": "15770",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "15780",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "15667",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "15617",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "15772",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "15619",
+          "relevance": 0.02853124402463436
+        },
+        {
+          "number": "15621",
+          "relevance": 0.02744360826909542
+        },
+        {
+          "number": "15789",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15790",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15622",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08848",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15627",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08776",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15647",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15626",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15840",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15624",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15838",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Constat de décès en CHSLD pour un patient en fin de vie sous soins de confort. Décès survenu à 17h52 après appel initial pour détresse respiratoire et ordonnances de médication palliative. Famille présente, bulletin de décès complété.\nLieu (détail): CHSLD Saint-Jude (fictif) — Unité 1 Nord\nDate: 2026-10-05\nHeure de début: 17:45\nHeure de fin: 17:52\nDurée (minutes): 7.0\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Constat de décès en contexte de fin de vie (soins de confort) pour patient sous médication palliative pour détresse respiratoire.\nSystèmes/régions concernés: respiratoire; neurologique; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Mode de décès : naturel (pneumonie d'aspiration sur démence avancée).\nRecommandations données au patient: non\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; respiratoire; neurologique\nConstatations: Absence de pouls carotidien et de bruits cardiaques à l'auscultation x 1 min, absence de respiration, pupilles fixes et dilatées, aucune réponse aux stimuli.\nActe réalisé 1 - Description: Constat de décès avec examen clinique complet (vérification des signes vitaux, auscultation cardiaque et respiratoire, évaluation neurologique).\nActe réalisé 1 - Acte (générique): constat de décès\nActe réalisé 1 - Technique/approche: vérification des pouls carotidiens, auscultation cardiaque et respiratoire, évaluation des pupilles et des stimuli\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 2 - Description: Signature du bulletin de décès (SP-3).\nActe réalisé 2 - Acte (générique): compléter un bulletin de décès\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: les_deux\nAjouts possiblement facturables: deplacement_urgence\nÉlément incertain: La durée du déplacement au CHSLD n'est pas explicitement mentionnée (estimée à 7 minutes).; Le rôle exact de l'infirmière (Dubé) dans l'appel initial n'est pas précisé (infirmière du CHSLD ou du GMF).",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00016",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15266",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00018",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "15264",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "15889",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "15234",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "00014",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "15890",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15622",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00013",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15883",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15265",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15763",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00953",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08995",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00638",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08997",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00566",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09530",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15068",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "constat de décès",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00016",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "00014",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "15234",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00018",
+          "relevance": 0.03128054738044739
+        },
+        {
+          "number": "00013",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "15264",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "15266",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "15265",
+          "relevance": 0.029411764815449715
+        },
+        {
+          "number": "15890",
+          "relevance": 0.028577260673046112
+        },
+        {
+          "number": "15889",
+          "relevance": 0.02857142873108387
+        },
+        {
+          "number": "20180",
+          "relevance": 0.028006266802549362
+        },
+        {
+          "number": "09911",
+          "relevance": 0.025816122069954872
+        },
+        {
+          "number": "09912",
+          "relevance": 0.025487013161182404
+        },
+        {
+          "number": "09055",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09054",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15160",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "20026",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "09067",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15967",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09820",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Constat de décès avec examen clinique complet (vérification des signes vitaux, auscultation cardiaque et respiratoire, évaluation neurologique).",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00016",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15264",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "00014",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00018",
+          "relevance": 0.03128054738044739
+        },
+        {
+          "number": "15266",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "15234",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "09116",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "00013",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "08992",
+          "relevance": 0.02758360095322132
+        },
+        {
+          "number": "09119",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "09117",
+          "relevance": 0.02666666731238365
+        },
+        {
+          "number": "09120",
+          "relevance": 0.02547874115407467
+        },
+        {
+          "number": "08969",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15160",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00023",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08994",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08913",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08996",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15889",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00026",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "compléter un bulletin de décès",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15265",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15264",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "00016",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00014",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "00018",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "15234",
+          "relevance": 0.029709506779909134
+        },
+        {
+          "number": "15266",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "00023",
+          "relevance": 0.028594771400094032
+        },
+        {
+          "number": "15890",
+          "relevance": 0.028370222076773643
+        },
+        {
+          "number": "00013",
+          "relevance": 0.02830941043794155
+        },
+        {
+          "number": "15889",
+          "relevance": 0.02694394253194332
+        },
+        {
+          "number": "00026",
+          "relevance": 0.026500526815652847
+        },
+        {
+          "number": "15797",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09909",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20180",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15886",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09930",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "02252",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15796",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09929",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Signature du bulletin de décès (SP-3).",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15265",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00016",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "15264",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00018",
+          "relevance": 0.030578898265957832
+        },
+        {
+          "number": "15266",
+          "relevance": 0.030117753893136978
+        },
+        {
+          "number": "00014",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "15890",
+          "relevance": 0.029236022382974625
+        },
+        {
+          "number": "00013",
+          "relevance": 0.02904040366411209
+        },
+        {
+          "number": "15234",
+          "relevance": 0.028612013906240463
+        },
+        {
+          "number": "15889",
+          "relevance": 0.02857142873108387
+        },
+        {
+          "number": "15622",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "20180",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09973",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15886",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "30010",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09820",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "08010",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "09909",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "08125",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15797",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "deplacement_urgence",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15057",
+          "relevance": 0.02938045561313629
+        },
+        {
+          "number": "15659",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "15660",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "15634",
+          "relevance": 0.028594771400094032
+        },
+        {
+          "number": "15635",
+          "relevance": 0.028577260673046112
+        },
+        {
+          "number": "08968",
+          "relevance": 0.028445512056350708
+        },
+        {
+          "number": "15661",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "15625",
+          "relevance": 0.02597840689122677
+        },
+        {
+          "number": "15623",
+          "relevance": 0.025657894089818
+        },
+        {
+          "number": "15655",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15646",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08966",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15653",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08967",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15644",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15654",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15063",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15645",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15070",
+          "relevance": 0.01515151560306549
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00016",
+      "rrf_score": 0.08252247488101534,
+      "header_path": "B — Consultation, examen et visite > Constatation de décès aux fins de transplantation d'organes et de tissus",
+      "description": "Constatation de décès aux fins de transplantation d'organes et de tissus, 2e constat de décès, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15264",
+      "rrf_score": 0.08017354876159742,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Évaluation à distance du décès incluant, le cas échéant, le constat de décès",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "00018",
+      "rrf_score": 0.07937307987711213,
+      "header_path": "B — Consultation, examen et visite > Constatation de décès aux fins de transplantation d'organes et de tissus",
+      "description": "Constatation de décès aux fins de transplantation d'organes et de tissus, 2e constat de décès, avec déplacement entre 7 h et 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "00014",
+      "rrf_score": 0.07893162129016175,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Constatation de décès avec déplacement entre 7 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15266",
+      "rrf_score": 0.07794647292598113,
+      "header_path": "B — Consultation, examen et visite > Constatation de décès aux fins de transplantation d'organes et de tissus",
+      "description": "Constatation de décès aux fins de transplantation d'organes et de tissus, 2e constat de décès, avec déplacement entre 0 h et 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15234",
+      "rrf_score": 0.07698876076485185,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Constatation de décès avec déplacement de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "00013",
+      "rrf_score": 0.07446125351503353,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Constatation de décès sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15889",
+      "rrf_score": 0.07171673435260392,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Évaluation à distance du décès hors d'un centre désigné d'un patient hébergé en CHSLD",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15265",
+      "rrf_score": 0.062343213509915216,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Rédaction du bulletin de décès (formulaire SP-3)",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "15890",
+      "rrf_score": 0.05948865299172586,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Évaluation à distance du décès hors d'un centre désigné d'un patient décédé à domicile et inscrit au programme de soins à domicile du CLSC",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "15622",
+      "rrf_score": 0.04307610368090898,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "20180",
+      "rrf_score": 0.04188373484148132,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Supplément pour la stabilisation et le maintien d'un donneur potentiel en vue d'une greffe d'organes, si décès cardiocirculatoire programmé avant mort cérébrale, le jour du décès cardiocirculatoire, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "00023",
+      "rrf_score": 0.028438886647841874,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, complet",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "00020",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, ordinaire",
+      "expanded_from": "00023"
+    },
+    {
+      "rank": 15,
+      "number": "15160",
+      "rrf_score": 0.027031963470319637,
+      "header_path": "B — Consultation, examen et visite > Examen médical et constat médico-légal pour un patient présumément victime d'assaut sexuel (réf. : P.G. 2.2.7) > examen médical d'un patient présumément victime d'assaut sexuel, constat médico-légal le cas échéant, et rédaction du formulaire",
+      "description": "Évaluation médicale d'un patient présumément victime d'assaut sexuel qui, suite à l'évaluation, ne nécessite pas la rédaction du formulaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "09067",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen médical et constat médico-légal pour un patient présumément victime d'assaut sexuel (réf. : P.G. 2.2.7) > examen médical d'un patient présumément victime d'assaut sexuel, constat médico-légal le cas échéant, et rédaction du formulaire",
+      "description": "Examen médical d'un patient présumément victime d'assaut sexuel, constat médico-légal le cas échéant, et rédaction du formulaire, sans déplacement",
+      "expanded_from": "15160"
+    },
+    {
+      "rank": 17,
+      "number": "15967",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen médical et constat médico-légal pour un patient présumément victime d'assaut sexuel (réf. : P.G. 2.2.7) > examen médical d'un patient présumément victime d'assaut sexuel, constat médico-légal le cas échéant, et rédaction du formulaire",
+      "description": "Examen médical d'un patient présumément victime d'assaut sexuel, constat médico-légal le cas échéant, et rédaction du formulaire, d'urgence avec déplacement",
+      "expanded_from": "15160"
+    },
+    {
+      "rank": 18,
+      "number": "15886",
+      "rrf_score": 0.027031963470319637,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire et démarches afférentes relatifs à une demande d'aide médicale à mourir (parties 1, 2 et 3) (médecin accompagnateur) : Demande du patient finalisée",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15885",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire (partie 1) relatif à une demande d'aide médicale à mourir (médecin accompagnateur) : Demande du patient non finalisée",
+      "expanded_from": "15886"
+    },
+    {
+      "rank": 20,
+      "number": "15887",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Rapport de consultation relatif à une demande d'aide médicale à mourir (avis du second médecin)",
+      "expanded_from": "15886"
+    },
+    {
+      "rank": 21,
+      "number": "00026",
+      "rrf_score": 0.026742734890354787,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, complet majeur",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "09909",
+      "rrf_score": 0.02668564312399929,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 8. Rapport complémentaire",
+      "description": "Rédaction du formulaire prescrit par la Commission et expédition à celle-ci, dans les trente (30) jours de la réception du rapport du professionnel de la santé, pour un rapport complémentaire en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "15797",
+      "rrf_score": 0.026547116736990152,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 20. Rapports pour les victimes d'actes criminels (IVAC) > C) Rapport final IVAC-CIVISME",
+      "description": "Rédaction et expédition à la Commission du formulaire de rapport final IVAC-CIVISME prescrit par la Commission, dès que la blessure de la victime ou du sauveteur est consolidée, pour les victimes d'actes criminels, en vertu de la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "09820",
+      "rrf_score": 0.0259915611814346,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Sécurité publique représenté par le sous-ministre",
+      "description": "Remplir le formulaire intitulé « certificat du médecin qualifié » et effectuer, le cas échéant, le prélèvement découlant des exigences du Code criminel dans le cadre d'un prélèvement prévu à l'article 258 (1) h) et (ii) du Code criminel (L.R.C., (1985), ch. C-46), à la demande d'un policier.",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "15778",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15057",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire avec déplacement (d'urgence avec déplacement)",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "15616",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "15659",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "09231",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation mineure d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15659"
+    },
+    {
+      "rank": 30,
+      "number": "15770",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "15660",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation d'urgence avec déplacement d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "09234",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation ordinaire d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15660"
+    },
+    {
+      "rank": 33,
+      "number": "15780",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "15633",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "15667",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15634",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "15617",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "15635",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "15772",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "09116",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > complet > patient inscrit",
+      "description": "Examen complet sans déplacement d'un patient inscrit de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "09117",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > complet > patient inscrit",
+      "description": "Examen complet d'urgence avec déplacement d'un patient inscrit de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": "09116"
+    },
+    {
+      "rank": 42,
+      "number": "08968",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 0 h à 7 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "08966",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 7 h à 16 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": "08968"
+    },
+    {
+      "rank": 44,
+      "number": "08967",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 16 h à 24 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": "08968"
+    },
+    {
+      "rank": 45,
+      "number": "15619",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "15661",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "09237",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation majeure d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15661"
+    },
+    {
+      "rank": 48,
+      "number": "15621",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Échanges interdisciplinaires concernant l'ensemble des patients d'une unité ou de l'établissement (par période de quinze (15) minutes) dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "08992",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > psychiatrique complet > patient inscrit",
+      "description": "Examen psychiatrique complet sans déplacement d'un patient inscrit de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "15625",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence période de 0 h à 7 h dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15789",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "15790",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "08848",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15627",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "08776",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15647",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "15626",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "15840",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite périodique",
+      "description": "Visite périodique d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "15624",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence période de 16 h à 24 h dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "15838",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [
+    "registration",
+    "vulnerability"
+  ],
+  "eligibility": {
+    "age": 94,
+    "panel_size": 900,
+    "is_registered": null,
+    "is_vulnerable": null
+  },
+  "embedding_ms": 344.53720500459895,
+  "db_ms": 49.44119299761951
+}

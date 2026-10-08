@@ -1,0 +1,871 @@
+{
+  "patient_id": "GMF-2026-00306",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 737,
+      "output_tokens": null,
+      "latency_ms": 300.1433850004105,
+      "started_at": "2026-10-08T15:43:50.680420Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 737,
+    "output_tokens": 0,
+    "llm_latency_ms": 300.1433850004105,
+    "wall_ms": 348.40412900666706
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. GMF Boisé-des-Cèdres. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15837",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "15835",
+          "relevance": 0.0317460335791111
+        },
+        {
+          "number": "15839",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "15779",
+          "relevance": 0.03109932504594326
+        },
+        {
+          "number": "15771",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "08776",
+          "relevance": 0.030414747074246407
+        },
+        {
+          "number": "08848",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "15790",
+          "relevance": 0.029083246365189552
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02904040366411209
+        },
+        {
+          "number": "15789",
+          "relevance": 0.02878289483487606
+        },
+        {
+          "number": "08777",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "08819",
+          "relevance": 0.026584507897496223
+        },
+        {
+          "number": "15626",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09058",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15627",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15667",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "08841",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09059",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "08843",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Visite périodique annuelle d'une patiente de 88 ans résidente en établissement avec assistance, suivie pour insuffisance cardiaque, fibrillation auriculaire et déclin cognitif léger. Examen physique stable, bilan sanguin et ECG demandés. Plan de surveillance et ajustement des soins sans changement médicamenteux immédiat.\nLieu (détail): GMF Boisé-des-Cèdres\nDate: 2026-05-26\nHeure de début: 10:15\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Visite périodique annuelle pour patiente vulnérable résidente en établissement avec assistance, suivie pour insuffisance cardiaque, fibrillation auriculaire et déclin cognitif léger.\nSystèmes/régions concernés: cardiovasculaire; cognitif; urinaire; cutané; musculo-squelettique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Insuffisance cardiaque et fibrillation auriculaire chroniques stables; déclin cognitif léger progressif; statut fonctionnel globalement préservé.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes_vitaux; cardiovasculaire; pulmonaire; membres_inférieurs; cognitif; peau\nConstatations: Rythme irrégulier confirmé (FA), souffle systolique doux 2/6 au foyer aortique connu et stable; œdème léger godet 1+ bilatéral stable; score MoCA 23/30 (légère baisse par rapport à 25/30 l'an dernier).\nActe réalisé 1 - Description: Mini-examen cognitif (MoCA) avec score de 23/30\nActe réalisé 1 - Acte (générique): examen cognitif\nActe réalisé 1 - Technique/approche: Mini-examen cognitif (MoCA)\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Temps de fin de la consultation non précisé.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15771",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "15779",
+          "relevance": 0.028665028512477875
+        },
+        {
+          "number": "15839",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15837",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08776",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08994",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00837",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08996",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15835",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00638",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00205",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06100",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08813",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07081",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15054",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08777",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08995",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "05345",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08997",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "examen cognitif",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08883",
+          "relevance": 0.03125
+        },
+        {
+          "number": "08969",
+          "relevance": 0.03021353855729103
+        },
+        {
+          "number": "08992",
+          "relevance": 0.02976190485060215
+        },
+        {
+          "number": "09116",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "09119",
+          "relevance": 0.027984345331788063
+        },
+        {
+          "number": "15763",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "00541",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00543",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "98007",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09093",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08998",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09100",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00353",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00403",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00976",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15067",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09939",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08999",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15193",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08004",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Mini-examen cognitif (MoCA) avec score de 23/30",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08883",
+          "relevance": 0.026709401980042458
+        },
+        {
+          "number": "09116",
+          "relevance": 0.026356857270002365
+        },
+        {
+          "number": "15763",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02228",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08992",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09500",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08969",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02229",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08998",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00635",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08999",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00636",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15067",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00706",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15070",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00543",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00736",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08857",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08979",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08866",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "08883",
+      "rrf_score": 0.03333333333333333,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > ordinaire > patient inscrit > sans déplacement",
+      "description": "Examen ordinaire sans déplacement d'un patient inscrit de 80 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15837",
+      "rrf_score": 0.03229166666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "15771",
+      "rrf_score": 0.03229166666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15779",
+      "rrf_score": 0.032266458495966696,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "09116",
+      "rrf_score": 0.032266458495966696,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > complet > patient inscrit",
+      "description": "Examen complet sans déplacement d'un patient inscrit de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "09117",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > complet > patient inscrit",
+      "description": "Examen complet d'urgence avec déplacement d'un patient inscrit de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": "09116"
+    },
+    {
+      "rank": 7,
+      "number": "15839",
+      "rrf_score": 0.03225806451612903,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite périodique",
+      "description": "Visite périodique d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "08992",
+      "rrf_score": 0.031754032258064516,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > psychiatrique complet > patient inscrit",
+      "description": "Examen psychiatrique complet sans déplacement d'un patient inscrit de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "08969",
+      "rrf_score": 0.031544957774465976,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > psychiatrique complet > patient admis",
+      "description": "Examen psychiatrique complet sans déplacement d'un patient admis de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "08979",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > psychiatrique complet > patient admis",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient admis de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée",
+      "expanded_from": "08969"
+    },
+    {
+      "rank": 11,
+      "number": "15763",
+      "rrf_score": 0.0315136476426799,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > examen à domicile du premier patient en perte sévère d'autonomie",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie de 70 ans ou plus par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "15835",
+      "rrf_score": 0.030886196246139225,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "08776",
+      "rrf_score": 0.03076923076923077,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "08998",
+      "rrf_score": 0.028991596638655463,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de 70 ans et plus)",
+      "description": "Examen psychiatrique complet d'un patient de 70 ans ou plus, dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation ou dans une unité de soins de longue durée d'un CHSGS",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "09245",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de 70 ans et plus)",
+      "description": "Examen d'urgence avec déplacement pour un patient de 70 ans ou plus, dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation ou dans une unité de soins de longue durée d'un CHSGS",
+      "expanded_from": "08998"
+    },
+    {
+      "rank": 16,
+      "number": "00543",
+      "rrf_score": 0.028258706467661692,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Gonioscopie, pour les deux yeux à moins de mention contraire",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "08777",
+      "rrf_score": 0.027443609022556388,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "08999",
+      "rrf_score": 0.027272727272727275,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de 70 ans et plus)",
+      "description": "Examen psychiatrique complet majeur d'un patient de 70 ans ou plus, dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation ou dans une unité de soins de longue durée d'un CHSGS",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15067",
+      "rrf_score": 0.027222222222222224,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen psychiatrique principal sans déplacement",
+      "description": "Examen psychiatrique principal sans déplacement d'un patient inscrit de 70 ans et plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "00953",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "02228",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > Scoliose > correction par thoracoscopie",
+      "description": "Correction de scoliose par thoracoscopie, premier niveau",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "09119",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > complet majeur > patient inscrit (clinique externe)",
+      "description": "Examen complet majeur sans déplacement d'un patient inscrit de 70 ans ou plus en clinique externe dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "09120",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > complet majeur > patient inscrit (clinique externe)",
+      "description": "Examen complet majeur d'urgence avec déplacement d'un patient inscrit de 70 ans ou plus en clinique externe dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée",
+      "expanded_from": "09119"
+    },
+    {
+      "rank": 24,
+      "number": "09500",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Pied > Arthroscopie",
+      "description": "Arthroscopie du pied",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "08848",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "08994",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "00541",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Examen complémentaire d'un demi-voyant (cet examen doit inclure les enregistrements de l'acuité visuelle à l'aide de boîtes d'aides visuelles du type microscopique et télémicroscopique), pour les deux yeux à moins de mention contraire",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "15790",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "00837",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, première heure, incluant la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "00838",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, par quart d'heure ou portion de quart d'heure après la première heure, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": "00837"
+    },
+    {
+      "rank": 31,
+      "number": "09346",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, pour chaque patient supplémentaire traité simultanément lors de la première heure, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": "00837"
+    },
+    {
+      "rank": 32,
+      "number": "02229",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > Scoliose > correction par thoracoscopie",
+      "description": "Correction de scoliose par thoracoscopie, par niveau relâché et greffé, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "08775",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "08996",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "98007",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Commission d'examen",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15789",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "09093",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > préanesthésie",
+      "description": "Examen préanesthésie d'un patient de 70 ans ou plus réservé au médecin exerçant en anesthésie",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "15193",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > préanesthésie",
+      "description": "Examen d'urgence avec déplacement d'un patient de 70 ans ou plus réservé au médecin exerçant en anesthésie en centre hospitalier seulement",
+      "expanded_from": "09093"
+    },
+    {
+      "rank": 39,
+      "number": "00635",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Endoscopie gastro-entérologique > Oesophagoscopie ou gastroscopie ou duodénoscopie ou les trois > Rectosigmoïdoscopie diagnostique rigide ou à fibre optique incluant l'anuscopie (examen de trente (30) cm ou moins)",
+      "description": "Rectosigmoïdoscopie diagnostique rigide ou à fibre optique incluant l'anuscopie (examen de trente (30) cm ou moins) sans manipulation, en gastroentérologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "00706",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Endoscopie gastro-entérologique > Oesophagoscopie ou gastroscopie ou duodénoscopie ou les trois > Rectosigmoïdoscopie diagnostique rigide ou à fibre optique incluant l'anuscopie (examen de trente (30) cm ou moins)",
+      "description": "Rectosigmoïdoscopie diagnostique rigide ou à fibre optique incluant l'anuscopie (examen de trente (30) cm ou moins) avec exérèse de polypes (un (1) ou (2) deux) incluant la biopsie, en gastroentérologie",
+      "expanded_from": "00635"
+    },
+    {
+      "rank": 41,
+      "number": "00638",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "00783",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie",
+      "expanded_from": "00638"
+    },
+    {
+      "rank": 43,
+      "number": "08819",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "00205",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Insertion de stérilet incluant l'examen, la visite ou la consultation effectué antérieurement ou concurremment à cet égard en gynécologie (P.A.D.T. 1.4)",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "09100",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "09063",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie lorsqu'effectué à domicile",
+      "expanded_from": "09100"
+    },
+    {
+      "rank": 47,
+      "number": "09101",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié dans le cadre d'un examen d'évaluation médicale d'un patient en perte d'autonomie",
+      "expanded_from": "09100"
+    },
+    {
+      "rank": 48,
+      "number": "00636",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Endoscopie gastro-entérologique > Oesophagoscopie ou gastroscopie ou duodénoscopie ou les trois > Rectosigmoïdoscopie diagnostique rigide ou à fibre optique incluant l'anuscopie (examen de trente (30) cm ou moins)",
+      "description": "Rectosigmoïdoscopie diagnostique rigide ou à fibre optique incluant l'anuscopie (examen de trente (30) cm ou moins) avec biopsie unique ou multiple, en gastroentérologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "15626",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "06100",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "M — Appareil urinaire > Rein > Excision",
+      "description": "Biopsie du rein non effectuée à la même séance opératoire qu'un autre acte chirurgical associé, faite par lombotomie, rein",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "06204",
+      "rrf_score": 0.0,
+      "header_path": "M — Appareil urinaire > Rein > Excision",
+      "description": "Marsupialisation de kyste rénal, unique ou multiple, ou exérèse ou les deux, unilatéral (ne peut être associé à un code de chirurgie rénale ouverte), rein",
+      "expanded_from": "06100"
+    },
+    {
+      "rank": 52,
+      "number": "06217",
+      "rrf_score": 0.0,
+      "header_path": "M — Appareil urinaire > Rein > Excision",
+      "description": "Traitement percutané de tumeurs malignes du bassinet par résection, électrocoagulation ou Laser incluant les biopsies du bassinet, la néphroscopie, la dilatation ou la néphrostomie percutanée si faites dans la même séance et les tubes de drainage, rein",
+      "expanded_from": "06100"
+    },
+    {
+      "rank": 53,
+      "number": "00353",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Capillaroscopie péri-unguéale, par séance",
+      "description": "Technique et interprétation de la capillaroscopie péri-unguéale, par séance, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "98010",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "09058",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Vacation : Taux du tarif horaire multiplié par trois (3) (réf. : annexe XIV et article 17.03 de l'Entente) > Conseil génétique ou génique > Rencontre et interview avec un membre d'une famille dans le cadre d'un conseil génétique individuel ou collectif > individuel",
+      "description": "Rencontre et interview avec un membre d'une famille dans le cadre d'un conseil génétique individuel, en établissement désigné par accord des parties, par demi-heure, vacation (taux du tarif horaire multiplié par trois), jusqu'à concurrence d'un grand total de deux (2) heures, un maximum d'une (1) heure par personne",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15627",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "15667",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "08841",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective visant un groupe de personnes souffrant toutes de problèmes de santé mentale ou d'une condition de vulnérabilité, première période de trente (30) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "09059",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Vacation : Taux du tarif horaire multiplié par trois (3) (réf. : annexe XIV et article 17.03 de l'Entente) > Conseil génétique ou génique > Rencontre et interview avec un membre d'une famille dans le cadre d'un conseil génétique individuel ou collectif > collectif (couple)",
+      "description": "Rencontre et interview avec un membre d'une famille dans le cadre d'un conseil génétique collectif (couple), en établissement désigné par accord des parties, par demi-heure, vacation (taux du tarif horaire multiplié par trois), jusqu'à concurrence d'un grand total de quatre (4) heures, à raison d'un maximum d'une (1) heure par personne",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "08843",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective visant un groupe de personnes souffrant toutes de problèmes de santé mentale ou d'une condition de vulnérabilité, période supplémentaire de quinze (15) minutes",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 88,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 301.6101300017908,
+  "db_ms": 36.71615300117992
+}
