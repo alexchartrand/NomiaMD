@@ -31,8 +31,9 @@ from app.lancedb.database import vector_dimension
 from app.lancedb.fusion import DEFAULT_K
 from app.lancedb.models import CodeVersionRow
 from app.llm import EmbeddingDimensionGuard, chat_provider, get_embedding_client
-from app.ramq_codes import build_candidate_fuser, build_code_query_runner
-from app.ramq_codes.candidate_fuser import DEFAULT_FUSED_TOP_K
+from app.ramq_codes import build_candidate_fuser, build_code_query_runner, build_family_expander
+from app.ramq_codes.candidate_fuser import DEFAULT_FUSED_TOP_K, DEFAULT_KEPT_SOURCES
+from app.ramq_codes.family_expander import DEFAULT_MAX_FAMILY_SIZE
 from app.ramq_codes.query_runner import DEFAULT_SIMILARITY_TOP_K
 from app.summary import ConsultationSummaryTask
 
@@ -48,6 +49,8 @@ class RetrievalParams:
     similarity_top_k: int = DEFAULT_SIMILARITY_TOP_K
     fused_top_k: int = DEFAULT_FUSED_TOP_K
     rrf_k: float = DEFAULT_K
+    max_family_size: int = DEFAULT_MAX_FAMILY_SIZE
+    kept_sources: tuple[str, ...] = DEFAULT_KEPT_SOURCES
 
 
 @dataclass(frozen=True)
@@ -123,6 +126,8 @@ class RunCommand:
                 similarity_top_k=params.similarity_top_k,
                 fused_top_k=params.fused_top_k,
                 rrf_k=params.rrf_k,
+                max_family_size=params.max_family_size,
+                kept_sources=list(params.kept_sources),
             )
             run = self._open_run(name, config, version.manual_rev, selected, argv or [])
 
@@ -135,8 +140,15 @@ class RunCommand:
                     embedding_client=CachedEmbeddingClient(get_embedding_client(), self._cache_dir),
                     similarity_top_k=params.similarity_top_k,
                 )
-                candidate_fuser = build_candidate_fuser(fused_top_k=params.fused_top_k, rrf_k=params.rrf_k)
-                pipeline.append(RetrievalStage(query_runner, candidate_fuser, source, summaries=summary_run))
+                candidate_fuser = build_candidate_fuser(
+                    fused_top_k=params.fused_top_k, rrf_k=params.rrf_k, kept_sources=params.kept_sources
+                )
+                family_expander = build_family_expander(codes, max_family_size=params.max_family_size)
+                pipeline.append(
+                    RetrievalStage(
+                        query_runner, candidate_fuser, source, summaries=summary_run, family_expander=family_expander
+                    )
+                )
 
             runner = BenchmarkRunner(pipeline, concurrency=concurrency, force=force, on_record=on_record)
             progress = await runner.run(run, selected)
@@ -278,6 +290,7 @@ class SweepCommand:
         similarity_top_ks: list[int],
         fused_top_ks: list[int],
         rrf_ks: list[float],
+        max_family_sizes: list[int] | None = None,
         query_source_name: str = "summary",
         prefix: str | None = None,
         codes_table: str | None = None,
@@ -286,14 +299,20 @@ class SweepCommand:
         argv: list[str] | None = None,
     ) -> list[RunReport]:
         reports = []
-        for similarity_top_k, fused_top_k, rrf_k in itertools.product(similarity_top_ks, fused_top_ks, rrf_ks):
-            name = f"{prefix or summaries_from}-{query_source_name.replace('+', '-')}-sim{similarity_top_k}-fused{fused_top_k}-rrf{rrf_k:g}"
+        combinations = itertools.product(
+            similarity_top_ks, fused_top_ks, rrf_ks, max_family_sizes or [DEFAULT_MAX_FAMILY_SIZE]
+        )
+        for similarity_top_k, fused_top_k, rrf_k, max_family_size in combinations:
+            name = (
+                f"{prefix or summaries_from}-{query_source_name.replace('+', '-')}"
+                f"-sim{similarity_top_k}-fused{fused_top_k}-rrf{rrf_k:g}-fam{max_family_size}"
+            )
             await self._run.execute(
                 name,
                 stages=["retrieval"],
                 query_source_name=query_source_name,
                 summaries_from=summaries_from,
-                params=RetrievalParams(similarity_top_k, fused_top_k, rrf_k),
+                params=RetrievalParams(similarity_top_k, fused_top_k, rrf_k, max_family_size),
                 codes_table=codes_table,
                 cases=cases,
                 concurrency=concurrency,

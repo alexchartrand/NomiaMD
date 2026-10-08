@@ -101,7 +101,9 @@ Extraction flow: the physician picks a patient *first* (global search), then `PO
 (requires `patient_id`) stores the note as an `Encounter` (the retention purge target; runs
 cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
 (physician practice facts + patient age/vulnerability/registration) → `billing_codes`
-(multi-query hybrid retrieval, eligibility-filtered, RRF-fused → LLM picks from candidates).
+(multi-query hybrid retrieval: a visit query rendered from the encounter's form only and scoped to the
+manual's visit section, the full summary, one per procedure/add-on; eligibility-filtered, RRF-fused with every
+visit hit kept, small code families completed → LLM picks from candidates).
 The physician reviews (and may add codes from the code search), then `POST /claims` saves from
 the stored extraction run. Billing without an encounter (`/app/facturer`) skips all of it:
 patient + date + hand-picked codes → `POST /claims/manual`.

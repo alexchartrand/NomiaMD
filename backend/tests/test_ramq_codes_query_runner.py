@@ -22,9 +22,14 @@ class _FakeCodeRepository:
         self.calls: list[dict[str, Any]] = []
 
     async def hybrid_search(
-        self, text: str, vector: list[float], k: int, eligibility: CodeEligibilityFilter | None = None
+        self,
+        text: str,
+        vector: list[float],
+        k: int,
+        eligibility: CodeEligibilityFilter | None = None,
+        sections: tuple[str, ...] | None = None,
     ) -> list[tuple[CodeRow, float]]:
-        self.calls.append({"text": text, "vector": vector, "k": k, "eligibility": eligibility})
+        self.calls.append({"text": text, "vector": vector, "k": k, "eligibility": eligibility, "sections": sections})
         return self._hits_by_query.get(text, [])
 
 
@@ -86,3 +91,12 @@ async def test_similarity_top_k_is_passed_to_every_search():
     await runner.run(_queries("visite", "ECG"), _FILTER)
 
     assert [c["k"] for c in codes.calls] == [5, 5]
+
+
+async def test_each_search_is_limited_to_its_own_query_sections():
+    runner, codes, _ = _runner({})
+    queries = [PlannedQuery("visite", "visit", section_prefixes=("B —",)), PlannedQuery("ECG", "procedure")]
+
+    await runner.run(queries, _FILTER)
+
+    assert [c["sections"] for c in codes.calls] == [("B —",), None]

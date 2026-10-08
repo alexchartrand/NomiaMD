@@ -60,7 +60,7 @@ class MarkdownReport:
             ["chat provider / summary model", f"{c.llm_provider} / {c.summary_model or '–'}"],
             ["embeddings", f"{c.embedding_provider} / {c.embedding_model}"],
             ["codes table", f"{c.codes_table} (manual {manifest.manual_rev})"],
-            ["retrieval", f"similarity_top_k={c.similarity_top_k}, fused_top_k={c.fused_top_k}, rrf_k={c.rrf_k:g}"],
+            ["retrieval", f"similarity_top_k={c.similarity_top_k}, fused_top_k={c.fused_top_k}, rrf_k={c.rrf_k:g}, max_family_size={c.max_family_size}, kept_sources={','.join(c.kept_sources) or '-'}"],
             ["notes", str(len(manifest.case_ids))],
             ["git", f"{(manifest.git_sha or '?')[:10]}{' (dirty)' if manifest.git_dirty else ''}"],
             ["fixture", f"{manifest.fixture_path} ({manifest.fixture_sha256[:10]})"],

@@ -73,6 +73,9 @@ class _EmptyCodesTableReader(ICodeRepository):
     async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
         raise NotImplementedError
 
+    async def list_by_header_paths(self, header_paths: list[str], eligibility=None) -> list:
+        raise NotImplementedError
+
 
 def _row(row_id: str, text: str, metadata: dict | None = None) -> DocumentRow:
     metadata = metadata or {}

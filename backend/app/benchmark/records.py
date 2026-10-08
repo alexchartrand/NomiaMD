@@ -71,6 +71,8 @@ class QueryHitRecord(BaseModel):
 class QueryRecord(BaseModel):
     source: str
     text: str
+    # The `header_path` prefixes the search was limited to; None = the whole table.
+    sections: list[str] | None = None
     hits: list[QueryHitRecord]
 
 
@@ -80,6 +82,8 @@ class CandidateRecord(BaseModel):
     rrf_score: float
     header_path: str
     description: str
+    # Set when the code was added as a sibling of a retrieved one (that one's number).
+    expanded_from: str | None = None
 
 
 class RetrievalRecord(StageRecord):
@@ -109,6 +113,10 @@ class RunConfig(BaseModel):
     similarity_top_k: int
     fused_top_k: int
     rrf_k: float
+    # 0 = no family expansion (every run recorded before it existed).
+    max_family_size: int = 0
+    # Query sources whose every hit is kept past fused_top_k; [] before it existed.
+    kept_sources: list[str] = []
 
 
 class RunManifest(BaseModel):

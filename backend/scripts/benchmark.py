@@ -83,6 +83,14 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--similarity-top-k", type=int, default=RetrievalParams.similarity_top_k)
     run.add_argument("--fused-top-k", type=int, default=RetrievalParams.fused_top_k)
     run.add_argument("--rrf-k", type=float, default=RetrievalParams.rrf_k)
+    run.add_argument(
+        "--max-family-size", type=int, default=RetrievalParams.max_family_size,
+        help="expand retrieved codes' families of at most this many eligible variants (0 = off)",
+    )
+    run.add_argument(
+        "--kept-sources", type=_csv(str), default=list(RetrievalParams.kept_sources),
+        help="comma-separated query sources whose every hit is kept past --fused-top-k ('' = none)",
+    )
     run.add_argument("--codes-table", help="a registered codes_<rev> table instead of the current one")
     run.add_argument("--concurrency", type=int, default=2, help="notes in parallel")
     run.add_argument("--force", action="store_true", help="redo notes already recorded")
@@ -94,6 +102,7 @@ def _parser() -> argparse.ArgumentParser:
     sweep.add_argument("--similarity-top-k", type=_csv(int), default=[RetrievalParams.similarity_top_k])
     sweep.add_argument("--fused-top-k", type=_csv(int), default=[RetrievalParams.fused_top_k])
     sweep.add_argument("--rrf-k", type=_csv(float), default=[RetrievalParams.rrf_k])
+    sweep.add_argument("--max-family-size", type=_csv(int), default=[RetrievalParams.max_family_size])
     sweep.add_argument("--query-source", default="summary", choices=["summary", "transcript", "summary+transcript"])
     sweep.add_argument("--prefix", help="run name prefix (default: the summaries run)")
     sweep.add_argument("--codes-table")
@@ -171,7 +180,13 @@ async def main() -> None:
             query_source_name=args.query_source,
             summaries_from=args.summaries_from,
             summary_model=args.summary_model,
-            params=RetrievalParams(args.similarity_top_k, args.fused_top_k, args.rrf_k),
+            params=RetrievalParams(
+                args.similarity_top_k,
+                args.fused_top_k,
+                args.rrf_k,
+                args.max_family_size,
+                tuple(s for s in args.kept_sources if s),
+            ),
             codes_table=args.codes_table,
             cases=_case_filter(args),
             concurrency=args.concurrency,
@@ -190,6 +205,7 @@ async def main() -> None:
             similarity_top_ks=args.similarity_top_k,
             fused_top_ks=args.fused_top_k,
             rrf_ks=args.rrf_k,
+            max_family_sizes=args.max_family_size,
             query_source_name=args.query_source,
             prefix=args.prefix,
             codes_table=args.codes_table,

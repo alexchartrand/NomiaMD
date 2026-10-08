@@ -72,7 +72,15 @@ class EncounterSetting(BaseModel):
 
 
 class ReferralInformation(BaseModel):
-    present: bool = Field(json_schema_extra={"fr_label": "Référence"})
+    present: bool = Field(
+        description=(
+            "True only for an incoming referral: another professional asked the physician who "
+            "wrote this note to see the patient (for an opinion, an evaluation, a transfer of "
+            "care). False when this physician refers the patient elsewhere (to a specialist, a "
+            "program, a service) — that outgoing referral is not this field"
+        ),
+        json_schema_extra={"fr_label": "Référence"},
+    )
     requester_role: RequesterRole | None = Field(
         default=None, json_schema_extra={"fr_label": "Demandeur (rôle)"}
     )
@@ -142,6 +150,16 @@ class ProcedurePerformed(BaseModel):
         description="Plain language, e.g. 'suture of 3cm laceration', 'joint injection', 'ECG performed and interpreted'",
         json_schema_extra={"fr_label": "Description"},
     )
+    generic_act: str | None = Field(
+        default=None,
+        description=(
+            "The same act named generically, the way a fee schedule would list it: no side, "
+            "size, count, product or anatomical detail beyond the tissue or structure, e.g. "
+            "'incision et drainage d'abcès', 'excision de lésion cutanée', 'cryothérapie de "
+            "verrue', 'retrait de corps étranger de l'oreille', 'électrocardiogramme'"
+        ),
+        json_schema_extra={"fr_label": "Acte (générique)"},
+    )
     body_site: str | None = Field(
         default=None, description="Free text or null", json_schema_extra={"fr_label": "Site"}
     )
@@ -177,7 +195,12 @@ class ConsultationSummaryResult(BaseModel):
     clinical_summary: ClinicalSummary
     physical_examination: PhysicalExamination
     procedures_performed: list[ProcedurePerformed] = Field(
-        default_factory=list, json_schema_extra={"fr_label": "Acte réalisé"}
+        default_factory=list,
+        description=(
+            "Acts the physician performed during this encounter. Not tests or imaging ordered, "
+            "prescriptions, questionnaires or scales filled in, or referrals made"
+        ),
+        json_schema_extra={"fr_label": "Acte réalisé"},
     )
     possible_billable_add_ons: list[str] = Field(
         default_factory=list,

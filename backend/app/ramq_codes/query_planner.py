@@ -9,16 +9,21 @@ removed; that retriever now runs a single query.)
 
 Without this, a note describing both a routine visit and a minor procedure gets one blended
 embedding query that retrieves neither the visit family nor the procedure family well —
-retrieval dilution the two-part summary structure already tells us how to avoid."""
+retrieval dilution the two-part summary structure already tells us how to avoid.
+
+The visit query is the encounter's form only, scoped to the manual's visit section (see
+visit_query.py); the whole rendered summary still runs as the `overview` query, so a code
+only the full clinical picture surfaces isn't lost."""
 
 from dataclasses import dataclass
 from typing import Literal
 
 from app.patients import nam
-from app.summary.models import ConsultationSummaryResult
+from app.ramq_codes.visit_query import VISIT_SECTION_PREFIX, VisitQueryRenderer
+from app.summary.models import ConsultationSummaryResult, ProcedurePerformed
 from app.summary.task import render_for_billing_codes
 
-QuerySource = Literal["visit", "procedure", "add_on", "transcript"]
+QuerySource = Literal["visit", "overview", "procedure", "procedure_detail", "add_on", "transcript"]
 
 
 @dataclass(frozen=True)
@@ -27,19 +32,26 @@ class PlannedQuery:
     # Which part of the input the query came from — lets a retrieval trace say which query
     # surfaced a code.
     source: QuerySource
+    # `header_path` prefixes the search is limited to (any of them); None = the whole table.
+    section_prefixes: tuple[str, ...] | None = None
 
 
 class SummaryQueryPlanner:
+    def __init__(self, visit_renderer: VisitQueryRenderer | None = None):
+        self._visit_renderer = visit_renderer or VisitQueryRenderer()
+
     def plan_labeled(self, summary: ConsultationSummaryResult) -> list[PlannedQuery]:
-        """The first query is always the full rendered summary (today's single-query
-        behavior, preserved as the baseline) — everything after it narrows in on one
-        specific concept the summary called out separately. Order matters for RRF only in
-        that it doesn't: fusion is rank-based per query list, not query-list order, so this
-        list can grow without needing to stay in any particular sequence."""
-        queries = [PlannedQuery(render_for_billing_codes(summary), "visit")]
+        """The visit query (section B only), then the full rendered summary (`overview`,
+        the whole table), then each procedure's queries and one query per add-on. Order doesn't matter
+        to RRF: fusion is rank-based per query list, so this list can grow without needing
+        to stay in any particular sequence."""
+        queries = [
+            PlannedQuery(self._visit_renderer.render(summary), "visit", section_prefixes=(VISIT_SECTION_PREFIX,)),
+            PlannedQuery(render_for_billing_codes(summary), "overview"),
+        ]
 
         for procedure in summary.procedures_performed:
-            queries.append(PlannedQuery(procedure.procedure_description, "procedure"))
+            queries.extend(self._procedure_queries(procedure))
 
         queries.extend(PlannedQuery(add_on, "add_on") for add_on in summary.possible_billable_add_ons)
 
@@ -47,6 +59,20 @@ class SummaryQueryPlanner:
 
     def plan(self, summary: ConsultationSummaryResult) -> list[str]:
         return [query.text for query in self.plan_labeled(summary)]
+
+    @staticmethod
+    def _procedure_queries(procedure: ProcedurePerformed) -> list[PlannedQuery]:
+        """The act named generically, in the fee schedule's own terms, is what matches its
+        code; the note's detailed wording (side, size, site) mostly matches unrelated
+        surgery on the same body part, so it runs as a query of its own (`procedure_detail`)
+        rather than diluting the generic one. A summary without a generic name (recorded
+        before the field existed) searches with the detailed wording alone."""
+        if not procedure.generic_act:
+            return [PlannedQuery(procedure.procedure_description, "procedure")]
+        return [
+            PlannedQuery(procedure.generic_act, "procedure"),
+            PlannedQuery(procedure.procedure_description, "procedure_detail"),
+        ]
 
 
 class TranscriptQueryPlanner:

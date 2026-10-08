@@ -1,7 +1,8 @@
 """First retrieval step: run every planned query against the current `codes_<rev>` table.
 One embedding call for all of them, then one hybrid (vector + native FTS) search per query,
 each prefiltered on the eligibility facts the caller resolved — so a variant contradicting
-a known fact never takes one of the k slots. A hybrid_search hit already carries the full
+a known fact never takes one of the k slots — and limited to the query's own sections, if
+it has any. A hybrid_search hit already carries the full
 row, so there's no separate hydrate-by-number step to make.
 
 Each query's hits come back in LanceDB's own relevance order, which is all
@@ -73,8 +74,14 @@ class CodeQueryRunner:
         db_start = time.perf_counter()
         per_query_hits = await asyncio.gather(
             *(
-                self._codes.hybrid_search(text=text, vector=vector, k=self._similarity_top_k, eligibility=eligibility)
-                for text, vector in zip(texts, vectors)
+                self._codes.hybrid_search(
+                    text=query.text,
+                    vector=vector,
+                    k=self._similarity_top_k,
+                    eligibility=eligibility,
+                    sections=query.section_prefixes,
+                )
+                for query, vector in zip(queries, vectors)
             )
         )
         db_ms = (time.perf_counter() - db_start) * 1000

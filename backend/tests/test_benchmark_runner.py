@@ -57,7 +57,7 @@ async def test_a_run_stores_each_notes_summary_and_retrieval(tmp_path):
 
     retrieval = run.read("retrieval", "CLI-1", RetrievalRecord)
     assert retrieval.summary_run == "base"
-    assert [q.source for q in retrieval.queries] == ["visit"]
+    assert [q.source for q in retrieval.queries] == ["visit", "overview"]
     assert [c.number for c in retrieval.candidates] == ["A", "B", "C"]
     assert retrieval.candidates[0].rank == 1 and retrieval.candidates[0].rrf_score > 0
 
@@ -119,7 +119,7 @@ async def test_retrieval_reads_summaries_from_another_run(tmp_path):
 
     record = sweep.read("retrieval", "CLI-1", RetrievalRecord)
     assert record.summary_run == "base"
-    assert [q.source for q in record.queries] == ["visit", "transcript"]
+    assert [q.source for q in record.queries] == ["visit", "overview", "transcript"]
     assert not sweep.has("summary", "CLI-1")
 
 

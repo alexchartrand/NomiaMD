@@ -25,6 +25,7 @@ from app.lancedb.repository import (
     ICodeRepository,
     IDocumentRepository,
 )
+from app.lancedb.scope import CodeSectionWhereBuilder
 
 __all__ = [
     "LanceDB",
@@ -35,6 +36,7 @@ __all__ = [
     "UnknownCodesTableError",
     "CodeEligibilityFilter",
     "CodeEligibilityWhereBuilder",
+    "CodeSectionWhereBuilder",
     "CodeRepository",
     "CodeRowLookupError",
     "ICodeCatalogRepository",

@@ -26,6 +26,7 @@ from app.extraction.engine import ExtractionOutputError, run_extraction
 from app.llm import usage_scope
 from app.ramq_codes.candidate_fuser import CandidateFuser
 from app.ramq_codes.eligibility import EligibilityFilterFactory
+from app.ramq_codes.family_expander import FamilyExpander
 from app.ramq_codes.query_runner import CodeQueryRunner
 from app.summary import ConsultationSummaryTask
 
@@ -100,6 +101,7 @@ class RetrievalStage(Stage):
         query_source: IQuerySource,
         summaries: Run | None = None,
         filter_factory: EligibilityFilterFactory | None = None,
+        family_expander: FamilyExpander | None = None,
     ):
         """`summaries`: the run to read each note's summary from; None = the run being
         written (its own summary stage ran first)."""
@@ -108,6 +110,7 @@ class RetrievalStage(Stage):
         self._query_source = query_source
         self._summaries = summaries
         self._filter_factory = filter_factory or EligibilityFilterFactory()
+        self._family_expander = family_expander
 
     async def run(self, case: BenchmarkCase, run: Run) -> RetrievalRecord:
         start = time.perf_counter()
@@ -133,6 +136,8 @@ class RetrievalStage(Stage):
             try:
                 query_run = await self._query_runner.run(self._query_source.plan(case, summary), eligibility)
                 fused = self._candidate_fuser.fuse(query_run.results, case.context)
+                if self._family_expander is not None:
+                    fused = await self._family_expander.expand(fused, eligibility, case.context)
             except Exception as exc:
                 record.error = _error(exc)
                 query_run = fused = None
@@ -146,6 +151,7 @@ class RetrievalStage(Stage):
             QueryRecord(
                 source=result.query.source,
                 text=result.query.text,
+                sections=list(result.query.section_prefixes) if result.query.section_prefixes else None,
                 hits=[QueryHitRecord(number=hit.code.number, relevance=hit.relevance) for hit in result.hits],
             )
             for result in query_run.results
@@ -157,6 +163,7 @@ class RetrievalStage(Stage):
                 rrf_score=candidate.rrf_score,
                 header_path=candidate.code.header_path,
                 description=candidate.code.description,
+                expanded_from=candidate.expanded_from,
             )
             for rank, candidate in enumerate(fused.ranked, start=1)
         ]

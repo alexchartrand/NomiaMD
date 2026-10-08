@@ -77,8 +77,15 @@ class StubCodeRepository(ICodeCatalogRepository):
             if n in self._rows_by_number and self._eligible(self._rows_by_number[n], eligibility)
         ]
 
-    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None) -> list:
+    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None, sections=None) -> list:
         raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
+
+    async def list_by_header_paths(
+        self, header_paths: list[str], eligibility: CodeEligibilityFilter | None = None
+    ) -> list[CodeRow]:
+        return [
+            r for r in self._rows_by_number.values() if r.header_path in header_paths and self._eligible(r, eligibility)
+        ]
 
     async def keyword_search(self, text: str, k: int, eligibility: CodeEligibilityFilter | None = None) -> list:
         needle = text.lower()

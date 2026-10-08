@@ -37,15 +37,27 @@ def row(number: str, header_path: str = "", **bounds) -> CodeRow:
 
 
 class RankedCodeRepository(StubCodeRepository):
-    """hybrid_search returns every eligible row, in insertion order, whatever the query."""
+    """hybrid_search returns every eligible row within the query's sections, in insertion
+    order, whatever the query text."""
 
     def __init__(self, rows: list[CodeRow]):
         super().__init__(rows)
         self.searches: list[str] = []
 
-    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility: CodeEligibilityFilter | None = None) -> list:
+    async def hybrid_search(
+        self,
+        text: str,
+        vector: list[float],
+        k: int,
+        eligibility: CodeEligibilityFilter | None = None,
+        sections: tuple[str, ...] | None = None,
+    ) -> list:
         self.searches.append(text)
-        rows = [r for r in self._rows_by_number.values() if self._eligible(r, eligibility)]
+        rows = [
+            r
+            for r in self._rows_by_number.values()
+            if self._eligible(r, eligibility) and (not sections or r.header_path.startswith(sections))
+        ]
         return [(r, 1.0 / (i + 1)) for i, r in enumerate(rows[:k])]
 
 

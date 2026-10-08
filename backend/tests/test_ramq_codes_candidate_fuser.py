@@ -19,9 +19,9 @@ class _FakeAxisDetector:
         return ("panel_size",)
 
 
-def _result(text: str, *numbers: str) -> QueryResult:
+def _result(text: str, *numbers: str, source: str = "procedure") -> QueryResult:
     return QueryResult(
-        query=PlannedQuery(text, "visit"),
+        query=PlannedQuery(text, source),
         hits=[QueryHit(code=Code(number=n, description=""), relevance=1.0) for n in numbers],
     )
 
@@ -68,3 +68,20 @@ def test_the_candidate_set_is_the_ranked_codes_with_the_unresolved_axes():
 
     assert [c.number for c in fused.candidate_set.candidates] == ["A", "B"]
     assert fused.candidate_set.unresolved_axes == ("panel_size",)
+
+
+def test_a_kept_sources_hits_stay_candidates_past_the_cap_in_rrf_order():
+    fused = CandidateFuser(axis_detector=_FakeAxisDetector(), fused_top_k=2).fuse(
+        [_result("ECG", "A", "B", "C"), _result("visite", "V1", "V2", "V3", source="visit")], BillingContext()
+    )
+
+    # A and V1 tie at rank 1 and fill the cap; B and C (rank 2 and 3) are cut, V2 and V3 kept.
+    assert [c.code.number for c in fused.ranked] == ["A", "V1", "V2", "V3"]
+
+
+def test_no_kept_source_means_the_cap_applies_to_every_query():
+    fused = CandidateFuser(axis_detector=_FakeAxisDetector(), fused_top_k=2, kept_sources=()).fuse(
+        [_result("ECG", "A", "B"), _result("visite", "V1", "V2", source="visit")], BillingContext()
+    )
+
+    assert [c.code.number for c in fused.ranked] == ["A", "V1"]
