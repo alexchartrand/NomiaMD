@@ -1,0 +1,486 @@
+{
+  "patient_id": "CLI-2026-01222",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 648,
+      "output_tokens": null,
+      "latency_ms": 1184.8578339995584,
+      "started_at": "2026-10-08T14:18:53.980038Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 648,
+    "output_tokens": 0,
+    "llm_latency_ms": 1184.8578339995584,
+    "wall_ms": 1228.9868719963124
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation en pédiatrie pour otalgie droite avec fièvre chez un enfant de 4 ans non inscrit. Diagnostic d'otite moyenne aiguë droite confirmé par otoscopie. Prescription d'amoxicilline à haute dose pour 10 jours, avec enseignement sur les signes d'alerte et recommandation de retrait temporaire de la garderie.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-03-10\nHeure de début: 16:20\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Douleur à l'oreille droite et fièvre depuis 24 heures chez un enfant de 4 ans.\nSystèmes/régions concernés: oreille_droite; système_respiratoire; système_général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Otite moyenne aiguë droite.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: oreille_droite; oreille_gauche; oropharynx; ganglions_cervicaux; pulmonaire; signes_vitaux\nConstatations: Membrane tympanique droite bombée, érythémateuse et opaque avec reflet lumineux absent, compatible avec otite moyenne aiguë. Tympan gauche normal. Légère érythème oropharyngé sans exsudat. Adénopathies sous-mandibulaires mobiles et non douloureuses.\nActe réalisé 1 - Description: Otoscopie bilatérale\nActe réalisé 1 - Site: oreille_droite, oreille_gauche\nActe réalisé 1 - Technique/approche: examen otoscopique\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement indiquée dans le transcript.; Absence de mention de la durée de l'antibiothérapie en jours dans le plan (bien que la posologie soit détaillée).",
+      "hits": [
+        {
+          "number": "07430",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "07078",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "07187",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "07268",
+          "relevance": 0.02837301604449749
+        },
+        {
+          "number": "07256",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07081",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "03127",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05142",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00639",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07449",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07308",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07442",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04582",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07450",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07076",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07079",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07438",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02833",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08800",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00953",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Otoscopie bilatérale",
+      "hits": [
+        {
+          "number": "00145",
+          "relevance": 0.027071520686149597
+        },
+        {
+          "number": "00759",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08420",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09406",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07645",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00543",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07647",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07077",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05457",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00198",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05321",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00755",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00893",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07078",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01234",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00795",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "03042",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08141",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "03044",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09424",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "07078",
+      "rrf_score": 0.03009207275993712,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Paracentèse unilatérale, oreille moyenne"
+    },
+    {
+      "rank": 2,
+      "number": "07430",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Cautérisation de perforation tympanique (incluant tympan artificiel au microscope) non associée à un autre acte chirurgical au cours de la même séance opératoire au même site opératoire, oreille moyenne"
+    },
+    {
+      "rank": 3,
+      "number": "00145",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires",
+      "description": "Audiométrie du tronc cérébral (bilatéral) (P.G. 2.9) (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 4,
+      "number": "00759",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > Examens vestibulaires (bilatéral)",
+      "description": "Épreuves optocinétiques exécutées avec l'utilisation d'un électronystagmogramme ou d'une lunette grossissante de Frenzel pour examens vestibulaires (bilatéral)"
+    },
+    {
+      "rank": 5,
+      "number": "07187",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Excision",
+      "description": "Excision d'un polype de l'oreille moyenne, oreille moyenne"
+    },
+    {
+      "rank": 6,
+      "number": "08420",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective avec quantification par moyen objectif : périphérique, membres inférieurs > Angiographie coronarienne",
+      "description": "Angiographie coronarienne bilatérale, par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective avec quantification par moyen objectif, périphérique, membres inférieurs"
+    },
+    {
+      "rank": 7,
+      "number": "07268",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "U — Appareil auditif > Oreille interne > Excision > Labyrinthectomie",
+      "description": "Labyrinthectomie par oreille moyenne, oreille interne"
+    },
+    {
+      "rank": 8,
+      "number": "09406",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Sinus",
+      "description": "Endoscopie naso-sinusienne unilatérale (un (1) ou plusieurs sinus) en oto-rhino-laryngologie"
+    },
+    {
+      "rank": 9,
+      "number": "07256",
+      "rrf_score": 0.015625,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Mastoïdectomie",
+      "description": "Mastoïdectomie simple, sans autre intervention chirurgicale à la même séance opératoire sauf une myringotomie, oreille moyenne"
+    },
+    {
+      "rank": 10,
+      "number": "07645",
+      "rrf_score": 0.015625,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Méninges & Encéphale : > Neurochirurgie fonctionnelle & stéréotaxie : > chirurgie stéréotaxie pour mouvements anormaux, spasticité ou rigidité, douleur, épilepsie ou installation d'électrodes permanents (comprend le mapping et la lésion ou doit faire interruption stéréotaxie de faisceaux) incluant la technique de localisation > si lésion bilatérale, supplément",
+      "description": "Chirurgie stéréotaxie pour mouvements anormaux, spasticité ou rigidité, douleur, épilepsie ou installation d'électrodes permanents, si lésion bilatérale, supplément incluant la technique de localisation, malformation congénitale crânio-encéphalique"
+    },
+    {
+      "rank": 11,
+      "number": "07081",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Tympanotomie exploratrice non associée à un autre acte chirurgical au cours de la même séance opératoire, au même site opératoire, incluant la mobilisation de l'étrier, oreille moyenne"
+    },
+    {
+      "rank": 12,
+      "number": "00543",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Gonioscopie, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 13,
+      "number": "03127",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "H — Système respiratoire > Poumons et plèvre > Excision > Lobectomie simple",
+      "description": "Lobectomie moyenne (côté droit), supplément, poumons et plèvre"
+    },
+    {
+      "rank": 14,
+      "number": "07647",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Méninges & Encéphale : > Neurochirurgie fonctionnelle & stéréotaxie : > exploration stéréotaxie d'une épilepsie par implantation d'électrodes incluant la technique de localisation :",
+      "description": "Exploration stéréotaxie d'une épilepsie par implantation d'électrodes incluant la technique de localisation, bilatérale, malformation congénitale crânio-encéphalique"
+    },
+    {
+      "rank": 15,
+      "number": "05142",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Résection intestinale avec anastomose > iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)",
+      "description": "Résection intestinale avec anastomose de l'iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)"
+    },
+    {
+      "rank": 16,
+      "number": "07077",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Myringotomie avec mise en place du tube sous microscope, unilatérale, oreille moyenne"
+    },
+    {
+      "rank": 17,
+      "number": "00639",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque droit et/ou artère pulmonaire, cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 18,
+      "number": "05457",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision > Herniotomie inguinale ou fémorale",
+      "description": "Herniotomie inguinale ou fémorale bilatérale en un temps, abdomen, péritoine et épiploon"
+    },
+    {
+      "rank": 19,
+      "number": "07449",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Myringoplastie (a minima), oreille moyenne"
+    },
+    {
+      "rank": 20,
+      "number": "00198",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires",
+      "description": "Tympanogramme (appareil automatique), uni ou bilatéral"
+    },
+    {
+      "rank": 21,
+      "number": "07308",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Excision",
+      "description": "Exérèse de tube de drainage (sous microscope ou non), oreille moyenne (Inclus dans la prestation de l'examen ou du service médical associé.)"
+    },
+    {
+      "rank": 22,
+      "number": "05321",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "L — Système digestif > Lèvres > Réparation > Fissure labiale",
+      "description": "Réparation des lèvres pour fissure labiale bilatérale en un temps"
+    },
+    {
+      "rank": 23,
+      "number": "07442",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation > Fermeture de fistule de la mastoïde",
+      "description": "Fermeture de fistule de la mastoïde de l'oreille moyenne"
+    },
+    {
+      "rank": 24,
+      "number": "00755",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > Examens vestibulaires (bilatéral)",
+      "description": "Calibrage, recherche du nystagmus spontané et étude du regard exécutés avec l'utilisation d'un électronystagmogramme ou d'une lunette grossissante de Frenzel pour examens vestibulaires (bilatéral)"
+    },
+    {
+      "rank": 25,
+      "number": "04582",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Réparation de sténose de l'infundibulum droit, au niveau des ventricules"
+    },
+    {
+      "rank": 26,
+      "number": "00893",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Injection de substance de contraste",
+      "description": "Bronchographie bilatérale incluant l'anesthésie locale et l'intubation trachéo-bronchique, injection de substance de contraste"
+    },
+    {
+      "rank": 27,
+      "number": "07450",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Tympanoplastie, oreille moyenne"
+    },
+    {
+      "rank": 28,
+      "number": "07076",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "U — Appareil auditif > Oreille externe > Incision",
+      "description": "Incision d'un abcès du conduit auditif externe"
+    },
+    {
+      "rank": 29,
+      "number": "01234",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Seins > Excision > Mastectomie simple chez l'homme pour gynécomastie",
+      "description": "Excision par mastectomie simple bilatérale chez l'homme pour gynécomastie"
+    },
+    {
+      "rank": 30,
+      "number": "07079",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Section des muscles stapédien et tensor tympani incluant l'exploration de l'oreille moyenne, oreille moyenne"
+    },
+    {
+      "rank": 31,
+      "number": "00795",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > corticale",
+      "description": "Mise en place d'électrodes transtympaniques sous microscopie, enregistrement et interprétation des données pour la cochlée, unilatéral"
+    },
+    {
+      "rank": 32,
+      "number": "07438",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Mastoïdectomie",
+      "description": "Oblitération de cavité mastoïde de l'oreille moyenne"
+    },
+    {
+      "rank": 33,
+      "number": "03042",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "H — Système respiratoire > Larynx > Incision > Introduction > Laryngoscopie incluant la biopsie > avec exérèse de polype ou tumeur bénigne de cordes vocales, bilatérale",
+      "description": "Laryngoscopie incluant la biopsie avec exérèse de polype ou tumeur bénigne de cordes vocales, bilatérale, directe (P.G. 2.9), larynx"
+    },
+    {
+      "rank": 34,
+      "number": "02833",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Examen et manipulation",
+      "description": "Examen et manipulation de l'épaule sous anesthésie générale, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 35,
+      "number": "08141",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Mammographie > sans examen clinique",
+      "description": "Mammographie bilatérale sans examen clinique, en examen spécial incluant la scopie"
+    },
+    {
+      "rank": 36,
+      "number": "08800",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 37,
+      "number": "03044",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "H — Système respiratoire > Larynx > Incision > Introduction > Laryngoscopie incluant la biopsie > avec exérèse de polype ou tumeur bénigne de cordes vocales, bilatérale",
+      "description": "Laryngoscopie incluant la biopsie avec exérèse de polype ou tumeur bénigne de cordes vocales, bilatérale, au microscope (P.G. 2.9), larynx"
+    },
+    {
+      "rank": 38,
+      "number": "00953",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 39,
+      "number": "09424",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Bilan orthoptique avec enregistrement des mesures sur document permanent, excluant les traitements, pour les deux yeux à moins de mention contraire"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 4,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 1185.9829739987617,
+  "db_ms": 42.390980990603566
+}

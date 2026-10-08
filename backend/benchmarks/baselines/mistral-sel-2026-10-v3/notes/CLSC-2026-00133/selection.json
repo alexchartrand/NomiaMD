@@ -1,0 +1,121 @@
+{
+  "patient_id": "CLSC-2026-00133",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 9457,
+      "output_tokens": 1019,
+      "latency_ms": 7911.403391000931,
+      "started_at": "2026-10-08T17:07:14.272365Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 9457,
+    "output_tokens": 1019,
+    "llm_latency_ms": 7911.403391000931,
+    "wall_ms": 7918.347120998078
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15145",
+    "15832",
+    "15159",
+    "15806",
+    "15808",
+    "15810",
+    "15830",
+    "15812",
+    "15144",
+    "08802",
+    "08805",
+    "15762",
+    "00059",
+    "15313",
+    "15407",
+    "08867",
+    "08862",
+    "08863",
+    "08864",
+    "15804",
+    "08865",
+    "00985",
+    "08876",
+    "09338",
+    "06987",
+    "06986",
+    "06988",
+    "08800",
+    "06430",
+    "06429",
+    "06451",
+    "15314",
+    "08803",
+    "00125",
+    "06990",
+    "06989",
+    "08858",
+    "00837",
+    "00838",
+    "09346"
+  ],
+  "prompt_chars": 37564,
+  "raw_code_count": 4,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15812",
+        "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "high",
+        "explanation": "Visite de suivi de grossesse au deuxième trimestre (24 SA), patiente inscrite, non vulnérable, clientèle de 610 patients, sur rendez-vous, sans référence. Le code 15812 est le plus spécifique et applicable.",
+        "supporting_quote": "Suivi de grossesse à 24 semaines d'aménorrhée pour patiente primigeste. Examen clinique normal avec mesure de la tension artérielle, du poids, de la hauteur utérine et auscultation des bruits cardiaques fœtaux.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15832",
+        "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Ce code est une variante de 15812, mais il est spécifique aux patients *non vulnérables inscrits*. Bien que la patiente soit non vulnérable et inscrite, le code 15812 couvre déjà les patientes inscrites ou non inscrites, ce qui le rend plus inclusif. Cependant, 15832 pourrait être considéré si l'accent est mis sur le statut inscrit.",
+        "supporting_quote": "Suivi de grossesse à 24 semaines d'aménorrhée pour patiente primigeste.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15144",
+        "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans",
+        "confidence": "low",
+        "explanation": "Ce code concerne un supplément pour suivi de grossesse *en cabinet*, alors que l'encounter a lieu en CLSC (GMF-U en établissement). Il est donc exclu, mais inclus ici pour exhaustivité.",
+        "supporting_quote": "Lieu (détail): CLSC des Monts (GMF-U en établissement)",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "00059",
+        "description": "Examen de prise en charge de grossesse en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans",
+        "confidence": "low",
+        "explanation": "Ce code concerne un *examen de prise en charge* en clinique externe, alors que l'encounter est un *suivi* de grossesse au deuxième trimestre. Il est donc non applicable.",
+        "supporting_quote": "Suivi de grossesse à 24 semaines d'aménorrhée",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la consultation n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code 15812, qui ne dépend pas de la durée. Aucun supplément (déplacement, heure, etc.) n'est justifié par les documents fournis.",
+    "analysis": "L'encounter a lieu au CLSC des Monts (GMF-U en établissement) pour un suivi de grossesse à 24 semaines d'aménorrhée, soit au deuxième trimestre. La patiente, âgée de 31 ans, est inscrite, non vulnérable et fait partie d'une clientèle de 610 patients. Une visite de suivi de grossesse sur rendez-vous a été effectuée, incluant un examen clinique complet (tension artérielle, poids, hauteur utérine, bruits cardiaques fœtaux) et des prescriptions d'examens complémentaires. Aucun supplément (déplacement, heure, etc.) n'est mentionné. Le code 15812 correspond à une visite de suivi de grossesse pour une patiente non vulnérable inscrite, sur rendez-vous, au-delà du premier trimestre, avec une clientèle de 500 patients ou plus. Les codes 15145 et 15159 sont exclus car ils concernent des suppléments spécifiques (suivi en CLSC/GMF-U ou prise en charge au premier trimestre) non applicables ici. Les codes 15806, 15808 et 15810 sont des variantes de prise en charge au premier trimestre ou avec référence, ce qui n'est pas le cas."
+  }
+}

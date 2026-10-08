@@ -1,0 +1,102 @@
+{
+  "patient_id": "CLI-2026-01224",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2125,
+      "output_tokens": 586,
+      "latency_ms": 3592.3373810073826,
+      "started_at": "2026-10-08T14:18:55.020380Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2125,
+    "output_tokens": 586,
+    "llm_latency_ms": 3592.3373810073826,
+    "wall_ms": 3592.675494001014
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi pour tendinopathie de la coiffe des rotateurs droite avec bursite sous-acromiale associée. Amélioration partielle sous traitement conservateur (anti-inflammatoires, physiothérapie). Discussion sur une éventuelle infiltration de corticostéroïde si absence de progrès dans 4 semaines.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-04-07",
+      "time_start": "14:10",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de tendinopathie de la coiffe des rotateurs à l'épaule droite, prise en charge il y a 6 semaines",
+      "systems_or_body_regions_involved": [
+        "musculo-squelettique",
+        "épaule_droite"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Tendinopathie de la coiffe des rotateurs (sus-épineux) droite avec bursite sous-acromiale associée, en amélioration progressive sous traitement conservateur",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "épaule_droite",
+        "épaule_gauche",
+        "membre_supérieur"
+      ],
+      "notable_findings": "Amplitude articulaire limitée à 140° en abduction active (amélioration par rapport à 100° initialement), rotation externe légèrement limitée. Signe de l'arc douloureux positif entre 70-120°, test de Jobe légèrement positif, Hawkins-Kennedy positif. Force musculaire conservée, pas de déficit neurologique."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le document.",
+      "Absence de mention explicite de la durée de l'examen physique ou de la discussion des recommandations."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-04-07",
+      "actual": "2026-04-07"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:10",
+      "actual": "14:10"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

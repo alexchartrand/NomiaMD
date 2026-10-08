@@ -1,0 +1,267 @@
+{
+  "patient_id": "GMF-2026-00311",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 528,
+      "output_tokens": null,
+      "latency_ms": 445.42510800238233,
+      "started_at": "2026-10-08T14:19:23.034669Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 528,
+    "output_tokens": 0,
+    "llm_latency_ms": 445.42510800238233,
+    "wall_ms": 468.6661000014283
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi de routine d'une patiente de 67 ans avec diabète de type 2 (DB2) et insuffisance rénale chronique (IRC) stade 3a. Ajout d'un nouveau traitement (empagliflozine) pour néphroprotection, ajustement des médicaments existants, et prescription d'examens de laboratoire dans 4 semaines. Consultation en cabinet avec rendez-vous.\nLieu (détail): GMF Boisé-des-Cèdres\nDate: 2026-08-12\nHeure de début: 10:40\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de diabète de type 2 et insuffisance rénale chronique stade 3a\nSystèmes/régions concernés: endocrinien; rénal; musculo-squelettique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: oui\nDiagnostic/impression: DB2 contrôle acceptable pour l'âge; IRC 3a stable avec albuminurie modérée; crampes nocturnes aux mollets probablement bénignes\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; pieds; abdominal\nConstatations: TA 138/76, FC 74, poids stable à 79,4 kg; monofilament normal bilatéral, pouls pédieux perçus, pas de plaie; HbA1c 7,4 %, DFGe 52 (stable), RAC 4,1 mg/mmol, K 4,8\nÉlément incertain: Durée de la consultation non explicitement indiquée dans le transcript; Heure de fin de la consultation non mentionnée",
+      "hits": [
+        {
+          "number": "09312",
+          "relevance": 0.03109932504594326
+        },
+        {
+          "number": "15811",
+          "relevance": 0.030679157003760338
+        },
+        {
+          "number": "08776",
+          "relevance": 0.030621785670518875
+        },
+        {
+          "number": "15823",
+          "relevance": 0.028629032894968987
+        },
+        {
+          "number": "15896",
+          "relevance": 0.02699275314807892
+        },
+        {
+          "number": "09425",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00205",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09313",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08777",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06100",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00952",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08800",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08848",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15145",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00837",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15821",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15807",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15144",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08775",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00060",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "09312",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Séance d'enseignement de groupe aux patients diabétiques, minimum de quatre (4) patients diabétiques, pour une période service continu de 60 minutes ou plus, diabétothérapie"
+    },
+    {
+      "rank": 2,
+      "number": "15811",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 3,
+      "number": "08776",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 4,
+      "number": "15823",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 5,
+      "number": "15896",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > Consultations virtuelles en temps différé > Gestion en douleur chronique",
+      "description": "Gestion en douleur chronique, consultations virtuelles en temps différé, lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 6,
+      "number": "09425",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Désensibilisation à l'insuline, incluant les examens, les visites, les consultations et la surveillance, diabétothérapie"
+    },
+    {
+      "rank": 7,
+      "number": "00205",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Insertion de stérilet incluant l'examen, la visite ou la consultation effectué antérieurement ou concurremment à cet égard en gynécologie (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 8,
+      "number": "09313",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Enseignement de la technique de la mesure de la glycémie capillaire, diabétothérapie (maximum une (1) fois par patient par année)"
+    },
+    {
+      "rank": 9,
+      "number": "08777",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 10,
+      "number": "06100",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "M — Appareil urinaire > Rein > Excision",
+      "description": "Biopsie du rein non effectuée à la même séance opératoire qu'un autre acte chirurgical associé, faite par lombotomie, rein"
+    },
+    {
+      "rank": 11,
+      "number": "00952",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Épidurale différentielle incluant les examens, les visites et consultations, les injections et la surveillance, anesthésie diagnostique et thérapeutique (P.G. 2.4.7.3 C)"
+    },
+    {
+      "rank": 12,
+      "number": "08800",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 13,
+      "number": "08848",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 14,
+      "number": "15145",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 15,
+      "number": "00837",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, première heure, incluant la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre, le patient et le médecin étant dans la chambre, en établissement"
+    },
+    {
+      "rank": 16,
+      "number": "15821",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 17,
+      "number": "15807",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 18,
+      "number": "15144",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 19,
+      "number": "08775",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 20,
+      "number": "00060",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 67,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 446.4436900016153,
+  "db_ms": 21.596566992229782
+}

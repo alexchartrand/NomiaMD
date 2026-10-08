@@ -1,0 +1,103 @@
+{
+  "patient_id": "GMF-2026-00301",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2137,
+      "output_tokens": 611,
+      "latency_ms": 3958.659843003261,
+      "started_at": "2026-10-08T14:18:45.645332Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2137,
+    "output_tokens": 611,
+    "llm_latency_ms": 3958.659843003261,
+    "wall_ms": 3959.0076180029428
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Première visite prénatale pour grossesse confirmée chez une patiente de 29 ans (G2P1A0). Confirmation de grossesse, bilan prénatal initial demandé (FSC, groupe sanguin, sérologies, échographie de datation), counseling sur les soins prénatals et signes d'alarme, et planification du suivi.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-02-24",
+      "time_start": "10:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": true,
+      "trimester": "premier"
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Confirmation et prise en charge d'une grossesse désirée (G2P1A0) avec test urinaire positif à domicile et nausées matinales légères.",
+      "systems_or_body_regions_involved": [
+        "gynécologique",
+        "gastro-intestinal"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Grossesse intra-utérine désirée, environ 8 semaines d'aménorrhée, G2P1A0, à faible risque à ce stade.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes_vitaux",
+        "abdomen",
+        "cardio-pulmonaire"
+      ],
+      "notable_findings": "TA 112/70, FC 76, poids 64 kg, taille 165 cm, IMC pré-grossesse 23,5. Abdomen souple, non distendu, hauteur utérine non palpable (compatible avec 8 semaines). Cardio-pulmonaire sans particularité."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Groupe sanguin non encore déterminé (à vérifier au bilan).",
+      "DPA (date prévue d'accouchement) estimée à confirmer par échographie."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-02-24",
+      "actual": "2026-02-24"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:00",
+      "actual": "10:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 3,
+    "systems": 2,
+    "pregnancy": true,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "patient_id": "GMF-2026-00410",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 6213,
+      "output_tokens": 650,
+      "latency_ms": 5133.297606007545,
+      "started_at": "2026-10-08T17:06:43.082130Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 6213,
+    "output_tokens": 650,
+    "llm_latency_ms": 5133.297606007545,
+    "wall_ms": 5144.849233998684
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15804",
+    "15802",
+    "15812",
+    "15766",
+    "08776",
+    "15774",
+    "08848",
+    "15806",
+    "15832",
+    "15145",
+    "15808",
+    "00125",
+    "08775",
+    "00546",
+    "15789",
+    "15790",
+    "01900",
+    "08819",
+    "15830",
+    "08777",
+    "00780",
+    "15814",
+    "00132",
+    "15626",
+    "00988",
+    "15627",
+    "15834",
+    "98010",
+    "00989"
+  ],
+  "prompt_chars": 24676,
+  "raw_code_count": 2,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15804",
+        "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "high",
+        "explanation": "Visite de suivi planifiée pour un patient inscrit de 52 ans, non vulnérable, avec une clientèle de 1240 patients. Le motif est un suivi d'hypertension artérielle essentielle, incluant anamnèse, examen physique et recommandations.",
+        "supporting_quote": "Suivi d'hypertension artérielle essentielle chez un patient de 52 ans sous amlodipine 5 mg die. La tension artérielle est bien contrôlée (134/82), sans symptômes ni effets secondaires. Le médecin ajuste le plan de suivi avec un nouveau rendez-vous dans 6 mois et des examens de laboratoire annuels.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15802",
+        "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Alternative possible si la visite était une prise en charge initiale, mais le résumé et le transcript indiquent clairement un suivi, pas une première prise en charge.",
+        "supporting_quote": "Suivi HTA (RV prévu).",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": null,
+    "analysis": "L'encounter est une visite de suivi planifiée en GMF pour un patient inscrit de 52 ans, non vulnérable, avec une clientèle de 1240 patients. Le service principal est une visite de suivi pour hypertension artérielle essentielle bien contrôlée, incluant anamnèse, examen physique (cardiovasculaire et membres inférieurs), ajustement du plan de suivi et recommandations. Aucune procédure diagnostique ou thérapeutique, ni certificat, ni supplément (travel, heure, interprète) n'est mentionné. La visite est clairement un suivi, excluant les codes de prise en charge initiale ou de grossesse. Les codes de visite ponctuelle (15766, 15774) sont exclus car la visite est sur rendez-vous pour un patient inscrit. Les codes spécifiques à la grossesse (15806, 15808, 15812, 15832) ou pédiatriques (15814, 15834) ne s'appliquent pas. Les codes de suivi musculo-squelettique (08775, 08776, 08777) ou psychiatrique (08819, 08848) sont exclus par le motif et le contenu de la visite."
+  }
+}

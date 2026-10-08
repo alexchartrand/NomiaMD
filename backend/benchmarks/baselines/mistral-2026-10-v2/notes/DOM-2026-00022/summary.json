@@ -1,0 +1,112 @@
+{
+  "patient_id": "DOM-2026-00022",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1971,
+      "output_tokens": 658,
+      "latency_ms": 3696.2295239936793,
+      "started_at": "2026-10-08T15:44:14.988309Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1971,
+    "output_tokens": 658,
+    "llm_latency_ms": 3696.2295239936793,
+    "wall_ms": 3696.5847019891953
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Visite à domicile pour fatigue et étourdissements chez une patiente de 88 ans avec perte d'autonomie sévère. Découverte d'une bradycardie symptomatique, hypotension orthostatique et probable toxicité digitalique. Ajustement des médicaments, prélèvements sanguins à domicile et suivi rapproché organisé.",
+    "encounter_setting": {
+      "location_detail": "Soins à domicile — GMF des Rivières",
+      "date": "2026-09-29",
+      "time_start": "14:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "autre_professionnel",
+      "requester_identifier_mentioned": "infirmière du SAD",
+      "reason_for_referral": "fatigue et étourdissements depuis 1 semaine",
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Fatigue et étourdissements depuis 1 semaine",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Bradycardie symptomatique + hypotension orthostatique, probable toxicité digitalique/bêtabloquant ± déshydratation (diurétique)",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "général"
+      ],
+      "notable_findings": "TA couchée 112/64, debout 96/58. FC 48 rég. Œdème MI 1+. Muqueuses sèches. Bradycardie sinusale 46/min, PR 220 ms (BAV 1er degré), sous-décalage ST en cupule V4-V6 (effet digitalique)"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "ECG à domicile avec appareil portatif (technique + interprétation)",
+        "generic_act": "électrocardiogramme",
+        "body_site": null,
+        "technique_or_approach_mentioned": "appareil portatif du GMF",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "Durée de la visite non explicitement mentionnée dans le transcript",
+      "Absence de mention explicite de l'heure de fin de la visite"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-29",
+      "actual": "2026-09-29"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:00",
+      "actual": "14:00"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

@@ -1,0 +1,545 @@
+{
+  "patient_id": "CLI-2026-01231",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 573,
+      "output_tokens": null,
+      "latency_ms": 347.8340430010576,
+      "started_at": "2026-10-08T15:43:57.110431Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 573,
+    "output_tokens": 0,
+    "llm_latency_ms": 347.8340430010576,
+    "wall_ms": 386.47962400864344
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15823",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "15775",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "15819",
+          "relevance": 0.03102453052997589
+        },
+        {
+          "number": "15767",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "15821",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "08776",
+          "relevance": 0.03009207360446453
+        },
+        {
+          "number": "08775",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "15789",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "15811",
+          "relevance": 0.02919863536953926
+        },
+        {
+          "number": "15790",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "08848",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08777",
+          "relevance": 0.027313265949487686
+        },
+        {
+          "number": "15809",
+          "relevance": 0.02597840689122677
+        },
+        {
+          "number": "08819",
+          "relevance": 0.025833332911133766
+        },
+        {
+          "number": "08913",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15617",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15626",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15627",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "08861",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Suivi de cessation tabagique après 6 semaines de succès, avec découverte d'une MPOC légère (GOLD 1) confirmée par spirométrie. Renforcement positif, ajustement du traitement de remplacement nicotinique, counseling nutritionnel et prescription de bronchodilatateur de secours. Planification de vaccins et suivi dans 4 semaines et 12 mois.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-07-28\nHeure de début: 10:45\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de démarche de cessation tabagique après 6 semaines de succès, avec évaluation de l'état pulmonaire et ajustement du plan thérapeutique.\nSystèmes/régions concernés: pulmonaire; cardiovasculaire; métabolique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: 1. Cessation tabagique réussie à 6 semaines, bonne adhésion au traitement de remplacement de la nicotine. 2. Maladie pulmonaire obstructive chronique légère (GOLD 1), nouvellement objectivée par spirométrie.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: pulmonaire; cardiovasculaire\nConstatations: Murmure vésiculaire présent bilatéralement, quelques sibilances expiratoires légères en fin d'expiration forcée, sans détresse. TA 122/76, FC 70, poids 71 kg (gain de 2 kg depuis 2 mois).\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Heure de fin de la consultation non indiquée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15811",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "08776",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "15807",
+          "relevance": 0.02684684656560421
+        },
+        {
+          "number": "15805",
+          "relevance": 0.026584507897496223
+        },
+        {
+          "number": "09353",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "06952",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15823",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09352",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06953",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00991",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08511",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00753",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00979",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15821",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00953",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15627",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06989",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09351",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08553",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15819",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15823",
+      "rrf_score": 0.031818181818181815,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "08776",
+      "rrf_score": 0.03177805800756621,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "15811",
+      "rrf_score": 0.03137254901960784,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15821",
+      "rrf_score": 0.0293236301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15819",
+      "rrf_score": 0.02878726010616578,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite périodique",
+      "description": "Visite périodique d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15627",
+      "rrf_score": 0.026153846153846153,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15775",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15807",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15767",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "15805",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "09353",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, résection palliative d'une tumeur maligne sténosante",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "06952",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet",
+      "description": "Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "08775",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "15789",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "09352",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, cure de sténose trachéale inflammatoire",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "06953",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "P — Gynécologie > Utérus et col utérin",
+      "description": "Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet, en cabinet, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "06192",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Utérus et col utérin",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, chirurgie pour cancer gynécologique, supplément pour résection du grêle incluant les anastomoses et l'iléostomie au même site",
+      "expanded_from": "06953"
+    },
+    {
+      "rank": 18,
+      "number": "06193",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Utérus et col utérin",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, chirurgie pour cancer gynécologique, supplément pour résection du colon incluant les anastomoses et la colostomie au même site",
+      "expanded_from": "06953"
+    },
+    {
+      "rank": 19,
+      "number": "06194",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Utérus et col utérin",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, chirurgie pour cancer gynécologique, supplément pour lymphadénectomie radicale lombo-aortique à partir de l'origine des vaisseaux ovariens, uni ou bilatérale",
+      "expanded_from": "06953"
+    },
+    {
+      "rank": 20,
+      "number": "06195",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Utérus et col utérin",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, chirurgie pour cancer gynécologique, supplément pour iléostomie ou colostomie, ou les deux, à un autre site que la résection",
+      "expanded_from": "06953"
+    },
+    {
+      "rank": 21,
+      "number": "06951",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Utérus et col utérin",
+      "description": "Avortement thérapeutique à partir de 14 semaines, deux temps, en cabinet, supplément",
+      "expanded_from": "06953"
+    },
+    {
+      "rank": 22,
+      "number": "15790",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "00991",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau II > Soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "description": "Contrôle subséquent, par examen, pour des soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "00990",
+      "rrf_score": 0.0,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau II > Soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "description": "Installation de l'équipement de ventilation pour des soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle (la valeur de durée de l'acte se calcule depuis le début de la mise en marche du traitement)",
+      "expanded_from": "00991"
+    },
+    {
+      "rank": 25,
+      "number": "08848",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "08511",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations pour lésions non cutanées",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "08777",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "00753",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie",
+      "description": "Localisation bronchoscopique d'un cancer occulte de l'arbre respiratoire, incluant biopsies multiples et aspirations cytologiques multiples, au niveau de toutes les bronches segmentaires",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "15809",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "00979",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "D — Anesthésie — réanimation > Divers",
+      "description": "Anesthésie pour homogreffe pour remplacement au système cardiovasculaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "08819",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "08913",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "00953",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "98010",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "15617",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "06989",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, de 7 h à 19 h du lundi au vendredi (excluant les jours fériés)",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "06990",
+      "rrf_score": 0.0,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, samedi, dimanche ou un jour férié et de 19 h à 7 h du lundi au vendredi (excluant les jours fériés)",
+      "expanded_from": "06989"
+    },
+    {
+      "rank": 38,
+      "number": "15626",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "09351",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, traitement des hémoptysies ou hémostase de tumeurs hémorragiques",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "08553",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations à l'aide de la tomodensitométrie pour lésions non cutanées",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "08861",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "description": "Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 55,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 348.87709499162156,
+  "db_ms": 28.532443000585772
+}

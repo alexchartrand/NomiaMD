@@ -43,7 +43,8 @@ RULES
    in duration_minutes, but duration_explicitly_stated must be false, and add
    a note.
 4. procedures_performed should be an empty list if no procedure beyond
-   history-taking/examination occurred.
+   history-taking/examination occurred. Ordering a test, prescribing, having the
+   patient fill in a questionnaire, or referring them elsewhere is not a procedure.
 5. Output valid JSON only, matching the schema exactly. No text before or
    after the JSON object.
 6. Write all free-text field values in French (Québécois medical French is

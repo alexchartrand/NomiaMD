@@ -1,10 +1,9 @@
-from llama_index.core.base.embeddings.base import BaseEmbedding
-from llama_index.core.llms import LLM
-from llama_index.embeddings.openai_like import OpenAILikeEmbedding
-from llama_index.llms.openai_like import OpenAILike
+from openai import AsyncOpenAI
 
 from app.config import settings
-from app.llm.provider import MAX_TOKENS, ChatModelProvider, EmbeddingModelProvider
+from app.llm.client import IChatClient, IEmbeddingClient
+from app.llm.openai_client import OpenAIChatClient, OpenAIEmbeddingClient
+from app.llm.provider import ChatModelProvider, EmbeddingModelProvider
 
 
 class OpenAICompatibleChatProvider(ChatModelProvider):
@@ -13,19 +12,14 @@ class OpenAICompatibleChatProvider(ChatModelProvider):
     no sensible default host. `response_format` (json_schema, strict) is forwarded to the
     request body as-is, which is OpenAI's own structured-output shape."""
 
-    def build(self, model: str, temperature: float) -> LLM:
+    name = "openai_compatible"
+
+    def build(self, model: str, temperature: float) -> IChatClient:
         endpoint = settings.llm_endpoint
         if not endpoint:
             raise RuntimeError("LLM_PROVIDER=openai_compatible requires LLM_ENDPOINT (e.g. http://host:8000/v1)")
-        return OpenAILike(
-            model=model,
-            api_base=endpoint,
-            api_key=settings.llm_api_key,
-            temperature=temperature,
-            max_tokens=MAX_TOKENS,
-            is_chat_model=True,
-            is_function_calling_model=False,
-        )
+        client = AsyncOpenAI(base_url=endpoint, api_key=settings.llm_api_key)
+        return OpenAIChatClient(client, provider=self.name, model=model, temperature=temperature)
 
 
 class OpenAICompatibleEmbeddingProvider(EmbeddingModelProvider):
@@ -33,7 +27,9 @@ class OpenAICompatibleEmbeddingProvider(EmbeddingModelProvider):
     URL *including* `/v1`) and EMBEDDING_MODEL are both required — the model must be the one
     the LanceDB vectors were built with, which app/bootstrap.py checks by dimension."""
 
-    def build(self) -> BaseEmbedding:
+    name = "openai_compatible"
+
+    def build(self) -> IEmbeddingClient:
         endpoint = settings.embedding_endpoint
         model = settings.embedding_model
         if not endpoint or not model:
@@ -41,9 +37,6 @@ class OpenAICompatibleEmbeddingProvider(EmbeddingModelProvider):
                 "EMBEDDING_PROVIDER=openai_compatible requires EMBEDDING_ENDPOINT "
                 "(e.g. http://host:8080/v1) and EMBEDDING_MODEL"
             )
-        return OpenAILikeEmbedding(
-            model_name=model,
-            api_base=endpoint,
-            # The OpenAI client needs some non-empty value even when the server has no auth.
-            api_key=settings.embedding_api_key or "unused",
-        )
+        # The OpenAI client needs some non-empty key even when the server has no auth.
+        client = AsyncOpenAI(base_url=endpoint, api_key=settings.embedding_api_key or "unused")
+        return OpenAIEmbeddingClient(client, provider=self.name, model=model)

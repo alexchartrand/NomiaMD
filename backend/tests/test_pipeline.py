@@ -4,8 +4,6 @@ resolved, and billing_codes then runs off the structured summary, the raw transc
 that resolved BillingContext — never the summary's rendered text alone (see
 BillingCodesInput's docstring for why both reach the selection step)."""
 
-import json
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 from app.extraction.pipeline import run_billing_codes_pipeline
@@ -14,6 +12,7 @@ from app.ramq_codes import BillingContext, PhysicianContext
 from app.summary import render_for_billing_codes
 from tests.test_consultation_summary import MOCK_RESULT as MOCK_SUMMARY_RESULT
 from tests.test_extraction import MOCK_RESULT as MOCK_BILLING_RESULT
+from tests.llm_helpers import fake_chat_result
 
 TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2, se présente en cabinet sur "
@@ -35,19 +34,13 @@ class _FakeContextBuilder:
 
 
 def _response(payload):
-    return SimpleNamespace(
-        message=SimpleNamespace(content=json.dumps(payload)),
-        raw={
-            "model": "mistral-small-latest",
-            "choices": [SimpleNamespace(finish_reason="stop")],
-        },
-    )
+    return fake_chat_result(payload)
 
 
 async def _run_pipeline(context: BillingContext = BillingContext()):
     context_builder = _FakeContextBuilder(context)
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(side_effect=[
+        mock_get_client.return_value.chat = AsyncMock(side_effect=[
             _response(MOCK_SUMMARY_RESULT),
             _response(MOCK_BILLING_RESULT),
         ])
@@ -65,20 +58,20 @@ async def test_pipeline_runs_all_three_stages():
 
     assert summary_result.task == "consultation_summary"
     assert billing_result.task == "billing_codes"
-    assert mock_get_client.return_value.achat.call_count == 2
+    assert mock_get_client.return_value.chat.call_count == 2
 
 
 async def test_consultation_summary_stage_sees_the_raw_transcript():
     summary_result, _billing_result, mock_get_client, _ = await _run_pipeline()
 
-    first_user_message = mock_get_client.return_value.achat.call_args_list[0].kwargs["messages"][1].content
+    first_user_message = mock_get_client.return_value.chat.call_args_list[0].kwargs["messages"][1].content
     assert TRANSCRIPT in first_user_message
 
 
 async def test_billing_codes_stage_sees_both_the_rendered_summary_and_the_raw_transcript():
     summary_result, _billing_result, mock_get_client, _ = await _run_pipeline()
 
-    second_user_message = mock_get_client.return_value.achat.call_args_list[1].kwargs["messages"][1].content
+    second_user_message = mock_get_client.return_value.chat.call_args_list[1].kwargs["messages"][1].content
     rendered_summary = render_for_billing_codes(summary_result.result)
     # billing_codes must see both — the whole point of passing the transcript through
     # instead of bottlenecking selection on whatever the summarizer kept.
@@ -91,7 +84,7 @@ async def test_billing_codes_stage_states_known_context_facts():
 
     _s, _b, mock_get_client, _ = await _run_pipeline(context)
 
-    second_user_message = mock_get_client.return_value.achat.call_args_list[1].kwargs["messages"][1].content
+    second_user_message = mock_get_client.return_value.chat.call_args_list[1].kwargs["messages"][1].content
     assert "320 patients" in second_user_message
 
 

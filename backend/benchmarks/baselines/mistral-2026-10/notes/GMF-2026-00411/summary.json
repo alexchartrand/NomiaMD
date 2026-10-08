@@ -1,0 +1,111 @@
+{
+  "patient_id": "GMF-2026-00411",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1936,
+      "output_tokens": 571,
+      "latency_ms": 4654.4060980086215,
+      "started_at": "2026-10-08T14:19:23.503517Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1936,
+    "output_tokens": 571,
+    "llm_latency_ms": 4654.4060980086215,
+    "wall_ms": 4654.75186999538
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Première visite d'une nouvelle patiente de 45 ans pour bilan de santé initial et mise à jour des suivis. Examen physique complet réalisé. Bilan sanguin et mammographie prescrits. Suivi prévu dans 6 semaines pour résultats.",
+    "encounter_setting": {
+      "location_detail": "GMF des Rivières",
+      "date": "2026-08-25",
+      "time_start": "08:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Bilan de santé initial pour nouvelle patiente sans médecin de famille depuis 2022, sans plainte aiguë mais souhaitant un suivi complet",
+      "systems_or_body_regions_involved": [
+        "endocrinien",
+        "neurologique",
+        "digestif",
+        "cardiovasculaire",
+        "gynécologique",
+        "cutané"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Hypothyroïdie sous traitement, migraine épisodique, antécédents familiaux de cancer du sein et de maladie cardiovasculaire précoce",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pulmonaire",
+        "abdominal",
+        "thyroïdien",
+        "cutané",
+        "seins"
+      ],
+      "notable_findings": "TA 122/78, FC 68, IMC 27,3. Thyroïde non palpable. Cœur et poumons normaux. Abdomen souple. Pas de masse palpable aux seins. Peau sans lésion suspecte."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "communication_specialiste"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le document.",
+      "Heure de fin de la consultation non indiquée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-08-25",
+      "actual": "2026-08-25"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "08:30",
+      "actual": "08:30"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 6,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

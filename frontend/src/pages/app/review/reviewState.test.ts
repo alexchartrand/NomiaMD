@@ -17,12 +17,12 @@ describe("reviewReducer", () => {
     expect(state.pristine).toBe(true);
   });
 
-  it("ticks the high-confidence codes when asked to preselect", () => {
+  it("ticks the codes the model retained, whatever their confidence, when asked to preselect", () => {
     const mixed = makeExtraction([
-      makeProposedCode({ code: "00103", confidence: "high" }),
-      makeProposedCode({ code: "00200", confidence: "medium" }),
-      makeProposedCode({ code: "15145", confidence: "high" }),
-      makeProposedCode({ code: "00328", confidence: "low" }),
+      makeProposedCode({ code: "00103", confidence: "high", retained: true }),
+      makeProposedCode({ code: "00200", confidence: "high", retained: false }),
+      makeProposedCode({ code: "15145", confidence: "medium", retained: true }),
+      makeProposedCode({ code: "00328", confidence: "low", retained: false }),
     ]);
     const state = reviewReducer(initialReviewState, { type: "extracted", result: mixed, preselect: true });
     expect([...state.selection]).toEqual([0, 2]);

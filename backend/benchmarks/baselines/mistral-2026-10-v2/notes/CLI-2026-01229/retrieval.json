@@ -1,0 +1,775 @@
+{
+  "patient_id": "CLI-2026-01229",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 698,
+      "output_tokens": null,
+      "latency_ms": 794.9497279914794,
+      "started_at": "2026-10-08T15:43:52.469002Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 698,
+    "output_tokens": 0,
+    "llm_latency_ms": 794.9497279914794,
+    "wall_ms": 840.5078270006925
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15803",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "15801",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "15765",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "15773",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "15789",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "15790",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "08776",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "15811",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "15813",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "08848",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08777",
+          "relevance": 0.027205882593989372
+        },
+        {
+          "number": "15809",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "08913",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15626",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15617",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15831",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15627",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "08819",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Bilan de santé périodique annuel pour un patient de 76 ans en bonne santé générale. Examen physique complet réalisé, bilan sanguin et dépistages demandés (FSC, bilan lipidique, glycémie, TSH, APS, RSOSi). Vaccination antigrippale administrée. Aucune nouvelle problématique identifiée, médication maintenue sans changement.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-06-02\nHeure de début: 09:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Bilan de santé périodique annuel chez un patient de 76 ans en bonne santé générale\nSystèmes/régions concernés: cardiovasculaire; uro-génital; cutané; musculo-squelettique; neurologique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Patient de 76 ans en bon état de santé général, HTA et hypertrophie bénigne de la prostate stables, aucune nouvelle problématique identifiée à ce bilan\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes vitaux; cardiovasculaire; pulmonaire; abdomen; prostate (toucher rectal); peau; pieds et démarche; cicatrice de hanche\nConstatations: TA 134/80, FC 72, IMC 25,1, prostate légèrement augmentée de volume sans nodule suspect, quelques kératoses séborrhéiques bénignes\nActe réalisé 1 - Description: Vaccination antigrippale administrée\nActe réalisé 1 - Acte (générique): vaccination\nActe réalisé 1 - Site: bras\nActe réalisé 1 - Technique/approche: intramusculaire\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript; Heure de fin de la consultation non indiquée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.03030998818576336
+        },
+        {
+          "number": "20021",
+          "relevance": 0.02982766181230545
+        },
+        {
+          "number": "20024",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "20023",
+          "relevance": 0.029206348583102226
+        },
+        {
+          "number": "15813",
+          "relevance": 0.026500526815652847
+        },
+        {
+          "number": "08994",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08996",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15803",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15801",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00953",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00023",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08882",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08848",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08995",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08997",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15765",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08813",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15773",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09234",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "vaccination",
+      "sections": null,
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "20021",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "00474",
+          "relevance": 0.0317460335791111
+        },
+        {
+          "number": "20024",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "20023",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "00161",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00431",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00400",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00429",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00430",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00432",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09487",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "20026",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "00152",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00454",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "00334",
+          "relevance": 0.01315789483487606
+        },
+        {
+          "number": "00480",
+          "relevance": 0.012987012974917889
+        },
+        {
+          "number": "00478",
+          "relevance": 0.012820512987673283
+        },
+        {
+          "number": "00583",
+          "relevance": 0.012658228166401386
+        },
+        {
+          "number": "00468",
+          "relevance": 0.012500000186264515
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Vaccination antigrippale administrée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "20021",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "20023",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "20024",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "00474",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "00431",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00152",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15801",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "98012",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09487",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00603",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09335",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00161",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09948",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00485",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00928",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00583",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00927",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00400",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "20022",
+      "rrf_score": 0.05,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour, en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "20021",
+      "rrf_score": 0.04918032786885246,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "20024",
+      "rrf_score": 0.04787506400409626,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "20023",
+      "rrf_score": 0.04762704813108039,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15801",
+      "rrf_score": 0.045811569380467584,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "00474",
+      "rrf_score": 0.031754032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15803",
+      "rrf_score": 0.03137254901960784,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00431",
+      "rrf_score": 0.030536130536130537,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou une articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15813",
+      "rrf_score": 0.030117753623188408,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "15765",
+      "rrf_score": 0.02928692699490662,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "00161",
+      "rrf_score": 0.029083245521601686,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Traitement d'hyposensibilisation au venin d'insecte, une (1) ou plusieurs injections par séance, allergie",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "00152",
+      "rrf_score": 0.028850145288501453,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "15773",
+      "rrf_score": 0.028693528693528692,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "09487",
+      "rrf_score": 0.028577260665441927,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection unique ou multiple de toxine botulinique pour le soulagement des douleurs myofasciales, facettaires et de points gâchettes ou cervico-crâniennes réfractaires",
+      "description": "Injection unique ou multiple de toxine botulinique pour le soulagement des douleurs myofasciales, facettaires et de points gâchettes ou cervico-crâniennes réfractaires",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "08848",
+      "rrf_score": 0.027984344422700584,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "00400",
+      "rrf_score": 0.027583600982429624,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Cure d'hyposensibilisation (excluant le coût du produit injecté) en cabinet seulement, lorsque faite sans examen; une seule ou plusieurs injections dans la même séance, allergie",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "00583",
+      "rrf_score": 0.025807525807525808,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, première injection",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15789",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15790",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "08994",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "08776",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "00638",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "00783",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie",
+      "expanded_from": "00638"
+    },
+    {
+      "rank": 24,
+      "number": "15811",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "08996",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "08775",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "00429",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > cornets du nez",
+      "description": "Injection de médicament ou de substance thérapeutique dans les cornets du nez",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "98012",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "00430",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > capsules, gaines, tendons, ligaments ou fascia",
+      "description": "Injection de médicament ou de substance thérapeutique dans les capsules, gaines, tendons, ligaments ou fascia",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "00953",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "00432",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > trachée et bronches (incluant l'intubation et s'il y a lieu la laryngoscopie) par intubation trachéo-bronchique",
+      "description": "Injection de médicament ou de substance thérapeutique dans la trachée et les bronches (incluant l'intubation et s'il y a lieu la laryngoscopie) par intubation trachéo-bronchique (P.A.D.T. 1.4)",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "09334",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "08777",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "00023",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, complet",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "00020",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, ordinaire",
+      "expanded_from": "00023"
+    },
+    {
+      "rank": 36,
+      "number": "00026",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, complet majeur",
+      "expanded_from": "00023"
+    },
+    {
+      "rank": 37,
+      "number": "00603",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, chaque injection subséquente à la même séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "15809",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "08882",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > ordinaire > patient inscrit > sans déplacement",
+      "description": "Examen ordinaire sans déplacement d'un patient inscrit de 70 à 79 ans dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "20026",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Ponctions (incluant injection s'il y a lieu) > À la demande d'un coroner, chez le patient décédé > prélèvement du liquide oculaire et du liquide vésical, le cas échéant, toutes techniques",
+      "description": "Ponction incluant injection s'il y a lieu, à la demande d'un coroner, chez le patient décédé, pour prélèvement du liquide oculaire et du liquide vésical, le cas échéant, toutes techniques, dans le cadre d'hyperalimentation, injection, insufflation ou ponction.",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "09335",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "08913",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "98010",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "15626",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "15617",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "15831",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "15627",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "08819",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 76,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 796.4888099959353,
+  "db_ms": 34.71095200802665
+}

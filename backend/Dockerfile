@@ -9,7 +9,7 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PROJECT_ENVIRONMENT=/opt/venv
 COPY pyproject.toml uv.lock ./
 # Deps first (--no-install-project), then the local package, so the deps layer stays cached
 # across app/ changes. --frozen refuses to touch uv.lock, for a reproducible build
-# regardless of what's newly released upstream (lancedb/llama-index-* move fast).
+# regardless of what's newly released upstream (lancedb/openai move fast).
 RUN uv sync --frozen --no-install-project --no-dev
 COPY app ./app
 RUN uv sync --frozen --no-dev

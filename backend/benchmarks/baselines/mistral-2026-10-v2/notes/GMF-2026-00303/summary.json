@@ -1,0 +1,116 @@
+{
+  "patient_id": "GMF-2026-00303",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2188,
+      "output_tokens": 639,
+      "latency_ms": 4017.2999200003687,
+      "started_at": "2026-10-08T15:43:36.311791Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2188,
+    "output_tokens": 639,
+    "llm_latency_ms": 4017.2999200003687,
+    "wall_ms": 4017.575592995854
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Visite périodique de suivi du développement et vaccination de routine à 18 mois pour une enfant de 18 mois. Examen physique complet normal. Vaccination administrée selon le calendrier québécois. Counseling anticipatoire prodigué.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-03-03",
+      "time_start": "09:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Visite périodique de suivi du développement et vaccination de routine à 18 mois",
+      "systems_or_body_regions_involved": [
+        "général",
+        "développement",
+        "vaccination"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Développement staturopondéral et psychomoteur normal pour l'âge. Aucune préoccupation clinique identifiée.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "général",
+        "cardio-pulmonaire",
+        "abdomen",
+        "hanches",
+        "démarche",
+        "ORL",
+        "développement"
+      ],
+      "notable_findings": "Examen physique complet normal : poids 11,2 kg (50e percentile), taille 81 cm (55e percentile), périmètre crânien dans les limites normales, développement conforme à l'âge, tympans normaux bilatéralement, pas d'érythème pharyngé"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Administration de vaccins de rappel selon le calendrier québécois à 18 mois (DCaT-VPI-Hib et RRO-Var)",
+        "generic_act": "vaccination",
+        "body_site": "bras",
+        "technique_or_approach_mentioned": "injection intramusculaire",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript",
+      "Heure de fin de la consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-03-03",
+      "actual": "2026-03-03"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:00",
+      "actual": "09:00"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

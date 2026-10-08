@@ -8,7 +8,13 @@ CodeRow/DocumentRow shapes) and .converter (the IConverter interface; implementa
 app/ramq_codes and app/ramq_chatbot) are imported directly by their few callers. Nothing in
 this package imports a domain package built on top of it."""
 
-from app.lancedb.code_versions import CurrentCodeTableProvider, ICodeTableProvider, NoCurrentCodesTableError
+from app.lancedb.code_versions import (
+    CurrentCodeTableProvider,
+    ICodeTableProvider,
+    NoCurrentCodesTableError,
+    PinnedCodeTableProvider,
+    UnknownCodesTableError,
+)
 from app.lancedb.database import LanceDB
 from app.lancedb.eligibility import CodeEligibilityFilter, CodeEligibilityWhereBuilder
 from app.lancedb.repository import (
@@ -19,14 +25,18 @@ from app.lancedb.repository import (
     ICodeRepository,
     IDocumentRepository,
 )
+from app.lancedb.scope import CodeSectionWhereBuilder
 
 __all__ = [
     "LanceDB",
     "CurrentCodeTableProvider",
     "ICodeTableProvider",
     "NoCurrentCodesTableError",
+    "PinnedCodeTableProvider",
+    "UnknownCodesTableError",
     "CodeEligibilityFilter",
     "CodeEligibilityWhereBuilder",
+    "CodeSectionWhereBuilder",
     "CodeRepository",
     "CodeRowLookupError",
     "ICodeCatalogRepository",

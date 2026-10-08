@@ -1,0 +1,138 @@
+{
+  "patient_id": "URG-2026-04471",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2060,
+      "output_tokens": 941,
+      "latency_ms": 5605.4523670027265,
+      "started_at": "2026-10-08T15:43:26.752817Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2060,
+    "output_tokens": 941,
+    "llm_latency_ms": 5605.4523670027265,
+    "wall_ms": 5606.311145005748
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient de 67 ans se présentant à l'urgence pour douleur thoracique rétrosternale constrictive avec irradiation au bras gauche, associée à diaphorèse et dyspnée légère. Diagnostic de STEMI inférieur aigu confirmé par ECG et troponine. Prise en charge immédiate incluant activation du protocole STEMI, administration d'AAS et ticagrélor, héparine IV, et transfert urgent en salle de cathétérisme pour angioplastie primaire.",
+    "encounter_setting": {
+      "location_detail": "CHU fictif, urgence",
+      "date": "2026-07-13",
+      "time_start": "08:42",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Douleur thoracique rétrosternale constrictive irradiant au bras gauche, apparue au repos il y a 2 heures, associée à diaphorèse et dyspnée légère.",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "thoracique",
+        "cutané"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "STEMI inférieur aigu",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pulmonaire",
+        "général"
+      ],
+      "notable_findings": "TA 152/94, FC 98, FR 20, SpO2 96 % AA, T 37,1 °C, inconfortable et diaphorétique. Cardio : B1-B2 normaux, pas de souffle ni galop. Pulmonaire : murmure vésiculaire symétrique, pas de crépitants."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Administration d'AAS 325 mg croqué et de ticagrélor 180 mg par voie orale",
+        "generic_act": "administration de médicaments",
+        "body_site": null,
+        "technique_or_approach_mentioned": "voie orale pour ticagrélor, croqué pour AAS",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Début de perfusion d'héparine IV selon protocole",
+        "generic_act": "administration de médicaments",
+        "body_site": null,
+        "technique_or_approach_mentioned": "perfusion intraveineuse",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Activation du protocole STEMI et avis immédiat à la cardiologie d'hémodynamie",
+        "generic_act": "consultation spécialisée",
+        "body_site": null,
+        "technique_or_approach_mentioned": "communication téléphonique",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "les_deux"
+      },
+      {
+        "procedure_description": "Transfert urgent du patient en salle de cathétérisme pour angioplastie primaire",
+        "generic_act": "transfert médical urgent",
+        "body_site": "salle de cathétérisme",
+        "technique_or_approach_mentioned": "transport médicalisé",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "Durée de l'encounter non explicitement mentionnée dans le transcript.",
+      "Heure de fin de l'encounter non précisée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "08:42",
+      "actual": "08:42"
+    }
+  ],
+  "stats": {
+    "procedures": 4,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

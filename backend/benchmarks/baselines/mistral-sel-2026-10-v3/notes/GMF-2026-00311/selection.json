@@ -1,0 +1,109 @@
+{
+  "patient_id": "GMF-2026-00311",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 7737,
+      "output_tokens": 686,
+      "latency_ms": 5989.5092340011615,
+      "started_at": "2026-10-08T17:06:47.834825Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 7737,
+    "output_tokens": 686,
+    "llm_latency_ms": 5989.5092340011615,
+    "wall_ms": 5997.682346001966
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15823",
+    "15811",
+    "08776",
+    "08848",
+    "15821",
+    "08775",
+    "15805",
+    "15807",
+    "15775",
+    "15819",
+    "09312",
+    "09425",
+    "15767",
+    "09313",
+    "06100",
+    "06204",
+    "06217",
+    "15790",
+    "08777",
+    "15789",
+    "15145",
+    "08913",
+    "08800",
+    "08802",
+    "08803",
+    "08805",
+    "15762",
+    "08858",
+    "15827",
+    "08860",
+    "15809",
+    "15825",
+    "08867",
+    "08819",
+    "08869",
+    "00285",
+    "15626",
+    "15144"
+  ],
+  "prompt_chars": 30925,
+  "raw_code_count": 3,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15823",
+        "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "high",
+        "explanation": "La patiente est vulnérable, inscrite, a moins de 80 ans, et la visite est un suivi sur rendez-vous. La clientèle du médecin est de 320 patients (< 500).",
+        "supporting_quote": "Suivi de routine pour une patiente de 67 ans avec diabète de type 2 (DB2) et insuffisance rénale chronique (IRC) stade 3a. [...] Rendez-vous: avec rendez-vous",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15819",
+        "description": "Visite périodique d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "medium",
+        "explanation": "La visite pourrait être interprétée comme périodique plutôt que de suivi, mais le résumé et le transcript précisent explicitement un 'suivi de routine'.",
+        "supporting_quote": "Suivi de routine pour une patiente de 67 ans avec diabète de type 2 (DB2) et insuffisance rénale chronique (IRC) stade 3a.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15775",
+        "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit",
+        "confidence": "low",
+        "explanation": "La visite est sur rendez-vous et la patiente est inscrite, ce qui exclut ce code. De plus, rien n'indique qu'il s'agisse d'une visite ponctuelle complexe.",
+        "supporting_quote": "Rendez-vous: avec rendez-vous",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Aucune ambiguïté majeure. La durée de la consultation n'est pas documentée, mais cela n'affecte pas le choix du code pour une visite de suivi standard. Aucun acte additionnel (ex. enseignement diabétothérapie) n'est mentionné comme ayant été réalisé pendant cette visite.",
+    "analysis": "Rencontre en clinique GMF sur rendez-vous pour une patiente de 67 ans, inscrite et vulnérable, avec suivi de routine pour diabète de type 2 et insuffisance rénale chronique. Une seule visite de suivi a été réalisée, sans procédure, test, supplément ou certificat additionnel. La visite correspond à un suivi régulier pour un patient vulnérable inscrit, avec clientèle de moins de 500 patients. Les codes de grossesse, musculo-squelettiques ou psychiatriques ne s'appliquent pas, car le motif et les actes ne les concernent pas. Aucun acte diagnostique ou thérapeutique spécifique (ex. diabétothérapie) n'est documenté comme ayant été effectué pendant cette visite."
+  }
+}

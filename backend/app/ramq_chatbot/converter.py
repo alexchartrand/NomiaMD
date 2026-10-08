@@ -1,21 +1,20 @@
 """DocumentRow (a validated row of the `documents-embeddings` LanceDB table) -> the
-llama_index TextNode the chatbot's retriever and engine work in."""
-
-from llama_index.core.schema import TextNode
+ManualChunk the chatbot's retriever and engine work in."""
 
 from app.lancedb.converter import IConverter
 from app.lancedb.models import DocumentRow
+from app.ramq_chatbot.chunks import ManualChunk
 
 
-class DocumentRowConverter(IConverter[DocumentRow, TextNode]):
-    """DocumentRow -> TextNode, the shape ReferenceExpander/RAMQManualQueryEngine already
+class DocumentRowConverter(IConverter[DocumentRow, ManualChunk]):
+    """DocumentRow -> ManualChunk, the shape ReferenceExpander/RAMQManualQueryEngine already
     read (section_number/page_start/page_end/section_references/code_references metadata —
     see reference_expansion.py and engine.py's _citation_prefix). Optional scalar columns
     absent on the row are omitted from metadata entirely (matches ramq-ingestion's own
     absent=NULL convention); the two reference-list columns default to [] rather than being
     omitted, since callers already read them via `.get(key, [])`."""
 
-    def convert(self, data: DocumentRow) -> TextNode:
+    def convert(self, data: DocumentRow) -> ManualChunk:
         metadata: dict = {
             "title": data.title,
             "url": data.url,
@@ -29,4 +28,4 @@ class DocumentRowConverter(IConverter[DocumentRow, TextNode]):
         if data.page_end is not None:
             metadata["page_end"] = data.page_end
 
-        return TextNode(id_=data.id, text=data.text, metadata=metadata)
+        return ManualChunk(id=data.id, text=data.text, metadata=metadata)

@@ -1,0 +1,117 @@
+{
+  "patient_id": "GMF-2026-00307",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2282,
+      "output_tokens": 784,
+      "latency_ms": 4863.739047010313,
+      "started_at": "2026-10-08T14:19:08.665557Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2282,
+    "output_tokens": 784,
+    "llm_latency_ms": 4863.739047010313,
+    "wall_ms": 4864.193695000722
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de diabète de type 2 nouvellement diagnostiqué chez un patient de 58 ans, avec évaluation de l'adhésion au traitement, ajustement thérapeutique (ajout d'atorvastatine) et planification d'examens complémentaires (fond d'œil, bilan sanguin de contrôle). Consultation assistée par interprète en dari.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-06-16",
+      "time_start": "14:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Fatima Ouedraogo, MD",
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de diabète de type 2 nouvellement diagnostiqué il y a 3 mois, avec évaluation de l'adhésion au traitement et ajustement thérapeutique.",
+      "systems_or_body_regions_involved": [
+        "endocrinien",
+        "cardiovasculaire",
+        "digestif",
+        "métabolique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Diabète de type 2 en amélioration sous metformine (HbA1c 7,3 %), cible non encore atteinte. Dyslipidémie non traitée à considérer pour statine en prévention.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes_vitaux",
+        "pieds",
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "TA 136/84, FC 76, poids 82 kg, IMC 27,7. Sensibilité au monofilament préservée bilatéralement, pouls pédieux palpables. Cardio-pulmonaire sans particularité."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Discussion sur l'ajout d'une statine (atorvastatine 20 mg DIE) pour la dyslipidémie et la prévention cardiovasculaire, avec accord du patient.",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Explication détaillée avec l'aide de l'interprète en dari",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "communication_specialiste",
+      "frais_interprétariat"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le transcript.",
+      "Le type de rendez-vous (avec ou sans rendez-vous) est déduit de la mention 'réservé à l'avance', mais non explicitement confirmé comme 'avec rendez-vous'.",
+      "L'ajout de l'atorvastatine est-il considéré comme une nouvelle ordonnance ou un ajustement de traitement existant ?"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-06-16",
+      "actual": "2026-06-16"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:30",
+      "actual": "14:30"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 2,
+    "uncertain_items": 3,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

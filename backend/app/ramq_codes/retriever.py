@@ -1,20 +1,13 @@
-import asyncio
 import logging
-import time
 from abc import ABC, abstractmethod
 from dataclasses import asdict
-from typing import List
 
-from llama_index.core.base.embeddings.base import BaseEmbedding
-
-from app.lancedb.converter import IConverter
-from app.lancedb.models import CodeRow
-from app.lancedb.fusion import ReciprocalRankFuser
-from app.lancedb.repository import ICodeRepository
+from app.ramq_codes.candidate_fuser import CandidateFuser
 from app.ramq_codes.context import BillingContext
-from app.ramq_codes.eligibility import CandidateSet, EligibilityFilterFactory, UnresolvedAxisDetector
-from app.ramq_codes.models import Code
+from app.ramq_codes.eligibility import CandidateSet, EligibilityFilterFactory
+from app.ramq_codes.family_expander import FamilyExpander
 from app.ramq_codes.query_planner import SummaryQueryPlanner
+from app.ramq_codes.query_runner import CodeQueryRunner
 from app.summary.models import ConsultationSummaryResult
 
 __all__ = ["ICodesRetriever", "RAMQCodesRetriever"]
@@ -29,85 +22,47 @@ class ICodesRetriever(ABC):
 
 
 class RAMQCodesRetriever(ICodesRetriever):
-    """Hybrid (vector + native FTS) search over the current `codes_<rev>` LanceDB table,
-    fanned out across SummaryQueryPlanner's structural per-concept queries (one for the
-    visit, one per procedure/add-on the summary called out — see query_planner.py) and fused
-    with ReciprocalRankFuser. Every search is prefiltered on whatever eligibility facts
-    BillingContext resolves (eligibility.py), so a variant contradicting a known fact never
-    takes a retrieval slot; UnresolvedAxisDetector then names the unknown axes the
-    survivors still depend on, for the prompt to ask the physician about.
+    """The pipeline's retrieval, composed of its steps: SummaryQueryPlanner fans the summary
+    out into structural per-concept queries (one for the visit, one per procedure/add-on —
+    see query_planner.py), EligibilityFilterFactory resolves the prefilter from the
+    BillingContext (eligibility.py), CodeQueryRunner runs each query as a hybrid search
+    (query_runner.py), CandidateFuser fuses them and names the axes left unresolved
+    (candidate_fuser.py), and FamilyExpander adds the retrieved codes' eligible variants
+    (family_expander.py).
 
-    Replaces the old single-query VectorStoreIndex/BM25Retriever/QueryFusionRetriever stack
-    (that in-memory BM25 corpus scan and English stemmer only existed because the previous
-    `code-embeddings` table had no native FTS index; the flat `codes` table does — see
-    ramq-ingestion's docs/plans/flat-lancedb-codes-table.md). A hybrid_search hit already
-    carries the full row, so there's no separate hydrate-by-number step to make."""
+    Only the CandidateSet comes out. The benchmark (app/benchmark/stages.py's
+    RetrievalStage) composes the same steps itself to keep what each one produced."""
 
     def __init__(
         self,
-        codes: ICodeRepository,
-        embed_model: BaseEmbedding,
-        converter: IConverter[CodeRow, Code],
+        query_runner: CodeQueryRunner,
+        candidate_fuser: CandidateFuser,
+        family_expander: FamilyExpander | None = None,
         query_planner: SummaryQueryPlanner | None = None,
-        fuser: ReciprocalRankFuser[Code] | None = None,
         filter_factory: EligibilityFilterFactory | None = None,
-        axis_detector: UnresolvedAxisDetector | None = None,
-        similarity_top_k: int = 20,
-        fused_top_k: int = 40,
     ):
-        self._codes = codes
-        self._embed_model = embed_model
-        self._converter = converter
+        """`family_expander`: None = no expansion."""
+        self._query_runner = query_runner
+        self._candidate_fuser = candidate_fuser
+        self._family_expander = family_expander
         self._query_planner = query_planner or SummaryQueryPlanner()
-        self._fuser = fuser or ReciprocalRankFuser(key=lambda code: code.number)
         self._filter_factory = filter_factory or EligibilityFilterFactory()
-        self._axis_detector = axis_detector or UnresolvedAxisDetector()
-        self._similarity_top_k = similarity_top_k
-        self._fused_top_k = fused_top_k
 
     async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> CandidateSet:
-        retriever_start = time.perf_counter()
-
-        queries = self._query_planner.plan(summary)
         eligibility = self._filter_factory.from_context(context)
-        vectors = await asyncio.gather(*(self._embed_model.aget_query_embedding(q) for q in queries))
+        query_run = await self._query_runner.run(self._query_planner.plan_labeled(summary), eligibility)
+        fused = self._candidate_fuser.fuse(query_run.results, context)
+        if self._family_expander is not None:
+            fused = await self._family_expander.expand(fused, eligibility, context)
+        candidate_set = fused.candidate_set
 
-        db_start = time.perf_counter()
-        per_query_hits = await asyncio.gather(
-            *(
-                self._codes.hybrid_search(
-                    text=query, vector=vector, k=self._similarity_top_k, eligibility=eligibility
-                )
-                for query, vector in zip(queries, vectors)
-            )
-        )
-        db_duration_ms = (time.perf_counter() - db_start) * 1000
-
-        per_query_codes = [[self._converter.convert(row) for row, _score in hits] for hits in per_query_hits]
-
-        fused = self._fuser.fuse(per_query_codes, top_k=self._fused_top_k)
-        result = CandidateSet(candidates=fused, unresolved_axes=self._axis_detector.detect(fused, context))
-
-        retriever_duration_ms = (time.perf_counter() - retriever_start) * 1000
-        logger.debug(
-            "RAMQCodesRetriever.aretrieve timing",
-            extra={
-                "retriever_duration_ms": round(retriever_duration_ms, 1),
-                "db_duration_ms": round(db_duration_ms, 1),
-                "query_count": len(queries),
-            },
-        )
         logger.debug(
             "RAMQCodesRetriever.aretrieve result",
             extra={
-                "candidates": [
-                    {"number": code.number, "description": code.description}
-                    for code in result.candidates
-                ],
-                "candidate_count": len(result.candidates),
+                "candidates": [{"number": code.number, "description": code.description} for code in candidate_set.candidates],
+                "candidate_count": len(candidate_set.candidates),
                 "eligibility": asdict(eligibility),
-                "unresolved_axes": list(result.unresolved_axes),
+                "unresolved_axes": list(candidate_set.unresolved_axes),
             },
         )
-
-        return result
+        return candidate_set

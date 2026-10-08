@@ -32,3 +32,7 @@ Thumbs.db
 # Project outputs
 *.log
 *.jar
+
+# Benchmark runs and the embedding cache (backend/app/benchmark/); baselines/ is committed
+backend/benchmarks/runs/
+backend/benchmarks/.cache/

@@ -1,20 +1,24 @@
 import logging
 import time
-from typing import List
-
-from llama_index.core.base.embeddings.base import BaseEmbedding
-from llama_index.core.retrievers import BaseRetriever
-from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
+from abc import ABC, abstractmethod
 
 from app.lancedb.converter import IConverter
 from app.lancedb.models import DocumentRow
 from app.lancedb.repository import IDocumentRepository
+from app.llm import IEmbeddingClient, call_purpose
+from app.ramq_chatbot.chunks import ManualChunk, ScoredChunk
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
 
 logger = logging.getLogger(__name__)
 
 
-class RAMQManualRetriever(BaseRetriever):
+class IManualRetriever(ABC):
+    @abstractmethod
+    async def aretrieve(self, query: str) -> list[ScoredChunk]:
+        pass
+
+
+class RAMQManualRetriever(IManualRetriever):
     """Hybrid (vector + native FTS) search over the `documents-embeddings` LanceDB table —
     replaces the old VectorStoreIndex/BM25Retriever/QueryFusionRetriever stack (that BM25
     corpus scan and English stemmer only existed because the previous nested-struct table
@@ -24,42 +28,34 @@ class RAMQManualRetriever(BaseRetriever):
     ReciprocalRankFuser, still used by billing_codes' retriever) — with a single query and a
     single hybrid_search call, there is nothing to fuse across.
 
-    Async-only: IDocumentRepository has no sync query path, so _retrieve() (the sync
-    BaseRetriever entry point) raises rather than pretending to support a code path nothing
-    in this backend actually calls — app/ramq_chatbot/engine.py's RAMQManualQueryEngine only
-    ever calls .aretrieve()."""
+    Async-only: IDocumentRepository has no sync query path."""
 
     def __init__(
         self,
         documents: IDocumentRepository,
-        embed_model: BaseEmbedding,
-        converter: IConverter[DocumentRow, TextNode],
+        embedding_client: IEmbeddingClient,
+        converter: IConverter[DocumentRow, ManualChunk],
         reference_expander: ReferenceExpander,
         similarity_top_k: int = 30,
     ):
         self._documents = documents
-        self._embed_model = embed_model
+        self._embedding_client = embedding_client
         self._converter = converter
         self._reference_expander = reference_expander
         self._similarity_top_k = similarity_top_k
-        super().__init__()
 
-    def _retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
-        raise NotImplementedError("RAMQManualRetriever is async-only — use aretrieve()")
-
-    async def _aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+    async def aretrieve(self, query: str) -> list[ScoredChunk]:
         retriever_start = time.perf_counter()
 
-        vector = await self._embed_model.aget_query_embedding(query_bundle.query_str)
+        with call_purpose("ramq_chatbot.retrieval"):
+            vector = await self._embedding_client.embed_query(query)
 
         db_start = time.perf_counter()
-        hits = await self._documents.hybrid_search(
-            text=query_bundle.query_str, vector=vector, k=self._similarity_top_k
-        )
+        hits = await self._documents.hybrid_search(text=query, vector=vector, k=self._similarity_top_k)
         db_duration_ms = (time.perf_counter() - db_start) * 1000
 
-        nodes = [NodeWithScore(node=self._converter.convert(row), score=None) for row, _score in hits]
-        expanded = await self._reference_expander.aexpand(nodes)
+        chunks = [ScoredChunk(chunk=self._converter.convert(row), score=score) for row, score in hits]
+        expanded = await self._reference_expander.aexpand(chunks)
 
         retriever_duration_ms = (time.perf_counter() - retriever_start) * 1000
         logger.debug(
@@ -72,17 +68,17 @@ class RAMQManualRetriever(BaseRetriever):
         logger.debug(
             "RAMQManualRetriever.aretrieve result",
             extra={
-                "nodes": [
+                "chunks": [
                     {
-                        "node_id": n.node.node_id,
-                        "title": n.node.metadata.get("title"),
-                        "section_number": n.node.metadata.get("section_number"),
-                        "is_expansion": n.node.metadata.get("is_expansion", False),
-                        "text": n.node.text[:200],
+                        "id": hit.chunk.id,
+                        "title": hit.chunk.metadata.get("title"),
+                        "section_number": hit.chunk.metadata.get("section_number"),
+                        "is_expansion": hit.chunk.metadata.get("is_expansion", False),
+                        "text": hit.chunk.text[:200],
                     }
-                    for n in expanded
+                    for hit in expanded
                 ],
-                "node_count": len(expanded),
+                "chunk_count": len(expanded),
             },
         )
 

@@ -19,8 +19,8 @@ client = TestClient(fake_llm_server.app)
 
 
 def _request_body(user_message: str, system_message: str = "system prompt") -> dict:
-    # content-as-list-of-chunks, matching what the Mistral client (llama_index's
-    # MistralAI) actually sends over the wire — see fake_llm_server._content_to_text.
+    # content-as-list-of-chunks, the other shape OpenAI's spec allows (the Mistral SDK
+    # sends it) — see fake_llm_server._content_to_text.
     return {
         "model": "fake-llm",
         "messages": [
@@ -50,11 +50,14 @@ def test_picks_candidates_from_prompt():
     assert body["choices"][0]["finish_reason"] == "stop"
 
     content = json.loads(body["choices"][0]["message"]["content"])
-    assert len(content["codes"]) == fake_llm_server.PICK
+    # The first pick is the code it is sure of, the others only possible ones.
+    assert len(content["codes"]) + len(content["other_possible_codes"]) == fake_llm_server.PICK
+    assert content["analysis"]
     assert content["codes"][0]["code"] == "15801"
     assert content["codes"][0]["description"] == "Visite de prise en charge"
     assert "explanation" in content["codes"][0]
-    assert content["codes"][0]["confidence"] == "medium"
+    assert content["codes"][0]["confidence"] == "high"
+    assert content["other_possible_codes"][0]["code"] == "08579"
     assert "supporting_quote" in content["codes"][0]
     assert content["codes"][0]["needs_confirmation"] == []
     assert "fee" not in content["codes"][0]

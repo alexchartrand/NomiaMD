@@ -1,0 +1,111 @@
+{
+  "patient_id": "CLI-2026-01225",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2323,
+      "output_tokens": 704,
+      "latency_ms": 4265.924021994579,
+      "started_at": "2026-10-08T15:43:40.801121Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2323,
+    "output_tokens": 704,
+    "llm_latency_ms": 4265.924021994579,
+    "wall_ms": 4266.294724002364
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en médecine familiale pour une douleur chronique au genou droit référée par le médecin traitant. Évaluation diagnostique confirmant une gonarthrose modérée à sévère avec retentissement fonctionnel. Réalisation d'une infiltration intra-articulaire de corticostéroïde sous asepsie et transmission d'un rapport au médecin traitant avec recommandation de référence en orthopédie.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-04-14",
+      "time_start": "10:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "médecin traitant (actuellement en congé)",
+      "reason_for_referral": "deuxième opinion sur une douleur chronique au genou droit avant de statuer sur une référence en orthopédie",
+      "written_report_back_required_or_produced": true
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "douleur chronique au genou droit évoluant depuis 2 ans, aggravation progressive avec retentissement fonctionnel",
+      "systems_or_body_regions_involved": [
+        "musculo-squelettique",
+        "genou_droit"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "gonarthrose droite modérée à sévère, compartiment médial prédominant, avec retentissement fonctionnel significatif",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "genou_droit",
+        "genou_gauche",
+        "marche"
+      ],
+      "notable_findings": "légère boiterie antalgique à droite, léger épanchement au genou droit sans chaleur ni érythème, crépitements palpables, amplitude articulaire limitée (flexion à 100°), McMurray équivoque, sensibilité à l'interligne articulaire médial"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "infiltration intra-articulaire de corticostéroïde au genou droit sous asepsie",
+        "generic_act": "infiltration intra-articulaire de corticostéroïde",
+        "body_site": "genou droit",
+        "technique_or_approach_mentioned": "asepsie",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "durée de la consultation non explicitement mentionnée dans le texte",
+      "anesthésie locale non clairement documentée pour l'infiltration (seule l'asepsie est mentionnée)"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-04-14",
+      "actual": "2026-04-14"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:30",
+      "actual": "10:30"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

@@ -8,18 +8,17 @@ test_ramq_codes_codes_data.py). aexpand() is the only entry point — both colla
 async-only (IDocumentRepository has no sync query path), so there's no sync expand() to
 test separately any more."""
 
-from llama_index.core.schema import BaseNode, NodeWithScore, TextNode
-
+from app.ramq_chatbot.chunks import ManualChunk, ScoredChunk
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
 from app.ramq_codes.models import Code
 
 
 class _FakeSectionLookup:
-    def __init__(self, nodes_by_section: dict[str, list[BaseNode]]):
+    def __init__(self, nodes_by_section: dict[str, list[ManualChunk]]):
         self._nodes_by_section = nodes_by_section
         self.calls: list[str] = []
 
-    async def aget_by_section_number(self, section_number: str) -> list[BaseNode]:
+    async def aget_by_section_number(self, section_number: str) -> list[ManualChunk]:
         self.calls.append(section_number)
         return list(self._nodes_by_section.get(section_number, []))
 
@@ -34,12 +33,12 @@ class _FakeCodesData:
         return [self._codes_by_number[n] for n in numbers if n in self._codes_by_number]
 
 
-def _hit(node_id: str, metadata: dict | None = None) -> NodeWithScore:
-    return NodeWithScore(node=TextNode(text=f"text {node_id}", id_=node_id, metadata=metadata or {}), score=1.0)
+def _hit(chunk_id: str, metadata: dict | None = None) -> ScoredChunk:
+    return ScoredChunk(chunk=_plain_node(chunk_id, metadata), score=1.0)
 
 
-def _plain_node(node_id: str, metadata: dict | None = None) -> TextNode:
-    return TextNode(text=f"text {node_id}", id_=node_id, metadata=metadata or {})
+def _plain_node(chunk_id: str, metadata: dict | None = None) -> ManualChunk:
+    return ManualChunk(text=f"text {chunk_id}", id=chunk_id, metadata=metadata or {})
 
 
 def _code(number: str) -> Code:
@@ -53,10 +52,10 @@ async def test_aexpand_pulls_in_a_referenced_section():
 
     results = await expander.aexpand([origin])
 
-    node_ids = [n.node.node_id for n in results]
+    node_ids = [n.chunk.id for n in results]
     assert node_ids == ["A", "B"]
-    added = next(n for n in results if n.node.node_id == "B")
-    assert added.node.metadata["is_expansion"] is True
+    added = next(n for n in results if n.chunk.id == "B")
+    assert added.chunk.metadata["is_expansion"] is True
 
 
 async def test_aexpand_contributes_nothing_for_an_unresolvable_section_reference():
@@ -65,7 +64,7 @@ async def test_aexpand_contributes_nothing_for_an_unresolvable_section_reference
 
     results = await expander.aexpand([origin])
 
-    assert [n.node.node_id for n in results] == ["A"]
+    assert [n.chunk.id for n in results] == ["A"]
 
 
 async def test_aexpand_includes_every_node_sharing_a_referenced_section_number():
@@ -76,7 +75,7 @@ async def test_aexpand_includes_every_node_sharing_a_referenced_section_number()
 
     results = await expander.aexpand([origin])
 
-    assert {n.node.node_id for n in results} == {"A", "B", "C"}
+    assert {n.chunk.id for n in results} == {"A", "B", "C"}
 
 
 async def test_aexpand_only_follows_one_hop():
@@ -90,7 +89,7 @@ async def test_aexpand_only_follows_one_hop():
 
     results = await expander.aexpand([origin])
 
-    assert "C" not in {n.node.node_id for n in results}
+    assert "C" not in {n.chunk.id for n in results}
     assert "1.1" not in lookup.calls
 
 
@@ -98,12 +97,12 @@ async def test_aexpand_does_not_duplicate_a_reference_already_among_the_input_no
     already_present = _hit("B", {"section_number": "9.9"})
     origin = _hit("A", {"section_references": ["9.9"]})
     expander = ReferenceExpander(
-        _FakeSectionLookup({"9.9": [already_present.node]}), _FakeCodesData({})
+        _FakeSectionLookup({"9.9": [already_present.chunk]}), _FakeCodesData({})
     )
 
     results = await expander.aexpand([origin, already_present])
 
-    assert [n.node.node_id for n in results].count("B") == 1
+    assert [n.chunk.id for n in results].count("B") == 1
 
 
 async def test_aexpand_caps_total_expansions_and_never_drops_original_hits():
@@ -119,7 +118,7 @@ async def test_aexpand_caps_total_expansions_and_never_drops_original_hits():
 
     results = await expander.aexpand([origin])
 
-    assert results[0].node.node_id == "A"
+    assert results[0].chunk.id == "A"
     assert len(results) == 1 + 2
 
 
@@ -130,9 +129,9 @@ async def test_aexpand_also_follows_code_references():
 
     results = await expander.aexpand([origin])
 
-    added = next(n for n in results if n.node.node_id != "A")
-    assert added.node.metadata["is_expansion"] is True
-    assert "15801" in added.node.get_content()
+    added = next(n for n in results if n.chunk.id != "A")
+    assert added.chunk.metadata["is_expansion"] is True
+    assert "15801" in added.chunk.text
 
 
 async def test_aexpand_silently_drops_an_unresolvable_code_reference():
@@ -141,7 +140,7 @@ async def test_aexpand_silently_drops_an_unresolvable_code_reference():
 
     results = await expander.aexpand([origin])
 
-    assert [n.node.node_id for n in results] == ["A"]
+    assert [n.chunk.id for n in results] == ["A"]
 
 
 async def test_aexpand_requests_a_referenced_code_only_once_even_if_multiple_hits_cite_it():
@@ -152,7 +151,7 @@ async def test_aexpand_requests_a_referenced_code_only_once_even_if_multiple_hit
 
     results = await expander.aexpand([hit_1, hit_2])
 
-    expansion_nodes = [n for n in results if n.node.node_id not in ("A", "B")]
+    expansion_nodes = [n for n in results if n.chunk.id not in ("A", "B")]
     assert len(expansion_nodes) == 1
     assert codes_data.get_calls == [["15801"]]
 
@@ -168,5 +167,5 @@ async def test_aexpand_shares_its_budget_across_sections_and_codes():
 
     results = await expander.aexpand([origin])
 
-    assert [n.node.node_id for n in results] == ["A", "B"]
+    assert [n.chunk.id for n in results] == ["A", "B"]
     assert codes_data.get_calls == []

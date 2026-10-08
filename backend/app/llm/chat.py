@@ -1,11 +1,10 @@
 """Builds the configured chat LLM. LLM_PROVIDER picks the backend; every caller (extraction
-engine, ramq_chatbot) goes through get_chat_llm so none of them names a provider."""
+engine, ramq_chatbot) goes through get_chat_client so none of them names a provider."""
 
 from functools import lru_cache
 
-from llama_index.core.llms import LLM
-
 from app.config import settings
+from app.llm.client import IChatClient
 from app.llm.mistral import MistralChatProvider
 from app.llm.openai_compatible import OpenAICompatibleChatProvider
 from app.llm.provider import ChatModelProvider
@@ -33,7 +32,7 @@ def chat_provider() -> ChatModelProvider:
 
 
 @lru_cache(maxsize=None)
-def get_chat_llm(model: str, temperature: float = 0.0) -> LLM:
+def get_chat_client(model: str, temperature: float = 0.0) -> IChatClient:
     """Cached per (model, temperature) — a task with a stronger model= override
     (app/tasks/base.py's ExtractionTask.model) gets its own client.
 

@@ -1,0 +1,437 @@
+{
+  "patient_id": "GMF-2026-00303",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 645,
+      "output_tokens": null,
+      "latency_ms": 1489.0604079992045,
+      "started_at": "2026-10-08T14:18:53.491855Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 645,
+    "output_tokens": 0,
+    "llm_latency_ms": 1489.0604079992045,
+    "wall_ms": 1527.9648069990799
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Visite périodique de suivi du développement et vaccination de routine à 18 mois pour une enfant de 18 mois. Examen physique normal, vaccination administrée selon le calendrier québécois, counseling anticipatoire prodigué et prochaine visite prévue à 2 ans.\nLieu (détail): GMF Boisé-des-Cèdres\nDate: 2026-03-03\nHeure de début: 09:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Visite périodique de suivi du développement et vaccination de routine à 18 mois\nSystèmes/régions concernés: développement_pédiatrique; système_respiratoire; système_cardiovasculaire; abdomen; hanches; démarche; ORL; croissance_staturopondérale\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Développement staturopondéral et psychomoteur normal pour l'âge. Aucune préoccupation clinique identifiée.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: poids; taille; périmètre_crânien; système_cardio-pulmonaire; abdomen; hanches; démarche; développement_pédiatrique; ORL\nConstatations: Examen physique normal pour l'âge, croissance staturopondérale dans les limites normales, développement psychomoteur conforme à l'âge.\nActe réalisé 1 - Description: Administration de vaccins de routine à 18 mois (DCaT-VPI-Hib de rappel, RRO-Var de rappel)\nActe réalisé 1 - Site: bras (intramusculaire)\nActe réalisé 1 - Technique/approche: intramusculaire\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "hits": [
+        {
+          "number": "15813",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15833",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15811",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15803",
+          "relevance": 0.02976190485060215
+        },
+        {
+          "number": "20021",
+          "relevance": 0.02976190485060215
+        },
+        {
+          "number": "20022",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "20023",
+          "relevance": 0.028445512056350708
+        },
+        {
+          "number": "08776",
+          "relevance": 0.028438886627554893
+        },
+        {
+          "number": "20024",
+          "relevance": 0.027598019689321518
+        },
+        {
+          "number": "08877",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00953",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15831",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08848",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15801",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15807",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00638",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15805",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15789",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15145",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Administration de vaccins de routine à 18 mois (DCaT-VPI-Hib de rappel, RRO-Var de rappel)",
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "20021",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "20024",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "20023",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00474",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "00477",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00152",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08877",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09315",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15833",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15616",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15813",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00844",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15796",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07424",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00400",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "98012",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00557",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09334",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15803",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "20022",
+      "rrf_score": 0.03205128205128205,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour, en cabinet"
+    },
+    {
+      "rank": 2,
+      "number": "20021",
+      "rrf_score": 0.032018442622950824,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en cabinet"
+    },
+    {
+      "rank": 3,
+      "number": "20023",
+      "rrf_score": 0.031024531024531024,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en établissement"
+    },
+    {
+      "rank": 4,
+      "number": "15833",
+      "rrf_score": 0.030886196246139225,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique de prise en charge et suivi pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 5,
+      "number": "20024",
+      "rrf_score": 0.030834914611005692,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour, en établissement"
+    },
+    {
+      "rank": 6,
+      "number": "15813",
+      "rrf_score": 0.030751173708920186,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 7,
+      "number": "08877",
+      "rrf_score": 0.029418126757516764,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité à l'examen périodique du patient âgé de 0 à 5 ans en cabinet, en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 8,
+      "number": "15803",
+      "rrf_score": 0.028531243721117136,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 9,
+      "number": "15811",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 10,
+      "number": "00474",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen"
+    },
+    {
+      "rank": 11,
+      "number": "00477",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intraveineuse, enfant jusqu'à quatre (4) ans, en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intraveineuse, enfant jusqu'à quatre (4) ans, en cabinet ou à domicile, lorsque faite sans examen"
+    },
+    {
+      "rank": 12,
+      "number": "00152",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie"
+    },
+    {
+      "rank": 13,
+      "number": "08776",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 14,
+      "number": "09315",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Insulinothérapie intensive à doses multiples et variables, vérification du traitement, par période de trois (3) mois, par patient"
+    },
+    {
+      "rank": 15,
+      "number": "00953",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 16,
+      "number": "15616",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 17,
+      "number": "15831",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 18,
+      "number": "08848",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 19,
+      "number": "00844",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Hyperalimentation",
+      "description": "Hyperalimentation parentérale permanente, soins du patient non hospitalisé, par mois (cet acte est réservé au seul médecin responsable de la mise en marche et du contrôle du traitement et comprend tous les services médicaux ou administratifs rendus par le médecin en rapport avec la pathologie en cause)"
+    },
+    {
+      "rank": 20,
+      "number": "15801",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 21,
+      "number": "15796",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 20. Rapports pour les victimes d'actes criminels (IVAC) > B) Rapport médical IVAC-CIVISME",
+      "description": "Rédaction et expédition immédiate à la Commission du formulaire de rapport médical IVAC-CIVISME prescrit par la Commission, pour les victimes d'actes criminels, en vertu de la loi sur l'indemnisation des victimes d'actes criminels"
+    },
+    {
+      "rank": 22,
+      "number": "15807",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 23,
+      "number": "07424",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "U — Appareil auditif > Oreille externe > Réparation > Malformation congénitale",
+      "description": "Réparation d'un prominauris unilatéral chez un patient de moins de 18 ans de l'oreille externe"
+    },
+    {
+      "rank": 24,
+      "number": "00638",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 25,
+      "number": "00400",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Cure d'hyposensibilisation (excluant le coût du produit injecté) en cabinet seulement, lorsque faite sans examen; une seule ou plusieurs injections dans la même séance, allergie"
+    },
+    {
+      "rank": 26,
+      "number": "15805",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 27,
+      "number": "98012",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure"
+    },
+    {
+      "rank": 28,
+      "number": "15789",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 29,
+      "number": "00557",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques > Insertion percutanée d'un cathéter flexible pour infusion intraveineuse prolongée chez un enfant de moins de deux (2) ans",
+      "description": "Insertion percutanée d'un cathéter flexible pour infusion intraveineuse prolongée chez un enfant de moins de deux (2) ans"
+    },
+    {
+      "rank": 30,
+      "number": "15790",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 31,
+      "number": "09334",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)"
+    },
+    {
+      "rank": 32,
+      "number": "15145",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 1,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1490.1610350061674,
+  "db_ms": 37.23244099819567
+}

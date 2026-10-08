@@ -39,7 +39,7 @@ async def test_returns_the_node_with_a_matching_section_number():
 
     results = await lookup.aget_by_section_number("2.2.6")
 
-    assert [n.node_id for n in results] == ["A"]
+    assert [n.id for n in results] == ["A"]
 
 
 async def test_returns_empty_list_when_no_node_matches():
@@ -57,7 +57,7 @@ async def test_returns_every_node_sharing_a_section_number():
 
     results = await lookup.aget_by_section_number("2.2.6")
 
-    assert {n.node_id for n in results} == {"A", "B"}
+    assert {n.id for n in results} == {"A", "B"}
 
 
 async def test_a_row_with_no_section_number_is_never_matched():

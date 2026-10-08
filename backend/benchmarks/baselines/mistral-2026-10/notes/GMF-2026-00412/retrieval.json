@@ -1,0 +1,486 @@
+{
+  "patient_id": "GMF-2026-00412",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 487,
+      "output_tokens": null,
+      "latency_ms": 346.8092080001952,
+      "started_at": "2026-10-08T14:19:35.749267Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 487,
+    "output_tokens": 0,
+    "llm_latency_ms": 346.8092080001952,
+    "wall_ms": 377.551265002694
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation de suivi pour hypertension artérielle et palpitations chez un patient de 58 ans. Examen physique et ECG réalisés. Plan incluant ajustement des habitudes de vie, analyses sanguines et Holter si nécessaire.\nLieu (détail): GMF des Rivières\nDate: 2026-09-15\nHeure de début: 10:20\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi d'hypertension artérielle et palpitations depuis 2 semaines\nSystèmes/régions concernés: cardiovasculaire; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: ESV bénignes probables sur caféine/manque de sommeil; HTA bien contrôlée\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; thyroïde; extremités\nConstatations: TA 136/84, FC 78 rég. Cœur : B1B2 rég., pas de souffle. Thyroïde N. Pas d'œdème.\nActe réalisé 1 - Description: ECG 12 dérivations réalisé et interprété\nActe réalisé 1 - Technique/approche: technique standard\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement indiquée dans le transcript.",
+      "hits": [
+        {
+          "number": "15804",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "00780",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15145",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15812",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08800",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15144",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15832",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15061",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15766",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00060",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15774",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08802",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15830",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08942",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06911",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15058",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00125",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15802",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "ECG 12 dérivations réalisé et interprété",
+      "hits": [
+        {
+          "number": "00756",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "00341",
+          "relevance": 0.03125
+        },
+        {
+          "number": "00340",
+          "relevance": 0.03102453052997589
+        },
+        {
+          "number": "00758",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "00757",
+          "relevance": 0.030578898265957832
+        },
+        {
+          "number": "30010",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "00344",
+          "relevance": 0.029877368360757828
+        },
+        {
+          "number": "30120",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "00545",
+          "relevance": 0.027984345331788063
+        },
+        {
+          "number": "00342",
+          "relevance": 0.027619047090411186
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00630",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "30060",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08408",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09389",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08409",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08413",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "09385",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00535",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00313",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00638",
+      "rrf_score": 0.0304147465437788,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 2,
+      "number": "15804",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 3,
+      "number": "00756",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé)",
+      "description": "Interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour une bande de douze (12) heures"
+    },
+    {
+      "rank": 4,
+      "number": "00780",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, en milieu hospitalier ou en gymnase, effectuée par le médecin, maximum quinze (15) patients"
+    },
+    {
+      "rank": 5,
+      "number": "00341",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme en cabinet"
+    },
+    {
+      "rank": 6,
+      "number": "00340",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Interprétation d'un électrocardiogramme en cabinet"
+    },
+    {
+      "rank": 7,
+      "number": "00953",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 8,
+      "number": "00758",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé)",
+      "description": "Visualisation, enregistrement et interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour les bandes de douze (12) heures subséquentes et consécutives, chacune"
+    },
+    {
+      "rank": 9,
+      "number": "15145",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 10,
+      "number": "00757",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé)",
+      "description": "Visualisation, enregistrement et interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour les deux premières bandes de douze (12) heures, chacune"
+    },
+    {
+      "rank": 11,
+      "number": "15812",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 12,
+      "number": "30010",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme en établissement, incluant l'enregistrement du tracé, la lecture du tracé enregistré sur document permanent, la rédaction et la signature du rapport, sa communication et son intégration au dossier"
+    },
+    {
+      "rank": 13,
+      "number": "08800",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 14,
+      "number": "00344",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme à domicile"
+    },
+    {
+      "rank": 15,
+      "number": "15144",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 16,
+      "number": "30120",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme par enregistrement épicardique en établissement"
+    },
+    {
+      "rank": 17,
+      "number": "15832",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 18,
+      "number": "00545",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Électrocardiogramme endocavitaire, cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 19,
+      "number": "15061",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal avec déplacement",
+      "description": "Examen principal avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 20,
+      "number": "00342",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme avec épreuve d'effort en cabinet, incluant l'électrocardiogramme au repos"
+    },
+    {
+      "rank": 21,
+      "number": "15766",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 22,
+      "number": "00060",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré"
+    },
+    {
+      "rank": 23,
+      "number": "00630",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps réel), par vingt-quatre (24) heures",
+      "description": "Technique et interprétation d'un électrocardiogramme dynamique (analyse en temps réel), par vingt-quatre (24) heures"
+    },
+    {
+      "rank": 24,
+      "number": "15774",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 25,
+      "number": "30060",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Épreuve d'effort sub-maximal et maximal en établissement, incluant l'électrocardiogramme au repos exécuté au moyen d'un tapis roulant et/ou d'une bicyclette ergométrique avec monitoring continu de l'électrocardiogramme (surveillance et interprétation)"
+    },
+    {
+      "rank": 26,
+      "number": "08802",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 27,
+      "number": "08408",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > non sélective",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, non sélective, interprétation, angioradiologie"
+    },
+    {
+      "rank": 28,
+      "number": "15830",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 29,
+      "number": "09389",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Photopléthysmographie > Étude des flots avec enregistrement graphique > flots supraorbitaires",
+      "description": "Photopléthysmographie, étude des flots avec enregistrement graphique, flots supraorbitaires, interprétation"
+    },
+    {
+      "rank": 30,
+      "number": "08942",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen, subséquente dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 31,
+      "number": "08409",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective autre que spinale, par vaisseau, maximum 4",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective autre que spinale, par vaisseau, maximum 4, interprétation, angioradiologie"
+    },
+    {
+      "rank": 32,
+      "number": "06911",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "Q — Obstétrique",
+      "description": "Non stress test comprenant l'interprétation incluant, le cas échéant la technique ou la surveillance ou les deux"
+    },
+    {
+      "rank": 33,
+      "number": "08413",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective, spinale, par vaisseau, maximum 8 vaisseaux",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective, spinale, par vaisseau, maximum 8 vaisseaux, interprétation, angioradiologie"
+    },
+    {
+      "rank": 34,
+      "number": "15058",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal sans déplacement",
+      "description": "Examen principal sans déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 35,
+      "number": "09385",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Pléthysmographie par « Strain-Gauge » ou par impédance > étude du flot artériel ou veineux des deux membres supérieurs ou des deux membres inférieurs",
+      "description": "Pléthysmographie par « Strain-Gauge » ou par impédance, étude du flot artériel ou veineux des deux membres supérieurs ou des deux membres inférieurs, interprétation"
+    },
+    {
+      "rank": 36,
+      "number": "00125",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Monitoring continu de la pression artérielle, par technique non invasive, par période de vingt-quatre (24) heures, interprétation"
+    },
+    {
+      "rank": 37,
+      "number": "00535",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Épreuve d'entraînement sélectif du coeur incluant l'électrocardiogramme endocavitaire, cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 38,
+      "number": "15802",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 39,
+      "number": "00313",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Programmation et/ou vérification d'un défibrillateur interne sous contrôle électrocardiographique (maximum six (6) programmations et/ou vérifications par année), cathétérisme cardiaque et études hémodynamiques"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 58,
+    "panel_size": 1240,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 347.8695339872502,
+  "db_ms": 29.12982700217981
+}

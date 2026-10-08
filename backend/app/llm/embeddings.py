@@ -1,13 +1,12 @@
 """Builds the configured query-embedding model. EMBEDDING_PROVIDER picks the backend; every
-retriever (ramq_codes, ramq_chatbot) goes through get_embedding_model so none of them names
+retriever (ramq_codes, ramq_chatbot) goes through get_embedding_client so none of them names
 a provider. Query embeddings embed text derived from the transcript, so they carry PHI the
 same way chat calls do (docs/encounter-intake-plan.md §3)."""
 
 from functools import lru_cache
 
-from llama_index.core.base.embeddings.base import BaseEmbedding
-
 from app.config import settings
+from app.llm.client import IEmbeddingClient
 from app.llm.mistral import MistralEmbeddingProvider
 from app.llm.openai_compatible import OpenAICompatibleEmbeddingProvider
 from app.llm.provider import EmbeddingModelProvider
@@ -33,5 +32,5 @@ def embedding_provider() -> EmbeddingModelProvider:
 
 
 @lru_cache(maxsize=1)
-def get_embedding_model() -> BaseEmbedding:
+def get_embedding_client() -> IEmbeddingClient:
     return embedding_provider().build()

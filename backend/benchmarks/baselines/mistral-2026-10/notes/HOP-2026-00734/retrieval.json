@@ -1,0 +1,270 @@
+{
+  "patient_id": "HOP-2026-00734",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 629,
+      "output_tokens": null,
+      "latency_ms": 1323.3232200000202,
+      "started_at": "2026-10-08T14:20:05.650368Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 629,
+    "output_tokens": 0,
+    "llm_latency_ms": 1323.3232200000202,
+    "wall_ms": 1349.2585749918362
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Visite de transfert et rencontre familiale pour un patient de 79 ans hospitalisé pour un AVC ischémique sylvien gauche. Examen clinique, ajustement du traitement (apixaban, atorvastatine), évaluation du pronostic et planification de la réadaptation intensive. Niveau d'intervention médicale (NIM 2) discuté et maintenu.\nLieu (détail): Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)\nDate: 2026-10-05\nHeure de début: 08:30\nHeure de fin: 15:30\nDurée (minutes): 420.0\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Prise en charge en relève comme médecin traitant de l'unité de médecine (remplacement du Dr Pelletier).\nSystèmes/régions concernés: neurologique; cardiovasculaire; digestif\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: oui\nDiagnostic/impression: AVC ischémique sylvien gauche (non thrombolysé), hémiparésie droite 3/5, aphasie d'expression, dysphagie, fibrillation auriculaire nouvelle (apixaban débuté J3).\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: neurologique; cardiovasculaire\nConstatations: Éveillé, aphasie d'expression, compréhension partielle, force MSD 3/5, MID 3+/5, TA 138/80, FC 74 irrégulière. Pas de signe d'aspiration.\nÉlément incertain: Durée totale de l'encounter estimée à 420 minutes (08h30 à 15h30) — durée explicitement indiquée seulement pour la rencontre familiale (30 min).; Le statut de médecin traitant de l'unité est-il considéré comme une 'consultation' ou une 'visite' pour la facturation?",
+      "hits": [
+        {
+          "number": "15802",
+          "relevance": 0.027242401614785194
+        },
+        {
+          "number": "15641",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15830",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15629",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15808",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15650",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15806",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15667",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15828",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15804",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15826",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09234",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "05920",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15631",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "05921",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15668",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00837",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15632",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08507",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15824",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15802",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 2,
+      "number": "15641",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A"
+    },
+    {
+      "rank": 3,
+      "number": "15830",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 4,
+      "number": "15629",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de transfert dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 5,
+      "number": "15808",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 6,
+      "number": "15650",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B"
+    },
+    {
+      "rank": 7,
+      "number": "15806",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 8,
+      "number": "15667",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B"
+    },
+    {
+      "rank": 9,
+      "number": "15828",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente vulnérable inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 10,
+      "number": "15804",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 11,
+      "number": "15826",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente vulnérable inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 12,
+      "number": "09234",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation ordinaire d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré"
+    },
+    {
+      "rank": 13,
+      "number": "05920",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "E — Chirurgie > Chirurgie oncologique complexe > Anesthésie",
+      "description": "Anesthésie pour chirurgie oncologique complexe d'une durée anesthésique totale de 4 à 5 heures, assurée par un médecin omnipraticien détenant des privilèges"
+    },
+    {
+      "rank": 14,
+      "number": "15631",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 15,
+      "number": "05921",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "E — Chirurgie > Chirurgie oncologique complexe > Anesthésie",
+      "description": "Anesthésie pour chirurgie oncologique complexe d'une durée anesthésique totale de 5 à 6 heures, assurée par un médecin omnipraticien détenant des privilèges"
+    },
+    {
+      "rank": 16,
+      "number": "15668",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B"
+    },
+    {
+      "rank": 17,
+      "number": "00837",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, première heure, incluant la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre, le patient et le médecin étant dans la chambre, en établissement"
+    },
+    {
+      "rank": 18,
+      "number": "15632",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires concernant l'ensemble des patients d'une unité ou de l'établissement (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 19,
+      "number": "08507",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Supplément pour une planification du traitement par radiations de plus de 30 minutes mais moins de 45 minutes"
+    },
+    {
+      "rank": 20,
+      "number": "15824",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    }
+  ],
+  "unresolved_axes": [
+    "registration",
+    "vulnerability"
+  ],
+  "eligibility": {
+    "age": 79,
+    "panel_size": 900,
+    "is_registered": null,
+    "is_vulnerable": null
+  },
+  "embedding_ms": 1324.0996610111324,
+  "db_ms": 24.591243010945618
+}

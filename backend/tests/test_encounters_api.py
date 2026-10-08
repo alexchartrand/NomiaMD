@@ -30,6 +30,8 @@ _ramq_numbers = itertools.count(1)
 _texts = itertools.count(1)
 
 CLEAN_RESULT = {"codes": [MOCK_RESULT["codes"][0]], "notes": None}  # one high-confidence code
+# The model is sure of a code, but only with medium confidence.
+UNSURE_RETAINED_RESULT = {"codes": [MOCK_RESULT["other_possible_codes"][0]], "notes": None}
 NEEDS_CONFIRMATION_RESULT = {
     "codes": [MOCK_RESULT["codes"][0] | {"needs_confirmation": ["Confirmer la taille de la clientèle"]}],
     "notes": None,
@@ -72,7 +74,7 @@ def _model(billing=MOCK_RESULT, extractions: int = 1):
     """The chat model, answering `extractions` pipeline runs (summary, then codes)."""
     patcher = patch("app.extraction.engine.get_client")
     mock_get_client = patcher.start()
-    mock_get_client.return_value.achat = AsyncMock(
+    mock_get_client.return_value.chat = AsyncMock(
         side_effect=[_mock_response(MOCK_SUMMARY_RESULT), _mock_response(billing)] * extractions
     )
     return patcher
@@ -330,7 +332,8 @@ async def test_another_physicians_encounter_is_not_found(me, client):
     ("billing", "all_clean"),
     [
         (CLEAN_RESULT, True),
-        (MOCK_RESULT, False),  # one medium-confidence code
+        (MOCK_RESULT, True),  # its medium-confidence code is only a possible one
+        (UNSURE_RETAINED_RESULT, False),
         (NEEDS_CONFIRMATION_RESULT, False),
         ({"codes": [], "notes": None}, False),  # nothing to approve
     ],
@@ -455,7 +458,7 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
     patient = await _seed_patient()
     patcher = patch("app.extraction.engine.get_client")
     mock_get_client = patcher.start()
-    mock_get_client.return_value.achat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
+    mock_get_client.return_value.chat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
     try:
         [outcome] = client.post("/intake/notes", json={"text": _note_text(patient.ramq_number)}).json()
     finally:
@@ -650,8 +653,10 @@ def _extraction(*codes):
     return SimpleNamespace(billing=SimpleNamespace(result=SimpleNamespace(codes=list(codes))))
 
 
-def _code(fees: int = 1, confidence: str = "high", needs_confirmation=()):
-    return SimpleNamespace(confidence=confidence, needs_confirmation=list(needs_confirmation), fees=[object()] * fees)
+def _code(fees: int = 1, confidence: str = "high", needs_confirmation=(), retained: bool = True):
+    return SimpleNamespace(
+        confidence=confidence, needs_confirmation=list(needs_confirmation), fees=[object()] * fees, retained=retained
+    )
 
 
 def test_a_code_with_several_fees_is_not_clean():
@@ -659,3 +664,12 @@ def test_a_code_with_several_fees_is_not_clean():
     ready = {"service_date": date(2026, 3, 4), "possible_duplicate": False}
     assert is_all_clean(EncounterStatus.PRET, _extraction(_code(fees=1), _code(fees=0)), **ready)
     assert not is_all_clean(EncounterStatus.PRET, _extraction(_code(fees=1), _code(fees=2)), **ready)
+
+
+def test_only_the_retained_codes_decide_cleanliness():
+    """Approving bills the retained codes: an unsure possible code doesn't block it, and
+    possible codes alone leave nothing to approve."""
+    ready = {"service_date": date(2026, 3, 4), "possible_duplicate": False}
+    possible = _code(confidence="low", needs_confirmation=["?"], fees=3, retained=False)
+    assert is_all_clean(EncounterStatus.PRET, _extraction(_code(), possible), **ready)
+    assert not is_all_clean(EncounterStatus.PRET, _extraction(possible), **ready)

@@ -66,7 +66,22 @@
 - [ ] 🟢 Prompt injection surface is unhardened — *added 8/19, from codebase audit*
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
+- [ ] 🟢 Lance prints a deprecation warning on every hybrid code search — *added 10/8, from the benchmark work*
+  - `CodeRepository.hybrid_search` (`app/lancedb/repository.py`) selects explicit columns without `_score`/`_distance`, so lance logs "This search specified output columns but did not include `_score`… Call `disable_scoring_autoprojection`" to stderr on each query (several per extraction, dozens per benchmark run). `LANCE_LOG`/`RUST_LOG` don't silence it. Fix: call `disable_scoring_autoprojection()` on the hybrid query (check that the relevance score `hybrid_search` returns is still selected), and the same in `DocumentRepository.hybrid_search`.
+
 ## ✨ Features
+
+- [ ] 🟡 Measure the selection benchmark's noise floor — *added 10/8, from the `mistral-sel` analysis*
+  - `mistral-medium` isn't deterministic at temperature 0 (the summary already moved a code's rank between two identical runs). Before reading small per-note deltas between two selection prompts as real, re-run one unchanged configuration (`run --name <x>-rerun --stages selection --candidates-from mistral-2026-10-v2`) and compare it with `report --baseline`: whatever changes there is noise. A `--repeat N` on `run` would make this routine.
+
+- [ ] 🟡 Show each candidate's eligibility bounds in the billing_codes prompt — *added 10/8, from the `mistral-sel` analysis*
+  - `_format_candidate` (`app/ramq_codes/task.py`) shows the taxonomy path, description, usage and conditions, so what tells sibling variants apart (age band, panel size, registered/vulnerable) is buried in French prose. `mistral-sel` retained 18 wrong variants of an expected code. Render `Code.eligibility`'s typed bounds as one line per candidate (e.g. « Admissibilité : 80 ans ou plus ; patient inscrit ; clientèle ≥ 500 »), then measure with `run --stages selection --candidates-from mistral-2026-10-v2 --baseline <previous>` (wrong variants, retained precision).
+
+- [ ] 🟡 Physician review of the selection judgment calls — *added 10/8, from the `mistral-sel` analysis*
+  - Five expected codes the model saw and didn't pick look like label questions as much as model errors: `GMF-2026-00303` 15813 vs 15833 (periodic vs pediatric intake), `GMF-2026-00313` 15803 vs 08819 (follow-up vs psychiatric evaluation), `HOP-2026-00733` 15639 vs 15638 (follow-up vs intake on the ward), `CHSLD-2026-00054` 15622 (phone response), `CLI-2026-01229` 15803 (the model picked hospital code 08882). Also the negatives that came back with codes, `CLI-2026-01246`'s insurer form above all (09826 at high confidence). Settle them in `tests/fixtures/eval_billing_codes.jsonl` before tuning the prompt against them.
+
+- [ ] 🟢 Check server-side that a code's supporting quote is in the note — *added 10/8, from the `mistral-sel` analysis*
+  - The prompt asks for a verbatim `supporting_quote` from the summary or transcript, but nothing checks it. A deterministic check in `BillingCodesTask.parse` (whitespace/case-normalized substring of the rendered summary or the transcript) would flag a made-up quote on the review card rather than drop the code. Count the flagged quotes in the selection benchmark first, to see whether it happens at all.
 
 - [ ] 🟡 Seed demo encounters relative to today — *added 10/6, from the app demo polish*
   - `scripts/seed_db.py` seeds the `consultations/` notes at the dates written in them (spring–summer 2026), so on a demo day the dashboard shows 0 encounters this week, an empty 8-week activity chart, and every unbilled note at "5 j restants" before the 90-day limit; the inbox's default "Cette semaine" period is empty too. Wanted: an opt-in seed mode (e.g. `--relative-to-today`) that spreads the encounters over the last ~3 weeks, several per day, so the dashboard, the day cards and the bulk-approve callout all have something to show.
@@ -82,7 +97,7 @@
   - The pricing page (`frontend/src/site/pricing.ts`) advertises a Gratuit plan limited to 1 extraction per day, but nothing enforces it. Needs a plan on `User` (or a dated plan history, like practice facts) and a daily quota check on `POST /extract` and in the extraction worker, counted per physician over the Montreal day (`Clock`), with a clear message in the app when the limit is reached.
 
 - [ ] 🟡 Retune `similarity_top_k`/`fused_top_k` for the full-manual codes table — *added 9/30, from the versioned-codes-table migration*
-  - `RAMQCodesRetriever` still uses `similarity_top_k=20`, `fused_top_k=40`, sized for the old 362-row, section-B-only table; `codes_2026-06-05` is 4,070 rows across B–V. The eligibility prefilter frees slots that ineligible variants used to take, but that's no substitute for measuring. Run `scripts/eval_extraction.py --retrieval-only` on 2+ cases (per the "a fix validated on one transcript can regress another" rule) before changing either number — `URG-2026-04512`'s `01320…` procedure codes can now appear at all.
+  - `RAMQCodesRetriever` still uses `similarity_top_k=20`, `fused_top_k=40`, sized for the old 362-row, section-B-only table; `codes_2026-06-05` is 4,070 rows across B–V. The eligibility prefilter frees slots that ineligible variants used to take, but that's no substitute for measuring. Measure with `scripts/benchmark.py sweep --summaries-from <run> --similarity-top-k … --fused-top-k …` over all labeled notes, and check `report --baseline` for per-note regressions (the "a fix validated on one transcript can regress another" rule) before changing either number — `URG-2026-04512`'s `01320…` procedure codes can now appear at all.
 
 - [ ] 🟡 Carry `manual_rev` on code results and claims — *added 9/30, deferred from the versioned-codes-table migration*
   - The `code_versions` registry names each table's `manual_rev`. Not carried anywhere yet: `CodeVersionRow` is read, but `Code`/`ExtractedCode`/`claim_codes` don't record which manual edition a suggestion came from.
@@ -117,11 +132,9 @@
 - [ ] 🟢 Measure per-candidate prompt cost with the deeper `header_path` and procedure `rules` — *added 9/30*
   - `_format_candidate` (`app/ramq_codes/task.py`) prints `header_path` verbatim (now up to ~7 segments) and every rule; procedure-section codes can carry long `rules`. Check the token cost of a 40-candidate prompt on the real table before deciding whether to trim either.
 
-- [ ] 🟢 LLM usage logging (token counts, execution time) — *added 8/27*
-  - Today `app/extraction/engine.py`'s `run_extraction` only debug-logs the call's duration (`llm_duration_ms`); token usage isn't read and nothing is persisted.
-  - Every extraction LLM call already funnels through one chokepoint, `app/extraction/engine.py`'s `run_extraction` (`client.achat(...)`), and `ramq_chatbot/factory.py` builds its own `MistralAI` client the same way — so either option below is a single integration point, not scattered instrumentation.
-  - Decide between: (a) self-hosted Langfuse, using its `llama_index` instrumentor (`LlamaIndexInstrumentor` from `langfuse.llama_index`, started once in `bootstrap.py`) for full traces/dashboards/cost aggregation, vs (b) lightweight DB logging — wrap the `achat` call with `time.perf_counter()`, read `response.raw["usage"]` (Mistral's API is OpenAI-compatible), and persist onto the stage's `extraction_results` row (`ExtractionRunResult`, `app/postgresdb/models.py`).
-  - Self-hosted Langfuse means another service to run/maintain but gets a UI, prompt diffing, and cost views; DB logging is zero new infra and keeps prompt/response content off any third-party system (relevant here since transcripts carry patient name + NAM), but you build your own queries/views to look at it.
+- [ ] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8*
+  - Since 10/8 every chat and embedding call is metered by `app/llm/openai_client.py` (`LLMCallRecord`: tokens in/out, latency, purpose, `finish_reason`) and logged as one structured `llm_call` line (`app/llm/usage.py`); the benchmark collects them per note with `usage_scope()`. Nothing is persisted yet.
+  - Remaining: a `UsageRecorder` sink that stores the records of an extraction on its run (a `llm_calls` table keyed to `ExtractionRun`, or a JSON column on `ExtractionRunResult`), so cost per encounter/physician can be queried. Langfuse stays an option, but would need its OpenAI-SDK integration now that llama-index is gone.
 
 ## 🧹 Cleanup / Dead code
 

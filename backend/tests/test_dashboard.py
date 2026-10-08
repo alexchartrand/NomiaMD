@@ -19,7 +19,7 @@ from app.dashboard.activity import week_start
 from app.main import app
 from app.postgresdb import ExtractionStageInput, Gender, PatientRepository, session_scope
 from tests.db_helpers import ensure_user_row, physician, seed_run
-from tests.test_encounters_api import CLEAN_RESULT, _model, _note_text, _paste, _push
+from tests.test_encounters_api import CLEAN_RESULT, UNSURE_RETAINED_RESULT, _model, _note_text, _paste, _push
 
 _physician_ids = itertools.count(7000)
 # "DASH" prefix: patients are globally unique by NAM across the shared test DB.
@@ -121,11 +121,11 @@ async def test_an_empty_dashboard(me, client):
 async def test_tasks_count_what_is_left_to_do(me, client):
     patient = await _seed_patient()
     clean = _push(client, patient, billing=CLEAN_RESULT)
-    # A medium-confidence code: not approvable. Another day, or it's a possible duplicate.
-    to_review = _push(client, patient, service_date=TODAY - timedelta(days=1))
+    # A medium-confidence retained code: not approvable. Another day, or it's a possible duplicate.
+    to_review = _push(client, patient, billing=UNSURE_RETAINED_RESULT, service_date=TODAY - timedelta(days=1))
     [unmatched] = _paste(client, _note_text("ZZZZ99999999")).json()
     with patch("app.extraction.engine.get_client") as get_client:
-        get_client.return_value.achat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
+        get_client.return_value.chat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
         [failed] = client.post("/intake/notes", json={"text": _note_text(patient.ramq_number)}).json()
 
     tasks = _dashboard(client)["tasks"]

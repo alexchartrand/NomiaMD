@@ -1,0 +1,126 @@
+{
+  "patient_id": "HOP-2026-00734",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 9928,
+      "output_tokens": 1145,
+      "latency_ms": 9012.875945991254,
+      "started_at": "2026-10-08T17:08:36.392605Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 9928,
+    "output_tokens": 1145,
+    "llm_latency_ms": 9012.875945991254,
+    "wall_ms": 9022.756652993849
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15629",
+    "15830",
+    "15158",
+    "15667",
+    "08943",
+    "15627",
+    "15641",
+    "15642",
+    "15626",
+    "15628",
+    "15650",
+    "08933",
+    "15808",
+    "15616",
+    "15806",
+    "15062",
+    "15639",
+    "15828",
+    "15631",
+    "15617",
+    "15826",
+    "15648",
+    "15632",
+    "15640",
+    "05920",
+    "05922",
+    "05923",
+    "05924",
+    "05925",
+    "05921",
+    "15647",
+    "15643",
+    "08923",
+    "15638",
+    "15668",
+    "09347",
+    "15649",
+    "15652",
+    "08913",
+    "15802"
+  ],
+  "prompt_chars": 39392,
+  "raw_code_count": 4,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15641",
+        "description": "Visite de transfert d'un patient admis dans un CHSGS ou CHSP, partie soins de courte durée, niveau A",
+        "confidence": "high",
+        "explanation": "Visite de transfert documentée pour un patient admis en unité de soins de courte durée d'un CHSGS, avec examen clinique et ajustement du traitement. Le niveau A est applicable car aucune condition spécifique pour le niveau B (ex. : médecin désigné dans une unité de géronto-psychiatrie) n'est mentionnée.",
+        "supporting_quote": "08h30 — Visite de transfert. Revu dossier, imagerie, notes de physio/ergo/orthophonie. Examen : éveillé, aphasie d'expression, compréhension partielle, force MSD 3/5, MID 3+/5.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15643",
+        "description": "Échanges interdisciplinaires ou avec les proches du patient admis dans un CHSGS ou CHSP, partie soins de courte durée, niveau A, par période de 15 minutes",
+        "confidence": "high",
+        "explanation": "Rencontre familiale de 30 minutes (2 périodes de 15 minutes) avec discussion du pronostic et du plan de réadaptation. Le niveau A est applicable par défaut, car aucune condition pour le niveau B (ex. : médecin désigné dans une unité de géronto-psychiatrie) n'est remplie.",
+        "supporting_quote": "15h00-15h30 — Rencontre avec l'épouse et la fille (30 min), séance distincte, salle des familles, avec la travailleuse sociale. Explication du pronostic fonctionnel, du plan de réadaptation et du risque de récidive.",
+        "needs_confirmation": [
+          "Confirmer le statut d'inscription du patient pour déterminer si le code 15652 (niveau B) pourrait s'appliquer à la place."
+        ],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15650",
+        "description": "Visite de transfert d'un patient admis dans un CHSGS ou CHSP, partie soins de courte durée, niveau B",
+        "confidence": "medium",
+        "explanation": "Alternative au code 15641 si le médecin était désigné pour une unité spécifique (ex. : géronto-psychiatrie), mais aucune mention de cette désignation n'est présente dans le transcript ou le summary.",
+        "supporting_quote": "08h30 — Visite de transfert.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15652",
+        "description": "Échanges interdisciplinaires ou avec les proches du patient admis dans un CHSGS ou CHSP, partie soins de courte durée, niveau B, par période de 15 minutes",
+        "confidence": "medium",
+        "explanation": "Alternative au code 15643 si le patient était inscrit et vulnérable, mais ces statuts ne sont pas établis. Le niveau B pourrait s'appliquer si le médecin était désigné pour une unité de géronto-psychiatrie, ce qui n'est pas mentionné.",
+        "supporting_quote": "15h00-15h30 — Rencontre avec l'épouse et la fille (30 min).",
+        "needs_confirmation": [
+          "Confirmer le statut d'inscription du patient.",
+          "Confirmer le statut de vulnérabilité du patient."
+        ],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée totale de l'encounter (450 minutes) est une estimation et non une durée explicitement déclarée. Aucun autre service (ex. : certificat, procédure) n'est documenté. Les codes pour les patients de 70 ans et plus (ex. : 15158) ou pour les moins de 80 ans (ex. : 15802, 15806) sont exclus car non applicables à ce contexte (visite de transfert en soins de courte durée).",
+    "analysis": "L'encounter a lieu dans un CHSGS, en unité de soins de courte durée, pour un patient de 79 ans admis pour un AVC ischémique. Deux services distincts sont documentés : une visite de transfert à 08h30 (examen clinique, ajustement du traitement, évaluation du pronostic) et une rencontre familiale de 30 minutes à 15h00 (discussion du pronostic, du plan de réadaptation et du niveau d'intervention médicale). La visite de transfert correspond à un code de niveau A ou B pour un patient admis en soins de courte durée. La rencontre familiale correspond à un échange interdisciplinaire ou avec les proches, facturable par période de 15 minutes. Aucun autre service (procédure, test, certificat) n'est mentionné. Le patient a 79 ans, ce qui exclut les codes réservés aux moins de 80 ans ou aux 70 ans et plus pour des services spécifiques non applicables ici. Le statut d'inscription et de vulnérabilité du patient n'est pas établi, ce qui influence le choix entre les variantes de codes pour les échanges interdisciplinaires."
+  }
+}

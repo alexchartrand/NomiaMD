@@ -1,0 +1,123 @@
+{
+  "patient_id": "URG-2026-04538",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1935,
+      "output_tokens": 742,
+      "latency_ms": 4972.040729000582,
+      "started_at": "2026-10-08T14:18:33.885826Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1935,
+    "output_tokens": 742,
+    "llm_latency_ms": 4972.040729000582,
+    "wall_ms": 4972.244638003758
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation à l'urgence pour un enfant de 8 ans présentant une douleur abdominale évolutive avec fièvre et vomissements. Diagnostic d'appendicite aiguë confirmé par échographie, suivi d'une admission en chirurgie pédiatrique pour appendicectomie.",
+    "encounter_setting": {
+      "location_detail": "CHU fictif, service d'urgence",
+      "date": "2026-07-13",
+      "time_start": "19:20",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Douleur abdominale progressive depuis 18 heures avec fièvre et vomissements chez un enfant de 8 ans.",
+      "systems_or_body_regions_involved": [
+        "abdominal",
+        "digestif"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Appendicite aiguë probable.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "abdomen",
+        "signes vitaux"
+      ],
+      "notable_findings": "Sensibilité marquée au point de McBurney, défense volontaire, signe de Rovsing positif, fièvre à 38,4 °C, leucocytose à 14,2 x10⁹/L avec déviation gauche, CRP élevée à 48 mg/L."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Évaluation clinique complète incluant examen physique et interprétation des signes vitaux",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Examen abdominal ciblé (point de McBurney, signe de Rovsing), évaluation des signes vitaux",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Administration d'antipyrétique (acétaminophène) et d'antibiotique prophylactique IV",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Voie intraveineuse",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Pose de soluté IV NaCl 0,9 % pour réhydratation",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Voie intraveineuse",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement indiquée dans le transcript.",
+      "Heure de fin de la consultation non mentionnée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "19:20",
+      "actual": "19:20"
+    }
+  ],
+  "stats": {
+    "procedures": 3,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

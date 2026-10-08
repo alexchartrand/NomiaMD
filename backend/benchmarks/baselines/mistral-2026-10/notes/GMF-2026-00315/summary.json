@@ -1,0 +1,97 @@
+{
+  "patient_id": "GMF-2026-00315",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1527,
+      "output_tokens": 456,
+      "latency_ms": 3272.673706000205,
+      "started_at": "2026-10-08T14:20:08.250386Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1527,
+    "output_tokens": 456,
+    "llm_latency_ms": 3272.673706000205,
+    "wall_ms": 3272.966574993916
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Le patient Simon Ouimet, 39 ans, n'est pas venu à son rendez-vous de suivi pour asthme à la clinique GMF Boisé-des-Cèdres le 2 octobre 2026 à 15h00. Un message a été laissé sur sa boîte vocale à 15h20 pour reprogrammer le rendez-vous. Une lettre de rappel sera envoyée par le secrétariat si aucune réponse n'est reçue sous 2 semaines.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-10-02",
+      "time_start": "15:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi d'asthme (patient absent)",
+      "systems_or_body_regions_involved": [
+        "respiratoire"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": false,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": null,
+      "recommendations_given_to_patient": false,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": false,
+      "regions_or_systems_examined": [],
+      "notable_findings": null
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'appel téléphonique à 15h20 non précisée",
+      "Contenu exact du message laissé sur la boîte vocale non détaillé"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-02",
+      "actual": "2026-10-02"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "15:00",
+      "actual": "15:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 1,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -4,25 +4,25 @@ environment. Once LLM_API_KEY and EMBEDDING_API_KEY are configured, see scripts/
 live smoke test.
 
 Uses the small tests/fixtures/reference_data_test.json table (via the small_reference_table
-fixture in conftest.py) rather than the real llama_index vector store, so these tests don't
+fixture in conftest.py) rather than the real LanceDB codes table, so these tests don't
 depend on its size, network access, or exact content."""
 
 import itertools
-import json
 from datetime import date
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
-from app.extraction.engine import run_extraction
+from app.extraction.engine import ExtractionOutputError, run_extraction
 from app.main import app
 from app.intake import content_hash
 from app.postgresdb import Encounter, ExtractionRun, ExtractionRunResult, Gender, PatientRepository, session_scope
 from app.ramq_codes import BillingCodesInput, BillingContext
 from app.summary import ConsultationSummaryResult
 from app.tasks.registry import get_task
+from tests.llm_helpers import fake_chat_result
 
 SAMPLE_TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "
@@ -73,6 +73,7 @@ MOCK_SUMMARY_RESULT = {
 }
 
 MOCK_RESULT = {
+    "analysis": "Suivi d'hypertension en cabinet; un bilan sanguin de contrôle est demandé.",
     "codes": [
         {
             "code": "TEST-BP-MGMT",
@@ -82,6 +83,8 @@ MOCK_RESULT = {
             "supporting_quote": "hypertension artérielle depuis 10 ans",
             "needs_confirmation": [],
         },
+    ],
+    "other_possible_codes": [
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",
@@ -109,19 +112,13 @@ def _billing_codes_input() -> BillingCodesInput:
 
 
 def _mock_response(payload=MOCK_RESULT):
-    return SimpleNamespace(
-        message=SimpleNamespace(content=json.dumps(payload)),
-        raw={
-            "model": "mistral-small-latest",
-            "choices": [SimpleNamespace(finish_reason="stop")],
-        },
-    )
+    return fake_chat_result(payload)
 
 
 async def test_run_extraction_parses_mocked_response():
     task = get_task("billing_codes")
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response())
+        mock_get_client.return_value.chat = AsyncMock(return_value=_mock_response())
         result = await run_extraction(task, _billing_codes_input())
 
     assert result.task == "billing_codes"
@@ -131,7 +128,7 @@ async def test_run_extraction_parses_mocked_response():
     ]
     # The prompt actually sent to the model should have narrowed candidates via keyword
     # match, not dumped the whole reference table — confirm the call args reflect that.
-    call_kwargs = mock_get_client.return_value.achat.call_args.kwargs
+    call_kwargs = mock_get_client.return_value.chat.call_args.kwargs
     user_message = call_kwargs["messages"][1].content
     assert "TEST-BP-MGMT" in user_message
     assert "TEST-CONSULT-NEW" not in user_message  # not relevant to this transcript
@@ -158,7 +155,7 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
         "notes": None,
     }
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response(mock_result))
+        mock_get_client.return_value.chat = AsyncMock(return_value=_mock_response(mock_result))
         result = await run_extraction(task, _billing_codes_input())
 
     assert [c.code for c in result.result.codes] == ["TEST-BLOODWORK-ORDER"]
@@ -168,7 +165,7 @@ async def test_run_extraction_drops_malformed_bare_string_codes():
 
 def _extract(client: TestClient, *, patient_id: int, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT, side_effect=None):
     with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(
+        mock_get_client.return_value.chat = AsyncMock(
             side_effect=side_effect or [_mock_response(summary), _mock_response(billing)]
         )
         return client.post(
@@ -302,3 +299,54 @@ def test_unknown_task_returns_400():
             "/extract", json={"transcript": "hello", "task": "not_a_real_task", "patient_id": 1}
         )
     assert response.status_code == 400
+
+
+# -- model resolution and unusable output (app/extraction/engine.py) -----------------------
+
+
+async def test_run_extraction_uses_the_task_default_model():
+    task = get_task("consultation_summary")
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(return_value=fake_chat_result(MOCK_SUMMARY_RESULT))
+        await run_extraction(task, SAMPLE_TRANSCRIPT)
+
+    mock_get_client.assert_called_once_with(task.model)
+
+
+async def test_run_extraction_model_env_override_beats_the_task_default(monkeypatch):
+    monkeypatch.setenv("LLM_MODEL_CONSULTATION_SUMMARY", "qwen3-32b")
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(return_value=fake_chat_result(MOCK_SUMMARY_RESULT))
+        await run_extraction(get_task("consultation_summary"), SAMPLE_TRANSCRIPT)
+
+    mock_get_client.assert_called_once_with("qwen3-32b")
+
+
+async def test_run_extraction_explicit_model_beats_the_env_override(monkeypatch):
+    monkeypatch.setenv("LLM_MODEL_CONSULTATION_SUMMARY", "qwen3-32b")
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(return_value=fake_chat_result(MOCK_SUMMARY_RESULT))
+        await run_extraction(get_task("consultation_summary"), SAMPLE_TRANSCRIPT, model="llama-70b")
+
+    mock_get_client.assert_called_once_with("llama-70b")
+
+
+@pytest.mark.parametrize(
+    ("content", "finish_reason"),
+    [
+        ("{not json", "stop"),
+        ('{"short_description": 3}', "stop"),
+        ('{"codes": [', "length"),
+        ("{}", "content_filter"),
+    ],
+)
+async def test_unusable_output_raises_extraction_output_error_with_the_raw_content(content, finish_reason):
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(
+            return_value=fake_chat_result(content, finish_reason=finish_reason)
+        )
+        with pytest.raises(ExtractionOutputError) as excinfo:
+            await run_extraction(get_task("consultation_summary"), SAMPLE_TRANSCRIPT)
+
+    assert excinfo.value.raw_content == content
+    assert excinfo.value.finish_reason == finish_reason

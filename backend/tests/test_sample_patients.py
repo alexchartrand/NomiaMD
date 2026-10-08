@@ -79,8 +79,8 @@ def test_get_patient_endpoint_404():
 
 
 def test_eval_fixture_entries_point_at_real_notes():
-    # scripts/eval_extraction.py resolves each entry's patient_id against these notes and
-    # silently skips the ones it can't find — a renamed dossier would quietly shrink the eval.
+    # The benchmark (app/benchmark/dataset.py) resolves each entry's patient_id against these
+    # notes — a renamed dossier would quietly shrink the eval.
     fixture = Path(__file__).parent / "fixtures" / "eval_billing_codes.jsonl"
     entries = [json.loads(line) for line in fixture.read_text().splitlines() if line.strip()]
 
@@ -90,3 +90,8 @@ def test_eval_fixture_entries_point_at_real_notes():
         assert all(re.fullmatch(r"\d{5}", code) for code in entry["expected_codes"]), entry["patient_id"]
         assert entry["label_status"] in {"draft-unverified", "to_review", "reviewed", "needs_physician_label"}
         assert ("review_reason" in entry) == (entry["label_status"] == "to_review"), entry["patient_id"]
+        # The consultations/README.md group the note belongs to (the benchmark breaks its
+        # metrics down by it); a negative is a note whose right answer is no code.
+        assert entry["difficulty"] in {"original", "easy", "medium", "hard", "negative"}, entry["patient_id"]
+        if entry["difficulty"] == "negative":
+            assert entry["expected_codes"] == [], entry["patient_id"]

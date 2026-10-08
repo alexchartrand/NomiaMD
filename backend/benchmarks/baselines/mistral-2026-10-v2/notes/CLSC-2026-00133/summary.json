@@ -1,0 +1,102 @@
+{
+  "patient_id": "CLSC-2026-00133",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1782,
+      "output_tokens": 543,
+      "latency_ms": 3455.7469909923384,
+      "started_at": "2026-10-08T15:44:02.011857Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1782,
+    "output_tokens": 543,
+    "llm_latency_ms": 3455.7469909923384,
+    "wall_ms": 3456.060997006716
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de grossesse à 24 semaines d'aménorrhée pour patiente primigeste. Examen clinique normal avec mesure de la tension artérielle, du poids, de la hauteur utérine et auscultation des bruits cardiaques fœtaux. Prescription d'examens de laboratoire et de suivi échographique. Traitement symptomatique du reflux gastro-œsophagien.",
+    "encounter_setting": {
+      "location_detail": "CLSC des Monts (GMF-U en établissement)",
+      "date": "2026-09-10",
+      "time_start": "11:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": true,
+      "trimester": "deuxième"
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de grossesse à 24 semaines d'aménorrhée",
+      "systems_or_body_regions_involved": [
+        "gastro-intestinal",
+        "génito-urinaire",
+        "cardiovasculaire"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Grossesse 24 SA évoluant normalement. RGO de grossesse.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "abdomen",
+        "cardiovasculaire"
+      ],
+      "notable_findings": "TA 112/68, poids 68,5 kg (+6,5 kg), HU 24 cm, BCF 145/min, bandelette urinaire : prot −, glu −"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le document.",
+      "Absence de mention explicite de l'heure de fin de la consultation."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-10",
+      "actual": "2026-09-10"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "11:00",
+      "actual": "11:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": true,
+    "referral": false,
+    "duration_stated": false
+  }
+}

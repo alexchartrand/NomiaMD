@@ -1,0 +1,479 @@
+{
+  "patient_id": "DOM-2026-00022",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 623,
+      "output_tokens": null,
+      "latency_ms": 286.7027789907297,
+      "started_at": "2026-10-08T14:19:50.346012Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 623,
+    "output_tokens": 0,
+    "llm_latency_ms": 286.7027789907297,
+    "wall_ms": 313.6653900000965
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Visite à domicile pour fatigue et étourdissements chez une patiente de 88 ans avec perte d'autonomie sévère. Découverte d'une bradycardie symptomatique, hypotension orthostatique et probable toxicité digitalique. Ajustement des médicaments, prélèvements sanguins à domicile et suivi rapproché organisé.\nLieu (détail): Soins à domicile — GMF des Rivières\nDate: 2026-09-29\nHeure de début: 14:00\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): autre_professionnel\nDemandeur (identifiant): infirmière du SAD\nMotif de la référence: fatigue et étourdissements depuis 1 semaine\nMotif de consultation: Fatigue et étourdissements depuis 1 semaine\nSystèmes/régions concernés: cardiovasculaire; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Bradycardie symptomatique + hypotension orthostatique, probable toxicité digitalique/bêtabloquant ± déshydratation (diurétique)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; général\nConstatations: TA couchée 112/64, debout 96/58; FC 48 rég.; œdème MI 1+; muqueuses sèches\nActe réalisé 1 - Description: ECG à domicile avec appareil portatif (technique + interprétation)\nActe réalisé 1 - Technique/approche: appareil portatif du GMF\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la visite non explicitement mentionnée dans le transcript; Absence de mention explicite d'un rapport écrit produit ou requis pour le suivi",
+      "hits": [
+        {
+          "number": "15781",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15782",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "15770",
+          "relevance": 0.03125
+        },
+        {
+          "number": "15763",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "15778",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "09063",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "00344",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08776",
+          "relevance": 0.025645241141319275
+        },
+        {
+          "number": "00953",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08861",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15668",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00638",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00780",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15667",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08813",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00889",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15630",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09582",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15627",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08848",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "ECG à domicile avec appareil portatif (technique + interprétation)",
+      "hits": [
+        {
+          "number": "00344",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00341",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "30010",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "30120",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "00340",
+          "relevance": 0.02877846732735634
+        },
+        {
+          "number": "00630",
+          "relevance": 0.02788461558520794
+        },
+        {
+          "number": "00127",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00758",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00638",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00342",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00180",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00757",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09423",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00536",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00138",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "30060",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00756",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00339",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00747",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "30110",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00344",
+      "rrf_score": 0.031818181818181815,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme à domicile"
+    },
+    {
+      "rank": 2,
+      "number": "00638",
+      "rrf_score": 0.028790389395194696,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 3,
+      "number": "15781",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites à domicile > Patient non vulnérable > Visite d'un patient en perte sévère d'autonomie",
+      "description": "Visite à domicile d'un patient non vulnérable en perte sévère d'autonomie, premier patient"
+    },
+    {
+      "rank": 4,
+      "number": "15782",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites à domicile > Patient non vulnérable > Visite d'un patient en perte sévère d'autonomie",
+      "description": "Visite à domicile d'un patient non vulnérable en perte sévère d'autonomie, patient additionnel en perte sévère d'autonomie"
+    },
+    {
+      "rank": 5,
+      "number": "00341",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme en cabinet"
+    },
+    {
+      "rank": 6,
+      "number": "15770",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 7,
+      "number": "30010",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme en établissement, incluant l'enregistrement du tracé, la lecture du tracé enregistré sur document permanent, la rédaction et la signature du rapport, sa communication et son intégration au dossier"
+    },
+    {
+      "rank": 8,
+      "number": "15763",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > examen à domicile du premier patient en perte sévère d'autonomie",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie de 70 ans ou plus par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD"
+    },
+    {
+      "rank": 9,
+      "number": "30120",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme par enregistrement épicardique en établissement"
+    },
+    {
+      "rank": 10,
+      "number": "15778",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 11,
+      "number": "00340",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Interprétation d'un électrocardiogramme en cabinet"
+    },
+    {
+      "rank": 12,
+      "number": "09063",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie lorsqu'effectué à domicile"
+    },
+    {
+      "rank": 13,
+      "number": "00630",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps réel), par vingt-quatre (24) heures",
+      "description": "Technique et interprétation d'un électrocardiogramme dynamique (analyse en temps réel), par vingt-quatre (24) heures"
+    },
+    {
+      "rank": 14,
+      "number": "00127",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Examen microscopique du sédiment urinaire et interprétation en cabinet ou à domicile"
+    },
+    {
+      "rank": 15,
+      "number": "08776",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 16,
+      "number": "00758",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé)",
+      "description": "Visualisation, enregistrement et interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour les bandes de douze (12) heures subséquentes et consécutives, chacune"
+    },
+    {
+      "rank": 17,
+      "number": "00953",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 18,
+      "number": "08861",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "description": "Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective"
+    },
+    {
+      "rank": 19,
+      "number": "00342",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme avec épreuve d'effort en cabinet, incluant l'électrocardiogramme au repos"
+    },
+    {
+      "rank": 20,
+      "number": "15668",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B"
+    },
+    {
+      "rank": 21,
+      "number": "00180",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tonale",
+      "description": "Interprétation et technique de procédé d'une audiométrie tonale"
+    },
+    {
+      "rank": 22,
+      "number": "00757",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé)",
+      "description": "Visualisation, enregistrement et interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour les deux premières bandes de douze (12) heures, chacune"
+    },
+    {
+      "rank": 23,
+      "number": "00780",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, en milieu hospitalier ou en gymnase, effectuée par le médecin, maximum quinze (15) patients"
+    },
+    {
+      "rank": 24,
+      "number": "09423",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > corticale",
+      "description": "Interprétation et technique de procédé d'une audiométrie corticale (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 25,
+      "number": "15667",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B"
+    },
+    {
+      "rank": 26,
+      "number": "00536",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Électrorétinographie (technique complexe et interprétation), pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 27,
+      "number": "08813",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation psychiatrique > ordinaire en établissement sauf en CLSC ou en GMF-U en établissement",
+      "description": "Consultation psychiatrique ordinaire d'un patient de 70 ans ou plus en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 28,
+      "number": "00138",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Pneumopléthysmographie pénienne, toutes techniques",
+      "description": "Technique et interprétation de la pneumopléthysmographie pénienne, toutes techniques, en établissement"
+    },
+    {
+      "rank": 29,
+      "number": "00889",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électroencéphalographie",
+      "description": "Corticographie effectuée par un (1) médecin, comprenant l'enregistrement, l'interprétation des données, la rédaction d'un rapport, sa communication et son incorporation au dossier du patient"
+    },
+    {
+      "rank": 30,
+      "number": "30060",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Épreuve d'effort sub-maximal et maximal en établissement, incluant l'électrocardiogramme au repos exécuté au moyen d'un tapis roulant et/ou d'une bicyclette ergométrique avec monitoring continu de l'électrocardiogramme (surveillance et interprétation)"
+    },
+    {
+      "rank": 31,
+      "number": "15630",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 32,
+      "number": "00756",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé)",
+      "description": "Interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour une bande de douze (12) heures"
+    },
+    {
+      "rank": 33,
+      "number": "09582",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Tendon > pollicisation ou transfert d'un (1) doigt à un (1) doigt non adjacent",
+      "description": "Pollicisation ou transfert d'un (1) tendon d'un (1) doigt à un (1) doigt non adjacent, extrémités - membres supérieurs, main et poignet"
+    },
+    {
+      "rank": 34,
+      "number": "00339",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Épreuve d'effort submaximal et maximal au moyen d'un tapis roulant ou d'une bicyclette ergométrique en cabinet, incluant le monitoring continu de l'électrocardiogramme et l'électrocardiogramme au repos (surveillance et interprétation)"
+    },
+    {
+      "rank": 35,
+      "number": "15627",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 36,
+      "number": "00747",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tonale et vocale",
+      "description": "Interprétation et technique de procédé d'une audiométrie tonale et vocale"
+    },
+    {
+      "rank": 37,
+      "number": "08848",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 38,
+      "number": "30110",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Étude des paramètres d'un stimulateur cardiaque ou caractérisation d'arythmie par bande de rythme transmise par téléphone et venant de l'extérieur de l'hôpital en établissement (avec rédaction de rapport)"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 88,
+    "panel_size": 540,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 287.91800400358625,
+  "db_ms": 25.140735000604764
+}

@@ -126,16 +126,25 @@ export function CodesReview({
     );
   };
 
-  // Low-confidence codes stay out of sight unless the physician asks, or already ticked one.
-  const likely = sorted.filter(({ c }) => c.confidence !== "low");
-  const unlikely = sorted.filter(({ c }) => c.confidence === "low");
+  // The codes the model is sure of first; then the other possible ones, the low-confidence
+  // ones out of sight unless the physician asks, or already ticked one.
+  const retained = sorted.filter(({ c }) => c.retained);
+  const possible = sorted.filter(({ c }) => !c.retained && c.confidence !== "low");
+  const unlikely = sorted.filter(({ c }) => !c.retained && c.confidence === "low");
 
   return (
     <div className="flex flex-col gap-3">
-      {likely.length > 0 && (
-        <ul className="m-0 flex flex-col gap-3 p-0">
-          {likely.map(renderCode)}
-        </ul>
+      {retained.length > 0 && (
+        <section aria-label="Codes retenus" className="flex flex-col gap-2">
+          <h3 className="m-0 font-heading text-sm font-semibold text-muted-foreground">Codes retenus</h3>
+          <ul className="m-0 flex flex-col gap-3 p-0">{retained.map(renderCode)}</ul>
+        </section>
+      )}
+      {possible.length > 0 && (
+        <section aria-label="Autres possibilités" className="flex flex-col gap-2">
+          <h3 className="m-0 font-heading text-sm font-semibold text-muted-foreground">Autres possibilités</h3>
+          <ul className="m-0 flex flex-col gap-3 p-0">{possible.map(renderCode)}</ul>
+        </section>
       )}
       {unlikely.length > 0 && (
         <details

@@ -1,0 +1,100 @@
+{
+  "patient_id": "HOP-2026-00731",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1880,
+      "output_tokens": 531,
+      "latency_ms": 3570.820166001795,
+      "started_at": "2026-10-08T15:43:58.428361Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1880,
+    "output_tokens": 531,
+    "llm_latency_ms": 3570.820166001795,
+    "wall_ms": 3571.148394999909
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient de 66 ans hospitalisé pour une pneumonie lobaire inférieure droite (J3 de traitement). Évolution clinique favorable avec amélioration des signes vitaux, des paramètres inflammatoires et de l'auscultation pulmonaire. Plan de traitement ajusté avec passage à une antibiothérapie orale et préparation de congé prévu sous 48 heures.",
+    "encounter_setting": {
+      "location_detail": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)",
+      "date": "2026-09-03",
+      "time_start": "08:10",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Tournée — J3 de traitement pour pneumonie lobaire inférieure droite",
+      "systems_or_body_regions_involved": [
+        "pulmonaire",
+        "infectieux"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Pneumonie lobaire inférieure droite en amélioration sous antibiothérapie (J3), MPOC GOLD 2 stable",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "pulmonaire"
+      ],
+      "notable_findings": "Crépitants à la base droite diminués par rapport à l'admission, absence de tirage, saturation en oxygène améliorée (94 % AA vs 89 % à l'admission)"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'entrevue non explicitement mentionnée dans le document",
+      "Heure de fin de l'entrevue non précisée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-03",
+      "actual": "2026-09-03"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "08:10",
+      "actual": "08:10"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -1,7 +1,7 @@
 """The process's single composition root: opens the relational database and the RAMQ
 LanceDB, and wires everything built on top of them (the extraction task registry, the RAMQ
 chatbot engine). Used by app/main.py's FastAPI lifespan and by the scripts — the real-API
-ones (try_extraction.py, eval_extraction.py) take `application_services()`, the DB-only
+one (try_extraction.py) takes `application_services()`, the DB-only
 ones (create_user.py, seed_db.py, reset_password.py) just `postgres_database()`.
 
 Deferred to here, rather than done at import time, because lancedb.connect_async needs a
@@ -15,7 +15,7 @@ from app.code_catalog import init_code_catalog
 from app.config import settings
 from app.intake.connectors.epic_fhir.factory import check_sandbox_startup
 from app.lancedb import CodeRepository, DocumentRepository, LanceDB
-from app.llm import EmbeddingDimensionGuard, chat_provider, embedding_provider, get_embedding_model
+from app.llm import EmbeddingDimensionGuard, chat_provider, embedding_provider, get_embedding_client
 from app.postgresdb import PostgresDB, bind_database
 from app.ramq_chatbot import init_ramq_query_engine
 from app.tasks.registry import init_tasks
@@ -43,7 +43,7 @@ async def application_services() -> AsyncIterator[LanceDB]:
         try:
             # Query vectors must live in the same space as the stored ones; a mismatch would
             # otherwise silently degrade hybrid search to its FTS half.
-            await EmbeddingDimensionGuard(get_embedding_model()).check(await db.vector_dimensions())
+            await EmbeddingDimensionGuard(get_embedding_client()).check(await db.vector_dimensions())
             codes = CodeRepository(db.code_tables)
             documents = DocumentRepository(db.documents_table)
             init_tasks(codes=codes)

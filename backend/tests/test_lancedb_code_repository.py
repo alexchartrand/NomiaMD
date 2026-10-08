@@ -26,7 +26,12 @@ import lancedb
 import pyarrow as pa
 import pytest
 
-from app.lancedb.code_versions import CurrentCodeTableProvider, NoCurrentCodesTableError
+from app.lancedb.code_versions import (
+    CurrentCodeTableProvider,
+    NoCurrentCodesTableError,
+    PinnedCodeTableProvider,
+    UnknownCodesTableError,
+)
 from app.lancedb.eligibility import CodeEligibilityFilter
 from app.lancedb.models import CodeRow
 from app.lancedb.repository import CodeRepository, ICodeRepository
@@ -301,6 +306,81 @@ async def test_hybrid_search_with_an_empty_filter_keeps_every_variant():
         assert sorted(row.number for row, _score in hits) == ["15801", "15802"]
 
 
+# -- section scope ----------------------------------------------------------------------------
+
+
+async def test_hybrid_search_keeps_only_rows_under_the_given_sections():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [
+            _record("15803", header_path="B — Consultation, examen et visite > Visites sur rendez-vous"),
+            _record("01323", header_path="F — Peau phanères > Réparation de plaies"),
+            _record("00431", header_path="C — Actes diagnostiques et thérapeutiques > Injection"),
+        ]
+        repository = await _async_repository(persist_dir, records)
+
+        hits = await repository.hybrid_search(
+            text="description", vector=[0.1, 0.2, 0.3, 0.4], k=10, sections=("B — Consultation", "C — Actes")
+        )
+
+        assert sorted(row.number for row, _score in hits) == ["00431", "15803"]
+
+
+async def test_hybrid_search_applies_the_section_scope_and_eligibility_together():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [
+            _record("under80", header_path="B — visite", max_age=79),
+            _record("80plus", header_path="B — visite", min_age=80),
+            _record("other", header_path="C — acte"),
+        ]
+        repository = await _async_repository(persist_dir, records)
+
+        hits = await repository.hybrid_search(
+            text="description",
+            vector=[0.1, 0.2, 0.3, 0.4],
+            k=10,
+            eligibility=CodeEligibilityFilter(age=45),
+            sections=("B —",),
+        )
+
+        assert [row.number for row, _score in hits] == ["under80"]
+
+
+async def test_hybrid_search_section_prefix_is_literal_not_a_like_pattern():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [_record("literal", header_path="B_1 > x"), _record("wildcard", header_path="BX1 > x")]
+        repository = await _async_repository(persist_dir, records)
+
+        hits = await repository.hybrid_search(text="description", vector=[0.1, 0.2, 0.3, 0.4], k=10, sections=("B_1",))
+
+        assert [row.number for row, _score in hits] == ["literal"]
+
+
+# -- families -------------------------------------------------------------------------------
+
+
+async def test_list_by_header_paths_returns_whole_families_minus_ineligible_variants():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        records = [
+            _record("15638", header_path="B > CHSGS > Niveau A"),
+            _record("15639", header_path="B > CHSGS > Niveau A"),
+            _record("15640", header_path="B > CHSGS > Niveau A", min_age=80),
+            _record("15641", header_path="B > CHSGS > Niveau B"),
+            _record("15642", header_path="B > CHSGS"),  # a parent path is another family
+        ]
+        repository = await _async_repository(persist_dir, records)
+
+        rows = await repository.list_by_header_paths(["B > CHSGS > Niveau A"], CodeEligibilityFilter(age=66))
+
+        assert sorted(r.number for r in rows) == ["15638", "15639"]
+
+
+async def test_list_by_header_paths_with_no_path_reads_nothing():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        repository = await _async_repository(persist_dir, [_record("A")])
+
+        assert await repository.list_by_header_paths([]) == []
+
+
 # -- manual search (ICodeCatalogRepository) -------------------------------------------------
 
 
@@ -429,4 +509,36 @@ async def test_raises_when_more_than_one_table_is_current():
         provider = await _provider(persist_dir)
 
         with pytest.raises(NoCurrentCodesTableError):
+            await provider.current()
+
+
+# -- pinned table (the benchmark's --codes-table) ------------------------------------------
+
+
+async def _pinned(persist_dir: str, table_name: str) -> PinnedCodeTableProvider:
+    connection = await lancedb.connect_async(persist_dir)
+    registry = await connection.open_table(REGISTRY_TABLE_NAME)
+    return PinnedCodeTableProvider(connection, registry, table_name)
+
+
+async def test_a_pinned_provider_reads_a_table_that_is_not_current():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        _seed(
+            persist_dir,
+            {"codes_2026-01-01": [_record("OLD")], "codes_2026-06-05": [_record("NEW")]},
+            current="codes_2026-06-05",
+        )
+        provider = await _pinned(persist_dir, "codes_2026-01-01")
+        repository = CodeRepository(provider)
+
+        assert [r.number for r in await repository.list_by_numbers(["OLD", "NEW"])] == ["OLD"]
+        assert (await provider.current_version()).manual_rev == "2026-01-01"
+
+
+async def test_a_pinned_provider_refuses_an_unregistered_table():
+    with tempfile.TemporaryDirectory() as persist_dir:
+        _seed(persist_dir, {TABLE_NAME: [_record("A")]}, current=TABLE_NAME)
+        provider = await _pinned(persist_dir, "codes_nope")
+
+        with pytest.raises(UnknownCodesTableError, match="codes_nope"):
             await provider.current()

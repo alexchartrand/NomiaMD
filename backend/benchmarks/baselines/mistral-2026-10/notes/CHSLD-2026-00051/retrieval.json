@@ -1,0 +1,270 @@
+{
+  "patient_id": "CHSLD-2026-00051",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 419,
+      "output_tokens": null,
+      "latency_ms": 1667.0728619938018,
+      "started_at": "2026-10-08T14:19:26.789549Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 419,
+    "output_tokens": 0,
+    "llm_latency_ms": 1667.0728619938018,
+    "wall_ms": 1689.7531989961863
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée. Constipation persistante malgré PEG 17 g die, ajustement du traitement (PEG bid x 7 jours puis reprise die) et ajout de sennosides PRN. Examen sommaire de l'abdomen sans particularité.\nLieu (détail): CHSLD Saint-Jude — Unité 2 Est\nDate: 2026-09-02\nHeure de début: 09:15\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi courant en CHSLD — constipation persistante malgré PEG 17 g die\nSystèmes/régions concernés: digestif; abdomen\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: oui\nDiagnostic/impression: Constipation persistante chez patiente avec démence Alzheimer avancée\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: abdomen\nConstatations: Abdomen souple, non distendu à la palpation sommaire. Patiente souriante.\nÉlément incertain: Durée exacte de la consultation non précisée dans le transcript.; Absence de mention explicite de l'heure de fin de la consultation.",
+      "hits": [
+        {
+          "number": "15818",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "08994",
+          "relevance": 0.029709506779909134
+        },
+        {
+          "number": "08996",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "15622",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15617",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15770",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15616",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15778",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08265",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08267",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08269",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08995",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08848",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08997",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08776",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09234",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09363",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15063",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15621",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15060",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15818",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 2,
+      "number": "08994",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 3,
+      "number": "08996",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 4,
+      "number": "15622",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 5,
+      "number": "15617",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 6,
+      "number": "15770",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 7,
+      "number": "15616",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 8,
+      "number": "15778",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 9,
+      "number": "08265",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Tomographie par ordinateur (un examen par région, par jour, par patient) > Abdomen",
+      "description": "Tomographie par ordinateur de l'abdomen sans injection de substance de contraste, un examen par région, par jour, par patient, ne peut être facturé en sus des codes d'acte pour « pelvis » ou pour « abdomen et pelvis »"
+    },
+    {
+      "rank": 10,
+      "number": "08267",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Tomographie par ordinateur (un examen par région, par jour, par patient) > Pelvis",
+      "description": "Tomographie par ordinateur du pelvis sans injection de substance de contraste, un examen par région, par jour, par patient, ne peut être facturé en sus des codes d'acte pour « abdomen » ou pour « abdomen et pelvis »"
+    },
+    {
+      "rank": 11,
+      "number": "08269",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Tomographie par ordinateur (un examen par région, par jour, par patient) > Abdomen et pelvis",
+      "description": "Tomographie par ordinateur de l'abdomen et pelvis sans injection de substance de contraste, un examen par région, par jour, par patient, ne peut être facturé en sus des codes d'acte pour « abdomen » ou pour « pelvis »"
+    },
+    {
+      "rank": 12,
+      "number": "08995",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > d'urgence avec déplacement > complet",
+      "description": "Consultation et examen complet d'urgence avec déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 13,
+      "number": "08848",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 14,
+      "number": "08997",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > d'urgence avec déplacement > complet",
+      "description": "Consultation et examen complet d'urgence avec déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 15,
+      "number": "08776",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 16,
+      "number": "09234",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation ordinaire d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré"
+    },
+    {
+      "rank": 17,
+      "number": "09363",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Bronchoscopie incluant la laryngoscopie, la trachéoscopie et la biopsie > Bronchoscopie",
+      "description": "Bronchoscopie incluant la laryngoscopie, la trachéoscopie et la biopsie, bronchoscopie chez un patient non intubé"
+    },
+    {
+      "rank": 18,
+      "number": "15063",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal avec déplacement",
+      "description": "Examen principal avec déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 19,
+      "number": "15621",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Échanges interdisciplinaires concernant l'ensemble des patients d'une unité ou de l'établissement (par période de quinze (15) minutes) dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 20,
+      "number": "15060",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal sans déplacement",
+      "description": "Examen principal sans déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    }
+  ],
+  "unresolved_axes": [
+    "registration",
+    "vulnerability"
+  ],
+  "eligibility": {
+    "age": 91,
+    "panel_size": 900,
+    "is_registered": null,
+    "is_vulnerable": null
+  },
+  "embedding_ms": 1667.88762100623,
+  "db_ms": 21.247609998681583
+}

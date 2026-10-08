@@ -60,6 +60,12 @@ class Settings:
         points chat at the fake server while embeddings stay on Mistral)."""
         return os.environ["LLM_API_KEY"]
 
+    def chat_model_for(self, task_name: str) -> str | None:
+        """LLM_MODEL_<TASK_NAME> (e.g. LLM_MODEL_BILLING_CODES), the chat model a task runs
+        on instead of its default — needed on a host whose model names differ from
+        Mistral's. Unset = the task's own default (app/tasks/base.py's ExtractionTask.model)."""
+        return os.environ.get(f"LLM_MODEL_{task_name.upper()}") or None
+
     @property
     def embedding_provider(self) -> str:
         """Which embedding backend app/llm/embeddings.py builds: `mistral` (default) or

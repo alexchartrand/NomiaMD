@@ -1,0 +1,108 @@
+{
+  "patient_id": "CLI-2026-01223",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2300,
+      "output_tokens": 620,
+      "latency_ms": 3756.152290996397,
+      "started_at": "2026-10-08T15:43:36.921218Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2300,
+    "output_tokens": 620,
+    "llm_latency_ms": 3756.152290996397,
+    "wall_ms": 3756.532182000228
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation pour lombalgie mécanique aiguë chez un homme de 38 ans, apparue suite à un effort de soulèvement. Examen physique sans signe de radiculopathie ni drapeau rouge. Prise en charge avec analgésie, recommandations d'activité, arrêt de travail de 5 jours et référence en physiothérapie si nécessaire.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-03-17",
+      "time_start": "08:50",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Douleur lombaire basse aiguë depuis 3 jours suite à un effort de soulèvement, cotée 6/10, aggravée par la flexion et la position assise, améliorée par le repos.",
+      "systems_or_body_regions_involved": [
+        "musculo-squelettique",
+        "lombaire"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Lombalgie mécanique aiguë (entorse lombaire), sans signe de radiculopathie ni de drapeau rouge.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signe_vitaux",
+        "posture",
+        "palpation_paravertébrale",
+        "amplitude_articulaire_lombaire",
+        "neurologique_membres_inférieurs",
+        "Lasègue"
+      ],
+      "notable_findings": "Posture antalgique légère, sensibilité paravertébrale lombaire basse bilatérale, spasme musculaire palpable, amplitude articulaire limitée à 50% en flexion par la douleur, force 5/5 aux membres inférieurs, réflexes et sensibilité conservés, Lasègue négatif bilatéralement."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "arrêt_travail",
+      "formulaire_employeur"
+    ],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Heure de fin de la consultation non indiquée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-03-17",
+      "actual": "2026-03-17"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "08:50",
+      "actual": "08:50"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 2,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

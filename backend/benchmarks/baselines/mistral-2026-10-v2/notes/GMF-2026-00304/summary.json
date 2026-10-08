@@ -1,0 +1,109 @@
+{
+  "patient_id": "GMF-2026-00304",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2398,
+      "output_tokens": 667,
+      "latency_ms": 4387.391479991493,
+      "started_at": "2026-10-08T15:43:41.094077Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2398,
+    "output_tokens": 667,
+    "llm_latency_ms": 4387.391479991493,
+    "wall_ms": 4387.689996001427
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en médecine familiale pour polyarthralgies inflammatoires et fatigue chronique évoluant depuis 6 mois. Examen physique révèle synovite bilatérale aux MCP et poignets, épanchement au genou droit, et érythème malaire. Bilan auto-immun complémentaire demandé et référence urgente en rhumatologie initiée.",
+    "encounter_setting": {
+      "location_detail": "Clinique GMF Boisé-des-Cèdres",
+      "date": "2026-04-28",
+      "time_start": "11:45",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "médecin de famille (surchargée)",
+      "reason_for_referral": "polyarthralgies et fatigue chronique évoluant depuis 6 mois, bilan initial déjà amorcé",
+      "written_report_back_required_or_produced": true
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Polyarthralgies migratoires touchant les mains, poignets et genoux depuis 6 mois, associées à une fatigue importante, une raideur matinale de 45 minutes et une perte de poids non intentionnelle de 3 kg",
+      "systems_or_body_regions_involved": [
+        "articulations_mains",
+        "articulations_poignets",
+        "articulations_genoux",
+        "système_cutané",
+        "système_général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Polyarthrite inflammatoire d'étiologie à préciser — diagnostic différentiel incluant polyarthrite rhumatoïde débutante et connectivite de type lupus érythémateux disséminé",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "articulaire",
+        "cutané",
+        "muqueuses",
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "Synovite palpable aux 2e et 3e articulations métacarpophalangiennes bilatérales, sensibilité aux poignets bilatéraux, léger épanchement au genou droit sans chaleur significative, érythème malaire léger et transitoire"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "communication_specialiste"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le document",
+      "Absence de mention explicite de l'heure de fin de la consultation"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-04-28",
+      "actual": "2026-04-28"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "11:45",
+      "actual": "11:45"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 5,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

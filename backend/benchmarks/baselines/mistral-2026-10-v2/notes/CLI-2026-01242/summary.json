@@ -1,0 +1,113 @@
+{
+  "patient_id": "CLI-2026-01242",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1850,
+      "output_tokens": 714,
+      "latency_ms": 4329.775689999224,
+      "started_at": "2026-10-08T15:44:04.751819Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1850,
+    "output_tokens": 714,
+    "llm_latency_ms": 4329.775689999224,
+    "wall_ms": 4330.095359997358
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient non inscrit se présente en plage sans rendez-vous pour une lacération linéaire de 3 cm à l'avant-bras droit après un accident domestique. Suture simple sous anesthésie locale réalisée avec succès. Vaccination dT à jour confirmée, pas de rappel nécessaire. Suivi recommandé au CLSC ou à la clinique pour retrait des points.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls — plage sans rendez-vous",
+      "date": "2026-09-16",
+      "time_start": "17:50",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Lacération linéaire de 3 cm à l'avant-bras droit après coupure sur une tôle en rénovant un garage.",
+      "systems_or_body_regions_involved": [
+        "cutané",
+        "avant-bras_droit"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Lacération simple de 3 cm à l'avant-bras droit",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "avant-bras_droit",
+        "poignet",
+        "doigts",
+        "sensibilité_nerfs_radial_médian_cubital",
+        "pouls_radial"
+      ],
+      "notable_findings": "Lacération linéaire face dorsale avant-bras droit, tiers moyen, 3 cm, bords nets, profondeur sous-cutanée, pas d'exposition tendineuse. Mobilité complète poignet/doigts, force normale, sensibilité normale, pouls radial présent."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Suture sous anesthésie locale d'une lacération de 3 cm à l'avant-bras droit avec 5 points simples en nylon 4-0 après irrigation et exploration.",
+        "generic_act": "suture de plaie cutanée",
+        "body_site": "avant-bras droit",
+        "technique_or_approach_mentioned": "anesthésie locale lidocaïne 1 % 3 mL, irrigation au sérum physiologique 250 mL, exploration, plan unique, 5 points simples nylon 4-0",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'encounter non explicitement mentionnée dans le transcript.",
+      "Heure de fin de l'encounter non indiquée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-16",
+      "actual": "2026-09-16"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "17:50",
+      "actual": "17:50"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

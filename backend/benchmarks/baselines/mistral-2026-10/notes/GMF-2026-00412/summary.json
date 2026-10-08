@@ -1,0 +1,109 @@
+{
+  "patient_id": "GMF-2026-00412",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1730,
+      "output_tokens": 533,
+      "latency_ms": 3260.755388997495,
+      "started_at": "2026-10-08T14:19:32.486889Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1730,
+    "output_tokens": 533,
+    "llm_latency_ms": 3260.755388997495,
+    "wall_ms": 3261.0660739883315
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation de suivi pour hypertension artérielle et palpitations chez un patient de 58 ans. Examen physique et ECG réalisés. Plan incluant ajustement des habitudes de vie, analyses sanguines et Holter si nécessaire.",
+    "encounter_setting": {
+      "location_detail": "GMF des Rivières",
+      "date": "2026-09-15",
+      "time_start": "10:20",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi d'hypertension artérielle et palpitations depuis 2 semaines",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "ESV bénignes probables sur caféine/manque de sommeil; HTA bien contrôlée",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "thyroïde",
+        "extremités"
+      ],
+      "notable_findings": "TA 136/84, FC 78 rég. Cœur : B1B2 rég., pas de souffle. Thyroïde N. Pas d'œdème."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "ECG 12 dérivations réalisé et interprété",
+        "body_site": null,
+        "technique_or_approach_mentioned": "technique standard",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement indiquée dans le transcript."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-15",
+      "actual": "2026-09-15"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:20",
+      "actual": "10:20"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 1,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -77,8 +77,15 @@ class StubCodeRepository(ICodeCatalogRepository):
             if n in self._rows_by_number and self._eligible(self._rows_by_number[n], eligibility)
         ]
 
-    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None) -> list:
+    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None, sections=None) -> list:
         raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
+
+    async def list_by_header_paths(
+        self, header_paths: list[str], eligibility: CodeEligibilityFilter | None = None
+    ) -> list[CodeRow]:
+        return [
+            r for r in self._rows_by_number.values() if r.header_path in header_paths and self._eligible(r, eligibility)
+        ]
 
     async def keyword_search(self, text: str, k: int, eligibility: CodeEligibilityFilter | None = None) -> list:
         needle = text.lower()
@@ -120,7 +127,7 @@ _ELIGIBILITY_AXES = (
 @pytest.fixture(autouse=True)
 def small_reference_table():
     """Points RAMQ candidate retrieval and code lookup at a tiny, stable fixture rather than
-    the real (large, network-backed) llama_index vector store and LanceDB `codes` table —
+    the real (large, network-backed) embedding API and LanceDB `codes` table —
     tests need candidate narrowing to behave predictably without a real vector index,
     API key, or network call.
 
@@ -210,6 +217,7 @@ def no_real_api_keys(monkeypatch):
     # at a real openai_compatible host must not leak into tests either.
     for name in (
         "LLM_PROVIDER", "LLM_ENDPOINT", "LLM_API_KEY",
+        "LLM_MODEL_CONSULTATION_SUMMARY", "LLM_MODEL_BILLING_CODES", "LLM_MODEL_RAMQ_CHATBOT",
         "EMBEDDING_PROVIDER", "EMBEDDING_ENDPOINT", "EMBEDDING_MODEL", "EMBEDDING_API_KEY",
         # And the Epic sandbox demo: a developer's flag/credentials must not turn its routes
         # on, or let a test reach fhir.epic.com (the contract test opts back in itself).

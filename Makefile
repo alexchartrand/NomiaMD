@@ -1,4 +1,4 @@
-.PHONY: dev backend frontend fake-llm dev-fake worker redis
+.PHONY: dev backend frontend fake-llm dev-fake worker redis bench
 
 dev:
 	@echo "Starting backend and frontend..."
@@ -35,3 +35,10 @@ frontend:
 
 fake-llm:
 	cd backend && uv run python scripts/fake_llm_server.py
+
+# Benchmark the extraction pipeline stage by stage, e.g.
+#   make bench ARGS="run --name mistral-base"
+#   make bench ARGS="report mistral-base"
+# See backend/scripts/benchmark.py.
+bench:
+	cd backend && uv run python scripts/benchmark.py $(ARGS)
