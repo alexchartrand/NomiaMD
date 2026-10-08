@@ -378,6 +378,19 @@ def test_parse_marks_the_sure_codes_retained_and_lists_them_first():
     assert result.analysis == "Visite de suivi."
 
 
+def test_parse_makes_a_retained_code_without_high_confidence_a_possible_one():
+    result = _task([]).parse(
+        {
+            "codes": [_extracted_code("15801") | {"confidence": "medium"}, _extracted_code("15802")],
+            "other_possible_codes": [],
+            "notes": None,
+        },
+        _prepared(frozenset({"15801", "15802"})),
+    )
+
+    assert [(c.code, c.retained) for c in result.codes] == [("15802", True), ("15801", False)]
+
+
 def test_parse_keeps_a_code_given_in_both_lists_once_as_retained():
     result = _task([]).parse(
         {"codes": [_extracted_code("15801")], "other_possible_codes": [_extracted_code("15801")], "notes": None},

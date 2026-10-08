@@ -276,12 +276,24 @@ class BillingCodesTask(ExtractionTask[BillingCodesInput]):
         result = BillingCodesResult.model_validate(
             {"codes": list(unique.values()), "notes": raw.get("notes"), "analysis": raw.get("analysis")}
         )
+        self._demote_unsure_retained(result)
 
         if notes:
             combined = " ".join(notes)
             result.notes = f"{result.notes} {combined}".strip() if result.notes else combined
 
         return result
+
+    @staticmethod
+    def _demote_unsure_retained(result: BillingCodesResult) -> None:
+        """A code the model says it is sure of, but without high confidence, is only a
+        possible one: over the selection benchmark (backend/benchmarks/README.md), retained
+        codes rated medium or low were right 2 times in 26, high ones about 2 in 3. Retained
+        codes stay first."""
+        for code in result.codes:
+            if code.retained and code.confidence != "high":
+                code.retained = False
+        result.codes.sort(key=lambda code: not code.retained)
 
     async def resolve_fees(self, result: BillingCodesResult) -> None:
         """Attaches each returned code's real fee list, in place — the model never picks a
