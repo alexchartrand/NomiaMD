@@ -73,6 +73,7 @@ MOCK_SUMMARY_RESULT = {
 }
 
 MOCK_RESULT = {
+    "analysis": "Suivi d'hypertension en cabinet; un bilan sanguin de contrôle est demandé.",
     "codes": [
         {
             "code": "TEST-BP-MGMT",
@@ -82,6 +83,8 @@ MOCK_RESULT = {
             "supporting_quote": "hypertension artérielle depuis 10 ans",
             "needs_confirmation": [],
         },
+    ],
+    "other_possible_codes": [
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",

@@ -5,7 +5,7 @@ from typing import Any
 from app.lancedb.repository import ICodeRepository
 from app.patients import nam
 from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext
-from app.ramq_codes.models import BillingCodesResult, Code, CodeFeeOut
+from app.ramq_codes.models import BillingCodesOutput, BillingCodesResult, Code, CodeFeeOut
 from app.ramq_codes.retriever import ICodesRetriever
 from app.summary.models import ConsultationSummaryResult
 from app.summary.task import render_for_billing_codes
@@ -44,12 +44,37 @@ final billing submission. You are given three things: a candidate list of RAMQ c
 only codes you may choose from), a structured consultation summary, and the raw encounter
 transcript the summary was built from.
 
-Recall matters more than precision here: a physician reviews every suggestion you return
-before anything is billed, so a plausible code they reject costs them one glance, while a
-correct code you never surfaced is a missed claim they will not think to add back. Include
-any candidate with plausible support from the summary or transcript — do not require
-certainty. An empty `codes` list is correct only when genuinely nothing in the candidate
-list relates to this encounter at all.
+Your answer has four parts, written in this order:
+
+1. `analysis` — before choosing any code, 3 to 6 short sentences: the setting and kind of
+   encounter; each service actually performed; which visit family fits and why its sibling
+   variants don't; anything in the summary or transcript that rules a candidate out. The
+   codes you then give must follow from this analysis.
+
+2. `codes` — the codes you are sure of: what you would bill for this encounter as it is
+   documented. Precision matters here: the physician starts their review with these codes
+   ticked, and may approve them without opening the encounter. Only include a code with
+   clear support. Candidates that are alternatives to one another (sibling variants of the
+   same act, or two visit codes describing the same encounter) are never all billed: keep
+   the single one that fits in `codes`. Several visit codes only when the encounter really
+   holds several billable services (e.g. an admission and a discharge). A procedure, a
+   supplement or an add-on billed on top of the visit is not an alternative to it.
+
+3. `other_possible_codes` — every other candidate with plausible support, not already in
+   `codes`: alternatives to a code you kept, variants that differ only on an axis that could
+   not be established, additions whose support is partial. Recall matters here: the
+   physician sees these unticked, and a correct code you never surfaced is a missed claim
+   they will not think to add back. Be generous, within the exclusion rule below.
+
+4. `notes` — anything ambiguous not already captured per code: two candidates that could
+   both apply, a service mentioned but not clearly performed.
+
+Excluded from both lists: a candidate the summary or transcript contradicts (wrong age,
+setting, time of day, an act that was not performed...). If your explanation for a code
+would have to say it does not apply, leave the code out entirely.
+
+An empty answer is correct when nothing in the encounter is billable — an insurer form only,
+a prescription renewal without a visit, a no-show: both lists empty, and `notes` says why.
 
 Reading the candidate list:
 - Each candidate carries its manual taxonomy path, its description, and may carry "when to
@@ -70,31 +95,22 @@ Established facts and open questions for this encounter:
   This list is authoritative: an axis on it stays unresolved no matter what the summary or
   transcript says about it — including a clinician's own descriptive language (e.g. a
   transcript calling someone "une patiente vulnérable" is clinical narrative, not the RAMQ
-  administrative determination this axis represents). For any candidate whose applicability
-  depends on one of those axes, still include it (per the recall-first policy above) but add
-  a short, specific, physician-facing sentence to its `needs_confirmation` list naming the
-  axis and, if another candidate in the list differs from it only on that axis, naming that
-  candidate too so the physician can pick between them. Do this even when the summary or
-  transcript reads as if it already answers the question — an unresolved axis is only
-  resolved by the established facts above, never by inference from either text.
+  administrative determination this axis represents). When candidates differ only on such
+  an axis, keep the likeliest in `codes` and the others in `other_possible_codes`.
 - The user message may also give unconfirmed indications for an unresolved axis (e.g. the
   physician's likely panel size, from a profile entered after the encounter). Use them only
-  to decide which variant to list first or rate higher; the axis stays unresolved, so keep
-  every variant that differs on it and still add the `needs_confirmation` sentence.
-- A condition about the encounter itself (age, what was performed, referral) that the
-  summary/transcript actively contradicts means the candidate does not apply — exclude it
-  entirely, don't include it at low confidence "just in case".
+  to decide which variant goes in `codes`; the axis stays unresolved.
 
-For every code you return:
+For every code you return, in either list:
 - `confidence`: "high", "medium", or "low" — how well the summary/transcript supports it.
-- `explanation`: short, concrete reason this code fits.
+- `explanation`: short, concrete reason this code fits. Doubts about the encounter itself
+  (duration, place, what exactly was done) belong here or in `notes`.
 - `supporting_quote`: a verbatim quote from the summary or transcript that grounds it. Never
   paraphrase this field or invent a quote that isn't actually present in either text.
-- `needs_confirmation`: as described above; empty list when nothing needs confirming.
-
-Use `notes` for anything ambiguous that isn't already captured per-code in
-`needs_confirmation` — e.g. two candidates that could both apply for a reason other than an
-unresolved axis, or a service mentioned but not clearly performed.
+- `needs_confirmation`: only for the unresolved axes listed in the user message. For a code
+  whose applicability depends on one of them, one short, specific, physician-facing sentence
+  per axis, naming the sibling candidate that differs from it only on that axis, if any.
+  Empty in every other case — when no axis is listed, it is always empty.
 
 Rules:
 - Everything in your answer must be in french"""
@@ -203,16 +219,20 @@ class BillingCodesTask(ExtractionTask[BillingCodesInput]):
         )
 
     def json_schema(self) -> dict[str, Any]:
-        return to_strict_schema(BillingCodesResult)
+        return to_strict_schema(BillingCodesOutput)
 
     def parse(self, raw: dict[str, Any], prepared: PreparedPrompt) -> BillingCodesResult:
-        # Small local models (freeform JSON, no grammar constraint) sometimes collapse the
-        # `codes` array to bare code strings instead of the required object shape,
+        """The model's two lists (BillingCodesOutput) -> one list, its sure codes first,
+        each marked `retained` or not; a code in both lists counts as retained."""
+        # Small local models (freeform JSON, no grammar constraint) sometimes collapse a
+        # code array to bare code strings instead of the required object shape,
         # especially with a large real candidate list. Drop anything malformed rather than
         # crashing the request — and rather than fabricating an explanation for it, since
         # that field exists specifically so a physician can see the model's reasoning for
         # the suggestion; a made-up explanation would defeat that.
-        codes = raw.get("codes") or []
+        codes = []
+        for key, retained in (("codes", True), ("other_possible_codes", False)):
+            codes += [{**c, "retained": retained} if isinstance(c, dict) else c for c in raw.get(key) or []]
         well_formed = [c for c in codes if isinstance(c, dict)]
         dropped_malformed = len(codes) - len(well_formed)
 
@@ -237,8 +257,13 @@ class BillingCodesTask(ExtractionTask[BillingCodesInput]):
                 )
             well_formed = in_set
 
-        raw = {**raw, "codes": well_formed}
-        result = BillingCodesResult.model_validate(raw)
+        # Retained codes come first, so a code in both lists keeps its retained entry.
+        unique: dict[str, dict] = {}
+        for c in well_formed:
+            unique.setdefault(c.get("code"), c)
+        result = BillingCodesResult.model_validate(
+            {"codes": list(unique.values()), "notes": raw.get("notes"), "analysis": raw.get("analysis")}
+        )
 
         if notes:
             combined = " ".join(notes)

@@ -31,6 +31,7 @@ export function makeFee(overrides: Partial<ExtractedFee> = {}): ExtractedFee {
   };
 }
 
+// `retained` defaults to a high confidence, as the server reads a result stored before it existed.
 export function makeProposedCode(overrides: Partial<ExtractedCode> = {}): ExtractedCode {
   return {
     code: "00103",
@@ -40,6 +41,7 @@ export function makeProposedCode(overrides: Partial<ExtractedCode> = {}): Extrac
     supporting_quote: "",
     needs_confirmation: [],
     fees: [makeFee()],
+    retained: (overrides.confidence ?? "high") === "high",
     ...overrides,
   };
 }

@@ -6,17 +6,24 @@ import { formatDate } from "../../../utils/date";
 type Outcome = { ok: true } | { ok: false; error: string };
 
 interface ApproveAllModalProps {
-  // The day's all_clean rows — the server's rule (app/encounters/readiness.py): high
-  // confidence, nothing to confirm, one fee per code, dated, no possible duplicate.
+  // The day's all_clean rows — the server's rule (app/encounters/readiness.py): the retained
+  // codes are high-confidence, with nothing to confirm and one fee each; dated, no possible
+  // duplicate.
   rows: EncounterRow[];
   onClose: () => void;
   // Called once claims were saved, so the inbox re-reads its statuses.
   onApproved: () => void;
 }
 
-// Every code of the run is billed at its only fee (fee_index null = the first, and only, one).
+// What approving bills: the codes the run retained (the review's preselection), never its
+// other possible codes.
+function retainedCodes(detail: EncounterDetail) {
+  return (detail.extraction?.billing.result.codes ?? []).filter((c) => c.retained);
+}
+
+// Every retained code is billed at its only fee (fee_index null = the first, and only, one).
 function approvable(detail: EncounterDetail): boolean {
-  const codes = detail.extraction?.billing.result.codes ?? [];
+  const codes = retainedCodes(detail);
   // all_clean already excludes these; checked again on what is actually about to be billed.
   return codes.length > 0 && codes.every((c) => c.needs_confirmation.length === 0 && c.fees.length <= 1);
 }
@@ -45,7 +52,7 @@ export function ApproveAllModal({ rows, onClose, onApproved }: ApproveAllModalPr
         await createClaim({
           extraction_run_id: extraction.extraction_run_id,
           service_date: detail.service_date!,
-          selected_codes: extraction.billing.result.codes.map((c) => ({ code: c.code, fee_index: null })),
+          selected_codes: retainedCodes(detail).map((c) => ({ code: c.code, fee_index: null })),
         });
         results.set(detail.id, { ok: true });
       } catch (err) {
@@ -100,7 +107,7 @@ export function ApproveAllModal({ rows, onClose, onApproved }: ApproveAllModalPr
                   <span className="text-sm text-muted-foreground">{formatDate(detail.service_date!)}</span>
                 </div>
                 <ul className="mt-1 mb-0 pl-4 text-sm">
-                  {detail.extraction!.billing.result.codes.map((c) => (
+                  {retainedCodes(detail).map((c) => (
                     <li key={c.code}>
                       <span className="font-mono font-[650]">{c.code}</span> — {c.description}
                     </li>

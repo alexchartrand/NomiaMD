@@ -117,6 +117,20 @@ describe("reviewing the proposed codes", () => {
     expect(total()).toHaveTextContent("50,00 $");
   });
 
+  it("shows the codes the model retained apart from the other possible ones", async () => {
+    serveEncounter(withCodes());
+    renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    const inGroup = (name: string) =>
+      within(screen.getByRole("region", { name }))
+        .getAllByRole("checkbox")
+        .map((box) => box.getAttribute("aria-label"));
+    expect(inGroup("Codes retenus")).toEqual(["Facturer le code 00103"]);
+    expect(inGroup("Autres possibilités")).toEqual(["Facturer le code 09001"]);
+    // The low-confidence possible code stays folded away.
+    expect(screen.getByText("Autres codes (1)")).toBeInTheDocument();
+  });
+
   it("starts with nothing ticked once the physician un-ticks it, and saving is disabled", async () => {
     serveEncounter(withCodes());
     const { user } = renderEncounter();

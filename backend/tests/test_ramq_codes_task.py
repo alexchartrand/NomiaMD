@@ -243,7 +243,7 @@ async def test_build_prompt_passes_the_summary_and_context_to_the_retriever():
 # -- json_schema ----------------------------------------------------------------------------
 
 
-def test_json_schema_describes_billing_codes_result():
+def test_json_schema_describes_the_billing_codes_answer():
     task = _task([])
 
     schema = task.json_schema()
@@ -263,6 +263,16 @@ def test_json_schema_never_asks_the_model_for_a_fee():
 
     assert "fees" not in code_schema["properties"]
     assert "fees" not in code_schema["required"]
+
+
+
+def test_json_schema_asks_for_the_analysis_first_then_sure_and_possible_codes():
+    """Generation follows property order: the model reasons before it commits to codes."""
+    schema = _task([]).json_schema()
+
+    assert list(schema["properties"]) == ["analysis", "codes", "other_possible_codes", "notes"]
+    for key in ("codes", "other_possible_codes"):
+        assert "retained" not in schema["properties"][key]["items"]["properties"]
 
 
 # -- parse ------------------------------------------------------------------------------
@@ -351,6 +361,49 @@ def test_parse_keeps_every_code_when_all_are_in_the_candidate_set():
 
     assert [c.code for c in result.codes] == ["15801"]
     assert result.notes is None
+
+
+def test_parse_marks_the_sure_codes_retained_and_lists_them_first():
+    result = _task([]).parse(
+        {
+            "analysis": "Visite de suivi.",
+            "codes": [_extracted_code("15801")],
+            "other_possible_codes": [_extracted_code("15802")],
+            "notes": None,
+        },
+        _prepared(frozenset({"15801", "15802"})),
+    )
+
+    assert [(c.code, c.retained) for c in result.codes] == [("15801", True), ("15802", False)]
+    assert result.analysis == "Visite de suivi."
+
+
+def test_parse_keeps_a_code_given_in_both_lists_once_as_retained():
+    result = _task([]).parse(
+        {"codes": [_extracted_code("15801")], "other_possible_codes": [_extracted_code("15801")], "notes": None},
+        _prepared(frozenset({"15801"})),
+    )
+
+    assert [(c.code, c.retained) for c in result.codes] == [("15801", True)]
+
+
+def test_parse_drops_an_invented_or_malformed_possible_code_too():
+    result = _task([]).parse(
+        {"codes": [], "other_possible_codes": [_extracted_code("99999"), "15801"], "notes": None},
+        _prepared(frozenset({"15801"})),
+    )
+
+    assert result.codes == []
+    assert "not in the offered candidate list" in result.notes and "unexpected format" in result.notes
+
+
+def test_a_result_stored_before_the_split_keeps_its_high_confidence_codes_as_retained():
+    stored = {"codes": [_extracted_code("15801") | {"confidence": "high"}, _extracted_code("15802") | {"confidence": "medium"}]}
+
+    result = BillingCodesResult.model_validate(stored)
+
+    assert [c.retained for c in result.codes] == [True, False]
+    assert result.analysis is None
 
 
 # -- resolve_fees -------------------------------------------------------------------------

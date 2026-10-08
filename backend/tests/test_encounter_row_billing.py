@@ -8,7 +8,8 @@ from app.postgresdb import Claim, ClaimCode, ClaimDetail
 from app.ramq_codes.models import BillingCodesResult, CodeFeeOut, ExtractedCode
 
 
-def _code(number: str, confidence: str, fees: list[CodeFeeOut]) -> ExtractedCode:
+def _code(number: str, confidence: str, fees: list[CodeFeeOut], **retained) -> ExtractedCode:
+    """`retained` defaults to confidence == "high", as for a result stored before it existed."""
     return ExtractedCode(
         code=number,
         description=number,
@@ -16,6 +17,7 @@ def _code(number: str, confidence: str, fees: list[CodeFeeOut]) -> ExtractedCode
         explanation="",
         supporting_quote="",
         fees=fees,
+        **retained,
     )
 
 
@@ -89,3 +91,10 @@ def test_once_billed_the_claim_wins_over_the_run():
     assert billing.code_count == 2
     assert billing.codes == ["15188", "09001"]
     assert billing.indicative_total == Decimal("27.25")
+
+
+def test_the_retained_codes_are_preselected_whatever_their_confidence():
+    fee = [CodeFeeOut(amount=40.0)]
+    row = summarize(None, _run(_code("A", "medium", fee, retained=True), _code("B", "high", fee, retained=False)))
+
+    assert (row.code_count, row.codes, row.indicative_total) == (2, ["A"], Decimal("40.0"))

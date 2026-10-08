@@ -25,11 +25,17 @@ export interface ExtractedCode {
   supporting_quote: string;
   needs_confirmation: string[];
   fees: ExtractedFee[];
+  // The model is sure of it: the review starts with it ticked, and approving from the inbox
+  // bills it. The others are only possible codes.
+  retained: boolean;
 }
 
 export interface BillingCodesResult {
+  // Retained codes first, then the other possible ones.
   codes: ExtractedCode[];
   notes: string | null;
+  // The model's reasoning before it chose; null for results stored before it existed.
+  analysis?: string | null;
 }
 
 export interface ExtractionResult {

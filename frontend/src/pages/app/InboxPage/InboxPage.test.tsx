@@ -410,7 +410,17 @@ describe("approve all", () => {
             Number(params.id),
             Number(params.id) === 1
               ? [makeProposedCode({ code: "00101" }), makeProposedCode({ code: "15145", fees: [makeFee({ amount: 12 })] })]
-              : [makeProposedCode({ code: "00102" })],
+              : [
+                  makeProposedCode({ code: "00102" }),
+                  // Only possible: never billed, and its two fees don't make the encounter unapprovable.
+                  makeProposedCode({
+                    code: "00999",
+                    confidence: "medium",
+                    retained: false,
+                    needs_confirmation: ["lieu"],
+                    fees: [makeFee(), makeFee({ role: 2 })],
+                  }),
+                ],
           ),
         ),
       ),

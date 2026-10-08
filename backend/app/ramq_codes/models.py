@@ -4,15 +4,16 @@
 RAMQCodesRetriever); ramq-ingestion owns the write-side (Code, the extraction/embedding
 schema, and one flat `codes_<rev>` LanceDB table per manual revision).
 
-Also holds BillingCodesTask's own output schema (CodeFeeOut/ExtractedCode/
-BillingCodesResult), which is a distinct, model-facing shape rather than a mirror of the
-candidate data above."""
+Also holds BillingCodesTask's own output shapes, distinct from the candidate data above:
+BillingCodesOutput is what the model answers (its sure codes and the other possible ones in
+two lists), BillingCodesResult what parse() makes of it and the app stores (one list, each
+code marked `retained` or not)."""
 
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 ConfidenceLevel = Literal["high", "medium", "low"]
 
@@ -104,11 +105,47 @@ class ExtractedCode(BaseModel):
             "populated by the model. Empty when no fee data was available."
         ),
     )
+    retained: bool = Field(
+        default=False,
+        json_schema_extra={"server_only": True},
+        description=(
+            "Set by parse(): the model is sure of this code (its `codes` list) rather than "
+            "offering it as a possibility (`other_possible_codes`). What the review starts "
+            "with ticked and what approving from the inbox bills."
+        ),
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _retained_defaults_to_high_confidence(cls, data: Any) -> Any:
+        """Results stored before the split have no `retained`: their high-confidence codes
+        were what the review ticked, so they keep that meaning."""
+        if isinstance(data, dict) and "retained" not in data:
+            return {**data, "retained": data.get("confidence") == "high"}
+        return data
+
+
+class BillingCodesOutput(BaseModel):
+    """What the model answers (json_schema() is built from it). Field order is generation
+    order: the analysis comes first so the codes follow from it, not the reverse."""
+
+    analysis: str = Field(description="Short reasoning written before any code is chosen")
+    codes: list[ExtractedCode] = Field(description="The codes the model is sure of: what it would bill")
+    other_possible_codes: list[ExtractedCode] = Field(
+        description="Every other plausible candidate, not already in `codes`"
+    )
+    notes: str | None = Field(
+        default=None,
+        description="Anything the model flagged as ambiguous or needing physician review",
+    )
 
 
 class BillingCodesResult(BaseModel):
+    # Retained codes first, then the other possible ones (see ExtractedCode.retained).
     codes: list[ExtractedCode]
     notes: str | None = Field(
         default=None,
         description="Anything the model flagged as ambiguous or needing physician review",
     )
+    # The model's reasoning before it chose; None for results stored before it existed.
+    analysis: str | None = None
