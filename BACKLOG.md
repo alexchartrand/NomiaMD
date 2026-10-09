@@ -71,6 +71,11 @@
 
 ## ✨ Features
 
+- [ ] 🟡 Benchmark ramq-ingestion's Bedrock candidate tables — *added 10/8, from ramq-ingestion's model comparison*
+  - ramq-ingestion now builds candidate tables beside the current one, `codes_<rev>__<variant>`: another model's extraction (Claude/Nova on Bedrock) and/or another embedding model (Cohere Embed v4). Each is registered in `code_versions` with `is_current=false`, so `scripts/benchmark.py run --codes-table codes_<rev>__<variant>` can pin it. Then `report <run> --baseline mistral-sel-2026-10-v3`.
+  - Registry rows are now keyed by `table_name` (several per `manual_rev`), and there is a new nullable `embedding_model` column (e.g. `mistral:mistral-embed`, `bedrock:cohere.embed-v4:0`). Each codes table's schema metadata carries `embedding_model` too. `CodeVersionRow` ignores the extra field (pydantic default), so nothing breaks today.
+  - Extraction-only variants (Mistral embeddings) run as-is. An embedding variant (`codes_<rev>__…` built with `bedrock:cohere.embed-v4:0`) runs with `EMBEDDING_PROVIDER=bedrock EMBEDDING_MODEL=cohere.embed-v4:0` (done 10/9: `app/llm/bedrock.py`, and `EmbeddingModelGuard` now refuses a table recording another model). None is built yet; only the run is left.
+
 - [ ] 🟡 Measure the selection benchmark's noise floor — *added 10/8, from the `mistral-sel` analysis*
   - `mistral-medium` isn't deterministic at temperature 0 (the summary already moved a code's rank between two identical runs). Before reading small per-note deltas between two selection prompts as real, re-run one unchanged configuration (`run --name <x>-rerun --stages selection --candidates-from mistral-2026-10-v2`) and compare it with `report --baseline`: whatever changes there is noise. A `--repeat N` on `run` would make this routine.
 
