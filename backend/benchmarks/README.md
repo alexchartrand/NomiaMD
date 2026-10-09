@@ -19,12 +19,14 @@ baselines/<name>/   runs worth comparing against later, committed (`promote <run
   the `reviewed` ones went through a human review (see `consultations/README.md`). Several misses below
   look like label questions as much as model errors. A metric that moves on 2–3 notes may be the label
   that's wrong.
-- **9 of the 75 expected codes can't be found.** The ER codes 15052–15070 and 15637 carry
-  `requires_registered=True` in `codes_2026-09-17`. At the ER, "patient inscrit" means a non-admitted patient,
-  not GMF registration, so eligibility filters them out for unregistered patients. This upstream data bug is
-  logged in ramq-ingestion's BACKLOG.md. It caps retrieval recall at 88% (66/75), and every selection run
-  shows these codes as *not offered*. On those 7 ER notes the model then retains the closest wrong code:
-  12 of v3's 36 wrong retained codes.
+- **9 of the 75 expected codes are ER codes that are hard to reach.** Until 10/8 the ER codes 15052–15070
+  and 15637 carried `requires_registered=True` in `codes_2026-09-17`. At the ER, "patient inscrit" means a
+  non-admitted patient, not GMF registration, so eligibility filtered them out. Every run up to and including
+  the baselines below shows them as *ineligible* / *not offered*. On those 7 ER notes the model then
+  retained the closest wrong code: 12 of v3's 36 wrong retained codes. ramq-ingestion fixed the data on
+  10/8 and patched `codes_2026-09-17` in place, so **those baselines no longer match the current table**.
+  The fix didn't recover the codes: they are eligible now, but retrieval doesn't find them (see *Codes
+  tables* below). Retrieval recall is still 88%.
 - **Scores are computed at report time** against the fixture as it is now. Relabeling never needs a rerun:
   `report <run>` again.
 - **The models aren't deterministic, even at temperature 0.** See the next section.
@@ -140,9 +142,46 @@ review used to pre-tick. Committed baseline: `baselines/mistral-sel-2026-10-v3`.
 7. **Cost is stable across prompts.** About 11k input and 0.9–1k output tokens per note; p50 7.6–8.1 s,
    p95 12.3–13.5 s. Writing the `analysis` first costs about 100 output tokens.
 
+## Codes tables (2026-10)
+
+ramq-ingestion builds candidate tables beside the current one (`codes_<rev>__<variant>`, another model's
+extraction). Compare one with a **control run on the current table made with the same code**, not with the
+baselines above: those predate the ER data fix and the two-halves `HybridSearch` (10/9). Both runs below
+run retrieval + selection (mistral-medium, the v3 prompt with the high-confidence rule) on
+`mistral-2026-10-v2`'s summaries:
+
+```
+run --name <x> --stages retrieval,selection --summaries-from mistral-2026-10-v2 --codes-table <table>
+```
+
+| run | codes table | recall | R@5 / R@10 / R@20 / R@40 | MRR | retained P / R / F1 | exact notes | overall recall | input tok/note | p50 |
+|---|---|---|---|---|---|---|---|---|---|
+| `current-table-sel` (control) | `codes_2026-09-17` | 88% | 43 / 57 / 67 / 81 | **0.32** | 65% / 61% / 63% | 56% | 79% | 11.8k | 7.2 s |
+| `sonnet-sel` | `codes_2026-09-17__claude-sonnet-4-6` | 87%\* | 40 / 52 / 68 / 81 | 0.27 | 61% / 57% / 59% | 48% | 76% | 13.0k | 8.1 s |
+
+\* 65 exact + 15622 offered only as a sibling variant.
+
+- **The Sonnet table isn't better.** Selection is 3 correct retained codes behind (43 vs 46), which is at
+  the noise level (9 notes regressed, 6 improved). Retrieval *is* worse: with cached embeddings and a fixed
+  table it's deterministic, so the MRR drop is real. It also costs 10% more input tokens per note.
+- **It moves add-ons up and visit codes down.** Procedures and add-ons rise (01166 #15→#1, 00431 #10→#1,
+  15643 #26→#3, 08857 #58→#15, 15639 #35→#11). About 25 expected codes fall, mostly visit codes (15616
+  #1→#11, 15790 #2→#13, 15839 #4→#12, 15765 #6→#17, psychotherapy 15785/15786 #5–6→#27–30). Its rows are
+  templated: siblings share the same wording, with about 4 lexical terms instead of 7. So variants of one
+  family are harder to tell apart (15617 now outranks 15616 on the CHSLD note).
+- **The selection follows the rank.** Every code the Sonnet run lost moved down: 15785/15786 lost to
+  08862/08863, 15616 to 15617, 15790 to 08777, and 00014. The codes it gained moved up: 15803 on GMF-00313
+  (#28→#3), 15641, 00431, 01323. mistral-medium favours candidates near the top of the list, so the order
+  of the candidates in the prompt is a lever of its own, whichever table is used.
+- **The ER fix recovered nothing.** On the current table 7 of the 9 expected ER codes are still never
+  offered (15052 and 15064 come in at #55 and #70 on one note each). They are eligible now, but the visit
+  query surfaces 00006, 00057, 15645 and 15055 (« avec déplacement ») instead of 15058 (« sans
+  déplacement »). BACKLOG.md, "ER visit codes are eligible but never retrieved".
+
 ## Where the remaining misses are
 
-- **The ER data bug** (above): 9 expected codes never offered, and most wrong retained codes on ER notes.
+- **ER codes that retrieval doesn't find** (above, and *Codes tables*): 7 of the 9 expected ER codes are
+  never offered, and most wrong retained codes are on ER notes.
 - **Eligibility gaps** that leave both variants in the list for the model to guess (BACKLOG.md, "Eligibility
   can't see several RAMQ conditions"):
   - the care setting: CHSLD-specific 15617/15624 vs the general emergency code 09245;
