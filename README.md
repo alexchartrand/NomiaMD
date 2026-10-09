@@ -142,8 +142,10 @@ uv run uvicorn app.main:app --reload
 
 The extraction engine (`backend/app/extraction/engine.py`) and the chatbot get their chat
 model from `backend/app/llm/`, which `LLM_PROVIDER` switches between the Mistral API
-(`mistral`, default) and any OpenAI-compatible server such as vLLM/TGI (`openai_compatible`,
-with `LLM_ENDPOINT` + `LLM_API_KEY`). No API key handy, or want to avoid real API calls? Set
+(`mistral`, default), any OpenAI-compatible server such as vLLM/TGI (`openai_compatible`,
+with `LLM_ENDPOINT` + `LLM_API_KEY`) and Amazon Bedrock's Converse API (`bedrock`, with
+`aws login` credentials and a Bedrock model id per task, e.g.
+`LLM_MODEL_BILLING_CODES=us.anthropic.claude-sonnet-5-5`; synthetic notes only). No API key handy, or want to avoid real API calls? Set
 `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1 LLM_API_KEY=fake` and
 run `backend/scripts/fake_llm_server.py` (`make fake-llm`, or `make dev-fake` which does both).
 

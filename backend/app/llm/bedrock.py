@@ -145,6 +145,16 @@ class BedrockEmbeddingClient(IEmbeddingClient):
         )
 
 
+def bedrock_runtime_client(region: str | None) -> Any:
+    """A boto3 `bedrock-runtime` client, shared by embeddings and chat (bedrock_chat.py).
+    `region` None = the AWS SDK's own configuration (AWS_REGION, ~/.aws/config)."""
+    return boto3.client(
+        "bedrock-runtime",
+        region_name=region,
+        config=Config(retries={"max_attempts": 5, "mode": "adaptive"}, connect_timeout=10),
+    )
+
+
 def _input_tokens(response: dict[str, Any]) -> int | None:
     value = response.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get(INPUT_TOKEN_COUNT_HEADER)
     return int(value) if value is not None else None
@@ -162,9 +172,6 @@ class BedrockEmbeddingProvider(EmbeddingModelProvider):
         if not model:
             raise RuntimeError("EMBEDDING_PROVIDER=bedrock requires EMBEDDING_MODEL (e.g. cohere.embed-v4:0)")
         embedding_format = embedding_format_for(model)
-        client = boto3.client(
-            "bedrock-runtime",
-            region_name=settings.bedrock_region,
-            config=Config(retries={"max_attempts": 5, "mode": "adaptive"}, connect_timeout=10),
+        return BedrockEmbeddingClient(
+            bedrock_runtime_client(settings.bedrock_region), model=model, embedding_format=embedding_format
         )
-        return BedrockEmbeddingClient(client, model=model, embedding_format=embedding_format)
