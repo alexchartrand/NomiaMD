@@ -280,6 +280,19 @@ async def test_push_rejects_a_note_with_no_text_left_once_normalized(me, client)
     assert response.status_code == 422
 
 
+async def test_paste_stores_the_care_setting_the_physician_picked(me, client):
+    [outcome] = _paste(client, _note_text("ZZZZ99999999"), care_setting="urgence").json()
+
+    async with session_scope() as session:
+        encounter = await session.get(Encounter, outcome["encounter_id"])
+    assert encounter.encounter_meta == {"care_setting": "urgence"}
+
+
+def test_paste_rejects_an_unknown_care_setting(me, client):
+    response = client.post("/intake/notes", json={"text": _note_text("ZZZZ99999999"), "care_setting": "bureau"})
+    assert response.status_code == 422
+
+
 # --- POST /intake/upload ------------------------------------------------------------------
 
 
@@ -290,7 +303,7 @@ async def test_upload_a_text_file(me, client):
         response = client.post(
             "/intake/upload",
             files={"file": ("notes.txt", _note_text(patient.ramq_number).encode(), "text/plain")},
-            data={"batch_label": "Clinique matin"},
+            data={"batch_label": "Clinique matin", "care_setting": "cabinet"},
         )
     finally:
         patcher.stop()
@@ -301,6 +314,9 @@ async def test_upload_a_text_file(me, client):
     row = _row(client, outcome["encounter_id"])
     assert row["channel"] == "upload"
     assert row["batch_label"] == "Clinique matin"
+    async with session_scope() as session:
+        encounter = await session.get(Encounter, outcome["encounter_id"])
+    assert encounter.encounter_meta["care_setting"] == "cabinet"
 
 
 async def test_upload_rejects_anything_but_text(me, client):

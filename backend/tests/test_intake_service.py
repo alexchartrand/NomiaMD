@@ -12,6 +12,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from sqlalchemy import func, select
 
+from app.care_setting import CareSetting
 from app.extraction.encounter_extractor import EncounterNotExtractableError, PipelineEncounterExtractor
 from app.extraction.models import ExtractionResult
 from app.intake import (
@@ -132,6 +133,12 @@ async def test_receive_keeps_the_source_facts_as_encounter_meta(user):
     }
 
 
+async def test_receive_stores_the_care_setting_as_its_value(user):
+    note = _note(meta=EncounterMeta(care_setting=CareSetting.URGENCE))
+    outcome = await IntakeService(RecordingQueue()).receive(note, user)
+    assert (await _get(outcome.encounter_id)).encounter_meta == {"care_setting": "urgence"}
+
+
 async def test_receive_the_same_version_twice_is_a_duplicate(user, nam):
     queue = RecordingQueue()
     service = IntakeService(queue)
@@ -234,6 +241,31 @@ async def test_extractor_runs_the_pipeline_in_the_source_date_order(user, nam):
     async with session_scope() as session:
         run = await session.scalar(select(ExtractionRun).where(ExtractionRun.encounter_id == encounter.id))
     assert run is not None
+
+
+async def test_extractor_hands_the_pipeline_the_stored_care_setting(user, nam):
+    note = _note(nam=nam, meta=EncounterMeta(care_setting=CareSetting.URGENCE))
+    outcome = await IntakeService(RecordingQueue()).receive(note, user)
+
+    with patch(
+        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
+        AsyncMock(return_value=_pipeline_results("2026-03-04")),
+    ) as pipeline:
+        await PipelineEncounterExtractor().extract(outcome.encounter_id)
+
+    assert pipeline.await_args.kwargs["care_setting"] is CareSetting.URGENCE
+
+
+async def test_extractor_without_a_care_setting_hands_the_pipeline_none(user, nam):
+    outcome = await IntakeService(RecordingQueue()).receive(_note(nam=nam), user)
+
+    with patch(
+        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
+        AsyncMock(return_value=_pipeline_results("2026-03-04")),
+    ) as pipeline:
+        await PipelineEncounterExtractor().extract(outcome.encounter_id)
+
+    assert pipeline.await_args.kwargs["care_setting"] is None
 
 
 async def test_extractor_records_a_pipeline_failure_on_the_encounter(user, nam):

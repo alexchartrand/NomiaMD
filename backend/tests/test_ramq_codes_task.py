@@ -4,6 +4,7 @@ is covered end to end in tests/test_extraction.py; these pin build_prompt's
 candidate-formatting/context-rendering logic and parse()'s malformed-/uncandidated-output
 handling directly."""
 
+from app.care_setting import CareSetting
 from app.lancedb.models import CodeRow, CodeRowFee
 from app.lancedb.repository import ICodeRepository
 from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
@@ -211,6 +212,15 @@ async def test_build_prompt_floors_the_patient_age_to_completed_years():
     prepared = await task.build_prompt(_input(context))
 
     assert "consultation : 79 ans." in prepared.user_message
+
+
+async def test_build_prompt_states_a_known_care_setting_as_established():
+    task = _task([])
+
+    prepared = await task.build_prompt(_input(BillingContext(care_setting=CareSetting.URGENCE)))
+
+    assert "Faits établis" in prepared.user_message
+    assert "Lieu de la consultation : service d'urgence" in prepared.user_message
 
 
 async def test_build_prompt_omits_known_facts_section_when_context_is_empty():

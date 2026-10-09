@@ -5,6 +5,7 @@ because the pipeline reaches into ramq_codes and the intake context never does.
 Same short-session pattern as ExtractionRecorder: the encounter and its physician are read
 in one scope, closed before the LLM calls."""
 
+from app.care_setting import parse_care_setting
 from app.extraction.encounter_date import parse_encounter_date
 from app.extraction.pipeline import run_billing_codes_pipeline
 from app.extraction.recorder import ExtractionRecorder
@@ -31,7 +32,11 @@ class PipelineEncounterExtractor:
         date_order = self._normalizers.for_source(encounter.source_system).date_order
         try:
             summary_result, billing_result = await run_billing_codes_pipeline(
-                encounter.note_text, user=user, patient_id=encounter.patient_id, date_order=date_order
+                encounter.note_text,
+                user=user,
+                patient_id=encounter.patient_id,
+                date_order=date_order,
+                care_setting=parse_care_setting((encounter.encounter_meta or {}).get("care_setting")),
             )
         except Exception as exc:
             await self._recorder.record_failure(encounter_id=encounter.id, user_id=user.id, error=exc)

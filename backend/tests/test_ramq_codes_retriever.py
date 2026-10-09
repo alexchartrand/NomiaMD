@@ -5,6 +5,7 @@ test_ramq_codes_candidate_fuser.py); this file only pins the wiring: the summary
 queries and the context's one eligibility filter go to the query runner, its results and
 the same context go to the fuser, and the fuser's candidate set is what comes out."""
 
+from app.care_setting import CareSetting
 from app.lancedb.eligibility import CodeEligibilityFilter
 from app.ramq_codes.candidate_fuser import FusedCandidate, FusedCandidates
 from app.ramq_codes.context import BillingContext
@@ -24,10 +25,10 @@ _FUSED = FusedCandidates(ranked=[FusedCandidate(code=Code(number="A", descriptio
 
 class _FakeQueryPlanner:
     def __init__(self):
-        self.calls: list[ConsultationSummaryResult] = []
+        self.calls: list[tuple[ConsultationSummaryResult, CareSetting | None]] = []
 
-    def plan_labeled(self, summary: ConsultationSummaryResult) -> list[PlannedQuery]:
-        self.calls.append(summary)
+    def plan_labeled(self, summary: ConsultationSummaryResult, care_setting: CareSetting | None) -> list[PlannedQuery]:
+        self.calls.append((summary, care_setting))
         return _QUERIES
 
 
@@ -65,8 +66,19 @@ async def test_aretrieve_composes_planner_filter_runner_and_fuser():
 
     result = await retriever.aretrieve(SUMMARY, context)
 
-    assert planner.calls == [SUMMARY]
+    assert planner.calls == [(SUMMARY, None)]
     assert factory.calls == [context]
     assert runner.calls == [(_QUERIES, _FILTER)]
     assert fuser.calls == [(_RESULTS, context)]
     assert result == _FUSED.candidate_set
+
+
+async def test_aretrieve_plans_with_the_contexts_care_setting():
+    planner = _FakeQueryPlanner()
+    retriever = RAMQCodesRetriever(
+        _FakeQueryRunner(), _FakeCandidateFuser(), query_planner=planner, filter_factory=_FakeFilterFactory()
+    )
+
+    await retriever.aretrieve(SUMMARY, BillingContext(care_setting=CareSetting.URGENCE))
+
+    assert planner.calls == [(SUMMARY, CareSetting.URGENCE)]

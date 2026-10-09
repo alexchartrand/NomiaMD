@@ -2,6 +2,7 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
+from app.care_setting import CARE_SETTING_LABELS_FR
 from app.lancedb.repository import ICodeRepository
 from app.patients import nam
 from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext
@@ -162,6 +163,8 @@ def _known_facts_text(context: BillingContext) -> str | None:
         # Floored, not rounded: the manual's age bands are in completed years, so a 79.6-year-
         # old is 79 ("moins de 80 ans"), never 80.
         lines.append(f"- Âge du patient au moment de la consultation : {math.floor(patient.age_years)} ans.")
+    if context.care_setting is not None:
+        lines.append(f"- Lieu de la consultation : {CARE_SETTING_LABELS_FR[context.care_setting]}.")
 
     if not lines:
         return None

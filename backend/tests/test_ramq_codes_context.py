@@ -7,6 +7,7 @@ doesn't need a session, and these tests have nothing to do with persistence."""
 from datetime import date
 
 from app.auth.profile import PhysicianAccount
+from app.care_setting import CareSetting
 from app.postgresdb import Gender, Patient, PhysicianProfile, User, UserRole
 from app.ramq_codes.context_builder import BillingContextBuilder
 
@@ -69,6 +70,17 @@ async def test_no_profile_and_no_patient_yields_an_all_null_context():
     assert context.patient.age_years is None
     assert context.patient.is_registered is None
     assert context.patient.is_vulnerable is None
+    assert context.care_setting is None
+
+
+async def test_the_care_setting_carries_through_as_given():
+    builder = BillingContextBuilder(_FakeProfileService(None), _FakePatientRepository(None))
+
+    context = await builder.build(
+        user=_user(), patient_id=999, encounter_date=date(2026, 6, 1), care_setting=CareSetting.URGENCE
+    )
+
+    assert context.care_setting is CareSetting.URGENCE
 
 
 async def test_profile_facts_carry_through_when_a_profile_exists():

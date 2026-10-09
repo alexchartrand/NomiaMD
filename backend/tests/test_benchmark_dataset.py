@@ -5,6 +5,7 @@ import json
 import pytest
 
 from app.benchmark.dataset import DEFAULT_EVAL_PATH, EvalSetLoader, UnknownCaseError
+from app.care_setting import CareSetting
 from app.sample_patients import SamplePatient
 
 
@@ -39,7 +40,25 @@ def test_a_case_carries_the_note_the_labels_and_the_billing_context(tmp_path):
     assert case.expected_codes == {"15801"}
     assert case.context.physician.panel_size == 320
     assert case.context.patient.is_registered is True
+    assert case.context.care_setting is None
     assert not case.is_labeled_negative
+
+
+def test_the_encounter_context_supplies_the_care_setting(tmp_path):
+    loader = EvalSetLoader(
+        _fixture(tmp_path, [_entry("A", encounter_context={"care_setting": "urgence"})]), notes=_notes
+    )
+
+    [case] = loader.load()
+
+    assert case.context.care_setting is CareSetting.URGENCE
+
+
+def test_a_misspelled_care_setting_fails_loudly(tmp_path):
+    loader = EvalSetLoader(_fixture(tmp_path, [_entry("A", encounter_context={"care_setting": "ER"})]), notes=_notes)
+
+    with pytest.raises(ValueError):
+        loader.load()
 
 
 def test_filters_by_id_label_status_and_difficulty(tmp_path):
@@ -79,3 +98,6 @@ def test_the_real_fixture_loads_every_note():
 
     assert len(cases) == 58
     assert all(case.transcript for case in cases)
+    assert {case.patient_id for case in cases if case.context.care_setting is CareSetting.URGENCE} == {
+        case.patient_id for case in cases if case.patient_id.startswith("URG-")
+    }
