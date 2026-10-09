@@ -40,7 +40,7 @@ def test_an_er_encounter_also_searches_the_er_subsection_with_the_same_visit_que
     visit = VisitQueryRenderer().render(summary)
     assert queries[:3] == [
         PlannedQuery(visit, "visit", section_prefixes=(VISIT_SECTION_PREFIX,)),
-        PlannedQuery(visit, "visit", section_prefixes=(CARE_SETTING_VISIT_SECTIONS[CareSetting.URGENCE],)),
+        PlannedQuery(visit, "care_setting_visit", section_prefixes=(CARE_SETTING_VISIT_SECTIONS[CareSetting.URGENCE],)),
         PlannedQuery(render_for_billing_codes(summary), "overview"),
     ]
     assert CARE_SETTING_VISIT_SECTIONS[CareSetting.URGENCE].startswith(f"{VISIT_SECTION_PREFIX} > ")

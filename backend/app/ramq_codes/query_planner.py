@@ -25,7 +25,7 @@ from app.ramq_codes.visit_query import CARE_SETTING_VISIT_SECTIONS, VISIT_SECTIO
 from app.summary.models import ConsultationSummaryResult, ProcedurePerformed
 from app.summary.task import render_for_billing_codes
 
-QuerySource = Literal["visit", "overview", "procedure", "procedure_detail", "add_on", "transcript"]
+QuerySource = Literal["visit", "care_setting_visit", "overview", "procedure", "procedure_detail", "add_on", "transcript"]
 
 
 @dataclass(frozen=True)
@@ -51,13 +51,14 @@ class SummaryQueryPlanner:
         matter to RRF: fusion is rank-based per query list, so this list can grow without
         needing to stay in any particular sequence.
 
-        The section-B-wide visit query stays alongside the subsection one, so a wrong care
+        The subsection query is labeled `care_setting_visit`, whose hits CandidateFuser
+        pins first. The section-B-wide visit query stays alongside it, so a wrong care
         setting only adds candidates, never removes the right one."""
         visit = self._visit_renderer.render(summary)
         queries = [PlannedQuery(visit, "visit", section_prefixes=(VISIT_SECTION_PREFIX,))]
         setting_section = CARE_SETTING_VISIT_SECTIONS.get(care_setting) if care_setting else None
         if setting_section:
-            queries.append(PlannedQuery(visit, "visit", section_prefixes=(setting_section,)))
+            queries.append(PlannedQuery(visit, "care_setting_visit", section_prefixes=(setting_section,)))
         queries.append(PlannedQuery(render_for_billing_codes(summary), "overview"))
 
         for procedure in summary.procedures_performed:

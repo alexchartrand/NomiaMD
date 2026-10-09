@@ -221,6 +221,18 @@ async def test_build_prompt_states_a_known_care_setting_as_established():
 
     assert "Faits établis" in prepared.user_message
     assert "Lieu de la consultation : service d'urgence" in prepared.user_message
+    # The ER codes' « patient inscrit » means registered at the ER, not with this physician
+    # — without saying so, the model rules every ER code out for a non-registered patient.
+    assert "« patient inscrit » dans le libellé d'un code désigne un patient inscrit à l'urgence" in prepared.user_message
+
+
+async def test_build_prompt_explains_the_er_meaning_of_inscrit_only_at_the_er():
+    task = _task([])
+
+    prepared = await task.build_prompt(_input(BillingContext(care_setting=CareSetting.CABINET)))
+
+    assert "Lieu de la consultation : cabinet" in prepared.user_message
+    assert "inscrit à l'urgence" not in prepared.user_message
 
 
 async def test_build_prompt_omits_known_facts_section_when_context_is_empty():

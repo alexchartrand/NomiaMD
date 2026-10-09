@@ -2,7 +2,7 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
-from app.care_setting import CARE_SETTING_LABELS_FR
+from app.care_setting import CARE_SETTING_LABELS_FR, CareSetting
 from app.lancedb.repository import ICodeRepository
 from app.patients import nam
 from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext
@@ -165,6 +165,13 @@ def _known_facts_text(context: BillingContext) -> str | None:
         lines.append(f"- Âge du patient au moment de la consultation : {math.floor(patient.age_years)} ans.")
     if context.care_setting is not None:
         lines.append(f"- Lieu de la consultation : {CARE_SETTING_LABELS_FR[context.care_setting]}.")
+    if context.care_setting is CareSetting.URGENCE:
+        lines.append(
+            "- Au service d'urgence, « patient inscrit » dans le libellé d'un code désigne un patient "
+            "inscrit à l'urgence (par opposition à un patient admis), sans lien avec l'inscription "
+            "auprès d'un médecin de famille : ces codes s'appliquent que le patient soit inscrit ou "
+            "non auprès de ce médecin."
+        )
 
     if not lines:
         return None
