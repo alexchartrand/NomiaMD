@@ -234,6 +234,17 @@ async def test_hybrid_search_never_returns_the_vector_column():
         assert not hasattr(row, "vector")
 
 
+async def test_hybrid_search_logs_no_scoring_autoprojection_warning(capfd):
+    # lance's deprecation warning about `_score`/`_distance` missing from an explicit select
+    # goes to the process's stderr from Rust, hence capfd rather than caplog (see hybrid.py).
+    with tempfile.TemporaryDirectory() as persist_dir:
+        repository = await _async_repository(persist_dir, [_record("A")])
+
+        await repository.hybrid_search(text="description", vector=[0.1, 0.2, 0.3, 0.4], k=5)
+
+        assert "disable_scoring_autoprojection" not in capfd.readouterr().err
+
+
 async def test_hybrid_search_matches_on_lexical_terms_alone():
     # The whole point of MultiMatchQuery over several columns: a synonym that only lives in
     # lexical_terms (never in description) still surfaces its row.

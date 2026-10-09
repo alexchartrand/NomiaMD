@@ -66,9 +66,6 @@
 - [ ] 🟢 Prompt injection surface is unhardened — *added 8/19, from codebase audit*
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
-- [ ] 🟢 Lance prints a deprecation warning on every hybrid code search — *added 10/8, from the benchmark work*
-  - `CodeRepository.hybrid_search` (`app/lancedb/repository.py`) selects explicit columns without `_score`/`_distance`, so lance logs "This search specified output columns but did not include `_score`… Call `disable_scoring_autoprojection`" to stderr on each query (several per extraction, dozens per benchmark run). `LANCE_LOG`/`RUST_LOG` don't silence it. Fix: call `disable_scoring_autoprojection()` on the hybrid query (check that the relevance score `hybrid_search` returns is still selected), and the same in `DocumentRepository.hybrid_search`.
-
 ## ✨ Features
 
 - [ ] 🟡 Benchmark ramq-ingestion's Bedrock candidate tables — *added 10/8, from ramq-ingestion's model comparison*
@@ -151,6 +148,7 @@
 
 ## ✅ Done
 
+- [x] 🟢 Lance prints a deprecation warning on every hybrid code search — *added 10/8, from the benchmark work, done 10/9*
 - [x] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests, done 10/7*
 - [x] 🟢 Replace the remaining `window.confirm` calls with `useConfirm` — *added 10/6, from the review-page rework, done 10/6*
 - [x] 🟢 A failed bill deletion hides the bills list — *added 10/4, from the frontend tests*
