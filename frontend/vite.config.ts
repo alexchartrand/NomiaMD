@@ -18,6 +18,9 @@ export default defineConfig({
     globals: true,
     setupFiles: "src/test/setup.ts",
     css: false,
+    // Page tests chain several mocked requests and re-renders; with every file running in
+    // parallel (CI's small runners especially), the 5 s default times some of them out.
+    testTimeout: 15_000,
   },
   server: {
     proxy: {
