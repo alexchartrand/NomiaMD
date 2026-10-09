@@ -1,8 +1,10 @@
 """app/llm/embeddings.py's provider selection from EMBEDDING_PROVIDER, OpenAIEmbeddingClient
-against a real AsyncOpenAI whose HTTP transport is mocked, and the startup dimension guard
-(app/llm/embedding_guard.py) against real temp LanceDB tables' vector columns. The guard's
-probe goes through a fixed-dimension fake embedding client."""
+against a real AsyncOpenAI whose HTTP transport is mocked, BedrockEmbeddingClient against a
+fake boto3 client, and the startup model guard (app/llm/embedding_guard.py) against real temp
+LanceDB tables' schemas. The guard's probe goes through a fixed-dimension fake embedding
+client."""
 
+import io
 import json
 
 import httpx
@@ -11,10 +13,11 @@ import pyarrow as pa
 import pytest
 from openai import AsyncOpenAI
 
-from app.lancedb.database import vector_dimension
+from app.lancedb.database import stored_embedding
 from app.llm import (
-    EmbeddingDimensionGuard,
-    EmbeddingDimensionMismatchError,
+    EmbeddingModelGuard,
+    EmbeddingModelMismatchError,
+    StoredEmbedding,
     UnknownEmbeddingProviderError,
     UsageRecorder,
     call_purpose,
@@ -22,6 +25,7 @@ from app.llm import (
     get_embedding_client,
     usage_scope,
 )
+from app.llm.bedrock import BedrockEmbeddingClient, BedrockEmbeddingProvider, CohereEmbedV3Format, CohereEmbedV4Format
 from app.llm.mistral import MistralEmbeddingProvider
 from app.llm.openai_client import OpenAIEmbeddingClient
 from app.llm.openai_compatible import OpenAICompatibleEmbeddingProvider
@@ -80,6 +84,30 @@ def test_openai_compatible_requires_endpoint_and_model(monkeypatch, missing):
     monkeypatch.setenv("EMBEDDING_MODEL", "BAAI/bge-m3")
     monkeypatch.delenv(missing)
     with pytest.raises(RuntimeError, match="EMBEDDING_ENDPOINT.*EMBEDDING_MODEL"):
+        get_embedding_client()
+
+
+def test_selects_bedrock(monkeypatch):
+    monkeypatch.setenv("EMBEDDING_PROVIDER", "bedrock")
+    monkeypatch.setenv("EMBEDDING_MODEL", "cohere.embed-v4:0")
+    monkeypatch.setenv("BEDROCK_REGION", "ca-central-1")
+    assert isinstance(embedding_provider(), BedrockEmbeddingProvider)
+    client = get_embedding_client()
+    assert isinstance(client, BedrockEmbeddingClient)
+    assert client.identity == "bedrock:cohere.embed-v4:0"
+    assert client._client.meta.region_name == "ca-central-1"
+
+
+def test_bedrock_requires_a_model(monkeypatch):
+    monkeypatch.setenv("EMBEDDING_PROVIDER", "bedrock")
+    with pytest.raises(RuntimeError, match="EMBEDDING_MODEL"):
+        get_embedding_client()
+
+
+def test_bedrock_refuses_a_model_it_has_no_request_format_for(monkeypatch):
+    monkeypatch.setenv("EMBEDDING_PROVIDER", "bedrock")
+    monkeypatch.setenv("EMBEDDING_MODEL", "amazon.titan-embed-text-v2:0")
+    with pytest.raises(ValueError, match="titan"):
         get_embedding_client()
 
 
@@ -165,43 +193,156 @@ async def test_embed_of_nothing_makes_no_call():
     assert requests == []
 
 
-# -- startup dimension guard ---------------------------------------------------------------
+# -- BedrockEmbeddingClient over a fake boto3 client ---------------------------------------
 
 
-async def _table_with_vector_dimension(tmp_path, name: str, dimension: int):
+class _FakeBedrockRuntime:
+    """Answers InvokeModel like bedrock-runtime does: a streaming body, the input token count
+    in a response header. `payload` builds the answer from the request body."""
+
+    def __init__(self, payload, *, input_tokens: int | None = 5):
+        self._payload = payload
+        self._input_tokens = input_tokens
+        self.requests: list[dict] = []
+
+    def invoke_model(self, **request):
+        self.requests.append({**request, "body": json.loads(request["body"])})
+        headers = {} if self._input_tokens is None else {"x-amzn-bedrock-input-token-count": str(self._input_tokens)}
+        payload = self._payload(self.requests[-1]["body"])
+        return {"body": io.BytesIO(json.dumps(payload).encode()), "ResponseMetadata": {"HTTPHeaders": headers}}
+
+
+def _v4_payload(body: dict) -> dict:
+    return {"embeddings": {"float": [[float(i), 1.0] for i in range(len(body["texts"]))]}}
+
+
+async def test_bedrock_embeds_cohere_v4_queries_as_search_query():
+    runtime = _FakeBedrockRuntime(_v4_payload)
+    client = BedrockEmbeddingClient(
+        runtime, model="cohere.embed-v4:0", embedding_format=CohereEmbedV4Format(), recorder=UsageRecorder()
+    )
+
+    vectors = await client.embed(["a", "b"])
+
+    assert vectors == [[0.0, 1.0], [1.0, 1.0]]
+    [request] = runtime.requests
+    assert request["modelId"] == "cohere.embed-v4:0"
+    # The corpus side is `search_document` (ramq-ingestion); same width and no truncation.
+    assert request["body"] == {
+        "texts": ["a", "b"],
+        "input_type": "search_query",
+        "embedding_types": ["float"],
+        "output_dimension": 1024,
+        "truncate": "NONE",
+    }
+
+
+async def test_bedrock_embeds_cohere_v3_queries():
+    runtime = _FakeBedrockRuntime(lambda body: {"embeddings": [[1.0] for _ in body["texts"]]})
+    client = BedrockEmbeddingClient(
+        runtime, model="cohere.embed-multilingual-v3", embedding_format=CohereEmbedV3Format(), recorder=UsageRecorder()
+    )
+
+    assert await client.embed(["a"]) == [[1.0]]
+    assert runtime.requests[0]["body"] == {"texts": ["a"], "input_type": "search_query", "truncate": "NONE"}
+
+
+async def test_bedrock_records_input_tokens_from_the_response_header():
+    client = BedrockEmbeddingClient(
+        _FakeBedrockRuntime(_v4_payload, input_tokens=9),
+        model="cohere.embed-v4:0",
+        embedding_format=CohereEmbedV4Format(),
+        recorder=UsageRecorder(),
+    )
+
+    with usage_scope() as scope, call_purpose("billing_codes.retrieval"):
+        await client.embed_query("a")
+
+    [call] = scope.records
+    assert (call.kind, call.provider, call.model) == ("embedding", "bedrock", "cohere.embed-v4:0")
+    assert call.purpose == "billing_codes.retrieval"
+    assert (call.input_tokens, call.output_tokens) == (9, None)
+
+
+async def test_bedrock_raises_and_records_a_short_answer():
+    client = BedrockEmbeddingClient(
+        _FakeBedrockRuntime(lambda body: {"embeddings": {"float": []}}),
+        model="cohere.embed-v4:0",
+        embedding_format=CohereEmbedV4Format(),
+        recorder=UsageRecorder(),
+    )
+
+    with usage_scope() as scope, pytest.raises(RuntimeError, match="0 vectors for 1 texts"):
+        await client.embed(["a"])
+    assert "0 vectors" in scope.records[0].error
+
+
+async def test_bedrock_embed_of_nothing_makes_no_call():
+    runtime = _FakeBedrockRuntime(_v4_payload)
+    client = BedrockEmbeddingClient(runtime, model="cohere.embed-v4:0", embedding_format=CohereEmbedV4Format())
+
+    assert await client.embed([]) == []
+    assert runtime.requests == []
+
+
+# -- startup model guard -------------------------------------------------------------------
+
+
+async def _table(tmp_path, name: str, dimension: int, *, embedding_model: str | None = None):
     connection = await lancedb.connect_async(str(tmp_path))
-    schema = pa.schema([
-        pa.field("id", pa.string()),
-        pa.field("vector", pa.list_(pa.float32(), dimension)),
-    ])
+    schema = pa.schema(
+        [pa.field("id", pa.string()), pa.field("vector", pa.list_(pa.float32(), dimension))],
+        metadata={"embedding_model": embedding_model} if embedding_model else None,
+    )
     return await connection.create_table(name, schema=schema)
 
 
-async def test_vector_dimension_reads_the_fixed_size_list(tmp_path):
-    table = await _table_with_vector_dimension(tmp_path, "codes_test", 1024)
-    assert await vector_dimension(table) == 1024
+def _query_client(dimension: int, identity: str = "mistral:mistral-embed") -> FakeEmbeddingClient:
+    provider, _, model = identity.partition(":")
+    return FakeEmbeddingClient(default=[0.0] * dimension, provider_name=provider, model_name=model)
 
 
-async def test_guard_passes_when_every_table_matches(tmp_path):
-    codes = await _table_with_vector_dimension(tmp_path, "codes_test", 8)
-    documents = await _table_with_vector_dimension(tmp_path, "documents-embeddings", 8)
-    guard = EmbeddingDimensionGuard(FakeEmbeddingClient(default=[0.0] * 8, model_name="fake"))
-    await guard.check({
-        "codes_test": await vector_dimension(codes),
-        "documents-embeddings": await vector_dimension(documents),
+async def test_stored_embedding_reads_the_width_and_the_recorded_model(tmp_path):
+    table = await _table(tmp_path, "codes_test", 1024, embedding_model="bedrock:cohere.embed-v4:0")
+    assert await stored_embedding(table) == StoredEmbedding(1024, "bedrock:cohere.embed-v4:0")
+
+
+async def test_stored_embedding_of_a_table_recording_no_model(tmp_path):
+    table = await _table(tmp_path, "documents-embeddings", 1024)
+    assert await stored_embedding(table) == StoredEmbedding(1024, None)
+
+
+async def test_guard_passes_when_every_table_matches():
+    await EmbeddingModelGuard(_query_client(1024)).check({
+        "codes_test": StoredEmbedding(1024, "mistral:mistral-embed"),
+        # A table recording no model was built with mistral-embed.
+        "documents-embeddings": StoredEmbedding(1024, None),
     })
 
 
-async def test_guard_raises_naming_the_model_and_the_mismatched_table(tmp_path):
-    codes = await _table_with_vector_dimension(tmp_path, "codes_test", 1024)
-    documents = await _table_with_vector_dimension(tmp_path, "documents-embeddings", 768)
-    guard = EmbeddingDimensionGuard(FakeEmbeddingClient(default=[0.0] * 768, model_name="bge-local"))
-    with pytest.raises(EmbeddingDimensionMismatchError) as excinfo:
+async def test_guard_passes_a_bedrock_client_on_its_own_table():
+    await EmbeddingModelGuard(_query_client(1024, "bedrock:cohere.embed-v4:0")).check(
+        {"codes_test__embed-v4:0": StoredEmbedding(1024, "bedrock:cohere.embed-v4:0")}
+    )
+
+
+async def test_guard_raises_on_another_model_of_the_same_width():
+    # Cohere v4 at 1024 dims has mistral-embed's width: only the recorded name tells them apart.
+    guard = EmbeddingModelGuard(_query_client(1024, "bedrock:cohere.embed-v4:0"))
+    with pytest.raises(EmbeddingModelMismatchError) as excinfo:
         await guard.check({
-            "codes_test": await vector_dimension(codes),
-            "documents-embeddings": await vector_dimension(documents),
+            "codes_legacy": StoredEmbedding(1024, None),
+            "codes_variant": StoredEmbedding(1024, "bedrock:cohere.embed-v4:0"),
         })
     message = str(excinfo.value)
-    assert "'bge-local'" in message and "768-dim" in message
-    assert "codes_test (dim 1024)" in message
-    assert "documents-embeddings" not in message
+    assert "'bedrock:cohere.embed-v4:0'" in message
+    assert "codes_legacy (mistral:mistral-embed, dim 1024)" in message
+    assert "codes_variant" not in message
+
+
+async def test_guard_raises_naming_the_model_and_the_mismatched_dimension():
+    guard = EmbeddingModelGuard(_query_client(768, "mistral:mistral-embed"))
+    with pytest.raises(EmbeddingModelMismatchError) as excinfo:
+        await guard.check({"codes_test": StoredEmbedding(1024, "mistral:mistral-embed")})
+    message = str(excinfo.value)
+    assert "768-dim" in message and "codes_test (mistral:mistral-embed, dim 1024)" in message

@@ -27,6 +27,10 @@ class CachedEmbeddingClient(IEmbeddingClient):
         self.misses = 0
 
     @property
+    def provider_name(self) -> str:
+        return self._inner.provider_name
+
+    @property
     def model_name(self) -> str:
         return self._inner.model_name
 

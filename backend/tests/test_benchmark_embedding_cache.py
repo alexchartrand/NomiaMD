@@ -16,6 +16,10 @@ class _MeteredFake(IEmbeddingClient):
         self.batches: list[list[str]] = []
 
     @property
+    def provider_name(self) -> str:
+        return "mistral"
+
+    @property
     def model_name(self) -> str:
         return "mistral-embed"
 

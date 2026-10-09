@@ -26,6 +26,7 @@ dependencies = [
     "httpx>=0.28.1",
     "arq>=0.28.0",
     "openai>=3.26",
+    "boto3[crt]>=1.40",
 ]
 
 [project.optional-dependencies]

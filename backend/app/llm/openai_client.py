@@ -1,7 +1,7 @@
-"""The only module that talks to an SDK. Every host this backend uses speaks the OpenAI wire
-protocol — Mistral's API, vLLM, TEI, the fake dev server — so one adapter per call kind covers
-them all; the providers (app/llm/mistral.py, app/llm/openai_compatible.py) only differ in the
-base URL and key they hand it.
+"""The OpenAI-protocol adapter. Every host this backend uses speaks the OpenAI wire protocol —
+Mistral's API, vLLM, TEI, the fake dev server — so one adapter per call kind covers them all;
+the providers (app/llm/mistral.py, app/llm/openai_compatible.py) only differ in the base URL
+and key they hand it. The one exception is Bedrock's embeddings (app/llm/bedrock.py).
 
 Each call is timed and reported to a UsageRecorder (app/llm/usage.py) with the token counts
 the response carries, failed calls included."""
@@ -123,6 +123,10 @@ class OpenAIEmbeddingClient(IEmbeddingClient):
         self._provider = provider
         self._model = model
         self._recorder = recorder
+
+    @property
+    def provider_name(self) -> str:
+        return self._provider
 
     @property
     def model_name(self) -> str:

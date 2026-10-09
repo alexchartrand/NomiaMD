@@ -76,7 +76,7 @@ Backend modules (`backend/app/`):
 
 | Module | Role |
 |---|---|
-| `llm/` | chat and embedding clients (`IChatClient`/`IEmbeddingClient`, one `openai`-SDK adapter in `openai_client.py` — no llama-index), provider selection (`LLM_PROVIDER`, `EMBEDDING_PROVIDER`: `mistral` \| `openai_compatible`), per-call metering (`usage.py`: tokens in/out + latency of every call, logged as `llm_call`, collected by `usage_scope()`, tagged by `call_purpose()`), startup embedding-dimension guard |
+| `llm/` | chat and embedding clients (`IChatClient`/`IEmbeddingClient`, one `openai`-SDK adapter in `openai_client.py` — no llama-index — plus `bedrock.py`'s boto3 Cohere embeddings), provider selection (`LLM_PROVIDER`: `mistral` \| `openai_compatible`; `EMBEDDING_PROVIDER`: the same \| `bedrock`), per-call metering (`usage.py`: tokens in/out + latency of every call, logged as `llm_call`, collected by `usage_scope()`, tagged by `call_purpose()`), startup embedding-model guard |
 | `intake/` | where notes come from: connectors (sample, paste/upload + ER-shift splitter, Epic FHIR — `connectors/epic_fhir/`, sandbox demo behind `EPIC_SANDBOX_ENABLED`) → `IntakeService.receive(SourceNote)` — per-source normalizers (+ date order), NAM-only patient resolution, dedup, `ExtractionQueue`; derived encounter status (`status.py`), `POST /intake/notes`/`/intake/upload`. Never imports `ramq_codes` |
 | `encounters/` | the inbox: `/encounters` (list over a service-date range, with derived status + `all_clean`, detail with latest run, manual patient pick, on-demand extract, "doublon possible" flags derived over the listed encounters + the physician's confirm/dismiss); wires `IntakeService` to the extraction pipeline |
 | `dashboard/` | `GET /dashboard` — the landing page's read-only summary over the inbox's derived rows: to-do counts, unbilled work near RAMQ's 90-day billing deadline (`deadline.py`), draft/billed totals, weekly activity, latest encounters. Today comes from `get_clock` |
@@ -150,7 +150,8 @@ on `/app/ajouter`. `/app/facturer` bills without an encounter (and edits such a 
   `is_current` row picks the one to use (re-read per call; no current row = startup error).
   `documents-embeddings` (chatbot) is in the same `DB_PATH`. The query embedding model must
   match the one that built their vectors; `application_services()` refuses to start on a
-  dimension mismatch (`app/llm/embedding_guard.py`).
+  dimension or model mismatch (`app/llm/embedding_guard.py`: the `<provider>:<model>` in each
+  table's schema metadata, a table recording none counting as `mistral:mistral-embed`).
 - **Frontend types in `src/api/` are kept in sync with backend Pydantic models by hand.**
 
 `consultations/` holds synthetic French notes (one per file, `**NAM :**` header);

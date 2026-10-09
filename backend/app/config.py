@@ -68,8 +68,8 @@ class Settings:
 
     @property
     def embedding_provider(self) -> str:
-        """Which embedding backend app/llm/embeddings.py builds: `mistral` (default) or
-        `openai_compatible`."""
+        """Which embedding backend app/llm/embeddings.py builds: `mistral` (default),
+        `openai_compatible` or `bedrock`."""
         return os.environ.get("EMBEDDING_PROVIDER", "mistral").strip().lower()
 
     @property
@@ -85,8 +85,15 @@ class Settings:
     @property
     def embedding_api_key(self) -> str | None:
         """The embedding provider's key, whichever EMBEDDING_PROVIDER selects. Required by
-        mistral; optional for openai_compatible (TEI and vLLM run without auth by default)."""
+        mistral; optional for openai_compatible (TEI and vLLM run without auth by default);
+        unused by bedrock, whose credentials come from the AWS SDK's own chain."""
         return os.environ.get("EMBEDDING_API_KEY") or None
+
+    @property
+    def bedrock_region(self) -> str | None:
+        """The Region EMBEDDING_PROVIDER=bedrock calls. Unset = the AWS SDK's own
+        configuration (AWS_REGION, ~/.aws/config)."""
+        return os.environ.get("BEDROCK_REGION") or None
 
     @property
     def smtp_host(self) -> str | None:

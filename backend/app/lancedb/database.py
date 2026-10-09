@@ -12,10 +12,14 @@ from lancedb import AsyncConnection, AsyncTable
 
 from app.config import settings
 from app.lancedb.code_versions import CurrentCodeTableProvider, ICodeTableProvider, PinnedCodeTableProvider
+from app.llm import StoredEmbedding
 
 CODE_VERSIONS_TABLE_NAME = "code_versions"
 DOCUMENTS_TABLE_NAME = "documents-embeddings"
 VECTOR_COLUMN = "vector"
+# Schema-metadata key under which ramq-ingestion records the `<provider>:<model>` that built
+# a table's vectors (its code_table_schema.py).
+EMBEDDING_MODEL_METADATA_KEY = b"embedding_model"
 
 # How stale an already-open table may be before LanceDB re-checks it for a newer version.
 # Without it, an open table never sees later writes: a promote (the `code_versions` flip),
@@ -79,14 +83,14 @@ class LanceDB:
     def documents_table(self) -> AsyncTable:
         return self._documents_table
 
-    async def vector_dimensions(self) -> dict[str, int]:
-        """Each embedded table's name mapped to its vector column's fixed dimension — the
-        current codes table and the documents table. app/bootstrap.py compares these with
-        the query embedding model's output at startup."""
+    async def stored_embeddings(self) -> dict[str, StoredEmbedding]:
+        """How each embedded table's vectors were built — the current codes table and the
+        documents table. app/bootstrap.py compares these with the query embedding model at
+        startup."""
         version = await self._code_tables.current_version()
         return {
-            version.table_name: await vector_dimension(await self._code_tables.current()),
-            DOCUMENTS_TABLE_NAME: await vector_dimension(self._documents_table),
+            version.table_name: await stored_embedding(await self._code_tables.current()),
+            DOCUMENTS_TABLE_NAME: await stored_embedding(self._documents_table),
         }
 
     def close(self) -> None:
@@ -94,10 +98,20 @@ class LanceDB:
         self._connection.close()
 
 
-async def vector_dimension(table: AsyncTable) -> int:
-    """The fixed size of `table`'s vector column (ramq-ingestion writes it as a
+async def stored_embedding(table: AsyncTable) -> StoredEmbedding:
+    """`table`'s vector column width and the embedding model its schema metadata records."""
+    schema = await table.schema()
+    model = (schema.metadata or {}).get(EMBEDDING_MODEL_METADATA_KEY)
+    return StoredEmbedding(
+        dimension=_vector_dimension(table.name, schema),
+        model=model.decode() if model is not None else None,
+    )
+
+
+def _vector_dimension(table_name: str, schema: pa.Schema) -> int:
+    """The fixed size of the vector column (ramq-ingestion writes it as a
     fixed_size_list<float32>)."""
-    vector_type = (await table.schema()).field(VECTOR_COLUMN).type
+    vector_type = schema.field(VECTOR_COLUMN).type
     if not pa.types.is_fixed_size_list(vector_type):
-        raise TypeError(f"{table.name}.{VECTOR_COLUMN} is {vector_type}, expected a fixed-size list")
+        raise TypeError(f"{table_name}.{VECTOR_COLUMN} is {vector_type}, expected a fixed-size list")
     return vector_type.list_size

@@ -35,10 +35,10 @@ from app.benchmark.store import Run, RunStore
 from app.config import settings
 from app.extraction.engine import resolve_model
 from app.lancedb import CodeRepository, LanceDB
-from app.lancedb.database import vector_dimension
+from app.lancedb.database import stored_embedding
 from app.lancedb.fusion import DEFAULT_K
 from app.lancedb.models import CodeVersionRow
-from app.llm import EmbeddingDimensionGuard, chat_provider, get_embedding_client
+from app.llm import EmbeddingModelGuard, chat_provider, get_embedding_client
 from app.ramq_codes import BillingCodesTask, build_candidate_fuser, build_code_query_runner, build_family_expander
 from app.ramq_codes.candidate_fuser import DEFAULT_FUSED_TOP_K, DEFAULT_KEPT_SOURCES
 from app.ramq_codes.family_expander import DEFAULT_MAX_FAMILY_SIZE
@@ -70,7 +70,7 @@ class CaseFilter:
 
 @asynccontextmanager
 async def codes_repository(
-    table_name: str | None, *, check_embedding_dimension: bool
+    table_name: str | None, *, check_embedding_model: bool
 ) -> AsyncIterator[tuple[CodeRepository, CodeVersionRow]]:
     """The codes table a run reads — `table_name` pinned (current or not), or the current
     one — and its registry row."""
@@ -78,9 +78,9 @@ async def codes_repository(
     try:
         provider = db.pinned_code_tables(table_name) if table_name else db.code_tables
         version = await provider.current_version()
-        if check_embedding_dimension:
-            await EmbeddingDimensionGuard(get_embedding_client()).check(
-                {version.table_name: await vector_dimension(await provider.current())}
+        if check_embedding_model:
+            await EmbeddingModelGuard(get_embedding_client()).check(
+                {version.table_name: await stored_embedding(await provider.current())}
             )
         yield CodeRepository(provider), version
     finally:
@@ -144,7 +144,7 @@ class RunCommand:
             )
         summary_run = self._store.open(summaries_from) if summaries_from else None
 
-        async with codes_repository(codes_table, check_embedding_dimension="retrieval" in stages) as (codes, version):
+        async with codes_repository(codes_table, check_embedding_model="retrieval" in stages) as (codes, version):
             config = RunConfig(
                 stages=stages,
                 query_source=source.name,
@@ -359,7 +359,7 @@ class ReportCommand:
             return RunScores(retrieval=[], selection=[])
         # Scored against the codes table the run retrieved from, even if another one has
         # been promoted since.
-        async with codes_repository(manifest.config.codes_table, check_embedding_dimension=False) as (codes, _version):
+        async with codes_repository(manifest.config.codes_table, check_embedding_model=False) as (codes, _version):
             retrieval, selection = [], []
             if "retrieval" in stages:
                 scorer = RetrievalScorer(codes)

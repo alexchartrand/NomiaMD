@@ -26,8 +26,20 @@ class IChatClient(ABC):
 class IEmbeddingClient(ABC):
     @property
     @abstractmethod
+    def provider_name(self) -> str:
+        """The EMBEDDING_PROVIDER that built it (`mistral`, `bedrock`...)."""
+
+    @property
+    @abstractmethod
     def model_name(self) -> str:
         pass
+
+    @property
+    def identity(self) -> str:
+        """`<provider>:<model>`, the name ramq-ingestion records on the tables it embeds
+        (e.g. `mistral:mistral-embed`, `bedrock:cohere.embed-v4:0`) —
+        app/llm/embedding_guard.py compares the two."""
+        return f"{self.provider_name}:{self.model_name}"
 
     @abstractmethod
     async def embed(self, texts: Sequence[str]) -> list[list[float]]:

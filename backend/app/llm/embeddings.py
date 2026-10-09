@@ -6,6 +6,7 @@ same way chat calls do (docs/encounter-intake-plan.md §3)."""
 from functools import lru_cache
 
 from app.config import settings
+from app.llm.bedrock import BedrockEmbeddingProvider
 from app.llm.client import IEmbeddingClient
 from app.llm.mistral import MistralEmbeddingProvider
 from app.llm.openai_compatible import OpenAICompatibleEmbeddingProvider
@@ -14,6 +15,7 @@ from app.llm.provider import EmbeddingModelProvider
 _PROVIDERS: dict[str, type[EmbeddingModelProvider]] = {
     "mistral": MistralEmbeddingProvider,
     "openai_compatible": OpenAICompatibleEmbeddingProvider,
+    "bedrock": BedrockEmbeddingProvider,
 }
 
 

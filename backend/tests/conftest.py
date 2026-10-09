@@ -219,6 +219,7 @@ def no_real_api_keys(monkeypatch):
         "LLM_PROVIDER", "LLM_ENDPOINT", "LLM_API_KEY",
         "LLM_MODEL_CONSULTATION_SUMMARY", "LLM_MODEL_BILLING_CODES", "LLM_MODEL_RAMQ_CHATBOT",
         "EMBEDDING_PROVIDER", "EMBEDDING_ENDPOINT", "EMBEDDING_MODEL", "EMBEDDING_API_KEY",
+        "BEDROCK_REGION",
         # And the Epic sandbox demo: a developer's flag/credentials must not turn its routes
         # on, or let a test reach fhir.epic.com (the contract test opts back in itself).
         "APP_ENV", "EPIC_SANDBOX_ENABLED", "EPIC_SANDBOX_CLIENT_ID", "EPIC_SANDBOX_PRIVATE_KEY_PATH",
