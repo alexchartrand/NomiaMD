@@ -12,18 +12,20 @@ embedding query that retrieves neither the visit family nor the procedure family
 retrieval dilution the two-part summary structure already tells us how to avoid.
 
 The visit query is the encounter's form only, scoped to the manual's visit section (see
-visit_query.py); the whole rendered summary still runs as the `overview` query, so a code
-only the full clinical picture surfaces isn't lost."""
+visit_query.py) — and run a second time within the care setting's own subsection when the
+encounter's setting has one; the whole rendered summary still runs as the `overview` query,
+so a code only the full clinical picture surfaces isn't lost."""
 
 from dataclasses import dataclass
 from typing import Literal
 
+from app.care_setting import CareSetting
 from app.patients import nam
-from app.ramq_codes.visit_query import VISIT_SECTION_PREFIX, VisitQueryRenderer
+from app.ramq_codes.visit_query import CARE_SETTING_VISIT_SECTIONS, VISIT_SECTION_PREFIX, VisitQueryRenderer
 from app.summary.models import ConsultationSummaryResult, ProcedurePerformed
 from app.summary.task import render_for_billing_codes
 
-QuerySource = Literal["visit", "overview", "procedure", "procedure_detail", "add_on", "transcript"]
+QuerySource = Literal["visit", "care_setting_visit", "overview", "procedure", "procedure_detail", "add_on", "transcript"]
 
 
 @dataclass(frozen=True)
@@ -40,15 +42,24 @@ class SummaryQueryPlanner:
     def __init__(self, visit_renderer: VisitQueryRenderer | None = None):
         self._visit_renderer = visit_renderer or VisitQueryRenderer()
 
-    def plan_labeled(self, summary: ConsultationSummaryResult) -> list[PlannedQuery]:
-        """The visit query (section B only), then the full rendered summary (`overview`,
-        the whole table), then each procedure's queries and one query per add-on. Order doesn't matter
-        to RRF: fusion is rank-based per query list, so this list can grow without needing
-        to stay in any particular sequence."""
-        queries = [
-            PlannedQuery(self._visit_renderer.render(summary), "visit", section_prefixes=(VISIT_SECTION_PREFIX,)),
-            PlannedQuery(render_for_billing_codes(summary), "overview"),
-        ]
+    def plan_labeled(
+        self, summary: ConsultationSummaryResult, care_setting: CareSetting | None = None
+    ) -> list[PlannedQuery]:
+        """The visit query (section B only) — plus the same query within `care_setting`'s
+        own subsection, if it has one — then the full rendered summary (`overview`, the
+        whole table), then each procedure's queries and one query per add-on. Order doesn't
+        matter to RRF: fusion is rank-based per query list, so this list can grow without
+        needing to stay in any particular sequence.
+
+        The subsection query is labeled `care_setting_visit`, whose hits CandidateFuser
+        pins first. The section-B-wide visit query stays alongside it, so a wrong care
+        setting only adds candidates, never removes the right one."""
+        visit = self._visit_renderer.render(summary)
+        queries = [PlannedQuery(visit, "visit", section_prefixes=(VISIT_SECTION_PREFIX,))]
+        setting_section = CARE_SETTING_VISIT_SECTIONS.get(care_setting) if care_setting else None
+        if setting_section:
+            queries.append(PlannedQuery(visit, "care_setting_visit", section_prefixes=(setting_section,)))
+        queries.append(PlannedQuery(render_for_billing_codes(summary), "overview"))
 
         for procedure in summary.procedures_performed:
             queries.extend(self._procedure_queries(procedure))
@@ -57,8 +68,8 @@ class SummaryQueryPlanner:
 
         return queries
 
-    def plan(self, summary: ConsultationSummaryResult) -> list[str]:
-        return [query.text for query in self.plan_labeled(summary)]
+    def plan(self, summary: ConsultationSummaryResult, care_setting: CareSetting | None = None) -> list[str]:
+        return [query.text for query in self.plan_labeled(summary, care_setting)]
 
     @staticmethod
     def _procedure_queries(procedure: ProcedurePerformed) -> list[PlannedQuery]:

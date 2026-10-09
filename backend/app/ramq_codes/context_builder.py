@@ -9,6 +9,7 @@ this class trivially fakeable in tests, same convention as app/patients/verifica
 from datetime import date
 
 from app.auth.profile import ProfileService
+from app.care_setting import CareSetting
 from app.clock import ClinicClock, Clock
 from app.patients.registration import resolve_registration
 from app.postgresdb import PatientRepository, User
@@ -38,6 +39,7 @@ class BillingContextBuilder:
         user: User,
         patient_id: int,
         encounter_date: date | None,
+        care_setting: CareSetting | None = None,
     ) -> BillingContext:
         """Best-effort: a missing profile or a since-deleted patient degrades that half to
         all-null rather than raising, mirroring extraction/router.py's existing "a lookup
@@ -78,4 +80,6 @@ class BillingContextBuilder:
                 is_vulnerable=record.is_vulnerable,
             )
 
-        return BillingContext(physician=physician, patient=patient, encounter_date=encounter_date)
+        return BillingContext(
+            physician=physician, patient=patient, encounter_date=encounter_date, care_setting=care_setting
+        )

@@ -13,6 +13,8 @@ physician to confirm."""
 from dataclasses import dataclass, field
 from datetime import date
 
+from app.care_setting import CareSetting
+
 # Names for the eligibility axes a code variant can be bound on — shared vocabulary between
 # BillingContext.known_axes(), UnresolvedAxisDetector's unresolved-axis reporting, and the
 # prompt's "please confirm" instructions, so all three always refer to the same thing.
@@ -84,6 +86,10 @@ class BillingContext:
     physician: PhysicianContext = field(default_factory=PhysicianContext)
     patient: PatientContext = field(default_factory=PatientContext)
     encounter_date: date | None = None
+    # Where the encounter took place, from its source or the physician (see
+    # app/care_setting.py). Not an eligibility axis — no codes column is bound on it — it
+    # scopes the visit-code search (visit_query.py) and is stated in the prompt.
+    care_setting: CareSetting | None = None
 
     def known_axes(self) -> dict[str, bool | int | None]:
         """Which of the four eligibility axes this context can resolve, and to what value. A

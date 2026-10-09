@@ -85,3 +85,35 @@ def test_no_kept_source_means_the_cap_applies_to_every_query():
     )
 
     assert [c.code.number for c in fused.ranked] == ["A", "V1"]
+
+
+def test_the_care_setting_visit_querys_hits_come_first_in_their_own_order():
+    fused = CandidateFuser(axis_detector=_FakeAxisDetector(), fused_top_k=2).fuse(
+        [
+            _result("visite", "A", "B", source="visit"),
+            _result("visite", "A", "B"),
+            _result("visite", "ER2", "ER1", source="care_setting_visit"),
+        ],
+        BillingContext(),
+    )
+
+    # ER2/ER1 are only in one list and fall past the cut, yet lead the candidates; the
+    # fused ranking follows them unchanged.
+    assert [c.code.number for c in fused.ranked] == ["ER2", "ER1", "A", "B"]
+
+
+def test_a_code_both_pinned_and_fused_appears_once_at_its_pinned_place():
+    fused = CandidateFuser(axis_detector=_FakeAxisDetector()).fuse(
+        [_result("visite", "A", "ER1"), _result("visite", "ER1", source="care_setting_visit")], BillingContext()
+    )
+
+    assert [c.code.number for c in fused.ranked] == ["ER1", "A"]
+
+
+def test_no_pinned_sources_keeps_the_rrf_order():
+    fused = CandidateFuser(axis_detector=_FakeAxisDetector(), pinned_sources=()).fuse(
+        [_result("visite", "A", "B"), _result("visite", "B"), _result("visite", "C", source="care_setting_visit")],
+        BillingContext(),
+    )
+
+    assert [c.code.number for c in fused.ranked] == ["B", "A", "C"]

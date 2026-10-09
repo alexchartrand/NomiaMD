@@ -2,7 +2,9 @@
 context, label status, difficulty) joined to its `consultations/` note.
 
 The billing context comes straight from the fixture rather than BillingContextBuilder: the
-benchmark is deterministic and needs no physician login or patient row."""
+benchmark is deterministic and needs no physician login or patient row. So does the care
+setting (`encounter_context`), which in the app comes from the note's source or the
+physician, never the note text."""
 
 import hashlib
 import json
@@ -11,6 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
+from app.care_setting import CareSetting
 from app.ramq_codes import BillingContext, PatientContext, PhysicianContext
 from app.sample_patients import SamplePatient, get_sample_patient
 
@@ -99,6 +102,9 @@ class EvalSetLoader:
     def _context(entry: dict) -> BillingContext:
         physician = entry.get("physician_context") or {}
         patient = entry.get("patient_context") or {}
+        # A misspelled setting fails loudly (ValueError) rather than silently searching
+        # without it.
+        care_setting = (entry.get("encounter_context") or {}).get("care_setting")
         return BillingContext(
             physician=PhysicianContext(
                 panel_size=physician.get("panel_size"),
@@ -110,4 +116,5 @@ class EvalSetLoader:
                 is_registered=patient.get("is_registered"),
                 is_vulnerable=patient.get("is_vulnerable"),
             ),
+            care_setting=CareSetting(care_setting) if care_setting is not None else None,
         )

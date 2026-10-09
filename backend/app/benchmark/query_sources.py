@@ -29,7 +29,7 @@ class SummaryQuerySource(IQuerySource):
     def plan(self, case: BenchmarkCase, summary: ConsultationSummaryResult | None) -> list[PlannedQuery]:
         if summary is None:
             raise ValueError(f"The {self.name!r} query source needs the note's summary")
-        return self._planner.plan_labeled(summary)
+        return self._planner.plan_labeled(summary, case.context.care_setting)
 
 
 class TranscriptQuerySource(IQuerySource):

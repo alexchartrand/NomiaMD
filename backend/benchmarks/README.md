@@ -25,8 +25,8 @@ baselines/<name>/   runs worth comparing against later, committed (`promote <run
   the baselines below shows them as *ineligible* / *not offered*. On those 7 ER notes the model then
   retained the closest wrong code: 12 of v3's 36 wrong retained codes. ramq-ingestion fixed the data on
   10/8 and patched `codes_2026-09-17` in place, so **those baselines no longer match the current table**.
-  The fix didn't recover the codes: they are eligible now, but retrieval doesn't find them (see *Codes
-  tables* below). Retrieval recall is still 88%.
+  The fix alone didn't recover the codes: they were eligible but not retrieved (see *Codes tables*). The
+  care setting brought them in on 10/9 (*Care setting* below): retrieval recall 88% → 97%.
 - **Scores are computed at report time** against the fixture as it is now. Relabeling never needs a rerun:
   `report <run>` again.
 - **The models aren't deterministic, even at temperature 0.** See the next section.
@@ -176,12 +176,65 @@ run --name <x> --stages retrieval,selection --summaries-from mistral-2026-10-v2 
 - **The ER fix recovered nothing.** On the current table 7 of the 9 expected ER codes are still never
   offered (15052 and 15064 come in at #55 and #70 on one note each). They are eligible now, but the visit
   query surfaces 00006, 00057, 15645 and 15055 (« avec déplacement ») instead of 15058 (« sans
-  déplacement »). BACKLOG.md, "ER visit codes are eligible but never retrieved".
+  déplacement »). Fixed by the care setting, next section.
+
+## Care setting (2026-10-09)
+
+The section-B-wide visit query's « urgence » ranks the « déplacement d'urgence » supplements (15633–15635,
+15847–15849, 08966…) above every ER visit code. The encounter's care setting (`app/care_setting.py`; in the
+app from the note's source or the physician, here from the fixture's `encounter_context`) now adds the same
+visit query within the setting's own subsection (ER only for now), and states the setting in the prompt.
+Same command as *Codes tables*, on `codes_2026-09-17`, compared with `current-table-sel`:
+
+| run | recall | R@5 / R@10 / R@20 / R@40 | MRR | retained P / R / F1 | exact notes | overall recall | input tok/note |
+|---|---|---|---|---|---|---|---|
+| `current-table-sel` (control) | 88% | 43 / 57 / 67 / 81 | 0.32 | 65% / 61% / 63% | 56% | 79% | 11.8k |
+| `care-setting-sel` | **97%** | 43 / 59 / 69 / 87 | 0.32 | 68% / 64% / 66% | 57% | **84%** | 11.9k |
+
+- **Every expected ER visit code is offered now** (7 notes improved, none regressed). The 51 other notes plan
+  the same queries as before, so their retrieval is identical. The two codes still missed are 01323 on
+  URG-2026-04512 and 15158 on HOP-2026-00733, neither a visit code.
+- **The ER codes are offered low**, #35–#70 on 5 of the 7 notes. The subsection query is one list among
+  six to twelve, so its hits fall below the fused top-40 and come in as kept visit hits, after it. The
+  model favours the top of the list (*Codes tables*), and the visit query's déplacement supplements are
+  still above them. Fixed below.
+- **Selection on the 7 ER notes:** retained correct 0 → 2 (15058 on 04471, 15060 on 04622), wrong retained
+  9 → 5. 15052 and 15058 are offered but not picked on 04512/04538, 15064 on 04623. The selection changes
+  on the 51 other notes (6 regressed, 4 mixed, 5 improved) are at the noise level, so the prompt's
+  « Lieu de la consultation » line hasn't measurably moved them.
+
+### ER notes: pinning and « patient inscrit » (2026-10-09)
+
+Variants run on the 7 URG notes only (`--notes URG-…`), against `care-setting-sel`'s numbers on the same
+notes. 11 expected codes; on 7 notes a difference of 1–2 codes is noise.
+
+| run | ER codes ranked | retained | retained P / R | overall recall |
+|---|---|---|---|---|
+| `care-setting-sel` (both visit queries, ER hits after the cut) | #7–#70 | 7 | 29% / 18% | 36% |
+| `er-a-subsection-only` (no section-B-wide visit query) | #3–#68 | 6 | 33% / 18% | 55% |
+| `er-b-pinned` (ER subsection's hits first) | #2–#9 | 3 | 0% / 0% | 36% |
+| `er-clarified-only` (prompt clarification, no pinning) | #7–#70 | 9 | 11% / 9% | 36% |
+| `er-a-clarified` (no B-wide query + clarification) | #3–#68 | 8 | 25% / 18% | 45% |
+| **`er-b-pinned-clarified`** (kept) | **#2–#9** | 8 | 25% / 18% | **64%** |
+
+- **Pinning alone made selection worse.** With the ER codes on top, the model read them and ruled every one
+  out: their descriptions say « d'un patient inscrit », and the prompt states « Le patient n'est pas
+  inscrit auprès de ce médecin ». At the ER, « inscrit » means registered at the emergency department, as
+  opposed to « admis » (P.G. 2.2.6 C), the same ambiguity as the upstream `requires_registered` data bug.
+- **So the prompt now says so** when the care setting is the ER (`task.py`'s known facts). Alone it changes
+  nothing (the codes are too far down to be read); with pinning, overall recall goes 36% → 64%.
+- **What's left is the variant.** The model now retains ER codes, mostly the wrong one: « ordinaire »
+  where the label says « principal » (04471, 04538), « avec déplacement » where it says « sans »
+  (04512, 04621, 04622). The labels are drafts and these are judgment calls (BACKLOG.md).
+- Both changes act only when the setting is the ER (the pinned query and the prompt line exist only then),
+  so the other 51 notes are unchanged by construction; a retrieval rerun on the 7 notes after the cleanup
+  gave identical candidates.
 
 ## Where the remaining misses are
 
-- **ER codes that retrieval doesn't find** (above, and *Codes tables*): 7 of the 9 expected ER codes are
-  never offered, and most wrong retained codes are on ER notes.
+- **ER visit variant** (*Care setting*): every ER visit code is offered near the top now, and the model
+  retains one from the right family, but often the wrong variant (principal vs ordinaire, avec vs sans
+  déplacement).
 - **Eligibility gaps** that leave both variants in the list for the model to guess (BACKLOG.md, "Eligibility
   can't see several RAMQ conditions"):
   - the care setting: CHSLD-specific 15617/15624 vs the general emergency code 09245;

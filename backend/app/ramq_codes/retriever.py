@@ -50,7 +50,8 @@ class RAMQCodesRetriever(ICodesRetriever):
 
     async def aretrieve(self, summary: ConsultationSummaryResult, context: BillingContext) -> CandidateSet:
         eligibility = self._filter_factory.from_context(context)
-        query_run = await self._query_runner.run(self._query_planner.plan_labeled(summary), eligibility)
+        queries = self._query_planner.plan_labeled(summary, context.care_setting)
+        query_run = await self._query_runner.run(queries, eligibility)
         fused = self._candidate_fuser.fuse(query_run.results, context)
         if self._family_expander is not None:
             fused = await self._family_expander.expand(fused, eligibility, context)

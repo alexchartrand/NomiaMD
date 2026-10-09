@@ -102,9 +102,9 @@ and Postgres, registers tasks), used by `main.py`'s lifespan and by the scripts.
 Extraction flow: the physician picks a patient *first* (global search), then `POST /extract`
 (requires `patient_id`) stores the note as an `Encounter` (the retention purge target; runs
 cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
-(physician practice facts + patient age/vulnerability/registration) → `billing_codes`
+(physician practice facts + patient age/vulnerability/registration + the encounter's care setting) → `billing_codes`
 (multi-query hybrid retrieval: a visit query rendered from the encounter's form only and scoped to the
-manual's visit section, the full summary, one per procedure/add-on; eligibility-filtered, RRF-fused with every
+manual's visit section — run again within the care setting's own subsection when it has one (ER for now; its hits pinned first), the full summary, one per procedure/add-on; eligibility-filtered, RRF-fused with every
 visit hit kept, small code families completed → LLM picks from candidates: a short `analysis`, then the codes it is sure of
 (`codes`, stored `retained`: preselected in the review, what inbox approve-all bills) and `other_possible_codes`).
 The physician reviews (and may add codes from the code search), then `POST /claims` saves from
@@ -123,7 +123,9 @@ on `/app/ajouter`. `/app/facturer` bills without an encounter (and edits such a 
 ### Invariants — don't break these
 
 - **The model never decides administrative facts or fees.** Registration, vulnerability, age
-  and panel size come from the DB via `BillingContext`, never from the transcript. Fees are
+  and panel size come from the DB via `BillingContext`, never from the transcript. So does the
+  care setting (`app/care_setting.py`): from the note's source (`EncounterMeta.care_setting`)
+  or the physician's pick at paste/upload, else unknown — never from the note text. Fees are
   resolved server-side by code number after the LLM call (`server_only` schema fields).
 - **Eligibility is deterministic.** Code variants carry typed bounds; contradicted variants
   are filtered in the LanceDB `WHERE`. Axes the context can't resolve are surfaced as

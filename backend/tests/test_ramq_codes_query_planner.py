@@ -1,8 +1,9 @@
 """Unit tests for SummaryQueryPlanner and TranscriptQueryPlanner
 (app/ramq_codes/query_planner.py) — pure data transformation, no LLM, no DB."""
 
+from app.care_setting import CareSetting
 from app.ramq_codes.query_planner import PlannedQuery, SummaryQueryPlanner, TranscriptQueryPlanner
-from app.ramq_codes.visit_query import VISIT_SECTION_PREFIX, VisitQueryRenderer
+from app.ramq_codes.visit_query import CARE_SETTING_VISIT_SECTIONS, VISIT_SECTION_PREFIX, VisitQueryRenderer
 from app.summary import ConsultationSummaryResult, render_for_billing_codes
 from tests.test_consultation_summary import MOCK_RESULT
 
@@ -29,6 +30,27 @@ def test_only_the_visit_query_is_scoped_to_the_visit_section():
         ("overview", None),
         ("add_on", None),
     ]
+
+
+def test_an_er_encounter_also_searches_the_er_subsection_with_the_same_visit_query():
+    summary = _summary()
+
+    queries = SummaryQueryPlanner().plan_labeled(summary, CareSetting.URGENCE)
+
+    visit = VisitQueryRenderer().render(summary)
+    assert queries[:3] == [
+        PlannedQuery(visit, "visit", section_prefixes=(VISIT_SECTION_PREFIX,)),
+        PlannedQuery(visit, "care_setting_visit", section_prefixes=(CARE_SETTING_VISIT_SECTIONS[CareSetting.URGENCE],)),
+        PlannedQuery(render_for_billing_codes(summary), "overview"),
+    ]
+    assert CARE_SETTING_VISIT_SECTIONS[CareSetting.URGENCE].startswith(f"{VISIT_SECTION_PREFIX} > ")
+
+
+def test_a_setting_without_its_own_subsection_or_none_plans_as_before():
+    summary = _summary()
+
+    assert SummaryQueryPlanner().plan_labeled(summary, CareSetting.CABINET) == SummaryQueryPlanner().plan_labeled(summary)
+    assert [q.source for q in SummaryQueryPlanner().plan_labeled(summary, None)] == ["visit", "overview"]
 
 
 def test_each_procedure_becomes_its_own_query():

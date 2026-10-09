@@ -6,6 +6,7 @@ BillingCodesInput's docstring for why both reach the selection step)."""
 
 from unittest.mock import AsyncMock, patch
 
+from app.care_setting import CareSetting
 from app.extraction.pipeline import run_billing_codes_pipeline
 from app.postgresdb import User, UserRole
 from app.ramq_codes import BillingContext, PhysicianContext
@@ -28,8 +29,10 @@ class _FakeContextBuilder:
         self._context = context
         self.build_calls: list[dict] = []
 
-    async def build(self, *, user, patient_id, encounter_date):
-        self.build_calls.append({"user": user, "patient_id": patient_id, "encounter_date": encounter_date})
+    async def build(self, *, user, patient_id, encounter_date, care_setting=None):
+        self.build_calls.append(
+            {"user": user, "patient_id": patient_id, "encounter_date": encounter_date, "care_setting": care_setting}
+        )
         return self._context
 
 
@@ -95,5 +98,22 @@ async def test_context_builder_receives_the_encounter_date_parsed_from_the_summa
     _s, _b, _client, context_builder = await _run_pipeline()
 
     assert context_builder.build_calls == [
-        {"user": USER, "patient_id": PATIENT_ID, "encounter_date": None}
+        {"user": USER, "patient_id": PATIENT_ID, "encounter_date": None, "care_setting": None}
     ]
+
+
+async def test_context_builder_receives_the_care_setting_the_caller_passed():
+    context_builder = _FakeContextBuilder(BillingContext())
+    with patch("app.extraction.engine.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(
+            side_effect=[_response(MOCK_SUMMARY_RESULT), _response(MOCK_BILLING_RESULT)]
+        )
+        await run_billing_codes_pipeline(
+            TRANSCRIPT,
+            user=USER,
+            patient_id=PATIENT_ID,
+            context_builder=context_builder,
+            care_setting=CareSetting.URGENCE,
+        )
+
+    assert context_builder.build_calls[0]["care_setting"] is CareSetting.URGENCE
