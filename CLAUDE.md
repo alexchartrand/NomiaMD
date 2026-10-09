@@ -104,7 +104,7 @@ Extraction flow: the physician picks a patient *first* (global search), then `PO
 cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
 (physician practice facts + patient age/vulnerability/registration + the encounter's care setting) → `billing_codes`
 (multi-query hybrid retrieval: a visit query rendered from the encounter's form only and scoped to the
-manual's visit section — run again within the care setting's own subsection when it has one (ER for now), the full summary, one per procedure/add-on; eligibility-filtered, RRF-fused with every
+manual's visit section — run again within the care setting's own subsection when it has one (ER for now; its hits pinned first), the full summary, one per procedure/add-on; eligibility-filtered, RRF-fused with every
 visit hit kept, small code families completed → LLM picks from candidates: a short `analysis`, then the codes it is sure of
 (`codes`, stored `retained`: preselected in the review, what inbox approve-all bills) and `other_possible_codes`).
 The physician reviews (and may add codes from the code search), then `POST /claims` saves from
