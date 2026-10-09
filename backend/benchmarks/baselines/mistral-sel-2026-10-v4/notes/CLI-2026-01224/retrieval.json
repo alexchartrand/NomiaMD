@@ -1,0 +1,808 @@
+{
+  "patient_id": "CLI-2026-01224",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 664,
+      "output_tokens": null,
+      "latency_ms": 0.9750360040925443,
+      "started_at": "2026-10-09T17:39:38.265538Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 664,
+    "output_tokens": 0,
+    "llm_latency_ms": 0.9750360040925443,
+    "wall_ms": 48.41847199713811
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15803",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15765",
+          "relevance": 0.0317460335791111
+        },
+        {
+          "number": "15801",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "15773",
+          "relevance": 0.03125
+        },
+        {
+          "number": "15811",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "08776",
+          "relevance": 0.028371628373861313
+        },
+        {
+          "number": "08848",
+          "relevance": 0.02808326855301857
+        },
+        {
+          "number": "15813",
+          "relevance": 0.027863776311278343
+        },
+        {
+          "number": "08775",
+          "relevance": 0.027809742838144302
+        },
+        {
+          "number": "15789",
+          "relevance": 0.02699275314807892
+        },
+        {
+          "number": "08777",
+          "relevance": 0.0251582283526659
+        },
+        {
+          "number": "00020",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "98010",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08819",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15805",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15639",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15880",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15807",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15881",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Suivi pour tendinopathie de la coiffe des rotateurs droite avec bursite sous-acromiale associée, en amélioration sous traitement conservateur (anti-inflammatoires, physiothérapie). Discussion sur une éventuelle infiltration de corticostéroïde si absence de progrès. Adaptation des tâches au travail et formulaire de modification remis.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-04-07\nHeure de début: 14:10\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de tendinopathie de la coiffe des rotateurs à l'épaule droite avec bursite sous-acromiale associée\nSystèmes/régions concernés: musculo-squelettique; épaule_droite\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Tendinopathie de la coiffe des rotateurs (sus-épineux) droite avec bursite sous-acromiale associée, en amélioration progressive sous traitement conservateur\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: épaule_droite; épaule_gauche; membre_supérieur\nConstatations: Amplitude articulaire de l'épaule droite limitée à 140° en abduction active (amélioration par rapport à 100° initialement), rotation externe légèrement limitée. Signe de l'arc douloureux positif entre 70-120°, test de Jobe légèrement positif (douleur, force préservée), Hawkins-Kennedy positif. Légère amélioration de la douleur nocturne (7/10 à 3/10) et meilleure tolérance aux mouvements au-dessus de la tête.\nAjouts possiblement facturables: formulaire_modification_tâches\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Absence de mention explicite de la fin de la consultation pour calculer la durée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "02156",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "02157",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "08776",
+          "relevance": 0.02982766181230545
+        },
+        {
+          "number": "15803",
+          "relevance": 0.02742537297308445
+        },
+        {
+          "number": "02973",
+          "relevance": 0.02690502069890499
+        },
+        {
+          "number": "08062",
+          "relevance": 0.025816122069954872
+        },
+        {
+          "number": "00639",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02833",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08777",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08775",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04582",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00183",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02546",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07230",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02120",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02281",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02034",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15811",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02035",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09928",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "formulaire_modification_tâches",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09928",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "09971",
+          "relevance": 0.030282331630587578
+        },
+        {
+          "number": "15888",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "15885",
+          "relevance": 0.02911604568362236
+        },
+        {
+          "number": "09826",
+          "relevance": 0.02812499925494194
+        },
+        {
+          "number": "09101",
+          "relevance": 0.027799228206276894
+        },
+        {
+          "number": "15886",
+          "relevance": 0.027397260069847107
+        },
+        {
+          "number": "09477",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02324",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00843",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09909",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06925",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07487",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01800",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00704",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02348",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15265",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08867",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15618",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15803",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15803",
+      "rrf_score": 0.0451979103877838,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "08776",
+      "rrf_score": 0.0315136476426799,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "09928",
+      "rrf_score": 0.029324894514767934,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 3. Rapport d'évolution",
+      "description": "Rapport d'évolution d'un travailleur victime d'une lésion professionnelle, expédié à la Commission par un médecin si l'évolution de la pathologie du travailleur modifie de façon significative la nature ou la durée des soins ou des traitements prescrits ou administrés, rédaction et expédition immédiate à la Commission du formulaire d'évolution prescrit par la Commission",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "08775",
+      "rrf_score": 0.02919863597612958,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "08777",
+      "rrf_score": 0.028991596638655463,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15811",
+      "rrf_score": 0.028612012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "02156",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > réparation de la coiffe incluant l'acromioplastie, le cas échéant",
+      "description": "Réparation de la coiffe des rotateurs incluant l'acromioplastie, le cas échéant, extrémités - membres supérieurs, épaule",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15765",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "02157",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > reconstruction de la coiffe (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant",
+      "description": "Reconstruction de la coiffe (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant, extrémités - membres supérieurs, épaule",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "09971",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > A) Assignation temporaire",
+      "description": "Rédaction complète de la partie du formulaire d'assignation temporaire où il est demandé au médecin de se prononcer sur le travail préalablement proposé par l'employeur, dans le cadre des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, remise de la copie au travailleur et expédition sans délai du formulaire d'assignation temporaire prévu par la Commission ou identique à celui-ci",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "15801",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "15888",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaire relatif à la sédation palliative continue",
+      "description": "Formulaire relatif à la sédation palliative continue : Avis de sédation palliative continue",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "15773",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "15885",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire (partie 1) relatif à une demande d'aide médicale à mourir (médecin accompagnateur) : Demande du patient non finalisée",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "15887",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Rapport de consultation relatif à une demande d'aide médicale à mourir (avis du second médecin)",
+      "expanded_from": "15885"
+    },
+    {
+      "rank": 16,
+      "number": "02973",
+      "rrf_score": 0.015625,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthrolyse",
+      "description": "Arthrolyse gléno-humérale d'un membre supérieur, intervention côté droit ou côté gauche",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "09826",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Santé et des Services sociaux",
+      "description": "Remplir le formulaire intitulé « réévaluation médicale » ou son équivalent pour les services professionnels dispensés par le médecin auprès d'un patient, en vue d'un régime de protection public ou privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "09825",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Santé et des Services sociaux",
+      "description": "Remplir le formulaire intitulé « rapport du directeur-général - évaluation médicale » ou son équivalent pour les services professionnels dispensés par le médecin auprès d'un patient, en vue d'un régime de protection public ou privé",
+      "expanded_from": "09826"
+    },
+    {
+      "rank": 19,
+      "number": "08062",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Membres supérieurs > Épaule",
+      "description": "Radiographie de l'épaule, membres supérieurs",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "09101",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié suite à un examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources, examen d'évaluation médicale",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "09063",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, lorsqu'effectué à domicile",
+      "expanded_from": "09101"
+    },
+    {
+      "rank": 22,
+      "number": "09100",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, examen d'évaluation médicale",
+      "expanded_from": "09101"
+    },
+    {
+      "rank": 23,
+      "number": "08848",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "00639",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque droit et/ou artère pulmonaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "15886",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Formulaire et démarches afférentes relatifs à une demande d'aide médicale à mourir (parties 1, 2 et 3) (médecin accompagnateur) : Demande du patient finalisée",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15813",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "02833",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Examen et manipulation",
+      "description": "Examen et manipulation sous anesthésie générale d'un membre supérieur, intervention côté droit ou côté gauche",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "09477",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Injection de substance de contraste",
+      "description": "Injection intraveineuse ou intra-musculaire d'un modificateur physiologique, lors d'un examen radiologique du tube digestif supérieur, du grêle ou du colon, injection de substance de contraste",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "02324",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "G — Appareil musculo-squelettique > Tendons, gaines tendineuses, aponévroses et ligaments > Reconstruction - Réparation > ténoplastie, raccourcissement, allongement, etc.",
+      "description": "Ténoplastie, raccourcissement, allongement, etc., un (1) tendon",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "15789",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "00843",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve à (au)",
+      "description": "Épreuve à l'ergonovine incluant la surveillance immédiate et l'interprétation des modifications électrocardiographiques, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "04582",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Excision au coeur et péricarde, réparation aux ventricules, réparation de sténose de l'infundibulum droit",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "09909",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 8. Rapport complémentaire",
+      "description": "Rapport complémentaire expédié à la Commission par le médecin qui a charge du travailleur pour étayer ses conclusions",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "00020",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen ordinaire du personnel d'un établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "00023",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen complet du personnel d'un établissement",
+      "expanded_from": "00020"
+    },
+    {
+      "rank": 36,
+      "number": "00026",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen complet majeur du personnel d'un établissement",
+      "expanded_from": "00020"
+    },
+    {
+      "rank": 37,
+      "number": "00183",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Biopsie avec ou sans guidage échographique (unique ou multiple)",
+      "description": "Biopsie de la gaine tendineuse, avec ou sans guidage échographique (unique ou multiple)",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "06925",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "Q — Obstétrique",
+      "description": "Version par manoeuvre externe d'une présentation de siège en vertex, avant le travail, après trente-six (36) semaines, incluant l'examen, la visite, la tocolyse, le monitoring externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "98010",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "02546",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Luxation > gléno-humérale > réduction fermée",
+      "description": "Réduction fermée d'une luxation gléno-humérale, extrémités - membres supérieurs, épaule",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "07487",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Révision de la cavité d'évidement mastoïdienne",
+      "description": "Révision de la cavité d'évidement mastoïdienne sans fraisage, ni modification du conduit, à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "07488",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Révision de la cavité d'évidement mastoïdienne",
+      "description": "Révision de la cavité d'évidement mastoïdienne avec plastie de Conche par voie postérieure, à l'oreille moyenne",
+      "expanded_from": "07487"
+    },
+    {
+      "rank": 43,
+      "number": "07489",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Révision de la cavité d'évidement mastoïdienne",
+      "description": "Révision de la cavité d'évidement mastoïdienne avec moulage du mur du facial, à l'oreille moyenne",
+      "expanded_from": "07487"
+    },
+    {
+      "rank": 44,
+      "number": "07490",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Révision de la cavité d'évidement mastoïdienne",
+      "description": "Réfection totale de la cavité d'évidement mastoïdienne à l'oreille moyenne",
+      "expanded_from": "07487"
+    },
+    {
+      "rank": 45,
+      "number": "08819",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "07230",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel droit horizontal ou vertical pour strabisme, incluant les ductions forcées, par muscle (maximum 8 muscles)",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "07231",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel petit oblique pour strabisme, incluant les ductions forcées, par muscle (maximum 2 muscles)",
+      "expanded_from": "07230"
+    },
+    {
+      "rank": 48,
+      "number": "07232",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel grand oblique pour strabisme, incluant les ductions forcées, par muscle (maximum 2 muscles)",
+      "expanded_from": "07230"
+    },
+    {
+      "rank": 49,
+      "number": "07233",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel opéré antérieurement pour strabisme, incluant les ductions forcées, par muscle (maximum 11 muscles), incluant les cas de dysthyroïdie ou après chirurgie de Buckle",
+      "expanded_from": "07230"
+    },
+    {
+      "rank": 50,
+      "number": "01800",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Brûlures > importantes (2e et 3e degré) > traitement subséquent, incluant débridement",
+      "description": "Traitement subséquent d'une brûlure importante (2e et 3e degré), changement de pansements de 20 cm carrés ou plus, par quart d'heure, incluant débridement",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15805",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "02120",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Excision",
+      "description": "Excision acromioplastie ou acromiectomie d'un membre supérieur, intervention côté droit ou côté gauche, ouverte ou par voie arthroscopique incluant, le cas échéant, la bursectomie, la méniscectomie acromio-claviculaire, l'exérèse de l'extrémité distale de la clavicule et le curetage tendineux",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "15790",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15639",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 56,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 57,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 58,
+      "number": "15642",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 59,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 60,
+      "number": "15880",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Intervention clinique à la suite d'une demande d'aide médicale à mourir, forfait pour la première période de quinze (15) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "15882",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Intervention clinique à la suite d'une demande d'aide médicale à mourir, supplément pour déplacement selon les dispositions du sous-paragraphe 2.2.6 B-1 du préambule général par quinze (15) minutes consécutives, maximum de six (6) périodes pour l'aller-retour",
+      "expanded_from": "15880"
+    },
+    {
+      "rank": 62,
+      "number": "15807",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "15881",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Intervention clinique à la suite d'une demande d'aide médicale à mourir, forfait par période de quinze (15) minutes supplémentaires",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 45,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.0827719961525872,
+  "db_ms": 35.09314000257291
+}

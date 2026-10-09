@@ -1,0 +1,856 @@
+{
+  "patient_id": "CLI-2026-01230",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 496,
+      "output_tokens": null,
+      "latency_ms": 0.911513008759357,
+      "started_at": "2026-10-09T17:40:19.365683Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 496,
+    "output_tokens": 0,
+    "llm_latency_ms": 0.911513008759357,
+    "wall_ms": 41.51295300107449
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. sans rendez-vous. Clinique médicale Les Tilleuls. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15765",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15803",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15773",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "15789",
+          "relevance": 0.030117753893136978
+        },
+        {
+          "number": "08776",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "08848",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "08775",
+          "relevance": 0.029009880498051643
+        },
+        {
+          "number": "15801",
+          "relevance": 0.02853124402463436
+        },
+        {
+          "number": "15790",
+          "relevance": 0.02788461558520794
+        },
+        {
+          "number": "15805",
+          "relevance": 0.027692895382642746
+        },
+        {
+          "number": "15811",
+          "relevance": 0.02765151485800743
+        },
+        {
+          "number": "00005",
+          "relevance": 0.027479765936732292
+        },
+        {
+          "number": "08819",
+          "relevance": 0.026709401980042458
+        },
+        {
+          "number": "00020",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00056",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15639",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08777",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15648",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "98010",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15813",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Communication téléphonique entre la médecin de famille et l'oncologue traitant pour coordonner le suivi post-traitement d'un cancer du sein. Résultat de mammographie de contrôle (asymétrie focale, BI-RADS 3) discuté, avec plan de contrôle à 6 mois confirmé et poursuite du traitement hormonal sans ajustement.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-06-23\nHeure de début: 11:00\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Communication interprofessionnelle avec l'oncologue traitant pour coordination du suivi post-traitement d'un cancer du sein et clarification d'un résultat de mammographie de contrôle (asymétrie focale, BI-RADS 3).\nSystèmes/régions concernés: sein; radiologie\nSystème unique ou multiple: single\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Résultat de mammographie de contrôle (asymétrie focale, BI-RADS 3) discuté avec l'oncologue, plan de contrôle à 6 mois confirmé.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: non\nAjouts possiblement facturables: communication_specialiste\nÉlément incertain: Durée de l'appel téléphonique non explicitement mentionnée dans le document.; La patiente n'était pas présente lors de l'échange, mais a été informée ultérieurement.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15803",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "00551",
+          "relevance": 0.027106227353215218
+        },
+        {
+          "number": "00561",
+          "relevance": 0.025816122069954872
+        },
+        {
+          "number": "08142",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00147",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08143",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00844",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15622",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00290",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00060",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00285",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08511",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08800",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00061",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15188",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15631",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15811",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15643",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15765",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15773",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08025",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "00157",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "08232",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "00748",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15898",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "15894",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "08113",
+          "relevance": 0.028594771400094032
+        },
+        {
+          "number": "15786",
+          "relevance": 0.02715098112821579
+        },
+        {
+          "number": "04600",
+          "relevance": 0.026742734014987946
+        },
+        {
+          "number": "15787",
+          "relevance": 0.02500000037252903
+        },
+        {
+          "number": "15188",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08006",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15622",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01326",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00552",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08242",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09908",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08008",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15788",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04708",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15803",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15765",
+      "rrf_score": 0.029487179487179487,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "15622",
+      "rrf_score": 0.028814262023217248,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15773",
+      "rrf_score": 0.02878726010616578,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15188",
+      "rrf_score": 0.027799227799227798,
+      "header_path": "B — Consultation, examen et visite",
+      "description": "Supplément pour la communication par l'intermédiaire d'un interprète, en cabinet, à domicile ou en établissement pour un patient inscrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15811",
+      "rrf_score": 0.027443609022556388,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "08025",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires",
+      "description": "Sialographie, examen spécial",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00551",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Interventions per-cutanées non vasculaires > Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique > Mammaire > Biopsie d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie), incluant la mammographie effectuée le même jour, le cas échéant",
+      "description": "Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique, Mammaire, Biopsie d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie), incluant la mammographie effectuée le même jour, le cas échéant",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "00157",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux > interprétation",
+      "description": "Interprétation de tests spéciaux en audiométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "00561",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Interventions per-cutanées non vasculaires > Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique > Mammaire > Localisation d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie), incluant la mammographie postlocalisation et la biopsie, le cas échéant",
+      "description": "Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique, Mammaire, Localisation d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie), incluant la mammographie postlocalisation et la biopsie, le cas échéant",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "08232",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires",
+      "description": "Tomographie, examen spécial",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "15789",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "08142",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Mammographie > avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "description": "Mammographie unilatérale avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "00748",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux > interprétation et technique de procédé",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "08776",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "00147",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Néphrologie > Dialyse (sans égard au lieu, n'incluant pas les techniques pour accès)",
+      "description": "Visites pour le contrôle du traitement par hémodialyse en centre satellite comprenant la revue du dossier de chaque dialyse, l'interprétation des résultats sanguins avant ou après chaque dialyse, le contrôle de l'anticoagulothérapie, la surveillance hebdomadaire d'une dialyse et le contrôle à distance des traitements, par mois, par patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "15898",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "08848",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "08143",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Mammographie > avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "description": "Mammographie bilatérale avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "15894",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication par conseil numérique (eConsult)",
+      "description": "Communication par conseil numérique (eConsult) lorsqu'effectuée en cabinet ou en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "08775",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "00844",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Hyperalimentation",
+      "description": "Hyperalimentation parentérale permanente, soins du patient non hospitalisé, par mois (cet acte est réservé au seul médecin responsable de la mise en marche et du contrôle du traitement et comprend tous les services médicaux ou administratifs rendus par le médecin en rapport avec la pathologie en cause)",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "00845",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Hyperalimentation",
+      "description": "Révision de cathéter d'hyperalimentation prolongée type Scribner ou Broviac",
+      "expanded_from": "00844"
+    },
+    {
+      "rank": 24,
+      "number": "09331",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Hyperalimentation",
+      "description": "Installation de cathéter d'hyperalimentation prolongée type Scribner ou Broviac",
+      "expanded_from": "00844"
+    },
+    {
+      "rank": 25,
+      "number": "09332",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Hyperalimentation",
+      "description": "Exérèse de cathéter d'hyperalimentation prolongée type Scribner ou Broviac",
+      "expanded_from": "00844"
+    },
+    {
+      "rank": 26,
+      "number": "08113",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Thorax > Larynx, études spéciales > phonation",
+      "description": "Larynx, études spéciales, phonation, radiologie diagnostique du thorax",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "15801",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "15786",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, période supplémentaire de quinze (15) minutes, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "15785",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, première période de trente (30) minutes, en communications",
+      "expanded_from": "15786"
+    },
+    {
+      "rank": 30,
+      "number": "15790",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "00290",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Néphrologie > Dialyse (sans égard au lieu, n'incluant pas les techniques pour accès)",
+      "description": "Visites pour le contrôle du traitement par hémodialyse à domicile, par mois, par patient, comprenant la revue du dossier de chaque dialyse, l'interprétation des résultats sanguins avant et après chaque dialyse, le contrôle de l'anticoagulothérapie et revue de l'évolution du patient en plus de l'examen lors d'une visite périodique",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "04600",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > réparation d'une communication interauriculaire, type ostium secundum",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, supplément, en chirurgie coronarienne",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "15805",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "00060",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "00062",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 36,
+      "number": "15656",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 37,
+      "number": "15657",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 38,
+      "number": "15658",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 39,
+      "number": "15787",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (collective) > Psychothérapie collective",
+      "description": "Psychothérapie collective, première période de trente (30) minutes, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "15788",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (collective) > Psychothérapie collective",
+      "description": "Psychothérapie collective, période supplémentaire de quinze (15) minutes, en communications",
+      "expanded_from": "15787"
+    },
+    {
+      "rank": 41,
+      "number": "00285",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Néphrologie > Dialyse (sans égard au lieu, n'incluant pas les techniques pour accès) > Visites pour le contrôle du traitement par dialyse péritonéale à domicile, par mois, par patient, comprenant la revue du dossier de chaque dialyse, l'interprétation des résultats sanguins avant et après chaque dialyse, le contrôle de l'anticoagulothérapie et revue de l'évolution du patient en plus de l'examen lors d'une visite périodique",
+      "description": "Visites pour le contrôle du traitement par dialyse péritonéale à domicile, par mois, par patient de plus de seize (16) ans, comprenant la revue du dossier de chaque dialyse, l'interprétation des résultats sanguins avant et après chaque dialyse, le contrôle de l'anticoagulothérapie et revue de l'évolution du patient en plus de l'examen lors d'une visite périodique",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "00005",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "00006",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "00005"
+    },
+    {
+      "rank": 44,
+      "number": "08511",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations pour lésions non cutanées, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "08006",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires",
+      "description": "Stéréotaxie, examen spécial",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "08819",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "08800",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 49,
+      "number": "08803",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 50,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 51,
+      "number": "09092",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen préanesthésie d'un patient de moins de 70 ans, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 52,
+      "number": "15192",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen d'urgence avec déplacement d'un patient de moins de 70 ans, en centre hospitalier seulement, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 53,
+      "number": "00020",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen ordinaire du personnel d'un établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "00023",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen complet du personnel d'un établissement",
+      "expanded_from": "00020"
+    },
+    {
+      "rank": 55,
+      "number": "00026",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen complet majeur du personnel d'un établissement",
+      "expanded_from": "00020"
+    },
+    {
+      "rank": 56,
+      "number": "00061",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "01326",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Plaie > exploration d'une plaie sous anesthésie",
+      "description": "Exploration d'une plaie sous anesthésie, sans réparation, d'une plaie complexe nécessitant un transfert à un autre médecin",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "00056",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "00057",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "00056"
+    },
+    {
+      "rank": 60,
+      "number": "15639",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 62,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 63,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 64,
+      "number": "15642",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 65,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 66,
+      "number": "08777",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 67,
+      "number": "15648",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 68,
+      "number": "98010",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 69,
+      "number": "15813",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 54,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.0383570042904466,
+  "db_ms": 25.199918993166648
+}

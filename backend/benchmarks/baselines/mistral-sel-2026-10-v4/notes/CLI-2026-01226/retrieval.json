@@ -1,0 +1,1292 @@
+{
+  "patient_id": "CLI-2026-01226",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 965,
+      "output_tokens": null,
+      "latency_ms": 1.4475250063696876,
+      "started_at": "2026-10-09T17:39:45.169388Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 965,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.4475250063696876,
+    "wall_ms": 67.691885997192
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite d'évaluation pour donner une opinion. sans rendez-vous. Clinique médicale Les Tilleuls. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15789",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15790",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "08777",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "15619",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "15642",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "15651",
+          "relevance": 0.03030303120613098
+        },
+        {
+          "number": "15630",
+          "relevance": 0.02985074557363987
+        },
+        {
+          "number": "08948",
+          "relevance": 0.02919863536953926
+        },
+        {
+          "number": "15668",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "08819",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "15765",
+          "relevance": 0.027598019689321518
+        },
+        {
+          "number": "15773",
+          "relevance": 0.027222221717238426
+        },
+        {
+          "number": "09100",
+          "relevance": 0.02547874115407467
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09948",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08776",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "09977",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "00060",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00061",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "00005",
+          "relevance": 0.01315789483487606
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation en médecine familiale pour une lésion pigmentée suspecte au dos chez une patiente de 51 ans. Examen dermatologique réalisé avec dermoscope, critères ABCDE positifs identifiés. Référence urgente en dermatologie pour exérèse-biopsie recommandée et organisée.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-04-21\nHeure de début: 15:00\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nDemandeur (identifiant): Dr. Isabelle Roy, MD\nMotif de la référence: Lésion pigmentée suspecte de mélanome au dos avec critères ABCDE positifs nécessitant exérèse-biopsie urgente en dermatologie\nRapport écrit requis/produit: oui\nMotif de consultation: Opinion sur un grain de beauté changeant d'aspect au dos, remarqué par le conjoint\nSystèmes/régions concernés: tégument; peau; dos\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Lésion pigmentée suspecte de mélanome (critères ABCDE positifs, changement rapporté)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: oui\nRégions examinées: tégument; peau; dos; région scapulaire droite\nConstatations: Lésion pigmentée de 8 mm de diamètre au dos avec asymétrie, bords irréguliers, coloration hétérogène, diamètre > 6 mm et évolution rapportée. Réseau pigmentaire atypique et zones de régression notés au dermoscope. Plusieurs nævus banals dispersés, aucun autre suspect. Pas d'adénopathie palpable régionale.\nActe réalisé 1 - Description: Examen dermatologique dirigé de la lésion au dos avec dermoscope de bureau\nActe réalisé 1 - Acte (générique): examen dermatologique avec dermoscope\nActe réalisé 1 - Site: dos, région scapulaire droite\nActe réalisé 1 - Technique/approche: critères ABCDE évalués, réseau pigmentaire atypique et zones de régression notés\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 2 - Description: Photographie clinique de la lésion pigmentée au dos\nActe réalisé 2 - Acte (générique): photographie clinique\nActe réalisé 2 - Site: dos\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nAjouts possiblement facturables: communication_specialiste\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript; Absence de mention explicite de l'heure de fin de la consultation",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01165",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09372",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01166",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01158",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00335",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01182",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09535",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01153",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00425",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01184",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06100",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01185",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00468",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01183",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15795",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01157",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15796",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01156",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08264",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "examen dermatologique avec dermoscope",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00005",
+          "relevance": 0.03047795034945011
+        },
+        {
+          "number": "00056",
+          "relevance": 0.0295138880610466
+        },
+        {
+          "number": "00097",
+          "relevance": 0.02758360095322132
+        },
+        {
+          "number": "08807",
+          "relevance": 0.02752639539539814
+        },
+        {
+          "number": "08903",
+          "relevance": 0.027272727340459824
+        },
+        {
+          "number": "00830",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00403",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15895",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00576",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00821",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00425",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00404",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00468",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09054",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00328",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20293",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "20294",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00541",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00006",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00057",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Examen dermatologique dirigé de la lésion au dos avec dermoscope de bureau",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00468",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "00425",
+          "relevance": 0.02905167080461979
+        },
+        {
+          "number": "15895",
+          "relevance": 0.028205128386616707
+        },
+        {
+          "number": "00386",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01227",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09939",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01184",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00830",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01163",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01165",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09372",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01185",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00821",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01158",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09931",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01162",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00335",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01166",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00345",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01153",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "photographie clinique",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00553",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "00577",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "00355",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "08142",
+          "relevance": 0.028205128386616707
+        },
+        {
+          "number": "08140",
+          "relevance": 0.02808326855301857
+        },
+        {
+          "number": "08143",
+          "relevance": 0.025991560891270638
+        },
+        {
+          "number": "00830",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08132",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00360",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08861",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08272",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00537",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08270",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08271",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08141",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09390",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06938",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08133",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06939",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00061",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Photographie clinique de la lésion pigmentée au dos",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01184",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09372",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00830",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00553",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01185",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00577",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01417",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00335",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01405",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00345",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01416",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08520",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01227",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08547",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01182",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08042",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01158",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09315",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01406",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01300",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08025",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "00157",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "08232",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "00748",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15898",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "15894",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "08113",
+          "relevance": 0.028594771400094032
+        },
+        {
+          "number": "15786",
+          "relevance": 0.02715098112821579
+        },
+        {
+          "number": "04600",
+          "relevance": 0.026742734014987946
+        },
+        {
+          "number": "15787",
+          "relevance": 0.02500000037252903
+        },
+        {
+          "number": "15188",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08006",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15622",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01326",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00552",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08242",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09908",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08008",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15788",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04708",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00830",
+      "rrf_score": 0.06159053592852341,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Photochimiothérapie en dermatologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "00328",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de l'acné par chirurgie et/ou cryothérapie et/ou thérapie physique en dermatologie (excluant le Laser), y compris l'extraction de comédons, un (1) ou plusieurs traitements par séance",
+      "expanded_from": "00830"
+    },
+    {
+      "rank": 3,
+      "number": "09372",
+      "rrf_score": 0.047072599531615925,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation)",
+      "description": "Évaluation d'une dose thérapeutique d'iode",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "00119",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation)",
+      "description": "Acidification urinaire, en établissement",
+      "expanded_from": "09372"
+    },
+    {
+      "rank": 5,
+      "number": "00128",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation)",
+      "description": "Détermination de la filtration glomérulaire par « clearance » à l'insuline (incluant technique et interprétation), en établissement",
+      "expanded_from": "09372"
+    },
+    {
+      "rank": 6,
+      "number": "01184",
+      "rrf_score": 0.046103896103896105,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes > diamètre de un (1) cm ou moins",
+      "description": "Excision ou destruction de tumeurs précancéreuses de la peau (biopsies comprises) au tronc, aux bras ou aux jambes, diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "00425",
+      "rrf_score": 0.045171910531853515,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Infiltration intralésionnelle en dermatologie, une (1) ou plusieurs lésions",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00468",
+      "rrf_score": 0.04425418569254186,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Injection de substance sclérosante, intralésionnelle en dermatologie, une (1) ou plusieurs lésions",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "01185",
+      "rrf_score": 0.04359839593114241,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes > diamètre de plus de un (1) cm",
+      "description": "Excision ou destruction de tumeurs précancéreuses de la peau (biopsies comprises) au tronc, aux bras ou aux jambes, diamètre de plus de un (1) cm",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "00335",
+      "rrf_score": 0.04346788325578585,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Insulinothérapie intensive à doses multiples et variables",
+      "description": "Insulinothérapie intensive à doses multiples et variables, traitement initial par patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "09315",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Insulinothérapie intensive à doses multiples et variables",
+      "description": "Insulinothérapie intensive à doses multiples et variables, vérification du traitement, par période de trois (3) mois, par patient",
+      "expanded_from": "00335"
+    },
+    {
+      "rank": 12,
+      "number": "01158",
+      "rrf_score": 0.042481524873828405,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de quatre (4) cm ou cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de quatre (4) centimètres ou cinq (5) centimètres",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "00553",
+      "rrf_score": 0.032539682539682535,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Rétinophotographie, pour les deux yeux à moins de mention contraire",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "00577",
+      "rrf_score": 0.03177805800756621,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Microscopie spéculaire étude endothéliale au microscope spéculaire ou photographie du segment antérieur à la lampe à fente, avec documents permanents, pour les deux yeux à moins de mention contraire",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "01165",
+      "rrf_score": 0.03115942028985507,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de trois (3) cm ou moins",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de trois (3) centimètres ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "15895",
+      "rrf_score": 0.031054405392392875,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > Consultations virtuelles en temps différé > Télédermatologie",
+      "description": "Télédermatologie, consultation virtuelle en temps différé lorsqu'effectuée en cabinet ou en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "01227",
+      "rrf_score": 0.029513888888888888,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale",
+      "description": "Excision chirurgicale d'une verrue en mosaïque (excision totale) par séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "01224",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale",
+      "description": "Excision chirurgicale d'une verrue avec excision totale et plastie",
+      "expanded_from": "01227"
+    },
+    {
+      "rank": 19,
+      "number": "00005",
+      "rrf_score": 0.029324894514767934,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "00006",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "00005"
+    },
+    {
+      "rank": 21,
+      "number": "01166",
+      "rrf_score": 0.029116045245077504,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > tronc, bras et jambes > diamètre de trois (3) cm ou moins",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du tronc, des bras ou des jambes, incluant fermeture simple, diamètre de trois (3) centimètres ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "01182",
+      "rrf_score": 0.028665028665028666,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux > diamètre de un (1) cm ou moins",
+      "description": "Excision ou destruction de tumeurs précancéreuses de la peau (biopsies comprises) à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de un (1) cm ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "00821",
+      "rrf_score": 0.028381642512077296,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de Goekerman en dermatologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "01153",
+      "rrf_score": 0.027364110201042444,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de plus de cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de plus de cinq (5) centimètres, premiers cinq (5) centimètres",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "00345",
+      "rrf_score": 0.027313266443701224,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Insulinothérapie intensive à doses multiples et variables",
+      "description": "Insulinothérapie intensive à doses multiples et variables, installation initiale de la pompe et du cathéter",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "00061",
+      "rrf_score": 0.025478740668614087,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "00062",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 28,
+      "number": "15656",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 29,
+      "number": "15657",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 30,
+      "number": "15658",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 31,
+      "number": "15789",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "08025",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires",
+      "description": "Sialographie, examen spécial",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "15790",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "00056",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "00057",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "00056"
+    },
+    {
+      "rank": 36,
+      "number": "00157",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux > interprétation",
+      "description": "Interprétation de tests spéciaux en audiométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "08777",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "00097",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet majeur",
+      "description": "Examen complet majeur d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "00098",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet majeur",
+      "description": "Examen complet majeur d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "00097"
+    },
+    {
+      "rank": 40,
+      "number": "00355",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électromyographie",
+      "description": "E.M.G. quantitatif incluant documents photographiques et analyse détaillée d'au moins vingt potentiels différents, en établissement ou en cabinet privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "08232",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires",
+      "description": "Tomographie, examen spécial",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "15619",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "00953",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "08807",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "08806",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient admis de moins de 70 ans en clinique externe",
+      "expanded_from": "08807"
+    },
+    {
+      "rank": 46,
+      "number": "08808",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "08807"
+    },
+    {
+      "rank": 47,
+      "number": "00386",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électromyographie",
+      "description": "Réponses cutanées sympatiques (RCS), stimulations du nerf médian avec enregistrement à partir de la main et du pied contra-latéral, en établissement ou en cabinet privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "08142",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Mammographie > avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "description": "Mammographie unilatérale avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "08143",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Mammographie > avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "description": "Mammographie bilatérale avec examen clinique fait par le médecin et dont le sommaire est gardé au dossier radiologique",
+      "expanded_from": "08142"
+    },
+    {
+      "rank": 50,
+      "number": "00748",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux > interprétation et technique de procédé",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15642",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 53,
+      "number": "15639",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 54,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 55,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 56,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 57,
+      "number": "08903",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'un patient admis de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "08140",
+      "rrf_score": 0.015625,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Mammographie > sans examen clinique",
+      "description": "Mammographie unilatérale sans examen clinique",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "08141",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Mammographie > sans examen clinique",
+      "description": "Mammographie bilatérale sans examen clinique",
+      "expanded_from": "08140"
+    },
+    {
+      "rank": 60,
+      "number": "15898",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "15651",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "15630",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "08948",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "15668",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "08819",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 66,
+      "number": "15765",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 67,
+      "number": "15773",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 68,
+      "number": "09100",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, examen d'évaluation médicale",
+      "expanded_from": null
+    },
+    {
+      "rank": 69,
+      "number": "09063",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, lorsqu'effectué à domicile",
+      "expanded_from": "09100"
+    },
+    {
+      "rank": 70,
+      "number": "09101",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié suite à un examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources, examen d'évaluation médicale",
+      "expanded_from": "09100"
+    },
+    {
+      "rank": 71,
+      "number": "98010",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 72,
+      "number": "09948",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 7. Opinion du médecin avant la consolidation de la lésion professionnelle",
+      "description": "Opinion du médecin avant la consolidation de la lésion professionnelle, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 73,
+      "number": "09949",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 7. Opinion du médecin avant la consolidation de la lésion professionnelle",
+      "description": "Opinion du médecin avant la consolidation de la lésion professionnelle, avec considération en raison de la complexité, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": "09948"
+    },
+    {
+      "rank": 74,
+      "number": "08776",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 75,
+      "number": "09977",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission lorsque le médecin rend son avis en cabinet privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 76,
+      "number": "09902",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale par un médecin désigné par la Commission",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 77,
+      "number": "09946",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale en urgence par un médecin désigné par la Commission, examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 78,
+      "number": "09978",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale par un médecin désigné par la Commission, examen du travailleur, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 79,
+      "number": "09980",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 80,
+      "number": "00060",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 51,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.58486700092908,
+  "db_ms": 53.51953399076592
+}

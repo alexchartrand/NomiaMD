@@ -1,0 +1,1006 @@
+{
+  "patient_id": "CHSLD-2026-00053",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 739,
+      "output_tokens": null,
+      "latency_ms": 1.3678260002052411,
+      "started_at": "2026-10-09T17:41:26.477565Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 739,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.3678260002052411,
+    "wall_ms": 42.6351549976971
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. urgence. CHSLD Saint-Jude (fictif) — Unité 2 Est. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15623",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "15626",
+          "relevance": 0.030017921701073647
+        },
+        {
+          "number": "15634",
+          "relevance": 0.02943722903728485
+        },
+        {
+          "number": "15627",
+          "relevance": 0.029206348583102226
+        },
+        {
+          "number": "15633",
+          "relevance": 0.02919863536953926
+        },
+        {
+          "number": "15616",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "15617",
+          "relevance": 0.028717948123812675
+        },
+        {
+          "number": "15635",
+          "relevance": 0.028577260673046112
+        },
+        {
+          "number": "15624",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15629",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15625",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15628",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15632",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15622",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15621",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15645",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15619",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15630",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15667",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation en urgence au CHSLD pour chute avec plaie frontale chez un patient de 89 ans sous apixaban. Évaluation clinique, nettoyage et rapprochement de la plaie avec bandelettes adhésives. Surveillance neurologique renforcée et ajustement temporaire de l'anticoagulation.\nLieu (détail): CHSLD Saint-Jude (fictif) — Unité 2 Est\nDate: 2026-09-23\nHeure de début: 21:40\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Chute avec plaie au front chez patient sous apixaban\nSystèmes/régions concernés: tête; système_nerveux; peau; système_cardiovasculaire\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Chute mécanique avec traumatisme cranio-cérébral léger chez patient anticoagulé\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: neurologique; cardiovasculaire; peau; colonne_cervicale; hanches\nConstatations: Plaie frontale gauche de 2 cm superficielle, hématome, TA 148/82, FC 88 irrégulière, glycémie 7,1, GCS 14, pas de déficit moteur ni dlr cervicale\nActe réalisé 1 - Description: Nettoyage et rapprochement d'une plaie frontale de 2 cm avec bandelettes adhésives (Steri-Strip)\nActe réalisé 1 - Acte (générique): soins de plaie cutanée\nActe réalisé 1 - Site: front gauche\nActe réalisé 1 - Technique/approche: nettoyage, rapprochement avec bandelettes adhésives\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nAjouts possiblement facturables: deplacement_urgence\nÉlément incertain: Durée exacte de la consultation non précisée dans le document; Heure de fin de la consultation non mentionnée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15068",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "09234",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01327",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09231",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15054",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15659",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15057",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15660",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15060",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15661",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15063",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09237",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00953",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08995",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "20025",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08997",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00310",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15067",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15638",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15070",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "soins de plaie cutanée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01326",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "01325",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "01327",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "07411",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "07410",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "01370",
+          "relevance": 0.02741784043610096
+        },
+        {
+          "number": "01415",
+          "relevance": 0.025320513173937798
+        },
+        {
+          "number": "00578",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01320",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01322",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05347",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01323",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05431",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07808",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08510",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07413",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09462",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "05196",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "05376",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06159",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Nettoyage et rapprochement d'une plaie frontale de 2 cm avec bandelettes adhésives (Steri-Strip)",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01322",
+          "relevance": 0.029726775363087654
+        },
+        {
+          "number": "01320",
+          "relevance": 0.02837301604449749
+        },
+        {
+          "number": "01326",
+          "relevance": 0.02633402682840824
+        },
+        {
+          "number": "01327",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01325",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07007",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02434",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01323",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07302",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07501",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07309",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01416",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "05034",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01406",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "05035",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01151",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "05066",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01405",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "05068",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01156",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "deplacement_urgence",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15644",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15646",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "15655",
+          "relevance": 0.02964254654943943
+        },
+        {
+          "number": "15653",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "15645",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "15659",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "15654",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "15847",
+          "relevance": 0.028629032894968987
+        },
+        {
+          "number": "15660",
+          "relevance": 0.028484849259257317
+        },
+        {
+          "number": "08815",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "15661",
+          "relevance": 0.02808326855301857
+        },
+        {
+          "number": "08928",
+          "relevance": 0.027783136814832687
+        },
+        {
+          "number": "15193",
+          "relevance": 0.026153845712542534
+        },
+        {
+          "number": "15623",
+          "relevance": 0.025316456332802773
+        },
+        {
+          "number": "09245",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15848",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15849",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15634",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15635",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15633",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "01327",
+      "rrf_score": 0.048131080389144903,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > débridement isolé de plaie (excluant les brûlures)",
+      "description": "Débridement isolé de plaie (excluant les brûlures), chaque unité de un (1) cm",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "01326",
+      "rrf_score": 0.03279569892473118,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Plaie > exploration d'une plaie sous anesthésie",
+      "description": "Exploration d'une plaie sous anesthésie, sans réparation, d'une plaie complexe nécessitant un transfert à un autre médecin",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "01325",
+      "rrf_score": 0.032018442622950824,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) de plaies étendues, multiples ou compliquées à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "01322",
+      "rrf_score": 0.03115942028985507,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération compliquée de moins de deux centimètres et demi (2,5 cm) à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "01320",
+      "rrf_score": 0.031099324975891997,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération simple de moins de un (1) cm à la face et au cou, la somme des centimètres s'additionnant à la valeur de base payable qu'une fois",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15659",
+      "rrf_score": 0.03076923076923077,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15623",
+      "rrf_score": 0.030365296803652967,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15660",
+      "rrf_score": 0.029631255487269532,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15634",
+      "rrf_score": 0.029116045245077504,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "01323",
+      "rrf_score": 0.02900988017658188,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > autres localisations",
+      "description": "Réparation de plaies (débridement compris) d'une lacération simple de moins de un (1) cm à d'autres localisations que la face et le cou, la somme des centimètres s'additionnant à la valeur de base payable qu'une fois",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "15645",
+      "rrf_score": 0.028782894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "15661",
+      "rrf_score": 0.02877846790890269,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "09237",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation majeure d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15661"
+    },
+    {
+      "rank": 14,
+      "number": "15633",
+      "rrf_score": 0.028283227848101264,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "15635",
+      "rrf_score": 0.027745885954841176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "15068",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > intervention en situation complexe > patient de 70 ans et plus",
+      "description": "Intervention en situation complexe d'un patient inscrit de 70 ans ou plus, au service d'urgence des centres hospitaliers et du CLSC du réseau de garde, première période de trente (30) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "15644",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15626",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "09234",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation ordinaire d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "15646",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "15655",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "15627",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "09231",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation mineure d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "07411",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Plastie de plaie traumatique de la conjonctive avec greffe de la muqueuse conjonctivale ou buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "07413",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Fermeture secondaire d'une plaie opératoire de la conjonctive",
+      "expanded_from": "07411"
+    },
+    {
+      "rank": 26,
+      "number": "07434",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie générale incluant l'examen sous anesthésie générale",
+      "expanded_from": "07411"
+    },
+    {
+      "rank": 27,
+      "number": "15653",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "15054",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire sans déplacement",
+      "description": "Examen ordinaire sans déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "07410",
+      "rrf_score": 0.015625,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie locale",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "15616",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "01370",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Xénogreffe cutanée de moins de six (6) cm carrés, greffes cutanées ou greffes cultivées",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "01335",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Prélèvement de greffon cutané par un médecin autre que celui qui a appliqué le greffon (peu importe le nombre de greffons), greffes cutanées ou greffes cultivées",
+      "expanded_from": "01370"
+    },
+    {
+      "rank": 33,
+      "number": "01371",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Xénogreffe cutanée de six (6) cm carrés à soixante (60) cm carrés, greffes cutanées ou greffes cultivées",
+      "expanded_from": "01370"
+    },
+    {
+      "rank": 34,
+      "number": "01372",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Xénogreffe cutanée de soixante (60) cm carrés à six cents (600) cm carrés, greffes cutanées ou greffes cultivées",
+      "expanded_from": "01370"
+    },
+    {
+      "rank": 35,
+      "number": "07007",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "T — Appareil visuel > Cornée",
+      "description": "Application d'adhésif (e.g. cyanoacrylate) pour plaie cornéenne, avec ou sans mise en place de verre de contact",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15617",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "15057",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire avec déplacement (d'urgence avec déplacement)",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "01415",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Fistule cutanée",
+      "description": "Exérèse de fistule cutanée profonde sous-aponévrotique, fistule cutanée",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "01414",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Fistule cutanée",
+      "description": "Exérèse de fistule cutanée superficielle sus-aponévrotique, fistule cutanée",
+      "expanded_from": "01415"
+    },
+    {
+      "rank": 40,
+      "number": "02434",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cuisse",
+      "description": "Allongement ou section de la bandelette de Maissiat de la cuisse",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "02041",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cuisse",
+      "description": "Fasciotomie fémorale de la cuisse",
+      "expanded_from": "02434"
+    },
+    {
+      "rank": 42,
+      "number": "02295",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cuisse",
+      "description": "Amputation de la cuisse",
+      "expanded_from": "02434"
+    },
+    {
+      "rank": 43,
+      "number": "02426",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cuisse",
+      "description": "Quadriceps plastie de la cuisse incluant arthrolyse",
+      "expanded_from": "02434"
+    },
+    {
+      "rank": 44,
+      "number": "15654",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "00578",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers",
+      "description": "Pansement de vingt (20) cm2 ou plus, en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "15847",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 7 h à 16 h en cabinet, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "15848",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 16 h à 24 h en cabinet, en communications",
+      "expanded_from": "15847"
+    },
+    {
+      "rank": 48,
+      "number": "15849",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 0 h à 7 h en cabinet, en communications",
+      "expanded_from": "15847"
+    },
+    {
+      "rank": 49,
+      "number": "15624",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "15060",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal sans déplacement",
+      "description": "Examen principal sans déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "07302",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "U — Appareil auditif > Oreille moyenne",
+      "description": "Nettoyage d'une cavité de mastoïdectomie sous microscope à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "07257",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne",
+      "description": "Stapédectomie à l'oreille moyenne",
+      "expanded_from": "07302"
+    },
+    {
+      "rank": 53,
+      "number": "07270",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne",
+      "description": "Reprise complète de stapédectomie avec remplacement de la prothèse incluant, le cas échéant, la cure de fistule, à l'oreille moyenne",
+      "expanded_from": "07302"
+    },
+    {
+      "rank": 54,
+      "number": "07286",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne",
+      "description": "Reprise partielle de stapédectomie incluant, le cas échéant, le repositionnement de la prothèse et la cure de fistule, à l'oreille moyenne",
+      "expanded_from": "07302"
+    },
+    {
+      "rank": 55,
+      "number": "07435",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne",
+      "description": "Supplément pour technique de Perkins ou homogreffe de tympan lors d'une masto-tympanoplastie à l'oreille moyenne",
+      "expanded_from": "07302"
+    },
+    {
+      "rank": 56,
+      "number": "07452",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne",
+      "description": "Supplément pour technique de Perkins ou homogreffe de tympan lors d'une tympanoplastie ou masto-tympanoplastie à l'oreille moyenne",
+      "expanded_from": "07302"
+    },
+    {
+      "rank": 57,
+      "number": "15629",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de transfert dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "15625",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "15628",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi exigeant un examen dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "15632",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires concernant l'ensemble des patients d'une unité ou de l'établissement (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "15622",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "98010",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "15621",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Échanges interdisciplinaires concernant l'ensemble des patients d'une unité ou de l'établissement (par période de quinze (15) minutes) dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "15619",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "15630",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 66,
+      "number": "15667",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 89,
+    "panel_size": 900,
+    "is_registered": null,
+    "is_vulnerable": null
+  },
+  "embedding_ms": 1.5018119884189218,
+  "db_ms": 33.10703499300871
+}

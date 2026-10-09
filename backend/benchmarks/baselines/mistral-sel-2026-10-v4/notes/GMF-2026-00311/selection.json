@@ -1,0 +1,110 @@
+{
+  "patient_id": "GMF-2026-00311",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 7355,
+      "output_tokens": 742,
+      "latency_ms": 5531.278944996302,
+      "started_at": "2026-10-09T17:40:32.772951Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 7355,
+    "output_tokens": 742,
+    "llm_latency_ms": 5531.278944996302,
+    "wall_ms": 5535.633884996059
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15823",
+    "15811",
+    "15821",
+    "08776",
+    "15819",
+    "08848",
+    "15831",
+    "08775",
+    "15807",
+    "15805",
+    "15775",
+    "09312",
+    "15767",
+    "00290",
+    "00147",
+    "15809",
+    "08777",
+    "00285",
+    "15829",
+    "00288",
+    "00287",
+    "08858",
+    "09425",
+    "08860",
+    "15052",
+    "08867",
+    "08869",
+    "00060",
+    "00061",
+    "00062",
+    "15656",
+    "15657",
+    "15658",
+    "15789",
+    "15827",
+    "15790",
+    "09315",
+    "00335",
+    "00345"
+  ],
+  "prompt_chars": 29414,
+  "raw_code_count": 3,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15823",
+        "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "high",
+        "explanation": "La patiente est vulnérable, inscrite, a moins de 80 ans, la visite est sur rendez-vous et la clientèle du médecin est de 320 patients. Il s'agit d'un suivi de routine.",
+        "supporting_quote": "Suivi de routine pour une patiente de 67 ans avec diabète de type 2 (DB2) et insuffisance rénale chronique (IRC) stade 3a. [...] Rendez-vous: avec rendez-vous",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15819",
+        "description": "Visite périodique d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "medium",
+        "explanation": "La visite pourrait être interprétée comme périodique, mais le résumé et le transcript précisent qu'il s'agit d'un suivi de routine pour des problèmes chroniques, ce qui correspond mieux à une visite de suivi.",
+        "supporting_quote": "Suivi de routine pour une patiente de 67 ans avec diabète de type 2 (DB2) et insuffisance rénale chronique (IRC) stade 3a.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15821",
+        "description": "Visite de prise en charge d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "low",
+        "explanation": "La visite ne correspond pas à une prise en charge initiale, mais à un suivi de routine. Ce code est donc moins pertinent.",
+        "supporting_quote": "Suivi de routine pour une patiente de 67 ans avec diabète de type 2 (DB2) et insuffisance rénale chronique (IRC) stade 3a.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la consultation n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code pour cette visite de suivi. Aucun autre service (procédure, test, supplément) n'a été documenté comme ayant été effectué pendant cette rencontre.",
+    "analysis": "Rencontre en clinique GMF, sur rendez-vous, pour une patiente de 67 ans inscrite et désignée vulnérable. Une seule visite a eu lieu : un suivi de routine pour diabète de type 2 et insuffisance rénale chronique, incluant anamnèse, examen physique (cardiovasculaire et pieds), ajustement du traitement (ajout d'empagliflozine) et recommandations. Aucune procédure, test, supplément ou certificat n'est mentionné. Le code doit correspondre à une visite de suivi pour un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, avec une clientèle de moins de 500 patients. Les codes liés à la grossesse, aux problèmes musculo-squelettiques ou à la santé mentale sont exclus car non pertinents. Les codes pour visites sans rendez-vous ou pour patients non inscrits sont également exclus."
+  }
+}

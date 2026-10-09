@@ -1,0 +1,801 @@
+{
+  "patient_id": "CLI-2026-01222",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 470,
+      "output_tokens": null,
+      "latency_ms": 0.8500049880240113,
+      "started_at": "2026-10-09T17:39:32.006984Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 470,
+    "output_tokens": 0,
+    "llm_latency_ms": 0.8500049880240113,
+    "wall_ms": 36.395765011548065
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15775",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15767",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "15811",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "08776",
+          "relevance": 0.02964254654943943
+        },
+        {
+          "number": "15790",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "15789",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02878289483487606
+        },
+        {
+          "number": "08777",
+          "relevance": 0.027912385761737823
+        },
+        {
+          "number": "08848",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08819",
+          "relevance": 0.02715098112821579
+        },
+        {
+          "number": "00020",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "98010",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15626",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15627",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15880",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15881",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15616",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15639",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09977",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15617",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation en pédiatrie pour otalgie droite avec fièvre chez un enfant de 4 ans non inscrit, avec diagnostic d'otite moyenne aiguë droite. Prescription d'amoxicilline et recommandations de suivi. Pas de référence initiale.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-03-10\nHeure de début: 16:20\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Douleur à l'oreille droite et fièvre depuis 24 heures chez un enfant de 4 ans.\nSystèmes/régions concernés: oreille_droite; système_respiratoire; système_général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Otite moyenne aiguë droite.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: oreille_droite; oreille_gauche; oropharynx; ganglions_cervicaux; système_respiratoire\nConstatations: Membrane tympanique droite bombée, érythémateuse et opaque; tympan gauche normal. Fièvre à 38,6 °C.\nÉlément incertain: Durée de la consultation non explicitement indiquée dans le transcript.; Absence de mention de l'heure de fin de la consultation.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "07430",
+          "relevance": 0.027809742838144302
+        },
+        {
+          "number": "07308",
+          "relevance": 0.027205882593989372
+        },
+        {
+          "number": "00060",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00639",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "07077",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "04582",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07078",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "03127",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07268",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07230",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00061",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01209",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05142",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07256",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15052",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07450",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15896",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07210",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07187",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15811",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15811",
+      "rrf_score": 0.02878726010616578,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15775",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "07430",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Cautérisation de perforation tympanique non associée à un autre acte chirurgical au cours de la même séance opératoire au même site opératoire, incluant tympan artificiel au microscope, à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "07449",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Myringoplastie (a minima) à l'oreille moyenne",
+      "expanded_from": "07430"
+    },
+    {
+      "rank": 5,
+      "number": "07451",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Tympanoplastie avec reconstruction de la chaîne ossiculaire (avec ou sans atticotomie) à l'oreille moyenne",
+      "expanded_from": "07430"
+    },
+    {
+      "rank": 6,
+      "number": "15767",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "07308",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Excision",
+      "description": "Exérèse de tube de drainage à l'oreille moyenne (sous microscope ou non)",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00060",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "00062",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 10,
+      "number": "15656",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 11,
+      "number": "15657",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 12,
+      "number": "15658",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 13,
+      "number": "08776",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "00639",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque droit et/ou artère pulmonaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "15790",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "07077",
+      "rrf_score": 0.015625,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Myringotomie avec mise en place du tube sous microscope, unilatérale, à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "07079",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Section des muscles stapédien et tensor tympani incluant l'exploration de l'oreille moyenne, à l'oreille moyenne",
+      "expanded_from": "07077"
+    },
+    {
+      "rank": 18,
+      "number": "07081",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Tympanotomie exploratrice non associée à un autre acte chirurgical au cours de la même séance opératoire, au même site opératoire, incluant la mobilisation de l'étrier, à l'oreille moyenne",
+      "expanded_from": "07077"
+    },
+    {
+      "rank": 19,
+      "number": "07082",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Section du nerf de Jacobson par tympanotomie, incluant la section de la corde du tympan, à l'oreille moyenne",
+      "expanded_from": "07077"
+    },
+    {
+      "rank": 20,
+      "number": "15789",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "04582",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Excision au coeur et péricarde, réparation aux ventricules, réparation de sténose de l'infundibulum droit",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "08775",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "07078",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Paracentèse unilatérale à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "08777",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "03127",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "H — Système respiratoire > Poumons et plèvre > Excision",
+      "description": "Lobectomie moyenne (côté droit), supplément, excision, poumons et plèvre",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "08848",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "07268",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "U — Appareil auditif > Oreille interne > Excision > Labyrinthectomie",
+      "description": "Labyrinthectomie par oreille moyenne, oreille interne",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "07269",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille interne > Excision > Labyrinthectomie",
+      "description": "Labyrinthectomie par voie transmastoïdienne, oreille interne",
+      "expanded_from": "07268"
+    },
+    {
+      "rank": 29,
+      "number": "08819",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "07230",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel droit horizontal ou vertical pour strabisme, incluant les ductions forcées, par muscle (maximum 8 muscles)",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "07231",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel petit oblique pour strabisme, incluant les ductions forcées, par muscle (maximum 2 muscles)",
+      "expanded_from": "07230"
+    },
+    {
+      "rank": 32,
+      "number": "07232",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel grand oblique pour strabisme, incluant les ductions forcées, par muscle (maximum 2 muscles)",
+      "expanded_from": "07230"
+    },
+    {
+      "rank": 33,
+      "number": "07233",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Supplément pour muscle additionnel",
+      "description": "Supplément pour muscle additionnel opéré antérieurement pour strabisme, incluant les ductions forcées, par muscle (maximum 11 muscles), incluant les cas de dysthyroïdie ou après chirurgie de Buckle",
+      "expanded_from": "07230"
+    },
+    {
+      "rank": 34,
+      "number": "00020",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen ordinaire du personnel d'un établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "00023",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen complet du personnel d'un établissement",
+      "expanded_from": "00020"
+    },
+    {
+      "rank": 36,
+      "number": "00026",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen complet majeur du personnel d'un établissement",
+      "expanded_from": "00020"
+    },
+    {
+      "rank": 37,
+      "number": "00061",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "98010",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "01209",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle pour diastasis des grands droits",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "01208",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle abdominale avec ou sans réparation d'hernie ombilicale ou diastasis des grands droits ou les deux (correction de tablier graisseux)",
+      "expanded_from": "01209"
+    },
+    {
+      "rank": 41,
+      "number": "01214",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle d'autres régions",
+      "expanded_from": "01209"
+    },
+    {
+      "rank": 42,
+      "number": "15626",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "05142",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Résection intestinale avec anastomose > iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)",
+      "description": "Résection intestinale avec anastomose de l'iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite), intestin (à l'exception du rectum)",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "15627",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "07256",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Mastoïdectomie",
+      "description": "Mastoïdectomie simple, sans autre intervention chirurgicale à la même séance opératoire sauf une myringotomie, à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "07259",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Mastoïdectomie",
+      "description": "Mastoïdectomie radicale ou modifiée sans reconstruction ossiculaire (Bundy), à l'oreille moyenne",
+      "expanded_from": "07256"
+    },
+    {
+      "rank": 47,
+      "number": "07436",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Mastoïdectomie",
+      "description": "Masto-tympanoplastie (méato-masto-tympanoplastie) pour malformation congénitale de l'oreille moyenne",
+      "expanded_from": "07256"
+    },
+    {
+      "rank": 48,
+      "number": "07438",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Mastoïdectomie",
+      "description": "Oblitération de cavité mastoïde de l'oreille moyenne",
+      "expanded_from": "07256"
+    },
+    {
+      "rank": 49,
+      "number": "07439",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Mastoïdectomie",
+      "description": "Fénestration du canal semi-circulaire externe de l'oreille moyenne",
+      "expanded_from": "07256"
+    },
+    {
+      "rank": 50,
+      "number": "15880",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Intervention clinique à la suite d'une demande d'aide médicale à mourir, forfait pour la première période de quinze (15) minutes",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15882",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Intervention clinique à la suite d'une demande d'aide médicale à mourir, supplément pour déplacement selon les dispositions du sous-paragraphe 2.2.6 B-1 du préambule général par quinze (15) minutes consécutives, maximum de six (6) périodes pour l'aller-retour",
+      "expanded_from": "15880"
+    },
+    {
+      "rank": 52,
+      "number": "15052",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire sans déplacement",
+      "description": "Examen ordinaire sans déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "15881",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Intervention clinique à la suite d'une demande d'aide médicale à mourir, forfait par période de quinze (15) minutes supplémentaires",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "07450",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Tympanoplastie à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15616",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15896",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > Consultations virtuelles en temps différé > Gestion en douleur chronique",
+      "description": "Gestion en douleur chronique, consultation virtuelle en temps différé lorsqu'effectuée en cabinet ou en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "15639",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 59,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 60,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 61,
+      "number": "15642",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 62,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 63,
+      "number": "07210",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Premier muscle, un œil ou deux yeux",
+      "description": "Chirurgie sur un muscle droit horizontal ou vertical pour strabisme, incluant les ductions forcées, premier muscle, un œil ou deux yeux",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "07211",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Premier muscle, un œil ou deux yeux",
+      "description": "Chirurgie sur un muscle petit oblique pour strabisme, incluant les ductions forcées, premier muscle, un œil ou deux yeux",
+      "expanded_from": "07210"
+    },
+    {
+      "rank": 65,
+      "number": "07212",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Premier muscle, un œil ou deux yeux",
+      "description": "Chirurgie sur un muscle grand oblique pour strabisme, incluant les ductions forcées, premier muscle, un œil ou deux yeux",
+      "expanded_from": "07210"
+    },
+    {
+      "rank": 66,
+      "number": "07213",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées > Premier muscle, un œil ou deux yeux",
+      "description": "Chirurgie sur un muscle opéré antérieurement pour strabisme, incluant les ductions forcées, premier muscle, un œil ou deux yeux, incluant les cas de dysthyroïdie ou après chirurgie de Buckle",
+      "expanded_from": "07210"
+    },
+    {
+      "rank": 67,
+      "number": "09977",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission lorsque le médecin rend son avis en cabinet privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 68,
+      "number": "09902",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale par un médecin désigné par la Commission",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 69,
+      "number": "09946",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale en urgence par un médecin désigné par la Commission, examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 70,
+      "number": "09978",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale par un médecin désigné par la Commission, examen du travailleur, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 71,
+      "number": "09980",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission",
+      "expanded_from": "09977"
+    },
+    {
+      "rank": 72,
+      "number": "07187",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Excision",
+      "description": "Excision de polype de l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 73,
+      "number": "15617",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 4,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 0.9701360104372725,
+  "db_ms": 24.944392003817484
+}

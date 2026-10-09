@@ -1,0 +1,164 @@
+{
+  "patient_id": "HOP-2026-00733",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 12940,
+      "output_tokens": 1504,
+      "latency_ms": 10625.506223994307,
+      "started_at": "2026-10-09T17:41:37.229642Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 12940,
+    "output_tokens": 1504,
+    "llm_latency_ms": 10625.506223994307,
+    "wall_ms": 10630.315162998158
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15770",
+    "08913",
+    "15640",
+    "15641",
+    "15642",
+    "15643",
+    "08942",
+    "15649",
+    "15778",
+    "08776",
+    "00080",
+    "08933",
+    "15818",
+    "19047",
+    "15772",
+    "08994",
+    "19048",
+    "15627",
+    "08996",
+    "19049",
+    "08995",
+    "08993",
+    "08997",
+    "08876",
+    "15628",
+    "15622",
+    "08861",
+    "08923",
+    "09234",
+    "15660",
+    "00402",
+    "15626",
+    "98012",
+    "00403",
+    "15639",
+    "00404",
+    "15648",
+    "15882",
+    "15880",
+    "15881",
+    "09055",
+    "09054",
+    "08943",
+    "08848",
+    "19082",
+    "19080",
+    "19081",
+    "15616",
+    "09231",
+    "15659",
+    "09977",
+    "09902",
+    "09946",
+    "09978",
+    "09980",
+    "15629",
+    "15617",
+    "15638",
+    "08948"
+  ],
+  "prompt_chars": 51620,
+  "raw_code_count": 5,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15640",
+        "description": "Visite de suivi, subséquente d'un patient admis dans un CHSGS ou CHSP (soins de courte durée), niveau A",
+        "confidence": "high",
+        "explanation": "Visite de suivi subséquente en CHSGS (soins de courte durée) avec examen clinique complet, conforme au code 15640. Le niveau A est retenu par défaut en l'absence d'indication contraire dans le transcript ou le summary.",
+        "supporting_quote": "Tournée — J6 cellulite jambe G. Congé ce jour. S/ Se sent bien. Dlr jambe minime. O/ Afébrile 72 h. TA 132/70. Jambe G : érythème résiduel en régression... A/ Cellulite jambe G résolue en grande partie... P/ CONGÉ aujourd'hui vers domicile.",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour écarter les codes 15770 ou 15778 (patient non inscrit).",
+          "Confirmer le statut de vulnérabilité du patient pour écarter les codes 15772 ou 15649 (patient vulnérable)."
+        ],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15649",
+        "description": "Visite de suivi, subséquente d'un patient admis dans un CHSGS ou CHSP (soins de courte durée), niveau B",
+        "confidence": "medium",
+        "explanation": "Alternative au code 15640 si le niveau B est applicable. Le transcript ne précise pas le niveau de complexité, mais la description de la visite (examen complet, révision du traitement, organisation du suivi) pourrait justifier un niveau B.",
+        "supporting_quote": "Tournée — J6 cellulite jambe G. Congé ce jour. S/ Se sent bien. Dlr jambe minime. O/ Afébrile 72 h. TA 132/70. Jambe G : érythème résiduel en régression... A/ Cellulite jambe G résolue en grande partie... P/ CONGÉ aujourd'hui vers domicile.",
+        "needs_confirmation": [
+          "Confirmer le niveau de complexité (A vs B) pour cette visite de suivi subséquente."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15770",
+        "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Alternative si le patient n'est pas inscrit auprès du médecin. Le code 15770 s'applique aux visites ponctuelles mineures pour patients non inscrits de 80 ans ou plus, mais le contexte hospitalier (CHSGS, soins de courte durée) rend ce code moins probable.",
+        "supporting_quote": "Tournée — J6 cellulite jambe G. Congé ce jour.",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour écarter ce code.",
+          "Confirmer le statut de vulnérabilité du patient pour écarter ce code."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15778",
+        "description": "Visite ponctuelle complexe d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Alternative au code 15770 si la visite est considérée comme complexe. Comme pour 15770, le contexte hospitalier rend ce code moins probable, mais il reste une option si le patient n'est pas inscrit.",
+        "supporting_quote": "Tournée — J6 cellulite jambe G. Congé ce jour. S/ Se sent bien. Dlr jambe minime. O/ Afébrile 72 h. TA 132/70. Jambe G : érythème résiduel en régression...",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour écarter ce code.",
+          "Confirmer le statut de vulnérabilité du patient pour écarter ce code."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15772",
+        "description": "Visite ponctuelle mineure d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Alternative si le patient est vulnérable et non inscrit. Comme pour les codes 15770 et 15778, le contexte hospitalier rend ce code moins probable, mais il reste une option si le patient est vulnérable et non inscrit.",
+        "supporting_quote": "Tournée — J6 cellulite jambe G. Congé ce jour.",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour écarter ce code.",
+          "Confirmer le statut de vulnérabilité du patient pour valider ce code."
+        ],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Le statut d'inscription du patient et sa vulnérabilité ne sont pas confirmés, ce qui limite la précision du choix entre les codes 15640, 15649, 15770, 15772, 15778. Aucun supplément (kilométrage, forfait) n'est justifié par le transcript ou le summary. La visite est clairement une visite de suivi subséquente en CHSGS (soins de courte durée), mais le niveau (A ou B) et le statut du patient (inscrit/non inscrit, vulnérable/non vulnérable) restent à confirmer.",
+    "analysis": "L'encounter a eu lieu dans un CHSGS (Hôpital régional du Haut-Fleuve, unité de médecine courte durée) pour une patiente de 81 ans admise le 19 septembre 2026. Il s'agit d'une visite de suivi subséquente avant le congé, incluant un examen clinique complet (anamnèse, examen physique, révision du traitement, ordonnances et organisation du suivi infirmier). Aucune procédure diagnostique ou thérapeutique supplémentaire n'est mentionnée. Le statut d'inscription du patient et sa vulnérabilité ne sont pas établis, ce qui influence le choix entre les codes de niveau A ou B, ainsi que les variantes pour patients vulnérables ou non inscrits. Aucun déplacement ou supplément (kilométrage, forfait) n'est documenté. La visite est clairement une visite de suivi subséquente en établissement, niveau A ou B, et non une prise en charge initiale, un transfert ou une évaluation pour suivi conjoint."
+  }
+}

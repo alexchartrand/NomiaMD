@@ -1,0 +1,1141 @@
+{
+  "patient_id": "URG-2026-04512",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 1037,
+      "output_tokens": null,
+      "latency_ms": 1.6981989901978523,
+      "started_at": "2026-10-09T17:38:53.521546Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1037,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.6981989901978523,
+    "wall_ms": 282.34307999082375
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. urgence. CHU fictif, service d'urgence. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15657",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "15634",
+          "relevance": 0.030282331630587578
+        },
+        {
+          "number": "15055",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15658",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "15656",
+          "relevance": 0.029213955625891685
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028577260673046112
+        },
+        {
+          "number": "15635",
+          "relevance": 0.027212142944335938
+        },
+        {
+          "number": "15645",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15654",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15644",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15259",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00061",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15626",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00060",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15653",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00062",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15192",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15655",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15878",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15646",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Patiente de 24 ans présentant une plaie profonde de 3,5 cm à la paume gauche suite à un accident de cuisine. Suture sous anesthésie locale réalisée aux urgences avec exploration de la plaie, sans atteinte tendineuse ni neurovasculaire. Rappel antitétanique administré et consignes de soins donnés.\nLieu (détail): CHU fictif, service d'urgence\nDate: 2026-07-13\nHeure de début: 14:15\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Plaie profonde à la paume de la main gauche suite à un accident de cuisine\nSystèmes/régions concernés: main_gauche; peau; tissu_sous_cutané\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Plaie par lacération simple, paume gauche, sans atteinte tendineuse ni neurovasculaire\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes_vitaux; main_gauche; sensibilité_distale; mobilité_des_doigts; remplissage_capillaire; pouls_radial\nConstatations: Plaie linéaire de 3,5 cm à la paume gauche, zone thénar, bords nets, profondeur atteignant le tissu sous-cutané, pas d'atteinte tendineuse visible à l'exploration. Sensibilité distale intacte, flexion/extension complète des doigts, force préservée, remplissage capillaire < 2 secondes, pouls radial palpable.\nActe réalisé 1 - Description: Suture de plaie sous anesthésie locale à la paume gauche avec exploration complète, irrigation abondante et fermeture en plan unique avec 5 points simples au nylon 4-0\nActe réalisé 1 - Acte (générique): suture de plaie\nActe réalisé 1 - Site: paume gauche, zone thénar\nActe réalisé 1 - Technique/approche: champ stérile installé, irrigation abondante au NaCl 0,9 % sous pression, exploration complète de la plaie, fermeture en plan unique avec 5 points simples au nylon 4-0\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: les_deux\nActe réalisé 2 - Description: Exploration de plaie sous anesthésie locale avec irrigation et exploration complète\nActe réalisé 2 - Acte (générique): exploration de plaie\nActe réalisé 2 - Site: paume gauche\nActe réalisé 2 - Technique/approche: anesthésie locale : lidocaïne 1 % avec épinéphrine, 4 mL infiltrés autour de la plaie, irrigation abondante au NaCl 0,9 % (environ 200 mL) sous pression\nActe réalisé 2 - Anesthésie: local\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de l'intervention non explicitement mentionnée dans le texte; Heure de fin de la consultation non précisée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01326",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "07410",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "07434",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "05196",
+          "relevance": 0.028219396248459816
+        },
+        {
+          "number": "05347",
+          "relevance": 0.02765064872801304
+        },
+        {
+          "number": "01322",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05195",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01415",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07317",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01452",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07327",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01323",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00953",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01451",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01320",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01414",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "20025",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01325",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09535",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "02704",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "suture de plaie",
+      "sections": null,
+      "hits": [
+        {
+          "number": "05347",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "07410",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "07434",
+          "relevance": 0.03015873022377491
+        },
+        {
+          "number": "05196",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "01325",
+          "relevance": 0.02788461558520794
+        },
+        {
+          "number": "04588",
+          "relevance": 0.02758360095322132
+        },
+        {
+          "number": "01322",
+          "relevance": 0.02666666731238365
+        },
+        {
+          "number": "07462",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05389",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05327",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05393",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "06325",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "03365",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06368",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07808",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06367",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04250",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "04657",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "01320",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04166",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Suture de plaie sous anesthésie locale à la paume gauche avec exploration complète, irrigation abondante et fermeture en plan unique avec 5 points simples au nylon 4-0",
+      "sections": null,
+      "hits": [
+        {
+          "number": "07410",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "07434",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "05195",
+          "relevance": 0.03102453052997589
+        },
+        {
+          "number": "05196",
+          "relevance": 0.030117753893136978
+        },
+        {
+          "number": "01326",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "05347",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "00972",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07317",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02354",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07327",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02352",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07378",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04774",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04033",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "05920",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02355",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04772",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "01320",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "02040",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "07066",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "exploration de plaie",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01326",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "07081",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "05477",
+          "relevance": 0.029709506779909134
+        },
+        {
+          "number": "02015",
+          "relevance": 0.028949545696377754
+        },
+        {
+          "number": "02200",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "01325",
+          "relevance": 0.028006266802549362
+        },
+        {
+          "number": "04666",
+          "relevance": 0.02788461558520794
+        },
+        {
+          "number": "00644",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "03123",
+          "relevance": 0.025991560891270638
+        },
+        {
+          "number": "05347",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02014",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05431",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07808",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07413",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05057",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "03028",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01327",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07410",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06228",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07411",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Exploration de plaie sous anesthésie locale avec irrigation et exploration complète",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01326",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "05195",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "07410",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "07066",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "05196",
+          "relevance": 0.027205882593989372
+        },
+        {
+          "number": "01210",
+          "relevance": 0.026685643941164017
+        },
+        {
+          "number": "02014",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07317",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07327",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02015",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05477",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00953",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00645",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "03248",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07468",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04666",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07806",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00920",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00827",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07400",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "07410",
+      "rrf_score": 0.07856959715764582,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie locale",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "07411",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Plastie de plaie traumatique de la conjonctive avec greffe de la muqueuse conjonctivale ou buccale",
+      "expanded_from": "07410"
+    },
+    {
+      "rank": 3,
+      "number": "07413",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Fermeture secondaire d'une plaie opératoire de la conjonctive",
+      "expanded_from": "07410"
+    },
+    {
+      "rank": 4,
+      "number": "01326",
+      "rrf_score": 0.06562499999999999,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Plaie > exploration d'une plaie sous anesthésie",
+      "description": "Exploration d'une plaie sous anesthésie, sans réparation, d'une plaie complexe nécessitant un transfert à un autre médecin",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "05196",
+      "rrf_score": 0.06324404761904762,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées sous anesthésie générale et révision de toute la plaie, incision, abdomen, péritoine et épiploon",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "05347",
+      "rrf_score": 0.062169035674470456,
+      "header_path": "L — Système digestif > Pharynx > Réparation",
+      "description": "Suture d'une plaie du pharynx",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "05342",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Pharynx > Réparation",
+      "description": "Pharyngoplastie du pharynx",
+      "expanded_from": "05347"
+    },
+    {
+      "rank": 8,
+      "number": "07434",
+      "rrf_score": 0.048651507139079855,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie générale incluant l'examen sous anesthésie générale",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "05195",
+      "rrf_score": 0.04767399003253049,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées sous anesthésie locale, incision, abdomen, péritoine et épiploon",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "07317",
+      "rrf_score": 0.04455662862159789,
+      "header_path": "T — Appareil visuel > Appareil lacrymal > Voie lacrymale, dilatation et irrigation > sous anesthésie locale",
+      "description": "Voie lacrymale, dilatation et irrigation sous anesthésie locale pour un (1) oeil",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "01325",
+      "rrf_score": 0.04399662837162838,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) de plaies étendues, multiples ou compliquées à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "07327",
+      "rrf_score": 0.04348435026184387,
+      "header_path": "T — Appareil visuel > Appareil lacrymal > Voie lacrymale, dilatation et irrigation > sous anesthésie locale",
+      "description": "Voie lacrymale, dilatation et irrigation sous anesthésie locale pour deux (2) yeux",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "01320",
+      "rrf_score": 0.03932103932103932,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération simple de moins de un (1) cm à la face et au cou, la somme des centimètres s'additionnant à la valeur de base payable qu'une fois",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "01322",
+      "rrf_score": 0.030536130536130537,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération compliquée de moins de deux centimètres et demi (2,5 cm) à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "05477",
+      "rrf_score": 0.0304147465437788,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Exploration de la région inguinale, fémorale ou crurale, à la suite d'une herniorraphie antérieure",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "02015",
+      "rrf_score": 0.03036576949620428,
+      "header_path": "G — Appareil musculo-squelettique > Tendons, gaines tendineuses, aponévroses et ligaments > Incision et exérèse > exploration de fascia, ligament et/ou exploration de nodule et/ou exérèse de corps étranger",
+      "description": "Exploration de fascia, ligament et/ou exploration de nodule et/ou exérèse de corps étranger",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "02014",
+      "rrf_score": 0.029437229437229435,
+      "header_path": "G — Appareil musculo-squelettique > Tendons, gaines tendineuses, aponévroses et ligaments > Incision et exérèse > exploration d'un tendon, d'une gaine tendineuse, drainage ou section de gaine ou exérèse de corps étranger",
+      "description": "Exploration d'un tendon, d'une gaine tendineuse, drainage ou section de gaine ou exérèse de corps étranger",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "07066",
+      "rrf_score": 0.028531243721117136,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Incision > Ouverture et drainage d'abcès",
+      "description": "Ouverture et drainage d'abcès de la paupière et des sourcils, sous anesthésie locale (P.C. 13), incision",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "07067",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Incision > Ouverture et drainage d'abcès",
+      "description": "Ouverture et drainage d'abcès de la paupière et des sourcils, sous anesthésie générale comprenant l'examen sous anesthésie générale (P.C. 13), incision",
+      "expanded_from": "07066"
+    },
+    {
+      "rank": 20,
+      "number": "04666",
+      "rrf_score": 0.028484848484848488,
+      "header_path": "J — Système cardiaque > Non thoracique",
+      "description": "Chirurgie exploratoire d'une artère majeure au niveau d'une extrémité à l'exception du pied ou de la main, non thoracique",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "00953",
+      "rrf_score": 0.02797339593114241,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "07808",
+      "rrf_score": 0.027402402402402402,
+      "header_path": "T — Appareil visuel > Cornée",
+      "description": "Fermeture secondaire d'une plaie opératoire de la cornée",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "15657",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "15634",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "07081",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Tympanotomie exploratrice non associée à un autre acte chirurgical au cours de la même séance opératoire, au même site opératoire, incluant la mobilisation de l'étrier, à l'oreille moyenne",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "07077",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Myringotomie avec mise en place du tube sous microscope, unilatérale, à l'oreille moyenne",
+      "expanded_from": "07081"
+    },
+    {
+      "rank": 27,
+      "number": "07078",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Paracentèse unilatérale à l'oreille moyenne",
+      "expanded_from": "07081"
+    },
+    {
+      "rank": 28,
+      "number": "07079",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Section des muscles stapédien et tensor tympani incluant l'exploration de l'oreille moyenne, à l'oreille moyenne",
+      "expanded_from": "07081"
+    },
+    {
+      "rank": 29,
+      "number": "07082",
+      "rrf_score": 0.0,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Incision > Myringotomie",
+      "description": "Section du nerf de Jacobson par tympanotomie, incluant la section de la corde du tympan, à l'oreille moyenne",
+      "expanded_from": "07081"
+    },
+    {
+      "rank": 30,
+      "number": "15055",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire avec déplacement (d'urgence avec déplacement)",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "15658",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "15656",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "02200",
+      "rrf_score": 0.015625,
+      "header_path": "G — Appareil musculo-squelettique > Tendons, gaines tendineuses, aponévroses et ligaments > Incision et exérèse > exploration, sans réparation, d'un tendon, qui nécessite un transfert à un autre médecin",
+      "description": "Exploration, sans réparation, d'un tendon, qui nécessite un transfert à un autre médecin",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "15633",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "04588",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Excision au coeur et péricarde, réparation aux ventricules, cardiorraphie, suture pour lacération cardiaque non iatrogénique",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "01210",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle > Liposuccion d'un lambeau préalablement greffé",
+      "description": "Liposuccion d'un lambeau préalablement greffé sous anesthésie locale",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "01211",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle > Liposuccion d'un lambeau préalablement greffé",
+      "description": "Liposuccion d'un lambeau préalablement greffé sous anesthésie générale",
+      "expanded_from": "01210"
+    },
+    {
+      "rank": 38,
+      "number": "15635",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "00972",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "D — Anesthésie — réanimation > Divers",
+      "description": "Anesthésie pour ablation de points de suture",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "15645",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "01415",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Fistule cutanée",
+      "description": "Exérèse de fistule cutanée profonde sous-aponévrotique, fistule cutanée",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "01414",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Fistule cutanée",
+      "description": "Exérèse de fistule cutanée superficielle sus-aponévrotique, fistule cutanée",
+      "expanded_from": "01415"
+    },
+    {
+      "rank": 43,
+      "number": "07462",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Réparation simple de la cornée ou de la sclérotique ou les deux, traumatisme oculaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "07461",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Exploration chirurgicale d'un globe oculaire avec péritomie et désinsertion de un ou plusieurs muscles dans le but d'éliminer une perforation oculaire, traumatisme oculaire",
+      "expanded_from": "07462"
+    },
+    {
+      "rank": 45,
+      "number": "07463",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Réparation de la cornée avec iridotomies ou iridectomies et/ou réparation de la sclérotique avec cryothérapie ou électro-cautère, traumatisme oculaire",
+      "expanded_from": "07462"
+    },
+    {
+      "rank": 46,
+      "number": "07464",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Réparation de la cornée avec iridotomies ou iridectomies et réparation de la sclérotique avec cryothérapie ou électrocautère et ablation de masses cristalliennes et/ou de vitré, traumatisme oculaire",
+      "expanded_from": "07462"
+    },
+    {
+      "rank": 47,
+      "number": "00644",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Thoracoscopie",
+      "description": "Thoracoscopie exploratrice",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "15654",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "05389",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Réparation > Suture intestinale (lacération de part en part)",
+      "description": "Réparation pour suture intestinale (lacération de part en part), intestin (à l'exception du rectum)",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "02354",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour le poignet.",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "02352",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour un doigt (incluant au moins une articulation).",
+      "expanded_from": "02354"
+    },
+    {
+      "rank": 52,
+      "number": "02355",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour l'avant-bras.",
+      "expanded_from": "02354"
+    },
+    {
+      "rank": 53,
+      "number": "02356",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour le bras.",
+      "expanded_from": "02354"
+    },
+    {
+      "rank": 54,
+      "number": "02357",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour l'épaule.",
+      "expanded_from": "02354"
+    },
+    {
+      "rank": 55,
+      "number": "03123",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "H — Système respiratoire > Poumons et plèvre > Incision > Thoracotomie",
+      "description": "Thoracotomie exploratrice pour cancer, sans résection, avec ou sans biopsie, incision",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15644",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "01452",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Chirurgie plastique",
+      "description": "Intervention mineure en chirurgie plastique",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "15259",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > support médical à distance > support médical à distance des services préhospitaliers d'urgence - soins avancés",
+      "description": "Support médical à distance des services préhospitaliers d'urgence - soins avancés, forfait par quart de garde au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde désigné",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "00061",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "15626",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "00060",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "15653",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "00062",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "15192",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen d'urgence avec déplacement d'un patient de moins de 70 ans, en centre hospitalier seulement, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "08800",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 66,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 67,
+      "number": "08803",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 68,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 69,
+      "number": "09092",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen préanesthésie d'un patient de moins de 70 ans, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 70,
+      "number": "15655",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 71,
+      "number": "15878",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > support médical à distance > support médical à distance - soins primaires",
+      "description": "Appel de support médical à distance - soins primaires au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 72,
+      "number": "15646",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 0 h à 7 h",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 24,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.8167329981224611,
+  "db_ms": 259.17252599901985
+}

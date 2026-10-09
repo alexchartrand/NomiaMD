@@ -1,0 +1,1007 @@
+{
+  "patient_id": "CLI-2026-01242",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 810,
+      "output_tokens": null,
+      "latency_ms": 1.0707970068324357,
+      "started_at": "2026-10-09T17:41:09.715130Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 810,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.0707970068324357,
+    "wall_ms": 43.945782992523164
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. sans rendez-vous. Clinique médicale Les Tilleuls — plage sans rendez-vous. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15765",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15773",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "08776",
+          "relevance": 0.03102453052997589
+        },
+        {
+          "number": "15789",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "08775",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "15805",
+          "relevance": 0.02919863536953926
+        },
+        {
+          "number": "08848",
+          "relevance": 0.029083246365189552
+        },
+        {
+          "number": "00005",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "15811",
+          "relevance": 0.028169013559818268
+        },
+        {
+          "number": "00056",
+          "relevance": 0.027984345331788063
+        },
+        {
+          "number": "08819",
+          "relevance": 0.027106227353215218
+        },
+        {
+          "number": "15790",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00061",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00060",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08777",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15626",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15639",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "08903",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15617",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "08807",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Patient non inscrit se présente en plage sans rendez-vous pour une lacération linéaire de 3 cm à l'avant-bras droit après un accident domestique. Suture simple sous anesthésie locale réalisée avec succès. Vaccination dT à jour confirmée, pas de rappel nécessaire. Suivi recommandé au CLSC ou à la clinique pour retrait des points.\nLieu (détail): Clinique médicale Les Tilleuls — plage sans rendez-vous\nDate: 2026-09-16\nHeure de début: 17:50\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Lacération linéaire de 3 cm à l'avant-bras droit après coupure sur une tôle en rénovant un garage.\nSystèmes/régions concernés: cutané; avant-bras_droit\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Lacération simple de 3 cm à l'avant-bras droit\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: avant-bras_droit; poignet; doigts; sensibilité_nerfs_radial_médian_cubital; pouls_radial\nConstatations: Lacération linéaire face dorsale avant-bras droit, tiers moyen, 3 cm, bords nets, profondeur sous-cutanée, pas d'exposition tendineuse. Mobilité complète poignet/doigts, force normale, sensibilité normale, pouls radial présent.\nActe réalisé 1 - Description: Suture sous anesthésie locale d'une lacération de 3 cm à l'avant-bras droit avec 5 points simples en nylon 4-0 après irrigation et exploration.\nActe réalisé 1 - Acte (générique): suture de plaie cutanée\nActe réalisé 1 - Site: avant-bras droit\nActe réalisé 1 - Technique/approche: anesthésie locale lidocaïne 1 % 3 mL, irrigation au sérum physiologique 250 mL, exploration, plan unique, 5 points simples nylon 4-0\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de l'encounter non explicitement mentionnée dans le transcript.; Heure de fin de l'encounter non indiquée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01322",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09579",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01323",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02355",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01320",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08065",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01326",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02021",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07434",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09580",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07410",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02278",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07386",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02020",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06325",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02806",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "05327",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02365",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01166",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02389",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "suture de plaie cutanée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "05347",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "07410",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "07434",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "05196",
+          "relevance": 0.02967032976448536
+        },
+        {
+          "number": "01325",
+          "relevance": 0.02943722903728485
+        },
+        {
+          "number": "01322",
+          "relevance": 0.02830941043794155
+        },
+        {
+          "number": "04588",
+          "relevance": 0.027692895382642746
+        },
+        {
+          "number": "05195",
+          "relevance": 0.027313265949487686
+        },
+        {
+          "number": "01320",
+          "relevance": 0.02654711715877056
+        },
+        {
+          "number": "07462",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05389",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05327",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06358",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05393",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "03365",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06325",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07808",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04657",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "06421",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "04250",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Suture sous anesthésie locale d'une lacération de 3 cm à l'avant-bras droit avec 5 points simples en nylon 4-0 après irrigation et exploration.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "07410",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "02355",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "07434",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "09579",
+          "relevance": 0.03015873022377491
+        },
+        {
+          "number": "05195",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "02356",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "00972",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02311",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07317",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07327",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07378",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01322",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01323",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07386",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "04588",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "05920",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "05196",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "07066",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "01320",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "07806",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "07410",
+      "rrf_score": 0.04734582357533178,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie locale",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "07411",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Plastie de plaie traumatique de la conjonctive avec greffe de la muqueuse conjonctivale ou buccale",
+      "expanded_from": "07410"
+    },
+    {
+      "rank": 3,
+      "number": "07413",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Fermeture secondaire d'une plaie opératoire de la conjonctive",
+      "expanded_from": "07410"
+    },
+    {
+      "rank": 4,
+      "number": "07434",
+      "rrf_score": 0.04696394686907021,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie générale incluant l'examen sous anesthésie générale",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "01322",
+      "rrf_score": 0.04613578909353557,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération compliquée de moins de deux centimètres et demi (2,5 cm) à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "01320",
+      "rrf_score": 0.043151395173453996,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération simple de moins de un (1) cm à la face et au cou, la somme des centimètres s'additionnant à la valeur de base payable qu'une fois",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "09579",
+      "rrf_score": 0.032266458495966696,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras",
+      "description": "Suture tendineuse latéro-latérale, une (1) ou plusieurs, par membre à l'avant-bras",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "02389",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras",
+      "description": "Transposition et réinsertion d'un muscle à l'avant-bras",
+      "expanded_from": "09579"
+    },
+    {
+      "rank": 9,
+      "number": "02355",
+      "rrf_score": 0.032266458495966696,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour l'avant-bras.",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "02352",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour un doigt (incluant au moins une articulation).",
+      "expanded_from": "02355"
+    },
+    {
+      "rank": 11,
+      "number": "02354",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour le poignet.",
+      "expanded_from": "02355"
+    },
+    {
+      "rank": 12,
+      "number": "02357",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour l'épaule.",
+      "expanded_from": "02355"
+    },
+    {
+      "rank": 13,
+      "number": "05195",
+      "rrf_score": 0.03055037313432836,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées sous anesthésie locale, incision, abdomen, péritoine et épiploon",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "01323",
+      "rrf_score": 0.030017921146953404,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > autres localisations",
+      "description": "Réparation de plaies (débridement compris) d'une lacération simple de moins de un (1) cm à d'autres localisations que la face et le cou, la somme des centimètres s'additionnant à la valeur de base payable qu'une fois",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "05196",
+      "rrf_score": 0.029030910609857977,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées sous anesthésie générale et révision de toute la plaie, incision, abdomen, péritoine et épiploon",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "04588",
+      "rrf_score": 0.028665028665028666,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Excision au coeur et péricarde, réparation aux ventricules, cardiorraphie, suture pour lacération cardiaque non iatrogénique",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "07386",
+      "rrf_score": 0.02758751902587519,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Réparation > Lacération de la paupière > n'intéressant pas le bord libre",
+      "description": "Réparation d'une lacération de la paupière n'intéressant pas le bord libre des paupières et des sourcils.",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "05327",
+      "rrf_score": 0.027242401779095628,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Lacération mineure de la langue (P.G. 2.4.7.7 A) (P.C. 13), réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "05326",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Glossoplastie, réparation",
+      "expanded_from": "05327"
+    },
+    {
+      "rank": 20,
+      "number": "05328",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Lacération étendue de la langue, réparation",
+      "expanded_from": "05327"
+    },
+    {
+      "rank": 21,
+      "number": "06325",
+      "rrf_score": 0.02684684684684685,
+      "header_path": "M — Appareil urinaire > Rein > Réparation > Suture",
+      "description": "Suture d'une blessure du rein (non iatrogénique), réparation, suture",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "06326",
+      "rrf_score": 0.0,
+      "header_path": "M — Appareil urinaire > Rein > Réparation > Suture",
+      "description": "Fermeture de néphrostomie, de pyélostomie ou de toute autre fistule rénale, réparation, suture",
+      "expanded_from": "06325"
+    },
+    {
+      "rank": 23,
+      "number": "15765",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "05347",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "L — Système digestif > Pharynx > Réparation",
+      "description": "Suture d'une plaie du pharynx",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "05342",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Pharynx > Réparation",
+      "description": "Pharyngoplastie du pharynx",
+      "expanded_from": "05347"
+    },
+    {
+      "rank": 26,
+      "number": "15773",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "08776",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "15789",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "08775",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "01325",
+      "rrf_score": 0.015625,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) de plaies étendues, multiples ou compliquées à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "15805",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "08065",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Membres supérieurs > Avant-bras",
+      "description": "Radiographie de l'avant-bras, membres supérieurs",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "02356",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > (après amputation complète avec suture de nerfs, artères, veines, sous microscope)",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, pour le bras.",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "08848",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "01326",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Plaie > exploration d'une plaie sous anesthésie",
+      "description": "Exploration d'une plaie sous anesthésie, sans réparation, d'une plaie complexe nécessitant un transfert à un autre médecin",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "00972",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "D — Anesthésie — réanimation > Divers",
+      "description": "Anesthésie pour ablation de points de suture",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "00005",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "00006",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "00005"
+    },
+    {
+      "rank": 39,
+      "number": "02021",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Fasciotomie > deux ou plusieurs compartiments",
+      "description": "Fasciotomie de deux ou plusieurs compartiments de l'avant-bras",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "02311",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Divers",
+      "description": "Incision au niveau d'une broche d'un fixateur externe sous anesthésie locale, divers",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "15811",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "07317",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "T — Appareil visuel > Appareil lacrymal > Voie lacrymale, dilatation et irrigation > sous anesthésie locale",
+      "description": "Voie lacrymale, dilatation et irrigation sous anesthésie locale pour un (1) oeil",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "00056",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "00057",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "00056"
+    },
+    {
+      "rank": 45,
+      "number": "09580",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras",
+      "description": "Transfert tendineux à l'avant-bras",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "07462",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Réparation simple de la cornée ou de la sclérotique ou les deux, traumatisme oculaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "07461",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Exploration chirurgicale d'un globe oculaire avec péritomie et désinsertion de un ou plusieurs muscles dans le but d'éliminer une perforation oculaire, traumatisme oculaire",
+      "expanded_from": "07462"
+    },
+    {
+      "rank": 48,
+      "number": "07463",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Réparation de la cornée avec iridotomies ou iridectomies et/ou réparation de la sclérotique avec cryothérapie ou électro-cautère, traumatisme oculaire",
+      "expanded_from": "07462"
+    },
+    {
+      "rank": 49,
+      "number": "07464",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Traumatisme oculaire",
+      "description": "Réparation de la cornée avec iridotomies ou iridectomies et réparation de la sclérotique avec cryothérapie ou électrocautère et ablation de masses cristalliennes et/ou de vitré, traumatisme oculaire",
+      "expanded_from": "07462"
+    },
+    {
+      "rank": 50,
+      "number": "07327",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "T — Appareil visuel > Appareil lacrymal > Voie lacrymale, dilatation et irrigation > sous anesthésie locale",
+      "description": "Voie lacrymale, dilatation et irrigation sous anesthésie locale pour deux (2) yeux",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "08819",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "05389",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Réparation > Suture intestinale (lacération de part en part)",
+      "description": "Réparation pour suture intestinale (lacération de part en part), intestin (à l'exception du rectum)",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "07378",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "T — Appareil visuel > Muscles oculaires",
+      "description": "Utilisation de sutures ajustables pour strabisme, incluant la retouche sous anesthésie locale, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "07279",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires",
+      "description": "Transplantation musculaire pour strabisme, incluant les ductions forcées, un (1) ou plusieurs muscles",
+      "expanded_from": "07378"
+    },
+    {
+      "rank": 55,
+      "number": "07283",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires",
+      "description": "Dénervation et extirpation d'un muscle petit oblique pour strabisme, incluant les ductions forcées",
+      "expanded_from": "07378"
+    },
+    {
+      "rank": 56,
+      "number": "07377",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Muscles oculaires",
+      "description": "Réparation à la suite de traumatisme pour strabisme, incluant les ductions forcées",
+      "expanded_from": "07378"
+    },
+    {
+      "rank": 57,
+      "number": "15790",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "02278",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > Amputation",
+      "description": "Amputation de l'avant-bras, extrémités - membres supérieurs",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "00061",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "00062",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 61,
+      "number": "15656",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 62,
+      "number": "15657",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 63,
+      "number": "15658",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "00061"
+    },
+    {
+      "rank": 64,
+      "number": "00060",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "08777",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 66,
+      "number": "15626",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 67,
+      "number": "15639",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 68,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 69,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 70,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 71,
+      "number": "15642",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 72,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 73,
+      "number": "08903",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'un patient admis de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    },
+    {
+      "rank": 74,
+      "number": "08806",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient admis de moins de 70 ans en clinique externe",
+      "expanded_from": "08903"
+    },
+    {
+      "rank": 75,
+      "number": "08808",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": "08903"
+    },
+    {
+      "rank": 76,
+      "number": "15617",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 77,
+      "number": "08807",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 41,
+    "panel_size": 420,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.2040569999953732,
+  "db_ms": 32.23323400015943
+}

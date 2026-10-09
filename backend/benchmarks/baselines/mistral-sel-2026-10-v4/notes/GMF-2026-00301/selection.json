@@ -1,0 +1,107 @@
+{
+  "patient_id": "GMF-2026-00301",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 9180,
+      "output_tokens": 862,
+      "latency_ms": 6515.695160996984,
+      "started_at": "2026-10-09T17:39:23.370778Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 9180,
+    "output_tokens": 862,
+    "llm_latency_ms": 6515.695160996984,
+    "wall_ms": 6520.2067000063835
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15809",
+    "15807",
+    "15805",
+    "15159",
+    "15811",
+    "00059",
+    "15145",
+    "15801",
+    "15317",
+    "15318",
+    "15144",
+    "15803",
+    "15313",
+    "15407",
+    "08858",
+    "08867",
+    "15052",
+    "15639",
+    "15640",
+    "15641",
+    "15642",
+    "15643",
+    "15648",
+    "15408",
+    "15314",
+    "15781",
+    "15782",
+    "15055",
+    "06986",
+    "06987",
+    "06988",
+    "15638",
+    "15058",
+    "08857",
+    "06989",
+    "06990"
+  ],
+  "prompt_chars": 36485,
+  "raw_code_count": 3,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15805",
+        "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "high",
+        "explanation": "Première visite de prise en charge de grossesse au premier trimestre, sans référence à un autre médecin, pour une patiente inscrite de 29 ans, en cabinet, avec clientèle de 320 patients (<500).",
+        "supporting_quote": "Première visite de prise en charge d'une grossesse confirmée chez une patiente de 29 ans (G2P1A0). Confirmation de la grossesse, bilan prénatal initial demandé [...] counseling sur les soins prénatals et signes d'alarme, et planification du suivi.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15159",
+        "description": "Supplément à l'examen de prise en charge d'une grossesse d'un patient de moins de 70 ans, lorsque fait au cours du premier trimestre de grossesse en cabinet, en CLSC et en GMF-U en établissement",
+        "confidence": "medium",
+        "explanation": "La visite est au premier trimestre en cabinet, mais le code 15159 est un supplément qui nécessite une confirmation explicite de son applicabilité (ex. : examen spécifique au premier trimestre). Ici, la visite est déjà couverte par 15805, et aucun élément ne justifie un supplément.",
+        "supporting_quote": "Première visite de prise en charge d'une grossesse confirmée chez une patiente de 29 ans (G2P1A0).",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15144",
+        "description": "Supplément de responsabilité pour suivi de grossesse d'un patient de moins de 70 ans, en cabinet",
+        "confidence": "low",
+        "explanation": "Aucun élément dans le résumé ou le transcript ne mentionne explicitement un supplément de responsabilité pour le suivi de grossesse. Ce code est donc peu probable.",
+        "supporting_quote": "Prise en charge de grossesse débutée, dossier prénatal ouvert",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la consultation n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code principal (15805). Aucun supplément (15159, 15144) n'est clairement justifié par les documents fournis. Les codes 15807 et 15809 sont exclus car non applicables (référence absente et trimestre incorrect).",
+    "analysis": "Rencontre en cabinet (GMF Boisé-des-Cèdres) avec une patiente de 29 ans, inscrite, non vulnérable, pour une première visite de prise en charge de grossesse au premier trimestre. Aucune référence à un autre médecin n'est mentionnée. La visite inclut un examen physique complet, un counseling prénatal, la planification du suivi et la demande de bilan initial. Le code 15805 correspond à une visite de prise en charge de grossesse au premier trimestre sans référence, ce qui correspond exactement à la situation. Les codes 15807 (avec référence) et 15809 (au-delà du premier trimestre) sont exclus car non applicables. Aucun supplément (15159, 15144, 15145) n'est justifié car la visite est en cabinet et non en CLSC/GMF-U en établissement, et aucun élément ne confirme un supplément de responsabilité ou un examen spécifique au premier trimestre nécessitant un code distinct."
+  }
+}

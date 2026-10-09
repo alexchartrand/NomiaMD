@@ -1,0 +1,1277 @@
+{
+  "patient_id": "CLI-2026-01203",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 958,
+      "output_tokens": null,
+      "latency_ms": 1.3351670058909804,
+      "started_at": "2026-10-09T17:39:11.561954Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 958,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.3351670058909804,
+    "wall_ms": 70.32118699862622
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite d'évaluation pour donner une opinion. avec rendez-vous. Clinique médicale Les Tilleuls. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15789",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15619",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15790",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "08777",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "15642",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "15651",
+          "relevance": 0.03030303120613098
+        },
+        {
+          "number": "15668",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "08948",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "15630",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "15803",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "08819",
+          "relevance": 0.02678571455180645
+        },
+        {
+          "number": "09100",
+          "relevance": 0.026685643941164017
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09948",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09978",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09944",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09977",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15801",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09938",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15795",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation en médecine familiale pour fatigue persistante et troubles du sommeil depuis 2 mois chez un homme de 34 ans. Bilan sanguin demandé pour éliminer une cause organique. Impression diagnostique de symptomatologie dépressive légère à modérée dans un contexte de stress professionnel. Plan : suivi en 2 semaines, référence en psychothérapie et discussion sur la gestion du stress.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-07-13\nHeure de début: 15:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nDemandeur (identifiant): Dr. Karim El-Amrani, MD\nMotif de la référence: Symptomatologie dépressive légère à modérée dans un contexte de stress professionnel\nMotif de consultation: Fatigue persistante et troubles du sommeil depuis 2 mois\nSystèmes/régions concernés: psychiatrique; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Symptomatologie dépressive d'intensité légère à modérée, à corréler avec contexte de stress professionnel. À éliminer : cause organique (dysthyroïdie, anémie)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: général; thyroïde\nConstatations: Signes vitaux normaux (TA 122/78, FC 70), perte de poids de 2 kg en 2 mois, apparence fatiguée mais coopérative, examen thyroïdien sans particularité, reste de l'examen physique sans particularité\nActe réalisé 1 - Description: Prélèvement sanguin pour bilan (FSC, TSH, glycémie à jeun, ferritine, bilan hépatique, ions)\nActe réalisé 1 - Acte (générique): Prélèvement sanguin\nActe réalisé 1 - Site: veine périphérique\nActe réalisé 1 - Technique/approche: prélèvement veineux standard\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 2 - Description: Administration et interprétation du questionnaire PHQ-9\nActe réalisé 2 - Acte (générique): Administration de questionnaire standardisé\nActe réalisé 2 - Technique/approche: questionnaire auto-administré en clinique\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée exacte de la consultation non précisée dans le document; Heure de fin de la consultation non mentionnée; Absence de mention explicite d'un rapport écrit produit ou requis pour la référence en psychothérapie",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08800",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08942",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09535",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09910",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "20179",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08948",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00844",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15668",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20025",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08803",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04526",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08819",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04523",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15667",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00310",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00060",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00407",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15803",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "04530",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Prélèvement sanguin",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00683",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00301",
+          "relevance": 0.030414747074246407
+        },
+        {
+          "number": "09820",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "09443",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "09442",
+          "relevance": 0.029323630034923553
+        },
+        {
+          "number": "00647",
+          "relevance": 0.028438886627554893
+        },
+        {
+          "number": "00590",
+          "relevance": 0.02547874115407467
+        },
+        {
+          "number": "20027",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01335",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00525",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04526",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04612",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04611",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04722",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04607",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00550",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00560",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00712",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09417",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04523",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Prélèvement sanguin pour bilan (FSC, TSH, glycémie à jeun, ferritine, bilan hépatique, ions)",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00683",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "00113",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "00181",
+          "relevance": 0.028594771400094032
+        },
+        {
+          "number": "00301",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "09443",
+          "relevance": 0.02765151485800743
+        },
+        {
+          "number": "00525",
+          "relevance": 0.026856524869799614
+        },
+        {
+          "number": "09442",
+          "relevance": 0.0251582283526659
+        },
+        {
+          "number": "20027",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09424",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04523",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "04526",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08281",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01335",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08282",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15813",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09092",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09377",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09313",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04524",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00023",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Administration de questionnaire standardisé",
+      "sections": null,
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "20024",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "20023",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "20021",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "98012",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09334",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09335",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09101",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08811",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15622",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15651",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15883",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09063",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15884",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15668",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09928",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15642",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00928",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08812",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00927",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Administration et interprétation du questionnaire PHQ-9",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "98012",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08948",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "05363",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08811",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08413",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08812",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00160",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15066",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00158",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08807",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08408",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08903",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08409",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15668",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00157",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15069",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00180",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15643",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00156",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15668",
+      "rrf_score": 0.05688442453148336,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "08948",
+      "rrf_score": 0.04620592054390803,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "04526",
+      "rrf_score": 0.04265593561368209,
+      "header_path": "J — Système cardiaque > Actes généraux > Transplantation",
+      "description": "Prélèvement en bloc : coeur-poumons, transplantation, actes généraux",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "04523",
+      "rrf_score": 0.04084961160827597,
+      "header_path": "J — Système cardiaque > Actes généraux > Transplantation > Prélèvement de valve ou conduit, homogreffe fraîche",
+      "description": "Prélèvement d'une valve ou conduit, homogreffe fraîche, un, transplantation, actes généraux",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "04524",
+      "rrf_score": 0.0,
+      "header_path": "J — Système cardiaque > Actes généraux > Transplantation > Prélèvement de valve ou conduit, homogreffe fraîche",
+      "description": "Prélèvement de deux valves ou conduits, homogreffe fraîche, deux, transplantation, actes généraux",
+      "expanded_from": "04523"
+    },
+    {
+      "rank": 6,
+      "number": "00683",
+      "rrf_score": 0.03333333333333333,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Ponctions (incluant injection s'il y a lieu)",
+      "description": "Ponction artérielle pour prélèvement sanguin",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "00301",
+      "rrf_score": 0.032266458495966696,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme veine ombilicale, incluant le prélèvement",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "98012",
+      "rrf_score": 0.032018442622950824,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "09443",
+      "rrf_score": 0.03149801587301587,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radiologie > Procédés diagnostiques ou thérapeutiques faits sous contrôle fluoroscopique, échographique ou radiographique > Cathétérismes non sélectifs, sélectifs ou supersélectifs",
+      "description": "Cathétérismes non sélectifs, sélectifs ou supersélectifs sous fluoroscopie pour prélèvement sanguin, étude pharmacologique ou infusion de substance thérapeutique, cathétérisme de plus d'un vaisseau (quelque soit le nombre de vaisseaux rejoints par la même voie d'entrée au cours de la même séance)",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "09444",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radiologie > Procédés diagnostiques ou thérapeutiques faits sous contrôle fluoroscopique, échographique ou radiographique > Cathétérismes non sélectifs, sélectifs ou supersélectifs",
+      "description": "Cathétérisme intracérébral sous fluoroscopie, utilisant ou non la chambre à propulsion, incluant angiographie de positionnement et mise en place d'une perfusion médicamenteuse",
+      "expanded_from": "09443"
+    },
+    {
+      "rank": 11,
+      "number": "09442",
+      "rrf_score": 0.030776515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radiologie > Procédés diagnostiques ou thérapeutiques faits sous contrôle fluoroscopique, échographique ou radiographique > Cathétérismes non sélectifs, sélectifs ou supersélectifs",
+      "description": "Cathétérismes non sélectifs, sélectifs ou supersélectifs sous fluoroscopie pour prélèvement sanguin, étude pharmacologique ou infusion de substance thérapeutique, cathétérisme d'un seul vaisseau",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "08811",
+      "rrf_score": 0.030330882352941176,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet d'un patient de moins de 70 ans dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "09248",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique d'urgence avec déplacement d'un patient de moins de 70 ans dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS",
+      "expanded_from": "08811"
+    },
+    {
+      "rank": 14,
+      "number": "00525",
+      "rrf_score": 0.029877369007803793,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme des veines caves, rénales et/ou sushépatiques pour enregistrement de pression et/ou prélèvement",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "20027",
+      "rrf_score": 0.029850746268656716,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Ponctions (incluant injection s'il y a lieu) > À la demande d'un coroner, chez le patient décédé",
+      "description": "Ponction incluant injection s'il y a lieu, à la demande d'un coroner, chez le patient décédé, prélèvement de sang dans la veine cave, unique ou multiple, tout site de ponction",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "20026",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Ponctions (incluant injection s'il y a lieu) > À la demande d'un coroner, chez le patient décédé",
+      "description": "Ponction incluant injection s'il y a lieu, à la demande d'un coroner, chez le patient décédé, prélèvement du liquide oculaire et du liquide vésical, toutes techniques",
+      "expanded_from": "20027"
+    },
+    {
+      "rank": 17,
+      "number": "15651",
+      "rrf_score": 0.02967032967032967,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15642",
+      "rrf_score": 0.028782894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 20,
+      "number": "15639",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 21,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 22,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 23,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 24,
+      "number": "01335",
+      "rrf_score": 0.028594771241830064,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Prélèvement de greffon cutané par un médecin autre que celui qui a appliqué le greffon (peu importe le nombre de greffons), greffes cutanées ou greffes cultivées",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "01370",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Xénogreffe cutanée de moins de six (6) cm carrés, greffes cutanées ou greffes cultivées",
+      "expanded_from": "01335"
+    },
+    {
+      "rank": 26,
+      "number": "01371",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Xénogreffe cutanée de six (6) cm carrés à soixante (60) cm carrés, greffes cutanées ou greffes cultivées",
+      "expanded_from": "01335"
+    },
+    {
+      "rank": 27,
+      "number": "01372",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Greffes cutanées ou greffes cultivées > Xénogreffe cutanée",
+      "description": "Xénogreffe cutanée de soixante (60) cm carrés à six cents (600) cm carrés, greffes cutanées ou greffes cultivées",
+      "expanded_from": "01335"
+    },
+    {
+      "rank": 28,
+      "number": "08819",
+      "rrf_score": 0.02817460317460317,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "08812",
+      "rrf_score": 0.027972027972027972,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur d'un patient de moins de 70 ans dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "15803",
+      "rrf_score": 0.027313266443701224,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "15789",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "08800",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 34,
+      "number": "08803",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 35,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 36,
+      "number": "09092",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen préanesthésie d'un patient de moins de 70 ans, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 37,
+      "number": "15192",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen d'urgence avec déplacement d'un patient de moins de 70 ans, en centre hospitalier seulement, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 38,
+      "number": "20022",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "08953",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Échanges interdisciplinaires avec les intervenants en santé mentale ou avec les proches du patient dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "15619",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "00953",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "00113",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Glycémie (par méthode biochimique quantitative incluant le prélèvement) en laboratoire en cabinet ou à domicile",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "00111",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Analyse d'urine avec microscopie en laboratoire en cabinet ou à domicile",
+      "expanded_from": "00113"
+    },
+    {
+      "rank": 44,
+      "number": "00118",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Hémoglobine (méthode quantitative par spectrophotométrie) en laboratoire en cabinet ou à domicile",
+      "expanded_from": "00113"
+    },
+    {
+      "rank": 45,
+      "number": "00127",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Examen microscopique du sédiment urinaire et interprétation en laboratoire en cabinet ou à domicile",
+      "expanded_from": "00113"
+    },
+    {
+      "rank": 46,
+      "number": "20024",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "15790",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "08942",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen, subséquente dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "09820",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Sécurité publique représenté par le sous-ministre",
+      "description": "Certificat du médecin qualifié pour le service professionnel requis par un policier dans le cadre d'un prélèvement prévu à l'article 258 (1) h) et (ii) du Code criminel, incluant le remplissage du formulaire et, le cas échéant, le prélèvement de sang",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "00181",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Biopsie avec ou sans guidage échographique (unique ou multiple)",
+      "description": "Biopsie du foie (à l'aiguille, percutanée), avec ou sans guidage échographique (unique ou multiple)",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "20023",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "08777",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "09535",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "G — Appareil musculo-squelettique > Muscles > Allongement",
+      "description": "Allongement musculaire, muscles",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "20021",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "05363",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "L — Système digestif > Estomac > Réparation",
+      "description": "Réparation de l'estomac : pyloroplastie (P.G. 2.9)",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "05364",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Estomac > Réparation",
+      "description": "Réparation de l'estomac : pyloroplastie et vagotomie",
+      "expanded_from": "05363"
+    },
+    {
+      "rank": 57,
+      "number": "09910",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 9. Rapport de consultation motivé",
+      "description": "Rapport de consultation motivé rédigé et expédié au médecin qui a charge du travailleur à la suite d'un rapport qui infirme ses conclusions",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "20179",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Stabilisation et maintien d'un donneur potentiel en vue d'une greffe d'organes",
+      "description": "Stabilisation et maintien d'un donneur potentiel en vue d'une greffe d'organes, incluant les actes diagnostiques et thérapeutiques et les visites par jour, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "20180",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Stabilisation et maintien d'un donneur potentiel en vue d'une greffe d'organes",
+      "description": "Supplément pour la stabilisation et maintien d'un donneur potentiel en vue d'une greffe d'organes, si décès cardiocirculatoire programmé avant mort cérébrale, le jour du décès cardiocirculatoire, en établissement",
+      "expanded_from": "20179"
+    },
+    {
+      "rank": 60,
+      "number": "00647",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Transfusion directe ou exsanguino-transfusion (chacune)",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "00125",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Monitoring continu de la pression artérielle, par technique non invasive, par période de vingt-quatre (24) heures, interprétation",
+      "expanded_from": "00647"
+    },
+    {
+      "rank": 62,
+      "number": "00182",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Intubation endotrachéale seule, non reliée aux services médicaux prévus au préambule particulier d'anesthésie réanimation",
+      "expanded_from": "00647"
+    },
+    {
+      "rank": 63,
+      "number": "00344",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme à domicile",
+      "expanded_from": "00647"
+    },
+    {
+      "rank": 64,
+      "number": "00406",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Plaquettophérèse",
+      "expanded_from": "00647"
+    },
+    {
+      "rank": 65,
+      "number": "00780",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, maximum quinze (15) patients",
+      "expanded_from": "00647"
+    },
+    {
+      "rank": 66,
+      "number": "09334",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)",
+      "expanded_from": null
+    },
+    {
+      "rank": 67,
+      "number": "09335",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour",
+      "expanded_from": "09334"
+    },
+    {
+      "rank": 68,
+      "number": "08413",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective, spinale, par vaisseau, maximum 8 vaisseaux, interprétation",
+      "expanded_from": null
+    },
+    {
+      "rank": 69,
+      "number": "08412",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective, mesure de l'hyperhémie réactionnelle, supplément par artère, maximum 4, interprétation",
+      "expanded_from": "08413"
+    },
+    {
+      "rank": 70,
+      "number": "08414",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective carotidienne, unilatérale, interprétation",
+      "expanded_from": "08413"
+    },
+    {
+      "rank": 71,
+      "number": "08415",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective vertébrale, unilatérale, interprétation",
+      "expanded_from": "08413"
+    },
+    {
+      "rank": 72,
+      "number": "15630",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 73,
+      "number": "09100",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, examen d'évaluation médicale",
+      "expanded_from": null
+    },
+    {
+      "rank": 74,
+      "number": "09063",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, lorsqu'effectué à domicile",
+      "expanded_from": "09100"
+    },
+    {
+      "rank": 75,
+      "number": "09101",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié suite à un examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources, examen d'évaluation médicale",
+      "expanded_from": "09100"
+    },
+    {
+      "rank": 76,
+      "number": "98010",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 77,
+      "number": "09948",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 7. Opinion du médecin avant la consolidation de la lésion professionnelle",
+      "description": "Opinion du médecin avant la consolidation de la lésion professionnelle, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 78,
+      "number": "09949",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 7. Opinion du médecin avant la consolidation de la lésion professionnelle",
+      "description": "Opinion du médecin avant la consolidation de la lésion professionnelle, avec considération en raison de la complexité, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": "09948"
+    },
+    {
+      "rank": 79,
+      "number": "09978",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale par un médecin désigné par la Commission, examen du travailleur, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 80,
+      "number": "09902",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale par un médecin désigné par la Commission",
+      "expanded_from": "09978"
+    },
+    {
+      "rank": 81,
+      "number": "09946",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale en urgence par un médecin désigné par la Commission, examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": "09978"
+    },
+    {
+      "rank": 82,
+      "number": "09980",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission",
+      "expanded_from": "09978"
+    },
+    {
+      "rank": 83,
+      "number": "09944",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > A) Médecin qui a charge",
+      "description": "Rapport d'évaluation médicale par le médecin qui a charge du travailleur, examen du travailleur, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 84,
+      "number": "09901",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > A) Médecin qui a charge",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale par le médecin qui a charge du travailleur",
+      "expanded_from": "09944"
+    },
+    {
+      "rank": 85,
+      "number": "09977",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission lorsque le médecin rend son avis en cabinet privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 86,
+      "number": "15801",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 87,
+      "number": "09938",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 11. Bureau d'évaluation médicale > A) Avis écrit",
+      "description": "Avis écrit motivé donné au vu du dossier par un médecin membre du Bureau d'évaluation médicale, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": null
+    },
+    {
+      "rank": 88,
+      "number": "09939",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 11. Bureau d'évaluation médicale > A) Avis écrit",
+      "description": "Avis écrit motivé donné après examen du travailleur par un médecin membre du Bureau d'évaluation médicale, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels",
+      "expanded_from": "09938"
+    },
+    {
+      "rank": 89,
+      "number": "15795",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 20. Rapports pour les victimes d'actes criminels (IVAC) > A) Évaluation médicale IVAC-CIVISME",
+      "description": "Évaluation médicale IVAC-CIVISME pour la rédaction et remise sans délai à la victime du formulaire d'évaluation médicale prescrit par la Commission, comportant notamment le diagnostic, le siège de la blessure, les autres diagnostics actuels physiques ou psychiques pouvant avoir des répercussions, de même que les antécédents pertinents, s'il y a lieu arrêt de travail ou d'études et soit la date prévisible de consolidation, soit la période prévisible de consolidation de la blessure d'une personne victime ou d'un sauveteur",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 34,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.4521900011459365,
+  "db_ms": 55.969445005757734
+}
