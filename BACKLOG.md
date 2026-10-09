@@ -30,12 +30,12 @@
   - `scripts/create_user.py` and `reset_password.py` accept any password, even one character. Enforce a minimum length (≥ 12) and reject common/breached passwords.
   - Sessions are stateless JWTs: 12 h by default, 30 days with "Rester connecté" (`JWT_REMEMBER_ME_EXPIRY_SECONDS`, `app/auth/security.py`). Nothing invalidates one before it expires — not a password reset, a logout on another device, or a lost phone. Shorten the remember-me lifetime and add a revocation hook (e.g. a per-user `token_version` claim bumped on password reset).
 
-- [ ] 🟡 ER visit codes are eligible but never retrieved — *added 10/9, from the `sonnet-sel` benchmark*
-  - Since the upstream `requires_registered` fix (10/8), the ER codes `15052`-`15070` and `15637` pass eligibility, but on `codes_2026-09-17` 7 of the 9 expected ER codes are still never offered (`benchmarks/runs/current-table-sel`). The other two only come in at #55 and #70. Retrieval recall stays at 88%, and on the 7 ER notes the model retains the closest wrong code.
-  - On URG-2026-04471 the visit query (« Visite. urgence. CHU fictif, urgence. Un seul système ») ranks 00006, 00057, 15645 and 15055 (« avec déplacement ») above 15058 (« sans déplacement »). Family completion (`FamilyExpander`, same `header_path`) can't help: 15055 sits under « d'urgence avec déplacement » and 15058 under « examen principal », two different leaves, and no member of 15058's leaf is retrieved. Candidate fixes: put the ER-relevant facts the summary already has (age band, « sans déplacement », examen principal vs ordinaire) into the visit query, or scope ER notes' visit query to the ER subsection. The care-setting axis (item below) would also narrow the competition. Measure with `run --stages retrieval --summaries-from mistral-2026-10-v2` on the 7 URG notes, then on all 58 to check the cabinet notes don't regress.
+- [ ] 🟡 ER visit codes are offered, but too low for the model to pick — *added 10/9, from the `care-setting-sel` benchmark*
+  - Since the care setting scopes a second visit query to the ER subsection, every expected ER visit code is offered (retrieval recall 88% → 97%), but at #35–#70 on 5 of the 7 URG notes: that query is one list among six to twelve, so its hits miss the fused top-40 and are appended after it as kept visit hits. The model retains a wrong code on 5 of the 7 (15055/15656/00060/15659/30010), with the déplacement supplements from the section-B-wide visit query still ranked above. `backend/benchmarks/README.md`, *Care setting*.
+  - Candidate fixes: when the setting has its own subsection, drop the section-B-wide visit query (no déplacement supplements to compete; the cost is that a wrong setting hides the other visit codes); or have `CandidateFuser` rank kept hits by their own list's rank rather than after the cut. Measure on the 7 URG notes with `--stages retrieval,selection`, then on all 58.
 
 - [ ] 🟡 Eligibility can't see several RAMQ conditions the new eval notes hit — *added 10/7, from labeling `consultations/` 26-58*
-  - **Care setting isn't an axis.** `BillingContext` has no place of service (cabinet / GMF / CLSC-GMF-U / domicile / CHSLD / CHSGS ward / urgence), so CHSLD (`15615`-`15625`), ward (`15638`-`15655`) and ER (`15052`-`15070`) codes compete with cabinet visits for every note, and the model alone decides. The setting is in the note header and `EncounterSetting.location_detail`, and `fees[].lieux` already partially encodes it.
+  - **Care setting isn't an eligibility axis.** Since 10/9 `BillingContext.care_setting` exists (from the note's source or the physician, `app/care_setting.py`), but it only adds an ER-scoped visit query and a prompt line; nothing filters on it. CHSLD (`15615`-`15625`) and ward (`15638`-`15655`) codes still compete with cabinet visits, and the model alone decides. They could get their own subsection in `CARE_SETTING_VISIT_SECTIONS` (`visit_query.py`) like the ER; a real filter needs a codes column for it (`fees[].lieux` partially encodes it), so a ramq-ingestion change first.
   - **Vulnérable tariff is reserved to the treating physician or their group** (P.G. 2.2.6 A a). Eligibility treats `is_vulnerable` as a plain patient attribute, so a clinically vulnerable patient seen by another physician (home-care doctor, walk-in) gets only the vulnérable variants — the right non-vulnérable code is filtered out (eval entry `DOM-2026-00022` sets `is_vulnerable=false` to get around it).
   - **Physician designations aren't practice facts.** `08775`-`08777` (MSK) need a comité-paritaire designation; ward visits split by the unit's level A/B (annexe XXII 2.01). Neither is in `PracticeFacts`, so both variants are always offered (several `to_review` entries hinge on these).
   - The ER-code `requires_registered` data bug is fixed upstream (ramq-ingestion, 10/8). `codes_2026-09-17` now has `requires_registered=True` only on the 27 « patient (non) vulnérable inscrit » visits (`15801`-`15840`); the ER, clinique externe/CH, « patient admis » and `15188`/`15841`-`15846` rows are null. Re-score the eval entries labeled around it.
@@ -71,6 +71,12 @@
   - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
 ## ✨ Features
+
+- [ ] 🟡 Read the care setting from Epic encounters — *added 10/9, from the care-setting work*
+  - `EncounterMeta.care_setting` is only set by paste/upload today. Epic doesn't expose a standard code for it: the sandbox's `Encounter.class` is Epic-local ("Support OP Encounter") and its location a department name ("EMC Family Medicine"). Add a per-site mapping (department or class → `CareSetting`) to `EpicNoteMapper`; unmapped = unknown. A schedule-entry connector would fill the same field.
+
+- [ ] 🟡 Let the physician pick the care setting — *added 10/9, from the care-setting work*
+  - `POST /intake/notes` (`PastedNotes.care_setting`) and `/intake/upload` (`care_setting` form field) take it, applied to every note of the batch, but the frontend doesn't send it yet. Add the picker to `/app/ajouter`'s paste/upload form, and a way to set or correct it on the encounter page (then re-extract). `POST /extract` has no field for it yet either.
 
 - [ ] 🟡 Benchmark ramq-ingestion's Bedrock candidate tables — *added 10/8, from ramq-ingestion's model comparison*
   - ramq-ingestion now builds candidate tables beside the current one, `codes_<rev>__<variant>`: another model's extraction (Claude/Nova on Bedrock) and/or another embedding model (Cohere Embed v4). Each is registered in `code_versions` with `is_current=false`, so `scripts/benchmark.py run --codes-table codes_<rev>__<variant>` can pin it. Compare it with a control run on the current table made with the same code (`benchmarks/runs/current-table-sel`), not with `mistral-sel-2026-10-v3`: that baseline predates the ER data fix and `HybridSearch`.
@@ -153,6 +159,7 @@
 
 ## ✅ Done
 
+- [x] 🟡 ER visit codes are eligible but never retrieved — *added 10/9, from the `sonnet-sel` benchmark, done 10/9*
 - [x] 🟢 Lance prints a deprecation warning on every hybrid code search — *added 10/8, from the benchmark work, done 10/9*
 - [x] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests, done 10/7*
 - [x] 🟢 Replace the remaining `window.confirm` calls with `useConfirm` — *added 10/6, from the review-page rework, done 10/6*
