@@ -111,6 +111,25 @@ async def test_reads_the_text_blocks_and_skips_reasoning():
     assert (result.usage.input_tokens, result.usage.output_tokens) == (120, 30)
 
 
+@pytest.mark.parametrize("leak", ["**analysis", "**", "Voici le JSON : "])
+async def test_cuts_a_leaked_prefix_around_a_json_answer(leak):
+    runtime = _FakeBedrockRuntime(_response({"text": leak + '{"codes": ["15803"]}\n'}))
+    result = await _client(runtime).chat(MESSAGES, response_format=RESPONSE_FORMAT)
+    assert result.content == '{"codes": ["15803"]}'
+
+
+async def test_leaves_a_plain_answer_untouched():
+    runtime = _FakeBedrockRuntime(_response({"text": "**Réponse** : voir {ceci}."}))
+    result = await _client(runtime).chat(MESSAGES)
+    assert result.content == "**Réponse** : voir {ceci}."
+
+
+async def test_a_json_answer_without_an_object_is_left_for_the_parser_to_reject():
+    runtime = _FakeBedrockRuntime(_response({"text": "Je ne peux pas répondre."}))
+    result = await _client(runtime).chat(MESSAGES, response_format=RESPONSE_FORMAT)
+    assert result.content == "Je ne peux pas répondre."
+
+
 async def test_no_text_block_is_no_content():
     result = await _client(_FakeBedrockRuntime(_response())).chat(MESSAGES)
     assert result.content is None

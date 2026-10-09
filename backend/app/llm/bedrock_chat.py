@@ -72,12 +72,25 @@ class ConverseRequestBuilder:
 class ConverseResponseReader:
     """The text, finish reason and token counts of a Converse response. Reasoning models
     (gpt-oss, Qwen) put their reasoning in `reasoningContent` blocks before the answer: only
-    the `text` blocks are the answer."""
+    the `text` blocks are the answer.
 
-    def content(self, response: dict[str, Any]) -> str | None:
+    Bedrock doesn't hold gpt-oss to the schema on long prompts: its answer can start with a
+    leaked reasoning-channel marker (`**analysis{...}`, `**{...}`) before otherwise valid
+    JSON. When a JSON answer was asked for, whatever surrounds the outermost object is that
+    leak and is cut; the task's parse() still validates what's left."""
+
+    def content(self, response: dict[str, Any], *, json_expected: bool = False) -> str | None:
         blocks = response.get("output", {}).get("message", {}).get("content", [])
         texts = [block["text"] for block in blocks if "text" in block]
-        return "".join(texts) if texts else None
+        if not texts:
+            return None
+        text = "".join(texts)
+        return self._outermost_object(text) if json_expected else text
+
+    @staticmethod
+    def _outermost_object(text: str) -> str:
+        start, end = text.find("{"), text.rfind("}")
+        return text[start : end + 1] if 0 <= start < end else text
 
     def finish_reason(self, response: dict[str, Any]) -> str | None:
         reason = response.get("stopReason")
@@ -134,7 +147,7 @@ class BedrockChatClient(IChatClient):
         finish_reason = self._response_reader.finish_reason(response)
         self._record(started_at, start, usage, finish_reason)
         return ChatResult(
-            content=self._response_reader.content(response),
+            content=self._response_reader.content(response, json_expected=response_format is not None),
             finish_reason=finish_reason,
             model=self.model,
             usage=usage,
