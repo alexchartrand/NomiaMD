@@ -42,7 +42,7 @@
   - The ER-code `requires_registered` data bug is fixed upstream (ramq-ingestion, 10/8). `codes_2026-09-17` now has `requires_registered=True` only on the 27 « patient (non) vulnérable inscrit » visits (`15801`-`15840`); the ER, clinique externe/CH, « patient admis » and `15188`/`15841`-`15846` rows are null. Re-score the eval entries labeled around it.
 
 - [ ] 🟡 One extraction can mix two manual revisions — *added 9/30, from database review*
-  - `CurrentCodeTableProvider.current()` is re-resolved on every `CodeRepository` call: once per planned query in `RAMQCodesRetriever`, then again in `BillingCodesTask.resolve_fees` after the LLM call. A promote landing mid-extraction gives candidates from one `codes_<rev>` and fees from another (or an empty fee list for a code dropped from the new manual). Fix: resolve the table once per extraction and pass it through — also the natural carrier for the `manual_rev` item in Features.
+  - `CurrentCodeTableProvider.current()` is re-resolved on every `CodeRepository` call: once per planned query in `RAMQCodesRetriever`, then again in `FeeResolver.attach` after the LLM call. A promote landing mid-extraction gives candidates from one `codes_<rev>` and fees from another (or an empty fee list for a code dropped from the new manual). Fix: resolve the table once per extraction and pass it through — also the natural carrier for the `manual_rev` item in Features.
 
 - [ ] 🟡 `Patient.is_vulnerable` can't say "unknown" — *added 10/1, from the profile-fallback review*
   - The column is a non-null bool defaulting to `False` (`app/postgresdb/models.py`), so a patient created without anyone checking vulnerability is treated as established non-vulnerable: `EligibilityFilterFactory` filters the vulnerable variants out and the axis is never flagged for confirmation. Same "never guess" rule `BillingContext` holds to everywhere else. Fix: make it nullable (null = not entered yet), default new patients to null, and have the patient form ask explicitly.
@@ -69,7 +69,7 @@
   - Postgres/redis/caddy/frontend don't set an explicit non-root `user:` in `docker-compose.yml`. Backend (the real attack surface) already drops to `appuser`.
 
 - [ ] 🟢 Prompt injection surface is unhardened — *added 8/19, from codebase audit*
-  - Transcript and chat text are interpolated directly into prompts (`summary/task.py`, `ramq_codes/task.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
+  - Transcript and chat text are interpolated directly into prompts (`summary/prompt.py`, `ramq_codes/prompt.py`, `ramq_chatbot/engine.py`) with only section headers, no delimiter/escaping scheme. Low impact today given JSON-schema output + mandatory physician review downstream.
 
 ## ✨ Features
 
@@ -89,13 +89,13 @@
   - `mistral-medium` isn't deterministic at temperature 0 (the summary already moved a code's rank between two identical runs). Before reading small per-note deltas between two selection prompts as real, re-run one unchanged configuration (`run --name <x>-rerun --stages selection --candidates-from mistral-2026-10-v2`) and compare it with `report --baseline`: whatever changes there is noise. A `--repeat N` on `run` would make this routine.
 
 - [ ] 🟡 Show each candidate's eligibility bounds in the billing_codes prompt — *added 10/8, from the `mistral-sel` analysis*
-  - `_format_candidate` (`app/ramq_codes/task.py`) shows the taxonomy path, description, usage and conditions, so what tells sibling variants apart (age band, panel size, registered/vulnerable) is buried in French prose. `mistral-sel` retained 18 wrong variants of an expected code. Render `Code.eligibility`'s typed bounds as one line per candidate (e.g. « Admissibilité : 80 ans ou plus ; patient inscrit ; clientèle ≥ 500 »), then measure with `run --stages selection --candidates-from mistral-2026-10-v2 --baseline <previous>` (wrong variants, retained precision).
+  - `_format_candidate` (`app/ramq_codes/prompt.py`) shows the taxonomy path, description, usage and conditions, so what tells sibling variants apart (age band, panel size, registered/vulnerable) is buried in French prose. `mistral-sel` retained 18 wrong variants of an expected code. Render `Code.eligibility`'s typed bounds as one line per candidate (e.g. « Admissibilité : 80 ans ou plus ; patient inscrit ; clientèle ≥ 500 »), then measure with `run --stages selection --candidates-from mistral-2026-10-v2 --baseline <previous>` (wrong variants, retained precision).
 
 - [ ] 🟡 Physician review of the selection judgment calls — *added 10/8, from the `mistral-sel` analysis*
   - Five expected codes the model saw and didn't pick look like label questions as much as model errors: `GMF-2026-00303` 15813 vs 15833 (periodic vs pediatric intake), `GMF-2026-00313` 15803 vs 08819 (follow-up vs psychiatric evaluation), `HOP-2026-00733` 15639 vs 15638 (follow-up vs intake on the ward), `CHSLD-2026-00054` 15622 (phone response), `CLI-2026-01229` 15803 (the model picked hospital code 08882). Also the negatives that came back with codes, `CLI-2026-01246`'s insurer form above all (09826 at high confidence). Settle them in `tests/fixtures/eval_billing_codes.jsonl` before tuning the prompt against them.
 
 - [ ] 🟢 Check server-side that a code's supporting quote is in the note — *added 10/8, from the `mistral-sel` analysis*
-  - The prompt asks for a verbatim `supporting_quote` from the summary or transcript, but nothing checks it. A deterministic check in `BillingCodesTask.parse` (whitespace/case-normalized substring of the rendered summary or the transcript) would flag a made-up quote on the review card rather than drop the code. Count the flagged quotes in the selection benchmark first, to see whether it happens at all.
+  - The prompt asks for a verbatim `supporting_quote` from the summary or transcript, but nothing checks it. A deterministic check in `SelectionParser.parse` (whitespace/case-normalized substring of the rendered summary or the transcript) would flag a made-up quote on the review card rather than drop the code. Count the flagged quotes in the selection benchmark first, to see whether it happens at all.
 
 - [ ] 🟡 Seed demo encounters relative to today — *added 10/6, from the app demo polish*
   - `scripts/seed_db.py` seeds the `consultations/` notes at the dates written in them (spring–summer 2026), so on a demo day the dashboard shows 0 encounters this week, an empty 8-week activity chart, and every unbilled note at "5 j restants" before the 90-day limit; the inbox's default "Cette semaine" period is empty too. Wanted: an opt-in seed mode (e.g. `--relative-to-today`) that spreads the encounters over the last ~3 weeks, several per day, so the dashboard, the day cards and the bulk-approve callout all have something to show.
@@ -144,7 +144,7 @@
   - 135 rows of `codes_2026-06-05` are flagged by ingestion as ambiguous/incomplete. Not selected by `CodeRepository` today. Could flow through `Code` into `ExtractedCode` as a server-only field and show as a small "fiche RAMQ à vérifier" warning in `CodesReview.tsx` (not sent to the LLM).
 
 - [ ] 🟢 Measure per-candidate prompt cost with the deeper `header_path` and procedure `rules` — *added 9/30*
-  - `_format_candidate` (`app/ramq_codes/task.py`) prints `header_path` verbatim (now up to ~7 segments) and every rule; procedure-section codes can carry long `rules`. Check the token cost of a 40-candidate prompt on the real table before deciding whether to trim either.
+  - `_format_candidate` (`app/ramq_codes/prompt.py`) prints `header_path` verbatim (now up to ~7 segments) and every rule; procedure-section codes can carry long `rules`. Check the token cost of a 40-candidate prompt on the real table before deciding whether to trim either.
 
 - [ ] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8*
   - Since 10/8 every chat and embedding call is metered by `app/llm/openai_client.py` (`LLMCallRecord`: tokens in/out, latency, purpose, `finish_reason`) and logged as one structured `llm_call` line (`app/llm/usage.py`); the benchmark collects them per note with `usage_scope()`. Nothing is persisted yet.

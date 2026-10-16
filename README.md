@@ -76,17 +76,21 @@ the review UI; saving a claim (`POST /claims`) snapshots the chosen fee onto the
 regenerating the LanceDB data later never rewrites billing history. A fee counted in
 `unités` (anesthesia base units) is displayed but never billed as a dollar amount.
 
-## How it's extensible
+## How extraction is structured
 
-Every output type implements `ExtractionTask` (`backend/app/tasks/base.py`): a system
-prompt, a JSON schema for structured extraction, a parser into a typed Pydantic result, and
-an optional per-task `model` override (default `mistral-small-latest`; `billing_codes` uses
-`mistral-medium-latest`). `backend/app/extraction/engine.py` is the shared LLM call — it
-never changes when a new task is added. `backend/app/tasks/registry.py` is where new tasks
-get wired in.
+`BillingPipeline` (`backend/app/extraction/pipeline.py`) runs each step explicitly:
+`ConsultationSummarizer` (`app/summary/`) → the `BillingContext` → candidate retrieval →
+`CodeSelector` (`app/ramq_codes/selector.py`) → `FeeResolver`. It is built once at startup
+(`app/extraction/factory.py`, from `application_services()`) and injected into the
+`/extract` route and the extraction worker.
 
-Adding `prescriptions` or `consultation_notes` later: write a new class implementing
-`ExtractionTask`, register it in `registry.py`, then call it from a pipeline/route.
+Both LLM steps go through `StructuredChat` (`backend/app/llm/structured.py`), the one shared
+call: a system prompt and a user message in, JSON matching a Pydantic model's strict schema
+out (`app/llm/schema.py` derives the schema from the model). Each step owns its prompt, its
+parsing and its default model (`mistral-small-latest` for the summary,
+`mistral-medium-latest` for the code selection), overridable per step with
+`LLM_MODEL_<NAME>`. A new LLM step is a new class calling `StructuredChat`, added to the
+pipeline that needs it.
 
 ## RAMQ data ingestion
 
@@ -140,11 +144,11 @@ cp ../.env.example ../.env   # one file at the repo root, shared with docker com
 uv run uvicorn app.main:app --reload
 ```
 
-The extraction engine (`backend/app/extraction/engine.py`) and the chatbot get their chat
+The extraction steps (through `backend/app/llm/structured.py`) and the chatbot get their chat
 model from `backend/app/llm/`, which `LLM_PROVIDER` switches between the Mistral API
 (`mistral`, default), any OpenAI-compatible server such as vLLM/TGI (`openai_compatible`,
 with `LLM_ENDPOINT` + `LLM_API_KEY`) and Amazon Bedrock's Converse API (`bedrock`, with
-`aws login` credentials and a Bedrock model id per task, e.g.
+`aws login` credentials and a Bedrock model id per step, e.g.
 `LLM_MODEL_BILLING_CODES=us.anthropic.claude-sonnet-5-5`; synthetic notes only). No API key handy, or want to avoid real API calls? Set
 `LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1 LLM_API_KEY=fake` and
 run `backend/scripts/fake_llm_server.py` (`make fake-llm`, or `make dev-fake` which does both).
@@ -159,10 +163,10 @@ doesn't match the LanceDB tables', so a model switch needs the tables re-embedde
 
 Main endpoints (all but `/health` and `/auth/login` need a logged-in session cookie):
 
-- `GET /health` — lists registered tasks
+- `GET /health` — liveness check
 - `/auth/*` — login/logout, current user and practice-facts profile, password change
 - `/patients` — the caller's roster, global NAM/name search (`/patients/search?q=`), create
-- `POST /extract` — `{"transcript": "...", "task": "billing_codes", "patient_id": 1}` →
+- `POST /extract` — `{"transcript": "...", "patient_id": 1}` →
   summary, suggested codes, and an `extraction_run_id`
 - `/intake/notes`, `/intake/upload` — push notes in (a paste, possibly a whole ER shift; a
   list of structured notes; or a `.txt`/`.md` file); each is stored as an encounter and

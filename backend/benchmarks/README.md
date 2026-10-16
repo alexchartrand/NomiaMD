@@ -125,7 +125,7 @@ review used to pre-tick. Committed baseline: `baselines/mistral-sel-2026-10-v3`.
    above the noise floor. Still missed: 15804, 15639, 15144, and 15803 on the MSK follow-up.
 4. **Confidence is the strongest signal we have.** Across the v2/v3 runs, retained codes rated medium or
    low were right **2 times in 26**. High-confidence ones were right about 2 times in 3 (69% in v3). Since
-   2026-10-08, `BillingCodesTask.parse` turns a retained code without high confidence into a possible one.
+   2026-10-08, `BillingCodesTask.parse` (now `SelectionParser`) turns a retained code without high confidence into a possible one.
    Re-scored on every stored run, the rule raises precision each time and loses at most 2 hits (v2):
 
    | run | as run (P / R / F1) | high-confidence rule (P / R / F1) |
@@ -221,7 +221,7 @@ notes. 11 expected codes; on 7 notes a difference of 1–2 codes is noise.
   out: their descriptions say « d'un patient inscrit », and the prompt states « Le patient n'est pas
   inscrit auprès de ce médecin ». At the ER, « inscrit » means registered at the emergency department, as
   opposed to « admis » (P.G. 2.2.6 C), the same ambiguity as the upstream `requires_registered` data bug.
-- **So the prompt now says so** when the care setting is the ER (`task.py`'s known facts). Alone it changes
+- **So the prompt now says so** when the care setting is the ER (`prompt.py`'s known facts). Alone it changes
   nothing (the codes are too far down to be read); with pinning, overall recall goes 36% → 64%.
 - **What's left is the variant.** The model now retains ER codes, mostly the wrong one: « ordinaire »
   where the label says « principal » (04471, 04538), « avec déplacement » where it says « sans »
