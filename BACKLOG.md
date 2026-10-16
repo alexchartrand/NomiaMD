@@ -56,9 +56,6 @@
 - [ ] 🟢 NAM stored in plaintext — *added 8/27, from schema review*
   - `patients.ramq_number` and the NAM inside `encounters.note_text` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
 
-- [ ] 🟢 Facturation's patient filter only lists the physician's own roster — *added 8/24, from billing-workflow code review, reworded 9/30*
-  - `ClaimRepository.list_for_physician` deliberately doesn't filter `deleted_at` (a deleted patient's past claims keep showing their name), but `FacturationPage/RecordsTab.tsx`'s patient filter dropdown is filled from the physician's roster (`GET /patients`). Since the 8/31 global-patient refactor, claims aren't roster-gated, so any patient billed but never added to (or removed from) "my patients" can't be picked in the filter. Minor; the "all patients" view still shows their claims. Could be filled from the distinct patients on the physician's own claims instead.
-
 - [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
   - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
 
@@ -85,24 +82,18 @@
   - Registry rows are now keyed by `table_name` (several per `manual_rev`), and there is a new nullable `embedding_model` column (e.g. `mistral:mistral-embed`, `bedrock:cohere.embed-v4:0`). Each codes table's schema metadata carries `embedding_model` too. `CodeVersionRow` ignores the extra field (pydantic default), so nothing breaks today.
   - Extraction-only variants (Mistral embeddings) run as-is. An embedding variant (`codes_<rev>__…` built with `bedrock:cohere.embed-v4:0`) runs with `EMBEDDING_PROVIDER=bedrock EMBEDDING_MODEL=cohere.embed-v4:0` (done 10/9: `app/llm/bedrock.py`, and `EmbeddingModelGuard` now refuses a table recording another model). None is built yet; only the run is left.
 
-- [ ] 🟡 Measure the selection benchmark's noise floor — *added 10/8, from the `mistral-sel` analysis*
-  - `mistral-medium` isn't deterministic at temperature 0 (the summary already moved a code's rank between two identical runs). Before reading small per-note deltas between two selection prompts as real, re-run one unchanged configuration (`run --name <x>-rerun --stages selection --candidates-from mistral-2026-10-v2`) and compare it with `report --baseline`: whatever changes there is noise. A `--repeat N` on `run` would make this routine.
-
 - [ ] 🟡 Show each candidate's eligibility bounds in the billing_codes prompt — *added 10/8, from the `mistral-sel` analysis*
   - `_format_candidate` (`app/ramq_codes/prompt.py`) shows the taxonomy path, description, usage and conditions, so what tells sibling variants apart (age band, panel size, registered/vulnerable) is buried in French prose. `mistral-sel` retained 18 wrong variants of an expected code. Render `Code.eligibility`'s typed bounds as one line per candidate (e.g. « Admissibilité : 80 ans ou plus ; patient inscrit ; clientèle ≥ 500 »), then measure with `run --stages selection --candidates-from mistral-2026-10-v2 --baseline <previous>` (wrong variants, retained precision).
 
 - [ ] 🟡 Physician review of the selection judgment calls — *added 10/8, from the `mistral-sel` analysis*
   - Five expected codes the model saw and didn't pick look like label questions as much as model errors: `GMF-2026-00303` 15813 vs 15833 (periodic vs pediatric intake), `GMF-2026-00313` 15803 vs 08819 (follow-up vs psychiatric evaluation), `HOP-2026-00733` 15639 vs 15638 (follow-up vs intake on the ward), `CHSLD-2026-00054` 15622 (phone response), `CLI-2026-01229` 15803 (the model picked hospital code 08882). Also the negatives that came back with codes, `CLI-2026-01246`'s insurer form above all (09826 at high confidence). Settle them in `tests/fixtures/eval_billing_codes.jsonl` before tuning the prompt against them.
 
-- [ ] 🟢 Check server-side that a code's supporting quote is in the note — *added 10/8, from the `mistral-sel` analysis*
-  - The prompt asks for a verbatim `supporting_quote` from the summary or transcript, but nothing checks it. A deterministic check in `SelectionParser.parse` (whitespace/case-normalized substring of the rendered summary or the transcript) would flag a made-up quote on the review card rather than drop the code. Count the flagged quotes in the selection benchmark first, to see whether it happens at all.
-
 - [ ] 🟡 Seed demo encounters relative to today — *added 10/6, from the app demo polish*
   - `scripts/seed_db.py` seeds the `consultations/` notes at the dates written in them (spring–summer 2026), so on a demo day the dashboard shows 0 encounters this week, an empty 8-week activity chart, and every unbilled note at "5 j restants" before the 90-day limit; the inbox's default "Cette semaine" period is empty too. Wanted: an opt-in seed mode (e.g. `--relative-to-today`) that spreads the encounters over the last ~3 weeks, several per day, so the dashboard, the day cards and the bulk-approve callout all have something to show.
 
-- [ ] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework*
+- [ ] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework, reworded 10/16*
   - A `needs_confirmation` like « Confirmer la taille exacte de la clientèle inscrite… » comes back on every encounter dated before the physician's first profile version: `BillingContextBuilder` falls back to the earliest version as an *assumed* panel size, which never filters (`PhysicianContext.is_assumed`). The profile page can't fix it today: `ProfileService.record_practice_facts` is only called with `effective_from = today`.
-  - Wanted: (1) put the run's `unresolved_axes` (computed by `UnresolvedAxisDetector`, today only logged in `retriever.py`) on `BillingCodesResult` as a server-only field, so the review page knows deterministically that panel size is the open question instead of matching the model's free text; (2) a "En vigueur depuis" date on the profile form; (3) on the review page, one banner per run linking to the profile, then « Relancer l'extraction » once it's set.
+  - Wanted: (1) put the run's `unresolved_axes` (computed by `UnresolvedAxisDetector`; today they reach the prompt via `_unresolved_axes_text` in `prompt.py`, the trace in `retriever.py` and the benchmark, but not the stored result) on `BillingCodesResult` as a server-only field, so the review page knows deterministically that panel size is the open question instead of matching the model's free text; (2) a "En vigueur depuis" date on the profile form and API (default today) — `ProfileService.record_practice_facts` already takes `effective_from`, so `as_of` would find a real version for encounters before onboarding; (3) on the review page, one banner per run linking to the profile, then « Relancer l'extraction » once it's set.
 
 - [ ] 🟡 Group a code's variants into one choice on the review page — *added 10/6, from the review-page rework*
   - Variants of one act that differ only on an unresolved axis (e.g. 15841/15842/15843, panel size) are proposed as separate cards in `frontend/src/pages/app/review/CodesReview.tsx`, each with its own checkbox, so the physician can tick two and bill both. Wanted: one card per act with a radio choice of variant, and the `needs_confirmation` text shown once. Needs a family key on `ExtractedCode` (server-only, like `fees`), derived from the code table (the shared `header_path`/family `ramq_codes` already uses for eligibility), not guessed by the frontend from descriptions. Also guard `ClaimService` against two variants of one family on the same claim.
@@ -117,14 +108,14 @@
   - The `code_versions` registry names each table's `manual_rev`. Not carried anywhere yet: `CodeVersionRow` is read, but `Code`/`ExtractedCode`/`claim_codes` don't record which manual edition a suggestion came from.
   - Wanted: `manual_rev` on `Code`/`ExtractedCode` (extraction result JSON, no migration), `get_by_number(number, manual_rev=None)` opening that revision's `table_name` from the registry (explaining a claim billed under an older manual). 9/30: `claim_codes.manual_rev` now exists and `ClaimService` already copies `StoredCandidate.manual_rev` into it — it's NULL only because nothing upstream sets it yet.
 
-- [ ] 🟢 Open an encounter's review from its claim in Facturation — *added 10/6, from the app demo polish*
-  - A claim saved from an encounter can only be edited from its review, but `ClaimOut` carries no `encounter_id`, so the claims table can't link to it (only "Sans rencontre" drafts get a « Modifier »). Add a read-only `encounter_id` (claim → extraction run → encounter, `None` once the run is purged) and a « Ouvrir la rencontre » row action.
+- [ ] 🟢 Check server-side that a code's supporting quote is in the note — *added 10/8, from the `mistral-sel` analysis, reworded 10/16*
+  - The prompt asks for a verbatim `supporting_quote` from the summary or transcript, but nothing checks it server-side. The review page's `quoteLocator.ts` highlights the quote in the note when it finds it and silently shows nothing otherwise (a quote from the summary is legitimately absent from the note). A deterministic check in `SelectionParser.parse` (whitespace/case-normalized substring of the rendered summary or the transcript) would flag a made-up quote on the review card rather than drop the code. Count the flagged quotes in the selection benchmark first, to see whether it happens at all.
 
 - [ ] 🟢 An « Insérer une note d'exemple » button on Ajouter — *added 10/6, from the app demo polish*
   - Would let a demo show the paste flow without hunting for a note, but every `consultations/` note is already seeded, so pasting one is ignored as a duplicate. Needs demo-only notes kept out of the seed (or a fresh synthetic one generated per click).
 
-- [ ] 🟢 Small screens in the app — *added 10/6, from the app demo polish*
-  - The app targets 1280px+ laptops: the sidebar is a fixed 240px column with no collapse, and the review's note docks beside the codes only from 1200px (below that it folds under them). A collapsible sidebar (sheet under ~1024px) and a scroll-safe table layout would cover tablets.
+- [ ] 🟢 Small screens in the app — *added 10/6, from the app demo polish, reworded 10/16*
+  - The app targets 1280px+ laptops. Since 10/7 the sidebar can be folded to a 64px icon rail by hand (`Sidebar.tsx`, remembered per browser), but nothing folds it by viewport width, and the review's note docks beside the codes only from 1200px (below that it folds under them). An automatic collapse (sheet under ~1024px) and a scroll-safe table layout would cover tablets.
 
 - [ ] 🟢 Frontend E2E: more journeys, and a nightly run — *added 10/4, from the frontend test plan*
   - Playwright in `frontend/e2e/` covers 3 journeys (extract → pick codes → save the claim; paste a note → associate the patient; bill the saved claims → PDF). `npm run e2e` needs the root `.env`'s `EMBEDDING_API_KEY` and `DB_PATH`, since retrieval embeddings still hit the real Mistral API.
@@ -134,32 +125,29 @@
 - [ ] 🟢 Contact requests have no admin screen — *added 10/2, from the public-site work*
   - `POST /contact` saves to `contact_requests` and emails `CONTACT_NOTIFY_EMAIL` when SMTP is configured; otherwise requests are only in the DB. A small admin-only list (and a retention purge, per the privacy policy) would follow.
 
-- [ ] 🟢 Paginate the inbox for long periods — *added 10/1, from the step 11 period filter*
-  - `GET /encounters` with no bounds ("Tout") loads every encounter, its latest run's results and its patient in one response, and the duplicate flagging is O(n²) over them. Fine for weeks of notes; for a year of them, add a limit/cursor (and keep "Tout" paged) or cap the preset.
-
-- [ ] 🟢 Let the physician backdate their profile ("En vigueur depuis") — *added 10/1*
-  - The first profile version is dated the day it's entered, so encounters before onboarding only get an assumed panel size (see the cold-start item in Done). `ProfileService.record_practice_facts` already takes `effective_from`; expose it on the profile form/API (default today) so the physician can say when the facts started and `as_of` finds a real version.
+- [ ] 🟢 Paginate the inbox for long periods — *added 10/1, from the step 11 period filter, reworded 10/16*
+  - Since 10/7 the frontend shows long lists 50 rows at a time, but that's client-side: `GET /encounters` with no bounds ("Tout") still loads every encounter, its latest run's results and its patient in one response, and the duplicate flagging is O(n²) over them. Fine for weeks of notes; for a year of them, add a limit/cursor on the API (and keep "Tout" paged) or cap the preset.
 
 - [ ] 🟢 Show ingestion's `needs_review`/`review_reason` to the physician — *added 9/30, deferred from the versioned-codes-table migration*
   - 135 rows of `codes_2026-06-05` are flagged by ingestion as ambiguous/incomplete. Not selected by `CodeRepository` today. Could flow through `Code` into `ExtractedCode` as a server-only field and show as a small "fiche RAMQ à vérifier" warning in `CodesReview.tsx` (not sent to the LLM).
 
-- [ ] 🟢 Measure per-candidate prompt cost with the deeper `header_path` and procedure `rules` — *added 9/30*
-  - `_format_candidate` (`app/ramq_codes/prompt.py`) prints `header_path` verbatim (now up to ~7 segments) and every rule; procedure-section codes can carry long `rules`. Check the token cost of a 40-candidate prompt on the real table before deciding whether to trim either.
-
-- [ ] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8*
-  - Since 10/8 every chat and embedding call is metered by `app/llm/openai_client.py` (`LLMCallRecord`: tokens in/out, latency, purpose, `finish_reason`) and logged as one structured `llm_call` line (`app/llm/usage.py`); the benchmark collects them per note with `usage_scope()`. Nothing is persisted yet.
+- [ ] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8, reworded 10/16*
+  - Since 10/8 every chat and embedding call is metered by its client (`app/llm/openai_client.py`, and since 10/9 `bedrock_chat.py`; `LLMCallRecord`: tokens in/out, latency, purpose, `finish_reason`) and logged as one structured `llm_call` line (`app/llm/usage.py`); the benchmark collects them per note with `usage_scope()`. Nothing is persisted yet.
   - Remaining: a `UsageRecorder` sink that stores the records of an extraction on its run (a `llm_calls` table keyed to `ExtractionRun`, or a JSON column on `ExtractionRunResult`), so cost per encounter/physician can be queried. Langfuse stays an option, but would need its OpenAI-SDK integration now that llama-index is gone.
 
 ## 🧹 Cleanup / Dead code
-
-- [ ] 🟢 Flaky frontend tests under full-suite load — *added 10/7, from the `reloadSignal` cleanup*
-  - `FacturationPage.test.tsx`'s first test ("marks a claim billed without an encounter…") takes ~0.7s alone but often hits vitest's 5s timeout in a full `npm test` run, with or without the 10/7 change. `EncounterPage.test.tsx`'s "saves and opens the next encounter, saying whose claim was saved" failed once the same way. Find what the first test is waiting on (cold module/portal import under 37 parallel jsdom workers?) before reaching for a bigger `testTimeout`.
 
 - [ ] 🟢 `formatClinicTime`'s comment says "HH:MM" but it renders "09 h 05" — *added 10/4, from the frontend tests*
   - `frontend/src/utils/date.ts` uses the `fr-CA` locale, so the output is `09 h 05` (and the separator whitespace varies by ICU version). Probably intended for a French UI; fix the comment, or switch to `hour12: false` with `en-CA` if a strict HH:MM is wanted. `date.test.ts` asserts the current output.
 
 ## ✅ Done
 
+- [x] 🟢 Let the physician backdate their profile ("En vigueur depuis") — *added 10/1, merged 10/16 into "Let the physician settle a panel-size question once"*
+- [x] 🟢 Measure per-candidate prompt cost with the deeper `header_path` and procedure `rules` — *added 9/30, done 10/8 (benchmark cost table: ~11k input tokens per note)*
+- [x] 🟢 Flaky frontend tests under full-suite load — *added 10/7, from the `reloadSignal` cleanup, fixed 10/9 by raising the test timeouts*
+- [x] 🟡 Measure the selection benchmark's noise floor — *added 10/8, from the `mistral-sel` analysis, done 10/8 (±3 codes, `benchmarks/README.md`)*
+- [x] 🟢 Open an encounter's review from its claim in Facturation — *added 10/6, from the app demo polish, done 10/7*
+- [x] 🟢 Facturation's patient filter only lists the physician's own roster — *added 8/24, from billing-workflow code review, obsolete 10/7 (now a name search over the claims)*
 - [x] 🟡 ER visit codes are eligible but never retrieved — *added 10/9, from the `sonnet-sel` benchmark, done 10/9*
 - [x] 🟢 Lance prints a deprecation warning on every hybrid code search — *added 10/8, from the benchmark work, done 10/9*
 - [x] 🟢 `FacturationPage`'s `reloadSignal` is redundant — *added 10/4, from the frontend tests, done 10/7*
