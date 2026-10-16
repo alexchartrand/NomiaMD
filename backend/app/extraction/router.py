@@ -9,6 +9,7 @@ from app.extraction.models import BillingExtractionResponse, ExtractionRequest
 from app.extraction.pipeline import BillingPipeline
 from app.extraction.recorder import ExtractionRecorder, get_extraction_recorder
 from app.postgresdb import PatientRepository, User, session_scope
+from app.summary import ConsultationDigestBuilder
 from app.rate_limit import limiter
 
 logger = logging.getLogger(__name__)
@@ -70,4 +71,5 @@ async def extract(
         extraction_run_id=run.id,
         encounter_date=encounter_date,
         encounter_date_raw=encounter_date_raw,
+        summary=ConsultationDigestBuilder().build(result.summary),
     )

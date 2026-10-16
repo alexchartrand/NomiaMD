@@ -164,6 +164,8 @@ async def test_push_a_note_with_a_known_nam_is_extracted_and_ready(me, client):
         "TEST-BP-MGMT",
         "TEST-BLOODWORK-ORDER",
     ]
+    # The stored summary, read back as the review shows it above the codes.
+    assert detail["extraction"]["summary"]["short_description"] == MOCK_SUMMARY_RESULT["short_description"]
     async with session_scope() as session:
         run = await session.get(ExtractionRun, detail["extraction"]["extraction_run_id"])
     assert run.encounter_id == outcome["encounter_id"]

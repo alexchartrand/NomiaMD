@@ -171,6 +171,9 @@ async def test_extract_endpoint_end_to_end():
     # MOCK_SUMMARY_RESULT's encounter_setting.date is null -> must stay null, never "today".
     assert body["encounter_date"] is None
     assert body["encounter_date_raw"] is None
+    assert body["summary"]["short_description"] == MOCK_SUMMARY_RESULT["short_description"]
+    assert body["summary"]["procedures"] == []
+    assert body["summary"]["referral"] is None
 
 
 async def test_extract_endpoint_sets_the_encounters_service_date_from_the_summary():

@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.extraction.models import BillingExtractionResponse
 from app.postgresdb import Encounter, ExtractionRepository, ExtractionRunResult
 from app.ramq_codes import BillingCodesResult, CodeSelector
-from app.summary import ConsultationSummarizer
+from app.summary import ConsultationDigestBuilder, ConsultationSummarizer
 
 
 class StoredExtractionLoader:
@@ -44,6 +44,7 @@ def _response(
         # found (ExtractionRecorder.save) — the one a claim from it is dated with.
         encounter_date=encounter.service_date,
         encounter_date_raw=_raw_date(summary),
+        summary=ConsultationDigestBuilder().from_stored(summary.result_json) if summary else None,
     )
 
 

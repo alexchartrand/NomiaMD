@@ -5,6 +5,7 @@ from datetime import date
 from pydantic import BaseModel, Field
 
 from app.ramq_codes import BillingCodesResult
+from app.summary import ConsultationDigest
 
 
 class TranscriptSource(BaseModel):
@@ -32,3 +33,6 @@ class BillingExtractionResponse(BaseModel):
     extraction_run_id: int
     encounter_date: date | None
     encounter_date_raw: str | None
+    # The consultation summary as the review shows it above the codes; None for a run whose
+    # summary is missing or was stored under an older schema.
+    summary: ConsultationDigest | None = None
