@@ -57,7 +57,7 @@ describe("public pages", () => {
     serveSession(null);
     renderWithProviders(<AppRouter />, { route: "/prix" });
     await screen.findByRole("heading", { level: 1 });
-    expect(screen.getByRole("heading", { level: 2, name: "Gratuit" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Essai gratuit" })).toBeInTheDocument();
     expect(screen.getByText("200 $")).toBeInTheDocument();
     expect(screen.getByText("Communiquez avec nous")).toBeInTheDocument();
   });

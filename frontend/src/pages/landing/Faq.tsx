@@ -47,7 +47,7 @@ const QUESTIONS: FaqItem[] = [
     question: "Combien ça coûte ?",
     answer: (
       <>
-        Un forfait gratuit permet d'essayer NomiaMD sans frais, et des forfaits Solo et Clinique sont offerts.
+        Un essai gratuit d'un mois, avec toutes les fonctionnalités, permet d'essayer NomiaMD sans frais, et des forfaits Solo et Clinique sont offerts.
         Voyez la{" "}
         <Link to="/prix" className={inlineLink}>
           tarification

@@ -12,19 +12,21 @@ export type Plan = {
   highlighted?: boolean;
 };
 
-// The free plan's daily limit is advertised here only — nothing in the app enforces it yet
+// The trial's one-month limit is advertised here only — nothing in the app enforces it yet
 // (see BACKLOG.md).
 export const PLANS: Plan[] = [
   {
     id: "gratuit",
-    name: "Gratuit",
-    audience: "Pour découvrir NomiaMD à votre rythme.",
+    name: "Essai gratuit",
+    audience: "Pour essayer NomiaMD sans frais, avec toutes les fonctionnalités.",
     price: "0 $",
-    unit: "pour toujours",
+    unit: "pendant 1 mois",
     features: [
-      "Codes de facturation pour 1 note par jour",
+      "Accès complet pendant 1 mois",
+      "Codes de facturation pour un nombre illimité de notes",
       "1 médecin",
-      "Codes de facturation RAMQ suggérés avec tarifs",
+      "Boîte de réception quotidienne",
+      "Factures regroupées et PDF",
       "Assistant RAMQ",
     ],
     cta: { label: "Essayer gratuitement", to: contactLink("essai", "gratuit") },
@@ -75,9 +77,9 @@ export const PRICING_FAQ = [
     answer: "Non. Les forfaits sont mensuels et vous pouvez les annuler en tout temps.",
   },
   {
-    question: "Que se passe-t-il une fois la limite quotidienne du forfait gratuit atteinte ?",
+    question: "Que se passe-t-il à la fin de l'essai gratuit ?",
     answer:
-      "Vous pourrez obtenir les codes de facturation d'une nouvelle note le lendemain. Vous pouvez passer au forfait Solo en tout temps pour un nombre illimité de notes.",
+      "Après un mois, choisissez le forfait Solo ou Clinique pour continuer à utiliser NomiaMD. Vous pouvez passer à un forfait payant en tout temps pendant l'essai.",
   },
   {
     question: "Comment suis-je facturé ?",

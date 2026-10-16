@@ -18,7 +18,7 @@ export default function Pricing() {
           align="center"
           eyebrow="Tarifs"
           title="Un forfait pour chaque pratique"
-          lead="Commencez gratuitement, passez à un forfait payant quand NomiaMD fait partie de votre routine."
+          lead="Essayez NomiaMD gratuitement pendant un mois, avec toutes les fonctionnalités, puis choisissez le forfait qui convient à votre pratique."
         />
         <div className="grid grid-cols-1 items-stretch gap-6 min-[901px]:grid-cols-3">
           {PLANS.map((plan) => (
