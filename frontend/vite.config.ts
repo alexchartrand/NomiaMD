@@ -1,3 +1,4 @@
+import os from "node:os";
 import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -21,6 +22,10 @@ export default defineConfig({
     // Page tests chain several mocked requests and re-renders; with every file running in
     // parallel (CI's small runners especially), the 5 s default times some of them out.
     testTimeout: 15_000,
+    // Each worker holds its own jsdom + React + MSW, so memory, not cores, is the limit: the
+    // default (one worker per core) swaps a many-core, little-RAM machine (WSL) into timeouts.
+    // Beyond 4 the suite gets no faster. `--maxWorkers=N` on the CLI still overrides this.
+    maxWorkers: Math.max(1, Math.min(4, os.availableParallelism() - 1)),
   },
   server: {
     proxy: {
