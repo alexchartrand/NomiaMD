@@ -1,5 +1,5 @@
 """The process's single composition root: opens the relational database and the RAMQ
-LanceDB, and wires everything built on top of them (the extraction task registry, the RAMQ
+LanceDB, and wires everything built on top of them (the billing pipeline, the RAMQ
 chatbot engine). Used by app/main.py's FastAPI lifespan and by the scripts — the real-API
 one (try_extraction.py) takes `application_services()`, the DB-only
 ones (create_user.py, seed_db.py, reset_password.py) just `postgres_database()`.
@@ -13,12 +13,12 @@ from typing import AsyncIterator
 
 from app.code_catalog import init_code_catalog
 from app.config import settings
+from app.extraction import build_billing_pipeline, init_billing_pipeline
 from app.intake.connectors.epic_fhir.factory import check_sandbox_startup
 from app.lancedb import CodeRepository, DocumentRepository, LanceDB
 from app.llm import EmbeddingModelGuard, chat_provider, embedding_provider, get_embedding_client
 from app.postgresdb import PostgresDB, bind_database
 from app.ramq_chatbot import init_ramq_query_engine
-from app.tasks.registry import init_tasks
 
 
 @asynccontextmanager
@@ -46,7 +46,7 @@ async def application_services() -> AsyncIterator[LanceDB]:
             await EmbeddingModelGuard(get_embedding_client()).check(await db.stored_embeddings())
             codes = CodeRepository(db.code_tables)
             documents = DocumentRepository(db.documents_table)
-            init_tasks(codes=codes)
+            init_billing_pipeline(build_billing_pipeline(codes))
             init_code_catalog(codes)
             init_ramq_query_engine(codes, documents)
             yield db

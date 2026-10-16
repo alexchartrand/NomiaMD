@@ -9,8 +9,8 @@ scripts and long-running flows that must not hold a pooled connection across slo
 LLM calls in /extract — see app/extraction/router.py) open short scopes directly.
 
 Sessions come from the `PostgresDB` bound by `bind_database` — app/bootstrap.py's
-`postgres_database()` does that once at startup, same pattern as the task registry's
-`init_tasks`."""
+`postgres_database()` does that once at startup, same pattern as the billing pipeline's
+`init_billing_pipeline`."""
 
 from contextlib import asynccontextmanager
 from typing import AsyncIterator

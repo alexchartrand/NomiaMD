@@ -1,9 +1,9 @@
-"""Result model for the consultation_summary task.
+"""Result model for the consultation_summary step.
 
 Field types plus each field's `description=` (extraction guidance for the LLM) and
 `json_schema_extra={"fr_label": ...}` (French label for rendering) are the single source
-of truth this task's schema/prompt/renderer are all derived from — see app/tasks/schema.py
-(generic, shared across tasks) and app/summary/task.py."""
+of truth this step's schema/prompt/renderer are all derived from — see app/llm/schema.py
+(generic) and app/summary/prompt.py."""
 
 from typing import Literal
 

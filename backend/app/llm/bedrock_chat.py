@@ -77,7 +77,7 @@ class ConverseResponseReader:
     Bedrock doesn't hold gpt-oss to the schema on long prompts: its answer can start with a
     leaked reasoning-channel marker (`**analysis{...}`, `**{...}`) before otherwise valid
     JSON. When a JSON answer was asked for, whatever surrounds the outermost object is that
-    leak and is cut; the task's parse() still validates what's left."""
+    leak and is cut; the caller still validates what's left."""
 
     def content(self, response: dict[str, Any], *, json_expected: bool = False) -> str | None:
         blocks = response.get("output", {}).get("message", {}).get("content", [])
@@ -181,7 +181,7 @@ class BedrockChatClient(IChatClient):
 
 class BedrockChatProvider(ChatModelProvider):
     """Amazon Bedrock's Converse API. The model is a Bedrock model or inference profile id
-    (e.g. `us.anthropic.claude-sonnet-5-5`, `openai.gpt-oss-120b-1:0`), set per task with
+    (e.g. `us.anthropic.claude-sonnet-5-5`, `openai.gpt-oss-120b-1:0`), set per call with
     LLM_MODEL_<TASK> or the benchmark's --selection-model. BEDROCK_REGION overrides the
     Region the AWS SDK's own configuration picks. LLM_API_KEY and LLM_ENDPOINT are unused."""
 

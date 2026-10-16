@@ -44,7 +44,7 @@ def build_ramq_retriever(
     kept_sources: tuple[str, ...] = DEFAULT_KEPT_SOURCES,
     max_family_size: int = DEFAULT_MAX_FAMILY_SIZE,
 ) -> RAMQCodesRetriever:
-    """The ICodesRetriever BillingCodesTask is constructed with (see app/tasks/registry.py).
+    """The ICodesRetriever the billing pipeline is built with (see app/extraction/factory.py).
     The keyword arguments are the benchmark's tuning knobs, which it passes to
     build_code_query_runner/build_candidate_fuser/build_family_expander directly; production
     uses the defaults."""

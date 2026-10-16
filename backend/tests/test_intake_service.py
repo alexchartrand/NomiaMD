@@ -7,14 +7,15 @@ import ast
 import itertools
 from datetime import date
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from contextlib import contextmanager
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from sqlalchemy import func, select
 
 from app.care_setting import CareSetting
 from app.extraction.encounter_extractor import EncounterNotExtractableError, PipelineEncounterExtractor
-from app.extraction.models import ExtractionResult
+from app.extraction import PipelineResult
 from app.intake import (
     Channel,
     DedupOutcome,
@@ -219,19 +220,26 @@ def _pipeline_results(summary_date: str):
     summary = ConsultationSummaryResult.model_validate(
         MOCK_SUMMARY_RESULT | {"encounter_setting": MOCK_SUMMARY_RESULT["encounter_setting"] | {"date": summary_date}}
     )
-    return (
-        ExtractionResult(task="consultation_summary", result=summary, model="mistral-small-latest"),
-        ExtractionResult(task="billing_codes", result=BillingCodesResult(codes=[]), model="mistral-small-latest"),
+    return PipelineResult(
+        summary=summary,
+        summary_model="mistral-small-latest",
+        billing=BillingCodesResult(codes=[]),
+        billing_model="mistral-small-latest",
     )
+
+
+@contextmanager
+def _patched_pipeline(**run):
+    """Stands in for the process's billing pipeline; yields its `run` mock."""
+    run_mock = AsyncMock(**run)
+    with patch("app.extraction.encounter_extractor.get_billing_pipeline", return_value=Mock(run=run_mock)):
+        yield run_mock
 
 
 async def test_extractor_runs_the_pipeline_in_the_source_date_order(user, nam):
     outcome = await IntakeService(RecordingQueue()).receive(_note(source_system="epic", nam=nam), user)
 
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(return_value=_pipeline_results("03/04/2026")),
-    ) as pipeline:
+    with _patched_pipeline(return_value=_pipeline_results("03/04/2026")) as pipeline:
         await PipelineEncounterExtractor().extract(outcome.encounter_id)
 
     assert pipeline.await_args.kwargs["date_order"] == "mdy"
@@ -247,10 +255,7 @@ async def test_extractor_hands_the_pipeline_the_stored_care_setting(user, nam):
     note = _note(nam=nam, meta=EncounterMeta(care_setting=CareSetting.URGENCE))
     outcome = await IntakeService(RecordingQueue()).receive(note, user)
 
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(return_value=_pipeline_results("2026-03-04")),
-    ) as pipeline:
+    with _patched_pipeline(return_value=_pipeline_results("2026-03-04")) as pipeline:
         await PipelineEncounterExtractor().extract(outcome.encounter_id)
 
     assert pipeline.await_args.kwargs["care_setting"] is CareSetting.URGENCE
@@ -259,10 +264,7 @@ async def test_extractor_hands_the_pipeline_the_stored_care_setting(user, nam):
 async def test_extractor_without_a_care_setting_hands_the_pipeline_none(user, nam):
     outcome = await IntakeService(RecordingQueue()).receive(_note(nam=nam), user)
 
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(return_value=_pipeline_results("2026-03-04")),
-    ) as pipeline:
+    with _patched_pipeline(return_value=_pipeline_results("2026-03-04")) as pipeline:
         await PipelineEncounterExtractor().extract(outcome.encounter_id)
 
     assert pipeline.await_args.kwargs["care_setting"] is None
@@ -271,10 +273,7 @@ async def test_extractor_without_a_care_setting_hands_the_pipeline_none(user, na
 async def test_extractor_records_a_pipeline_failure_on_the_encounter(user, nam):
     outcome = await IntakeService(RecordingQueue()).receive(_note(nam=nam), user)
 
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(side_effect=RuntimeError("LLM indisponible")),
-    ):
+    with _patched_pipeline(side_effect=RuntimeError("LLM indisponible")):
         with pytest.raises(RuntimeError):
             await PipelineEncounterExtractor().extract(outcome.encounter_id)
 

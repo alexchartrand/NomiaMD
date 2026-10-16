@@ -25,7 +25,7 @@ from app.main import app
 from app.postgresdb import EncounterRepository, ExtractionRun, Gender, PatientRepository, session_scope
 from app.worker import WorkerSettings, extract_encounter
 from tests.db_helpers import ensure_user_row, physician
-from tests.test_intake_service import RecordingQueue, _get, _note, _pipeline_results
+from tests.test_intake_service import RecordingQueue, _get, _note, _patched_pipeline, _pipeline_results
 
 _physician_ids = itertools.count(6100)
 _ramq_numbers = itertools.count(1)  # "BGEX" prefix
@@ -59,10 +59,7 @@ async def _run_count(encounter_id: int) -> int:
 async def test_job_runs_the_pipeline_once_even_when_run_twice(received):
     _, encounter_id = received
     job = ExtractEncounterJob()
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(return_value=_pipeline_results("2026-03-04")),
-    ) as pipeline:
+    with _patched_pipeline(return_value=_pipeline_results("2026-03-04")) as pipeline:
         await job.run(encounter_id, attempt=1)
         await job.run(encounter_id, attempt=1)
 
@@ -72,10 +69,7 @@ async def test_job_runs_the_pipeline_once_even_when_run_twice(received):
 
 async def test_failed_attempt_records_the_error_and_asks_for_a_retry(received):
     _, encounter_id = received
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(side_effect=RuntimeError("LLM indisponible")),
-    ):
+    with _patched_pipeline(side_effect=RuntimeError("LLM indisponible")):
         with pytest.raises(RetryExtraction) as retry:
             await ExtractEncounterJob().run(encounter_id, attempt=1)
 
@@ -88,10 +82,7 @@ async def test_failed_attempt_records_the_error_and_asks_for_a_retry(received):
 
 async def test_last_attempt_fails_for_good(received):
     _, encounter_id = received
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(side_effect=RuntimeError("LLM indisponible")),
-    ):
+    with _patched_pipeline(side_effect=RuntimeError("LLM indisponible")):
         with pytest.raises(RuntimeError):
             await ExtractEncounterJob().run(encounter_id, attempt=MAX_TRIES)
 
@@ -99,10 +90,7 @@ async def test_last_attempt_fails_for_good(received):
 async def test_retry_backoff_grows_with_the_attempt(received):
     _, encounter_id = received
     delays = []
-    with patch(
-        "app.extraction.encounter_extractor.run_billing_codes_pipeline",
-        AsyncMock(side_effect=RuntimeError("boom")),
-    ):
+    with _patched_pipeline(side_effect=RuntimeError("boom")):
         for attempt in (1, 2):
             with pytest.raises(RetryExtraction) as retry:
                 await ExtractEncounterJob().run(encounter_id, attempt=attempt)

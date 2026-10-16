@@ -1,9 +1,9 @@
-"""Value objects for the administrative facts BillingCodesTask needs but can never derive
+"""Value objects for the administrative facts the billing_codes step needs but can never derive
 from a transcript (see CLAUDE.md): the billing physician's own practice facts, and the
 identified patient's roster status. Pure data — no I/O, no dependency on postgresdb or
 auth — assembled by BillingContextBuilder (context_builder.py) and consumed by the
-eligibility prefilter/UnresolvedAxisDetector (eligibility.py) and BillingCodesTask's prompt
-(task.py).
+eligibility prefilter/UnresolvedAxisDetector (eligibility.py) and the billing_codes prompt
+(prompt.py).
 
 Every field is nullable. An unresolved axis (no roster match, no profile on file) must
 degrade to "unknown", never to a guessed default — a wrong assumption here is worse than an
@@ -77,7 +77,7 @@ class PatientContext:
 
 @dataclass(frozen=True)
 class BillingContext:
-    """Everything BillingCodesTask's prompt states as authoritative fact rather than lets
+    """Everything the billing_codes prompt states as authoritative fact rather than lets
     the model infer from the transcript. Both halves are independently optional: a
     physician with no profile on file and/or a patient with no roster match still produce a
     valid (all-null) BillingContext — the pipeline degrades to today's guess-from-transcript

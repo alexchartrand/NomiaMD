@@ -7,7 +7,8 @@ in one scope, closed before the LLM calls."""
 
 from app.care_setting import parse_care_setting
 from app.extraction.encounter_date import parse_encounter_date
-from app.extraction.pipeline import run_billing_codes_pipeline
+from app.extraction.factory import get_billing_pipeline
+from app.extraction.pipeline import BillingPipeline
 from app.extraction.recorder import ExtractionRecorder
 from app.intake import NormalizerRegistry, default_normalizers
 from app.postgresdb import EncounterRepository, UserRepository, session_scope
@@ -18,9 +19,17 @@ class EncounterNotExtractableError(Exception):
 
 
 class PipelineEncounterExtractor:
-    def __init__(self, recorder: ExtractionRecorder | None = None, normalizers: NormalizerRegistry | None = None) -> None:
+    def __init__(
+        self,
+        recorder: ExtractionRecorder | None = None,
+        normalizers: NormalizerRegistry | None = None,
+        pipeline: BillingPipeline | None = None,
+    ) -> None:
+        """`pipeline`: None = the process's (get_billing_pipeline), looked up per extraction
+        since this may be built before application_services() has set it."""
         self._recorder = recorder or ExtractionRecorder()
         self._normalizers = normalizers or default_normalizers()
+        self._pipeline = pipeline
 
     async def extract(self, encounter_id: int) -> None:
         async with session_scope() as session:
@@ -30,8 +39,9 @@ class PipelineEncounterExtractor:
             raise EncounterNotExtractableError(encounter_id)
 
         date_order = self._normalizers.for_source(encounter.source_system).date_order
+        pipeline = self._pipeline or get_billing_pipeline()
         try:
-            summary_result, billing_result = await run_billing_codes_pipeline(
+            result = await pipeline.run(
                 encounter.note_text,
                 user=user,
                 patient_id=encounter.patient_id,
@@ -46,6 +56,6 @@ class PipelineEncounterExtractor:
             encounter_id=encounter.id,
             user_id=user.id,
             patient_id=encounter.patient_id,
-            service_date=parse_encounter_date(summary_result.result.encounter_setting.date, date_order),
-            stages=[summary_result, billing_result],
+            service_date=parse_encounter_date(result.summary.encounter_setting.date, date_order),
+            result=result,
         )

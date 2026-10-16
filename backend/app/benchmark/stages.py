@@ -9,9 +9,8 @@ from dataclasses import asdict
 
 from app.benchmark.checks import SummaryChecks
 from app.benchmark.dataset import BenchmarkCase
-from app.benchmark.frozen_candidates import FrozenCandidatesRetriever
+from app.benchmark.frozen_candidates import FrozenCandidatesLoader
 from app.benchmark.query_sources import IQuerySource
-from app.benchmark.recording_task import RecordingTask
 from app.benchmark.records import (
     CandidateRecord,
     QueryHitRecord,
@@ -25,15 +24,14 @@ from app.benchmark.records import (
     SummaryRecord,
 )
 from app.benchmark.store import Run
-from app.extraction.engine import ExtractionOutputError, run_extraction
 from app.lancedb import ICodeRepository
-from app.llm import usage_scope
-from app.ramq_codes import BillingCodesInput, BillingCodesTask
+from app.llm import ExtractionOutputError, usage_scope
+from app.ramq_codes import BillingPromptBuilder, CodeSelector
 from app.ramq_codes.candidate_fuser import CandidateFuser
 from app.ramq_codes.eligibility import EligibilityFilterFactory
 from app.ramq_codes.family_expander import FamilyExpander
 from app.ramq_codes.query_runner import CodeQueryRunner
-from app.summary import ConsultationSummaryResult, ConsultationSummaryTask
+from app.summary import ConsultationSummarizer, ConsultationSummaryResult
 
 
 def _error(exc: Exception) -> StageError:
@@ -67,19 +65,18 @@ class SummaryStage(Stage):
         self,
         model: str | None = None,
         checks: SummaryChecks | None = None,
-        task: ConsultationSummaryTask | None = None,
+        summarizer: ConsultationSummarizer | None = None,
     ):
-        """`model`: None = the task's own resolution (LLM_MODEL_CONSULTATION_SUMMARY, then
-        its default)."""
-        self._model = model
+        """`model`: None = the summarizer's own resolution (LLM_MODEL_CONSULTATION_SUMMARY,
+        then its default)."""
         self._checks = checks or SummaryChecks()
-        self._task = task or ConsultationSummaryTask()
+        self._summarizer = summarizer or ConsultationSummarizer(model=model)
 
     async def run(self, case: BenchmarkCase, run: Run) -> SummaryRecord:
         start = time.perf_counter()
         with usage_scope() as scope:
             try:
-                extraction = await run_extraction(self._task, case.transcript, model=self._model)
+                summarized = await self._summarizer.summarize(case.transcript)
             except Exception as exc:
                 return SummaryRecord(
                     patient_id=case.patient_id,
@@ -88,12 +85,12 @@ class SummaryStage(Stage):
                     error=_error(exc),
                 )
 
-        summary = extraction.result
+        summary = summarized.summary
         return SummaryRecord(
             patient_id=case.patient_id,
             calls=scope.records,
             totals=StageTotals.from_calls(scope.records, (time.perf_counter() - start) * 1000),
-            model=extraction.model,
+            model=summarized.model,
             result=summary,
             checks=self._checks.check(case, summary),
             stats=self._checks.stats(summary),
@@ -186,10 +183,10 @@ class RetrievalStage(Stage):
 
 
 class SelectionStage(Stage):
-    """The billing_codes call, run by the production BillingCodesTask on a stored retrieval
-    result (FrozenCandidatesRetriever) rather than a live search, so selection is measured
-    on exactly the candidates the retrieval record holds. Stores the model's codes (both tiers) and
-    what parse() dropped from its raw answer: codes never offered, and malformed entries."""
+    """The billing_codes call, run by the production CodeSelector on a stored retrieval
+    result (FrozenCandidatesLoader) rather than a live search, so selection is measured on
+    exactly the candidates the retrieval record holds. Stores the model's codes (both tiers)
+    and what parsing dropped from its raw answer: codes never offered, and malformed entries."""
 
     name = "selection"
 
@@ -202,12 +199,13 @@ class SelectionStage(Stage):
         model: str | None = None,
     ):
         """`candidates` / `summaries`: the runs to read each note's retrieval and summary
-        records from; None = the run being written. `model`: None = the task's own
+        records from; None = the run being written. `model`: None = the selector's own
         resolution (LLM_MODEL_BILLING_CODES, then its default)."""
-        self._codes = codes
+        self._loader = FrozenCandidatesLoader(codes)
         self._candidates = candidates
         self._summaries = summaries
-        self._model = model
+        self._selector = CodeSelector(model=model)
+        self._prompt_builder = BillingPromptBuilder()
 
     async def run(self, case: BenchmarkCase, run: Run) -> SelectionRecord:
         start = time.perf_counter()
@@ -231,33 +229,23 @@ class SelectionStage(Stage):
             return record
 
         record.offered = [c.number for c in retrieval.candidates]
-        retriever = FrozenCandidatesRetriever(self._codes, record.offered, retrieval.unresolved_axes)
-        task = RecordingTask(BillingCodesTask(retriever, self._codes))
-        task_input = BillingCodesInput(summary=summary, transcript=case.transcript, context=case.context)
         with usage_scope() as scope:
             try:
-                extraction = await run_extraction(task, task_input, model=self._model)
+                candidates = await self._loader.load(record.offered, retrieval.unresolved_axes)
+                record.prompt_chars = self._prompt_builder.build(
+                    candidates, summary, case.transcript, case.context
+                ).chars
+                selection = await self._selector.select(candidates, summary, case.transcript, case.context)
             except Exception as exc:
                 record.error = _error(exc)
-                extraction = None
+                selection = None
 
         record.calls = scope.records
         record.totals = StageTotals.from_calls(scope.records, (time.perf_counter() - start) * 1000)
-        if task.prepared is not None:
-            record.prompt_chars = len(task.prepared.system_prompt) + len(task.prepared.user_message)
-        if task.raw is not None:
-            self._record_drops(record, task.raw)
-        if extraction is not None:
-            record.model = extraction.model
-            record.result = extraction.result
+        if selection is not None:
+            record.model = selection.model
+            record.result = selection.result
+            record.raw_code_count = selection.drops.raw_code_count
+            record.dropped_malformed = selection.drops.malformed
+            record.dropped_not_offered = list(selection.drops.not_offered)
         return record
-
-    @staticmethod
-    def _record_drops(record: SelectionRecord, raw: dict) -> None:
-        codes = [*(raw.get("codes") or []), *(raw.get("other_possible_codes") or [])]
-        offered = set(record.offered)
-        record.raw_code_count = len(codes)
-        record.dropped_malformed = sum(1 for c in codes if not isinstance(c, dict))
-        record.dropped_not_offered = [
-            str(c.get("code")) for c in codes if isinstance(c, dict) and c.get("code") not in offered
-        ]

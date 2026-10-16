@@ -51,12 +51,7 @@ export function makeExtraction(
   overrides: Partial<BillingExtractionResponse> = {},
 ): BillingExtractionResponse {
   return {
-    billing: {
-      task: "billing_codes",
-      result: { codes, notes: null },
-      model: "test-model",
-      created_at: "2026-10-01T12:00:00Z",
-    },
+    billing: { codes, notes: null },
     extraction_run_id: 1,
     encounter_date: "2026-10-01",
     encounter_date_raw: null,

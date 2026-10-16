@@ -33,17 +33,16 @@ from app.benchmark.selection_scoring import SelectionScore, SelectionScorer
 from app.benchmark.stages import RetrievalStage, SelectionStage, Stage, SummaryStage
 from app.benchmark.store import Run, RunStore
 from app.config import settings
-from app.extraction.engine import resolve_model
 from app.lancedb import CodeRepository, LanceDB
 from app.lancedb.database import stored_embedding
 from app.lancedb.fusion import DEFAULT_K
 from app.lancedb.models import CodeVersionRow
 from app.llm import EmbeddingModelGuard, chat_provider, get_embedding_client
-from app.ramq_codes import BillingCodesTask, build_candidate_fuser, build_code_query_runner, build_family_expander
+from app.ramq_codes import CodeSelector, build_candidate_fuser, build_code_query_runner, build_family_expander
 from app.ramq_codes.candidate_fuser import DEFAULT_FUSED_TOP_K, DEFAULT_KEPT_SOURCES
 from app.ramq_codes.family_expander import DEFAULT_MAX_FAMILY_SIZE
 from app.ramq_codes.query_runner import DEFAULT_SIMILARITY_TOP_K
-from app.summary import ConsultationSummaryTask
+from app.summary import ConsultationSummarizer
 
 BACKEND_DIR = Path(__file__).parent.parent.parent
 
@@ -118,12 +117,12 @@ class RunCommand:
         )
         if "summary" in stages or "selection" in stages:
             chat_provider()  # an unknown LLM_PROVIDER fails now, not on every note
-        # Recorded resolved (argument, else LLM_MODEL_<TASK>, else the task default), so two
+        # Recorded resolved (argument, else LLM_MODEL_<NAME>, else the step default), so two
         # runs on different env-selected models never look alike.
         if "summary" in stages:
-            summary_model = resolve_model(ConsultationSummaryTask(), summary_model)
+            summary_model = ConsultationSummarizer(model=summary_model).resolved_model()
         if "selection" in stages:
-            selection_model = resolve_model(BillingCodesTask, selection_model)
+            selection_model = CodeSelector(model=selection_model).resolved_model()
 
         embedding_provider, embedding_model = settings.embedding_provider, settings.embedding_model
         candidates_run = self._store.open(candidates_from) if candidates_from else None

@@ -4,9 +4,9 @@
 RAMQCodesRetriever); ramq-ingestion owns the write-side (Code, the extraction/embedding
 schema, and one flat `codes_<rev>` LanceDB table per manual revision).
 
-Also holds BillingCodesTask's own output shapes, distinct from the candidate data above:
+Also holds the billing_codes step's own output shapes, distinct from the candidate data above:
 BillingCodesOutput is what the model answers (its sure codes and the other possible ones in
-two lists), BillingCodesResult what parse() makes of it and the app stores (one list, each
+two lists), BillingCodesResult what SelectionParser makes of it and the app stores (one list, each
 code marked `retained` or not)."""
 
 
@@ -52,7 +52,7 @@ class CodeEligibility:
 class Code:
     number: str
     description: str
-    # The manual's taxonomy path in full. Shown in BillingCodesTask's prompt so the model
+    # The manual's taxonomy path in full. Shown in the billing_codes prompt so the model
     # can see what distinguishes this candidate from a near-identical sibling.
     header_path: str = ""
     when_to_use: tuple[str, ...] = ()
@@ -62,7 +62,7 @@ class Code:
 
 
 class CodeFeeOut(BaseModel):
-    """A candidate's real fee entry, resolved server-side (see BillingCodesTask.resolve_fees)
+    """A candidate's real fee entry, resolved server-side (see FeeResolver in fees.py)
     — mirrors CodeFee/CodeRowFee field-for-field. Never populated by the model; the physician
     picks among these in the review UI when a code has more than one."""
 
@@ -109,7 +109,7 @@ class ExtractedCode(BaseModel):
         default=False,
         json_schema_extra={"server_only": True},
         description=(
-            "Set by parse(): the model is sure of this code (its `codes` list) rather than "
+            "Set by SelectionParser: the model is sure of this code (its `codes` list) rather than "
             "offering it as a possibility (`other_possible_codes`). What the review starts "
             "with ticked and what approving from the inbox bills."
         ),
@@ -126,7 +126,7 @@ class ExtractedCode(BaseModel):
 
 
 class BillingCodesOutput(BaseModel):
-    """What the model answers (json_schema() is built from it). Field order is generation
+    """What the model answers (its strict JSON schema is built from it). Field order is generation
     order: the analysis comes first so the codes follow from it, not the reverse."""
 
     analysis: str = Field(description="Short reasoning written before any code is chosen")

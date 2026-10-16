@@ -1,14 +1,9 @@
-"""Exercises the consultation_summary task against a mocked model response — same pattern
-as test_extraction.py's billing_codes tests."""
+"""Exercises the consultation_summary step (ConsultationSummarizer) against a mocked model
+response — same pattern as test_code_selector.py's billing_codes tests."""
 
 from unittest.mock import AsyncMock, patch
 
-from fastapi.testclient import TestClient
-
-from app.extraction.engine import run_extraction
-from app.main import app
-from app.summary import ConsultationSummaryResult, render_for_billing_codes
-from app.tasks.registry import get_task
+from app.summary import ConsultationSummarizer, ConsultationSummaryResult, render_for_billing_codes
 from tests.llm_helpers import fake_chat_result
 
 SAMPLE_TRANSCRIPT = (
@@ -65,31 +60,19 @@ def _mock_response():
     return fake_chat_result(MOCK_RESULT)
 
 
-async def test_run_extraction_parses_mocked_response():
-    task = get_task("consultation_summary")
-    with patch("app.extraction.engine.get_client") as mock_get_client:
+async def test_summarize_parses_mocked_response():
+    with patch("app.llm.structured.get_client") as mock_get_client:
         mock_get_client.return_value.chat = AsyncMock(return_value=_mock_response())
-        result = await run_extraction(task, SAMPLE_TRANSCRIPT)
+        summarized = await ConsultationSummarizer().summarize(SAMPLE_TRANSCRIPT)
 
-    assert result.task == "consultation_summary"
-    assert result.result.clinical_summary.single_vs_multi_system == "multi"
-    assert result.result.clinical_summary.systems_or_body_regions_involved == [
+    assert summarized.summary.clinical_summary.single_vs_multi_system == "multi"
+    assert summarized.summary.clinical_summary.systems_or_body_regions_involved == [
         "endocrinien",
         "cardiovasculaire",
     ]
-
-
-def test_extract_endpoint_rejects_consultation_summary_task():
-    # consultation_summary is billing_codes' internal first stage (see
-    # app/extraction/pipeline.py), not something a client can invoke directly via
-    # /extract — billing_codes is the only task wired to that endpoint (app/main.py).
-    with TestClient(app) as client:
-        response = client.post(
-            "/extract",
-            json={"transcript": SAMPLE_TRANSCRIPT, "task": "consultation_summary", "patient_id": 1},
-        )
-
-    assert response.status_code == 400
+    assert summarized.model == mock_get_client.return_value.chat.return_value.model
+    messages = mock_get_client.return_value.chat.call_args.kwargs["messages"]
+    assert SAMPLE_TRANSCRIPT in messages[1].content
 
 
 def test_render_for_billing_codes_surfaces_quotable_facts():

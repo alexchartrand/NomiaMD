@@ -1,8 +1,8 @@
-from typing import Any
+"""The consultation_summary prompt, and the summary rendered back into text for the billing
+step."""
 
+from app.llm.schema import render_instance, render_schema_block
 from app.summary.models import ConsultationSummaryResult
-from app.tasks.base import ExtractionTask, PreparedPrompt
-from app.tasks.schema import render_instance, render_schema_block, to_strict_schema
 
 _RULES = """\
 You are a clinical documentation parser for RAMQ billing preparation in Quebec.
@@ -56,14 +56,14 @@ SYSTEM_PROMPT = _RULES.format(schema=render_schema_block(ConsultationSummaryResu
 
 def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
     """Renders a ConsultationSummaryResult back into a single French text blob — this,
-    not the raw transcript, is what billing_codes/task.py sends to the model (both for RAMQ
+    not the raw transcript, is what app/ramq_codes/prompt.py sends to the model (both for RAMQ
     candidate retrieval and as the text its explanation must be grounded in). Using
     the already-extracted, denser summary instead of a long freeform dictation is the
     point of the two-stage pipeline (app/extraction/pipeline.py): it retrieves RAMQ
     candidates more reliably and grounds the billing model's reasoning in facts already
     pulled out once, rather than re-reading the whole transcript. The rendering itself
     (labels, which fields show up, empty/null handling) is generic — see
-    app/tasks/schema.py — and driven by the fr_label/description metadata on
+    app/llm/schema.py — and driven by the fr_label/description metadata on
     ConsultationSummaryResult's fields in app/summary/models.py, so a schema change
     here doesn't require touching this function.
 
@@ -73,18 +73,3 @@ def render_for_billing_codes(result: ConsultationSummaryResult) -> str:
     """
     return render_instance(result)
 
-
-class ConsultationSummaryTask(ExtractionTask[str]):
-    name = "consultation_summary"
-
-    async def build_prompt(self, transcript: str) -> PreparedPrompt:
-        return PreparedPrompt(
-            system_prompt=SYSTEM_PROMPT,
-            user_message=f"Transcript:\n{transcript}\n\nExtract the structured facts per your instructions.",
-        )
-
-    def json_schema(self) -> dict[str, Any]:
-        return to_strict_schema(ConsultationSummaryResult)
-
-    def parse(self, raw: dict[str, Any], prepared: PreparedPrompt) -> ConsultationSummaryResult:
-        return ConsultationSummaryResult.model_validate(raw)

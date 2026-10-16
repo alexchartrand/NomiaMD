@@ -23,7 +23,7 @@ from app.care_setting import CareSetting
 from app.patients import nam
 from app.ramq_codes.visit_query import CARE_SETTING_VISIT_SECTIONS, VISIT_SECTION_PREFIX, VisitQueryRenderer
 from app.summary.models import ConsultationSummaryResult, ProcedurePerformed
-from app.summary.task import render_for_billing_codes
+from app.summary import render_for_billing_codes
 
 QuerySource = Literal["visit", "care_setting_visit", "overview", "procedure", "procedure_detail", "add_on", "transcript"]
 
@@ -87,7 +87,7 @@ class SummaryQueryPlanner:
 
 
 class TranscriptQueryPlanner:
-    """One query over the whole note, NAM redacted (as BillingCodesTask sends it). Not used
+    """One query over the whole note, NAM redacted (as the billing_codes prompt sends it). Not used
     by the pipeline: it's the benchmark's control for what the structured summary adds to
     retrieval, and a candidate to fuse with SummaryQueryPlanner's queries if it helps."""
 

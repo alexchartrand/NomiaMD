@@ -1,17 +1,21 @@
-"""The billing_codes extraction pipeline (consultation_summary -> billing_codes) and its
-HTTP route.
+"""The billing pipeline (consultation_summary -> context -> retrieval -> billing_codes ->
+fees) and its HTTP route.
 
 Public interface — everything else that needs this imports it from here rather than
-reaching into .pipeline/.router/.engine/.models directly."""
+reaching into .pipeline/.factory/.router/.models directly."""
 
-from app.extraction.models import ExtractionRequest, ExtractionResult, TranscriptSource
-from app.extraction.pipeline import run_billing_codes_pipeline
+from app.extraction.factory import build_billing_pipeline, get_billing_pipeline, init_billing_pipeline
+from app.extraction.models import ExtractionRequest, TranscriptSource
+from app.extraction.pipeline import BillingPipeline, PipelineResult
 from app.extraction.router import router as extraction_router
 
 __all__ = [
-    "run_billing_codes_pipeline",
+    "BillingPipeline",
+    "PipelineResult",
+    "build_billing_pipeline",
+    "get_billing_pipeline",
+    "init_billing_pipeline",
     "extraction_router",
     "ExtractionRequest",
-    "ExtractionResult",
     "TranscriptSource",
 ]

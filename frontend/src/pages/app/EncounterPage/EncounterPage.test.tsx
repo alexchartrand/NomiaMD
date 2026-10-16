@@ -239,7 +239,7 @@ describe("reviewing the proposed codes", () => {
   it("shows what the physician must confirm, and the run's notes", async () => {
     const flagged = makeProposedCode({ code: "00103", needs_confirmation: ["Lieu de consultation à confirmer"] });
     const extraction = makeExtraction([flagged]);
-    extraction.billing.result.notes = "Note incomplète";
+    extraction.billing.notes = "Note incomplète";
     serveEncounter(makeEncounterDetail({ id: 5, extraction }));
     renderEncounter();
     expect(await screen.findByText("Lieu de consultation à confirmer")).toBeInTheDocument();

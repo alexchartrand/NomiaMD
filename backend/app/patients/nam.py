@@ -97,10 +97,10 @@ def decode(nam: str, *, on_date: date, age_hint: float | None = None) -> NamIden
 
 def redact(text: str) -> str:
     """Masks any NAM-shaped substring in free-form text with "[NAM]". Used by
-    app/ramq_codes/task.py before interpolating the raw transcript into the billing_codes
+    app/ramq_codes/prompt.py before interpolating the raw transcript into the billing_codes
     prompt: render_for_billing_codes already strips the patient's name and NAM from the
-    structured summary (app/summary/task.py), but the transcript now also reaches that
-    prompt (see BillingCodesTask), and a NAM is a direct government identifier — this is a
+    structured summary (app/summary/prompt.py), but the transcript now also reaches that
+    prompt (see BillingPromptBuilder), and a NAM is a direct government identifier — this is a
     best-effort scrub, not a guarantee, so it errs toward over-matching rather than missing
     one."""
     return _EMBEDDED_NAM_RE.sub("[NAM]", text)

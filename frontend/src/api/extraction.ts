@@ -38,15 +38,8 @@ export interface BillingCodesResult {
   analysis?: string | null;
 }
 
-export interface ExtractionResult {
-  task: string;
-  result: BillingCodesResult;
-  model: string;
-  created_at: string;
-}
-
 export interface BillingExtractionResponse {
-  billing: ExtractionResult;
+  billing: BillingCodesResult;
   // What POST /claims takes — the run carries the patient and both stages' results.
   extraction_run_id: number;
   encounter_date: string | null; // ISO date (YYYY-MM-DD)
@@ -62,7 +55,7 @@ export async function extractBillingCodes(
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ transcript, task: "billing_codes", patient_id: patientId, source: { system: source } }),
+    body: JSON.stringify({ transcript, patient_id: patientId, source: { system: source } }),
   });
   return unwrap<BillingExtractionResponse>(response);
 }

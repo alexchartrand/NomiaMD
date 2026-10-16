@@ -57,7 +57,7 @@ export function useCodeReview(
     return [...selection]
       .sort((a, b) => a - b)
       .map((i) => {
-        const code = result.billing.result.codes[i];
+        const code = result.billing.codes[i];
         const feeIndex = code.fees.length > 0 ? (feeSelection.get(i) ?? 0) : null;
         const fee = feeIndex != null ? code.fees[feeIndex] : null;
         const lieu = fee ? (lieuSelection.get(i) ?? defaultLieu(fee)) : null;

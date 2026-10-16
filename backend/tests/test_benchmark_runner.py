@@ -34,7 +34,7 @@ def _retrieval(source, codes=None, *, summaries=None):
 
 
 def _chat(*responses):
-    patcher = patch("app.extraction.engine.get_client")
+    patcher = patch("app.llm.structured.get_client")
     get_client = patcher.start()
     get_client.return_value.chat = AsyncMock(side_effect=list(responses))
     return patcher, get_client
