@@ -7,6 +7,9 @@ from app.llm.provider import ChatModelProvider, EmbeddingModelProvider
 
 MISTRAL_API_ROOT = "https://api.mistral.ai"
 
+# The fixed width of Mistral's embedding models; one not listed is left undeclared.
+EMBEDDING_DIMENSIONS = {"mistral-embed": 1024}
+
 
 def _base_url(endpoint: str | None) -> str:
     """Mistral's endpoint env vars name the server root, without `/v1` (the convention the
@@ -41,4 +44,6 @@ class MistralEmbeddingProvider(EmbeddingModelProvider):
         if not model or not api_key:
             raise RuntimeError("EMBEDDING_PROVIDER=mistral requires EMBEDDING_API_KEY and EMBEDDING_MODEL (e.g. mistral-embed)")
         client = AsyncOpenAI(base_url=_base_url(None), api_key=api_key)
-        return OpenAIEmbeddingClient(client, provider=self.name, model=model)
+        return OpenAIEmbeddingClient(
+            client, provider=self.name, model=model, dimension=EMBEDDING_DIMENSIONS.get(model)
+        )

@@ -43,7 +43,7 @@ async def application_services() -> AsyncIterator[LanceDB]:
         try:
             # Query vectors must live in the same space as the stored ones; a mismatch would
             # otherwise silently degrade hybrid search to its FTS half.
-            await EmbeddingModelGuard(get_embedding_client()).check(await db.stored_embeddings())
+            EmbeddingModelGuard(get_embedding_client()).check(await db.stored_embeddings())
             codes = CodeRepository(db.code_tables)
             documents = DocumentRepository(db.documents_table)
             init_billing_pipeline(build_billing_pipeline(codes))

@@ -41,6 +41,13 @@ class IEmbeddingClient(ABC):
         app/llm/embedding_guard.py compares the two."""
         return f"{self.provider_name}:{self.model_name}"
 
+    @property
+    def dimension(self) -> int | None:
+        """The width of the vectors it returns, when known without calling the model (fixed
+        by the model, or set in the request); None = undeclared, and the startup guard then
+        compares the model alone."""
+        return None
+
     @abstractmethod
     async def embed(self, texts: Sequence[str]) -> list[list[float]]:
         """One vector per text, in input order, from a single call."""

@@ -1,8 +1,8 @@
 """app/llm/embeddings.py's provider selection from EMBEDDING_PROVIDER, OpenAIEmbeddingClient
 against a real AsyncOpenAI whose HTTP transport is mocked, BedrockEmbeddingClient against a
 fake boto3 client, and the startup model guard (app/llm/embedding_guard.py) against real temp
-LanceDB tables' schemas. The guard's probe goes through a fixed-dimension fake embedding
-client."""
+LanceDB tables' schemas. The guard reads a fake embedding client's declared model and width,
+and never calls it."""
 
 import io
 import json
@@ -46,6 +46,7 @@ def test_defaults_to_mistral(monkeypatch):
     client = get_embedding_client()
     assert isinstance(client, OpenAIEmbeddingClient)
     assert client.model_name == "mistral-embed"
+    assert client.dimension == 1024
     assert str(client._client.base_url) == "https://api.mistral.ai/v1/"
 
 
@@ -64,6 +65,8 @@ def test_selects_openai_compatible(monkeypatch):
     client = get_embedding_client()
     assert str(client._client.base_url) == "http://localhost:8081/v1/"
     assert client.model_name == "BAAI/bge-m3"
+    # The width depends on whatever the server hosts: undeclared.
+    assert client.dimension is None
 
 
 @pytest.mark.parametrize("missing", ["EMBEDDING_API_KEY", "EMBEDDING_MODEL"])
@@ -95,6 +98,7 @@ def test_selects_bedrock(monkeypatch):
     client = get_embedding_client()
     assert isinstance(client, BedrockEmbeddingClient)
     assert client.identity == "bedrock:cohere.embed-v4:0"
+    assert client.dimension == 1024
     assert client._client.meta.region_name == "ca-central-1"
 
 
@@ -297,9 +301,9 @@ async def _table(tmp_path, name: str, dimension: int, *, embedding_model: str | 
     return await connection.create_table(name, schema=schema)
 
 
-def _query_client(dimension: int, identity: str = "mistral:mistral-embed") -> FakeEmbeddingClient:
+def _query_client(dimension: int | None, identity: str = "mistral:mistral-embed") -> FakeEmbeddingClient:
     provider, _, model = identity.partition(":")
-    return FakeEmbeddingClient(default=[0.0] * dimension, provider_name=provider, model_name=model)
+    return FakeEmbeddingClient(provider_name=provider, model_name=model, dimension=dimension)
 
 
 async def test_stored_embedding_reads_the_width_and_the_recorded_model(tmp_path):
@@ -312,25 +316,27 @@ async def test_stored_embedding_of_a_table_recording_no_model(tmp_path):
     assert await stored_embedding(table) == StoredEmbedding(1024, None)
 
 
-async def test_guard_passes_when_every_table_matches():
-    await EmbeddingModelGuard(_query_client(1024)).check({
+def test_guard_passes_when_every_table_matches_without_calling_the_model():
+    client = _query_client(1024)
+    EmbeddingModelGuard(client).check({
         "codes_test": StoredEmbedding(1024, "mistral:mistral-embed"),
         # A table recording no model was built with mistral-embed.
         "documents-embeddings": StoredEmbedding(1024, None),
     })
+    assert client.calls == []
 
 
-async def test_guard_passes_a_bedrock_client_on_its_own_table():
-    await EmbeddingModelGuard(_query_client(1024, "bedrock:cohere.embed-v4:0")).check(
+def test_guard_passes_a_bedrock_client_on_its_own_table():
+    EmbeddingModelGuard(_query_client(1024, "bedrock:cohere.embed-v4:0")).check(
         {"codes_test__embed-v4:0": StoredEmbedding(1024, "bedrock:cohere.embed-v4:0")}
     )
 
 
-async def test_guard_raises_on_another_model_of_the_same_width():
+def test_guard_raises_on_another_model_of_the_same_width():
     # Cohere v4 at 1024 dims has mistral-embed's width: only the recorded name tells them apart.
     guard = EmbeddingModelGuard(_query_client(1024, "bedrock:cohere.embed-v4:0"))
     with pytest.raises(EmbeddingModelMismatchError) as excinfo:
-        await guard.check({
+        guard.check({
             "codes_legacy": StoredEmbedding(1024, None),
             "codes_variant": StoredEmbedding(1024, "bedrock:cohere.embed-v4:0"),
         })
@@ -340,9 +346,18 @@ async def test_guard_raises_on_another_model_of_the_same_width():
     assert "codes_variant" not in message
 
 
-async def test_guard_raises_naming_the_model_and_the_mismatched_dimension():
-    guard = EmbeddingModelGuard(_query_client(768, "mistral:mistral-embed"))
+def test_guard_raises_naming_the_model_and_the_mismatched_dimension():
+    # Same model, another width: Cohere v4's output_dimension is a request parameter.
+    guard = EmbeddingModelGuard(_query_client(1536, "bedrock:cohere.embed-v4:0"))
     with pytest.raises(EmbeddingModelMismatchError) as excinfo:
-        await guard.check({"codes_test": StoredEmbedding(1024, "mistral:mistral-embed")})
+        guard.check({"codes_test": StoredEmbedding(1024, "bedrock:cohere.embed-v4:0")})
     message = str(excinfo.value)
-    assert "768-dim" in message and "codes_test (mistral:mistral-embed, dim 1024)" in message
+    assert "1536-dim" in message and "codes_test (bedrock:cohere.embed-v4:0, dim 1024)" in message
+
+
+def test_guard_compares_the_model_alone_when_the_width_is_undeclared():
+    guard = EmbeddingModelGuard(_query_client(None, "openai_compatible:bge-m3"))
+    guard.check({"codes_test": StoredEmbedding(1024, "openai_compatible:bge-m3")})
+    with pytest.raises(EmbeddingModelMismatchError) as excinfo:
+        guard.check({"codes_test": StoredEmbedding(1024, None)})
+    assert "'openai_compatible:bge-m3' doesn't match" in str(excinfo.value)

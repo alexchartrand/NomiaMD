@@ -25,7 +25,8 @@ class OpenAICompatibleChatProvider(ChatModelProvider):
 class OpenAICompatibleEmbeddingProvider(EmbeddingModelProvider):
     """Any server exposing OpenAI's `/v1/embeddings` (TEI, vLLM). EMBEDDING_ENDPOINT (base
     URL *including* `/v1`) and EMBEDDING_MODEL are both required — the model must be the one
-    the LanceDB vectors were built with, which app/bootstrap.py checks."""
+    the LanceDB vectors were built with, which app/bootstrap.py checks (by name only: the
+    width depends on whatever model the server hosts, so it's left undeclared)."""
 
     name = "openai_compatible"
 

@@ -30,11 +30,13 @@ class FakeEmbeddingClient(IEmbeddingClient):
         default: list[float] | None = None,
         model_name: str = "fake-embed",
         provider_name: str = "fake",
+        dimension: int | None = None,
     ):
         self._vectors = vectors or {}
         self._default = default if default is not None else [0.0]
         self._model_name = model_name
         self._provider_name = provider_name
+        self._dimension = dimension
         self.calls: list[list[str]] = []
 
     @property
@@ -44,6 +46,10 @@ class FakeEmbeddingClient(IEmbeddingClient):
     @property
     def model_name(self) -> str:
         return self._model_name
+
+    @property
+    def dimension(self) -> int | None:
+        return self._dimension
 
     async def embed(self, texts: Sequence[str]) -> list[list[float]]:
         self.calls.append(list(texts))

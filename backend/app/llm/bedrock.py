@@ -6,7 +6,7 @@ through app/llm/openai_client.py: it calls InvokeModel through boto3.
 Each request body mirrors ramq-ingestion's src/ramq_ingestion/shared/bedrock_text_embedder.py,
 with one deliberate difference: Cohere models are asymmetric, and ramq-ingestion embeds the
 corpus as `search_document`, so queries go out as `search_query`. The output dimension must
-match too, which the startup guard (embedding_guard.py) checks.
+match too: each format declares it, and the startup guard (embedding_guard.py) checks it.
 
 Credentials come from the AWS SDK's own chain (`aws login`), never from settings. Like every
 query embedding, the texts derive from the transcript and carry PHI: only synthetic notes
@@ -33,7 +33,10 @@ INPUT_TOKEN_COUNT_HEADER = "x-amzn-bedrock-input-token-count"
 
 
 class IBedrockEmbeddingFormat(ABC):
-    """One model family's InvokeModel request and response body."""
+    """One model family's InvokeModel request and response body, and the width of the
+    vectors it asks for."""
+
+    dimension: int
 
     @abstractmethod
     def body(self, texts: list[str]) -> dict[str, Any]:
@@ -47,14 +50,14 @@ class IBedrockEmbeddingFormat(ABC):
 class CohereEmbedV4Format(IBedrockEmbeddingFormat):
     """Cohere Embed v4 at 1024 dimensions, ramq-ingestion's default for it."""
 
-    output_dimension = 1024
+    dimension = 1024
 
     def body(self, texts: list[str]) -> dict[str, Any]:
         return {
             "texts": texts,
             "input_type": "search_query",
             "embedding_types": ["float"],
-            "output_dimension": self.output_dimension,
+            "output_dimension": self.dimension,
             # Fail on an oversized text rather than embed half of it.
             "truncate": "NONE",
         }
@@ -65,6 +68,8 @@ class CohereEmbedV4Format(IBedrockEmbeddingFormat):
 
 class CohereEmbedV3Format(IBedrockEmbeddingFormat):
     """Cohere Embed v3 (multilingual or English): 1024 dimensions, fixed."""
+
+    dimension = 1024
 
     def body(self, texts: list[str]) -> dict[str, Any]:
         return {"texts": texts, "input_type": "search_query", "truncate": "NONE"}
@@ -105,6 +110,10 @@ class BedrockEmbeddingClient(IEmbeddingClient):
     @property
     def model_name(self) -> str:
         return self._model
+
+    @property
+    def dimension(self) -> int:
+        return self._format.dimension
 
     async def embed(self, texts: Sequence[str]) -> list[list[float]]:
         if not texts:

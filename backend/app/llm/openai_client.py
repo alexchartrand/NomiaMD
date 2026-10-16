@@ -117,11 +117,13 @@ class OpenAIEmbeddingClient(IEmbeddingClient):
         *,
         provider: str,
         model: str,
+        dimension: int | None = None,
         recorder: UsageRecorder = default_recorder,
     ):
         self._client = client
         self._provider = provider
         self._model = model
+        self._dimension = dimension
         self._recorder = recorder
 
     @property
@@ -131,6 +133,10 @@ class OpenAIEmbeddingClient(IEmbeddingClient):
     @property
     def model_name(self) -> str:
         return self._model
+
+    @property
+    def dimension(self) -> int | None:
+        return self._dimension
 
     async def embed(self, texts: Sequence[str]) -> list[list[float]]:
         if not texts:

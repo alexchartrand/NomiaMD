@@ -1,8 +1,8 @@
 """What scripts/benchmark.py's subcommands do: run, sweep, report, promote. The wiring lives
 here (the benchmark's own composition root) rather than in app/bootstrap.py's
-application_services(): that one guards the *current* codes table's embedding dimension at
-startup, which would refuse a run against a re-embedded, non-current table of another
-dimension. A benchmark only needs the RAMQ LanceDB and the model clients, and guards the
+application_services(): that one guards the *current* codes table's embedding model at
+startup, which would refuse a run against a non-current table re-embedded with another
+model. A benchmark only needs the RAMQ LanceDB and the model clients, and guards the
 table it actually reads."""
 
 import itertools
@@ -78,7 +78,7 @@ async def codes_repository(
         provider = db.pinned_code_tables(table_name) if table_name else db.code_tables
         version = await provider.current_version()
         if check_embedding_model:
-            await EmbeddingModelGuard(get_embedding_client()).check(
+            EmbeddingModelGuard(get_embedding_client()).check(
                 {version.table_name: await stored_embedding(await provider.current())}
             )
         yield CodeRepository(provider), version
