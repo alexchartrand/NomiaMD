@@ -6,12 +6,10 @@ from collections.abc import Sequence
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.extraction.models import BillingExtractionResponse, ExtractionResult
+from app.extraction.models import BillingExtractionResponse
 from app.postgresdb import Encounter, ExtractionRepository, ExtractionRunResult
-from app.ramq_codes import BillingCodesResult
-
-_SUMMARY_TASK = "consultation_summary"
-_BILLING_TASK = "billing_codes"
+from app.ramq_codes import BillingCodesResult, CodeSelector
+from app.summary import ConsultationSummarizer
 
 
 class StoredExtractionLoader:
@@ -22,8 +20,8 @@ class StoredExtractionLoader:
         """Each encounter's newest run, keyed by encounter id; encounters never extracted
         are absent. Three queries whatever the number of encounters."""
         run_ids = await self._runs.latest_run_ids([encounter.id for encounter in encounters])
-        billing = await self._runs.get_results(list(run_ids.values()), _BILLING_TASK)
-        summaries = await self._runs.get_results(list(run_ids.values()), _SUMMARY_TASK)
+        billing = await self._runs.get_results(list(run_ids.values()), CodeSelector.NAME)
+        summaries = await self._runs.get_results(list(run_ids.values()), ConsultationSummarizer.NAME)
         loaded = {}
         for encounter in encounters:
             run_id = run_ids.get(encounter.id)
@@ -40,12 +38,7 @@ def _response(
     encounter: Encounter, run_id: int, billing: ExtractionRunResult, summary: ExtractionRunResult | None
 ) -> BillingExtractionResponse:
     return BillingExtractionResponse(
-        billing=ExtractionResult[BillingCodesResult](
-            task=billing.task,
-            result=BillingCodesResult.model_validate(billing.result_json),
-            model=billing.model,
-            created_at=billing.created_at,
-        ),
+        billing=BillingCodesResult.model_validate(billing.result_json),
         extraction_run_id=run_id,
         # The encounter's own date: the source's when it sent one, else what the summary
         # found (ExtractionRecorder.save) — the one a claim from it is dated with.

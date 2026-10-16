@@ -29,7 +29,7 @@ interface ReviewStepProps {
 export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext, onNext }: ReviewStepProps) {
   const { state } = review;
   const docked = useMediaQuery(SIDE_BY_SIDE);
-  const codes = result.billing.result.codes;
+  const codes = result.billing.codes;
   const quotes = useMemo(() => codes.map((c) => locateQuote(noteText, c.supporting_quote)), [codes, noteText]);
   // The code whose supporting quote is marked in the note: the last one hovered or focused.
   const [focused, setFocused] = useState<number | null>(null);
@@ -73,7 +73,7 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-[0.85rem]">
-          {result.billing.result.notes && <Banner tone="warning">{result.billing.result.notes}</Banner>}
+          {result.billing.notes && <Banner tone="warning">{result.billing.notes}</Banner>}
 
           <CodesReview
             codes={codes}

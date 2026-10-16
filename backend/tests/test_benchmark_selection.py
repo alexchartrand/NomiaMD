@@ -1,5 +1,5 @@
 """Phase 2 of app/benchmark: the selection stage over frozen candidates
-(frozen_candidates.py, recording_task.py, stages.py's SelectionStage), its scoring
+(frozen_candidates.py, stages.py's SelectionStage), its scoring
 (selection_scoring.py), and how it aggregates, compares and renders — with a mocked chat
 model and a stub code repository."""
 
@@ -10,7 +10,7 @@ import pytest
 from app.benchmark.aggregate import RunAggregator
 from app.benchmark.commands import BenchmarkConfigError, RunCommand
 from app.benchmark.compare import SelectionComparator
-from app.benchmark.frozen_candidates import FrozenCandidatesError, FrozenCandidatesRetriever
+from app.benchmark.frozen_candidates import FrozenCandidatesError, FrozenCandidatesLoader
 from app.benchmark.query_sources import query_source
 from app.benchmark.records import SelectionRecord, StageTotals, SummaryRecord
 from app.benchmark.report import MarkdownReport
@@ -18,7 +18,6 @@ from app.benchmark.runner import BenchmarkRunner
 from app.benchmark.selection_scoring import ExpectedStatus, SelectionScorer
 from app.benchmark.stages import SelectionStage
 from app.benchmark.store import RunStore
-from app.ramq_codes import BillingContext
 from app.ramq_codes.context import AXIS_LABELS_FR, AXIS_PANEL_SIZE
 from app.summary import ConsultationSummaryResult
 from tests.benchmark_helpers import (
@@ -60,19 +59,17 @@ def _base_run(tmp_path, name="base", patient_id="CLI-1", ranked=(("A", "Visites 
 
 
 def _chat(*responses):
-    patcher = patch("app.extraction.engine.get_client")
+    patcher = patch("app.llm.structured.get_client")
     get_client = patcher.start()
     get_client.return_value.chat = AsyncMock(side_effect=list(responses))
     return patcher, get_client
 
 
-# --- FrozenCandidatesRetriever
+# --- FrozenCandidatesLoader
 
 
 async def test_frozen_candidates_come_back_in_their_stored_rank_with_their_axes():
-    retriever = FrozenCandidatesRetriever(CODES, ["B", "A"], [AXIS_PANEL_SIZE])
-
-    candidates = await retriever.aretrieve(ConsultationSummaryResult.model_validate(MOCK_SUMMARY), BillingContext())
+    candidates = await FrozenCandidatesLoader(CODES).load(["B", "A"], [AXIS_PANEL_SIZE])
 
     assert [c.number for c in candidates.candidates] == ["B", "A"]
     assert candidates.candidates[1].header_path == "Visites > Suivi"
@@ -81,9 +78,7 @@ async def test_frozen_candidates_come_back_in_their_stored_rank_with_their_axes(
 
 async def test_a_frozen_candidate_missing_from_the_table_is_an_error_not_a_shorter_list():
     with pytest.raises(FrozenCandidatesError, match="ZZZ"):
-        await FrozenCandidatesRetriever(CODES, ["A", "ZZZ"]).aretrieve(
-            ConsultationSummaryResult.model_validate(MOCK_SUMMARY), BillingContext()
-        )
+        await FrozenCandidatesLoader(CODES).load(["A", "ZZZ"])
 
 
 # --- SelectionStage

@@ -1,6 +1,6 @@
 """The arq worker: `arq app.worker.WorkerSettings`. Runs extractions queued by the web
 process (ArqExtractionQueue). Boots the same composition root as the API
-(`application_services()`), so a job sees the same databases and task registry."""
+(`application_services()`), so a job sees the same databases and billing pipeline."""
 
 from contextlib import AsyncExitStack
 from typing import Any

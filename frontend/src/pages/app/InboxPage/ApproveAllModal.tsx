@@ -18,7 +18,7 @@ interface ApproveAllModalProps {
 // What approving bills: the codes the run retained (the review's preselection), never its
 // other possible codes.
 function retainedCodes(detail: EncounterDetail) {
-  return (detail.extraction?.billing.result.codes ?? []).filter((c) => c.retained);
+  return (detail.extraction?.billing.codes ?? []).filter((c) => c.retained);
 }
 
 // Every retained code is billed at its only fee (fee_index null = the first, and only, one).

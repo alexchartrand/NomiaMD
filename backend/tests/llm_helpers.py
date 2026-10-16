@@ -1,5 +1,5 @@
 """Fakes for app/llm's client contracts, shared by the tests that mock the chat model
-(patch("app.extraction.engine.get_client") with `.chat` returning fake_chat_result(...)) or
+(patch("app.llm.structured.get_client") with `.chat` returning fake_chat_result(...)) or
 inject an embedding client."""
 
 import json

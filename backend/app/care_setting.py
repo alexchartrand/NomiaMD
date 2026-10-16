@@ -18,7 +18,7 @@ class CareSetting(StrEnum):
     CHSLD = "chsld"
 
 
-# How the billing_codes prompt states it (see app/ramq_codes/task.py).
+# How the billing_codes prompt states it (see app/ramq_codes/prompt.py).
 CARE_SETTING_LABELS_FR = {
     CareSetting.CABINET: "cabinet privé, GMF ou CLSC",
     CareSetting.DOMICILE: "à domicile",

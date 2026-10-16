@@ -1,6 +1,6 @@
 """CodeRow (a validated row of the current `codes_<rev>` LanceDB table) -> this package's own
 Code — the one place the table's flat columns become the domain shape retrieval and the
-billing_codes task work in."""
+billing_codes step work in."""
 
 from app.lancedb.converter import IConverter
 from app.lancedb.models import CodeRow

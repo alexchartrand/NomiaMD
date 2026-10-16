@@ -1,6 +1,6 @@
 """Code search/lookup response shapes. A hit's `fees` keep the codes table's own order: a
 fee's position is the `fee_index` a claim is saved with (app/claims/models.py's
-SelectedCode), the same list a billing_codes run resolves (BillingCodesTask.resolve_fees)."""
+SelectedCode), the same list a billing_codes run resolves (app/ramq_codes/fees.py's FeeResolver)."""
 
 from pydantic import BaseModel
 

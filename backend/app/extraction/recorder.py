@@ -8,7 +8,7 @@ between makes two multi-second LLM calls that must not hold a pooled connection.
 
 from datetime import date
 
-from app.extraction.models import ExtractionResult
+from app.extraction.pipeline import PipelineResult
 from app.intake import Channel, content_hash
 from app.postgresdb import (
     Encounter,
@@ -20,6 +20,8 @@ from app.postgresdb import (
     ExtractionStageInput,
     session_scope,
 )
+from app.ramq_codes import CodeSelector
+from app.summary import ConsultationSummarizer
 
 # TranscriptSource.system when the request doesn't say.
 DEFAULT_SOURCE_SYSTEM = "manual"
@@ -57,10 +59,10 @@ class ExtractionRecorder:
         user_id: int,
         patient_id: int,
         service_date: date | None,
-        stages: list[ExtractionResult],
+        result: PipelineResult,
     ) -> ExtractionRun:
-        """The run, and the service date the summary found if the encounter had none yet,
-        in one transaction."""
+        """The run, one stored stage per LLM step, and the service date the summary found if
+        the encounter had none yet, in one transaction."""
         async with session_scope() as session:
             encounters = EncounterRepository(session)
             encounter = await encounters.get_for_user(encounter_id, user_id)
@@ -72,8 +74,14 @@ class ExtractionRecorder:
                     encounter_id=encounter_id,
                     patient_id=patient_id,
                     stages=[
-                        ExtractionStageInput(task=stage.task, model=stage.model, result=stage.result.model_dump())
-                        for stage in stages
+                        ExtractionStageInput(
+                            task=ConsultationSummarizer.NAME,
+                            model=result.summary_model,
+                            result=result.summary.model_dump(),
+                        ),
+                        ExtractionStageInput(
+                            task=CodeSelector.NAME, model=result.billing_model, result=result.billing.model_dump()
+                        ),
                     ],
                 )
             )

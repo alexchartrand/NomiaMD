@@ -23,7 +23,7 @@ def is_all_clean(
     physician says whether it's the same visit."""
     if status != EncounterStatus.PRET or extraction is None or service_date is None or possible_duplicate:
         return False
-    codes = [code for code in extraction.billing.result.codes if code.retained]
+    codes = [code for code in extraction.billing.codes if code.retained]
     return bool(codes) and all(
         code.confidence == "high" and not code.needs_confirmation and len(code.fees) <= 1 for code in codes
     )

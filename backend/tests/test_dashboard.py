@@ -124,7 +124,7 @@ async def test_tasks_count_what_is_left_to_do(me, client):
     # A medium-confidence retained code: not approvable. Another day, or it's a possible duplicate.
     to_review = _push(client, patient, billing=UNSURE_RETAINED_RESULT, service_date=TODAY - timedelta(days=1))
     [unmatched] = _paste(client, _note_text("ZZZZ99999999")).json()
-    with patch("app.extraction.engine.get_client") as get_client:
+    with patch("app.llm.structured.get_client") as get_client:
         get_client.return_value.chat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
         [failed] = client.post("/intake/notes", json={"text": _note_text(patient.ramq_number)}).json()
 

@@ -1,43 +1,15 @@
+"""The billing_codes prompt: the system rules, and the user message built from the offered
+candidates, the established facts, the consultation summary and the redacted transcript."""
+
 import math
 from dataclasses import dataclass
-from typing import Any
 
 from app.care_setting import CARE_SETTING_LABELS_FR, CareSetting
-from app.lancedb.repository import ICodeRepository
 from app.patients import nam
 from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext
-from app.ramq_codes.models import BillingCodesOutput, BillingCodesResult, Code, CodeFeeOut
-from app.ramq_codes.retriever import ICodesRetriever
-from app.summary.models import ConsultationSummaryResult
-from app.summary.task import render_for_billing_codes
-from app.tasks.base import ExtractionTask, PreparedPrompt
-from app.tasks.schema import to_strict_schema
-
-# Selecting among near-identical French tariff variants (differing on axes buried in prose)
-# is a harder task than the structural extraction consultation_summary does — mistral-small
-# is kept there, but billing_codes gets the stronger model. See app/tasks/base.py's
-# ExtractionTask.model and app/extraction/engine.py's per-model client cache.
-MODEL = "mistral-medium-latest"
-
-
-@dataclass(frozen=True)
-class BillingCodesInput:
-    """BillingCodesTask's input bundle — see app/tasks/base.py's ExtractionTask docstring
-    for why this task doesn't just take a string like ConsultationSummaryTask does.
-
-    `summary` is the structured consultation_summary result, not its rendered text: both
-    RAMQCodesRetriever (query planning per procedure/add-on) and this task's own prompt
-    (rendering + PHI stripping via render_for_billing_codes) need the structured object.
-    `transcript` is the raw encounter transcript, sent alongside the summary so the
-    selection step isn't bottlenecked by whatever detail the summarizer happened to drop —
-    see app/extraction/pipeline.py's docstring for why the summary alone isn't enough here.
-    `context` is whatever administrative facts app/ramq_codes/context_builder.py could
-    resolve for this encounter."""
-
-    summary: ConsultationSummaryResult
-    transcript: str
-    context: BillingContext
-
+from app.ramq_codes.eligibility import CandidateSet
+from app.ramq_codes.models import Code
+from app.summary import ConsultationSummaryResult, render_for_billing_codes
 
 SYSTEM_PROMPT = """\
 You extract RAMQ billing codes from a clinical encounter for physician review — never a
@@ -140,7 +112,7 @@ def _format_candidate(c: Code) -> str:
     if c.rules:
         lines.append(f"  Conditions : {'; '.join(c.rules)}")
     # Fee data is deliberately never shown here — the model doesn't pick a fee (see
-    # ExtractedCode.fees' server_only marker); resolve_fees fetches the real list afterward,
+    # ExtractedCode.fees' server_only marker); FeeResolver (fees.py) fetches the real list afterward,
     # straight from the candidate's own data, so there's nothing for the prompt to gain by
     # including it.
     return "\n".join(lines)
@@ -201,120 +173,37 @@ def _unresolved_axes_text(unresolved_axes: tuple[str, ...]) -> str | None:
     )
 
 
-class BillingCodesTask(ExtractionTask[BillingCodesInput]):
-    name = "billing_codes"
-    model = MODEL
+@dataclass(frozen=True)
+class BillingPrompt:
+    system: str
+    user: str
 
-    def __init__(self, retriever: ICodesRetriever, codes: ICodeRepository):
-        self._retriever = retriever
-        self._codes = codes
+    @property
+    def chars(self) -> int:
+        return len(self.system) + len(self.user)
 
-    async def build_prompt(self, task_input: BillingCodesInput) -> PreparedPrompt:
-        collapse_result = await self._retriever.aretrieve(task_input.summary, task_input.context)
-        candidate_lines = [_format_candidate(c) for c in collapse_result.candidates]
 
-        prompt_sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]
+class BillingPromptBuilder:
+    """Pure: the same inputs always give the same prompt. Both the summary and the raw
+    transcript go in — the summary is denser, but as the only grounding text it's a lossy
+    bottleneck: any clinical detail the summarizer dropped would be unrecoverable here."""
 
-        known_facts = _known_facts_text(task_input.context)
-        if known_facts:
-            prompt_sections.append(known_facts)
-
-        assumed_facts = _assumed_facts_text(task_input.context)
-        if assumed_facts:
-            prompt_sections.append(assumed_facts)
-
-        unresolved = _unresolved_axes_text(collapse_result.unresolved_axes)
-        if unresolved:
-            prompt_sections.append(unresolved)
-
-        summary_text = render_for_billing_codes(task_input.summary)
-        prompt_sections.append(f"Consultation summary (normalized view):\n{summary_text}")
-
-        redacted_transcript = nam.redact(task_input.transcript)
-        prompt_sections.append(f"Raw transcript (detail-of-record):\n{redacted_transcript}")
-
-        user_message = "\n\n".join(prompt_sections)
-        candidate_numbers = frozenset(c.number for c in collapse_result.candidates)
-
-        return PreparedPrompt(
-            system_prompt=SYSTEM_PROMPT, user_message=user_message, candidate_numbers=candidate_numbers
-        )
-
-    def json_schema(self) -> dict[str, Any]:
-        return to_strict_schema(BillingCodesOutput)
-
-    def parse(self, raw: dict[str, Any], prepared: PreparedPrompt) -> BillingCodesResult:
-        """The model's two lists (BillingCodesOutput) -> one list, its sure codes first,
-        each marked `retained` or not; a code in both lists counts as retained."""
-        # Small local models (freeform JSON, no grammar constraint) sometimes collapse a
-        # code array to bare code strings instead of the required object shape,
-        # especially with a large real candidate list. Drop anything malformed rather than
-        # crashing the request — and rather than fabricating an explanation for it, since
-        # that field exists specifically so a physician can see the model's reasoning for
-        # the suggestion; a made-up explanation would defeat that.
-        codes = []
-        for key, retained in (("codes", True), ("other_possible_codes", False)):
-            codes += [{**c, "retained": retained} if isinstance(c, dict) else c for c in raw.get(key) or []]
-        well_formed = [c for c in codes if isinstance(c, dict)]
-        dropped_malformed = len(codes) - len(well_formed)
-
-        notes: list[str] = []
-        if dropped_malformed:
-            notes.append(
-                f"{dropped_malformed} candidate code(s) came back from the model in an unexpected "
-                "format (missing an explanation) and were dropped rather than shown unverified."
-            )
-
-        # Defense in depth: the "only choose from candidates" constraint is stated in the
-        # prompt, but nothing before this enforced it server-side (see BACKLOG.md's item on
-        # this). candidate_numbers is None for a task with no closed set to check against —
-        # never true for this task, but the check is written generically off PreparedPrompt.
-        if prepared.candidate_numbers is not None:
-            in_set = [c for c in well_formed if c.get("code") in prepared.candidate_numbers]
-            dropped_uncandidated = len(well_formed) - len(in_set)
-            if dropped_uncandidated:
-                notes.append(
-                    f"{dropped_uncandidated} code(s) returned by the model were not in the offered "
-                    "candidate list and were dropped rather than shown unverified."
-                )
-            well_formed = in_set
-
-        # Retained codes come first, so a code in both lists keeps its retained entry.
-        unique: dict[str, dict] = {}
-        for c in well_formed:
-            unique.setdefault(c.get("code"), c)
-        result = BillingCodesResult.model_validate(
-            {"codes": list(unique.values()), "notes": raw.get("notes"), "analysis": raw.get("analysis")}
-        )
-        self._demote_unsure_retained(result)
-
-        if notes:
-            combined = " ".join(notes)
-            result.notes = f"{result.notes} {combined}".strip() if result.notes else combined
-
-        return result
-
-    @staticmethod
-    def _demote_unsure_retained(result: BillingCodesResult) -> None:
-        """A code the model says it is sure of, but without high confidence, is only a
-        possible one: over the selection benchmark (backend/benchmarks/README.md), retained
-        codes rated medium or low were right 2 times in 26, high ones about 2 in 3. Retained
-        codes stay first."""
-        for code in result.codes:
-            if code.retained and code.confidence != "high":
-                code.retained = False
-        result.codes.sort(key=lambda code: not code.retained)
-
-    async def resolve_fees(self, result: BillingCodesResult) -> None:
-        """Attaches each returned code's real fee list, in place — the model never picks a
-        fee (see SYSTEM_PROMPT and ExtractedCode.fees' server_only marker); the physician
-        picks among these in the review UI when there's more than one. A by-key lookup, same
-        convention as ramq_chatbot's ReferenceExpander: a code with no matching row is left
-        with an empty fee list rather than surfaced as missing data."""
-        if not result.codes:
-            return  # list_by_numbers([]) would build a malformed "IN ()" query
-
-        rows = await self._codes.list_by_numbers([c.code for c in result.codes])
-        fees_by_code = {row.number: row.fees for row in rows}
-        for code in result.codes:
-            code.fees = [CodeFeeOut.model_validate(f.model_dump()) for f in fees_by_code.get(code.code, [])]
+    def build(
+        self,
+        candidates: CandidateSet,
+        summary: ConsultationSummaryResult,
+        transcript: str,
+        context: BillingContext,
+    ) -> BillingPrompt:
+        candidate_lines = [_format_candidate(c) for c in candidates.candidates]
+        sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]
+        for optional_section in (
+            _known_facts_text(context),
+            _assumed_facts_text(context),
+            _unresolved_axes_text(candidates.unresolved_axes),
+        ):
+            if optional_section:
+                sections.append(optional_section)
+        sections.append(f"Consultation summary (normalized view):\n{render_for_billing_codes(summary)}")
+        sections.append(f"Raw transcript (detail-of-record):\n{nam.redact(transcript)}")
+        return BillingPrompt(system=SYSTEM_PROMPT, user="\n\n".join(sections))

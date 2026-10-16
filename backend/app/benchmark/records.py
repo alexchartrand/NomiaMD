@@ -108,7 +108,7 @@ class SelectionRecord(StageRecord):
     offered: list[str] = Field(default_factory=list)
     # System prompt + user message, in characters (the tokens are on the call).
     prompt_chars: int = 0
-    # What the model returned before BillingCodesTask.parse dropped anything: its code
+    # What the model returned before SelectionParser dropped anything: its code
     # count, the codes that were never offered (invented), and the entries that weren't
     # even code objects.
     raw_code_count: int = 0

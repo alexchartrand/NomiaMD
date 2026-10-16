@@ -3,7 +3,7 @@
 from decimal import Decimal
 
 from app.encounters.row_billing import RowBillingSummarizer
-from app.extraction.models import BillingExtractionResponse, ExtractionResult
+from app.extraction.models import BillingExtractionResponse
 from app.postgresdb import Claim, ClaimCode, ClaimDetail
 from app.ramq_codes.models import BillingCodesResult, CodeFeeOut, ExtractedCode
 
@@ -23,7 +23,7 @@ def _code(number: str, confidence: str, fees: list[CodeFeeOut], **retained) -> E
 
 def _run(*codes: ExtractedCode) -> BillingExtractionResponse:
     return BillingExtractionResponse(
-        billing=ExtractionResult(task="billing_codes", result=BillingCodesResult(codes=list(codes)), model="test"),
+        billing=BillingCodesResult(codes=list(codes)),
         extraction_run_id=1,
         encounter_date=None,
         encounter_date_raw=None,

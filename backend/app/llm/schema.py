@@ -1,7 +1,7 @@
-"""Derives everything task code needs from a Pydantic result model, so a field only gets
-added/changed in one place (the model in app/models.py) instead of being kept in sync by
-hand across a task's json_schema(), its prompt's schema description, and any renderer that
-turns a parsed result back into text.
+"""Derives everything a structured LLM call needs from its Pydantic result model, so a field
+only gets added/changed in one place (the model) instead of being kept in sync by hand
+across the call's JSON schema, its prompt's schema description, and any renderer that turns
+a parsed result back into text.
 
 Each model field carries its own metadata for this: `description=` is extraction guidance
 shown to the LLM in the prompt's schema block, `json_schema_extra={"fr_label": ...}` is
@@ -154,7 +154,7 @@ def _render_block(model: type[BaseModel], indent: int) -> str:
 
 def render_schema_block(model: type[BaseModel]) -> str:
     """Renders the same JSON-with-placeholders schema example previously hand-written into
-    each task's SYSTEM_PROMPT, driven by the model's field types and `description=` text."""
+    each call's SYSTEM_PROMPT, driven by the model's field types and `description=` text."""
     return _render_block(model, 0)
 
 

@@ -35,8 +35,8 @@ def chat_provider() -> ChatModelProvider:
 
 @lru_cache(maxsize=None)
 def get_chat_client(model: str, temperature: float = 0.0) -> IChatClient:
-    """Cached per (model, temperature) — a task with a stronger model= override
-    (app/tasks/base.py's ExtractionTask.model) gets its own client.
+    """Cached per (model, temperature) — a call with a stronger model (e.g.
+    CodeSelector.DEFAULT_MODEL) gets its own client.
 
     Temperature defaults to 0 on purpose: structured extraction (pick codes from a closed
     candidate list) must be reproducible — run-to-run variance means the same transcript

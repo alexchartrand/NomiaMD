@@ -15,13 +15,12 @@ from app.lancedb.models import CodeRow, CodeRowFee
 from app.code_catalog import init_code_catalog
 from app.lancedb.eligibility import CodeEligibilityFilter
 from app.lancedb.repository import CodeRowLookupError, ICodeCatalogRepository
-from app.ramq_codes import BillingCodesTask, BillingContext
+from app.extraction import build_billing_pipeline, init_billing_pipeline
+from app.ramq_codes import BillingContext
 from app.ramq_codes.eligibility import CandidateSet
 from app.ramq_codes.models import Code, CodeFee
 from app.rate_limit import limiter
 from app.summary import ConsultationSummaryResult, render_for_billing_codes
-from app.summary import ConsultationSummaryTask
-from app.tasks.registry import register_tasks
 from tests.db_helpers import ensure_user_row
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
@@ -53,7 +52,7 @@ class _KeywordStubRetriever:
 
 class StubCodeRepository(ICodeCatalogRepository):
     """Deterministic by-key lookup over the same fixture rows _KeywordStubRetriever ranks —
-    stands in for the real LanceDB-backed CodeRepository so BillingCodesTask.resolve_fees and
+    stands in for the real LanceDB-backed CodeRepository so FeeResolver and
     the hand-search/claim paths (app/code_catalog, app/claims) can be exercised without a real
     LanceDB connection. Eligibility is applied in Python with the same rule as the real WHERE
     (app/lancedb/eligibility.py: a null bound always passes); keyword search is a plain
@@ -78,7 +77,7 @@ class StubCodeRepository(ICodeCatalogRepository):
         ]
 
     async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None, sections=None) -> list:
-        raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
+        raise NotImplementedError("not exercised by FeeResolver")
 
     async def list_by_header_paths(
         self, header_paths: list[str], eligibility: CodeEligibilityFilter | None = None
@@ -131,11 +130,10 @@ def small_reference_table():
     tests need candidate narrowing to behave predictably without a real vector index,
     API key, or network call.
 
-    Populates app.tasks.registry's task dict directly with a BillingCodesTask built from
-    these stubs (register_tasks — the same call app/bootstrap.py's init_tasks makes with
-    real collaborators), rather than patching attributes on a pre-built singleton: nothing
-    builds the task registry at import time any more (see app/bootstrap.py), so there's no
-    singleton for this fixture to reach into until it makes one itself.
+    Sets the process's billing pipeline to one built from these stubs (init_billing_pipeline
+    — the same call app/bootstrap.py's application_services() makes with real
+    collaborators): nothing builds it at import time, so there's no singleton for this
+    fixture to reach into until it makes one itself.
     """
     data = json.loads(SMALL_REFERENCE_PATH.read_text())
     entries = [
@@ -177,19 +175,16 @@ def small_reference_table():
     stub_codes = StubCodeRepository(rows)
     init_code_catalog(stub_codes)
 
-    register_tasks([
-        BillingCodesTask(stub_retriever, stub_codes),
-        ConsultationSummaryTask(),
-    ])
+    init_billing_pipeline(build_billing_pipeline(stub_codes, retriever=stub_retriever))
     yield
 
 
 @pytest.fixture(autouse=True)
 def no_real_lancedb_on_startup(monkeypatch):
     """TestClient(app) as a context manager triggers app.main's lifespan, which normally
-    opens a real LanceDB connection and rebuilds the task registry / chatbot engine from it
+    opens a real LanceDB connection and rebuilds the billing pipeline / chatbot engine from it
     (app/bootstrap.py's application_services()) — tests must not touch a real LanceDB, and
-    must not clobber the stub registry small_reference_table just set up. Stubs out the
+    must not clobber the stub pipeline small_reference_table just set up. Stubs out the
     lifespan's call to application_services with a no-op, so TestClient triggers no real
     startup work — postgres_db already opened and bound the (SQLite) relational DB.
     """

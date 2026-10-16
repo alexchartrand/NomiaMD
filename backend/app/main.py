@@ -23,7 +23,6 @@ from app.ramq_chatbot import ramq_chatbot_router
 from app.rate_limit import limiter
 from app.request_logging import RequestLoggingMiddleware
 from app.sample_patients import sample_patients_router
-from app.tasks.registry import available_tasks
 
 configure_logging(settings.log_level)
 
@@ -60,6 +59,6 @@ app.include_router(sample_patients_router)
 
 
 @app.get("/health")
-# Liveness/readiness check. Returns "ok" plus the list of registered task names.
+# Liveness/readiness check.
 def health() -> dict:
-    return {"status": "ok", "tasks": available_tasks()}
+    return {"status": "ok"}

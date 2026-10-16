@@ -30,7 +30,7 @@ class RowBillingSummarizer:
             return RowBilling(len(claim.codes), [code.code for code in claim.codes], _total(amounts))
         if extraction is None:
             return RowBilling(None, None, None)
-        proposed = extraction.billing.result.codes
+        proposed = extraction.billing.codes
         preselected = [code for code in proposed if code.retained]
         # A fee in "unités" counts anesthesia base units, never dollars.
         amounts = [

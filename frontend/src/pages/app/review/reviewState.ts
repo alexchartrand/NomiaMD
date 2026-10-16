@@ -104,7 +104,7 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
 function manualCodesChanged(state: ReviewState, action: ManualCodesAction): ReviewState {
   // A searched code the extraction already proposes is ticked rather than added twice.
   if (action.type === "manual-code-added") {
-    const proposed = state.result?.billing.result.codes.findIndex((c) => c.code === action.hit.number) ?? -1;
+    const proposed = state.result?.billing.codes.findIndex((c) => c.code === action.hit.number) ?? -1;
     if (proposed >= 0) {
       return { ...state, selection: new Set(state.selection).add(proposed), pristine: false };
     }
@@ -120,7 +120,7 @@ function manualCodesChanged(state: ReviewState, action: ManualCodesAction): Revi
 // physician still un-ticks or adds before anything is saved.
 function retainedCodes(result: BillingExtractionResponse): Set<number> {
   const selection = new Set<number>();
-  result.billing.result.codes.forEach((code, i) => {
+  result.billing.codes.forEach((code, i) => {
     if (code.retained) selection.add(i);
   });
   return selection;
@@ -137,7 +137,7 @@ function selectionFromClaim(
   const selection = new Set<number>();
   const feeSelection = new Map<number, number>();
   const lieuSelection = new Map<number, string>();
-  result.billing.result.codes.forEach((code, i) => {
+  result.billing.codes.forEach((code, i) => {
     const line = claimed.get(code.code);
     if (!line) return;
     selection.add(i);

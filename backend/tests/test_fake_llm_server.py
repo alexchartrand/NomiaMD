@@ -1,5 +1,5 @@
 """Sanity-checks the fake LLM dev server's response shape — it needs to look enough like a
-real Mistral chat-completions response that run_extraction() (app/extraction/engine.py)
+real Mistral chat-completions response that StructuredChat (app/llm/structured.py)
 accepts it unmodified."""
 
 import json
@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 import fake_llm_server
 
 from app.summary import ConsultationSummaryResult
-from app.summary.task import SYSTEM_PROMPT as SUMMARY_SYSTEM_PROMPT
+from app.summary.prompt import SYSTEM_PROMPT as SUMMARY_SYSTEM_PROMPT
 
 client = TestClient(fake_llm_server.app)
 
@@ -86,15 +86,15 @@ def test_consultation_summary_request_echoes_the_date_header_as_valid_result():
     assert response.status_code == 200
 
     content = json.loads(response.json()["choices"][0]["message"]["content"])
-    # Must parse as a real ConsultationSummaryResult — this is what run_extraction() feeds
-    # ConsultationSummaryTask.parse() with.
+    # Must parse as a real ConsultationSummaryResult — this is what StructuredChat hands
+    # ConsultationSummarizer to validate.
     result = ConsultationSummaryResult.model_validate(content)
 
     assert result.encounter_setting.date == "10 février 2026"
 
 
 def test_billing_codes_request_is_not_misdetected_as_consultation_summary():
-    from app.ramq_codes.task import SYSTEM_PROMPT as BILLING_SYSTEM_PROMPT
+    from app.ramq_codes.prompt import SYSTEM_PROMPT as BILLING_SYSTEM_PROMPT
 
     assert fake_llm_server._classify_request(BILLING_SYSTEM_PROMPT, "") != "consultation_summary"
 

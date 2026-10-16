@@ -72,7 +72,7 @@ def _note_text(nam: str | None = None) -> str:
 
 def _model(billing=MOCK_RESULT, extractions: int = 1):
     """The chat model, answering `extractions` pipeline runs (summary, then codes)."""
-    patcher = patch("app.extraction.engine.get_client")
+    patcher = patch("app.llm.structured.get_client")
     mock_get_client = patcher.start()
     mock_get_client.return_value.chat = AsyncMock(
         side_effect=[_mock_response(MOCK_SUMMARY_RESULT), _mock_response(billing)] * extractions
@@ -160,8 +160,7 @@ async def test_push_a_note_with_a_known_nam_is_extracted_and_ready(me, client):
     assert detail["patient"]["is_vulnerable"] is False
     assert detail["patient"]["is_registered"] is None
     assert detail["status"] == "prêt"
-    assert detail["extraction"]["billing"]["task"] == "billing_codes"
-    assert [c["code"] for c in detail["extraction"]["billing"]["result"]["codes"]] == [
+    assert [c["code"] for c in detail["extraction"]["billing"]["codes"]] == [
         "TEST-BP-MGMT",
         "TEST-BLOODWORK-ORDER",
     ]
@@ -412,7 +411,7 @@ async def test_a_reviewed_encounter_shows_the_codes_billed_not_the_codes_propose
     assert row["indicative_total"] is None
     detail = client.get(f"/encounters/{encounter_id}").json()
     assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BLOODWORK-ORDER"]
-    assert len(detail["extraction"]["billing"]["result"]["codes"]) == 2
+    assert len(detail["extraction"]["billing"]["codes"]) == 2
 
 
 async def test_an_encounter_without_a_claim_has_none(me, client):
@@ -472,7 +471,7 @@ async def test_pick_refuses_an_unknown_patient(me, client):
 
 async def test_extract_on_demand_retries_a_failed_extraction(me, client):
     patient = await _seed_patient()
-    patcher = patch("app.extraction.engine.get_client")
+    patcher = patch("app.llm.structured.get_client")
     mock_get_client = patcher.start()
     mock_get_client.return_value.chat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
     try:
@@ -488,7 +487,7 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
         patcher.stop()
 
     assert response.status_code == 200
-    assert [c["code"] for c in response.json()["billing"]["result"]["codes"]] == ["TEST-BP-MGMT"]
+    assert [c["code"] for c in response.json()["billing"]["codes"]] == ["TEST-BP-MGMT"]
     row = _row(client, outcome["encounter_id"])
     assert row["status"] == "prêt"
     assert row["codes"] == ["TEST-BP-MGMT"]
@@ -666,7 +665,7 @@ def test_mask_nam_hides_the_birth_date_digits():
 
 def _extraction(*codes):
     """Just what is_all_clean reads: the latest run's codes."""
-    return SimpleNamespace(billing=SimpleNamespace(result=SimpleNamespace(codes=list(codes))))
+    return SimpleNamespace(billing=SimpleNamespace(codes=list(codes)))
 
 
 def _code(fees: int = 1, confidence: str = "high", needs_confirmation=(), retained: bool = True):

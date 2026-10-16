@@ -1,4 +1,4 @@
-"""Exercises app/tasks/schema.py's generic Pydantic-model -> (JSON schema / prompt block /
+"""Exercises app/llm/schema.py's generic Pydantic-model -> (JSON schema / prompt block /
 rendered text) conversions against a small synthetic model (fast, isolates the mechanism
 from the real ConsultationSummaryResult's size) and against the real model (confirms every
 field actually reaches the rendered text, which is the whole point of deriving it generically
@@ -9,7 +9,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.summary import ConsultationSummaryResult
-from app.tasks.schema import render_instance, render_schema_block, to_strict_schema
+from app.llm.schema import render_instance, render_schema_block, to_strict_schema
 from tests.test_consultation_summary import MOCK_RESULT
 
 
