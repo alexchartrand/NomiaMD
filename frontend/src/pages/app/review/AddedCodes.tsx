@@ -1,5 +1,6 @@
 import type { CodeHit } from "../../../api";
-import { AddedCodeCard } from "./AddedCodeCard";
+import { AddedCodeRow } from "./AddedCodeRow";
+import { CODE_LIST_CLASS } from "./CodeRow";
 import { CodeSearch } from "./CodeSearch";
 import type { ManualCodeEntry } from "./manualCodes";
 
@@ -32,9 +33,9 @@ export function AddedCodes({
   return (
     <div className="flex flex-col gap-3">
       {entries.length > 0 && (
-        <ul className="m-0 flex flex-col gap-3 p-0">
+        <ul aria-label="Codes ajoutés" className={CODE_LIST_CLASS}>
           {entries.map((entry) => (
-            <AddedCodeCard
+            <AddedCodeRow
               key={entry.hit.number}
               entry={entry}
               onFeeSelected={(feeIndex, lieu) => onFeeSelected(entry.hit.number, feeIndex, lieu)}

@@ -4,6 +4,7 @@ import type {
   ClaimCodeLine,
   CodeDetail,
   CodeHit,
+  ConsultationDigest,
   Dashboard,
   DashboardKpis,
   DashboardTasks,
@@ -46,6 +47,18 @@ export function makeProposedCode(overrides: Partial<ExtractedCode> = {}): Extrac
   };
 }
 
+export function makeDigest(overrides: Partial<ConsultationDigest> = {}): ConsultationDigest {
+  return {
+    short_description: "Consultation pour une toux depuis trois jours.",
+    reason_for_visit: null,
+    procedures: [],
+    billable_add_ons: [],
+    referral: null,
+    open_questions: [],
+    ...overrides,
+  };
+}
+
 export function makeExtraction(
   codes: ExtractedCode[],
   overrides: Partial<BillingExtractionResponse> = {},
@@ -55,6 +68,7 @@ export function makeExtraction(
     extraction_run_id: 1,
     encounter_date: "2026-10-01",
     encounter_date_raw: null,
+    summary: null,
     ...overrides,
   };
 }

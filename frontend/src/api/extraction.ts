@@ -38,12 +38,31 @@ export interface BillingCodesResult {
   analysis?: string | null;
 }
 
+export interface ReferralDigest {
+  requester: string | null;
+  reason: string | null;
+}
+
+// The consultation summary as the review shows it above the codes.
+export interface ConsultationDigest {
+  short_description: string;
+  reason_for_visit: string | null;
+  procedures: string[];
+  billable_add_ons: string[];
+  // Only an incoming referral: another professional asked this physician to see the patient.
+  referral: ReferralDigest | null;
+  // What the summary couldn't settle, phrased as questions for the physician.
+  open_questions: string[];
+}
+
 export interface BillingExtractionResponse {
   billing: BillingCodesResult;
   // What POST /claims takes — the run carries the patient and both stages' results.
   extraction_run_id: number;
   encounter_date: string | null; // ISO date (YYYY-MM-DD)
   encounter_date_raw: string | null;
+  // Null for a run whose summary is missing or was stored under an older schema.
+  summary?: ConsultationDigest | null;
 }
 
 export async function extractBillingCodes(
