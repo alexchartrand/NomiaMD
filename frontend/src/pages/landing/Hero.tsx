@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components";
 import { contactLink } from "@/site/config";
 import { HeroAccents } from "./HeroAccents";
-import { InboxPreview } from "./InboxPreview";
+import { AnnotatedNotePreview } from "./AnnotatedNotePreview";
 
 export function Hero() {
   return (
@@ -30,7 +30,7 @@ export function Hero() {
             </Link>
           </div>
         </div>
-        <InboxPreview />
+        <AnnotatedNotePreview />
       </section>
     </div>
   );
