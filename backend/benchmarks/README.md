@@ -229,6 +229,73 @@ notes. 11 expected codes; on 7 notes a difference of 1–2 codes is noise.
 - Both changes act only when the setting is the ER (the pinned query and the prompt line exist only then),
   so the other 51 notes are unchanged by construction; a retrieval rerun on the 7 notes after the cleanup
   gave identical candidates.
+- On all 58 notes (`bedrock-cands`, next section) the pinning moves expected codes up without changing
+  what is found: recall stays 97%, R@5 / R@10 / R@20 / R@40 go 43 / 59 / 69 / 87 → 49 / 68 / 79 / 93, MRR
+  0.32 → 0.35.
+
+## Selection models (2026-10-09 and 2026-10-16)
+
+Seven chat models answer the same `billing_codes` prompt (v3, high-confidence rule, the ER « inscrit »
+line) on the same candidates and summaries, so the model is the only thing that changes:
+
+```
+run --name <x> --stages selection --candidates-from bedrock-cands --selection-model <model id>
+```
+
+The candidates come from `bedrock-cands`, a retrieval-only run of the current pipeline (care setting, ER
+hits pinned) on `codes_2026-09-17` over `mistral-2026-10-v2`'s summaries: 61 candidates per note, the same
+two codes not retrieved as in `care-setting-sel`. mistral-medium, the control, goes through the Mistral API;
+the six others through Bedrock Converse (`LLM_PROVIDER=bedrock`).
+
+| run | model | retained P / R / F1 | correct / wrong retained | exact notes | overall recall | possible/note | clean negatives | notes worse / better\* | in / out tok per note | p50 / p95 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `mistral-medium-sel` (control) | mistral-medium | 68% / 65% / 67% | 49 / 23 | 56% | **88%** | 2.7 | 4/4 | – | 11.9k / 940 | **7.4 / 11.9 s** |
+| `sonnet46-sel` | Claude Sonnet 4.6 | 74% / **69%** / **72%** | **52** / 18 | 57% | 85% | 1.3 | 4/4 | 5 / 8 | 15.3k / 1.2k | 16.8 / 26.1 s |
+| `qwen3-vl-235b-sel` | Qwen3-VL 235B A22B | **75%** / 67% / 70% | 50 / **17** | **59%** | 85% | 2.1 | 2/4 | 7 / 8 | 13.3k / 1.2k | 20.4 / 87.0 s |
+| `gpt-oss-120b-sel` | gpt-oss-120b | 68% / 65% / 67% | 49 / 23 | 57% | 76% | 2.7 | 2/4 | 9 / 9 | 11.4k / 1.4k | 8.3 / 20.5 s |
+| `haiku45-sel` | Claude Haiku 4.5 | 69% / 64% / 66% | 48 / 22 | 50% | 79% | 1.3 | 4/4 | 8 / 7 | 15.3k / 1.2k | 10.6 / 18.3 s |
+| `qwen3-next-sel` | Qwen3-Next 80B A3B | 62% / 64% / 63% | 48 / 29 | 54% | 85% | 4.2 | 1/4 | 7 / 7 | 13.3k / 1.6k | 19.3 / 31.1 s |
+| `mistral-large3-sel` | Mistral Large 3 | 55% / 61% / 58% | 46 / 37 | 44% | 76% | 1.6 | 2/4 | 9 / 5 | 11.9k / 1.1k | 7.1 / 21.1 s |
+
+\* Notes with fewer / more correct retained codes than the control (notes that lost one code and gained
+another are left out).
+
+1. **No model clearly beats mistral-medium yet.** Correct retained codes range from 46 to 52 against 49,
+   inside the ±3 noise band except Mistral Large 3. Every model is worse on 5–9 notes and better on 5–9,
+   the pattern of *Run-to-run variance*. Each model ran once, so the gaps between the top three aren't
+   established.
+2. **Sonnet 4.6 and Qwen3-VL are more precise** (74–75% vs 68%): they retain 17–18 wrong codes against 23.
+   Sonnet also returns half as many possible codes (1.3 vs 2.7 per note), at the cost of a little overall
+   recall (85% vs 88%). It flags 27% of returned codes for confirmation (control: 8%), but these aren't the
+   generic hedging of `mistral-sel`: each one names the variant question and the alternative code (« Confirmer
+   si la visite est qualifiée de complexe — si oui, utiliser 15773 à la place de 15765 »).
+3. **Some misses are mistral-medium's own.** On GMF-2026-00307 every other model retains 15188 next to the
+   visit, while mistral-medium leaves it possible. On DOM-2026-00022 five of six retain 15781 where
+   mistral-medium retains the variant 15770. The reverse cases look like label or eligibility questions:
+   - CLI-2026-01226's 15765 is retained only by mistral-medium and Qwen3-Next; the others pick 15789 or
+     15773.
+   - On GMF-2026-00304, Sonnet, Haiku and gpt-oss retain the MSK code 08777 instead of 15790 (the
+     designation gap, below).
+4. **ER notes (7 notes, 11 codes): every model still has the variant problem.** Correct retained ER codes:
+   Haiku 6, Sonnet / gpt-oss / Qwen3-VL 4, mistral-medium / Qwen3-Next 3, Mistral Large 3 1 (with 11 wrong
+   retained). On 7 notes, 1–2 codes is noise.
+5. **Reliability.**
+   - Qwen3-Next returned 2 codes outside the candidates and Mistral Large 3 one; `SelectionParser` dropped
+     them.
+   - gpt-oss-120b fails on URG-2026-04512, also on a forced rerun after the reasoning-leak fix (7e8008e): its
+     output is `**analysis{` followed by blank lines, an `ExtractionOutputError`. The other runs have no
+     failed note.
+   - Only the Claude models and mistral-medium return nothing on all 4 no-code notes. Qwen3-Next also lists
+     the most possible codes (4.2 per note, 146 of them low-confidence).
+6. **Cost and latency.**
+   - The Claude models tokenize the same prompt into about 15.3k input tokens against 11.9k for Mistral, so
+     compare prices per note, not per token.
+   - Sonnet's p50 is 2.3× mistral-medium's.
+   - Qwen3-VL's p95 comes from 3 calls of about 90 s out of 58; Qwen3-Next had one.
+   - Bedrock and the Mistral API aren't the same path, so latencies aren't like-for-like.
+
+Before switching models, rerun the control, Sonnet 4.6 and Qwen3-VL once each to see whether the precision gap
+holds beyond the noise.
 
 ## Where the remaining misses are
 
@@ -245,4 +312,5 @@ notes. 11 expected codes; on 7 notes a difference of 1–2 codes is noise.
   a visit billed next to an injection.
 
 Tuning the prompt further against unverified labels risks fitting the labels' mistakes. The next gains are
-more likely from the data fix, the eligibility axes and a label review than from prompt wording.
+more likely from the data fix, the eligibility axes and a label review than from prompt wording. A different
+selection model (*Selection models*) hasn't yet shown a gain beyond the noise.
