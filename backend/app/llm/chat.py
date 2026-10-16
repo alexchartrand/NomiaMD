@@ -4,6 +4,7 @@ engine, ramq_chatbot) goes through get_chat_client so none of them names a provi
 from functools import lru_cache
 
 from app.config import settings
+from app.llm.bedrock_chat import BedrockChatProvider
 from app.llm.client import IChatClient
 from app.llm.mistral import MistralChatProvider
 from app.llm.openai_compatible import OpenAICompatibleChatProvider
@@ -12,6 +13,7 @@ from app.llm.provider import ChatModelProvider
 _PROVIDERS: dict[str, type[ChatModelProvider]] = {
     "mistral": MistralChatProvider,
     "openai_compatible": OpenAICompatibleChatProvider,
+    "bedrock": BedrockChatProvider,
 }
 
 

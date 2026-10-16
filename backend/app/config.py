@@ -45,8 +45,8 @@ class Settings:
 
     @property
     def llm_provider(self) -> str:
-        """Which chat backend app/llm/chat.py builds: `mistral` (default) or
-        `openai_compatible`."""
+        """Which chat backend app/llm/chat.py builds: `mistral` (default),
+        `openai_compatible` or `bedrock`."""
         return os.environ.get("LLM_PROVIDER", "mistral").strip().lower()
 
     @property
@@ -91,7 +91,7 @@ class Settings:
 
     @property
     def bedrock_region(self) -> str | None:
-        """The Region EMBEDDING_PROVIDER=bedrock calls. Unset = the AWS SDK's own
+        """The Region LLM_PROVIDER=bedrock and EMBEDDING_PROVIDER=bedrock call. Unset = the AWS SDK's own
         configuration (AWS_REGION, ~/.aws/config)."""
         return os.environ.get("BEDROCK_REGION") or None
 
