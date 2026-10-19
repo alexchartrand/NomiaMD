@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 import { Route, Routes } from "react-router-dom";
 import { makeUser, renderWithProviders, serveSession } from "./test/render";
 import { server } from "./test/server";
-import { RequireAuth, useAuth } from "./AuthContext";
+import { RequireAdmin, RequireAuth, useAuth } from "./AuthContext";
 
 function Protected() {
   return (
@@ -14,6 +14,24 @@ function Protected() {
         element={
           <RequireAuth>
             <p>zone protégée</p>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/app/profile"
+        element={
+          <RequireAuth>
+            <p>page de profil</p>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/app/admin"
+        element={
+          <RequireAuth>
+            <RequireAdmin>
+              <p>console admin</p>
+            </RequireAdmin>
           </RequireAuth>
         }
       />
@@ -106,5 +124,29 @@ describe("AuthProvider", () => {
   it("refuses to be used outside the provider", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     expect(() => render(<Probe />)).toThrow("useAuth must be used within an AuthProvider");
+  });
+});
+
+describe("temporary passwords", () => {
+  it("sends a user on a temporary password to the profile, whatever page they open", async () => {
+    serveSession(makeUser({ must_change_password: true }));
+    renderWithProviders(<Protected />, { route: "/app" });
+    expect(await screen.findByText("page de profil")).toBeInTheDocument();
+    expect(screen.queryByText("zone protégée")).not.toBeInTheDocument();
+  });
+});
+
+describe("RequireAdmin", () => {
+  it("opens the console for an admin", async () => {
+    serveSession(makeUser({ role: "admin" }));
+    renderWithProviders(<Protected />, { route: "/app/admin" });
+    expect(await screen.findByText("console admin")).toBeInTheDocument();
+  });
+
+  it("sends a physician back to the app", async () => {
+    serveSession(makeUser({ role: "physician" }));
+    renderWithProviders(<Protected />, { route: "/app/admin" });
+    expect(await screen.findByText("zone protégée")).toBeInTheDocument();
+    expect(screen.queryByText("console admin")).not.toBeInTheDocument();
   });
 });

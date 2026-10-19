@@ -11,6 +11,7 @@ from app.extraction.factory import get_billing_pipeline
 from app.extraction.pipeline import BillingPipeline
 from app.extraction.recorder import ExtractionRecorder
 from app.intake import NormalizerRegistry, default_normalizers
+from app.llm.usage import usage_scope
 from app.postgresdb import EncounterRepository, UserRepository, session_scope
 
 
@@ -40,17 +41,20 @@ class PipelineEncounterExtractor:
 
         date_order = self._normalizers.for_source(encounter.source_system).date_order
         pipeline = self._pipeline or get_billing_pipeline()
-        try:
-            result = await pipeline.run(
-                encounter.note_text,
-                user=user,
-                patient_id=encounter.patient_id,
-                date_order=date_order,
-                care_setting=parse_care_setting((encounter.encounter_meta or {}).get("care_setting")),
-            )
-        except Exception as exc:
-            await self._recorder.record_failure(encounter_id=encounter.id, user_id=user.id, error=exc)
-            raise
+        with usage_scope() as usage:
+            try:
+                result = await pipeline.run(
+                    encounter.note_text,
+                    user=user,
+                    patient_id=encounter.patient_id,
+                    date_order=date_order,
+                    care_setting=parse_care_setting((encounter.encounter_meta or {}).get("care_setting")),
+                )
+            except Exception as exc:
+                await self._recorder.record_failure(
+                    encounter_id=encounter.id, user_id=user.id, error=exc, llm_calls=usage.records
+                )
+                raise
 
         await self._recorder.save(
             encounter_id=encounter.id,
@@ -58,4 +62,5 @@ class PipelineEncounterExtractor:
             patient_id=encounter.patient_id,
             service_date=parse_encounter_date(result.summary.encounter_setting.date, date_order),
             result=result,
+            llm_calls=usage.records,
         )

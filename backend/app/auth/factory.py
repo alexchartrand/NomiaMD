@@ -7,6 +7,7 @@ from functools import lru_cache
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.audit import DetachedAuditLog, SessionAuditLog
 from app.auth.profile import ProfileService
 from app.auth.security import PasswordHasher, TokenService
 from app.auth.service import AuthService
@@ -36,6 +37,8 @@ def build_auth_service(session: AsyncSession) -> AuthService:
         password_hasher=_password_hasher(),
         token_service=_token_service(),
         login_throttle=_login_throttle(),
+        audit_log=SessionAuditLog(session),
+        failure_audit_log=DetachedAuditLog(),
     )
 
 
@@ -44,6 +47,11 @@ def build_profile_service(session: AsyncSession) -> ProfileService:
         user_repository=UserRepository(session),
         profile_repository=PhysicianProfileRepository(session),
     )
+
+
+def password_hasher() -> PasswordHasher:
+    """The process's one hasher — for other services that set passwords (app/admin/)."""
+    return _password_hasher()
 
 
 def get_auth_service(session: DbSession) -> AuthService:

@@ -19,6 +19,7 @@ export function makeUser(overrides: Partial<UserOut> = {}): UserOut {
     panel_size: null,
     remuneration_type: null,
     practice_number: null,
+    must_change_password: false,
     ...overrides,
   };
 }

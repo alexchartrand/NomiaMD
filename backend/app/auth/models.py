@@ -29,6 +29,9 @@ class UserOut(BaseModel):
     panel_size: int | None
     remuneration_type: RemunerationType | None
     practice_number: str | None
+    # True while the account is on an admin-issued temporary password: the frontend sends
+    # the user to the password form, and every other route answers 403 until it's changed.
+    must_change_password: bool = False
 
     @classmethod
     def from_account(cls, account: "PhysicianAccount") -> "UserOut":
@@ -44,6 +47,7 @@ class UserOut(BaseModel):
             # Unlike the rest of this method's fields, not sourced from `profile` — it
             # lives directly on `users` (see the User model's docstring for why).
             practice_number=account.user.practice_number,
+            must_change_password=bool(account.user.must_change_password),
         )
 
 

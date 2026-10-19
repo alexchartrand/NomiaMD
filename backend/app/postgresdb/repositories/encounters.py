@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 
-from sqlalchemy import and_, exists, or_, select
+from sqlalchemy import and_, exists, func, or_, select
 from sqlalchemy.orm import aliased
 from sqlalchemy.exc import IntegrityError
 
@@ -122,6 +122,18 @@ def _is_open(encounter):
     )
 
 
+@dataclass(frozen=True)
+class FailedExtraction:
+    """A failed encounter as the admin console lists it — metadata only, never the note."""
+
+    encounter_id: int
+    user_id: int
+    source_system: str
+    service_date: date | None
+    received_at: datetime
+    error: str
+
+
 class EncounterRepository(SessionRepository):
     async def create(self, data: EncounterInput) -> Encounter:
         encounter = Encounter(
@@ -144,6 +156,35 @@ class EncounterRepository(SessionRepository):
                 raise DuplicateEncounterError() from exc
             raise
         return encounter
+
+    async def list_failed_extractions(self, *, limit: int = 100) -> list[FailedExtraction]:
+        """Encounters whose last extraction failed and that have no run — the `échec` status
+        (app/intake/status.py), across every physician, newest first."""
+        result = await self._session.execute(
+            select(
+                Encounter.id,
+                Encounter.user_id,
+                Encounter.source_system,
+                Encounter.service_date,
+                Encounter.created_at,
+                Encounter.extraction_error,
+            )
+            .where(
+                Encounter.extraction_error.is_not(None),
+                Encounter.superseded_by_id.is_(None),
+                Encounter.patient_id.is_not(None),
+                ~_has_run(),
+            )
+            .order_by(Encounter.created_at.desc(), Encounter.id.desc())
+            .limit(limit)
+        )
+        return [FailedExtraction(*row) for row in result.tuples()]
+
+    async def count_past_purge(self, now: datetime) -> int:
+        result = await self._session.execute(
+            select(func.count()).select_from(Encounter).where(Encounter.purge_after < now)
+        )
+        return result.scalar_one()
 
     async def get(self, encounter_id: int) -> Encounter | None:
         """Unscoped — for background work that only has the id (app/intake/queue.py). Anything

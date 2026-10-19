@@ -17,7 +17,8 @@ import FacturationPage from "./pages/app/FacturationPage";
 import FacturerPage from "./pages/app/FacturerPage";
 import CodesPage from "./pages/app/CodesPage";
 import ProfilePage from "./pages/app/ProfilePage";
-import { RequireAuth } from "./AuthContext";
+import AdminPage from "./pages/app/AdminPage";
+import { RequireAdmin, RequireAuth } from "./AuthContext";
 
 export default function AppRouter() {
   return (
@@ -49,6 +50,14 @@ export default function AppRouter() {
         <Route path="facturer/:claimId" element={<FacturerPage />} />
         <Route path="codes" element={<CodesPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route
+          path="admin"
+          element={
+            <RequireAdmin>
+              <AdminPage />
+            </RequireAdmin>
+          }
+        />
       </Route>
     </Routes>
   );

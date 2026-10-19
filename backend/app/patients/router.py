@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.auth import get_current_user
+from app.auth import get_current_user, require_admin
 from app.patients.factory import get_patient_repository, get_patient_search, get_roster_repository
 from app.patients.models import (
     PatientCreate,
@@ -20,7 +20,6 @@ from app.postgresdb import (
     PhysicianPatient,
     PhysicianPatientRepository,
     User,
-    UserRole,
 )
 
 router = APIRouter(prefix="/patients", tags=["patients"])
@@ -43,11 +42,6 @@ def _to_patient_out(patient: Patient, *, current_user: User) -> PatientOut:
 def _to_roster_entry_out(entry: PhysicianPatient, patient: Patient, *, current_user: User) -> RosterEntryOut:
     patient_out = _to_patient_out(patient, current_user=current_user)
     return RosterEntryOut(**patient_out.model_dump(), notes=entry.notes)
-
-
-def _require_admin(current_user: User) -> None:
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Réservé aux administrateurs")
 
 
 @router.get("", response_model=list[RosterEntryOut])
@@ -98,13 +92,12 @@ async def get_patient(
 async def update_patient(
     patient_id: int,
     body: PatientUpdate,
-    current_user: User = Depends(get_current_user),
-    patients: PatientRepository = Depends(get_patient_repository),
-) -> PatientOut:
     # Patient is a shared, global record now — only admins may edit its demographic/
     # administrative fields, since any physician editing another physician's patient's
     # data has no ownership check left to gate it (see the plan's edit-authorization note).
-    _require_admin(current_user)
+    current_user: User = Depends(require_admin),
+    patients: PatientRepository = Depends(get_patient_repository),
+) -> PatientOut:
     try:
         patient = await patients.update(patient_id, **body.model_dump())
     except DuplicatePatientRamqNumberError as exc:

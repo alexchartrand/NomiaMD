@@ -7,6 +7,17 @@ from app.postgresdb.repositories.base import SessionRepository
 
 
 class LoginThrottleRepository(SessionRepository):
+    async def list_recent(self, *, limit: int = 100) -> list[LoginThrottle]:
+        """Emails with failed attempts on record, latest attempt first — what the admin
+        console shows as lockouts (locked or on the way to it)."""
+        result = await self._session.execute(
+            select(LoginThrottle)
+            .where(LoginThrottle.failed_attempts > 0)
+            .order_by(LoginThrottle.last_attempt_at.desc(), LoginThrottle.email)
+            .limit(limit)
+        )
+        return list(result.scalars())
+
     async def get_for_update(self, email: str) -> LoginThrottle | None:
         """The row, locked until the session ends, so concurrent attempts on one email
         count one after the other instead of all reading the same counter. Locks with a

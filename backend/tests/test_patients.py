@@ -12,7 +12,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import IntegrityError
 
-from app.auth import get_current_user
+from app.auth import get_authenticated_user, get_current_user
 from app.main import app
 from app.postgresdb import (
     ExtractionStageInput,
@@ -114,6 +114,7 @@ def test_patient_created_by_one_physician_is_visible_to_another():
             get_response = client.get(f"/patients/{created['id']}")
         finally:
             app.dependency_overrides.pop(get_current_user, None)
+            app.dependency_overrides.pop(get_authenticated_user, None)
 
     assert get_response.status_code == 200
     assert get_response.json()["id"] == created["id"]
@@ -184,6 +185,7 @@ def test_creating_the_same_nam_from_a_different_physician_is_also_409():
             second_response = client.post("/patients", json={**payload, "full_name": "Jean Tremblay Deux"})
         finally:
             app.dependency_overrides.pop(get_current_user, None)
+            app.dependency_overrides.pop(get_authenticated_user, None)
 
     assert first_response.status_code == 201
     assert second_response.status_code == 409
@@ -275,6 +277,7 @@ def test_update_patient_as_admin_succeeds():
             )
         finally:
             app.dependency_overrides.pop(get_current_user, None)
+            app.dependency_overrides.pop(get_authenticated_user, None)
 
     assert response.status_code == 200
     body = response.json()
@@ -295,6 +298,7 @@ def test_updating_a_patient_to_another_active_patients_nam_is_409():
             )
         finally:
             app.dependency_overrides.pop(get_current_user, None)
+            app.dependency_overrides.pop(get_authenticated_user, None)
 
     assert response.status_code == 409
 
@@ -381,6 +385,7 @@ def test_roster_isolated_per_physician():
             other_roster = client.get("/patients").json()
         finally:
             app.dependency_overrides.pop(get_current_user, None)
+            app.dependency_overrides.pop(get_authenticated_user, None)
 
     assert all(p["id"] != created["id"] for p in other_roster)
 
@@ -427,6 +432,7 @@ async def test_a_patient_not_on_the_billing_physicians_roster_can_still_be_claim
 
 def test_patients_routes_require_authentication():
     app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_authenticated_user, None)
 
     with TestClient(app) as client:
         assert client.get("/patients").status_code == 401
