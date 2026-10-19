@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import pytest_asyncio
 
-from app.auth import get_current_user
+from app.auth import get_authenticated_user, get_current_user
 from app.bootstrap import postgres_database
 from app.postgresdb import PostgresDB, User, UserRole
 from app.main import app
@@ -282,5 +282,7 @@ async def default_authenticated_user():
     )
     await ensure_user_row(fake_user)
     app.dependency_overrides[get_current_user] = lambda: fake_user
+    app.dependency_overrides[get_authenticated_user] = lambda: fake_user
     yield fake_user
     app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_authenticated_user, None)

@@ -22,6 +22,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    false,
     func,
     text,
 )
@@ -108,7 +109,13 @@ class User(CreatedAtMixin, Base):
     is compared against to derive whether a patient is registered with this physician (see
     app/patients/registration.py) — hence unique: two accounts sharing one would make that
     derivation ambiguous. NULLs never collide in a unique index on either dialect, so any
-    number of accounts may leave it blank."""
+    number of accounts may leave it blank.
+
+    `session_version` is stamped into every session token (app/auth/security.py); bumping it
+    revokes all of the account's open sessions at once — on deactivation, an admin password
+    reset, a role change or an explicit "log out everywhere". `must_change_password` is set
+    on an account an admin created or reset with a temporary password: until the user picks
+    their own, every route but the password change refuses them (app/auth/dependencies.py)."""
 
     __tablename__ = "users"
 
@@ -120,6 +127,9 @@ class User(CreatedAtMixin, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     practice_number: Mapped[str | None] = mapped_column(String(6), nullable=True, unique=True)
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    deactivated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    session_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    must_change_password: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
 
 
 class LoginThrottle(Base):

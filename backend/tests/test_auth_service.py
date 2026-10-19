@@ -59,6 +59,8 @@ def _user(hasher: PasswordHasher, **overrides):
         "email": "doc@example.test",
         "hashed_password": hasher.hash(PASSWORD),
         "is_active": True,
+        "session_version": 0,
+        "must_change_password": False,
     }
     return SimpleNamespace(**{**defaults, **overrides})
 

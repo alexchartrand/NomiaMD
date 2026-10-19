@@ -58,6 +58,10 @@ class AuthService:
         user = await self._users.get_by_id(payload.user_id)
         if user is None or not user.is_active:
             return None
+        if payload.session_version != user.session_version:
+            # Revoked: the account's sessions were ended (deactivation, admin reset, role
+            # change, "log out everywhere") after this token was issued.
+            return None
         return user
 
     async def change_password(self, user: User, *, current_password: str, new_password: str) -> bool:
@@ -70,6 +74,8 @@ class AuthService:
             return False
         new_hash = await asyncio.to_thread(self._hasher.hash, new_password)
         await self._users.update_password_hash(user.id, new_hash)
+        if user.must_change_password:
+            await self._users.set_must_change_password(user.id, False)
         logger.info("Password changed", extra={"email": user.email})
         return True
 

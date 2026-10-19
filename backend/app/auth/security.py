@@ -45,6 +45,10 @@ class PasswordHasher:
 @dataclass
 class TokenPayload:
     user_id: int
+    # The account's session_version when the token was issued — a token older than the
+    # current one has been revoked (app/auth/service.py). Tokens issued before the claim
+    # existed read as 0, the column's default.
+    session_version: int = 0
 
 
 class TokenService:
@@ -65,6 +69,7 @@ class TokenService:
         now = datetime.now(timezone.utc)
         payload = {
             "sub": str(user.id),
+            "sv": user.session_version or 0,
             "iat": now,
             "exp": now + timedelta(seconds=self.expiry_for(remember_me)),
         }
@@ -75,4 +80,4 @@ class TokenService:
             payload = jwt.decode(token, self._secret_key, algorithms=[self.ALGORITHM])
         except jwt.InvalidTokenError:
             return None
-        return TokenPayload(user_id=int(payload["sub"]))
+        return TokenPayload(user_id=int(payload["sub"]), session_version=int(payload.get("sv", 0)))

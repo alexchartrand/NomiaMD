@@ -2,7 +2,7 @@ import math
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
-from app.auth.dependencies import COOKIE_NAME, get_current_user
+from app.auth.dependencies import COOKIE_NAME, get_authenticated_user, get_current_user
 from app.auth.factory import get_auth_service, get_profile_service
 from app.auth.profile import PracticeFacts, ProfileService
 from app.auth.service import AuthService
@@ -62,7 +62,7 @@ async def logout(response: Response) -> None:
 
 @router.get("/me", response_model=UserOut)
 async def me(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_authenticated_user),
     profiles: ProfileService = Depends(get_profile_service),
 ) -> UserOut:
     # get_current_user deliberately doesn't load the profile — every authenticated
@@ -102,7 +102,7 @@ async def update_me(
 async def change_password(
     request: Request,
     body: PasswordChangeRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_authenticated_user),
     auth: AuthService = Depends(get_auth_service),
 ) -> None:
     changed = await auth.change_password(
