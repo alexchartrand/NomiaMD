@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import * as api from "./api";
 import { describeError, type UserOut } from "./api";
 import { Banner, Button, Spinner } from "./components";
@@ -65,8 +65,13 @@ export function useAuth(): AuthContextValue {
   return context;
 }
 
+// Where a user on an admin-issued temporary password is sent: the backend refuses every
+// other route until it's changed (403 password_change_required).
+export const FORCED_PASSWORD_ROUTE = "/app/profile";
+
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading, sessionError, retrySession } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -91,5 +96,19 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     return <Navigate to="/login" replace />;
   }
 
+  if (user.must_change_password && location.pathname !== FORCED_PASSWORD_ROUTE) {
+    return <Navigate to={FORCED_PASSWORD_ROUTE} replace />;
+  }
+
+  return <>{children}</>;
+}
+
+// Inside RequireAuth: the admin console's pages. The backend refuses non-admins anyway
+// (403); this only keeps them from landing on a page of errors.
+export function RequireAdmin({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  if (user?.role !== "admin") {
+    return <Navigate to="/app" replace />;
+  }
   return <>{children}</>;
 }

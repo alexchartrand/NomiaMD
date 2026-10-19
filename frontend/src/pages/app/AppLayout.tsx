@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { BookOpen, Inbox, LayoutDashboard, MessagesSquare, ReceiptText, Users } from "lucide-react";
+import { BookOpen, Inbox, LayoutDashboard, MessagesSquare, ReceiptText, ShieldCheck, Users } from "lucide-react";
+import { useAuth } from "../../AuthContext";
 import { NavItem, NavSection, Sidebar } from "../../components";
 import { RamqChatProvider } from "../../chat/RamqChatProvider";
 import { useInboxCount } from "./shell/useNavCounts";
@@ -7,6 +8,7 @@ import { UserMenu } from "./shell/UserMenu";
 
 export default function AppLayout() {
   const inboxCount = useInboxCount();
+  const { user } = useAuth();
 
   return (
     // The page scrolls inside the content column, not the window: the sidebar stays put and
@@ -35,6 +37,13 @@ export default function AppLayout() {
             Assistant RAMQ
           </NavItem>
         </NavSection>
+        {user?.role === "admin" && (
+          <NavSection title="Administration">
+            <NavItem to="/app/admin" icon={ShieldCheck}>
+              Console
+            </NavItem>
+          </NavSection>
+        )}
       </Sidebar>
       {/* Padded inside the scroll container, not on it: `sticky` offsets count from its padding edge. */}
       <div className="min-w-0 flex-1 overflow-y-auto">

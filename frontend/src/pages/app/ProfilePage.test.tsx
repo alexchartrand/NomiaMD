@@ -198,3 +198,22 @@ describe("password change", () => {
     await waitFor(() => expect(screen.getByLabelText("Mot de passe actuel")).toHaveValue("mauvais"));
   });
 });
+
+describe("on a temporary password", () => {
+  it("asks for a new password only, then opens the rest of the profile", async () => {
+    serveSession(makeUser({ must_change_password: true }));
+    server.use(http.post("/api/auth/me/password", () => new HttpResponse(null, { status: 204 })));
+    const { user } = renderWithProviders(<ProfilePage />);
+
+    expect(await screen.findByText(/mot de passe temporaire/)).toBeInTheDocument();
+    expect(screen.queryByLabelText("Nom complet")).not.toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("Mot de passe temporaire"), "Tmp-Secret-123456");
+    await user.type(screen.getByLabelText("Nouveau mot de passe"), "mon-propre-mdp");
+    await user.type(screen.getByLabelText("Confirmer le nouveau mot de passe"), "mon-propre-mdp");
+    await user.click(screen.getByRole("button", { name: "Changer le mot de passe" }));
+
+    expect(await screen.findByLabelText("Nom complet")).toBeInTheDocument();
+    expect(screen.queryByText(/mot de passe temporaire\./)).not.toBeInTheDocument();
+  });
+});

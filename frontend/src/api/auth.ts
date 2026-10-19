@@ -16,6 +16,9 @@ export interface UserOut {
   remuneration_type: RemunerationType | null;
   // Unlike the fields above, not versioned — see the User model's docstring for why.
   practice_number: string | null;
+  // On an admin-issued temporary password: every page but the password change is refused
+  // until the user picks their own (RequireAuth sends them to the profile).
+  must_change_password: boolean;
 }
 
 // Kept in sync by hand with PhysicianType in backend/app/postgresdb/models.py. The API
