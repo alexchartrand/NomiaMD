@@ -233,9 +233,9 @@ notes. 11 expected codes; on 7 notes a difference of 1–2 codes is noise.
   what is found: recall stays 97%, R@5 / R@10 / R@20 / R@40 go 43 / 59 / 69 / 87 → 49 / 68 / 79 / 93, MRR
   0.32 → 0.35.
 
-## Selection models (2026-10-09 and 2026-10-16)
+## Selection models (2026-10-09, 2026-10-16 and 2026-10-19)
 
-Seven chat models answer the same `billing_codes` prompt (v3, high-confidence rule, the ER « inscrit »
+Nine chat models answer the same `billing_codes` prompt (v3, high-confidence rule, the ER « inscrit »
 line) on the same candidates and summaries, so the model is the only thing that changes:
 
 ```
@@ -245,57 +245,83 @@ run --name <x> --stages selection --candidates-from bedrock-cands --selection-mo
 The candidates come from `bedrock-cands`, a retrieval-only run of the current pipeline (care setting, ER
 hits pinned) on `codes_2026-09-17` over `mistral-2026-10-v2`'s summaries: 61 candidates per note, the same
 two codes not retrieved as in `care-setting-sel`. mistral-medium, the control, goes through the Mistral API;
-the six others through Bedrock Converse (`LLM_PROVIDER=bedrock`).
+six others through Bedrock Converse (`LLM_PROVIDER=bedrock`); the two Augure models through Augure's
+Canadian-hosted OpenAI-compatible API (`LLM_PROVIDER=openai_compatible
+LLM_ENDPOINT=https://api.augureai.ca/v1`, the Augure key as `LLM_API_KEY`).
 
 | run | model | retained P / R / F1 | correct / wrong retained | exact notes | overall recall | possible/note | clean negatives | notes worse / better\* | in / out tok per note | p50 / p95 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | `mistral-medium-sel` (control) | mistral-medium | 68% / 65% / 67% | 49 / 23 | 56% | **88%** | 2.7 | 4/4 | – | 11.9k / 940 | **7.4 / 11.9 s** |
-| `sonnet46-sel` | Claude Sonnet 4.6 | 74% / **69%** / **72%** | **52** / 18 | 57% | 85% | 1.3 | 4/4 | 5 / 8 | 15.3k / 1.2k | 16.8 / 26.1 s |
-| `qwen3-vl-235b-sel` | Qwen3-VL 235B A22B | **75%** / 67% / 70% | 50 / **17** | **59%** | 85% | 2.1 | 2/4 | 7 / 8 | 13.3k / 1.2k | 20.4 / 87.0 s |
+| `augure-ossington-5-sel`† | Augure Ossington 5 | **78%** / **79%** / **78%** | **59** / **17** | **67%** | 87% | 0.8 | 4/4 | 2 / 11 | 12.5k / 2.8k | 29.6 / 61.6 s |
+| `sonnet46-sel` | Claude Sonnet 4.6 | 74% / 69% / 72% | 52 / 18 | 57% | 85% | 1.3 | 4/4 | 5 / 8 | 15.3k / 1.2k | 16.8 / 26.1 s |
+| `qwen3-vl-235b-sel` | Qwen3-VL 235B A22B | 75% / 67% / 70% | 50 / **17** | 59% | 85% | 2.1 | 2/4 | 7 / 8 | 13.3k / 1.2k | 20.4 / 87.0 s |
 | `gpt-oss-120b-sel` | gpt-oss-120b | 68% / 65% / 67% | 49 / 23 | 57% | 76% | 2.7 | 2/4 | 9 / 9 | 11.4k / 1.4k | 8.3 / 20.5 s |
 | `haiku45-sel` | Claude Haiku 4.5 | 69% / 64% / 66% | 48 / 22 | 50% | 79% | 1.3 | 4/4 | 8 / 7 | 15.3k / 1.2k | 10.6 / 18.3 s |
 | `qwen3-next-sel` | Qwen3-Next 80B A3B | 62% / 64% / 63% | 48 / 29 | 54% | 85% | 4.2 | 1/4 | 7 / 7 | 13.3k / 1.6k | 19.3 / 31.1 s |
 | `mistral-large3-sel` | Mistral Large 3 | 55% / 61% / 58% | 46 / 37 | 44% | 76% | 1.6 | 2/4 | 9 / 5 | 11.9k / 1.1k | 7.1 / 21.1 s |
+| `augure-tofino-3-sel` | Augure Tofino 3 | 55% / 53% / 54% | 40 / 33 | 43% | 77% | 2.0 | 2/4 | 11 / 2 | 12.6k / 1.2k | 36.2 / 72.1 s |
 
 \* Notes with fewer / more correct retained codes than the control (notes that lost one code and gained
 another are left out).
+† Run with `MAX_TOKENS` raised to 8192 in `app/llm/openai_client.py` (see *Reliability*).
 
-1. **No model clearly beats mistral-medium yet.** Correct retained codes range from 46 to 52 against 49,
-   inside the ±3 noise band except Mistral Large 3. Every model is worse on 5–9 notes and better on 5–9,
-   the pattern of *Run-to-run variance*. Each model ran once, so the gaps between the top three aren't
-   established.
-2. **Sonnet 4.6 and Qwen3-VL are more precise** (74–75% vs 68%): they retain 17–18 wrong codes against 23.
-   Sonnet also returns half as many possible codes (1.3 vs 2.7 per note), at the cost of a little overall
-   recall (85% vs 88%). It flags 27% of returned codes for confirmation (control: 8%), but these aren't the
-   generic hedging of `mistral-sel`: each one names the variant question and the alternative code (« Confirmer
-   si la visite est qualifiée de complexe — si oui, utiliser 15773 à la place de 15765 »).
-3. **Some misses are mistral-medium's own.** On GMF-2026-00307 every other model retains 15188 next to the
-   visit, while mistral-medium leaves it possible. On DOM-2026-00022 five of six retain 15781 where
-   mistral-medium retains the variant 15770. The reverse cases look like label or eligibility questions:
+1. **Ossington 5 is the first model past the noise.** 59 correct retained codes against 49, with 17 wrong
+   against 23: +10 is three times the ±3 band, and it is worse on 2 notes, better on 11 — a pattern, not
+   the 5–9 / 5–9 churn of the other models. The gain holds on both label groups: draft-unverified 88% / 91%
+   retained P / R (control 79% / 76%), reviewed 50% / 47% (control 44% / 41%). It has run once; rerun it
+   and the control before switching.
+2. **Where Ossington 5 gains:** codes billed next to the visit (15188 on GMF-2026-00307, 15144 on
+   GMF-2026-00302, psychotherapy 15785/15786 on GMF-2026-00312), the CHSLD variants (15616, 15617, 15622),
+   15803 on two follow-ups, 15781 on DOM-2026-00022, and two ER codes (15058, 15064). It loses 15765 on
+   CLI-2026-01226 and 15790 on GMF-2026-00304, the two label questions of point 4. It is the most decisive
+   model: 0.8 possible codes per note (control 2.7) and 4% flagged for confirmation. That is why overall
+   recall stays at 87%, one code short of the control.
+3. **Of the other models, none clearly beats mistral-medium.** Correct retained codes range from 40 to 52
+   against 49, inside the ±3 noise band except Mistral Large 3 and Tofino 3. Sonnet 4.6 and Qwen3-VL are
+   more precise (74–75% vs 68%): they retain 17–18 wrong codes against 23. Sonnet also returns half as many
+   possible codes (1.3 vs 2.7 per note), at the cost of a little overall recall (85% vs 88%). It flags 27% of
+   returned codes for confirmation (control: 8%), but these aren't the generic hedging of `mistral-sel`: each
+   one names the variant question and the alternative code (« Confirmer si la visite est qualifiée de
+   complexe — si oui, utiliser 15773 à la place de 15765 »).
+4. **Some misses are mistral-medium's own.** On GMF-2026-00307 every other model retains 15188 next to the
+   visit, while mistral-medium leaves it possible. On DOM-2026-00022 six of eight retain 15781
+   where mistral-medium retains the variant 15770. The reverse cases look like label or eligibility
+   questions:
    - CLI-2026-01226's 15765 is retained only by mistral-medium and Qwen3-Next; the others pick 15789 or
      15773.
-   - On GMF-2026-00304, Sonnet, Haiku and gpt-oss retain the MSK code 08777 instead of 15790 (the
-     designation gap, below).
-4. **ER notes (7 notes, 11 codes): every model still has the variant problem.** Correct retained ER codes:
-   Haiku 6, Sonnet / gpt-oss / Qwen3-VL 4, mistral-medium / Qwen3-Next 3, Mistral Large 3 1 (with 11 wrong
-   retained). On 7 notes, 1–2 codes is noise.
-5. **Reliability.**
+   - On GMF-2026-00304, Sonnet, Haiku, gpt-oss and both Augure models retain the MSK code 08777 instead of
+     15790 (the designation gap, below).
+5. **Tofino 3 is the weakest model.** 40 correct retained, 33 wrong, worse on 11 notes and better on 2.
+   It mostly retains the wrong variant of the right visit family (15803 for 15811, 15619 for 15615, 15810
+   for 15812, 15650 for 15641, 15773 for 15765), and it bills 09825 on a no-code note.
+6. **ER notes (7 notes, 11 codes): every model still has the variant problem.** Correct retained ER codes:
+   Haiku 6, Ossington 5 5, Sonnet / gpt-oss / Qwen3-VL 4, mistral-medium / Qwen3-Next 3, Mistral Large 3 and
+   Tofino 3 1 (Mistral Large 3 with 11 wrong retained). On 7 notes, 1–2 codes is noise.
+7. **Reliability.**
    - Qwen3-Next returned 2 codes outside the candidates and Mistral Large 3 one; `SelectionParser` dropped
      them.
    - gpt-oss-120b fails on URG-2026-04512, also on a forced rerun after the reasoning-leak fix (7e8008e): its
-     output is `**analysis{` followed by blank lines, an `ExtractionOutputError`. The other runs have no
-     failed note.
-   - Only the Claude models and mistral-medium return nothing on all 4 no-code notes. Qwen3-Next also lists
-     the most possible codes (4.2 per note, 146 of them low-confidence).
-6. **Cost and latency.**
-   - The Claude models tokenize the same prompt into about 15.3k input tokens against 11.9k for Mistral, so
-     compare prices per note, not per token.
-   - Sonnet's p50 is 2.3× mistral-medium's.
+     output is `**analysis{` followed by blank lines, an `ExtractionOutputError`.
+   - **The 4096-token output cap is too small for Augure's reasoning models**: their thinking counts toward
+     it. Ossington 5 averages 2.8k output tokens per note and 6 notes used 4.3k–6.8k, so at 4096 they would
+     fail; it ran with 8192 and failed none. Tofino 3 doesn't reason, yet its `analysis` ran away on
+     CLI-2026-01230 and hit 4096 (an `ExtractionOutputError`). Ossington 4, Ossington 4.1, Rosedale 1 and
+     GLM-5.3 failed a 2-note smoke test at 4096 (Augure answers 502 `reasoning_cutoff`, or the JSON is cut
+     off) and haven't been run in full.
+   - Only the Claude models, Ossington 5 and mistral-medium return nothing on all 4 no-code notes.
+     Qwen3-Next also lists the most possible codes (4.2 per note, 146 of them low-confidence).
+8. **Cost and latency.**
+   - The Claude models tokenize the same prompt into about 15.3k input tokens against 11.9k for Mistral and
+     12.5k for Augure, so compare prices per note, not per token.
+   - Augure, in CAD: Ossington 5 costs about 1.57 $ per 58-note run (2.7 ¢ per note: 1.50 / 3.00 $ per million
+     tokens in / out, most of the output being its thinking), Tofino 3 about 0.58 $.
+   - Ossington 5's p50 is 4× mistral-medium's, Sonnet's 2.3×. Augure generates about 70 tokens/s (one
+     timed `tofino-3` call); a smoke-test Ossington 5 call took 274 s, so watch the p95 on reruns.
    - Qwen3-VL's p95 comes from 3 calls of about 90 s out of 58; Qwen3-Next had one.
-   - Bedrock and the Mistral API aren't the same path, so latencies aren't like-for-like.
+   - Bedrock, Augure and the Mistral API aren't the same path, so latencies aren't like-for-like.
 
-Before switching models, rerun the control, Sonnet 4.6 and Qwen3-VL once each to see whether the precision gap
-holds beyond the noise.
+Before switching models, commit a larger output cap (or one per model), then rerun the control and
+Ossington 5 once each to confirm the gap; Sonnet 4.6 and Qwen3-VL are the fallbacks.
 
 ## Where the remaining misses are
 
@@ -312,5 +338,6 @@ holds beyond the noise.
   a visit billed next to an injection.
 
 Tuning the prompt further against unverified labels risks fitting the labels' mistakes. The next gains are
-more likely from the data fix, the eligibility axes and a label review than from prompt wording. A different
-selection model (*Selection models*) hasn't yet shown a gain beyond the noise.
+more likely from the data fix, the eligibility axes and a label review than from prompt wording. Of the
+selection models (*Selection models*), only Augure's Ossington 5 has shown a gain beyond the noise, in a single
+run so far.
