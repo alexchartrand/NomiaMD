@@ -50,22 +50,12 @@ class BillingContextBuilder:
         on_date = encounter_date or self._clock.today()
 
         profile = (await self._profiles.as_of(user, on_date)).profile
-        is_assumed = False
-        if profile is None:
-            # No profile version had taken effect yet as of the encounter date — most
-            # commonly, the physician's very first profile was entered after this encounter
-            # (e.g. a backfilled transcript predating their own onboarding). The earliest
-            # version on file is the closest estimate, but it's still a guess: it's marked
-            # assumed, so it never filters candidates and the physician confirms it.
-            profile = (await self._profiles.earliest(user)).profile
-            is_assumed = profile is not None
 
         physician = (
             PhysicianContext(
                 panel_size=profile.panel_size,
                 physician_type=profile.physician_type,
                 remuneration_type=profile.remuneration_type,
-                is_assumed=is_assumed,
             )
             if profile is not None
             else PhysicianContext()

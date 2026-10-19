@@ -128,8 +128,7 @@ on `/app/ajouter`. `/app/facturer` bills without an encounter (and edits such a 
   resolved server-side by code number after the LLM call (`server_only` schema fields).
 - **Eligibility is deterministic.** Code variants carry typed bounds; contradicted variants
   are filtered in the LanceDB `WHERE`. Axes the context can't resolve are surfaced as
-  `needs_confirmation`, never guessed. An *assumed* panel size (`PhysicianContext.is_assumed`)
-  never filters — read `confirmed_panel_size`.
+  `needs_confirmation`, never guessed.
 - **The model only picks from offered candidates** — anything else is dropped. Empty output
   is a valid answer.
 - **Codes the physician adds by hand are eligibility-checked server-side** against the current
@@ -137,7 +136,8 @@ on `/app/ajouter`. `/app/facturer` bills without an encounter (and edits such a 
   them isn't the guard. Their description and fees are snapshotted from that table by number,
   never from the request body; a code the run offered is snapshotted from the run instead.
 - **Practice facts are dated.** Read them with `ProfileService.as_of(user, service_date)`,
-  not today's values. "Today" comes from the injected `Clock` (America/Montreal), never
+  not today's values. A date before the physician's first profile version reads that first
+  version (`PhysicianProfileRepository.get_effective_on`). "Today" comes from the injected `Clock` (America/Montreal), never
   `date.today()`.
 - **Registration is derived, never stored**: `resolve_registration` matches the patient's
   `family_doctor_practice_number` to `User.practice_number`; `None` when either is missing.

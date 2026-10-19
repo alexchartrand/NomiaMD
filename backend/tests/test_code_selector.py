@@ -145,22 +145,6 @@ def test_build_prompt_states_known_facts_as_established():
     assert "58 ans" in prompt.user
 
 
-def test_build_prompt_gives_an_assumed_panel_size_as_an_unconfirmed_indication():
-    context = BillingContext(physician=PhysicianContext(panel_size=320, is_assumed=True))
-    prompt = _prompt(context=context, unresolved_axes=("panel_size",))
-
-    assert "Faits établis" not in prompt.user
-    assert "Indications non confirmées" in prompt.user
-    assert "probablement 320 patients" in prompt.user
-
-
-def test_build_prompt_omits_the_unconfirmed_section_when_nothing_is_assumed():
-    context = BillingContext(physician=PhysicianContext(panel_size=320))
-    prompt = _prompt(context=context)
-
-    assert "Indications non confirmées" not in prompt.user
-
-
 def test_build_prompt_floors_the_patient_age_to_completed_years():
     # The manual's age bands are in completed years: a 79.6-year-old is "moins de 80 ans",
     # so the prompt must say 79, never round up to 80.

@@ -123,8 +123,8 @@ def _known_facts_text(context: BillingContext) -> str | None:
     physician = context.physician
     patient = context.patient
 
-    if physician.confirmed_panel_size is not None:
-        lines.append(f"- Clientèle inscrite du médecin : {physician.confirmed_panel_size} patients.")
+    if physician.panel_size is not None:
+        lines.append(f"- Clientèle inscrite du médecin : {physician.panel_size} patients.")
     if patient.is_registered is not None:
         state = "est inscrit" if patient.is_registered else "n'est pas inscrit"
         lines.append(f"- Le patient {state} auprès de ce médecin.")
@@ -148,17 +148,6 @@ def _known_facts_text(context: BillingContext) -> str | None:
     if not lines:
         return None
     return "Faits établis pour cette facturation (certains, prioritaires sur toute déduction) :\n" + "\n".join(lines)
-
-
-def _assumed_facts_text(context: BillingContext) -> str | None:
-    panel_size = context.physician.assumed_panel_size
-    if panel_size is None:
-        return None
-    return (
-        "Indications non confirmées (aucun profil du médecin n'était en vigueur à la date de la "
-        "consultation ; valeurs tirées de son plus ancien profil au dossier) :\n"
-        f"- Clientèle inscrite du médecin : probablement {panel_size} patients."
-    )
 
 
 def _unresolved_axes_text(unresolved_axes: tuple[str, ...]) -> str | None:
@@ -199,7 +188,6 @@ class BillingPromptBuilder:
         sections = [f"Candidate RAMQ codes:\n{chr(10).join(candidate_lines)}"]
         for optional_section in (
             _known_facts_text(context),
-            _assumed_facts_text(context),
             _unresolved_axes_text(candidates.unresolved_axes),
         ):
             if optional_section:

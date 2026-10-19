@@ -102,14 +102,26 @@ async def test_past_date_reads_the_version_in_effect_then(db_session):
     assert today.remuneration_type == RemunerationType.MIXTE.value
 
 
-async def test_date_before_the_first_version_reads_as_none(db_session):
+async def test_date_before_the_first_version_reads_the_first_version(db_session):
+    # A backfilled encounter older than the physician's onboarding is read under the
+    # profile they first filled in, not left with no practice facts at all.
     user = await _create_user()
     profiles = _profile_service(db_session)
     await profiles.record_practice_facts(
         user.id, _facts(panel_size=500), effective_from=TODAY - timedelta(days=10)
     )
+    await profiles.record_practice_facts(user.id, _facts(panel_size=900))
 
-    assert (await profiles.as_of(user, TODAY - timedelta(days=30))).profile is None
+    before = (await profiles.as_of(user, TODAY - timedelta(days=30))).profile
+    assert before is not None
+    assert before.panel_size == 500
+
+
+async def test_a_physician_who_never_filled_a_profile_reads_as_none(db_session):
+    user = await _create_user()
+    profiles = _profile_service(db_session)
+
+    assert (await profiles.as_of(user, TODAY)).profile is None
 
 
 async def test_same_day_edits_overwrite_instead_of_piling_up(db_session):

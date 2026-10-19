@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from sqlalchemy import func, select
+from sqlalchemy import Select, func, select
 from sqlalchemy.dialects import postgresql, sqlite
 
 from app.postgresdb.models import PhysicianProfile
@@ -20,34 +20,26 @@ class PhysicianProfileRepository(SessionRepository):
 
     async def get_effective_on(self, user_id: int, on: date) -> PhysicianProfile | None:
         """The version in effect on `on` — the latest row that had already taken effect by
-        then. Returns None when the physician had no profile yet at that date, which is
-        also the answer for a physician who has never filled one in."""
-        result = await self._session.execute(
+        then. A date before the physician's first version reads that first version: the
+        profile a physician fills in at onboarding is taken to have held before it too (a
+        backfilled encounter predating their account), rather than leaving every older
+        encounter with no practice facts at all. None only for a physician who has never
+        filled one in."""
+        in_effect = await self._first(
             select(PhysicianProfile)
-            .where(
-                PhysicianProfile.user_id == user_id,
-                PhysicianProfile.effective_from <= on,
-            )
+            .where(PhysicianProfile.user_id == user_id, PhysicianProfile.effective_from <= on)
             .order_by(PhysicianProfile.effective_from.desc())
-            .limit(1)
         )
-        return result.scalar_one_or_none()
-
-    async def get_earliest(self, user_id: int) -> PhysicianProfile | None:
-        """The physician's very first profile version, regardless of date — a best-effort
-        fallback for an encounter dated before any version had taken effect (e.g. a demo
-        transcript predating a freshly-onboarded physician's own profile entry), used only
-        by app/ramq_codes/context_builder.py's BillingContext resolution. Never used for fee
-        calculation (app/bills/service.py keeps calling get_effective_on directly), since a
-        bill's fee snapshot must stay strictly historically accurate — this method exists so
-        billing_codes has *something* to suggest from instead of leaving the panel-size axis
-        unresolved purely because the physician's account is newer than the encounter."""
-        result = await self._session.execute(
+        if in_effect is not None:
+            return in_effect
+        return await self._first(
             select(PhysicianProfile)
             .where(PhysicianProfile.user_id == user_id)
             .order_by(PhysicianProfile.effective_from.asc())
-            .limit(1)
         )
+
+    async def _first(self, statement: Select) -> PhysicianProfile | None:
+        result = await self._session.execute(statement.limit(1))
         return result.scalar_one_or_none()
 
     async def upsert(

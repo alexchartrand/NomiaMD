@@ -34,8 +34,6 @@ class ClaimContextSnapshotter:
             is_vulnerable=context.patient.is_vulnerable,
             # Completed years, like the manual's age bands.
             patient_age_years=math.floor(age) if age is not None else None,
-            # An assumed panel size (no profile version in effect yet on the service date)
-            # is a guess, not a fact to record on the claim.
-            panel_size=context.physician.confirmed_panel_size,
+            panel_size=context.physician.panel_size,
         )
         return ClaimContextSnapshot(record=record, eligibility=self._filter_factory.from_context(context))

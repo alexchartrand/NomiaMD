@@ -91,10 +91,6 @@
 - [ ] 🟡 Seed demo encounters relative to today — *added 10/6, from the app demo polish*
   - `scripts/seed_db.py` seeds the `consultations/` notes at the dates written in them (spring–summer 2026), so on a demo day the dashboard shows 0 encounters this week, an empty 8-week activity chart, and every unbilled note at "5 j restants" before the 90-day limit; the inbox's default "Cette semaine" period is empty too. Wanted: an opt-in seed mode (e.g. `--relative-to-today`) that spreads the encounters over the last ~3 weeks, several per day, so the dashboard, the day cards and the bulk-approve callout all have something to show.
 
-- [ ] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework, reworded 10/16*
-  - A `needs_confirmation` like « Confirmer la taille exacte de la clientèle inscrite… » comes back on every encounter dated before the physician's first profile version: `BillingContextBuilder` falls back to the earliest version as an *assumed* panel size, which never filters (`PhysicianContext.is_assumed`). The profile page can't fix it today: `ProfileService.record_practice_facts` is only called with `effective_from = today`.
-  - Wanted: (1) put the run's `unresolved_axes` (computed by `UnresolvedAxisDetector`; today they reach the prompt via `_unresolved_axes_text` in `prompt.py`, the trace in `retriever.py` and the benchmark, but not the stored result) on `BillingCodesResult` as a server-only field, so the review page knows deterministically that panel size is the open question instead of matching the model's free text; (2) a "En vigueur depuis" date on the profile form and API (default today) — `ProfileService.record_practice_facts` already takes `effective_from`, so `as_of` would find a real version for encounters before onboarding; (3) on the review page, one banner per run linking to the profile, then « Relancer l'extraction » once it's set.
-
 - [ ] 🟡 Group a code's variants into one choice on the review page — *added 10/6, from the review-page rework*
   - Variants of one act that differ only on an unresolved axis (e.g. 15841/15842/15843, panel size) are proposed as separate cards in `frontend/src/pages/app/review/CodesReview.tsx`, each with its own checkbox, so the physician can tick two and bill both. Wanted: one card per act with a radio choice of variant, and the `needs_confirmation` text shown once. Needs a family key on `ExtractedCode` (server-only, like `fees`), derived from the code table (the shared `header_path`/family `ramq_codes` already uses for eligibility), not guessed by the frontend from descriptions. Also guard `ClaimService` against two variants of one family on the same claim.
 
@@ -142,6 +138,7 @@
 
 ## ✅ Done
 
+- [x] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework, done 10/19 by reading the first profile version for older encounters instead of an assumed panel size*
 - [x] 🟢 Let the physician backdate their profile ("En vigueur depuis") — *added 10/1, merged 10/16 into "Let the physician settle a panel-size question once"*
 - [x] 🟢 Measure per-candidate prompt cost with the deeper `header_path` and procedure `rules` — *added 9/30, done 10/8 (benchmark cost table: ~11k input tokens per note)*
 - [x] 🟢 Flaky frontend tests under full-suite load — *added 10/7, from the `reloadSignal` cleanup, fixed 10/9 by raising the test timeouts*
