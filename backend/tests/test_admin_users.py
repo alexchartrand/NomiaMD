@@ -10,17 +10,19 @@ from fastapi.testclient import TestClient
 from app.audit import AuditAction
 from app.auth import get_authenticated_user, get_current_user
 from app.main import app
-from app.postgresdb import AuditEventFilter, AuditEventRepository, User, UserRepository, UserRole, session_scope
-from tests.db_helpers import ensure_user_row
-
-ADMIN = User(id=900, email="admin@example.test", full_name="Admin", role=UserRole.ADMIN, is_active=True)
+from app.postgresdb import AuditEventFilter, AuditEventRepository, UserRepository, UserRole, session_scope
 
 
 @pytest.fixture
 async def as_admin():
-    await ensure_user_row(ADMIN)
-    app.dependency_overrides[get_current_user] = lambda: ADMIN
-    yield ADMIN
+    """A real admin row (autoincremented: a fixed id could collide with other tests' rows in
+    the shared test DB), acting through the get_current_user override."""
+    async with session_scope() as session:
+        admin = await UserRepository(session).create(
+            email=f"admin-{uuid.uuid4().hex[:8]}@example.test", hashed_password="!", full_name="Admin", role=UserRole.ADMIN
+        )
+    app.dependency_overrides[get_current_user] = lambda: admin
+    yield admin
 
 
 def _email() -> str:
@@ -131,7 +133,7 @@ async def test_reset_password_ends_open_sessions(as_admin):
         )
         assert user_client.get("/auth/me").status_code == 200
 
-        app.dependency_overrides[get_current_user] = lambda: ADMIN
+        app.dependency_overrides[get_current_user] = lambda: as_admin
         with TestClient(app) as admin_client:
             reset = admin_client.post(f"/admin/users/{user_id}/reset-password")
         app.dependency_overrides.pop(get_current_user, None)
@@ -154,9 +156,9 @@ async def test_revoke_sessions_bumps_the_session_version(as_admin):
 
 async def test_admin_cannot_deactivate_or_demote_themselves(as_admin):
     with TestClient(app) as client:
-        deactivate = client.post(f"/admin/users/{ADMIN.id}/deactivate")
-        demote = client.patch(f"/admin/users/{ADMIN.id}", json={"full_name": "Admin", "role": "physician"})
-        reset = client.post(f"/admin/users/{ADMIN.id}/reset-password")
+        deactivate = client.post(f"/admin/users/{as_admin.id}/deactivate")
+        demote = client.patch(f"/admin/users/{as_admin.id}", json={"full_name": "Admin", "role": "physician"})
+        reset = client.post(f"/admin/users/{as_admin.id}/reset-password")
 
     assert deactivate.status_code == 409
     assert demote.status_code == 409

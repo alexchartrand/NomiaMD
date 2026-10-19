@@ -393,6 +393,33 @@ class ExtractionRunResult(CreatedAtMixin, Base):
     result_json: Mapped[dict] = mapped_column(_JSON)
 
 
+class LLMCall(CreatedAtMixin, Base):
+    """One metered chat or embedding call (app/llm/usage.py's LLMCallRecord), kept for the
+    admin console's usage and cost report. Stored with what it was for: the physician, and
+    for an extraction its encounter and run (both SET NULL, so the retention purge of an
+    encounter never has to wait on its usage rows — the counts outlive the note)."""
+
+    __tablename__ = "llm_calls"
+    __table_args__ = (Index("ix_llm_calls_started_at", "started_at"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    encounter_id: Mapped[int | None] = mapped_column(
+        ForeignKey("encounters.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("extraction_runs.id", ondelete="SET NULL"), nullable=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    provider: Mapped[str] = mapped_column(String(32))
+    model: Mapped[str] = mapped_column(String(128))
+    purpose: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    input_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    output_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    latency_ms: Mapped[float] = mapped_column(Numeric(12, 1))
+    finish_reason: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
 class Bill(Base):
     """One generated invoice grouping many claims over a date range. The PDF is
     rendered on demand from the linked claims (Claim.bill_id — themselves already snapshots,

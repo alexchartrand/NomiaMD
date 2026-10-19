@@ -96,6 +96,13 @@ class Settings:
         return os.environ.get("BEDROCK_REGION") or None
 
     @property
+    def llm_prices(self) -> str | None:
+        """LLM_PRICES: a JSON object of USD per million tokens by model name, e.g.
+        `{"mistral-medium-latest": {"input": 0.4, "output": 2.0}}`, layered over the admin
+        console's defaults (app/admin/pricing.py)."""
+        return os.environ.get("LLM_PRICES") or None
+
+    @property
     def smtp_host(self) -> str | None:
         """Outgoing mail for contact-form notifications (app/contact/notifier.py). Unset =
         notifications are only logged."""

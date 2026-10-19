@@ -3,12 +3,20 @@ at the router level); routes that act on an account also take the admin as `acto
 audit trail."""
 
 from collections.abc import Awaitable
+from datetime import date, timedelta
 from typing import TypeVar
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.admin.factory import get_user_admin_service
-from app.admin.models import AdminUserCreate, AdminUserOut, AdminUserUpdate, TemporaryPasswordOut
+from app.admin.factory import get_usage_report, get_user_admin_service
+from app.admin.models import (
+    AdminUserCreate,
+    AdminUserOut,
+    AdminUserUpdate,
+    TemporaryPasswordOut,
+    UsageReportOut,
+)
+from app.admin.usage import UsageGrouping, UsageReport
 from app.admin.users import (
     AccountChanges,
     AdminGuardError,
@@ -18,6 +26,7 @@ from app.admin.users import (
     UserNotFoundError,
 )
 from app.auth import require_admin
+from app.clock import Clock, get_clock
 from app.postgresdb import DuplicateEmailError, DuplicatePracticeNumberError, User
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(require_admin)])
@@ -118,3 +127,23 @@ async def revoke_user_sessions(
     service: UserAdminService = Depends(get_user_admin_service),
 ) -> None:
     await _account_errors_as_http(service.revoke_sessions(actor, user_id))
+
+
+# A year at most: the report folds the range's rows in memory (app/admin/usage.py).
+_MAX_USAGE_DAYS = 366
+
+
+@router.get("/usage", response_model=UsageReportOut)
+async def usage_report(
+    start: date | None = Query(default=None),
+    end: date | None = Query(default=None),
+    group_by: UsageGrouping = Query(default=UsageGrouping.MODEL),
+    report: UsageReport = Depends(get_usage_report),
+    clock: Clock = Depends(get_clock),
+) -> UsageReportOut:
+    """Clinic days, both included. Default: the last 30 days, today included."""
+    end = end or clock.today()
+    start = start or end - timedelta(days=29)
+    if start > end or (end - start).days >= _MAX_USAGE_DAYS:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Période invalide")
+    return UsageReportOut.from_result(await report.build(start, end, group_by))

@@ -8,6 +8,7 @@ from app.extraction.factory import get_billing_pipeline
 from app.extraction.models import BillingExtractionResponse, ExtractionRequest
 from app.extraction.pipeline import BillingPipeline
 from app.extraction.recorder import ExtractionRecorder, get_extraction_recorder
+from app.llm.usage import usage_scope
 from app.postgresdb import PatientRepository, User, session_scope
 from app.summary import ConsultationDigestBuilder
 from app.rate_limit import limiter
@@ -49,11 +50,15 @@ async def extract(
         user_id=current_user.id,
         patient_id=body.patient_id,
     )
-    try:
-        result = await pipeline.run(body.transcript, user=current_user, patient_id=body.patient_id)
-    except Exception as exc:
-        await recorder.record_failure(encounter_id=encounter.id, user_id=current_user.id, error=exc)
-        raise
+    # Collects every metered call the pipeline makes, stored with the run (or the failure).
+    with usage_scope() as usage:
+        try:
+            result = await pipeline.run(body.transcript, user=current_user, patient_id=body.patient_id)
+        except Exception as exc:
+            await recorder.record_failure(
+                encounter_id=encounter.id, user_id=current_user.id, error=exc, llm_calls=usage.records
+            )
+            raise
 
     encounter_date_raw = result.summary.encounter_setting.date
     encounter_date = parse_encounter_date(encounter_date_raw)
@@ -64,6 +69,7 @@ async def extract(
         patient_id=body.patient_id,
         service_date=encounter_date,
         result=result,
+        llm_calls=usage.records,
     )
 
     return BillingExtractionResponse(

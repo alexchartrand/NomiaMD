@@ -1,9 +1,11 @@
 """Admin console request/response models. Mirrored by hand in frontend/src/api/admin.ts."""
 
-from datetime import datetime
+from datetime import date, datetime
+from decimal import Decimal
 
 from pydantic import BaseModel, Field, field_validator
 
+from app.admin.usage import UsageBucket, UsageGrouping, UsageReportResult
 from app.admin.users import AdminAccount
 from app.auth.profile import PracticeFacts
 from app.postgresdb import PhysicianType, RemunerationType, UserRole
@@ -91,3 +93,58 @@ class TemporaryPasswordOut(BaseModel):
 
     user: AdminUserOut
     temporary_password: str
+
+
+class UsageBucketOut(BaseModel):
+    key: str
+    label: str
+    calls: int
+    input_tokens: int
+    output_tokens: int
+    # Estimated USD over the priced calls only; `unpriced_calls` were left out.
+    cost_usd: Decimal
+    unpriced_calls: int
+    errors: int
+    median_latency_ms: float | None
+    p95_latency_ms: float | None
+
+    @classmethod
+    def from_bucket(cls, bucket: UsageBucket) -> "UsageBucketOut":
+        return cls(
+            key=bucket.key,
+            label=bucket.label,
+            calls=bucket.calls,
+            input_tokens=bucket.input_tokens,
+            output_tokens=bucket.output_tokens,
+            cost_usd=round(bucket.cost, 4),
+            unpriced_calls=bucket.unpriced_calls,
+            errors=bucket.errors,
+            median_latency_ms=bucket.median_latency_ms,
+            p95_latency_ms=bucket.p95_latency_ms,
+        )
+
+
+class UsageReportOut(BaseModel):
+    start: date
+    end: date
+    totals: UsageBucketOut
+    extractions: int
+    cost_per_extraction_usd: Decimal | None
+    by_day: list[UsageBucketOut]
+    group_by: UsageGrouping
+    breakdown: list[UsageBucketOut]
+
+    @classmethod
+    def from_result(cls, result: UsageReportResult) -> "UsageReportOut":
+        return cls(
+            start=result.start,
+            end=result.end,
+            totals=UsageBucketOut.from_bucket(result.totals),
+            extractions=result.extractions,
+            cost_per_extraction_usd=(
+                round(result.cost_per_extraction, 4) if result.cost_per_extraction is not None else None
+            ),
+            by_day=[UsageBucketOut.from_bucket(b) for b in result.by_day],
+            group_by=result.grouping,
+            breakdown=[UsageBucketOut.from_bucket(b) for b in result.breakdown],
+        )
