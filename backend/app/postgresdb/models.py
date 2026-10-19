@@ -122,6 +122,21 @@ class User(CreatedAtMixin, Base):
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+class LoginThrottle(Base):
+    """Failed-login bookkeeping per login email (app/auth/throttle.py), not per `users` row:
+    an unknown email is throttled exactly like a real one, so a lockout never reveals which
+    accounts exist. `email` is stored lowercased and stripped, so case variants share a
+    counter. `failed_attempts` counts every attempt since the last success (each is counted
+    before its password is checked); the row is deleted on a successful login."""
+
+    __tablename__ = "login_throttles"
+
+    email: Mapped[str] = mapped_column(String(255), primary_key=True)
+    failed_attempts: Mapped[int] = mapped_column(Integer, default=0)
+    last_attempt_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
 class PhysicianProfile(TimestampMixin, Base):
     """A physician's practice facts, as of a date — append-only, one row per edit rather
     than one row per physician.

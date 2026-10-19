@@ -23,8 +23,8 @@
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one.
   - Decided 9/30: not needed until the next release — every existing DB (local SQLite and the demo Postgres) is deleted and recreated on a schema change until then. Adopt Alembic (with the current schema as its baseline revision) before the first release that holds data worth keeping; it gates going live.
 
-- [ ] 🟡 Login brute force is only limited per IP — *added 10/7, from opening `ALLOWED_CIDRS` to everyone*
-  - `POST /auth/login` is `@limiter.limit("10/minute")` keyed on `get_remote_address` (`app/rate_limit.py`), so an attacker rotating IPs gets 10 guesses/minute per address against one account, with nothing tracking failures per account. Add a per-account counter (exponential delay or temporary lockout after N failures, reset on success), and log failed attempts.
+- [ ] 🟢 `login_throttles` grows with every distinct email tried — *added 10/19, from the per-account login throttle*
+  - Unknown emails are throttled like real ones (so a lock reveals nothing), which means an attacker rotating IPs can add rows without bound. Purge rows whose `last_attempt_at` is older than `LoginThrottlePolicy.forget_after` (a periodic job, or a delete inside `reserve`).
 
 - [ ] 🟡 No password policy, and 30-day sessions can't be revoked — *added 10/7, from opening `ALLOWED_CIDRS` to everyone*
   - `scripts/create_user.py` and `reset_password.py` accept any password, even one character. Enforce a minimum length (≥ 12) and reject common/breached passwords.
@@ -138,6 +138,7 @@
 
 ## ✅ Done
 
+- [x] 🟡 Login brute force is only limited per IP — *added 10/7, done 10/19 with a per-email counter that locks for 30 s doubling to 15 min after 5 attempts (`app/auth/throttle.py`)*
 - [x] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework, done 10/19 by reading the first profile version for older encounters instead of an assumed panel size*
 - [x] 🟢 Let the physician backdate their profile ("En vigueur depuis") — *added 10/1, merged 10/16 into "Let the physician settle a panel-size question once"*
 - [x] 🟢 Measure per-candidate prompt cost with the deeper `header_path` and procedure `rules` — *added 9/30, done 10/8 (benchmark cost table: ~11k input tokens per note)*

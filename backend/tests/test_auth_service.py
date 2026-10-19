@@ -25,6 +25,14 @@ class _InMemoryUsers:
         pass
 
 
+class _NoThrottle:
+    async def reserve(self, email) -> None:
+        pass
+
+    async def clear(self, email) -> None:
+        pass
+
+
 class _RecordingHasher(PasswordHasher):
     """The real Argon2 hasher, noting which method ran and on which thread."""
 
@@ -60,6 +68,7 @@ def _service(hasher: PasswordHasher, *users) -> AuthService:
         user_repository=_InMemoryUsers(*users),
         password_hasher=hasher,
         token_service=TokenService("test-secret", 60, 120),
+        login_throttle=_NoThrottle(),
     )
 
 

@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.profile import ProfileService
 from app.auth.security import PasswordHasher, TokenService
 from app.auth.service import AuthService
+from app.auth.throttle import LoginThrottleService
 from app.config import settings
 from app.postgresdb import DbSession, PhysicianProfileRepository, UserRepository
 
@@ -24,11 +25,17 @@ def _token_service() -> TokenService:
     return TokenService(settings.secret_key, settings.jwt_expiry_seconds, settings.jwt_remember_me_expiry_seconds)
 
 
+@lru_cache(maxsize=1)
+def _login_throttle() -> LoginThrottleService:
+    return LoginThrottleService()
+
+
 def build_auth_service(session: AsyncSession) -> AuthService:
     return AuthService(
         user_repository=UserRepository(session),
         password_hasher=_password_hasher(),
         token_service=_token_service(),
+        login_throttle=_login_throttle(),
     )
 
 

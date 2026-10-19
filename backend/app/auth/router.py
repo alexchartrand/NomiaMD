@@ -1,15 +1,25 @@
+import math
+
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.auth.dependencies import COOKIE_NAME, get_current_user
 from app.auth.factory import get_auth_service, get_profile_service
 from app.auth.profile import PracticeFacts, ProfileService
 from app.auth.service import AuthService
+from app.auth.throttle import LoginLockedError
 from app.auth.models import LoginRequest, PasswordChangeRequest, ProfileUpdateRequest, UserOut
 from app.config import settings
 from app.postgresdb import DuplicatePracticeNumberError, User
 from app.rate_limit import limiter
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+def _describe_wait(seconds: int) -> str:
+    if seconds < 60:
+        return f"{seconds} secondes"
+    minutes = math.ceil(seconds / 60)
+    return f"{minutes} minute" if minutes == 1 else f"{minutes} minutes"
 
 
 @router.post("/login", response_model=UserOut)
@@ -21,7 +31,15 @@ async def login(
     auth: AuthService = Depends(get_auth_service),
     profiles: ProfileService = Depends(get_profile_service),
 ) -> UserOut:
-    result = await auth.login(body.email, body.password, body.remember_me)
+    try:
+        result = await auth.login(body.email, body.password, body.remember_me)
+    except LoginLockedError as exc:
+        retry_after = math.ceil(exc.retry_after.total_seconds())
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Trop de tentatives de connexion. Réessayez dans {_describe_wait(retry_after)}.",
+            headers={"Retry-After": str(retry_after)},
+        ) from exc
     if result is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 

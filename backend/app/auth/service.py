@@ -5,6 +5,7 @@ import asyncio
 import logging
 
 from app.auth.security import PasswordHasher, TokenService
+from app.auth.throttle import ILoginThrottle
 from app.postgresdb import User, UserRepository
 
 logger = logging.getLogger(__name__)
@@ -16,16 +17,22 @@ class AuthService:
         user_repository: UserRepository,
         password_hasher: PasswordHasher,
         token_service: TokenService,
+        login_throttle: ILoginThrottle,
     ) -> None:
         self._users = user_repository
         self._hasher = password_hasher
         self._tokens = token_service
+        self._throttle = login_throttle
 
     async def login(self, email: str, password: str, remember_me: bool = False) -> tuple[str, User, int] | None:
         """Returns (signed session token, user, cookie max-age in seconds) on success, None
         on bad credentials or a deactivated account. Every attempt runs exactly one Argon2
         verify — against a dummy hash for an unknown email, before the active check for a
-        known one — so response time doesn't reveal which emails have an account."""
+        known one — so response time doesn't reveal which emails have an account.
+
+        Raises LoginLockedError, before any verify, while the email is locked out after
+        repeated attempts (app/auth/throttle.py)."""
+        await self._throttle.reserve(email)
         user = await self._users.get_by_email(email)
         if user is None:
             await asyncio.to_thread(self._hasher.verify_dummy, password)
@@ -38,6 +45,7 @@ class AuthService:
         if not password_matches:
             logger.warning("Failed login attempt", extra={"email": email, "reason": "bad_password"})
             return None
+        await self._throttle.clear(email)
         await self._users.touch_last_login(user.id)
         logger.info("Successful login", extra={"email": email})
         token = self._tokens.issue(user, remember_me=remember_me)

@@ -32,6 +32,7 @@ from app.postgresdb.repositories.extractions import (
     ExtractionRunInput,
     ExtractionStageInput,
 )
+from app.postgresdb.repositories.login_throttles import LoginThrottleRepository
 from app.postgresdb.repositories.patients import DuplicatePatientRamqNumberError, PatientRepository
 from app.postgresdb.repositories.physician_profiles import PhysicianProfileRepository
 from app.postgresdb.repositories.roster import DuplicateRosterEntryError, PhysicianPatientRepository
@@ -63,6 +64,7 @@ __all__ = [
     "ExtractionRepository",
     "ExtractionRunInput",
     "ExtractionStageInput",
+    "LoginThrottleRepository",
     "PatientRepository",
     "PhysicianPatientRepository",
     "PhysicianProfileRepository",
