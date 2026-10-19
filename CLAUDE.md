@@ -88,7 +88,9 @@ Backend modules (`backend/app/`):
 | `ramq_chatbot/` | `POST /query` — stateless RAMQ manual chatbot (hybrid search + reference expansion) |
 | `lancedb/` | read side of the RAMQ LanceDB tables (generic, never imports a domain package) |
 | `postgresdb/` | ORM models, sessions, one repository module per aggregate |
-| `auth/` | login/sessions (`AuthService`) and dated physician practice facts (`ProfileService`) |
+| `auth/` | login/sessions (`AuthService`) and dated physician practice facts (`ProfileService`); a session token carries the user's `session_version` (bumping it revokes every open session), `get_current_user` refuses a user on an admin-issued temporary password (`must_change_password`, 403 `password_change_required`) — only `/auth/me` and `/auth/me/password` take `get_authenticated_user` instead; `require_admin` |
+| `admin/` | the admin console's API (`/admin/*`, `require_admin`): `UserAdminService` (create with a one-time temporary password, edit, deactivate/reactivate — never delete —, reset password, revoke sessions; an admin can't remove their own access or the last active admin), `UsageReport` over `llm_calls` (clinic days, by model/purpose/physician; cost from `PriceTable`: defaults + `LLM_PRICES`, unknown model = unpriced), `SystemStatus`, failed extractions + re-queue, lockouts, contact requests, the audit list. Metadata and counts only — never note text |
+| `audit/` | append-only `audit_events`: `SessionAuditLog` (in the change's own transaction — admin actions, successful logins) and `DetachedAuditLog` (own session — failed logins, whose 401 rolls the request back); unknown emails are never recorded |
 | `patients/` | global patient identity, search, per-physician roster, registration |
 | `claims/`, `bills/` | saving reviewed codes as claims — the run's suggestions plus codes added from the search (`ClaimCode.origin`), or a claim with no encounter at all (`POST/PUT /claims/manual`, `source_system="manual"`, no duplicate guard); grouping claims into bills (+ PDF) |
 | `jwks/` | public `GET /.well-known/jwks.json`: the public keys committed in `jwks/public_keys/` (loaded at startup), what Epic's JWK Set URL points at; `kid` = RFC 7638 thumbprint, which the Epic signer derives from its private key |
@@ -107,7 +109,9 @@ manual's visit section — run again within the care setting's own subsection wh
 visit hit kept, small code families completed → LLM picks from candidates: a short `analysis`, then the codes it is sure of
 (`codes`, stored `retained`: preselected in the review, what inbox approve-all bills) and `other_possible_codes`).
 The physician reviews — the summary digest on top, the codes, the note collapsed below — (and may add codes from the code search), then `POST /claims` saves from
-the stored extraction run. Billing without an encounter (`/app/facturer`) skips all of it:
+the stored extraction run. Every metered LLM call of an extraction (`usage_scope()` around the
+pipeline) is stored in `llm_calls` with its encounter and run, in the run's transaction
+(`ExtractionRecorder`); the chatbot's with its physician. Billing without an encounter (`/app/facturer`) skips all of it:
 patient + date + hand-picked codes → `POST /claims/manual`.
 
 Frontend (`frontend/src/`): pages under `pages/app/` routed by `AppRouter.tsx`, typed API
@@ -116,7 +120,7 @@ client per domain under `api/`. The public site (`/`, `/prix`, `/contact`, `/sec
 `pages/landing/`, and contact details, prices and plans in `src/site/` (`config.ts`,
 `pricing.ts`) — the one place to edit them. The landing page after login is the dashboard (`/app`, `pages/app/DashboardPage/`: tasks, KPIs, activity chart, latest encounters, and the RAMQ assistant beside them — one conversation shared with `/app/chat` through `chat/RamqChatProvider.tsx`, mounted in `AppLayout`). The inbox is `/app/inbox`; a row opens
 `/app/inbox/:encounterId` (note + code review, `pages/app/review/`); notes are added by hand
-on `/app/ajouter`. `/app/facturer` bills without an encounter (and edits such a draft at
+on `/app/ajouter`. `/app/admin` is the admin console (admins only, `RequireAdmin`; tab in `?tab=`), and a user on a temporary password is sent to `/app/profile` by `RequireAuth` until they change it. `/app/facturer` bills without an encounter (and edits such a draft at
 `/app/facturer/:claimId`); `/app/codes` is the RAMQ code reference. `/api/*` proxies to the backend (`vite.config.ts`).
 
 ### Invariants — don't break these
@@ -144,7 +148,7 @@ on `/app/ajouter`. `/app/facturer` bills without an encounter (and edits such a 
 - **Claims snapshot everything** (description, fee, billing context) at save time, hydrated
   from the stored extraction run, never from the request body — the LanceDB tables are
   regenerated independently. A claim's patient always comes from its extraction run.
-- **Nothing is hard-deleted.** Claims/bills are voided (`voided_at`); claim status is derived
+- **Nothing is hard-deleted.** Users are deactivated (`is_active`, `deactivated_at`); claims/bills are voided (`voided_at`); claim status is derived
   (`soumis` iff `bill_id` set). Patients are global, unique by canonical NAM.
 - **RAMQ data is an external artifact** from `ramq-ingestion` (`~/Software/ramq-ingestion`),
   no code dependency. Codes live in versioned `codes_<rev>` tables; `code_versions`'

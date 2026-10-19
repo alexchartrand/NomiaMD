@@ -12,7 +12,7 @@
 ## 🐛 Bugs
 
 - [ ] 🔴 No two-factor login — *added 10/7, from opening `ALLOWED_CIDRS` to everyone*
-  - Physicians use the app from hospitals, clinics, home and cellular, so `ALLOWED_CIDRS` has to be `0.0.0.0/0,::/0` and the IP allowlist no longer protects anything. Email + password (`app/auth/`) is now the only barrier in front of patient data. Add TOTP (authenticator app) at login, with recovery codes and an admin reset in `scripts/reset_password.py`'s style.
+  - Physicians use the app from hospitals, clinics, home and cellular, so `ALLOWED_CIDRS` has to be `0.0.0.0/0,::/0` and the IP allowlist no longer protects anything. Email + password (`app/auth/`) is now the only barrier in front of patient data. Add TOTP (authenticator app) at login, with recovery codes and an admin reset in the admin console (`app/admin/users.py`). Admin accounts first: since 10/19 they can create accounts and reset any password.
   - Acceptable while the app holds only synthetic data; must be done before real patient data (Law 25's "reasonable security measures" for remote access to health data).
 
 - [ ] 🔴 No purge/retention policy on `encounters` — *added 8/21, moved from DEPLOY.md, escalated 8/24, escalated 8/29, reworded 9/30, retargeted 10/1*
@@ -23,12 +23,21 @@
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one.
   - Decided 9/30: not needed until the next release — every existing DB (local SQLite and the demo Postgres) is deleted and recreated on a schema change until then. Adopt Alembic (with the current schema as its baseline revision) before the first release that holds data worth keeping; it gates going live.
 
+- [ ] 🟢 Login matches the email case-sensitively — *added 10/19, from the admin console*
+  - The admin console stores emails lowercased (`AdminUserCreate`), but `scripts/create_user.py` stores them as typed and `AuthService.login` looks them up exactly, so « Dr.X@… » fails against « dr.x@… » (the login throttle already keys on the lowercased email). Normalize at login and in the script, after lowercasing the existing rows.
+
+- [ ] 🟢 `audit_events` and `llm_calls` have no retention — *added 10/19, from the admin console*
+  - Both are append-only and grow with every login and every LLM call. Neither holds note text, but the audit trail holds IPs. Pick retention periods (the privacy policy should name them) and purge in the same job as the encounters' retention purge.
+
+- [ ] 🟢 The admin console's default LLM prices are unverified — *added 10/19, from the admin console*
+  - `app/admin/pricing.py`'s `DEFAULT_PRICES` (Mistral small/medium/embed, USD per 1M tokens) were written from memory, not checked against Mistral's price page; Bedrock and local models have none (their calls show as « sans prix connu »). Check them and set `LLM_PRICES` for the other models in use.
+
 - [ ] 🟢 `login_throttles` grows with every distinct email tried — *added 10/19, from the per-account login throttle*
   - Unknown emails are throttled like real ones (so a lock reveals nothing), which means an attacker rotating IPs can add rows without bound. Purge rows whose `last_attempt_at` is older than `LoginThrottlePolicy.forget_after` (a periodic job, or a delete inside `reserve`).
 
-- [ ] 🟡 No password policy, and 30-day sessions can't be revoked — *added 10/7, from opening `ALLOWED_CIDRS` to everyone*
-  - `scripts/create_user.py` and `reset_password.py` accept any password, even one character. Enforce a minimum length (≥ 12) and reject common/breached passwords.
-  - Sessions are stateless JWTs: 12 h by default, 30 days with "Rester connecté" (`JWT_REMEMBER_ME_EXPIRY_SECONDS`, `app/auth/security.py`). Nothing invalidates one before it expires — not a password reset, a logout on another device, or a lost phone. Shorten the remember-me lifetime and add a revocation hook (e.g. a per-user `token_version` claim bumped on password reset).
+- [ ] 🟡 No password policy — *added 10/7, from opening `ALLOWED_CIDRS` to everyone, reworded 10/19*
+  - `scripts/create_user.py`, `reset_password.py` and the profile's password change accept anything from 8 characters (the scripts: anything at all). Enforce a minimum length (≥ 12) and reject common/breached passwords. The admin console's temporary passwords (`app/admin/passwords.py`) are already 16 random characters.
+  - Since 10/19 sessions can be revoked (`users.session_version`, bumped by the admin console's deactivate / reset / log-out-everywhere and by a role change). Still open: shorten the 30-day remember-me lifetime, and have a user's own password change end their other sessions (bump the version and reissue the current cookie).
 
 - [ ] 🟡 ER notes retain the wrong ER visit variant — *added 10/9, from the `er-b-pinned-clarified` benchmark*
   - The ER subsection's visit codes are now pinned at the top of the candidates, and the prompt says that an ER code's « patient inscrit » means registered at the ER, not with this physician (without it the model ruled every ER code out). On the 7 URG notes overall recall went 36% → 64%, but retained recall stays 2/11: the model picks « ordinaire » where the label says « principal » (04471, 04538) and « avec déplacement » where it says « sans » (04512, 04621, 04622). `backend/benchmarks/README.md`, *ER notes: pinning and « patient inscrit »*.
@@ -118,18 +127,11 @@
   - Not done: it isn't in CI (needs a nightly/manual workflow with secrets, or a fake embedding server); the e2e files aren't covered by `tsc -b` (`tsconfig.json` only includes `src`); no journeys for the chat, patients page or duplicate handling.
   - Known limits of the unit suite: jsdom's `FormData` doesn't stream into Node's fetch, so the upload test only checks the multipart content type; there are no visual/layout tests.
 
-- [ ] 🟢 Contact requests have no admin screen — *added 10/2, from the public-site work*
-  - `POST /contact` saves to `contact_requests` and emails `CONTACT_NOTIFY_EMAIL` when SMTP is configured; otherwise requests are only in the DB. A small admin-only list (and a retention purge, per the privacy policy) would follow.
-
 - [ ] 🟢 Paginate the inbox for long periods — *added 10/1, from the step 11 period filter, reworded 10/16*
   - Since 10/7 the frontend shows long lists 50 rows at a time, but that's client-side: `GET /encounters` with no bounds ("Tout") still loads every encounter, its latest run's results and its patient in one response, and the duplicate flagging is O(n²) over them. Fine for weeks of notes; for a year of them, add a limit/cursor on the API (and keep "Tout" paged) or cap the preset.
 
 - [ ] 🟢 Show ingestion's `needs_review`/`review_reason` to the physician — *added 9/30, deferred from the versioned-codes-table migration*
   - 135 rows of `codes_2026-06-05` are flagged by ingestion as ambiguous/incomplete. Not selected by `CodeRepository` today. Could flow through `Code` into `ExtractedCode` as a server-only field and show as a small "fiche RAMQ à vérifier" warning in `CodesReview.tsx` (not sent to the LLM).
-
-- [ ] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8, reworded 10/16*
-  - Since 10/8 every chat and embedding call is metered by its client (`app/llm/openai_client.py`, and since 10/9 `bedrock_chat.py`; `LLMCallRecord`: tokens in/out, latency, purpose, `finish_reason`) and logged as one structured `llm_call` line (`app/llm/usage.py`); the benchmark collects them per note with `usage_scope()`. Nothing is persisted yet.
-  - Remaining: a `UsageRecorder` sink that stores the records of an extraction on its run (a `llm_calls` table keyed to `ExtractionRun`, or a JSON column on `ExtractionRunResult`), so cost per encounter/physician can be queried. Langfuse stays an option, but would need its OpenAI-SDK integration now that llama-index is gone.
 
 ## 🧹 Cleanup / Dead code
 
@@ -138,6 +140,8 @@
 
 ## ✅ Done
 
+- [x] 🟢 Contact requests have no admin screen — *added 10/2, from the public-site work, done 10/19 (admin console's « Demandes de contact »)*
+- [x] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8, reworded 10/16, done 10/19 (`llm_calls`, stored with each extraction run; the admin console's « Utilisation IA »)*
 - [x] 🟡 Login brute force is only limited per IP — *added 10/7, done 10/19 with a per-email counter that locks for 30 s doubling to 15 min after 5 attempts (`app/auth/throttle.py`)*
 - [x] 🟡 Let the physician settle a panel-size question once, from the review page — *added 10/6, from the review-page rework, done 10/19 by reading the first profile version for older encounters instead of an assumed panel size*
 - [x] 🟢 Let the physician backdate their profile ("En vigueur depuis") — *added 10/1, merged 10/16 into "Let the physician settle a panel-size question once"*
