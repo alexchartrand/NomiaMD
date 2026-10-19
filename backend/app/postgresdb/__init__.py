@@ -30,6 +30,7 @@ from app.postgresdb.models import (
     UserRole,
 )
 from app.postgresdb.repositories import (
+    AccountActivity,
     AuditEventFilter,
     AuditEventInput,
     AuditEventRepository,
@@ -44,6 +45,7 @@ from app.postgresdb.repositories import (
     ClaimWithCodes,
     ContactRequestInput,
     ContactRequestRepository,
+    DuplicateEmailError,
     DuplicateEncounterError,
     DuplicatePatientRamqNumberError,
     DuplicatePracticeNumberError,
@@ -73,6 +75,7 @@ __all__ = [
     "session_scope",
     "DbSession",
     "get_db_session",
+    "AccountActivity",
     "AuditEvent",
     "AuditEventFilter",
     "AuditEventInput",
@@ -106,6 +109,7 @@ __all__ = [
     "ClaimWithCodes",
     "ContactRequestInput",
     "ContactRequestRepository",
+    "DuplicateEmailError",
     "DuplicateEncounterError",
     "DuplicatePatientRamqNumberError",
     "DuplicatePracticeNumberError",

@@ -37,9 +37,15 @@ from app.postgresdb.repositories.login_throttles import LoginThrottleRepository
 from app.postgresdb.repositories.patients import DuplicatePatientRamqNumberError, PatientRepository
 from app.postgresdb.repositories.physician_profiles import PhysicianProfileRepository
 from app.postgresdb.repositories.roster import DuplicateRosterEntryError, PhysicianPatientRepository
-from app.postgresdb.repositories.users import DuplicatePracticeNumberError, UserRepository
+from app.postgresdb.repositories.users import (
+    AccountActivity,
+    DuplicateEmailError,
+    DuplicatePracticeNumberError,
+    UserRepository,
+)
 
 __all__ = [
+    "AccountActivity",
     "AuditEventFilter",
     "AuditEventInput",
     "AuditEventRepository",
@@ -55,6 +61,7 @@ __all__ = [
     "ExtractionAlreadyClaimedError",
     "ContactRequestInput",
     "ContactRequestRepository",
+    "DuplicateEmailError",
     "DuplicateEncounterError",
     "DuplicatePatientRamqNumberError",
     "DuplicatePracticeNumberError",

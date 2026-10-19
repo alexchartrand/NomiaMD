@@ -1,11 +1,12 @@
 """`users` — credentials and the few account fields that live beside them."""
 
+from dataclasses import dataclass
 from datetime import datetime, timezone
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 
-from app.postgresdb.models import User, UserRole
+from app.postgresdb.models import Claim, Encounter, User, UserRole
 from app.postgresdb.repositories.base import SessionRepository
 
 
@@ -16,9 +17,19 @@ class DuplicatePracticeNumberError(Exception):
     (see session.py)."""
 
 
-def _violates_practice_number_unique(exc: IntegrityError) -> bool:
+class DuplicateEmailError(Exception):
+    """Another account already has this email (users.email is unique)."""
+
+
+def _violates_unique(exc: IntegrityError, column: str) -> bool:
     message = str(exc.orig).lower()
-    return "unique" in message and "practice_number" in message
+    return "unique" in message and column in message
+
+
+@dataclass(frozen=True)
+class AccountActivity:
+    encounters: int = 0
+    claims: int = 0
 
 
 class UserRepository(SessionRepository):
@@ -32,6 +43,22 @@ class UserRepository(SessionRepository):
     async def list_all(self) -> list[User]:
         result = await self._session.execute(select(User).order_by(User.full_name, User.id))
         return list(result.scalars())
+
+    async def activity_by_user(self) -> dict[int, AccountActivity]:
+        """Encounters and live (non-voided) claims per account — two grouped counts, not one
+        query per user. Accounts with neither are absent; read them as AccountActivity()."""
+        encounters = await self._session.execute(
+            select(Encounter.user_id, func.count()).group_by(Encounter.user_id)
+        )
+        claims = await self._session.execute(
+            select(Claim.physician_id, func.count()).where(Claim.voided_at.is_(None)).group_by(Claim.physician_id)
+        )
+        encounter_counts = dict(encounters.tuples().all())
+        claim_counts = dict(claims.tuples().all())
+        return {
+            user_id: AccountActivity(encounters=encounter_counts.get(user_id, 0), claims=claim_counts.get(user_id, 0))
+            for user_id in encounter_counts.keys() | claim_counts.keys()
+        }
 
     async def count_active_admins(self) -> int:
         result = await self._session.execute(
@@ -67,8 +94,10 @@ class UserRepository(SessionRepository):
         try:
             await self._session.flush()
         except IntegrityError as exc:
-            if _violates_practice_number_unique(exc):
+            if _violates_unique(exc, "practice_number"):
                 raise DuplicatePracticeNumberError() from exc
+            if _violates_unique(exc, "email"):
+                raise DuplicateEmailError() from exc
             raise
 
     async def touch_last_login(self, user_id: int) -> None:
