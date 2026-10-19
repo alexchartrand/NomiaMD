@@ -65,12 +65,19 @@ def _user(hasher: PasswordHasher, **overrides):
     return SimpleNamespace(**{**defaults, **overrides})
 
 
+class _NoAudit:
+    async def record(self, entry) -> None:
+        pass
+
+
 def _service(hasher: PasswordHasher, *users) -> AuthService:
     return AuthService(
         user_repository=_InMemoryUsers(*users),
         password_hasher=hasher,
         token_service=TokenService("test-secret", 60, 120),
         login_throttle=_NoThrottle(),
+        audit_log=_NoAudit(),
+        failure_audit_log=_NoAudit(),
     )
 
 

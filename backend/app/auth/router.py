@@ -1,6 +1,7 @@
 import math
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from slowapi.util import get_remote_address
 
 from app.auth.dependencies import COOKIE_NAME, get_authenticated_user, get_current_user
 from app.auth.factory import get_auth_service, get_profile_service
@@ -32,7 +33,9 @@ async def login(
     profiles: ProfileService = Depends(get_profile_service),
 ) -> UserOut:
     try:
-        result = await auth.login(body.email, body.password, body.remember_me)
+        result = await auth.login(
+            body.email, body.password, body.remember_me, client_ip=get_remote_address(request)
+        )
     except LoginLockedError as exc:
         retry_after = math.ceil(exc.retry_after.total_seconds())
         raise HTTPException(

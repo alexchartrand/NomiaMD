@@ -147,6 +147,26 @@ class LoginThrottle(Base):
     locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+class AuditEvent(CreatedAtMixin, Base):
+    """Append-only trail of account-level events: what an admin did to which account, and
+    every login on a real account (app/audit/). Never updated or deleted by the app.
+
+    `action` is a plain String (app/audit/actions.py's AuditAction values), not a native
+    Enum, so a new action needs no schema change. `details` carries what changed (field
+    names, old → new role) — never a password, a token or patient data. Login attempts on
+    unknown emails aren't recorded, so guessing addresses can't grow this table."""
+
+    __tablename__ = "audit_events"
+    __table_args__ = (Index("ix_audit_events_created_at", "created_at"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    action: Mapped[str] = mapped_column(String(64), index=True)
+    actor_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    target_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    details: Mapped[dict | None] = mapped_column(_JSON, nullable=True)
+    ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
+
 class PhysicianProfile(TimestampMixin, Base):
     """A physician's practice facts, as of a date — append-only, one row per edit rather
     than one row per physician.

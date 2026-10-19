@@ -9,6 +9,7 @@ reaching into .database/.models/.repositories directly."""
 from app.postgresdb.database import PostgresDB
 from app.postgresdb.dependencies import DbSession, get_db_session
 from app.postgresdb.models import (
+    AuditEvent,
     Bill,
     Claim,
     ClaimCode,
@@ -29,6 +30,9 @@ from app.postgresdb.models import (
     UserRole,
 )
 from app.postgresdb.repositories import (
+    AuditEventFilter,
+    AuditEventInput,
+    AuditEventRepository,
     BillInput,
     BillRepository,
     ClaimAlreadyBilledError,
@@ -69,6 +73,10 @@ __all__ = [
     "session_scope",
     "DbSession",
     "get_db_session",
+    "AuditEvent",
+    "AuditEventFilter",
+    "AuditEventInput",
+    "AuditEventRepository",
     "Bill",
     "Claim",
     "ClaimCode",
