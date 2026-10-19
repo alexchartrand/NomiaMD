@@ -5,10 +5,21 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field, field_validator
 
+from app.admin.lockouts import Lockout
+from app.admin.system import SystemReport
 from app.admin.usage import UsageBucket, UsageGrouping, UsageReportResult
 from app.admin.users import AdminAccount
 from app.auth.profile import PracticeFacts
-from app.postgresdb import PhysicianType, RemunerationType, UserRole
+from app.postgresdb import (
+    AuditEvent,
+    ContactRequest,
+    ContactRole,
+    ContactTopic,
+    FailedExtraction,
+    PhysicianType,
+    RemunerationType,
+    UserRole,
+)
 
 _PRACTICE_NUMBER_PATTERN = r"^\d{5,6}$"
 _EMAIL_PATTERN = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
@@ -147,4 +158,147 @@ class UsageReportOut(BaseModel):
             by_day=[UsageBucketOut.from_bucket(b) for b in result.by_day],
             group_by=result.grouping,
             breakdown=[UsageBucketOut.from_bucket(b) for b in result.breakdown],
+        )
+
+
+class DependencyCheckOut(BaseModel):
+    ok: bool
+    detail: str
+
+
+class ModelConfigurationOut(BaseModel):
+    chat_provider: str
+    embedding_provider: str
+    embedding_model: str | None
+    step_models: dict[str, str]
+
+
+class SystemReportOut(BaseModel):
+    checked_at: datetime
+    app_env: str
+    app_version: str | None
+    database: DependencyCheckOut
+    codes_table: DependencyCheckOut
+    models: ModelConfigurationOut
+    row_counts: dict[str, int]
+    failed_extractions: int
+    encounters_past_purge: int
+
+    @classmethod
+    def from_report(cls, report: SystemReport) -> "SystemReportOut":
+        return cls(
+            checked_at=report.checked_at,
+            app_env=report.app_env,
+            app_version=report.app_version,
+            database=DependencyCheckOut(ok=report.database.ok, detail=report.database.detail),
+            codes_table=DependencyCheckOut(ok=report.codes_table.ok, detail=report.codes_table.detail),
+            models=ModelConfigurationOut(
+                chat_provider=report.models.chat_provider,
+                embedding_provider=report.models.embedding_provider,
+                embedding_model=report.models.embedding_model,
+                step_models=report.models.step_models,
+            ),
+            row_counts=report.row_counts,
+            failed_extractions=report.failed_extractions,
+            encounters_past_purge=report.encounters_past_purge,
+        )
+
+
+class FailedExtractionOut(BaseModel):
+    """Metadata only — the note text never leaves the inbox of the physician who owns it."""
+
+    encounter_id: int
+    user_id: int
+    physician_name: str | None
+    source_system: str
+    service_date: date | None
+    received_at: datetime
+    error: str
+
+    @classmethod
+    def from_failure(cls, failure: FailedExtraction, names: dict[int, str]) -> "FailedExtractionOut":
+        return cls(
+            encounter_id=failure.encounter_id,
+            user_id=failure.user_id,
+            physician_name=names.get(failure.user_id),
+            source_system=failure.source_system,
+            service_date=failure.service_date,
+            received_at=failure.received_at,
+            error=failure.error,
+        )
+
+
+class LockoutOut(BaseModel):
+    email: str
+    failed_attempts: int
+    last_attempt_at: datetime
+    locked_until: datetime | None
+    is_locked: bool
+    known_account: bool
+
+    @classmethod
+    def from_lockout(cls, lockout: Lockout) -> "LockoutOut":
+        return cls(
+            email=lockout.email,
+            failed_attempts=lockout.failed_attempts,
+            last_attempt_at=lockout.last_attempt_at,
+            locked_until=lockout.locked_until,
+            is_locked=lockout.is_locked,
+            known_account=lockout.known_account,
+        )
+
+
+class ContactRequestOut(BaseModel):
+    id: int
+    created_at: datetime
+    name: str
+    email: str
+    phone: str | None
+    organization: str | None
+    role: ContactRole
+    physician_count: int | None
+    topic: ContactTopic
+    plan: str | None
+    message: str | None
+
+    @classmethod
+    def from_row(cls, row: ContactRequest) -> "ContactRequestOut":
+        return cls(
+            id=row.id,
+            created_at=row.created_at,
+            name=row.name,
+            email=row.email,
+            phone=row.phone,
+            organization=row.organization,
+            role=row.role,
+            physician_count=row.physician_count,
+            topic=row.topic,
+            plan=row.plan,
+            message=row.message,
+        )
+
+
+class AuditEventOut(BaseModel):
+    id: int
+    created_at: datetime
+    action: str
+    actor_id: int | None
+    actor_name: str | None
+    target_user_id: int | None
+    target_name: str | None
+    details: dict | None
+    ip: str | None
+
+    @classmethod
+    def from_event(cls, event: AuditEvent, names: dict[int, str]) -> "AuditEventOut":
+        return cls(
+            id=event.id,
+            created_at=event.created_at,
+            action=event.action,
+            actor_id=event.actor_id,
+            actor_name=names.get(event.actor_id) if event.actor_id is not None else None,
+            target_user_id=event.target_user_id,
+            target_name=names.get(event.target_user_id) if event.target_user_id is not None else None,
+            details=event.details,
+            ip=event.ip,
         )

@@ -73,7 +73,7 @@ class LoginThrottleService(ILoginThrottle):
         self._now = now
 
     async def reserve(self, email: str) -> None:
-        key = _key(email)
+        key = normalize_email(email)
         try:
             await self._reserve_once(key)
         except IntegrityError:
@@ -83,7 +83,7 @@ class LoginThrottleService(ILoginThrottle):
 
     async def clear(self, email: str) -> None:
         async with session_scope() as session:
-            await LoginThrottleRepository(session).delete(_key(email))
+            await LoginThrottleRepository(session).delete(normalize_email(email))
 
     async def _reserve_once(self, key: str) -> None:
         now = self._now()
@@ -111,7 +111,8 @@ class LoginThrottleService(ILoginThrottle):
                 )
 
 
-def _key(email: str) -> str:
+def normalize_email(email: str) -> str:
+    """The throttle's key for an email, as typed at login."""
     return email.strip().lower()
 
 

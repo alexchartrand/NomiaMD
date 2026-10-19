@@ -96,6 +96,11 @@ class Settings:
         return os.environ.get("BEDROCK_REGION") or None
 
     @property
+    def app_version(self) -> str | None:
+        """APP_VERSION (e.g. the deployed git sha), shown on the admin console's system page."""
+        return os.environ.get("APP_VERSION") or None
+
+    @property
     def llm_prices(self) -> str | None:
         """LLM_PRICES: a JSON object of USD per million tokens by model name, e.g.
         `{"mistral-medium-latest": {"input": 0.4, "output": 2.0}}`, layered over the admin

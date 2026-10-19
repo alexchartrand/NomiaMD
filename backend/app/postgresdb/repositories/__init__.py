@@ -27,6 +27,7 @@ from app.postgresdb.repositories.encounters import (
     OverviewScope,
     EncounterInput,
     EncounterRepository,
+    FailedExtraction,
 )
 from app.postgresdb.repositories.extractions import (
     ExtractionRepository,
@@ -38,6 +39,7 @@ from app.postgresdb.repositories.login_throttles import LoginThrottleRepository
 from app.postgresdb.repositories.patients import DuplicatePatientRamqNumberError, PatientRepository
 from app.postgresdb.repositories.physician_profiles import PhysicianProfileRepository
 from app.postgresdb.repositories.roster import DuplicateRosterEntryError, PhysicianPatientRepository
+from app.postgresdb.repositories.table_stats import TableStatsRepository
 from app.postgresdb.repositories.users import (
     AccountActivity,
     DuplicateEmailError,
@@ -74,6 +76,8 @@ __all__ = [
     "EncounterInput",
     "EncounterRepository",
     "ExtractionRepository",
+    "FailedExtraction",
+    "TableStatsRepository",
     "ExtractionRunInput",
     "ExtractionStageInput",
     "LLMCallOwner",
