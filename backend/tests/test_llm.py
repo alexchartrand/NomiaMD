@@ -28,7 +28,7 @@ def test_defaults_to_mistral(monkeypatch):
     assert isinstance(client, OpenAIChatClient)
     assert client.model == "mistral-small-latest"
     assert client.temperature == 0
-    assert client.max_tokens == MAX_TOKENS == 4096
+    assert client.max_tokens == MAX_TOKENS
     assert str(client._client.base_url) == "https://api.mistral.ai/v1/"
 
 
@@ -124,7 +124,7 @@ async def test_chat_sends_messages_temperature_max_tokens_and_response_format():
     assert body["model"] == "requested-model"
     assert body["messages"] == [{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}]
     assert body["temperature"] == 0.0
-    assert body["max_tokens"] == 4096
+    assert body["max_tokens"] == MAX_TOKENS
     assert body["response_format"] == response_format
 
 

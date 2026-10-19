@@ -19,7 +19,7 @@ from app.llm.usage import LLMCallRecord, UsageRecorder, current_purpose, default
 
 # Applied to every chat call: structured extraction outputs (the billing_codes JSON in
 # particular) can be long, and a truncated completion is unparseable.
-MAX_TOKENS = 4096
+MAX_TOKENS = 8192
 
 
 def _elapsed_ms(start: float) -> float:
