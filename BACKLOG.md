@@ -29,9 +29,6 @@
 - [ ] 🟢 `audit_events` and `llm_calls` have no retention — *added 10/19, from the admin console*
   - Both are append-only and grow with every login and every LLM call. Neither holds note text, but the audit trail holds IPs. Pick retention periods (the privacy policy should name them) and purge in the same job as the encounters' retention purge.
 
-- [ ] 🟢 The admin console's default LLM prices are unverified — *added 10/19, from the admin console*
-  - `app/admin/pricing.py`'s `DEFAULT_PRICES` (Mistral small/medium/embed, USD per 1M tokens) were written from memory, not checked against Mistral's price page; Bedrock and local models have none (their calls show as « sans prix connu »). Check them and set `LLM_PRICES` for the other models in use.
-
 - [ ] 🟢 `login_throttles` grows with every distinct email tried — *added 10/19, from the per-account login throttle*
   - Unknown emails are throttled like real ones (so a lock reveals nothing), which means an attacker rotating IPs can add rows without bound. Purge rows whose `last_attempt_at` is older than `LoginThrottlePolicy.forget_after` (a periodic job, or a delete inside `reserve`).
 
@@ -140,6 +137,7 @@
 
 ## ✅ Done
 
+- [x] 🟢 The admin console's default LLM prices are unverified — *added 10/19, from the admin console, done 10/19*
 - [x] 🟢 Contact requests have no admin screen — *added 10/2, from the public-site work, done 10/19 (admin console's « Demandes de contact »)*
 - [x] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8, reworded 10/16, done 10/19 (`llm_calls`, stored with each extraction run; the admin console's « Utilisation IA »)*
 - [x] 🟡 Login brute force is only limited per IP — *added 10/7, done 10/19 with a per-email counter that locks for 30 s doubling to 15 min after 5 attempts (`app/auth/throttle.py`)*

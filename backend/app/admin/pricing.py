@@ -24,8 +24,8 @@ class ModelPrice:
 # app/ramq_chatbot/factory.py, the embedding model) when this table was written. Check them
 # against the provider's price page and override with LLM_PRICES when they change.
 DEFAULT_PRICES: dict[str, ModelPrice] = {
-    "mistral-small-latest": ModelPrice(Decimal("0.10"), Decimal("0.30")),
-    "mistral-medium-latest": ModelPrice(Decimal("0.40"), Decimal("2.00")),
+    "mistral-small-latest": ModelPrice(Decimal("0.15"), Decimal("0.60")),
+    "mistral-medium-latest": ModelPrice(Decimal("1.50"), Decimal("7.50")),
     "mistral-embed": ModelPrice(Decimal("0.10")),
 }
 

@@ -162,7 +162,7 @@ async def test_usage_report_totals_days_and_breakdown(as_admin_on_a_quiet_day):
     assert body["end"] == "2031-03-10"
     assert body["totals"]["calls"] == 2
     assert body["totals"]["unpriced_calls"] == 1
-    assert Decimal(body["totals"]["cost_usd"]) == Decimal("0.4")
+    assert Decimal(body["totals"]["cost_usd"]) == Decimal("1.5")
     assert [(d["key"], d["calls"]) for d in body["by_day"]] == [
         ("2031-03-08", 0), ("2031-03-09", 1), ("2031-03-10", 1)
     ]
