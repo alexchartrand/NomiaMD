@@ -1,6 +1,8 @@
 """Unit tests for SummaryQueryPlanner and TranscriptQueryPlanner
 (app/ramq_codes/query_planner.py) — pure data transformation, no LLM, no DB."""
 
+import pytest
+
 from app.care_setting import CareSetting
 from app.ramq_codes.query_planner import PlannedQuery, SummaryQueryPlanner, TranscriptQueryPlanner
 from app.ramq_codes.visit_query import CARE_SETTING_VISIT_SECTIONS, VISIT_SECTION_PREFIX, VisitQueryRenderer
@@ -44,6 +46,20 @@ def test_an_er_encounter_also_searches_the_er_subsection_with_the_same_visit_que
         PlannedQuery(render_for_billing_codes(summary), "overview"),
     ]
     assert CARE_SETTING_VISIT_SECTIONS[CareSetting.URGENCE].startswith(f"{VISIT_SECTION_PREFIX} > ")
+
+
+@pytest.mark.parametrize("setting", [CareSetting.HOSPITALISATION, CareSetting.CHSLD])
+def test_a_ward_or_chsld_encounter_also_searches_its_own_subsection(setting):
+    summary = _summary()
+
+    queries = SummaryQueryPlanner().plan_labeled(summary, setting)
+
+    assert queries[1] == PlannedQuery(
+        VisitQueryRenderer().render(summary),
+        "care_setting_visit",
+        section_prefixes=(CARE_SETTING_VISIT_SECTIONS[setting],),
+    )
+    assert CARE_SETTING_VISIT_SECTIONS[setting].startswith(f"{VISIT_SECTION_PREFIX} > ")
 
 
 def test_a_setting_without_its_own_subsection_or_none_plans_as_before():
