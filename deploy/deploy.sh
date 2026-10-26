@@ -9,7 +9,8 @@
 # --running <sha> (the version the server runs, instead of asking it over SSH).
 #
 # The server is DEPLOY_SSH (user@host), from the environment or deploy/deploy.local.env
-# (gitignored). PROD_DIR / DEMO_DIR override the checkouts' paths.
+# (gitignored, copy deploy/deploy.local.env.example). PROD_DIR / DEMO_DIR override the
+# checkouts' paths.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 cd "$REPO_ROOT"
@@ -43,7 +44,7 @@ if [[ -f deploy/deploy.local.env ]]; then
     prod_dir=${prod_dir:-${PROD_DIR:-}}
     demo_dir=${demo_dir:-${DEMO_DIR:-}}
 fi
-[[ -n $deploy_ssh ]] || die "set DEPLOY_SSH=user@host (environment or deploy/deploy.local.env)"
+[[ -n $deploy_ssh ]] || die "set DEPLOY_SSH=user@host in the environment, or: cp deploy/deploy.local.env.example deploy/deploy.local.env"
 prod_dir=${prod_dir:-/opt/nomiamd/NomiaMD}
 demo_dir=${demo_dir:-/opt/nomiamd/NomiaMD-demo}
 

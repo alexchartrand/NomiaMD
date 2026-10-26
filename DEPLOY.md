@@ -29,7 +29,7 @@ only: `APP_ENV=development` there is what lets the sandbox run, and prod is pinn
 ## The short version: `deploy/`
 
 From your machine, with `DEPLOY_SSH=user@nomiamd.com` in the environment or in
-`deploy/deploy.local.env` (gitignored):
+`deploy/deploy.local.env` (gitignored; copy `deploy/deploy.local.env.example`):
 
 ```bash
 make deploy-prod TAG=vX.Y.Z      # deploy/deploy.sh prod vX.Y.Z — a tag already pushed (step 1)
