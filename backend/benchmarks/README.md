@@ -178,6 +178,57 @@ run --name <x> --stages retrieval,selection --summaries-from mistral-2026-10-v2 
   query surfaces 00006, 00057, 15645 and 15055 (« avec déplacement ») instead of 15058 (« sans
   déplacement »). Fixed by the care setting, next section.
 
+**Rerun on the current pipeline (2026-10-26).** Retrieval only, with the care setting and the ER pinning. It
+uses `mistral-2026-10-v2`'s summaries and is compared with `bedrock-cands` (same command, current table).
+Neither table has changed since 10/9.
+
+| run | codes table | recall | R@5 / R@10 / R@20 / R@40 | MRR | family only / missed | candidates/note |
+|---|---|---|---|---|---|---|
+| `bedrock-cands` (control) | `codes_2026-09-17` | 97% | **49 / 68** / 79 / 93 | **0.35** | 0 / 2 | 61 |
+| `sonnet-table-cands` | `codes_2026-09-17__claude-sonnet-4-6` | 97% | 44 / 63 / 80 / 93 | 0.29 | 1 / 1 | 59 |
+
+- **Same conclusion as on 10/9.** Recall and R@40 are equal, but the expected codes rank lower: 28 notes
+  regressed, 10 improved, 7 mixed. The same visit codes drop: 15616 #1→#11, 15790 #2→#13, 15839 #4→#12,
+  15765 #6→#17, and 15785/15786 #5–6→#27–30. The same add-ons rise: 01166 #15→#1, 00431 #10→#1,
+  15643 #26→#3, 15803 on GMF-2026-00313 #28→#3.
+- **01323 on URG-2026-04512 is now found** (#37), but 15622 on CHSLD-2026-00054 is offered only as a
+  sibling variant.
+- **The ER pinning holds on both tables.** The ER codes stay in the top 8 (15064 #2→#8, 15052 #2→#6,
+  15058 #6→#3).
+- **Why the Sonnet table ranks lower.** Retrieval embeds `description` + `when_to_use` and runs BM25 over
+  `description`, `lexical_terms` and `expansion_terms`. Sonnet's rows say more, but in a way that matches
+  the same words on many rows:
+  - Its section-B `lexical_terms` add place names shared by many codes: « chsgs » on 76 rows (26 in the
+    current table), « clsc » 67 (29), « gmf-u » 49 (0), « cabinet » 34, « établissement » 30. On 15790 they
+    include « cabinet, domicile, CLSC, GMF-U ». These terms match any visit note, so every visit code
+    scores about the same.
+  - Its descriptions and `when_to_use` are templated across siblings. They abbreviate the place
+    (« dans un CHSLD ou dans un CHSGS… ») and add references (« (P.G. 2.2.9 A) », « réf. : préambule
+    général »): 269 rows against 20. The text that differs between two variants is a smaller share of
+    each row's text, which weakens both the vector and BM25 match.
+  - Procedure and add-on rows gain specific words, which is why they rank higher.
+
+**Ward and CHSLD subsection queries (2026-10-26).** 15158, the ward's discharge fee on HOP-2026-00733, was
+missed by both tables. The note says « Congé hospitalier », but the overview query ranks 15158 only about
+#65 and the visit query about #170. The ward subsection (P.G. 2.2.6 D, 21 codes) and the CHSLD
+subsection (P.G. 2.2.6 E, 11 codes) are now `CARE_SETTING_VISIT_SECTIONS`, like the ER. Their query returns
+nearly the whole subsection, and its hits are pinned first. Same command, compared with `bedrock-cands`:
+
+| run | codes table | recall | R@5 / R@10 / R@20 / R@40 | MRR | missed |
+|---|---|---|---|---|---|
+| `bedrock-cands` (control) | `codes_2026-09-17` | 97% | 49 / 68 / 79 / 93 | 0.35 | 01323, 15158 |
+| `current-table-cands-v2` | `codes_2026-09-17` | 99% | 53 / 73 / 87 / 96 | **0.38** | 01323 (URG-2026-04512) |
+| `sonnet-table-cands-v2` | `codes_2026-09-17__claude-sonnet-4-6` | **100%** | 49 / 68 / 87 / 99 | 0.32 | – |
+
+- Only the 8 HOP/CHSLD notes plan a new query; the other 50 are unchanged by construction.
+- On the current table, 4 notes improved and 2 got slightly worse (15616 #1→#2, 15615 #8→#10):
+  - 15639 goes from #21–35 to #1, 15624 from #49 to #2, and 15617 from #36 to #5.
+  - Codes from other sections fall on CHSLD-2026-00054: the death certificate 00014 (#3→#14) and 15265
+    (#8→#19).
+- 15158 comes in at #21, after the pinned subsection hits.
+- The Sonnet table is the only one to reach every code: it also finds 01323 on URG-2026-04512, which the
+  current table misses. It still ranks lower overall (MRR 0.32 vs 0.38).
+
 ## Care setting (2026-10-09)
 
 The section-B-wide visit query's « urgence » ranks the « déplacement d'urgence » supplements (15633–15635,
