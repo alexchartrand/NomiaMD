@@ -1,0 +1,482 @@
+{
+  "patient_id": "HOP-2026-00733",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 528,
+      "output_tokens": null,
+      "latency_ms": 317.9279250034597,
+      "started_at": "2026-10-08T14:19:46.318346Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 528,
+    "output_tokens": 0,
+    "llm_latency_ms": 317.9279250034597,
+    "wall_ms": 344.9283230002038
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Congé d'une patiente de 81 ans hospitalisée pour une cellulite de la jambe gauche. La cellulite est en grande partie résolue sous antibiothérapie (céfazoline IV puis céphalexine PO). Prescription de congé avec suivi à domicile par le CLSC et recommandations de soins.\nLieu (détail): Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)\nDate: 2026-09-25\nHeure de début: 09:00\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Tournée — J6 cellulite jambe gauche avec congé prévu ce jour\nSystèmes/régions concernés: cutané; membre_inférieur_gauche\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Cellulite jambe gauche résolue en grande partie sous antibiothérapie (céfazoline IV puis céphalexine PO)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cutané; membre_inférieur_gauche\nConstatations: Érythème résiduel en régression (délimitation au marqueur dépassée vers l'intérieur), plus de chaleur, œdème léger. Afébrile depuis 72h. TA 132/70. GB 7,9, CRP 22.\nAjouts possiblement facturables: communication_specialiste\nÉlément incertain: Durée de l'entrevue non explicitement mentionnée dans le transcript.; Heure de fin de l'entrevue non précisée.",
+      "hits": [
+        {
+          "number": "15778",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "15818",
+          "relevance": 0.029206348583102226
+        },
+        {
+          "number": "15770",
+          "relevance": 0.028138527646660805
+        },
+        {
+          "number": "15780",
+          "relevance": 0.02715098112821579
+        },
+        {
+          "number": "15772",
+          "relevance": 0.025641025975346565
+        },
+        {
+          "number": "15816",
+          "relevance": 0.025487013161182404
+        },
+        {
+          "number": "09234",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15158",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15622",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "05164",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08776",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08994",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04640",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08996",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04583",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09231",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08995",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08997",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08511",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15188",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "hits": [
+        {
+          "number": "00157",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15898",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "00748",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "08113",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "04577",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "04568",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "04600",
+          "relevance": 0.026685643941164017
+        },
+        {
+          "number": "04576",
+          "relevance": 0.026671407744288445
+        },
+        {
+          "number": "15188",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00552",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04567",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15894",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04578",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15622",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08027",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08004",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15652",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08214",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15643",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08098",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15622",
+      "rrf_score": 0.028404512489927477,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 2,
+      "number": "15188",
+      "rrf_score": 0.027364110201042444,
+      "header_path": "B — Consultation, examen et visite",
+      "description": "Supplément pour la communication par l'intermédiaire d'un interprète, pour un patient inscrit, en cabinet, à domicile ou en établissement"
+    },
+    {
+      "rank": 3,
+      "number": "15778",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 4,
+      "number": "00157",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 5,
+      "number": "15818",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 6,
+      "number": "15898",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)"
+    },
+    {
+      "rank": 7,
+      "number": "15770",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 8,
+      "number": "00748",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 9,
+      "number": "15780",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 10,
+      "number": "08113",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Thorax > Larynx, études spéciales > phonation",
+      "description": "Étude spéciale du larynx en phonation, thorax"
+    },
+    {
+      "rank": 11,
+      "number": "15772",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 12,
+      "number": "04577",
+      "rrf_score": 0.015625,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire multiple, au niveau des ventricules"
+    },
+    {
+      "rank": 13,
+      "number": "15816",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 14,
+      "number": "04568",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, au niveau des oreillettes"
+    },
+    {
+      "rank": 15,
+      "number": "09234",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation ordinaire d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré"
+    },
+    {
+      "rank": 16,
+      "number": "04600",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > réparation d'une communication interauriculaire, type ostium secundum",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, supplément"
+    },
+    {
+      "rank": 17,
+      "number": "15158",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > forfait de congé en établissement d'un patient admis",
+      "description": "Forfait de congé en établissement d'un patient admis de 70 ans ou plus lors du départ d'un patient admis dans une unité de soins de courte durée d'un CHSGS"
+    },
+    {
+      "rank": 18,
+      "number": "04576",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire unique ou postinfarctus, au niveau des ventricules"
+    },
+    {
+      "rank": 19,
+      "number": "05164",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Résection intestinale avec anastomose > hémicolectomie gauche",
+      "description": "Résection intestinale avec anastomose, hémicolectomie gauche"
+    },
+    {
+      "rank": 20,
+      "number": "00552",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Tonographie avec ou sans épreuve spéciale, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 21,
+      "number": "08776",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 22,
+      "number": "04567",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Création de communication interauriculaire, procédé de Blalock-Hanlon ou autres, au niveau des oreillettes"
+    },
+    {
+      "rank": 23,
+      "number": "08994",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 24,
+      "number": "15894",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication par conseil numérique (eConsult)",
+      "description": "Communication par conseil numérique (eConsult), lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 25,
+      "number": "04640",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "J — Système cardiaque > Appareil vasculaire thoracique > Chirurgie congénitale > Anastomose",
+      "description": "Anastomose de la veine pulmonaire gauche à l'oreillette gauche en chirurgie congénitale de l'appareil vasculaire thoracique"
+    },
+    {
+      "rank": 26,
+      "number": "04578",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Agrandissement ou création de communication interventriculaire, au niveau des ventricules"
+    },
+    {
+      "rank": 27,
+      "number": "08996",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 28,
+      "number": "04583",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Réparation de sténose de l'infundibulum gauche, au niveau des ventricules"
+    },
+    {
+      "rank": 29,
+      "number": "08027",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Dacryocystographie, en examen spécial incluant la scopie"
+    },
+    {
+      "rank": 30,
+      "number": "09231",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation mineure d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré"
+    },
+    {
+      "rank": 31,
+      "number": "08004",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Encéphalographie, en examen spécial incluant la scopie"
+    },
+    {
+      "rank": 32,
+      "number": "08995",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > d'urgence avec déplacement > complet",
+      "description": "Consultation et examen complet d'urgence avec déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 33,
+      "number": "15652",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, par période de quinze (15) minutes"
+    },
+    {
+      "rank": 34,
+      "number": "08997",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > d'urgence avec déplacement > complet",
+      "description": "Consultation et examen complet d'urgence avec déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 35,
+      "number": "08214",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Fistulographie, en examen spécial incluant la scopie"
+    },
+    {
+      "rank": 36,
+      "number": "08511",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations pour lésions non cutanées"
+    },
+    {
+      "rank": 37,
+      "number": "15643",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, par période de quinze (15) minutes"
+    },
+    {
+      "rank": 38,
+      "number": "08098",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Discographie, un (1) niveau ou plus, en examen spécial incluant la scopie"
+    }
+  ],
+  "unresolved_axes": [
+    "registration",
+    "vulnerability"
+  ],
+  "eligibility": {
+    "age": 81,
+    "panel_size": 900,
+    "is_registered": null,
+    "is_vulnerable": null
+  },
+  "embedding_ms": 318.857083999319,
+  "db_ms": 25.52664899849333
+}

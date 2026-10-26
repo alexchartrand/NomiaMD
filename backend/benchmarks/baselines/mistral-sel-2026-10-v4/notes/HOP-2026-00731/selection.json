@@ -1,0 +1,117 @@
+{
+  "patient_id": "HOP-2026-00731",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 10534,
+      "output_tokens": 778,
+      "latency_ms": 6647.163543006172,
+      "started_at": "2026-10-09T17:40:48.977805Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 10534,
+    "output_tokens": 778,
+    "llm_latency_ms": 6647.163543006172,
+    "wall_ms": 6651.801879997947
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15766",
+    "15774",
+    "15638",
+    "15641",
+    "15642",
+    "08933",
+    "03139",
+    "15627",
+    "00639",
+    "15628",
+    "15622",
+    "08913",
+    "09347",
+    "15626",
+    "00927",
+    "00928",
+    "08942",
+    "15647",
+    "15768",
+    "15643",
+    "15639",
+    "09346",
+    "00837",
+    "15648",
+    "00674",
+    "08943",
+    "00838",
+    "15640",
+    "00999",
+    "08923",
+    "15806",
+    "15629",
+    "15616",
+    "08511",
+    "15649",
+    "15652",
+    "15158",
+    "15617",
+    "15808",
+    "08948",
+    "15631",
+    "15826"
+  ],
+  "prompt_chars": 43063,
+  "raw_code_count": 3,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15640",
+        "description": "Visite de suivi, subséquente d'un patient admis dans un CHSGS ou CHSP, pour sa partie des soins de courte durée, niveau A",
+        "confidence": "medium",
+        "explanation": "Visite de suivi subséquente en CHSGS (soins de courte durée) avec examen physique et ajustement du traitement. Le niveau A est retenu par défaut en l'absence de précision sur le niveau B, mais cela nécessite confirmation.",
+        "supporting_quote": "Tournée — J3 PNA lobaire inf. D. [...] Crépitants base D diminués. [...] Cesser ceftriaxone IV → amoxicilline-clavulanate PO",
+        "needs_confirmation": [
+          "Confirmer si le niveau de la visite est A ou B (alternative : 15649)."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15649",
+        "description": "Visite de suivi, subséquente d'un patient admis dans un CHSGS ou CHSP, pour sa partie des soins de courte durée, niveau B",
+        "confidence": "medium",
+        "explanation": "Alternative au code 15640 si le niveau de la visite est B. Le transcript ne précise pas le niveau.",
+        "supporting_quote": "Tournée — J3 PNA lobaire inf. D. [...] Crépitants base D diminués.",
+        "needs_confirmation": [
+          "Confirmer si le niveau de la visite est A ou B (alternative : 15640)."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15639",
+        "description": "Visite de suivi, première d'un patient admis dans un CHSGS ou CHSP, pour sa partie des soins de courte durée, niveau A",
+        "confidence": "low",
+        "explanation": "Le patient est à J3 de traitement, donc il s'agit probablement d'une visite subséquente et non de la première. Exclu car moins probable.",
+        "supporting_quote": "Tournée — J3 PNA lobaire inf. D.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Le niveau de la visite (A ou B) n'est pas précisé dans le transcript. Le statut de vulnérabilité du patient n'est pas confirmé, mais comme il est hospitalisé, les codes de visite ponctuelle (15766, 15774, 15768) ne s'appliquent pas. Aucune procédure ou test n'est mentionné pour justifier d'autres codes.",
+    "analysis": "Rencontre en milieu hospitalier (CHSGS, unité de soins de courte durée) pour une tournée médicale. Service effectué : une visite de suivi d'un patient admis en établissement, sans rendez-vous, avec examen physique et révision du traitement. Le patient est âgé de 66 ans, non vulnérable (statut non confirmé), et la clientèle du médecin compte 900 patients (donc ≥ 500). Aucune procédure, test ou supplément n'est mentionné. Le code doit correspondre à une visite de suivi en CHSGS, niveau A ou B, mais le niveau n'est pas précisé dans le transcript. Les codes de visite ponctuelle (15766, 15774, 15768) sont exclus car le patient est hospitalisé. Les codes psychiatriques ou spécifiques (ex. 08933, 08942) sont exclus car le motif est médical (pneumonie)."
+  }
+}

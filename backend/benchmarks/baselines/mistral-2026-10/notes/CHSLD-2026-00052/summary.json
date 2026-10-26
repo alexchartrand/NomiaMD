@@ -1,0 +1,109 @@
+{
+  "patient_id": "CHSLD-2026-00052",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2090,
+      "output_tokens": 610,
+      "latency_ms": 3754.634185010218,
+      "started_at": "2026-10-08T14:19:37.836807Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2090,
+    "output_tokens": 610,
+    "llm_latency_ms": 3754.634185010218,
+    "wall_ms": 3754.9288800073555
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Évaluation médicale globale d'une patiente de 87 ans admise en CHSLD pour épuisement de l'aidant, incluant examen complet, révision de la médication, évaluation fonctionnelle et détermination du niveau d'intervention médicale (NIM 3).",
+    "encounter_setting": {
+      "location_detail": "CHSLD Saint-Jude — Unité 3 Ouest",
+      "date": "2026-09-22",
+      "time_start": "10:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Évaluation médicale globale suite à l'admission au CHSLD et détermination du niveau d'intervention médicale.",
+      "systems_or_body_regions_involved": [
+        "neurocognitif",
+        "cardiovasculaire",
+        "génito-urinaire",
+        "musculo-squelettique",
+        "cutané",
+        "fonctionnel"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Trouble neurocognitif majeur mixte stade modéré-avancé, FA paroxystique, HTA contrôlée, risque de chute élevé, IU mixte, ostéoporose avec fracture tassement D12.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pulmonaire",
+        "abdominal",
+        "neurologique",
+        "cutané",
+        "pieds"
+      ],
+      "notable_findings": "TA 134/72, FC 72 irrégulière, souffle systolique 2/6 foyer aortique, onychomycose aux pieds, peau intacte sans plaie de pression (Braden 15), pas de déficit focal."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la visite non explicitement mentionnée dans le transcript.",
+      "Le niveau d'intervention médicale (NIM 3) est mentionné, mais son lien direct avec la visite du 22 septembre n'est pas clairement établi dans le texte."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-22",
+      "actual": "2026-09-22"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:00",
+      "actual": "10:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 6,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

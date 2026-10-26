@@ -30,6 +30,8 @@ _ramq_numbers = itertools.count(1)
 _texts = itertools.count(1)
 
 CLEAN_RESULT = {"codes": [MOCK_RESULT["codes"][0]], "notes": None}  # one high-confidence code
+# The model is sure of a code, but only with medium confidence.
+UNSURE_RETAINED_RESULT = {"codes": [MOCK_RESULT["other_possible_codes"][0]], "notes": None}
 NEEDS_CONFIRMATION_RESULT = {
     "codes": [MOCK_RESULT["codes"][0] | {"needs_confirmation": ["Confirmer la taille de la clientèle"]}],
     "notes": None,
@@ -70,9 +72,9 @@ def _note_text(nam: str | None = None) -> str:
 
 def _model(billing=MOCK_RESULT, extractions: int = 1):
     """The chat model, answering `extractions` pipeline runs (summary, then codes)."""
-    patcher = patch("app.extraction.engine.get_client")
+    patcher = patch("app.llm.structured.get_client")
     mock_get_client = patcher.start()
-    mock_get_client.return_value.achat = AsyncMock(
+    mock_get_client.return_value.chat = AsyncMock(
         side_effect=[_mock_response(MOCK_SUMMARY_RESULT), _mock_response(billing)] * extractions
     )
     return patcher
@@ -158,11 +160,12 @@ async def test_push_a_note_with_a_known_nam_is_extracted_and_ready(me, client):
     assert detail["patient"]["is_vulnerable"] is False
     assert detail["patient"]["is_registered"] is None
     assert detail["status"] == "prêt"
-    assert detail["extraction"]["billing"]["task"] == "billing_codes"
-    assert [c["code"] for c in detail["extraction"]["billing"]["result"]["codes"]] == [
+    assert [c["code"] for c in detail["extraction"]["billing"]["codes"]] == [
         "TEST-BP-MGMT",
         "TEST-BLOODWORK-ORDER",
     ]
+    # The stored summary, read back as the review shows it above the codes.
+    assert detail["extraction"]["summary"]["short_description"] == MOCK_SUMMARY_RESULT["short_description"]
     async with session_scope() as session:
         run = await session.get(ExtractionRun, detail["extraction"]["extraction_run_id"])
     assert run.encounter_id == outcome["encounter_id"]
@@ -278,6 +281,19 @@ async def test_push_rejects_a_note_with_no_text_left_once_normalized(me, client)
     assert response.status_code == 422
 
 
+async def test_paste_stores_the_care_setting_the_physician_picked(me, client):
+    [outcome] = _paste(client, _note_text("ZZZZ99999999"), care_setting="urgence").json()
+
+    async with session_scope() as session:
+        encounter = await session.get(Encounter, outcome["encounter_id"])
+    assert encounter.encounter_meta == {"care_setting": "urgence"}
+
+
+def test_paste_rejects_an_unknown_care_setting(me, client):
+    response = client.post("/intake/notes", json={"text": _note_text("ZZZZ99999999"), "care_setting": "bureau"})
+    assert response.status_code == 422
+
+
 # --- POST /intake/upload ------------------------------------------------------------------
 
 
@@ -288,7 +304,7 @@ async def test_upload_a_text_file(me, client):
         response = client.post(
             "/intake/upload",
             files={"file": ("notes.txt", _note_text(patient.ramq_number).encode(), "text/plain")},
-            data={"batch_label": "Clinique matin"},
+            data={"batch_label": "Clinique matin", "care_setting": "cabinet"},
         )
     finally:
         patcher.stop()
@@ -299,6 +315,9 @@ async def test_upload_a_text_file(me, client):
     row = _row(client, outcome["encounter_id"])
     assert row["channel"] == "upload"
     assert row["batch_label"] == "Clinique matin"
+    async with session_scope() as session:
+        encounter = await session.get(Encounter, outcome["encounter_id"])
+    assert encounter.encounter_meta["care_setting"] == "cabinet"
 
 
 async def test_upload_rejects_anything_but_text(me, client):
@@ -330,7 +349,8 @@ async def test_another_physicians_encounter_is_not_found(me, client):
     ("billing", "all_clean"),
     [
         (CLEAN_RESULT, True),
-        (MOCK_RESULT, False),  # one medium-confidence code
+        (MOCK_RESULT, True),  # its medium-confidence code is only a possible one
+        (UNSURE_RETAINED_RESULT, False),
         (NEEDS_CONFIRMATION_RESULT, False),
         ({"codes": [], "notes": None}, False),  # nothing to approve
     ],
@@ -393,7 +413,7 @@ async def test_a_reviewed_encounter_shows_the_codes_billed_not_the_codes_propose
     assert row["indicative_total"] is None
     detail = client.get(f"/encounters/{encounter_id}").json()
     assert [c["code"] for c in detail["claim"]["codes"]] == ["TEST-BLOODWORK-ORDER"]
-    assert len(detail["extraction"]["billing"]["result"]["codes"]) == 2
+    assert len(detail["extraction"]["billing"]["codes"]) == 2
 
 
 async def test_an_encounter_without_a_claim_has_none(me, client):
@@ -453,9 +473,9 @@ async def test_pick_refuses_an_unknown_patient(me, client):
 
 async def test_extract_on_demand_retries_a_failed_extraction(me, client):
     patient = await _seed_patient()
-    patcher = patch("app.extraction.engine.get_client")
+    patcher = patch("app.llm.structured.get_client")
     mock_get_client = patcher.start()
-    mock_get_client.return_value.achat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
+    mock_get_client.return_value.chat = AsyncMock(side_effect=RuntimeError("modèle indisponible"))
     try:
         [outcome] = client.post("/intake/notes", json={"text": _note_text(patient.ramq_number)}).json()
     finally:
@@ -469,7 +489,7 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
         patcher.stop()
 
     assert response.status_code == 200
-    assert [c["code"] for c in response.json()["billing"]["result"]["codes"]] == ["TEST-BP-MGMT"]
+    assert [c["code"] for c in response.json()["billing"]["codes"]] == ["TEST-BP-MGMT"]
     row = _row(client, outcome["encounter_id"])
     assert row["status"] == "prêt"
     assert row["codes"] == ["TEST-BP-MGMT"]
@@ -647,11 +667,13 @@ def test_mask_nam_hides_the_birth_date_digits():
 
 def _extraction(*codes):
     """Just what is_all_clean reads: the latest run's codes."""
-    return SimpleNamespace(billing=SimpleNamespace(result=SimpleNamespace(codes=list(codes))))
+    return SimpleNamespace(billing=SimpleNamespace(codes=list(codes)))
 
 
-def _code(fees: int = 1, confidence: str = "high", needs_confirmation=()):
-    return SimpleNamespace(confidence=confidence, needs_confirmation=list(needs_confirmation), fees=[object()] * fees)
+def _code(fees: int = 1, confidence: str = "high", needs_confirmation=(), retained: bool = True):
+    return SimpleNamespace(
+        confidence=confidence, needs_confirmation=list(needs_confirmation), fees=[object()] * fees, retained=retained
+    )
 
 
 def test_a_code_with_several_fees_is_not_clean():
@@ -659,3 +681,12 @@ def test_a_code_with_several_fees_is_not_clean():
     ready = {"service_date": date(2026, 3, 4), "possible_duplicate": False}
     assert is_all_clean(EncounterStatus.PRET, _extraction(_code(fees=1), _code(fees=0)), **ready)
     assert not is_all_clean(EncounterStatus.PRET, _extraction(_code(fees=1), _code(fees=2)), **ready)
+
+
+def test_only_the_retained_codes_decide_cleanliness():
+    """Approving bills the retained codes: an unsure possible code doesn't block it, and
+    possible codes alone leave nothing to approve."""
+    ready = {"service_date": date(2026, 3, 4), "possible_duplicate": False}
+    possible = _code(confidence="low", needs_confirmation=["?"], fees=3, retained=False)
+    assert is_all_clean(EncounterStatus.PRET, _extraction(_code(), possible), **ready)
+    assert not is_all_clean(EncounterStatus.PRET, _extraction(possible), **ready)

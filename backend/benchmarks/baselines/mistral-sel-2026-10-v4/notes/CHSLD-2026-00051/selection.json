@@ -1,0 +1,154 @@
+{
+  "patient_id": "CHSLD-2026-00051",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 9111,
+      "output_tokens": 1611,
+      "latency_ms": 10042.575182989822,
+      "started_at": "2026-10-09T17:40:44.387837Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 9111,
+    "output_tokens": 1611,
+    "llm_latency_ms": 10042.575182989822,
+    "wall_ms": 10048.435342003359
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15616",
+    "15617",
+    "15818",
+    "15622",
+    "15770",
+    "15619",
+    "15836",
+    "15816",
+    "15763",
+    "15772",
+    "15054",
+    "15057",
+    "15840",
+    "09234",
+    "15660",
+    "15060",
+    "15838",
+    "09231",
+    "15659",
+    "15639",
+    "15638",
+    "15640",
+    "15641",
+    "15642",
+    "15643",
+    "15063",
+    "15624",
+    "08813",
+    "08815",
+    "15667",
+    "15778",
+    "15627",
+    "15789",
+    "15621",
+    "15628",
+    "08994",
+    "15790",
+    "08848",
+    "15626",
+    "08996",
+    "98010",
+    "08776"
+  ],
+  "prompt_chars": 36085,
+  "raw_code_count": 6,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15616",
+        "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+        "confidence": "high",
+        "explanation": "Visite de suivi courant en CHSLD avec examen sommaire, ajustement de traitement et recommandations, conforme à la description du code 15616.",
+        "supporting_quote": "Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée. Constipation persistante malgré PEG 17 g die, ajustement du traitement (PEG bid x 7 jours puis reprise die) et ajout de sennosides PRN. Examen sommaire de l'abdomen sans particularité.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15617",
+        "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+        "confidence": "medium",
+        "explanation": "L'examen était sommaire et non explicitement décrit comme exigeant, mais le code pourrait s'appliquer si l'examen était considéré comme nécessairement approfondi.",
+        "supporting_quote": "Examen sommaire de l'abdomen sans particularité.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15818",
+        "description": "Visite de suivi d'un patient non vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Le patient a 91 ans et la clientèle du médecin est de 900 patients, mais le statut d'inscription et de vulnérabilité du patient n'est pas établi.",
+        "supporting_quote": "Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée.",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour distinguer entre 15818 et 15770.",
+          "Confirmer si la patiente est considérée comme vulnérable au sens de la RAMQ pour distinguer entre 15818 et 15838."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15838",
+        "description": "Visite de suivi d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Le patient a 91 ans et la clientèle du médecin est de 900 patients, mais le statut d'inscription et de vulnérabilité du patient n'est pas établi.",
+        "supporting_quote": "Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée.",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour distinguer entre 15838 et 15772.",
+          "Confirmer si la patiente est considérée comme vulnérable au sens de la RAMQ pour distinguer entre 15838 et 15818."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15770",
+        "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Le patient a 91 ans et la clientèle du médecin est de 900 patients, mais le statut d'inscription du patient n'est pas établi. De plus, il s'agit d'un suivi courant, pas d'une visite ponctuelle mineure.",
+        "supporting_quote": "Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée.",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour exclure ce code."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15772",
+        "description": "Visite ponctuelle mineure d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "Le patient a 91 ans et la clientèle du médecin est de 900 patients, mais le statut d'inscription et de vulnérabilité du patient n'est pas établi. De plus, il s'agit d'un suivi courant, pas d'une visite ponctuelle mineure.",
+        "supporting_quote": "Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée.",
+        "needs_confirmation": [
+          "Confirmer si la patiente est inscrite auprès du médecin pour exclure ce code.",
+          "Confirmer si la patiente est considérée comme vulnérable au sens de la RAMQ pour appliquer ce code."
+        ],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Le statut d'inscription du patient et son statut de vulnérabilité au sens de la RAMQ ne sont pas établis. Ces axes sont critiques pour déterminer si des codes comme 15818, 15838, 15770 ou 15772 pourraient s'appliquer. Le code 15616 reste le plus approprié en l'absence de ces informations, car il correspond au contexte de suivi courant en CHSLD sans exigence supplémentaire.",
+    "analysis": "L'encounter a eu lieu dans un CHSLD (Unité 2 Est du CHSLD Saint-Jude) pour une patiente de 91 ans, dans le cadre d'un suivi courant avec rendez-vous. Le médecin a effectué une visite de suivi incluant un examen physique sommaire de l'abdomen, une révision du traitement (ajustement du PEG et ajout de sennosides), ainsi qu'une anamnèse et des recommandations. Aucune mention d'urgence, de déplacement, d'évaluation pour opinion ou de consultation psychiatrique. Le code 15616 (visite de suivi courant en CHSLD) correspond parfaitement à cette situation, car il s'agit d'un suivi régulier sans exigence d'examen approfondi. Le code 15617 (visite de suivi exigeant un examen) n'est pas retenu, car l'examen était sommaire et non explicitement décrit comme exigeant. Les codes liés aux soins de courte durée (ex. 15638-15643) ou à d'autres contextes (urgence, clinique externe) sont exclus par le lieu (CHSLD, partie soins de longue durée). Les codes pour patients vulnérables ou non inscrits (ex. 15836, 15772) dépendent d'axes non établis (statut d'inscription et vulnérabilité)."
+  }
+}

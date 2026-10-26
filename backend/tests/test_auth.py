@@ -7,7 +7,7 @@ import uuid
 
 from fastapi.testclient import TestClient
 
-from app.auth import get_current_user
+from app.auth import get_authenticated_user, get_current_user
 from app.auth.security import PasswordHasher
 from app.postgresdb import PhysicianType, RemunerationType, UserRepository, UserRole, session_scope
 from app.main import app
@@ -28,6 +28,7 @@ async def _create_user(**overrides):
 
 def _drop_auth_override():
     app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_authenticated_user, None)
 
 
 async def test_login_success_sets_cookie_and_returns_user():
@@ -369,3 +370,43 @@ async def test_change_password_without_cookie_returns_401():
         )
 
     assert response.status_code == 401
+
+
+async def test_bumping_session_version_revokes_an_open_session():
+    _drop_auth_override()
+    user = await _create_user()
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        assert client.get("/auth/me").status_code == 200
+        async with session_scope() as session:
+            await UserRepository(session).bump_session_version(user.id)
+        revoked = client.get("/auth/me")
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        fresh = client.get("/auth/me")
+
+    assert revoked.status_code == 401
+    assert fresh.status_code == 200
+
+
+async def test_temporary_password_blocks_other_routes_until_changed():
+    _drop_auth_override()
+    user = await _create_user(must_change_password=True)
+
+    with TestClient(app) as client:
+        client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
+        me = client.get("/auth/me")
+        blocked = client.get("/patients")
+        changed = client.post(
+            "/auth/me/password", json={"current_password": PASSWORD, "new_password": "a brand new secret"}
+        )
+        unblocked = client.get("/patients")
+        me_after = client.get("/auth/me")
+
+    assert me.status_code == 200
+    assert me.json()["must_change_password"] is True
+    assert blocked.status_code == 403
+    assert blocked.json()["detail"] == "password_change_required"
+    assert changed.status_code == 204
+    assert unblocked.status_code == 200
+    assert me_after.json()["must_change_password"] is False

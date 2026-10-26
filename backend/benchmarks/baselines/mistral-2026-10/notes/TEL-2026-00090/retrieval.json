@@ -1,0 +1,465 @@
+{
+  "patient_id": "TEL-2026-00090",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 500,
+      "output_tokens": null,
+      "latency_ms": 1753.2726530043874,
+      "started_at": "2026-10-08T14:19:18.183771Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 500,
+    "output_tokens": 0,
+    "llm_latency_ms": 1753.2726530043874,
+    "wall_ms": 1790.5837399885058
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Téléconsultation vidéo pour éruption cutanée folliculaire au tronc chez un patient de 29 ans, probablement liée à la chaleur et à la transpiration excessive. Diagnostic clinique de folliculite miliaire/friction posé, avec recommandations non pharmacologiques et traitement topique au besoin.\nLieu (détail): Clinique médicale Les Tilleuls (téléconsultation vidéo)\nDate: 2026-07-21\nHeure de début: 16:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Éruption cutanée au tronc apparue depuis 5 jours avec prurit léger à modéré\nSystèmes/régions concernés: peau; tronc; dos; épaules\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Folliculite probablement de type miliaire/friction, favorisée par la chaleur, la transpiration excessive et les douches fréquentes\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: peau\nConstatations: Papules érythémateuses multiples de 2-4 mm disposées de façon folliculaire au niveau du tronc, du dos et des épaules, sans vésicule ni pustule franche visible\nAjouts possiblement facturables: téléconsultation\nÉlément incertain: Durée exacte de la consultation non précisée dans le document; Absence de mention explicite de l'utilisation d'anesthésie pour l'examen (non applicable en téléconsultation)",
+      "hits": [
+        {
+          "number": "01222",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15765",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15895",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15773",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01223",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08511",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00328",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15811",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06170",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08553",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01153",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02534",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01169",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01214",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07069",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04033",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01155",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06040",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01166",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15805",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "téléconsultation",
+      "hits": [
+        {
+          "number": "15895",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "08876",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15896",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "15894",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "15898",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "15622",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15878",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08800",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15789",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08803",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08802",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15887",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00017",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15790",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15773",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "15765",
+          "relevance": 0.01315789483487606
+        },
+        {
+          "number": "08776",
+          "relevance": 0.012987012974917889
+        },
+        {
+          "number": "00983",
+          "relevance": 0.012820512987673283
+        },
+        {
+          "number": "08805",
+          "relevance": 0.012658228166401386
+        },
+        {
+          "number": "15811",
+          "relevance": 0.012500000186264515
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15895",
+      "rrf_score": 0.03279569892473118,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > Consultations virtuelles en temps différé > Télédermatologie",
+      "description": "Télédermatologie, consultations virtuelles en temps différé, lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 2,
+      "number": "15765",
+      "rrf_score": 0.029726775956284153,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 3,
+      "number": "15773",
+      "rrf_score": 0.029386529386529386,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 4,
+      "number": "15811",
+      "rrf_score": 0.027583600982429624,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 5,
+      "number": "01222",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > non faciale",
+      "description": "Excision chirurgicale d'une verrue non faciale, première verrue lors de la même séance"
+    },
+    {
+      "rank": 6,
+      "number": "08876",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour",
+      "description": "Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour"
+    },
+    {
+      "rank": 7,
+      "number": "15896",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > Consultations virtuelles en temps différé > Gestion en douleur chronique",
+      "description": "Gestion en douleur chronique, consultations virtuelles en temps différé, lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 8,
+      "number": "15894",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication par conseil numérique (eConsult)",
+      "description": "Communication par conseil numérique (eConsult), lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 9,
+      "number": "01223",
+      "rrf_score": 0.015625,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > faciale",
+      "description": "Excision chirurgicale d'une verrue faciale, première verrue lors de la même séance"
+    },
+    {
+      "rank": 10,
+      "number": "15898",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)"
+    },
+    {
+      "rank": 11,
+      "number": "08511",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations pour lésions non cutanées"
+    },
+    {
+      "rank": 12,
+      "number": "15622",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 13,
+      "number": "00328",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de l'acné par chirurgie et/ou cryothérapie et/ou thérapie physique (excluant le Laser) y compris l'extraction de comédons, un (1) ou plusieurs traitements par séance en dermatologie, chimiothérapie d'une lésion cutanée, cryothérapie d'une lésion"
+    },
+    {
+      "rank": 14,
+      "number": "15878",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > support médical à distance > support médical à distance - soins primaires",
+      "description": "Appel de support médical à distance - soins primaires au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 15,
+      "number": "08800",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 16,
+      "number": "06170",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "P — Gynécologie > Vulve et orifice inférieur du vagin > Excision conventionnelle ou au laser",
+      "description": "Excision conventionnelle ou au laser d'un patient pour ablation de tumeurs bénignes de la vulve (condylomes, naevi, varicocèles ou kystes)"
+    },
+    {
+      "rank": 17,
+      "number": "15789",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 18,
+      "number": "08553",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations à l'aide de la tomodensitométrie pour lésions non cutanées"
+    },
+    {
+      "rank": 19,
+      "number": "08803",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 20,
+      "number": "01153",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de plus de cinq (5) cm > premiers cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de plus de cinq (5) centimètres, premiers cinq (5) centimètres."
+    },
+    {
+      "rank": 21,
+      "number": "08802",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 22,
+      "number": "02534",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Fracture > réduction fermée",
+      "description": "Réduction fermée d'une fracture à l'épaule"
+    },
+    {
+      "rank": 23,
+      "number": "15887",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Formulaires et démarches afférentes relatifs à une demande d'aide médicale à mourir",
+      "description": "Rapport de consultation relatif à une demande d'aide médicale à mourir (avis du second médecin)"
+    },
+    {
+      "rank": 24,
+      "number": "01169",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Kystes sébacés > face, cuir chevelu, cou",
+      "description": "Excision chirurgicale d'un kyste sébacé de la face, du cuir chevelu ou du cou, incluant fermeture simple."
+    },
+    {
+      "rank": 25,
+      "number": "00017",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Vacation : Taux du tarif horaire multiplié par trois (3) (réf. : annexe XIV et article 17.03 de l'Entente) > Éthique clinique",
+      "description": "Consultation en éthique clinique, vacation (taux du tarif horaire multiplié par trois)"
+    },
+    {
+      "rank": 26,
+      "number": "01214",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle d'autres régions"
+    },
+    {
+      "rank": 27,
+      "number": "15790",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 28,
+      "number": "07069",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "T — Appareil visuel > Conjonctive",
+      "description": "Cryocoagulation de la conjonctive pour folliculite, conjonctive"
+    },
+    {
+      "rank": 29,
+      "number": "04033",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "J — Système cardiaque > Non thoracique > Thrombo-endartérectomie ouverte d'une artère périphérique > Réparation > Réparation d'une artère ou d'une veine majeure au niveau du tronc (thoracique ou abdominale) par",
+      "description": "Réparation d'une artère ou d'une veine majeure au niveau du tronc (thoracique ou abdominale) par suture simple, non thoracique"
+    },
+    {
+      "rank": 30,
+      "number": "01155",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > tronc, bras et jambes > diamètre de plus de cinq (5) cm > premiers cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du tronc, des bras ou des jambes, incluant fermeture simple, diamètre de plus de cinq (5) centimètres, premiers cinq (5) centimètres."
+    },
+    {
+      "rank": 31,
+      "number": "08776",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 32,
+      "number": "06040",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "N — Appareil génital mâle > Pénis > Incision",
+      "description": "Traitement chirurgical du priapisme sans anastomose vasculaire (toute technique), pénis"
+    },
+    {
+      "rank": 33,
+      "number": "00983",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "D — Anesthésie — réanimation > Divers",
+      "description": "Anesthésie pour télécobalthérapie"
+    },
+    {
+      "rank": 34,
+      "number": "01166",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > tronc, bras et jambes > diamètre de trois (3) cm ou moins",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du tronc, des bras ou des jambes, incluant fermeture simple, diamètre de trois (3) centimètres ou moins."
+    },
+    {
+      "rank": 35,
+      "number": "08805",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 36,
+      "number": "15805",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 29,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1754.401076992508,
+  "db_ms": 35.42029799427837
+}

@@ -1,0 +1,110 @@
+{
+  "patient_id": "CLI-2026-01231",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2209,
+      "output_tokens": 587,
+      "latency_ms": 3962.061869999161,
+      "started_at": "2026-10-08T14:19:14.979169Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2209,
+    "output_tokens": 587,
+    "llm_latency_ms": 3962.061869999161,
+    "wall_ms": 3962.5083680002717
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de cessation tabagique chez une patiente de 55 ans avec succès à 6 semaines. Découverte d'une MPOC légère (GOLD 1) à la spirométrie. Plan de sevrage progressif de la nicotine, counseling nutritionnel, vaccination à mettre à jour et suivi dans 4 semaines.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-07-28",
+      "time_start": "10:45",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de démarche de cessation tabagique amorcée il y a 2 mois",
+      "systems_or_body_regions_involved": [
+        "pulmonaire",
+        "cardiovasculaire",
+        "métabolique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Cessation tabagique réussie à 6 semaines; MPOC légère (GOLD 1) nouvellement objectivée par spirométrie",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "pulmonaire",
+        "cardiovasculaire"
+      ],
+      "notable_findings": "Sibilances expiratoires légères en fin d'expiration forcée, sans détresse; TA 122/76, FC 70, gain de poids de 2 kg depuis 2 mois"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Interprétation des résultats de spirométrie",
+        "body_site": null,
+        "technique_or_approach_mentioned": "spirométrie",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript",
+      "Heure de fin de la consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-28",
+      "actual": "2026-07-28"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:45",
+      "actual": "10:45"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

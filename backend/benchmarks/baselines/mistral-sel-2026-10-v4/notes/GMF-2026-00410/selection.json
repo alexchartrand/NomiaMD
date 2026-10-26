@@ -1,0 +1,131 @@
+{
+  "patient_id": "GMF-2026-00410",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 7691,
+      "output_tokens": 959,
+      "latency_ms": 6747.268015998998,
+      "started_at": "2026-10-09T17:40:30.130891Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 7691,
+    "output_tokens": 959,
+    "llm_latency_ms": 6747.268015998998,
+    "wall_ms": 6752.098083001329
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15804",
+    "15766",
+    "08776",
+    "15802",
+    "15812",
+    "15774",
+    "08819",
+    "15806",
+    "15808",
+    "15627",
+    "00125",
+    "00182",
+    "00344",
+    "00406",
+    "00647",
+    "00780",
+    "08848",
+    "08775",
+    "00290",
+    "00147",
+    "08777",
+    "08942",
+    "15052",
+    "00132",
+    "15814",
+    "00285",
+    "15789",
+    "15790",
+    "15639",
+    "15638",
+    "15641",
+    "15642",
+    "15643",
+    "98010",
+    "15640",
+    "15055",
+    "15626",
+    "15058",
+    "15810",
+    "01900"
+  ],
+  "prompt_chars": 30434,
+  "raw_code_count": 5,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15804",
+        "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "high",
+        "explanation": "Visite de suivi sur rendez-vous pour un patient inscrit, non vulnérable, de 52 ans, avec une clientèle de 1240 patients. Tous les critères sont remplis : suivi régulier, rendez-vous, patient inscrit et non vulnérable.",
+        "supporting_quote": "Suivi d'hypertension artérielle essentielle chez un patient de 52 ans. Rendez-vous: avec rendez-vous.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "08776",
+        "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+        "confidence": "low",
+        "explanation": "Le suivi concerne une hypertension artérielle, non un problème musculo-squelettique. Aucune mention d'un problème musculo-squelettique dans le résumé ou le transcript.",
+        "supporting_quote": "Suivi d'hypertension artérielle essentielle",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15802",
+        "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "medium",
+        "explanation": "La visite est un suivi, non une prise en charge initiale. Le patient est déjà sous traitement (amlodipine) et le suivi est régulier.",
+        "supporting_quote": "Suivi d'hypertension artérielle essentielle. Poursuivre amlodipine 5 mg die.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15766",
+        "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "low",
+        "explanation": "La visite est sur rendez-vous et le patient est inscrit, ce qui exclut ce code réservé aux patients non inscrits ou aux visites sans rendez-vous.",
+        "supporting_quote": "Rendez-vous: avec rendez-vous",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15774",
+        "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+        "confidence": "low",
+        "explanation": "La visite est sur rendez-vous et le patient est inscrit. De plus, il s'agit d'un suivi régulier, non d'une visite ponctuelle complexe.",
+        "supporting_quote": "Rendez-vous: avec rendez-vous. Suivi d'hypertension artérielle essentielle",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Aucune ambiguïté majeure. La durée de la consultation n'est pas mentionnée, mais cela n'affecte pas le choix du code pour une visite de suivi standard. Aucun acte diagnostique ou thérapeutique n'a été réalisé, donc aucun code de la catégorie C n'est applicable.",
+    "analysis": "Rencontre en cabinet (GMF des Rivières) pour un suivi planifié d'hypertension artérielle essentielle chez un patient inscrit de 52 ans, non vulnérable. Une seule visite a eu lieu : un suivi régulier sur rendez-vous, incluant anamnèse, examen physique (tension artérielle, fréquence cardiaque, poids, auscultation cardiaque et membres inférieurs) et ajustement du plan de suivi (prochain rendez-vous dans 6 mois, examens de laboratoire annuels). Aucune procédure diagnostique ou thérapeutique, aucun acte spécifique (grossesse, santé mentale, musculo-squelettique) n'a été réalisé. Le code doit correspondre à une visite de suivi pour un patient inscrit, non vulnérable, de moins de 80 ans, sur rendez-vous, avec une clientèle de 1240 patients."
+  }
+}

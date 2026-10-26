@@ -1,0 +1,537 @@
+{
+  "patient_id": "CLSC-2026-00133",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 525,
+      "output_tokens": null,
+      "latency_ms": 0.3294299967819825,
+      "started_at": "2026-10-08T15:44:05.468876Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 525,
+    "output_tokens": 0,
+    "llm_latency_ms": 0.3294299967819825,
+    "wall_ms": 32.62160799931735
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. CLSC des Monts (GMF-U en établissement). Grossesse, deuxième trimestre. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15145",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15159",
+          "relevance": 0.03128054738044739
+        },
+        {
+          "number": "15832",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "08867",
+          "relevance": 0.026198629289865494
+        },
+        {
+          "number": "15806",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15810",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08862",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15808",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08863",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15830",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08864",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08865",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08876",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15812",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15144",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08800",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00059",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08803",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15313",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08858",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Suivi de grossesse à 24 semaines d'aménorrhée pour patiente primigeste. Examen clinique normal avec mesure de la tension artérielle, du poids, de la hauteur utérine et auscultation des bruits cardiaques fœtaux. Prescription d'examens de laboratoire et de suivi échographique. Traitement symptomatique du reflux gastro-œsophagien.\nLieu (détail): CLSC des Monts (GMF-U en établissement)\nDate: 2026-09-10\nHeure de début: 11:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: oui\nTrimestre de grossesse: deuxième\nRéférence: non\nMotif de consultation: Suivi de grossesse à 24 semaines d'aménorrhée\nSystèmes/régions concernés: gastro-intestinal; génito-urinaire; cardiovasculaire\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Grossesse 24 SA évoluant normalement. RGO de grossesse.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: abdomen; cardiovasculaire\nConstatations: TA 112/68, poids 68,5 kg (+6,5 kg), HU 24 cm, BCF 145/min, bandelette urinaire : prot −, glu −\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le document.; Absence de mention explicite de l'heure de fin de la consultation.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15832",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15145",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "15812",
+          "relevance": 0.0317460335791111
+        },
+        {
+          "number": "15808",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "15830",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "15806",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15159",
+          "relevance": 0.03009049780666828
+        },
+        {
+          "number": "15810",
+          "relevance": 0.02943722903728485
+        },
+        {
+          "number": "15144",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "00059",
+          "relevance": 0.02877846732735634
+        },
+        {
+          "number": "15804",
+          "relevance": 0.02690502069890499
+        },
+        {
+          "number": "00985",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15313",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09338",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "06987",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "06430",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15314",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00125",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "06990",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "00837",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15145",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15832",
+      "rrf_score": 0.03279569892473118,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "15159",
+      "rrf_score": 0.031544957774465976,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément à l'examen de prise en charge d'une grossesse lorsque fait au cours du premier trimestre de grossesse, en cabinet, en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15806",
+      "rrf_score": 0.031009615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15808",
+      "rrf_score": 0.030798389007344232,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15810",
+      "rrf_score": 0.030309988518943745,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15830",
+      "rrf_score": 0.030117753623188408,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15812",
+      "rrf_score": 0.029827662395050816,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15144",
+      "rrf_score": 0.02821939586645469,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "15144"
+    },
+    {
+      "rank": 11,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "15144"
+    },
+    {
+      "rank": 12,
+      "number": "15762",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD, examen d'un patient de moins de 70 ans",
+      "expanded_from": "15144"
+    },
+    {
+      "rank": 13,
+      "number": "00059",
+      "rrf_score": 0.027650648360030512,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen de prise en charge de grossesse en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "15313",
+      "rrf_score": 0.026709401709401708,
+      "header_path": "B — Consultation, examen et visite > Vacation : Taux du tarif horaire multiplié par trois (3) (réf. : annexe XIV et article 17.03 de l'Entente) > Interruption volontaire de grossesse par médicament > Évaluation globale pour interruption volontaire par médicament d'une grossesse intra-utérine dont l'âge gestationnel est d'un maximum de 63 jours, incluant la visite, la thérapie médicale et le counseling",
+      "description": "Évaluation globale pour interruption volontaire par médicament d'une grossesse intra-utérine dont l'âge gestationnel est d'un maximum de 63 jours, incluant la visite, la thérapie médicale et le counseling, en cabinet, vacation (taux du tarif horaire multiplié par trois)",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "15407",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Vacation : Taux du tarif horaire multiplié par trois (3) (réf. : annexe XIV et article 17.03 de l'Entente) > Interruption volontaire de grossesse par médicament > Évaluation globale pour interruption volontaire par médicament d'une grossesse intra-utérine dont l'âge gestationnel est d'un maximum de 63 jours, incluant la visite, la thérapie médicale et le counseling",
+      "description": "Supplément compensatoire à l'évaluation globale pour interruption volontaire par médicament d'une grossesse intra-utérine (code 15313) lorsqu'effectuée en cabinet, vacation (taux du tarif horaire multiplié par trois)",
+      "expanded_from": "15313"
+    },
+    {
+      "rank": 16,
+      "number": "08867",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique collective, première période de trente (30) minutes en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "08862",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective)",
+      "description": "Psychothérapie individuelle, première période de trente (30) minutes, en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "08863",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective)",
+      "description": "Psychothérapie individuelle, par période de quinze (15) minutes supplémentaires, en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "08864",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective)",
+      "description": "Psychothérapie collective, première période de trente (30) minutes, en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "15804",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "08865",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective)",
+      "description": "Psychothérapie collective, par période de quinze (15) minutes supplémentaires, en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "00985",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "D — Anesthésie — réanimation > Divers",
+      "description": "Monitoring d'un fœtus de 24 semaines ou plus lors d'une chirurgie, autre que l'accouchement ou la césarienne, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "08876",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour",
+      "description": "Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "09338",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Endoscopie gastro-entérologique > Oesophagoscopie ou gastroscopie ou duodénoscopie ou les trois > Oesophage",
+      "description": "pHmétrie oesophagienne de vingt-quatre (24) heures, surveillance et interprétation, non informatisée, en gastroentérologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "06987",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 19 h à 24 h du lundi au vendredi (excluant un jour férié) et de 7 h à 24 h le samedi, dimanche ou un jour férié",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "06986",
+      "rrf_score": 0.0,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 7 h à 19 h du lundi au vendredi (excluant un jour férié)",
+      "expanded_from": "06987"
+    },
+    {
+      "rank": 27,
+      "number": "06988",
+      "rrf_score": 0.0,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 0 h à 7 h tous les jours",
+      "expanded_from": "06987"
+    },
+    {
+      "rank": 28,
+      "number": "08800",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "06430",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "P — Gynécologie > Trompes > Suture",
+      "description": "Suture d'une trompe, traitement chirurgical d'une grossesse tubaire (ectopique)",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "06429",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Trompes > Suture",
+      "description": "Suture d'une trompe, stérilisation, toute méthode, toute voie d'approche, unilatérale ou bilatérale, post-partum ou élective, avec ou sans curetage",
+      "expanded_from": "06430"
+    },
+    {
+      "rank": 31,
+      "number": "06451",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Trompes > Suture",
+      "description": "Suture d'une trompe, stérilisation, toute méthode, toute voie d'approche, unilatérale ou bilatérale, avec avortement thérapeutique",
+      "expanded_from": "06430"
+    },
+    {
+      "rank": 32,
+      "number": "15314",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Vacation : Taux du tarif horaire multiplié par trois (3) (réf. : annexe XIV et article 17.03 de l'Entente) > Interruption volontaire de grossesse par médicament > Évaluation globale pour interruption volontaire par médicament d'une grossesse intra-utérine dont l'âge gestationnel est d'un maximum de 63 jours, incluant la visite, la thérapie médicale et le counseling",
+      "description": "Évaluation globale pour interruption volontaire par médicament d'une grossesse intra-utérine dont l'âge gestationnel est d'un maximum de 63 jours, incluant la visite, la thérapie médicale et le counseling, en établissement, vacation (taux du tarif horaire multiplié par trois)",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "08803",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "00125",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Monitoring continu de la pression artérielle, par technique non invasive, par période de vingt-quatre (24) heures, interprétation",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "06990",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, samedi, dimanche ou un jour férié et de 19 h à 7 h du lundi au vendredi (excluant les jours fériés)",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "06989",
+      "rrf_score": 0.0,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, de 7 h à 19 h du lundi au vendredi (excluant les jours fériés)",
+      "expanded_from": "06990"
+    },
+    {
+      "rank": 37,
+      "number": "08858",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Intervention clinique individuelle première période de trente (30) minutes en établissement sauf en CLSC et en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "00837",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, première heure, incluant la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "00838",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, par quart d'heure ou portion de quart d'heure après la première heure, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": "00837"
+    },
+    {
+      "rank": 40,
+      "number": "09346",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, pour chaque patient supplémentaire traité simultanément lors de la première heure, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": "00837"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 31,
+    "panel_size": 610,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 0.43531499977689236,
+  "db_ms": 23.406002001138404
+}

@@ -14,6 +14,12 @@ function pickedFeeDetails(fee: ExtractedFee, label: string): string {
   return details && !label.includes(details) ? details : "";
 }
 
+// The picked fee's amount, "—" for a code with none.
+export function FeeAmount({ fees, feeIndex }: { fees: ExtractedFee[]; feeIndex: number }) {
+  const fee = fees[feeIndex];
+  return <>{fee ? formatAmount(fee) : "—"}</>;
+}
+
 interface FeePickerProps {
   code: string;
   fees: ExtractedFee[];
@@ -23,45 +29,37 @@ interface FeePickerProps {
   disabled?: boolean;
 }
 
-// A code's fee: a selector when it has several (by lieu, then role/context), else its amount.
+// A code's fee details: a selector when it has several (by lieu, then role/context), else its
+// lieu and details. The amount is FeeAmount's.
 export function FeePicker({ code, fees, feeIndex, lieu, onSelect, disabled = false }: FeePickerProps) {
   const options = buildFeeOptions(fees);
   const picked = options.find((o) => o.feeIndex === feeIndex && o.lieu === lieu);
   const pickedDetails = picked ? pickedFeeDetails(fees[feeIndex], picked.label) : "";
 
-  return (
-    <div className="flex flex-wrap items-center gap-[0.6rem]">
-      {options.length > 1 ? (
-        <>
-          <Select
-            containerClassName="w-fit max-w-[min(100%,20rem)]"
-            value={optionValue(feeIndex, lieu)}
-            disabled={disabled}
-            onChange={(event) => {
-              const chosen = options.find((o) => optionValue(o.feeIndex, o.lieu) === event.target.value);
-              if (chosen) onSelect(chosen.feeIndex, chosen.lieu);
-            }}
-            aria-label={`Tarif pour le code ${code}`}
-          >
-            {options.map((o) => (
-              <option key={optionValue(o.feeIndex, o.lieu)} value={optionValue(o.feeIndex, o.lieu)}>
-                {o.label}
-              </option>
-            ))}
-          </Select>
-          <span className="font-heading font-bold whitespace-nowrap">{formatAmount(fees[feeIndex])}</span>
-          {pickedDetails && <span className="min-w-0 text-[0.85rem] text-muted-foreground">{pickedDetails}</span>}
-        </>
-      ) : fees.length === 1 ? (
-        <>
-          <span className="font-heading font-bold whitespace-nowrap">{formatAmount(fees[0])}</span>
-          {singleFeeDetails(fees[0]) && (
-            <span className="min-w-0 text-[0.85rem] text-muted-foreground">{singleFeeDetails(fees[0])}</span>
-          )}
-        </>
-      ) : (
-        <span className="font-heading font-bold">—</span>
-      )}
-    </div>
-  );
+  if (options.length > 1) {
+    return (
+      <>
+        <Select
+          containerClassName="w-fit max-w-[min(100%,20rem)]"
+          className="h-7 text-sm md:text-sm"
+          value={optionValue(feeIndex, lieu)}
+          disabled={disabled}
+          onChange={(event) => {
+            const chosen = options.find((o) => optionValue(o.feeIndex, o.lieu) === event.target.value);
+            if (chosen) onSelect(chosen.feeIndex, chosen.lieu);
+          }}
+          aria-label={`Tarif pour le code ${code}`}
+        >
+          {options.map((o) => (
+            <option key={optionValue(o.feeIndex, o.lieu)} value={optionValue(o.feeIndex, o.lieu)}>
+              {o.label}
+            </option>
+          ))}
+        </Select>
+        {pickedDetails && <span className="min-w-0">{pickedDetails}</span>}
+      </>
+    );
+  }
+  const details = fees.length === 1 ? singleFeeDetails(fees[0]) : "";
+  return details ? <span className="min-w-0">{details}</span> : null;
 }

@@ -5,6 +5,7 @@ import {
   makeClaim,
   makeClaimLine,
   makeCodeHit,
+  makeDigest,
   makeEncounterDetail,
   makeEncounterPatient,
   makeEncounterRow,
@@ -117,6 +118,20 @@ describe("reviewing the proposed codes", () => {
     expect(total()).toHaveTextContent("50,00 $");
   });
 
+  it("shows the codes the model retained apart from the other possible ones", async () => {
+    serveEncounter(withCodes());
+    renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    const inGroup = (name: string) =>
+      within(screen.getByRole("region", { name }))
+        .getAllByRole("checkbox")
+        .map((box) => box.getAttribute("aria-label"));
+    expect(inGroup("Codes retenus")).toEqual(["Facturer le code 00103"]);
+    expect(inGroup("Autres possibilités")).toEqual(["Facturer le code 09001"]);
+    // The low-confidence possible code stays folded away.
+    expect(screen.getByText("Autres codes (1)")).toBeInTheDocument();
+  });
+
   it("starts with nothing ticked once the physician un-ticks it, and saving is disabled", async () => {
     serveEncounter(withCodes());
     const { user } = renderEncounter();
@@ -222,14 +237,76 @@ describe("reviewing the proposed codes", () => {
     expect(options.map((o) => o.textContent)).toEqual(["Autre — R = 1", "Autre — R = 2 — soir"]);
   });
 
-  it("shows what the physician must confirm, and the run's notes", async () => {
+  it("shows what the physician must confirm, not the model's own notes", async () => {
     const flagged = makeProposedCode({ code: "00103", needs_confirmation: ["Lieu de consultation à confirmer"] });
     const extraction = makeExtraction([flagged]);
-    extraction.billing.result.notes = "Note incomplète";
+    extraction.billing.notes = "Note incomplète";
     serveEncounter(makeEncounterDetail({ id: 5, extraction }));
     renderEncounter();
     expect(await screen.findByText("Lieu de consultation à confirmer")).toBeInTheDocument();
-    expect(screen.getByText("Note incomplète")).toBeInTheDocument();
+    expect(screen.queryByText("Note incomplète")).not.toBeInTheDocument();
+  });
+
+  it("summarizes the consultation above the codes, the note collapsed below them", async () => {
+    const summary = makeDigest({
+      reason_for_visit: "Toux",
+      procedures: ["Suture d'une lacération de 3 cm"],
+      billable_add_ons: ["Deplacement urgence", "Frais kilometrage"],
+      referral: { requester: "Médecin spécialiste", reason: "Évaluation" },
+      open_questions: ["Durée de la visite non précisée"],
+    });
+    serveEncounter(
+      makeEncounterDetail({
+        id: 5,
+        note_text: "Texte de la note.",
+        extraction: makeExtraction([makeProposedCode({ code: "00103" })], { summary }),
+      }),
+    );
+    renderEncounter();
+    expect(await screen.findByText("Consultation pour une toux depuis trois jours.")).toBeInTheDocument();
+    const facts = within(screen.getByLabelText("Éléments de la consultation"));
+    expect(facts.getByText("Toux")).toBeInTheDocument();
+    expect(screen.queryByText("Diagnostic")).not.toBeInTheDocument();
+    expect(facts.getByText("Suture d'une lacération de 3 cm")).toBeInTheDocument();
+    expect(facts.getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Deplacement urgence", "Frais kilometrage"]);
+    expect(facts.getByText("Médecin spécialiste · Évaluation")).toBeInTheDocument();
+    expect(within(screen.getByLabelText("À vérifier")).getByText("Durée de la visite non précisée")).toBeInTheDocument();
+    // Summary first, then the codes, then the note, closed.
+    const summaryTitle = screen.getByText("Résumé de la consultation");
+    const codesTitle = screen.getByText("Codes proposés");
+    const note = screen.getByText("Note reçue").closest("details")!;
+    expect(summaryTitle.compareDocumentPosition(codesTitle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(codesTitle.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(note).not.toHaveAttribute("open");
+  });
+
+  it("shows no summary for a run stored without one", async () => {
+    serveEncounter(withCodes());
+    renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByText("Résumé de la consultation")).not.toBeInTheDocument();
+  });
+
+  it("leaves out what the summary doesn't have", async () => {
+    serveEncounter(makeEncounterDetail({ id: 5, extraction: makeExtraction([], { summary: makeDigest() }) }));
+    renderEncounter();
+    expect(await screen.findByText("Consultation pour une toux depuis trois jours.")).toBeInTheDocument();
+    expect(screen.queryByText("Actes réalisés")).not.toBeInTheDocument();
+    expect(screen.queryByText("Référence reçue")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("À vérifier")).not.toBeInTheDocument();
+  });
+
+  it("folds a code's explanation until the physician asks why", async () => {
+    const code = makeProposedCode({ code: "00103", explanation: "Visite de suivi documentée." });
+    serveEncounter(makeEncounterDetail({ id: 5, extraction: makeExtraction([code]) }));
+    const { user } = renderEncounter();
+    const why = await screen.findByRole("button", { name: "Pourquoi le code 00103 ?" });
+    expect(screen.queryByText("Visite de suivi documentée.")).not.toBeInTheDocument();
+    await user.click(why);
+    expect(screen.getByText("Visite de suivi documentée.")).toBeInTheDocument();
+    expect(why).toHaveAttribute("aria-expanded", "true");
+    // Asking why never ticks or unticks the code.
+    expect(checkbox("00103")).toBeChecked();
   });
 
   it("says when no code is supported by the note", async () => {

@@ -1,0 +1,493 @@
+{
+  "patient_id": "GMF-2026-00302",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 644,
+      "output_tokens": null,
+      "latency_ms": 1237.1011490031378,
+      "started_at": "2026-10-08T14:18:51.367299Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 644,
+    "output_tokens": 0,
+    "llm_latency_ms": 1237.1011490031378,
+    "wall_ms": 1273.7205240118783
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi de grossesse de routine à 32 semaines d'aménorrhée pour une patiente de 32 ans (G1P0). Examen clinique normal, dépistage du diabète gestationnel négatif, anémie légère physiologique traitée par supplément de fer. Vaccin dcaT administré. Prochain rendez-vous dans 2 semaines.\nLieu (détail): Clinique GMF Boisé-des-Cèdres\nDate: 2026-06-09\nHeure de début: 11:15\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: oui\nTrimestre de grossesse: troisième\nRéférence: non\nMotif de consultation: Suivi de grossesse de routine à 32 semaines d'aménorrhée\nSystèmes/régions concernés: obstétrique; génital; hématologique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Grossesse à 32 semaines d'aménorrhée évoluant normalement, G1P0. Anémie légère physiologique de grossesse. Dépistage du diabète gestationnel négatif.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: abdomen; membres_inférieurs; signes_vitaux; cœur_fœtal\nConstatations: Hauteur utérine 32 cm, présentation céphalique, cœur fœtal 142 bpm, œdème léger des chevilles godet 1+, TA 118/74, pas de protéinurie à la bandelette\nActe réalisé 1 - Description: Administration du vaccin contre la coqueluche (dcaT)\nActe réalisé 1 - Site: bras\nActe réalisé 1 - Technique/approche: injection intramusculaire\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript; Heure de fin de consultation non indiquée",
+      "hits": [
+        {
+          "number": "15831",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15811",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15807",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "15159",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "15805",
+          "relevance": 0.03030998818576336
+        },
+        {
+          "number": "15145",
+          "relevance": 0.03015873022377491
+        },
+        {
+          "number": "15809",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "15144",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "00059",
+          "relevance": 0.02919863536953926
+        },
+        {
+          "number": "15803",
+          "relevance": 0.027402402833104134
+        },
+        {
+          "number": "00953",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06990",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06989",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00638",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "06987",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "06986",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "06464",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "06430",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "06988",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "15765",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Administration du vaccin contre la coqueluche (dcaT)",
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "20021",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "20024",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "20023",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "00474",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "09335",
+          "relevance": 0.02967032976448536
+        },
+        {
+          "number": "00161",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00432",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00152",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00429",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "98012",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00603",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00583",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00431",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00386",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00480",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00358",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00400",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "01023",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15831",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 2,
+      "number": "20022",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour, en cabinet"
+    },
+    {
+      "rank": 3,
+      "number": "15811",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 4,
+      "number": "20021",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en cabinet"
+    },
+    {
+      "rank": 5,
+      "number": "15807",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 6,
+      "number": "20024",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour, en établissement"
+    },
+    {
+      "rank": 7,
+      "number": "15159",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément à l'examen de prise en charge d'une grossesse lorsque fait au cours du premier trimestre de grossesse, en cabinet, en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 8,
+      "number": "20023",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en établissement"
+    },
+    {
+      "rank": 9,
+      "number": "15805",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 10,
+      "number": "00474",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen"
+    },
+    {
+      "rank": 11,
+      "number": "15145",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 12,
+      "number": "09335",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour"
+    },
+    {
+      "rank": 13,
+      "number": "15809",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 14,
+      "number": "00161",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Traitement d'hyposensibilisation au venin d'insecte, une (1) ou plusieurs injections par séance, allergie"
+    },
+    {
+      "rank": 15,
+      "number": "15144",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 16,
+      "number": "00432",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > trachée et bronches (incluant l'intubation et s'il y a lieu la laryngoscopie) par intubation trachéo-bronchique",
+      "description": "Injection de médicament ou de substance thérapeutique dans la trachée et les bronches (incluant l'intubation et s'il y a lieu la laryngoscopie) par intubation trachéo-bronchique (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 17,
+      "number": "00059",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen de prise en charge de grossesse en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 18,
+      "number": "00152",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie"
+    },
+    {
+      "rank": 19,
+      "number": "15803",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 20,
+      "number": "00429",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > cornets du nez",
+      "description": "Injection de médicament ou de substance thérapeutique dans les cornets du nez"
+    },
+    {
+      "rank": 21,
+      "number": "00953",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 22,
+      "number": "98012",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure"
+    },
+    {
+      "rank": 23,
+      "number": "06990",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, samedi, dimanche ou un jour férié et de 19 h à 7 h du lundi au vendredi (excluant les jours fériés)"
+    },
+    {
+      "rank": 24,
+      "number": "00603",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, chaque injection subséquente à la même séance"
+    },
+    {
+      "rank": 25,
+      "number": "06989",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, de 7 h à 19 h du lundi au vendredi (excluant les jours fériés)"
+    },
+    {
+      "rank": 26,
+      "number": "09334",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)"
+    },
+    {
+      "rank": 27,
+      "number": "00638",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 28,
+      "number": "00583",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, première injection"
+    },
+    {
+      "rank": 29,
+      "number": "06987",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 19 h à 24 h du lundi au vendredi (excluant un jour férié) et de 7 h à 24 h le samedi, dimanche ou un jour férié"
+    },
+    {
+      "rank": 30,
+      "number": "00431",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou une articulation ou les deux incluant aspiration préliminaire (maximum trois (3))"
+    },
+    {
+      "rank": 31,
+      "number": "06986",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 7 h à 19 h du lundi au vendredi (excluant un jour férié)"
+    },
+    {
+      "rank": 32,
+      "number": "00386",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électromyographie > Réponses cutanées sympatiques (RCS)",
+      "description": "Réponses cutanées sympatiques (RCS), stimulations du nerf médian avec enregistrement à partir de la main et du pied contra-latéral, en établissement ou en cabinet privé"
+    },
+    {
+      "rank": 33,
+      "number": "06464",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "P — Gynécologie > Divers",
+      "description": "Injection intrautérine ou intrafoetale sous guidage échographique à partir de vingt (20) semaines de grossesse en prévision d'un avortement thérapeutique, une ou plusieurs, incluant l'amniocentèse, le cas échéant, et l'examen"
+    },
+    {
+      "rank": 34,
+      "number": "00480",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > injection intrathécale de médicaments",
+      "description": "Injection intrathécale de médicaments, dans le cadre d'hyperalimentation, injection, insufflation ou ponction. Si injection de phénol, la rémunération est doublée (MOD 052)."
+    },
+    {
+      "rank": 35,
+      "number": "06430",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "P — Gynécologie > Trompes > Suture",
+      "description": "Suture d'une trompe, traitement chirurgical d'une grossesse tubaire (ectopique)"
+    },
+    {
+      "rank": 36,
+      "number": "00358",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électromyographie > Mesure du seuil thermique (ST)",
+      "description": "Mesure du seuil thermique (ST) enregistré à partir de deux sites ipsi ou contra-latéraux, stimulation avec un thermode, en établissement ou en cabinet privé"
+    },
+    {
+      "rank": 37,
+      "number": "06988",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant, si le médecin consultant effectue la césarienne ou l'accouchement, de 0 h à 7 h tous les jours"
+    },
+    {
+      "rank": 38,
+      "number": "00400",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Cure d'hyposensibilisation (excluant le coût du produit injecté) en cabinet seulement, lorsque faite sans examen; une seule ou plusieurs injections dans la même séance, allergie"
+    },
+    {
+      "rank": 39,
+      "number": "15765",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 40,
+      "number": "01023",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Hématome",
+      "description": "Évacuation d'un hématome ou d'un sérome sus-fascial ou sus-aponévrotique par ponction, lorsque l'incision et drainage est contre-indiqué, une ou plusieurs ponctions, en cabinet ou non"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 32,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1238.0978840083117,
+  "db_ms": 35.029447011766024
+}

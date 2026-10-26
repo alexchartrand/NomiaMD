@@ -1,0 +1,133 @@
+{
+  "patient_id": "CLI-2026-01244",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1881,
+      "output_tokens": 975,
+      "latency_ms": 5737.752408997039,
+      "started_at": "2026-10-08T15:44:17.353269Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1881,
+    "output_tokens": 975,
+    "llm_latency_ms": 5737.752408997039,
+    "wall_ms": 5738.026849998278
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation de suivi pour hypothyroïdie stable et évaluation de lésions cutanées multiples. Excision d'un naevus suspect au dos, biopsie d'une lésion kératosique à l'avant-bras gauche et cryothérapie de verrues vulgaires à la main droite. Anesthésie locale utilisée pour les procédures cutanées. Résultats de pathologie en attente.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-10-01",
+      "time_start": "13:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi d'hypothyroïdie asymptomatique sous lévothyroxine et évaluation de lésions cutanées multiples (dos, avant-bras gauche, main droite).",
+      "systems_or_body_regions_involved": [
+        "endocrinien",
+        "cutané",
+        "dos",
+        "avant-bras_gauche",
+        "main_droite"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Hypothyroïdie stable sous lévothyroxine 100 mcg (TSH 2,1). Lésions cutanées : naevus suspect au dos, lésion kératosique à l'avant-bras gauche (R/O CBC superficiel vs kératose actinique), verrues vulgaires à la main droite.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cutané",
+        "dos",
+        "avant-bras_gauche",
+        "main_droite"
+      ],
+      "notable_findings": "Naevus de 0,8 cm au dos (région scapulaire droite) avec bords irréguliers et 2 teintes, lésion kératosique rosée de 6 mm à l'avant-bras gauche, 3 verrues vulgaires dorsales à la main droite."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Excision chirurgicale complète d'un naevus suspect au dos (région scapulaire droite) avec marge de 2 mm, fermeture par suture simple en 3 points.",
+        "generic_act": "excision de lésion cutanée",
+        "body_site": "dos (région scapulaire droite)",
+        "technique_or_approach_mentioned": "fuseau, fermeture simple en 3 points",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "les_deux"
+      },
+      {
+        "procedure_description": "Biopsie au punch de 4 mm d'une lésion kératosique rosée à l'avant-bras gauche, fermeture par 1 point.",
+        "generic_act": "biopsie cutanée",
+        "body_site": "avant-bras gauche",
+        "technique_or_approach_mentioned": "punch 4 mm, 1 point",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Cryothérapie à l'azote liquide de 3 verrues vulgaires dorsales à la main droite (2 cycles).",
+        "generic_act": "cryothérapie de verrue",
+        "body_site": "main droite",
+        "technique_or_approach_mentioned": "2 cycles",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "plateau_chirurgie"
+    ],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le texte.",
+      "Heure de fin de la consultation non indiquée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-01",
+      "actual": "2026-10-01"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "13:30",
+      "actual": "13:30"
+    }
+  ],
+  "stats": {
+    "procedures": 3,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 5,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

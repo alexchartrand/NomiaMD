@@ -1,0 +1,579 @@
+{
+  "patient_id": "GMF-2026-00314",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 612,
+      "output_tokens": null,
+      "latency_ms": 2227.4403359915596,
+      "started_at": "2026-10-08T14:20:00.495439Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 612,
+    "output_tokens": 0,
+    "llm_latency_ms": 2227.4403359915596,
+    "wall_ms": 2262.6641480019316
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Première visite de prise en charge d'un patient de 68 ans nouvellement inscrit au GMF, avec MPOC, diabète de type 2 et hypertension artérielle. Examen physique réalisé, bilan paraclinique et références en ophtalmologie et soins de pieds prescrits. Interprète présent pour la consultation.\nLieu (détail): Clinique GMF Boisé-des-Cèdres\nDate: 2026-10-05\nHeure de début: 10:00\nDurée (minutes): 40.0\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Première visite de prise en charge pour inscription comme patient vulnérable (MPOC, DB2) et souhait d'avoir un médecin de famille.\nSystèmes/régions concernés: respiratoire; métabolique; cardiovasculaire; neurologique_périphérique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: oui\nDiagnostic/impression: MPOC probablement modérée non documentée, DB2 avec contrôle inconnu et neuropathie périphérique, HTA non contrôlée.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: thorax; cœur; pieds; fond_d'œil\nConstatations: TA 146/88, FC 80, SatO2 94 % AA, IMC 29. MV diminué globalement, expirium prolongé, pas de crépitants. Sensibilité diminuée au monofilament (2/10 sites) aux pieds, pas de plaie. Fond d'œil non fait.\nAjouts possiblement facturables: communication_interprète; frais_kilometrage_interprète\nÉlément incertain: La durée de la consultation est estimée à 40 minutes (mentionnée pour le prochain rendez-vous), mais non explicitement indiquée pour cette rencontre.",
+      "hits": [
+        {
+          "number": "15827",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "15807",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "15821",
+          "relevance": 0.030282331630587578
+        },
+        {
+          "number": "15805",
+          "relevance": 0.030117753893136978
+        },
+        {
+          "number": "15825",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "15775",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "15767",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "15829",
+          "relevance": 0.028371628373861313
+        },
+        {
+          "number": "15811",
+          "relevance": 0.02758360095322132
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02741784043610096
+        },
+        {
+          "number": "15789",
+          "relevance": 0.026198629289865494
+        },
+        {
+          "number": "15823",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15819",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15809",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08800",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15188",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15667",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08776",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08803",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "00060",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_interprète",
+      "hits": [
+        {
+          "number": "15188",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15898",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "00783",
+          "relevance": 0.028594771400094032
+        },
+        {
+          "number": "30010",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "04577",
+          "relevance": 0.027598019689321518
+        },
+        {
+          "number": "04578",
+          "relevance": 0.026491228491067886
+        },
+        {
+          "number": "04576",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "04568",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "00157",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00889",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00156",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09421",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00158",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08408",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00160",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08409",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04567",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08413",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00735",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00347",
+          "relevance": 0.014705882407724857
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "frais_kilometrage_interprète",
+      "hits": [
+        {
+          "number": "00080",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "08876",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "08861",
+          "relevance": 0.03102453052997589
+        },
+        {
+          "number": "00783",
+          "relevance": 0.02919863536953926
+        },
+        {
+          "number": "15882",
+          "relevance": 0.02878289483487606
+        },
+        {
+          "number": "00158",
+          "relevance": 0.02742537297308445
+        },
+        {
+          "number": "00160",
+          "relevance": 0.02694394253194332
+        },
+        {
+          "number": "00157",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15188",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00156",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00402",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08408",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08409",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08413",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00748",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00403",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "30010",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00404",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15884",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00127",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15188",
+      "rrf_score": 0.04470588235294118,
+      "header_path": "B — Consultation, examen et visite",
+      "description": "Supplément pour la communication par l'intermédiaire d'un interprète, pour un patient inscrit, en cabinet, à domicile ou en établissement"
+    },
+    {
+      "rank": 2,
+      "number": "00783",
+      "rrf_score": 0.03200204813108039,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 3,
+      "number": "00157",
+      "rrf_score": 0.029631255487269532,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 4,
+      "number": "00158",
+      "rrf_score": 0.029273504273504274,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > corticale",
+      "description": "Interprétation d'une audiométrie corticale"
+    },
+    {
+      "rank": 5,
+      "number": "30010",
+      "rrf_score": 0.029030910609857977,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme en établissement, incluant l'enregistrement du tracé, la lecture du tracé enregistré sur document permanent, la rédaction et la signature du rapport, sa communication et son intégration au dossier"
+    },
+    {
+      "rank": 6,
+      "number": "00156",
+      "rrf_score": 0.02877846790890269,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tonale et vocale",
+      "description": "Interprétation d'une audiométrie tonale et vocale"
+    },
+    {
+      "rank": 7,
+      "number": "00160",
+      "rrf_score": 0.028665028665028666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tonale",
+      "description": "Interprétation d'une audiométrie tonale"
+    },
+    {
+      "rank": 8,
+      "number": "08408",
+      "rrf_score": 0.027783137179239824,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > non sélective",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, non sélective, interprétation, angioradiologie"
+    },
+    {
+      "rank": 9,
+      "number": "08409",
+      "rrf_score": 0.027222222222222224,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective autre que spinale, par vaisseau, maximum 4",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective autre que spinale, par vaisseau, maximum 4, interprétation, angioradiologie"
+    },
+    {
+      "rank": 10,
+      "number": "08413",
+      "rrf_score": 0.02668564312399929,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective, spinale, par vaisseau, maximum 8 vaisseaux",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective, spinale, par vaisseau, maximum 8 vaisseaux, interprétation, angioradiologie"
+    },
+    {
+      "rank": 11,
+      "number": "15827",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente vulnérable inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 12,
+      "number": "00080",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > jusqu'à soixante (60) kilomètres simples à partir du point de départ énoncé à la règle 2.4.2 du P.G. (distance dans un sens seulement), le kilomètre",
+      "description": "Frais de kilométrage pour surveillance, première demi-heure non rémunérée, par quart d'heure supplémentaire"
+    },
+    {
+      "rank": 13,
+      "number": "15807",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 14,
+      "number": "15898",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)"
+    },
+    {
+      "rank": 15,
+      "number": "08876",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour",
+      "description": "Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour"
+    },
+    {
+      "rank": 16,
+      "number": "15821",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 17,
+      "number": "08861",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "description": "Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective"
+    },
+    {
+      "rank": 18,
+      "number": "15805",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 19,
+      "number": "15825",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente vulnérable inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 20,
+      "number": "04577",
+      "rrf_score": 0.015625,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire multiple, au niveau des ventricules"
+    },
+    {
+      "rank": 21,
+      "number": "15882",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Supplément pour déplacement selon les dispositions du sous-paragraphe 2.2.6 B-1 du préambule général par quinze (15) minutes consécutives à la suite d'une demande d'aide médicale à mourir, maximum de six (6) périodes pour l'aller-retour"
+    },
+    {
+      "rank": 22,
+      "number": "15775",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 23,
+      "number": "04578",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Agrandissement ou création de communication interventriculaire, au niveau des ventricules"
+    },
+    {
+      "rank": 24,
+      "number": "15767",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit"
+    },
+    {
+      "rank": 25,
+      "number": "04576",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire unique ou postinfarctus, au niveau des ventricules"
+    },
+    {
+      "rank": 26,
+      "number": "15829",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente vulnérable inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 27,
+      "number": "04568",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, au niveau des oreillettes"
+    },
+    {
+      "rank": 28,
+      "number": "15811",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 29,
+      "number": "08775",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 30,
+      "number": "00889",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électroencéphalographie",
+      "description": "Corticographie effectuée par un (1) médecin, comprenant l'enregistrement, l'interprétation des données, la rédaction d'un rapport, sa communication et son incorporation au dossier du patient"
+    },
+    {
+      "rank": 31,
+      "number": "15789",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 32,
+      "number": "00402",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Examen",
+      "description": "Examen microbiologique à l'état frais et/ou après coloration d'un frottis cervico-vaginal"
+    },
+    {
+      "rank": 33,
+      "number": "15823",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 34,
+      "number": "09421",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électroencéphalographie",
+      "description": "Corticographie effectuée par deux (2) médecins, chacun, comprenant l'enregistrement, l'interprétation des données, la rédaction d'un rapport, sa communication et son incorporation au dossier du patient"
+    },
+    {
+      "rank": 35,
+      "number": "15819",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite périodique",
+      "description": "Visite périodique d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 36,
+      "number": "15809",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 37,
+      "number": "08800",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 38,
+      "number": "00748",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 39,
+      "number": "00403",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Examen",
+      "description": "Examen microbiologique, bactériologique, mycologique, etc. incluant l'examen microscopique à l'état frais et après coloration et la culture, par site (cabinet seulement)"
+    },
+    {
+      "rank": 40,
+      "number": "15667",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 68,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 2228.669475996867,
+  "db_ms": 33.27631800493691
+}

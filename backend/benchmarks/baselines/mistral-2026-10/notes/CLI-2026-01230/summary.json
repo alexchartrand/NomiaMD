@@ -1,0 +1,100 @@
+{
+  "patient_id": "CLI-2026-01230",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2173,
+      "output_tokens": 523,
+      "latency_ms": 3108.7377380026737,
+      "started_at": "2026-10-08T14:19:09.736304Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2173,
+    "output_tokens": 523,
+    "llm_latency_ms": 3108.7377380026737,
+    "wall_ms": 3109.3820429960033
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Communication téléphonique entre la médecin de famille et l'oncologue traitant pour coordonner le suivi post-traitement d'un cancer du sein. Résultat de mammographie de contrôle (asymétrie focale, BI-RADS 3) discuté, avec plan de contrôle à 6 mois confirmé. Aucune intervention directe sur la patiente lors de cet échange.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-06-23",
+      "time_start": "11:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Communication téléphonique avec l'oncologue traitant pour coordination du suivi post-traitement d'un cancer du sein et clarification d'un résultat de mammographie de contrôle (asymétrie focale, BI-RADS 3).",
+      "systems_or_body_regions_involved": [
+        "sein",
+        "radiologie"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": null,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Communication interprofessionnelle complétée avec l'oncologue traitant afin de clarifier la conduite à tenir devant un résultat radiologique ambigu et d'assurer la coordination du suivi partagé.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": false,
+      "regions_or_systems_examined": [],
+      "notable_findings": null
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "communication_specialiste"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de l'échange téléphonique non précisée dans le document.",
+      "La patiente n'était pas présente lors de l'échange, mais a été informée ultérieurement."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-06-23",
+      "actual": "2026-06-23"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "11:00",
+      "actual": "11:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

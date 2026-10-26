@@ -1,0 +1,107 @@
+{
+  "patient_id": "GMF-2026-00307",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2403,
+      "output_tokens": 680,
+      "latency_ms": 4433.849231005297,
+      "started_at": "2026-10-08T15:43:48.751124Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2403,
+    "output_tokens": 680,
+    "llm_latency_ms": 4433.849231005297,
+    "wall_ms": 4434.149522989173
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de diabète de type 2 nouvellement diagnostiqué chez un patient de 58 ans, avec ajustement du traitement (metformine) et ajout d'une statine (atorvastatine) pour dyslipidémie. Examen physique complet réalisé, incluant évaluation des pieds et bilan paraclinique récent. Références en nutrition et ophtalmologie planifiées.",
+    "encounter_setting": {
+      "location_detail": "Clinique GMF Boisé-des-Cèdres",
+      "date": "2026-06-16",
+      "time_start": "14:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Fatima Ouedraogo, MD",
+      "reason_for_referral": "Référence en nutrition pour counseling alimentaire culturellement adapté et en ophtalmologie pour examen du fond d'œil de dépistage",
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de diabète de type 2 nouvellement diagnostiqué il y a 3 mois",
+      "systems_or_body_regions_involved": [
+        "endocrinien",
+        "cardiovasculaire",
+        "métabolique",
+        "pieds"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "1. Diabète de type 2 en amélioration sous metformine (HbA1c 7,3 %, cible < 7,0 %); 2. Dyslipidémie non traitée à considérer pour statine en prévention",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "pieds",
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "Signes vitaux : TA 136/84, FC 76, poids 82 kg, IMC 27,7; Examen des pieds : sensibilité au monofilament préservée bilatéralement, pouls pédieux palpables, pas de lésion; Cardio-pulmonaire : sans particularité"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "communication_interprète"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non mentionnée dans le document",
+      "Absence de mention explicite de l'utilisation d'un interprète en présentiel (téléphonique seulement)",
+      "Absence de mention de la durée de l'utilisation de l'interprète"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-06-16",
+      "actual": "2026-06-16"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:30",
+      "actual": "14:30"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 3,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

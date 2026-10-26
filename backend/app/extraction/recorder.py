@@ -6,9 +6,11 @@ Each step opens its own short session_scope rather than taking the request's DbS
 for the same reason as ScopedBillingContextBuilder (scoped_context.py): the pipeline in
 between makes two multi-second LLM calls that must not hold a pooled connection."""
 
+from collections.abc import Sequence
 from datetime import date
 
-from app.extraction.models import ExtractionResult
+from app.extraction.pipeline import PipelineResult
+from app.llm.usage import LLMCallRecord
 from app.intake import Channel, content_hash
 from app.postgresdb import (
     Encounter,
@@ -18,8 +20,12 @@ from app.postgresdb import (
     ExtractionRun,
     ExtractionRunInput,
     ExtractionStageInput,
+    LLMCallOwner,
+    LLMCallRepository,
     session_scope,
 )
+from app.ramq_codes import CodeSelector
+from app.summary import ConsultationSummarizer
 
 # TranscriptSource.system when the request doesn't say.
 DEFAULT_SOURCE_SYSTEM = "manual"
@@ -57,33 +63,56 @@ class ExtractionRecorder:
         user_id: int,
         patient_id: int,
         service_date: date | None,
-        stages: list[ExtractionResult],
+        result: PipelineResult,
+        llm_calls: Sequence[LLMCallRecord] = (),
     ) -> ExtractionRun:
-        """The run, and the service date the summary found if the encounter had none yet,
-        in one transaction."""
+        """The run, one stored stage per LLM step, the metered calls that produced it, and the
+        service date the summary found if the encounter had none yet, in one transaction."""
         async with session_scope() as session:
             encounters = EncounterRepository(session)
             encounter = await encounters.get_for_user(encounter_id, user_id)
             if encounter is not None and encounter.service_date is None and service_date is not None:
                 await encounters.set_service_date(encounter, service_date)
-            return await ExtractionRepository(session).create_run(
+            run = await ExtractionRepository(session).create_run(
                 ExtractionRunInput(
                     user_id=user_id,
                     encounter_id=encounter_id,
                     patient_id=patient_id,
                     stages=[
-                        ExtractionStageInput(task=stage.task, model=stage.model, result=stage.result.model_dump())
-                        for stage in stages
+                        ExtractionStageInput(
+                            task=ConsultationSummarizer.NAME,
+                            model=result.summary_model,
+                            result=result.summary.model_dump(),
+                        ),
+                        ExtractionStageInput(
+                            task=CodeSelector.NAME, model=result.billing_model, result=result.billing.model_dump()
+                        ),
                     ],
                 )
             )
+            await LLMCallRepository(session).add_many(
+                llm_calls, LLMCallOwner(user_id=user_id, encounter_id=encounter_id, run_id=run.id)
+            )
+            return run
 
-    async def record_failure(self, *, encounter_id: int, user_id: int, error: BaseException) -> None:
+    async def record_failure(
+        self,
+        *,
+        encounter_id: int,
+        user_id: int,
+        error: BaseException,
+        llm_calls: Sequence[LLMCallRecord] = (),
+    ) -> None:
+        """The error on the encounter, plus the calls made before it — a failed extraction
+        still spent them."""
         async with session_scope() as session:
             encounters = EncounterRepository(session)
             encounter = await encounters.get_for_user(encounter_id, user_id)
             if encounter is not None:
                 await encounters.record_extraction_error(encounter, f"{type(error).__name__}: {error}")
+            await LLMCallRepository(session).add_many(
+                llm_calls, LLMCallOwner(user_id=user_id, encounter_id=encounter_id if encounter else None)
+            )
 
 
 def get_extraction_recorder() -> ExtractionRecorder:

@@ -1,0 +1,105 @@
+{
+  "patient_id": "CLI-2026-01222",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2287,
+      "output_tokens": 506,
+      "latency_ms": 4106.171082996298,
+      "started_at": "2026-10-08T15:43:36.440384Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2287,
+    "output_tokens": 506,
+    "llm_latency_ms": 4106.171082996298,
+    "wall_ms": 4106.590513008996
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en pédiatrie pour otalgie droite avec fièvre chez un enfant de 4 ans non inscrit, avec diagnostic d'otite moyenne aiguë droite. Prescription d'amoxicilline et recommandations de suivi. Pas de référence initiale.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-03-10",
+      "time_start": "16:20",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Douleur à l'oreille droite et fièvre depuis 24 heures chez un enfant de 4 ans.",
+      "systems_or_body_regions_involved": [
+        "oreille_droite",
+        "système_respiratoire",
+        "système_général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Otite moyenne aiguë droite.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "oreille_droite",
+        "oreille_gauche",
+        "oropharynx",
+        "ganglions_cervicaux",
+        "système_respiratoire"
+      ],
+      "notable_findings": "Membrane tympanique droite bombée, érythémateuse et opaque; tympan gauche normal. Fièvre à 38,6 °C."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement indiquée dans le transcript.",
+      "Absence de mention de l'heure de fin de la consultation."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-03-10",
+      "actual": "2026-03-10"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "16:20",
+      "actual": "16:20"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

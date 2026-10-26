@@ -1,0 +1,165 @@
+{
+  "patient_id": "HOP-2026-00731",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 10602,
+      "output_tokens": 1687,
+      "latency_ms": 12359.250124005484,
+      "started_at": "2026-10-08T17:07:01.851832Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 10602,
+    "output_tokens": 1687,
+    "llm_latency_ms": 12359.250124005484,
+    "wall_ms": 12366.33908499789
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15766",
+    "15774",
+    "15830",
+    "15806",
+    "15627",
+    "03139",
+    "15626",
+    "00639",
+    "15628",
+    "00674",
+    "08933",
+    "00999",
+    "15768",
+    "00997",
+    "15639",
+    "15638",
+    "15641",
+    "15642",
+    "15643",
+    "09395",
+    "09396",
+    "15616",
+    "08511",
+    "15629",
+    "00927",
+    "00928",
+    "15617",
+    "06040",
+    "06026",
+    "06027",
+    "06028",
+    "15667",
+    "15622",
+    "15648",
+    "00838",
+    "00837",
+    "15058",
+    "00998",
+    "09346",
+    "15052",
+    "03141",
+    "15640",
+    "15812",
+    "15789",
+    "01900",
+    "15647"
+  ],
+  "prompt_chars": 42249,
+  "raw_code_count": 7,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15640",
+        "description": "Visite de suivi, subséquente d'un patient admis dans un CHSGS ou CHSP (soins de courte durée), niveau A",
+        "confidence": "high",
+        "explanation": "Visite de suivi subséquente en unité de médecine (soins de courte durée) pour un patient hospitalisé, avec examen et ajustement du traitement. Le code 15640 est spécifique aux visites subséquentes en CHSGS/CHSP (niveau A).",
+        "supporting_quote": "Tournée — J3 de traitement pour pneumonie lobaire inférieure droite; Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée); Crépitants à la base droite diminués par rapport à l'admission, absence de tirage, saturation en oxygène améliorée (94 % AA vs 89 % à l'admission); Cesser ceftriaxone IV → amoxicilline-clavulanate PO",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15648",
+        "description": "Visite de suivi, première d'un patient admis dans un CHSGS ou CHSP (soins de courte durée), niveau B",
+        "confidence": "medium",
+        "explanation": "Bien que la visite soit un suivi, le code 15648 s'applique uniquement à la *première* visite de suivi. Ici, il s'agit d'une visite subséquente (J3), donc ce code ne s'applique pas. Inclus pour exhaustivité car le niveau (A vs B) dépend du statut du patient (non établi ici).",
+        "supporting_quote": "Tournée — J3 de traitement pour pneumonie lobaire inférieure droite",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit ou non pour déterminer si le niveau B pourrait s'appliquer à une première visite (non pertinent ici, car visite subséquente)."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15639",
+        "description": "Visite de suivi, première d'un patient admis dans un CHSGS ou CHSP (soins de courte durée), niveau A",
+        "confidence": "medium",
+        "explanation": "Ce code s'applique à la *première* visite de suivi après admission. Ici, la visite est subséquente (J3), donc 15639 ne s'applique pas. Inclus car le niveau A est compatible avec le contexte, mais la temporalité (première vs subséquente) est déterminante.",
+        "supporting_quote": "Tournée — J3 de traitement pour pneumonie lobaire inférieure droite",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15638",
+        "description": "Visite de prise en charge d'un patient admis dans un CHSGS ou CHSP (soins de courte durée), niveau A",
+        "confidence": "low",
+        "explanation": "Ce code s'applique à la *visite de prise en charge initiale* (admission). Ici, il s'agit d'un suivi subséquent (J3), donc non applicable. Exclus des codes finaux car clairement inapproprié.",
+        "supporting_quote": "Tournée — J3 de traitement pour pneumonie lobaire inférieure droite",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15766",
+        "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle ≥ 500 patients",
+        "confidence": "medium",
+        "explanation": "Bien que la visite soit sans rendez-vous et que la clientèle soit ≥ 500, ce code s'applique aux *visites ponctuelles en cabinet ou à domicile*, non en milieu hospitalier. Le contexte ici est clairement hospitalier (CHSGS, unité de médecine).",
+        "supporting_quote": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)",
+        "needs_confirmation": [
+          "Confirmer le statut d'inscription du patient (inscrit/non inscrit) et sa vulnérabilité pour valider l'exclusion définitive."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15774",
+        "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle ≥ 500 patients",
+        "confidence": "medium",
+        "explanation": "Même raison que pour 15766 : applicable aux visites ponctuelles en cabinet/domicile, non en milieu hospitalier. La complexité de la visite (révision de traitement, examen) ne change pas le contexte (hospitalier).",
+        "supporting_quote": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée); Cesser ceftriaxone IV → amoxicilline-clavulanate PO",
+        "needs_confirmation": [
+          "Confirmer le statut d'inscription du patient (inscrit/non inscrit) et sa vulnérabilité pour valider l'exclusion définitive."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15768",
+        "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle ≥ 500 patients",
+        "confidence": "medium",
+        "explanation": "Applicable aux visites ponctuelles en cabinet/domicile pour patients vulnérables. Le contexte hospitalier et l'âge (66 ans) excluent ce code, mais la vulnérabilité n'est pas établie.",
+        "supporting_quote": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)",
+        "needs_confirmation": [
+          "Confirmer le statut de vulnérabilité du patient pour valider l'exclusion définitive."
+        ],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Le statut d'inscription du patient (inscrit/non inscrit auprès du Dr Tremblay) et sa vulnérabilité au sens de la RAMQ ne sont pas établis. Ces axes sont critiques pour exclure définitivement les codes de visites ponctuelles (15766, 15774, 15768). La visite est clairement un suivi subséquent en CHSGS (soins de courte durée), donc 15640 est le code le plus approprié. Aucune procédure ou acte diagnostique/thérapeutique n'est documenté, donc aucun code de la section C, D, H ou N ne s'applique.",
+    "analysis": "Rencontre en milieu hospitalier, dans une unité de soins de courte durée (CHSGS, 4e Nord). Il s'agit d'une visite de suivi subséquente pour un patient de 66 ans hospitalisé depuis 3 jours pour une pneumonie lobaire inférieure droite. Le médecin effectue une tournée sans rendez-vous, avec anamnèse, examen physique (pulmonaire), révision du traitement (passage à une antibiothérapie orale) et planification du congé. Aucune procédure diagnostique ou thérapeutique spécifique n'est mentionnée. Le patient n'est pas en grossesse, et aucune référence à un autre médecin n'est indiquée. La clientèle du médecin est de 900 patients (donc ≥ 500). Le statut d'inscription du patient et sa vulnérabilité ne sont pas établis. La visite correspond à un suivi subséquent en soins de courte durée, niveau A, car elle est effectuée après l'admission et ne constitue pas une première visite de prise en charge ou de suivi."
+  }
+}

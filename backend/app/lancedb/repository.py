@@ -11,7 +11,9 @@ from lancedb.query import MultiMatchQuery
 
 from app.lancedb.code_versions import ICodeTableProvider
 from app.lancedb.eligibility import CodeEligibilityFilter, CodeEligibilityWhereBuilder
+from app.lancedb.hybrid import HybridSearch
 from app.lancedb.models import CodeRow, DocumentRow
+from app.lancedb.scope import CodeSectionWhereBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +42,7 @@ _CODE_ROW_COLUMNS = [
 _CODE_FTS_COLUMNS = ["number", "description", "lexical_terms", "expansion_terms"]
 
 # DocumentRow's fields, minus `vector` — every DocumentRepository query selects exactly
-# these columns so the embedding never crosses the wire for a hit about to become a TextNode.
+# these columns so the embedding never crosses the wire for a hit about to become a ManualChunk.
 _DOCUMENT_ROW_COLUMNS = [
     "id",
     "text",
@@ -77,9 +79,22 @@ class ICodeRepository(ABC):
 
     @abstractmethod
     async def hybrid_search(
-        self, text: str, vector: List[float], k: int, eligibility: CodeEligibilityFilter | None = None
+        self,
+        text: str,
+        vector: List[float],
+        k: int,
+        eligibility: CodeEligibilityFilter | None = None,
+        sections: tuple[str, ...] | None = None,
     ) -> List[Tuple[CodeRow, float]]:
-        pass
+        """`sections`: `header_path` prefixes to search within (any of them); None = the
+        whole table."""
+
+    @abstractmethod
+    async def list_by_header_paths(
+        self, header_paths: List[str], eligibility: CodeEligibilityFilter | None = None
+    ) -> List[CodeRow]:
+        """Every row whose `header_path` is exactly one of `header_paths` — a code's whole
+        family of variants — minus the ones contradicting a known fact."""
 
 
 class ICodeCatalogRepository(ICodeRepository):
@@ -111,9 +126,17 @@ class CodeRepository(ICodeCatalogRepository):
     needed. The async lancedb connection is established once at startup (database.py),
     never on a query."""
 
-    def __init__(self, tables: ICodeTableProvider, where_builder: CodeEligibilityWhereBuilder | None = None):
+    def __init__(
+        self,
+        tables: ICodeTableProvider,
+        where_builder: CodeEligibilityWhereBuilder | None = None,
+        section_builder: CodeSectionWhereBuilder | None = None,
+        hybrid: HybridSearch | None = None,
+    ):
         self._tables = tables
         self._where_builder = where_builder or CodeEligibilityWhereBuilder()
+        self._section_builder = section_builder or CodeSectionWhereBuilder()
+        self._hybrid = hybrid or HybridSearch()
 
     async def get_by_number(self, number: str) -> CodeRow:
         table = await self._tables.current()
@@ -158,31 +181,55 @@ class CodeRepository(ICodeCatalogRepository):
 
         return results
 
+    async def list_by_header_paths(
+        self, header_paths: List[str], eligibility: CodeEligibilityFilter | None = None
+    ) -> List[CodeRow]:
+        if not header_paths:
+            return []
+        quoted = ", ".join(_quote(path) for path in header_paths)
+        table = await self._tables.current()
+        rows = (
+            await table.query()
+            .where(self._and(f"header_path IN ({quoted})", eligibility))
+            .select(_CODE_ROW_COLUMNS)
+            .to_list()
+        )
+        return [CodeRow.model_validate(row) for row in rows]
+
     async def hybrid_search(
-        self, text: str, vector: List[float], k: int, eligibility: CodeEligibilityFilter | None = None
+        self,
+        text: str,
+        vector: List[float],
+        k: int,
+        eligibility: CodeEligibilityFilter | None = None,
+        sections: tuple[str, ...] | None = None,
     ) -> List[Tuple[CodeRow, float]]:
-        # Same nearest_to(...) + nearest_to_text(...) chain as DocumentRepository.hybrid_search
-        # below, with a MultiMatchQuery in place of a bare string: nearest_to_text takes
-        # `str | FullTextQuery`, and MultiMatchQuery (a FullTextQuery) is what lets one call
-        # search every FTS column at once instead of just one. Like the plain-string case,
-        # this does NOT raise when the FTS indices are missing — it silently falls back to an
+        # Same vector + full-text halves as DocumentRepository.hybrid_search below (run by
+        # HybridSearch, hybrid.py), with a MultiMatchQuery in place of a bare string: the FTS
+        # half takes `str | FullTextQuery`, and MultiMatchQuery (a FullTextQuery) is what lets
+        # one call search every FTS column at once instead of just one. Like the plain-string
+        # case, this does NOT raise when the FTS indices are missing — it silently falls back to an
         # unindexed scan (verified empirically), harmless as long as ramq-ingestion's
         # LanceCodeIndexBuilder actually built them, which it does at ingestion time.
         #
         # The eligibility WHERE applies to both halves of the hybrid query, so a variant that
         # contradicts a known fact never takes one of the k slots (verified against the real
-        # table). Null bounds always pass — see eligibility.py.
+        # table). Null bounds always pass — see eligibility.py. The section scope narrows both
+        # halves the same way (scope.py).
         table = await self._tables.current()
-        query = (
-            table.query()
-            .nearest_to(vector)
-            .distance_type("cosine")
-            .nearest_to_text(MultiMatchQuery(text, columns=_CODE_FTS_COLUMNS))
+        clauses = [
+            self._where_builder.build(eligibility) if eligibility is not None else None,
+            self._section_builder.build(sections),
+        ]
+        where = " AND ".join(c for c in clauses if c is not None)
+        rows = await self._hybrid.search(
+            table,
+            vector,
+            MultiMatchQuery(text, columns=_CODE_FTS_COLUMNS),
+            _CODE_ROW_COLUMNS,
+            k,
+            where=where or None,
         )
-        where = self._where_builder.build(eligibility) if eligibility is not None else None
-        if where is not None:
-            query = query.where(where)
-        rows = await query.limit(k).select(_CODE_ROW_COLUMNS).to_list()
         return [(CodeRow.model_validate(row), row["_relevance_score"]) for row in rows]
 
     async def keyword_search(
@@ -243,8 +290,9 @@ class DocumentRepository(IDocumentRepository):
     ramq-ingestion's document_table_schema.py writes (see CLAUDE.md's `documents-embeddings`
     note) instead of LlamaIndex's nested `metadata` struct."""
 
-    def __init__(self, table: AsyncTable):
+    def __init__(self, table: AsyncTable, hybrid: HybridSearch | None = None):
         self._table = table
+        self._hybrid = hybrid or HybridSearch()
 
     async def get_by_section_number(self, section_number: str) -> List[DocumentRow]:
         rows = (
@@ -265,22 +313,16 @@ class DocumentRepository(IDocumentRepository):
         return [DocumentRow.model_validate(row) for row in rows]
 
     async def hybrid_search(self, text: str, vector: List[float], k: int) -> List[Tuple[DocumentRow, float]]:
-        # nearest_to(...) + nearest_to_text(...) rather than table.search(query_type="hybrid"):
-        # the latter needs a registered embedding function to vectorize `text` itself, but
-        # this backend brings its own precomputed mistral-embed vector (see retriever.py) —
-        # there is no registered function to call. Note this specific chain does NOT raise
-        # when the `text` FTS index is missing (unlike table.search(query_type="fts")): it
+        # A vector half + an FTS half (HybridSearch, hybrid.py) rather than
+        # table.search(query_type="hybrid"): the latter needs a registered embedding function
+        # to vectorize `text` itself, but this backend brings its own precomputed query vector
+        # (see retriever.py) — there is no registered function to call. Note the FTS half does
+        # NOT raise when the `text` FTS index is missing (unlike table.search(query_type="fts")): it
         # silently falls back to an unindexed scan, same as vector search does without an ANN
         # index. Harmless as long as the index is actually built at ingestion time (it is —
         # see LanceDocumentIndexBuilder in ramq-ingestion), but a missing index degrades
         # ranking quality silently here rather than failing loudly.
-        rows = (
-            await self._table.query()
-            .nearest_to(vector)
-            .distance_type("cosine")
-            .nearest_to_text(text, columns=["text"])
-            .limit(k)
-            .select(_DOCUMENT_ROW_COLUMNS)
-            .to_list()
+        rows = await self._hybrid.search(
+            self._table, vector, text, _DOCUMENT_ROW_COLUMNS, k, fts_columns=["text"]
         )
         return [(DocumentRow.model_validate(row), row["_relevance_score"]) for row in rows]

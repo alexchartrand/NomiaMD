@@ -7,6 +7,7 @@ doesn't need a session, and these tests have nothing to do with persistence."""
 from datetime import date
 
 from app.auth.profile import PhysicianAccount
+from app.care_setting import CareSetting
 from app.postgresdb import Gender, Patient, PhysicianProfile, User, UserRole
 from app.ramq_codes.context_builder import BillingContextBuilder
 
@@ -14,19 +15,13 @@ PATIENT_ID = 2
 
 
 class _FakeProfileService:
-    def __init__(self, profile: PhysicianProfile | None, earliest: PhysicianProfile | None = None):
+    def __init__(self, profile: PhysicianProfile | None):
         self._profile = profile
-        self._earliest = earliest
         self.as_of_calls: list[tuple[User, date]] = []
-        self.earliest_calls: list[User] = []
 
     async def as_of(self, user: User, on: date) -> PhysicianAccount:
         self.as_of_calls.append((user, on))
         return PhysicianAccount(user=user, profile=self._profile)
-
-    async def earliest(self, user: User) -> PhysicianAccount:
-        self.earliest_calls.append(user)
-        return PhysicianAccount(user=user, profile=self._earliest)
 
 
 class _FakePatientRepository:
@@ -69,6 +64,17 @@ async def test_no_profile_and_no_patient_yields_an_all_null_context():
     assert context.patient.age_years is None
     assert context.patient.is_registered is None
     assert context.patient.is_vulnerable is None
+    assert context.care_setting is None
+
+
+async def test_the_care_setting_carries_through_as_given():
+    builder = BillingContextBuilder(_FakeProfileService(None), _FakePatientRepository(None))
+
+    context = await builder.build(
+        user=_user(), patient_id=999, encounter_date=date(2026, 6, 1), care_setting=CareSetting.URGENCE
+    )
+
+    assert context.care_setting is CareSetting.URGENCE
 
 
 async def test_profile_facts_carry_through_when_a_profile_exists():
@@ -92,38 +98,12 @@ async def test_reads_the_profile_effective_on_the_encounter_date_not_todays():
     assert on_date == encounter_date
 
 
-async def test_falls_back_to_the_earliest_profile_as_an_assumption_when_the_encounter_predates_every_version():
-    # as_of finds nothing (encounter older than the physician's first profile version, e.g.
-    # a transcript predating their own onboarding) — context_builder.py falls back to the
-    # earliest version on file, but marks it assumed rather than established.
-    profile_service = _FakeProfileService(None, earliest=_profile(panel_size=640))
-    builder = BillingContextBuilder(profile_service, _FakePatientRepository(None))
+async def test_no_profile_at_all_leaves_the_physician_facts_unknown():
+    builder = BillingContextBuilder(_FakeProfileService(None), _FakePatientRepository(None))
 
     context = await builder.build(user=_user(), patient_id=999, encounter_date=date(2020, 1, 1))
 
-    assert context.physician.is_assumed
-    assert context.physician.assumed_panel_size == 640
-    assert context.physician.confirmed_panel_size is None
-
-
-async def test_no_profile_at_all_is_unknown_not_assumed():
-    builder = BillingContextBuilder(_FakeProfileService(None, earliest=None), _FakePatientRepository(None))
-
-    context = await builder.build(user=_user(), patient_id=999, encounter_date=date(2020, 1, 1))
-
-    assert not context.physician.is_assumed
     assert context.physician.panel_size is None
-
-
-async def test_does_not_fall_back_to_earliest_when_as_of_already_found_a_profile():
-    profile_service = _FakeProfileService(_profile(panel_size=320), earliest=_profile(panel_size=999))
-    builder = BillingContextBuilder(profile_service, _FakePatientRepository(None))
-
-    context = await builder.build(user=_user(), patient_id=999, encounter_date=date(2026, 6, 1))
-
-    assert context.physician.confirmed_panel_size == 320
-    assert not context.physician.is_assumed
-    assert profile_service.earliest_calls == []
 
 
 async def test_a_patient_lookup_miss_degrades_to_no_patient_context():

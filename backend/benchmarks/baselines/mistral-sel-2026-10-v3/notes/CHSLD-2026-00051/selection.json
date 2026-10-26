@@ -1,0 +1,102 @@
+{
+  "patient_id": "CHSLD-2026-00051",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 9454,
+      "output_tokens": 800,
+      "latency_ms": 7083.231227006763,
+      "started_at": "2026-10-08T17:07:00.055813Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 9454,
+    "output_tokens": 800,
+    "llm_latency_ms": 7083.231227006763,
+    "wall_ms": 7092.371193997678
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15616",
+    "15617",
+    "15621",
+    "15818",
+    "15622",
+    "15816",
+    "15667",
+    "08994",
+    "15619",
+    "08996",
+    "15836",
+    "15770",
+    "15778",
+    "15840",
+    "15627",
+    "00837",
+    "00838",
+    "09346",
+    "15838",
+    "08848",
+    "15626",
+    "08995",
+    "08993",
+    "15628",
+    "08776",
+    "08997",
+    "15789",
+    "15630",
+    "09234",
+    "15660",
+    "15790",
+    "15063",
+    "15629",
+    "15188",
+    "15624",
+    "15763",
+    "15647",
+    "09363"
+  ],
+  "prompt_chars": 37942,
+  "raw_code_count": 2,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15616",
+        "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+        "confidence": "high",
+        "explanation": "Visite de suivi courant en CHSLD avec examen sommaire, ajustement de traitement et recommandations, sans exigence d'examen approfondi.",
+        "supporting_quote": "Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée. Constipation persistante malgré PEG 17 g die, ajustement du traitement (PEG bid x 7 jours puis reprise die) et ajout de sennosides PRN. Examen sommaire de l'abdomen sans particularité.",
+        "needs_confirmation": [
+          "Le statut d'inscription du patient auprès du médecin doit être confirmé pour écarter les codes 15816 ou 15818 si le patient était inscrit et vu en cabinet.",
+          "Le statut de vulnérabilité du patient doit être confirmé pour écarter les codes 15836 ou 15838 si le patient était vulnérable et inscrit."
+        ],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15617",
+        "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+        "confidence": "medium",
+        "explanation": "L'examen est décrit comme sommaire, mais si l'examen était plus approfondi que prévu, ce code pourrait s'appliquer.",
+        "supporting_quote": "Examen sommaire de l'abdomen sans particularité.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Aucun autre service billable (procédure, test, supplément) n'est documenté dans l'encounter. La durée n'est pas mentionnée, mais n'est pas requise pour le code 15616. Le statut d'inscription et de vulnérabilité du patient reste non confirmé, mais n'affecte pas le choix du code 15616 pour cette visite en CHSLD.",
+    "analysis": "L'encounter a lieu dans un CHSLD (Unité 2 Est du CHSLD Saint-Jude) pour une patiente de 91 ans, dans le cadre d'un suivi courant avec rendez-vous. Le médecin effectue une visite de suivi incluant un examen sommaire de l'abdomen, une révision du traitement (PEG) et l'ajout d'un nouveau médicament (sennosides). Aucune procédure, test, supplément (déplacement, heure, interprète) ou rencontre interdisciplinaire n'est documenté. Le code 15616 (visite de suivi courant en CHSLD) correspond parfaitement à cette situation, car il s'agit d'un suivi standard sans exigence d'examen approfondi. Le code 15617 (visite de suivi exigeant un examen) n'est pas retenu, car l'examen est décrit comme sommaire. Les codes liés aux patients de 80 ans ou plus en cabinet (15816, 15818, etc.) sont exclus car le lieu est un CHSLD, pas un cabinet. Aucun autre service billable n'est mentionné."
+  }
+}

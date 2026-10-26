@@ -1,0 +1,270 @@
+{
+  "patient_id": "HOP-2026-00731",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 485,
+      "output_tokens": null,
+      "latency_ms": 318.42607200087514,
+      "started_at": "2026-10-08T14:19:28.877471Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 485,
+    "output_tokens": 0,
+    "llm_latency_ms": 318.42607200087514,
+    "wall_ms": 343.5719999979483
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Patient de 66 ans hospitalisé pour une pneumonie lobaire inférieure droite (J3) en amélioration sous antibiothérapie. Transition de la ceftriaxone IV à l'amoxicilline-clavulanate PO pour compléter 7 jours. Préparation de congé prévu pour J5 sous réserve de stabilité.\nLieu (détail): Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)\nDate: 2026-09-03\nHeure de début: 08:10\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Tournée — J3 de pneumonie lobaire inférieure droite en amélioration\nSystèmes/régions concernés: pulmonaire; infectieux\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: PNA lobaire inf. D en amélioration sous ceftriaxone + azithro (J3); MPOC GOLD 2 stable\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: pulmonaire\nConstatations: Crépitants base D diminués; pas de tirage; saturation à 94 % AA (vs 89 % à l'admission)\nÉlément incertain: Durée de l'hospitalisation avant le 3 septembre 2026 non explicitement indiquée (J3 de PNA, mais date d'admission non précisée dans le texte).; Heure de fin de l'encounter non mentionnée.",
+      "hits": [
+        {
+          "number": "15804",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "15802",
+          "relevance": 0.026171742007136345
+        },
+        {
+          "number": "00999",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15766",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "03139",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15774",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00997",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15830",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01900",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15812",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00998",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15806",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15631",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15768",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15632",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15776",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06989",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15808",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00988",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06990",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15804",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 2,
+      "number": "15802",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 3,
+      "number": "00999",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par bloc plexique, neuraxial (péridural ou rachidien), intrapleural, incluant les examens, les visites et les consultations, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, douleur aiguë ou douleur chronique, période de plus de 96 heures, par jour, supplément"
+    },
+    {
+      "rank": 4,
+      "number": "15766",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 5,
+      "number": "03139",
+      "rrf_score": 0.015625,
+      "header_path": "H — Système respiratoire > Poumons et plèvre > Excision > Pneumonectomie simple",
+      "description": "Lobectomie, réintervention plus de trente (30) jours après l'intervention initiale, supplément, poumons et plèvre"
+    },
+    {
+      "rank": 6,
+      "number": "15774",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 7,
+      "number": "00997",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par bloc plexique, neuraxial (péridural ou rachidien), intrapleural, incluant les examens, les visites et les consultations, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, douleur aiguë ou douleur chronique, période de 24 heures ou moins"
+    },
+    {
+      "rank": 8,
+      "number": "15830",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 9,
+      "number": "01900",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, par jour, supplément"
+    },
+    {
+      "rank": 10,
+      "number": "15812",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 11,
+      "number": "00998",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par bloc plexique, neuraxial (péridural ou rachidien), intrapleural, incluant les examens, les visites et les consultations, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, douleur aiguë ou douleur chronique, période de plus de 24 heures"
+    },
+    {
+      "rank": 12,
+      "number": "15806",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 13,
+      "number": "15631",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 14,
+      "number": "15768",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 15,
+      "number": "15632",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires concernant l'ensemble des patients d'une unité ou de l'établissement (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 16,
+      "number": "15776",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 17,
+      "number": "06989",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, de 7 h à 19 h du lundi au vendredi (excluant les jours fériés)"
+    },
+    {
+      "rank": 18,
+      "number": "15808",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 19,
+      "number": "00988",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de 24 heures ou moins"
+    },
+    {
+      "rank": 20,
+      "number": "06990",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "Q — Obstétrique > Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique",
+      "description": "Ensemble des soins prodigués pendant le travail par le médecin traitant qui ne participe pas à la délivrance du nouveau-né du fait qu'il se fait remplacer par un autre médecin en raison de la durée du travail ou de l'organisation locale de la garde en obstétrique, samedi, dimanche ou un jour férié et de 19 h à 7 h du lundi au vendredi (excluant les jours fériés)"
+    }
+  ],
+  "unresolved_axes": [
+    "registration",
+    "vulnerability"
+  ],
+  "eligibility": {
+    "age": 66,
+    "panel_size": 900,
+    "is_registered": null,
+    "is_vulnerable": null
+  },
+  "embedding_ms": 319.1448069992475,
+  "db_ms": 23.904955000034533
+}

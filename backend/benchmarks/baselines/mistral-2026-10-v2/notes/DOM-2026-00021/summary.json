@@ -1,0 +1,106 @@
+{
+  "patient_id": "DOM-2026-00021",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1895,
+      "output_tokens": 657,
+      "latency_ms": 4093.2762040029047,
+      "started_at": "2026-10-08T15:44:01.079576Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1895,
+    "output_tokens": 657,
+    "llm_latency_ms": 4093.2762040029047,
+    "wall_ms": 4093.5914650035556
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Visite à domicile planifiée pour un patient de 71 ans atteint de SLA (forme bulbaire) avec perte sévère d'autonomie. Évaluation de la dysphagie, sialorrhée, dénutrition et hypoventilation. Références en orthophonie et nutrition, ajustement du traitement (glycopyrrolate), discussion sur les objectifs de soins et la VNI nocturne, ainsi que sur la gastrostomie.",
+    "encounter_setting": {
+      "location_detail": "GMF des Rivières — soins à domicile",
+      "date": "2026-09-09",
+      "time_start": "13:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Karim Haddad, MD",
+      "reason_for_referral": "SLA, perte sévère d'autonomie, dysphagie aux liquides, sialorrhée, dénutrition, hypoventilation probable",
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Visite à domicile planifiée pour SLA avec perte sévère d'autonomie, évaluation de la dysphagie, sialorrhée, dénutrition et hypoventilation",
+      "systems_or_body_regions_involved": [
+        "neurologique",
+        "respiratoire",
+        "digestif",
+        "bucco-pharyngé"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "SLA progressive (forme bulbaire) avec dysphagie aux liquides, sialorrhée, dénutrition et hypoventilation probable",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "neurologique",
+        "respiratoire",
+        "bucco-pharyngé",
+        "général"
+      ],
+      "notable_findings": "Dysarthrie marquée, fasciculations linguales, SatO2 93 % AA, FR 20, MV diminué aux bases, pas de crépitants francs, perte de poids récente (61 kg vs 64 kg en août)"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la visite non explicitement mentionnée",
+      "Heure de fin de la visite non indiquée",
+      "Absence de mention explicite d'un rapport écrit produit ou requis"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-09",
+      "actual": "2026-09-09"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "13:30",
+      "actual": "13:30"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 3,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

@@ -1,0 +1,579 @@
+{
+  "patient_id": "URG-2026-04623",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 855,
+      "output_tokens": null,
+      "latency_ms": 572.6476830022875,
+      "started_at": "2026-10-08T14:20:07.700060Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 855,
+    "output_tokens": 0,
+    "llm_latency_ms": 572.6476830022875,
+    "wall_ms": 609.5109180023428
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation d'urgence pour intoxication médicamenteuse volontaire (quétiapine et acétaminophène) avec prise en charge au déchocage incluant surveillance cardiaque, administration de N-acétylcystéine IV et consultation du centre antipoison. Patient non inscrit, amené par ambulance, avec risque suicidaire élevé nécessitant une admission aux soins intensifs.\nLieu (détail): Hôpital régional du Haut-Fleuve (déchocage)\nDate: 2026-10-04\nHeure de début: 01:30\nHeure de fin: 02:20\nDurée (minutes): 50.0\nDurée déclarée explicitement: oui\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Intoxication volontaire par ingestion médicamenteuse (quétiapine et acétaminophène) avec alcoolisation concomitante\nSystèmes/régions concernés: neurologique; cardiovasculaire; digestif; psychiatrique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Intoxication médicamenteuse volontaire (quétiapine et acétaminophène) avec risque suicidaire élevé et allongement du QTc\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: neurologique; cardiovasculaire; respiratoire; cutané\nConstatations: GCS 11 (Y3 V3 M5), TA 92/54, FC 124, FR 14, SatO2 95 %, T 36,4, glycémie 5,8, pupilles 3 mm réactives, tachycardie sinusale à l'ECG avec QTc 478 ms\nActe réalisé 1 - Description: Prise en charge initiale au déchocage incluant surveillance des voies respiratoires, oxygénothérapie, pose de 2 voies IV, administration de soluté physiologique 2 L, ECG, surveillance cardiaque continue et administration empirique de N-acétylcystéine IV\nActe réalisé 1 - Technique/approche: Surveillance constante 1:1, retrait des objets dangereux, consultation du centre antipoison\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: les_deux\nAjouts possiblement facturables: deplacement_urgence\nÉlément incertain: Le statut exact de l'assurance du patient (non inscrit) pourrait influencer la facturation, mais n'est pas précisé dans le contexte de facturation RAMQ.",
+      "hits": [
+        {
+          "number": "00988",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "00989",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "01900",
+          "relevance": 0.030414747074246407
+        },
+        {
+          "number": "08802",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15807",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15809",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00522",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15626",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08800",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15805",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09248",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00953",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08805",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00780",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15631",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00952",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15632",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00999",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00152",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00997",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Prise en charge initiale au déchocage incluant surveillance des voies respiratoires, oxygénothérapie, pose de 2 voies IV, administration de soluté physiologique 2 L, ECG, surveillance cardiaque continue et administration empirique de N-acétylcystéine IV",
+      "hits": [
+        {
+          "number": "01900",
+          "relevance": 0.03125
+        },
+        {
+          "number": "00988",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "00989",
+          "relevance": 0.030578898265957832
+        },
+        {
+          "number": "00780",
+          "relevance": 0.028138527646660805
+        },
+        {
+          "number": "15638",
+          "relevance": 0.0251582283526659
+        },
+        {
+          "number": "00991",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00928",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00927",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15626",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08165",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09328",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00479",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09316",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00990",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09927",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00997",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00704",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00998",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "20021",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "deplacement_urgence",
+      "hits": [
+        {
+          "number": "15192",
+          "relevance": 0.02985074557363987
+        },
+        {
+          "number": "15847",
+          "relevance": 0.029213955625891685
+        },
+        {
+          "number": "15635",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "15634",
+          "relevance": 0.028985507786273956
+        },
+        {
+          "number": "08966",
+          "relevance": 0.02878289483487606
+        },
+        {
+          "number": "08968",
+          "relevance": 0.028665028512477875
+        },
+        {
+          "number": "08967",
+          "relevance": 0.02804284356534481
+        },
+        {
+          "number": "08802",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08805",
+          "relevance": 0.027212142944335938
+        },
+        {
+          "number": "15625",
+          "relevance": 0.02690502069890499
+        },
+        {
+          "number": "09248",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "15623",
+          "relevance": 0.026491228491067886
+        },
+        {
+          "number": "15624",
+          "relevance": 0.025487013161182404
+        },
+        {
+          "number": "15655",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15646",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15848",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15653",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15849",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15644",
+          "relevance": 0.015625
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00988",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de 24 heures ou moins"
+    },
+    {
+      "rank": 2,
+      "number": "01900",
+      "rrf_score": 0.03279569892473118,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, par jour, supplément"
+    },
+    {
+      "rank": 3,
+      "number": "00989",
+      "rrf_score": 0.03252247488101534,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 24 heures"
+    },
+    {
+      "rank": 4,
+      "number": "08802",
+      "rrf_score": 0.03057889822595705,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 5,
+      "number": "00780",
+      "rrf_score": 0.029571646010002173,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, en milieu hospitalier ou en gymnase, effectuée par le médecin, maximum quinze (15) patients"
+    },
+    {
+      "rank": 6,
+      "number": "15626",
+      "rrf_score": 0.029418126757516764,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 7,
+      "number": "08805",
+      "rrf_score": 0.028381642512077296,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 8,
+      "number": "09248",
+      "rrf_score": 0.028370221327967807,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique d'urgence avec déplacement dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 9,
+      "number": "00152",
+      "rrf_score": 0.027972027972027972,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie"
+    },
+    {
+      "rank": 10,
+      "number": "00997",
+      "rrf_score": 0.02581612258494337,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par bloc plexique, neuraxial (péridural ou rachidien), intrapleural, incluant les examens, les visites et les consultations, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, douleur aiguë ou douleur chronique, période de 24 heures ou moins"
+    },
+    {
+      "rank": 11,
+      "number": "15192",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans)",
+      "description": "Examen d'urgence avec déplacement d'un patient de moins de 70 ans en centre hospitalier seulement, réservé au médecin exerçant en anesthésie"
+    },
+    {
+      "rank": 12,
+      "number": "15847",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 7 h à 16 h en cabinet"
+    },
+    {
+      "rank": 13,
+      "number": "15635",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 14,
+      "number": "15633",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 15,
+      "number": "15807",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 16,
+      "number": "15638",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A"
+    },
+    {
+      "rank": 17,
+      "number": "15634",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 18,
+      "number": "15809",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 19,
+      "number": "00991",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau II > Soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "description": "Contrôle subséquent, par examen, pour des soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle"
+    },
+    {
+      "rank": 20,
+      "number": "08966",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 7 h à 16 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 21,
+      "number": "00522",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Lavage gastrique (intoxication médicamenteuse ou alimentaire)",
+      "description": "Lavage gastrique (intoxication médicamenteuse ou alimentaire), en gastroentérologie"
+    },
+    {
+      "rank": 22,
+      "number": "08968",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 0 h à 7 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 23,
+      "number": "00928",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau I > Soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "description": "Installation de l'équipement de ventilation pour des soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort (la valeur de durée de l'acte se calcule depuis le début de la mise en marche du traitement)"
+    },
+    {
+      "rank": 24,
+      "number": "08967",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 16 h à 24 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 25,
+      "number": "08800",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 26,
+      "number": "00927",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau I > Soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "description": "Contrôle subséquent, par examen, pour des soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort"
+    },
+    {
+      "rank": 27,
+      "number": "15805",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 28,
+      "number": "08165",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies gastro-intestinales et biliaires (incluant fluoroscopie) > Cholangiographie",
+      "description": "Cholangiographie par infusion intra-veineuse, incluant injection"
+    },
+    {
+      "rank": 29,
+      "number": "15625",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence période de 0 h à 7 h dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 30,
+      "number": "00953",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 31,
+      "number": "09328",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques > Cathétérismes veineux > Mise en place par voie rétrograde et maintien dans la veine jugulaire interne d'un cathéter destiné à mesurer, en continu ou à l'aide de prélèvements répétés, la saturation en oxygène du sang veineux en provenance de la circulation cérébrale, chez un patient présentant une condition cérébrale critique",
+      "description": "Mise en place par voie rétrograde et maintien dans la veine jugulaire interne d'un cathéter destiné à mesurer, en continu ou à l'aide de prélèvements répétés, la saturation en oxygène du sang veineux en provenance de la circulation cérébrale, chez un patient présentant une condition cérébrale critique"
+    },
+    {
+      "rank": 32,
+      "number": "00479",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > injection intraveineuse",
+      "description": "Injection intraveineuse au cuir chevelu, en cabinet ou à domicile, dans le cadre d'hyperalimentation, injection, insufflation ou ponction."
+    },
+    {
+      "rank": 33,
+      "number": "15623",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence période de 7 h à 16 h dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 34,
+      "number": "09316",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Perfusion continue d'insuline, par jour, incluant la surveillance, les examens, les visites et les consultations, diabétothérapie (maximum de cinq (5) jours par patient, par hospitalisation (P.A.R. 3.02))"
+    },
+    {
+      "rank": 35,
+      "number": "15624",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence période de 16 h à 24 h dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 36,
+      "number": "15631",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 37,
+      "number": "00990",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau II > Soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "description": "Installation de l'équipement de ventilation pour des soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle (la valeur de durée de l'acte se calcule depuis le début de la mise en marche du traitement)"
+    },
+    {
+      "rank": 38,
+      "number": "15655",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h"
+    },
+    {
+      "rank": 39,
+      "number": "00952",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Épidurale différentielle incluant les examens, les visites et consultations, les injections et la surveillance, anesthésie diagnostique et thérapeutique (P.G. 2.4.7.3 C)"
+    },
+    {
+      "rank": 40,
+      "number": "09927",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 2. Rapport sommaire de prise en charge",
+      "description": "Rapport sommaire de prise en charge d'un travailleur victime d'une lésion professionnelle, rédaction et expédition à la Commission dans les six (6) jours du premier examen du formulaire de prise en charge prescrit par la Commission"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 38,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 574.0941539988853,
+  "db_ms": 34.761970993713476
+}

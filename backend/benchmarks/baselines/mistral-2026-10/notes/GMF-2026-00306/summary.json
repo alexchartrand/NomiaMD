@@ -1,0 +1,129 @@
+{
+  "patient_id": "GMF-2026-00306",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2247,
+      "output_tokens": 790,
+      "latency_ms": 4491.109192997101,
+      "started_at": "2026-10-08T14:19:04.927854Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2247,
+    "output_tokens": 790,
+    "llm_latency_ms": 4491.109192997101,
+    "wall_ms": 4491.4274610055145
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Visite périodique annuelle d'une patiente de 88 ans, résidente en centre d'hébergement avec assistance, présentant une insuffisance cardiaque et une fibrillation auriculaire chroniques stables. Examen physique complet incluant évaluation cognitive (MoCA 23/30). Bilan sanguin et ECG demandés. Plan : maintien de la médication, surveillance du déclin cognitif léger, révision du NIM et vérification des vaccins.",
+    "encounter_setting": {
+      "location_detail": "Clinique GMF Boisé-des-Cèdres",
+      "date": "2026-05-26",
+      "time_start": "10:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Visite périodique annuelle pour patiente vulnérable résidente en centre d'hébergement avec assistance",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "cognitif",
+        "urinaire",
+        "cutané",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Insuffisance cardiaque et fibrillation auriculaire chroniques stables; déclin cognitif léger progressif; statut fonctionnel globalement préservé",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pulmonaire",
+        "membres_inférieurs",
+        "cognitif",
+        "peau"
+      ],
+      "notable_findings": "Rythme irrégulier confirmé (FA), souffle systolique doux 2/6 au foyer aortique connu et stable; œdème léger godet 1+ bilatéral stable; MoCA 23/30 (légère baisse par rapport à 25/30 l'an dernier)"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Mini-examen cognitif (MoCA)",
+        "body_site": null,
+        "technique_or_approach_mentioned": "MoCA standardisé",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Demande de bilan sanguin annuel (FSC, ions, créatinine/DFGe, bilan hépatique, TSH)",
+        "body_site": null,
+        "technique_or_approach_mentioned": null,
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Demande d'ECG de contrôle",
+        "body_site": null,
+        "technique_or_approach_mentioned": null,
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript",
+      "Heure de fin de la consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-05-26",
+      "actual": "2026-05-26"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:15",
+      "actual": "10:15"
+    }
+  ],
+  "stats": {
+    "procedures": 3,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 5,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

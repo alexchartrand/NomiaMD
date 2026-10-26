@@ -1,0 +1,486 @@
+{
+  "patient_id": "CLI-2026-01240",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 565,
+      "output_tokens": null,
+      "latency_ms": 1552.1428170031868,
+      "started_at": "2026-10-08T14:19:23.741250Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 565,
+    "output_tokens": 0,
+    "llm_latency_ms": 1552.1428170031868,
+    "wall_ms": 1585.6708720093593
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation sans rendez-vous en clinique médicale pour mal de gorge évoluant depuis 3 jours. Diagnostic de pharyngite à streptocoque du groupe A confirmé par test rapide positif. Traitement par pénicilline V prescrit avec recommandations de retour au travail après 24 heures d'antibiotique.\nLieu (détail): Clinique médicale Les Tilleuls — plage sans rendez-vous\nDate: 2026-08-18\nHeure de début: 18:35\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Mal de gorge évoluant depuis 3 jours avec fièvre et odynophagie.\nSystèmes/régions concernés: ORL; pharynx; cervical\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Pharyngite à streptocoque du groupe A\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: ORL; cervical; tympanique; cutané\nConstatations: Température 38,1°C, fréquence cardiaque 92/min, saturation 99%. Amygdales hypertrophiées avec exsudat bilatéral. Adénopathies cervicales antérieures sensibles. Pas de trismus, luette médiane. Tympans normaux. Pas de rash.\nActe réalisé 1 - Description: Test rapide pour streptocoque du groupe A\nActe réalisé 1 - Site: pharynx\nActe réalisé 1 - Technique/approche: test rapide en clinique\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "hits": [
+        {
+          "number": "05172",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00559",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "03039",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15765",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00519",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15773",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05178",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07430",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "03045",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00205",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "03042",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00679",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "03041",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "20025",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00511",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15789",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "05018",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Test rapide pour streptocoque du groupe A",
+      "hits": [
+        {
+          "number": "09339",
+          "relevance": 0.029857397079467773
+        },
+        {
+          "number": "00110",
+          "relevance": 0.029323630034923553
+        },
+        {
+          "number": "00348",
+          "relevance": 0.027027027681469917
+        },
+        {
+          "number": "00831",
+          "relevance": 0.026356857270002365
+        },
+        {
+          "number": "00402",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "07540",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00807",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00679",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00403",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09312",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00112",
+          "relevance": 0.015625
+        },
+        {
+          "number": "20024",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08864",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09343",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09820",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08865",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "20022",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00398",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09340",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00808",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00679",
+      "rrf_score": 0.02862400327131466,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers",
+      "description": "Exercices thérapeutiques collectifs pré et postnataux incluant, s'il y a lieu, l'examen, la visite ou la consultation, pour un groupe de patients"
+    },
+    {
+      "rank": 2,
+      "number": "05172",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "L — Système digestif > Pharynx",
+      "description": "Exérèse de kyste branchial du pharynx"
+    },
+    {
+      "rank": 3,
+      "number": "09339",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Endoscopie gastro-entérologique > Oesophagoscopie ou gastroscopie ou duodénoscopie ou les trois > Oesophage",
+      "description": "Test à l'ergonovine, supplément à 00569 ou 00572, en gastroentérologie"
+    },
+    {
+      "rank": 4,
+      "number": "00953",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 5,
+      "number": "00110",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie > Test par application (patch test)",
+      "description": "Test par application (patch test) par test, allergie"
+    },
+    {
+      "rank": 6,
+      "number": "00559",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Laryngoscopie avec ou sans biopsie > avec ou sans exérèse d'un corps étranger, sous anesthésie générale",
+      "description": "Laryngoscopie avec ou sans biopsie, avec ou sans exérèse d'un corps étranger, sous anesthésie générale, laryngoscopie directe et dilatation laryngée"
+    },
+    {
+      "rank": 7,
+      "number": "00348",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test respiratoire à hydrogène"
+    },
+    {
+      "rank": 8,
+      "number": "00638",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 9,
+      "number": "00831",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test de stimulation à l'EDTA"
+    },
+    {
+      "rank": 10,
+      "number": "03039",
+      "rrf_score": 0.015625,
+      "header_path": "H — Système respiratoire > Larynx > Incision > Introduction > Laryngoscopie incluant la biopsie > avec exérèse de polype ou tumeur bénigne de cordes vocales, unilatérale",
+      "description": "Laryngoscopie incluant la biopsie avec exérèse de polype ou tumeur bénigne de cordes vocales, unilatérale, directe (P.G. 2.9), larynx"
+    },
+    {
+      "rank": 11,
+      "number": "00402",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Examen",
+      "description": "Examen microbiologique à l'état frais et/ou après coloration d'un frottis cervico-vaginal"
+    },
+    {
+      "rank": 12,
+      "number": "15765",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 13,
+      "number": "07540",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "S — Système nerveux > Crâne & encéphale > Lésions expansives tumorales : (incluant les lésions kystiques tumorales) > Base du crâne (temps neurochirurgical seulement) > Lésions intrasellaires avec extension suprasellaire par voie transphénoïdale",
+      "description": "Lésions intrasellaires avec extension suprasellaire par voie transphénoïdale, stade A, lésions expansives tumorales (incluant les lésions kystiques tumorales), base du crâne (temps neurochirurgical seulement), crâne et encéphale"
+    },
+    {
+      "rank": 14,
+      "number": "00519",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Laryngoscopie avec ou sans biopsie > avec ou sans exérèse d'un corps étranger, sous anesthésie générale",
+      "description": "Laryngoscopie avec ou sans biopsie, avec ou sans exérèse d'un corps étranger, sous anesthésie générale, directe (rigide)"
+    },
+    {
+      "rank": 15,
+      "number": "00807",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve à (au) > Épreuve de > dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation",
+      "description": "Épreuve à (au) dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation, épreuve cétogène, épreuves au glucagon et hypoglycémie cétogène comprises"
+    },
+    {
+      "rank": 16,
+      "number": "15773",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 17,
+      "number": "05178",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "L — Système digestif > Pharynx",
+      "description": "Exérèse de sinus branchial du pharynx"
+    },
+    {
+      "rank": 18,
+      "number": "00403",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Examen",
+      "description": "Examen microbiologique, bactériologique, mycologique, etc. incluant l'examen microscopique à l'état frais et après coloration et la culture, par site (cabinet seulement)"
+    },
+    {
+      "rank": 19,
+      "number": "07430",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "U — Appareil auditif > Oreille moyenne > Réparation",
+      "description": "Cautérisation de perforation tympanique (incluant tympan artificiel au microscope) non associée à un autre acte chirurgical au cours de la même séance opératoire au même site opératoire, oreille moyenne"
+    },
+    {
+      "rank": 20,
+      "number": "09312",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Séance d'enseignement de groupe aux patients diabétiques, minimum de quatre (4) patients diabétiques, pour une période service continu de 60 minutes ou plus, diabétothérapie"
+    },
+    {
+      "rank": 21,
+      "number": "03045",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "H — Système respiratoire > Larynx > Incision > Introduction > Laryngoscopie incluant la biopsie",
+      "description": "Laryngoscopie incluant la biopsie avec injection de substance plastique pour combler une corde vocale (P.G. 2.9), larynx"
+    },
+    {
+      "rank": 22,
+      "number": "00112",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Test de provocation nasale aux allergènes (comprenant trois (3) études rhinomanométriques) incluant surveillance, allergie"
+    },
+    {
+      "rank": 23,
+      "number": "00205",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Insertion de stérilet incluant l'examen, la visite ou la consultation effectué antérieurement ou concurremment à cet égard en gynécologie (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 24,
+      "number": "20024",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour, en établissement"
+    },
+    {
+      "rank": 25,
+      "number": "03042",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "H — Système respiratoire > Larynx > Incision > Introduction > Laryngoscopie incluant la biopsie > avec exérèse de polype ou tumeur bénigne de cordes vocales, bilatérale",
+      "description": "Laryngoscopie incluant la biopsie avec exérèse de polype ou tumeur bénigne de cordes vocales, bilatérale, directe (P.G. 2.9), larynx"
+    },
+    {
+      "rank": 26,
+      "number": "08864",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective)",
+      "description": "Psychothérapie collective, première période de trente (30) minutes, en établissement sauf en CLSC et en GMF-U en établissement"
+    },
+    {
+      "rank": 27,
+      "number": "09343",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Phoniatrie",
+      "description": "Rééducation individuelle ou de groupe en phoniatrie (par demi-heure)"
+    },
+    {
+      "rank": 28,
+      "number": "03041",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "H — Système respiratoire > Larynx > Incision > Introduction > Laryngoscopie incluant la biopsie > avec exérèse de polype ou tumeur bénigne de cordes vocales, unilatérale",
+      "description": "Laryngoscopie incluant la biopsie avec exérèse de polype ou tumeur bénigne de cordes vocales, unilatérale, au microscope (P.G. 2.9), larynx"
+    },
+    {
+      "rank": 29,
+      "number": "09820",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Sécurité publique représenté par le sous-ministre",
+      "description": "Remplir le formulaire intitulé « certificat du médecin qualifié » et effectuer, le cas échéant, le prélèvement découlant des exigences du Code criminel dans le cadre d'un prélèvement prévu à l'article 258 (1) h) et (ii) du Code criminel (L.R.C., (1985), ch. C-46), à la demande d'un policier."
+    },
+    {
+      "rank": 30,
+      "number": "20025",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Extraction de stérilet, acte compliqué en gynécologie (P.G. 2.4.7.7 A) (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 31,
+      "number": "08865",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective)",
+      "description": "Psychothérapie collective, par période de quinze (15) minutes supplémentaires, en établissement sauf en CLSC et en GMF-U en établissement"
+    },
+    {
+      "rank": 32,
+      "number": "00511",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Laryngoscopie avec ou sans biopsie > avec ou sans exérèse d'un corps étranger, sous anesthésie générale",
+      "description": "Laryngoscopie avec ou sans biopsie, avec ou sans exérèse d'un corps étranger, sous anesthésie générale, à suspension"
+    },
+    {
+      "rank": 33,
+      "number": "20022",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour, en cabinet"
+    },
+    {
+      "rank": 34,
+      "number": "15789",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 35,
+      "number": "00398",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve à (au) > Épreuve de > dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation",
+      "description": "Épreuve à (au) dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation, stimulation gastrique maximale, surveillance et interprétation (histamine, pentagastrine, ou autre substance)"
+    },
+    {
+      "rank": 36,
+      "number": "05018",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "L — Système digestif > Pharynx > Incision > Incision, drainage et soins d'abcès",
+      "description": "Incision, drainage et soins d'abcès du pharynx, rétropharyngé"
+    },
+    {
+      "rank": 37,
+      "number": "09340",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Endoscopie gastro-entérologique > Oesophagoscopie ou gastroscopie ou duodénoscopie ou les trois > Oesophage",
+      "description": "Test au betanechol, supplément à 00569 ou 00572, en gastroentérologie"
+    },
+    {
+      "rank": 38,
+      "number": "15790",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 39,
+      "number": "00808",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve à (au)",
+      "description": "Épreuve à héparine (PHLA)"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 29,
+    "panel_size": 420,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1553.60495999048,
+  "db_ms": 31.521558994427323
+}

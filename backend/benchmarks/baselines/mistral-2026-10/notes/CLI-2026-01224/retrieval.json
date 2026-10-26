@@ -1,0 +1,267 @@
+{
+  "patient_id": "CLI-2026-01224",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 554,
+      "output_tokens": null,
+      "latency_ms": 915.3178400010802,
+      "started_at": "2026-10-08T14:18:58.614130Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 554,
+    "output_tokens": 0,
+    "llm_latency_ms": 915.3178400010802,
+    "wall_ms": 941.7642460030038
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi pour tendinopathie de la coiffe des rotateurs droite avec bursite sous-acromiale associée. Amélioration partielle sous traitement conservateur (anti-inflammatoires, physiothérapie). Discussion sur une éventuelle infiltration de corticostéroïde si absence de progrès dans 4 semaines.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-04-07\nHeure de début: 14:10\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de tendinopathie de la coiffe des rotateurs à l'épaule droite, prise en charge il y a 6 semaines\nSystèmes/régions concernés: musculo-squelettique; épaule_droite\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Tendinopathie de la coiffe des rotateurs (sus-épineux) droite avec bursite sous-acromiale associée, en amélioration progressive sous traitement conservateur\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: épaule_droite; épaule_gauche; membre_supérieur\nConstatations: Amplitude articulaire limitée à 140° en abduction active (amélioration par rapport à 100° initialement), rotation externe légèrement limitée. Signe de l'arc douloureux positif entre 70-120°, test de Jobe légèrement positif, Hawkins-Kennedy positif. Force musculaire conservée, pas de déficit neurologique.\nÉlément incertain: Durée exacte de la consultation non précisée dans le document.; Absence de mention explicite de la durée de l'examen physique ou de la discussion des recommandations.",
+      "hits": [
+        {
+          "number": "02156",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "02157",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "02973",
+          "relevance": 0.02881426177918911
+        },
+        {
+          "number": "02035",
+          "relevance": 0.027313265949487686
+        },
+        {
+          "number": "15803",
+          "relevance": 0.025320513173937798
+        },
+        {
+          "number": "08776",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02833",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02120",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00430",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02144",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02925",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02857",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02965",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08777",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08775",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02220",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02976",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02858",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02977",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02037",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "02156",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > réparation de la coiffe incluant l'acromioplastie, le cas échéant",
+      "description": "Réparation de la coiffe des rotateurs incluant l'acromioplastie, le cas échéant, à l'épaule, par reconstruction (ouverte ou par voie arthroscopique)"
+    },
+    {
+      "rank": 2,
+      "number": "02157",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > reconstruction de la coiffe (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant",
+      "description": "Reconstruction de la coiffe des rotateurs (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant, à l'épaule, par reconstruction (ouverte ou par voie arthroscopique)"
+    },
+    {
+      "rank": 3,
+      "number": "02973",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthrolyse",
+      "description": "Arthrolyse gléno-humérale de l'épaule, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 4,
+      "number": "02035",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthroscopie",
+      "description": "Arthroscopie gléno-humérale de l'épaule avec un ou plusieurs des procédés thérapeutiques suivants : débridement articulaire, exérèse de souris ou de corps étranger, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 5,
+      "number": "15803",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 6,
+      "number": "08776",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 7,
+      "number": "02833",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Examen et manipulation",
+      "description": "Examen et manipulation de l'épaule sous anesthésie générale, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 8,
+      "number": "02120",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Excision",
+      "description": "Excision de l'épaule par acromioplastie ou acromiectomie ouverte ou par voie arthroscopique incluant, le cas échéant, la bursectomie, la méniscectomie acromio-claviculaire, l'exérèse de l'extrémité distale de la clavicule et le curetage tendineux, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 9,
+      "number": "00430",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > capsules, gaines, tendons, ligaments ou fascia",
+      "description": "Injection de médicament ou de substance thérapeutique dans les capsules, gaines, tendons, ligaments ou fascia"
+    },
+    {
+      "rank": 10,
+      "number": "02144",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > pour rupture du tendon du biceps proximal",
+      "description": "Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant, pour rupture du tendon du biceps proximal, à l'épaule"
+    },
+    {
+      "rank": 11,
+      "number": "02925",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthrodèse",
+      "description": "Arthrodèse gléno-humérale de l'épaule, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 12,
+      "number": "02857",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Transposition > un tendon",
+      "description": "Transposition d'un tendon, à l'épaule"
+    },
+    {
+      "rank": 13,
+      "number": "02965",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthrodèse",
+      "description": "Arthrodèse scapulo-thoracique de l'épaule, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 14,
+      "number": "08777",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 15,
+      "number": "08775",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 16,
+      "number": "02220",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Excision",
+      "description": "Excision de la tête humérale de l'épaule, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 17,
+      "number": "02976",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Exérèse",
+      "description": "Exérèse d'une prothèse simple de l'épaule, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 18,
+      "number": "02858",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Transposition > deux tendons ou plus",
+      "description": "Transposition de deux tendons ou plus, à l'épaule"
+    },
+    {
+      "rank": 19,
+      "number": "02977",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Exérèse",
+      "description": "Exérèse d'une prothèse totale de l'épaule, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 20,
+      "number": "02037",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthrotomie",
+      "description": "Arthrotomie ou capsulotomie gléno-humérale de l'épaule avec exploration, drainage ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation, intervention côté droit ou côté gauche"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 45,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 916.3908420014195,
+  "db_ms": 24.883774007321335
+}

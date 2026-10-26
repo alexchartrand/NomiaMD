@@ -1,0 +1,109 @@
+{
+  "patient_id": "GMF-2026-00413",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1818,
+      "output_tokens": 676,
+      "latency_ms": 4108.426667997264,
+      "started_at": "2026-10-08T15:44:05.502095Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1818,
+    "output_tokens": 676,
+    "llm_latency_ms": 4108.426667997264,
+    "wall_ms": 4108.729650004534
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation de suivi pour tendinopathie de la coiffe des rotateurs droite réfractaire à la physiothérapie. Infiltration sous-acromiale réalisée avec triamcinolone et lidocaïne, tolérée avec soulagement partiel immédiat. Recommandations de repos relatif et reprise de la physiothérapie.",
+    "encounter_setting": {
+      "location_detail": "GMF des Rivières",
+      "date": "2026-09-18",
+      "time_start": "09:40",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de tendinopathie de la coiffe des rotateurs droite avec échec de la physiothérapie après 8 semaines, douleur persistante et difficulté fonctionnelle.",
+      "systems_or_body_regions_involved": [
+        "musculo-squelettique",
+        "épaule_droite"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Tendinopathie du sus-épineux avec bursite sous-acromiale droite, réfractaire à la physiothérapie.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "épaule_droite"
+      ],
+      "notable_findings": "Abduction active douloureuse à 120°, arc douloureux entre 70° et 120°. Tests de Jobe, Hawkins et Neer positifs. Force de rotation externe à 5/5. Pas de signe de rupture (test du drop arm négatif)."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Infiltration sous-acromiale droite avec triamcinolone 40 mg et lidocaïne 1 % 4 mL, approche postérieure, après consentement éclairé.",
+        "generic_act": "infiltration intra-articulaire ou périarticulaire",
+        "body_site": "sous-acromiale droite",
+        "technique_or_approach_mentioned": "approche postérieure",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le document.",
+      "Absence de mention explicite de la durée de l'infiltration ou de la consultation complète."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-18",
+      "actual": "2026-09-18"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:40",
+      "actual": "09:40"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

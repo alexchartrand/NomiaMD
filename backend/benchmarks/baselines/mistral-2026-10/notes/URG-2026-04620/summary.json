@@ -1,0 +1,101 @@
+{
+  "patient_id": "URG-2026-04620",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1673,
+      "output_tokens": 531,
+      "latency_ms": 3753.5756199940806,
+      "started_at": "2026-10-08T14:19:28.479485Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1673,
+    "output_tokens": 531,
+    "llm_latency_ms": 3753.5756199940806,
+    "wall_ms": 3753.890401989338
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient de 34 ans se présente à l'urgence pour un traumatisme de la cheville gauche (inversion forcée lors d'une partie de soccer). Diagnostic d'entorse de grade I-II avec prise en charge conservatrice (orthèse, béquilles, AINS, exercices) et congé.",
+    "encounter_setting": {
+      "location_detail": "Hôpital régional du Haut-Fleuve (urgence)",
+      "date": "2026-09-05",
+      "time_start": "15:40",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Traumatisme de la cheville gauche par inversion forcée lors d'une partie de soccer il y a 2 heures, avec boiterie et douleur.",
+      "systems_or_body_regions_involved": [
+        "musculo-squelettique",
+        "cheville_gauche"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Entorse de la cheville gauche grade I-II (atteinte du ligament talo-fibulaire antérieur).",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cheville_gauche",
+        "pied_gauche"
+      ],
+      "notable_findings": "Œdème et ecchymose à la malléole latérale gauche, sensibilité au ligament talo-fibulaire antérieur, mise en charge possible (4 pas), pouls pédieux présent, sensibilité normale."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'entrevue non explicitement mentionnée dans le transcript.",
+      "Heure de fin de la consultation non indiquée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-05",
+      "actual": "2026-09-05"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "15:40",
+      "actual": "15:40"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -1,0 +1,935 @@
+{
+  "patient_id": "GMF-2026-00413",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 779,
+      "output_tokens": null,
+      "latency_ms": 1.0843850031960756,
+      "started_at": "2026-10-09T17:41:17.284292Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 779,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.0843850031960756,
+    "wall_ms": 46.28286900697276
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. GMF des Rivières. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15804",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15802",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "15766",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "15774",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "08776",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "08848",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "15812",
+          "relevance": 0.028717948123812675
+        },
+        {
+          "number": "08819",
+          "relevance": 0.028484849259257317
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "15806",
+          "relevance": 0.02690502069890499
+        },
+        {
+          "number": "15808",
+          "relevance": 0.026671407744288445
+        },
+        {
+          "number": "08777",
+          "relevance": 0.02633402682840824
+        },
+        {
+          "number": "15814",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15789",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15639",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15648",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15628",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15810",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Consultation de suivi pour tendinopathie de la coiffe des rotateurs droite réfractaire à la physiothérapie. Infiltration sous-acromiale réalisée avec triamcinolone et lidocaïne, tolérée avec soulagement partiel immédiat. Recommandations de repos relatif et reprise de la physiothérapie.\nLieu (détail): GMF des Rivières\nDate: 2026-09-18\nHeure de début: 09:40\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de tendinopathie de la coiffe des rotateurs droite avec échec de la physiothérapie après 8 semaines, douleur persistante et difficulté fonctionnelle.\nSystèmes/régions concernés: musculo-squelettique; épaule_droite\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Tendinopathie du sus-épineux avec bursite sous-acromiale droite, réfractaire à la physiothérapie.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: épaule_droite\nConstatations: Abduction active douloureuse à 120°, arc douloureux entre 70° et 120°. Tests de Jobe, Hawkins et Neer positifs. Force de rotation externe à 5/5. Pas de signe de rupture (test du drop arm négatif).\nActe réalisé 1 - Description: Infiltration sous-acromiale droite avec triamcinolone 40 mg et lidocaïne 1 % 4 mL, approche postérieure, après consentement éclairé.\nActe réalisé 1 - Acte (générique): infiltration intra-articulaire ou périarticulaire\nActe réalisé 1 - Site: sous-acromiale droite\nActe réalisé 1 - Technique/approche: approche postérieure\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée exacte de la consultation non précisée dans le document.; Absence de mention explicite de la durée de l'infiltration ou de la consultation complète.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "02156",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08776",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00639",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00183",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00292",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08775",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04582",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08777",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00425",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02157",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00906",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00430",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01901",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02120",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01209",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02035",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07230",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02973",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06100",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "infiltration intra-articulaire ou périarticulaire",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00201",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "02102",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "00425",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "00292",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "00431",
+          "relevance": 0.02911604568362236
+        },
+        {
+          "number": "09475",
+          "relevance": 0.02788461558520794
+        },
+        {
+          "number": "08114",
+          "relevance": 0.025657894089818
+        },
+        {
+          "number": "00293",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02103",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02654",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02932",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07674",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02110",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04741",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00473",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00777",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02040",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02933",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00722",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "02882",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Infiltration sous-acromiale droite avec triamcinolone 40 mg et lidocaïne 1 % 4 mL, approche postérieure, après consentement éclairé.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00425",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "00292",
+          "relevance": 0.030414747074246407
+        },
+        {
+          "number": "00293",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "05089",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02120",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02284",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00953",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09572",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00468",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02249",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09571",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00431",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09573",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00480",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00639",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09483",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07760",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00124",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07674",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00659",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00292",
+      "rrf_score": 0.04765107388058208,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques > Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "description": "Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée, une (1) racine, d'un patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "00425",
+      "rrf_score": 0.04728845254791959,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Infiltration intralésionnelle en dermatologie, une (1) ou plusieurs lésions",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "00328",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de l'acné par chirurgie et/ou cryothérapie et/ou thérapie physique en dermatologie (excluant le Laser), y compris l'extraction de comédons, un (1) ou plusieurs traitements par séance",
+      "expanded_from": "00425"
+    },
+    {
+      "rank": 4,
+      "number": "00821",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de Goekerman en dermatologie",
+      "expanded_from": "00425"
+    },
+    {
+      "rank": 5,
+      "number": "00830",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Photochimiothérapie en dermatologie",
+      "expanded_from": "00425"
+    },
+    {
+      "rank": 6,
+      "number": "08776",
+      "rrf_score": 0.031754032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "00953",
+      "rrf_score": 0.031544957774465976,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00293",
+      "rrf_score": 0.031054405392392875,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques > Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "description": "Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée, deux (2) racines ou plus, d'un patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "08775",
+      "rrf_score": 0.029857397504456328,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "00431",
+      "rrf_score": 0.029709507042253523,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "00639",
+      "rrf_score": 0.029386529386529386,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque droit et/ou artère pulmonaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "02120",
+      "rrf_score": 0.029138513513513514,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Excision",
+      "description": "Excision acromioplastie ou acromiectomie d'un membre supérieur, intervention côté droit ou côté gauche, ouverte ou par voie arthroscopique incluant, le cas échéant, la bursectomie, la méniscectomie acromio-claviculaire, l'exérèse de l'extrémité distale de la clavicule et le curetage tendineux",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "08777",
+      "rrf_score": 0.028790389395194696,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "07674",
+      "rrf_score": 0.02690501986276634,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens > Anastomose d'un nerf crânien",
+      "description": "Thermocoagulation ou infiltration intracrânienne du trijumeau, neurochirurgie des nerfs crâniens",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "07675",
+      "rrf_score": 0.0,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens > Anastomose d'un nerf crânien",
+      "description": "Traitement chirurgical sur un nerf crânien par fosse postérieure (spasme, douleur, vertige, etc.) (rhizolyse, rhizotomie), neurochirurgie des nerfs crâniens",
+      "expanded_from": "07674"
+    },
+    {
+      "rank": 16,
+      "number": "15804",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "02156",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > réparation de la coiffe incluant l'acromioplastie, le cas échéant",
+      "description": "Réparation de la coiffe des rotateurs incluant l'acromioplastie, le cas échéant, extrémités - membres supérieurs, épaule",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "00201",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > articulation temporo-mandibulaire",
+      "description": "Injection de médicament ou de substance thérapeutique dans l'articulation temporo-mandibulaire, médication ou substance thérapeutique intra-articulaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "00228",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > articulation temporo-mandibulaire",
+      "description": "Injection de médicament ou de substance thérapeutique dans l'articulation temporo-mandibulaire, médication sclérosante incluant la substance",
+      "expanded_from": "00201"
+    },
+    {
+      "rank": 20,
+      "number": "15802",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "02102",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (technique intra-articulaire)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur (technique intra-articulaire), toute voie d'approche, au genou",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "02110",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (technique intra-articulaire)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur (technique intra-articulaire) avec tendon rotulien, supplément, au genou",
+      "expanded_from": "02102"
+    },
+    {
+      "rank": 23,
+      "number": "15766",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "15774",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "05089",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Incision > Révision d'entérostomie plus de 4 semaines après l'intervention originale > sous-faciale",
+      "description": "Révision d'entérostomie plus de 4 semaines après l'intervention originale, sous-faciale, incision",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "00183",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Biopsie avec ou sans guidage échographique (unique ou multiple)",
+      "description": "Biopsie de la gaine tendineuse, avec ou sans guidage échographique (unique ou multiple)",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "08848",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "09475",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Injection de substance de contraste",
+      "description": "Arthrographie d'une prothèse articulaire, injection de substance de contraste",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "02284",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > excision totale de vertèbre ou d'hémivertèbre",
+      "description": "Excision totale de vertèbre ou d'hémivertèbre par temps postérieur",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "02283",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > excision totale de vertèbre ou d'hémivertèbre",
+      "description": "Excision totale de vertèbre ou d'hémivertèbre par temps antérieur",
+      "expanded_from": "02284"
+    },
+    {
+      "rank": 31,
+      "number": "02293",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > excision totale de vertèbre ou d'hémivertèbre",
+      "description": "Excision totale de vertèbre ou d'hémivertèbre par temps combinés",
+      "expanded_from": "02284"
+    },
+    {
+      "rank": 32,
+      "number": "02340",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > excision totale de vertèbre ou d'hémivertèbre",
+      "description": "Excision totale de vertèbre ou d'hémivertèbre avec instrumentation et greffe, supplément",
+      "expanded_from": "02284"
+    },
+    {
+      "rank": 33,
+      "number": "02341",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > excision totale de vertèbre ou d'hémivertèbre",
+      "description": "Exérèse d'instrumentation de tout type pour correction de scoliose",
+      "expanded_from": "02284"
+    },
+    {
+      "rank": 34,
+      "number": "15812",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "08114",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Arthrographie, bursographie ou ténographie, incluant la ponction articulaire",
+      "description": "Arthrographie, bursographie ou ténographie, incluant la ponction articulaire, graphie seulement",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "08116",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant > Arthrographie, bursographie ou ténographie, incluant la ponction articulaire",
+      "description": "Arthrographie, bursographie ou ténographie, incluant la ponction articulaire, fluoroscopie et positionnement par le médecin",
+      "expanded_from": "08114"
+    },
+    {
+      "rank": 37,
+      "number": "08819",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "04582",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Excision au coeur et péricarde, réparation aux ventricules, réparation de sténose de l'infundibulum droit",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "09572",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > approche postérieure avec instrumentation",
+      "description": "Approche postérieure avec instrumentation de la colonne vertébrale",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "02103",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (techniques intra et extra-articulaires)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur (techniques intra et extra-articulaires), toute voie d'approche, au genou",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "00468",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Injection de substance sclérosante, intralésionnelle en dermatologie, une (1) ou plusieurs lésions",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "15806",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "02654",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > fracture épiphyse distale - radius et cubitus",
+      "description": "Réduction fermée intra ou extra-articulaire d'une fracture de l'épiphyse distale du radius et du cubitus à l'avant-bras",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "02735",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > fracture épiphyse distale - radius et cubitus",
+      "description": "Réduction fermée et fixation par broches d'une fracture de l'épiphyse distale du radius et du cubitus à l'avant-bras",
+      "expanded_from": "02654"
+    },
+    {
+      "rank": 45,
+      "number": "02736",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > fracture épiphyse distale - radius et cubitus",
+      "description": "Réduction ouverte d'une fracture de l'épiphyse distale du radius et du cubitus à l'avant-bras",
+      "expanded_from": "02654"
+    },
+    {
+      "rank": 46,
+      "number": "02249",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Hanche > Arthroplastie",
+      "description": "Remplacement de prothèse totale de la hanche après infection en un (1) seul temps (incluant exérèse de prothèse), intervention côté droit ou côté gauche",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "15808",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "02157",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > reconstruction de la coiffe (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant",
+      "description": "Reconstruction de la coiffe (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant, extrémités - membres supérieurs, épaule",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "02932",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation",
+      "description": "Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation, interphalangienne, métacarpo-phalangienne avec arthrite septique, main et poignet",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "02038",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation",
+      "description": "Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation, poignet, main et poignet",
+      "expanded_from": "02932"
+    },
+    {
+      "rank": 51,
+      "number": "02040",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation",
+      "description": "Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation, interphalangienne, métacarpo-phalangienne, main et poignet",
+      "expanded_from": "02932"
+    },
+    {
+      "rank": 52,
+      "number": "02933",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation",
+      "description": "Arthrotomie ou capsulotomie avec exploration, drainage, ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation, poignet avec arthrite septique, main et poignet",
+      "expanded_from": "02932"
+    },
+    {
+      "rank": 53,
+      "number": "09571",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Colonne vertébrale > approche postérieure avec greffe osseuse",
+      "description": "Approche postérieure avec greffe osseuse de la colonne vertébrale",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "00906",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour un acte de chirurgie dentaire administré au cabinet du dentiste ou du médecin où il n'y a pas d'appareil d'anesthésie et de réanimation en permanence en chirurgie dentaire et buccale, donnant droit uniquement à l'examen préanesthésique et aux unités de durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15814",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "00430",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > capsules, gaines, tendons, ligaments ou fascia",
+      "description": "Injection de médicament ou de substance thérapeutique dans les capsules, gaines, tendons, ligaments ou fascia",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "15789",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "15639",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 60,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 61,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 62,
+      "number": "15642",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 63,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15639"
+    },
+    {
+      "rank": 64,
+      "number": "15790",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "98010",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 66,
+      "number": "15648",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 67,
+      "number": "15628",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi exigeant un examen dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 68,
+      "number": "15810",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 55,
+    "panel_size": 1240,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.2190010020276532,
+  "db_ms": 32.878575992072
+}

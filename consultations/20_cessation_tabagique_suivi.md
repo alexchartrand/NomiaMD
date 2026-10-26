@@ -1,6 +1,6 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Louis-Philippe Gagné, MD, médecine familiale
-**Patient :** Lapointe, Christiane — 55 ans (F)
+**Patient :** Lapointe, Christiane — 55 ans (F), inscrite, vulnérable
 **NAM :** LAPC71572801
 **Dossier :** #CLI-2026-01231
 **Date/heure :** 28 juillet 2026, 10h45

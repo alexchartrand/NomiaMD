@@ -1,0 +1,123 @@
+{
+  "patient_id": "URG-2026-04512",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2217,
+      "output_tokens": 872,
+      "latency_ms": 5182.160135998856,
+      "started_at": "2026-10-08T15:43:26.769985Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2217,
+    "output_tokens": 872,
+    "llm_latency_ms": 5182.160135998856,
+    "wall_ms": 5182.461057993351
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patiente de 24 ans présentant une plaie profonde de 3,5 cm à la paume gauche suite à un accident de cuisine. Suture sous anesthésie locale réalisée aux urgences avec exploration de la plaie, sans atteinte tendineuse ni neurovasculaire. Rappel antitétanique administré et consignes de soins donnés.",
+    "encounter_setting": {
+      "location_detail": "CHU fictif, service d'urgence",
+      "date": "2026-07-13",
+      "time_start": "14:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Plaie profonde à la paume de la main gauche suite à un accident de cuisine",
+      "systems_or_body_regions_involved": [
+        "main_gauche",
+        "peau",
+        "tissu_sous_cutané"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Plaie par lacération simple, paume gauche, sans atteinte tendineuse ni neurovasculaire",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes_vitaux",
+        "main_gauche",
+        "sensibilité_distale",
+        "mobilité_des_doigts",
+        "remplissage_capillaire",
+        "pouls_radial"
+      ],
+      "notable_findings": "Plaie linéaire de 3,5 cm à la paume gauche, zone thénar, bords nets, profondeur atteignant le tissu sous-cutané, pas d'atteinte tendineuse visible à l'exploration. Sensibilité distale intacte, flexion/extension complète des doigts, force préservée, remplissage capillaire < 2 secondes, pouls radial palpable."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Suture de plaie sous anesthésie locale à la paume gauche avec exploration complète, irrigation abondante et fermeture en plan unique avec 5 points simples au nylon 4-0",
+        "generic_act": "suture de plaie",
+        "body_site": "paume gauche, zone thénar",
+        "technique_or_approach_mentioned": "champ stérile installé, irrigation abondante au NaCl 0,9 % sous pression, exploration complète de la plaie, fermeture en plan unique avec 5 points simples au nylon 4-0",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "les_deux"
+      },
+      {
+        "procedure_description": "Exploration de plaie sous anesthésie locale avec irrigation et exploration complète",
+        "generic_act": "exploration de plaie",
+        "body_site": "paume gauche",
+        "technique_or_approach_mentioned": "anesthésie locale : lidocaïne 1 % avec épinéphrine, 4 mL infiltrés autour de la plaie, irrigation abondante au NaCl 0,9 % (environ 200 mL) sous pression",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'intervention non explicitement mentionnée dans le texte",
+      "Heure de fin de la consultation non précisée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:15",
+      "actual": "14:15"
+    }
+  ],
+  "stats": {
+    "procedures": 2,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

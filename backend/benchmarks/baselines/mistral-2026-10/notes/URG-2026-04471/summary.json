@@ -1,0 +1,135 @@
+{
+  "patient_id": "URG-2026-04471",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1939,
+      "output_tokens": 845,
+      "latency_ms": 4831.418892994407,
+      "started_at": "2026-10-08T14:18:33.868251Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1939,
+    "output_tokens": 845,
+    "llm_latency_ms": 4831.418892994407,
+    "wall_ms": 4832.267670994042
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient de 67 ans présentant un STEMI inférieur aigu confirmé par ECG et troponine, pris en charge en urgence avec activation du protocole STEMI, administration d'AAS et ticagrélor, héparine IV, et transfert immédiat en salle de cathétérisme pour angioplastie primaire.",
+    "encounter_setting": {
+      "location_detail": "Urgence, CHU fictif",
+      "date": "2026-07-13",
+      "time_start": "08:42",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Douleur thoracique rétrosternale constrictive irradiant au bras gauche, apparue au repos il y a 2 heures, cotée 7/10, associée à diaphorèse et dyspnée légère.",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "thoracique",
+        "pulmonaire"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "STEMI inférieur aigu",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes_vitaux",
+        "apparence_générale",
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "TA 152/94, FC 98, FR 20, SpO2 96 % AA, T 37,1 °C; inconfortable et diaphorétique; B1-B2 normaux sans souffle ni galop; murmure vésiculaire symétrique sans crépitants."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Administration d'AAS 325 mg croqué et ticagrélor 180 mg PO",
+        "body_site": null,
+        "technique_or_approach_mentioned": "per os",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Début d'héparine IV selon protocole",
+        "body_site": null,
+        "technique_or_approach_mentioned": "intraveineux",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Activation du protocole STEMI et avis immédiat à la cardiologie d'hémodynamie",
+        "body_site": null,
+        "technique_or_approach_mentioned": "communication_téléphonique",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "les_deux"
+      },
+      {
+        "procedure_description": "Transfert urgent en salle de cathétérisme pour angioplastie primaire",
+        "body_site": null,
+        "technique_or_approach_mentioned": "transport_urgent",
+        "anesthesia_used": "pas_mentionné",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "Durée de l'encounter non explicitement mentionnée dans le transcript.",
+      "Heure de fin de l'encounter non précisée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "08:42",
+      "actual": "08:42"
+    }
+  ],
+  "stats": {
+    "procedures": 4,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

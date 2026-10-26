@@ -1,0 +1,665 @@
+{
+  "patient_id": "GMF-2026-00307",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 885,
+      "output_tokens": null,
+      "latency_ms": 1399.9508760025492,
+      "started_at": "2026-10-08T14:19:13.530924Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 885,
+    "output_tokens": 0,
+    "llm_latency_ms": 1399.9508760025492,
+    "wall_ms": 1447.737098991638
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi de diabète de type 2 nouvellement diagnostiqué chez un patient de 58 ans, avec évaluation de l'adhésion au traitement, ajustement thérapeutique (ajout d'atorvastatine) et planification d'examens complémentaires (fond d'œil, bilan sanguin de contrôle). Consultation assistée par interprète en dari.\nLieu (détail): GMF Boisé-des-Cèdres\nDate: 2026-06-16\nHeure de début: 14:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nDemandeur (identifiant): Dr. Fatima Ouedraogo, MD\nMotif de consultation: Suivi de diabète de type 2 nouvellement diagnostiqué il y a 3 mois, avec évaluation de l'adhésion au traitement et ajustement thérapeutique.\nSystèmes/régions concernés: endocrinien; cardiovasculaire; digestif; métabolique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: oui\nDiagnostic/impression: Diabète de type 2 en amélioration sous metformine (HbA1c 7,3 %), cible non encore atteinte. Dyslipidémie non traitée à considérer pour statine en prévention.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes_vitaux; pieds; cardiovasculaire; pulmonaire\nConstatations: TA 136/84, FC 76, poids 82 kg, IMC 27,7. Sensibilité au monofilament préservée bilatéralement, pouls pédieux palpables. Cardio-pulmonaire sans particularité.\nActe réalisé 1 - Description: Discussion sur l'ajout d'une statine (atorvastatine 20 mg DIE) pour la dyslipidémie et la prévention cardiovasculaire, avec accord du patient.\nActe réalisé 1 - Technique/approche: Explication détaillée avec l'aide de l'interprète en dari\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nAjouts possiblement facturables: communication_specialiste; frais_interprétariat\nÉlément incertain: Durée exacte de la consultation non précisée dans le transcript.; Le type de rendez-vous (avec ou sans rendez-vous) est déduit de la mention 'réservé à l'avance', mais non explicitement confirmé comme 'avec rendez-vous'.; L'ajout de l'atorvastatine est-il considéré comme une nouvelle ordonnance ou un ajustement de traitement existant ?",
+      "hits": [
+        {
+          "number": "15823",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "15811",
+          "relevance": 0.028893442824482918
+        },
+        {
+          "number": "15789",
+          "relevance": 0.02828322723507881
+        },
+        {
+          "number": "08776",
+          "relevance": 0.027242401614785194
+        },
+        {
+          "number": "15188",
+          "relevance": 0.026685643941164017
+        },
+        {
+          "number": "00345",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09425",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15767",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09312",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15775",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09313",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15790",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08800",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00844",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09315",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00952",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09316",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "98003",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15821",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08819",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Discussion sur l'ajout d'une statine (atorvastatine 20 mg DIE) pour la dyslipidémie et la prévention cardiovasculaire, avec accord du patient.",
+      "hits": [
+        {
+          "number": "04606",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00979",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04605",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15620",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "04604",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15643",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04602",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15621",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09360",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "98000",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04603",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15230",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04601",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15652",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00550",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00578",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00540",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09970",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04612",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00134",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "hits": [
+        {
+          "number": "00157",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15898",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "00748",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "08113",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "04577",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "04568",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "04600",
+          "relevance": 0.026685643941164017
+        },
+        {
+          "number": "04576",
+          "relevance": 0.026671407744288445
+        },
+        {
+          "number": "15188",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00552",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04567",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15894",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04578",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15622",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08027",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08004",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15652",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08214",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15643",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08098",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "frais_interprétariat",
+      "hits": [
+        {
+          "number": "00080",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "15188",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08876",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00157",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08861",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15882",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00158",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00402",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00156",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00783",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00403",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00748",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00404",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00160",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09977",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "30010",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09055",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08417",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08416",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00340",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15188",
+      "rrf_score": 0.046724324975892,
+      "header_path": "B — Consultation, examen et visite",
+      "description": "Supplément pour la communication par l'intermédiaire d'un interprète, pour un patient inscrit, en cabinet, à domicile ou en établissement"
+    },
+    {
+      "rank": 2,
+      "number": "00157",
+      "rrf_score": 0.032539682539682535,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 3,
+      "number": "00748",
+      "rrf_score": 0.03021353930031804,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 4,
+      "number": "15643",
+      "rrf_score": 0.028205128205128206,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, par période de quinze (15) minutes"
+    },
+    {
+      "rank": 5,
+      "number": "15652",
+      "rrf_score": 0.026856524873828405,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, par période de quinze (15) minutes"
+    },
+    {
+      "rank": 6,
+      "number": "15823",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 7,
+      "number": "04606",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de six artères coronariennes ou plus"
+    },
+    {
+      "rank": 8,
+      "number": "00080",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > jusqu'à soixante (60) kilomètres simples à partir du point de départ énoncé à la règle 2.4.2 du P.G. (distance dans un sens seulement), le kilomètre",
+      "description": "Frais de kilométrage pour surveillance, première demi-heure non rémunérée, par quart d'heure supplémentaire"
+    },
+    {
+      "rank": 9,
+      "number": "15811",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 10,
+      "number": "00979",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "D — Anesthésie — réanimation > Divers",
+      "description": "Anesthésie pour homogreffe pour remplacement au système cardiovasculaire"
+    },
+    {
+      "rank": 11,
+      "number": "15898",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)"
+    },
+    {
+      "rank": 12,
+      "number": "15789",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 13,
+      "number": "04605",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de cinq artères coronariennes"
+    },
+    {
+      "rank": 14,
+      "number": "08876",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour",
+      "description": "Supplément pour le déplacement de dix (10) kilomètres ou plus, du médecin vers le lieu de téléconsultation, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour"
+    },
+    {
+      "rank": 15,
+      "number": "08776",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 16,
+      "number": "15620",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient (par période de quinze (15) minutes) dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 17,
+      "number": "08113",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Thorax > Larynx, études spéciales > phonation",
+      "description": "Étude spéciale du larynx en phonation, thorax"
+    },
+    {
+      "rank": 18,
+      "number": "04604",
+      "rrf_score": 0.015625,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de quatre artères coronariennes"
+    },
+    {
+      "rank": 19,
+      "number": "04577",
+      "rrf_score": 0.015625,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire multiple, au niveau des ventricules"
+    },
+    {
+      "rank": 20,
+      "number": "08861",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "description": "Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective"
+    },
+    {
+      "rank": 21,
+      "number": "00345",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Insulinothérapie intensive à doses multiples et variables, installation initiale de la pompe et du cathéter (Le nettoyage ou l'exérèse de l'appareillage est inclus dans le tarif de l'acte associé)"
+    },
+    {
+      "rank": 22,
+      "number": "04568",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, au niveau des oreillettes"
+    },
+    {
+      "rank": 23,
+      "number": "15882",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective) > Intervention clinique à la suite d'une demande d'aide médicale à mourir",
+      "description": "Supplément pour déplacement selon les dispositions du sous-paragraphe 2.2.6 B-1 du préambule général par quinze (15) minutes consécutives à la suite d'une demande d'aide médicale à mourir, maximum de six (6) périodes pour l'aller-retour"
+    },
+    {
+      "rank": 24,
+      "number": "09425",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Désensibilisation à l'insuline, incluant les examens, les visites, les consultations et la surveillance, diabétothérapie"
+    },
+    {
+      "rank": 25,
+      "number": "04602",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de deux artères coronariennes"
+    },
+    {
+      "rank": 26,
+      "number": "04600",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > réparation d'une communication interauriculaire, type ostium secundum",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, supplément"
+    },
+    {
+      "rank": 27,
+      "number": "00158",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > corticale",
+      "description": "Interprétation d'une audiométrie corticale"
+    },
+    {
+      "rank": 28,
+      "number": "15767",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit"
+    },
+    {
+      "rank": 29,
+      "number": "15621",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Échanges interdisciplinaires concernant l'ensemble des patients d'une unité ou de l'établissement (par période de quinze (15) minutes) dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 30,
+      "number": "04576",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire unique ou postinfarctus, au niveau des ventricules"
+    },
+    {
+      "rank": 31,
+      "number": "00402",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Examen",
+      "description": "Examen microbiologique à l'état frais et/ou après coloration d'un frottis cervico-vaginal"
+    },
+    {
+      "rank": 32,
+      "number": "09312",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Séance d'enseignement de groupe aux patients diabétiques, minimum de quatre (4) patients diabétiques, pour une période service continu de 60 minutes ou plus, diabétothérapie"
+    },
+    {
+      "rank": 33,
+      "number": "09360",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiocardiographie > Angioplastie d'une valve cardiaque ou d'un gros vaisseau intrathoracique",
+      "description": "Angioplastie d'une valve cardiaque ou d'un gros vaisseau intrathoracique (artère(s) pulmonaire(s), aorte, veines caves, shunts et conduits centraux), incluant le cathétérisme cardiaque fait le même jour"
+    },
+    {
+      "rank": 34,
+      "number": "00156",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tonale et vocale",
+      "description": "Interprétation d'une audiométrie tonale et vocale"
+    },
+    {
+      "rank": 35,
+      "number": "15775",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 36,
+      "number": "98000",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation – Garde préventive"
+    },
+    {
+      "rank": 37,
+      "number": "00552",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Tonographie avec ou sans épreuve spéciale, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 38,
+      "number": "00783",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 39,
+      "number": "09313",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Enseignement de la technique de la mesure de la glycémie capillaire, diabétothérapie (maximum une (1) fois par patient par année)"
+    },
+    {
+      "rank": 40,
+      "number": "04603",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > Thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage d'une artère coronarienne",
+      "description": "Réparation par thrombo-endartérectomie et/ou angioplastie ouverte, et/ou pontage de trois artères coronariennes"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 58,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 1401.624175006873,
+  "db_ms": 45.32492099679075
+}

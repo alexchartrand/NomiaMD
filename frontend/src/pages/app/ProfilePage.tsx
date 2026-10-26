@@ -108,6 +108,8 @@ export default function ProfilePage() {
       setNewPassword("");
       setConfirmPassword("");
       toast.success("Mot de passe modifié.", { id: "password-changed" });
+      // The temporary password is gone: the rest of the app opens up again.
+      if (user?.must_change_password) refreshUser({ ...user, must_change_password: false });
     } catch (err) {
       setPasswordError(describeError(err));
     } finally {
@@ -116,92 +118,102 @@ export default function ProfilePage() {
   }
 
   if (!user) return null;
+  const forcedPasswordChange = user.must_change_password;
 
   return (
     <AppPage width="narrow">
       <AppPageHeader title="Profil" description="Vos coordonnées et vos faits de pratique, à jour pour que les bons codes vous soient proposés." />
 
       <div className="flex flex-col gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-heading text-lg font-semibold">Renseignements</CardTitle>
-            <CardDescription>
-              Le type de pratique, la taille de votre clientèle inscrite et votre numéro de pratique déterminent les codes
-              admissibles. Chaque modification s&apos;applique à partir d&apos;aujourd&apos;hui.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleProfileSubmit} className="flex flex-col gap-5">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FormField id="profile-email" label="Courriel">
-                  <TextField id="profile-email" value={user.email} disabled />
-                </FormField>
-                <FormField id="profile-full-name" label="Nom complet">
-                  <TextField id="profile-full-name" value={fullName} onChange={(event) => setFullName(event.target.value)} />
-                </FormField>
-                <FormField id="profile-physician-type" label="Type de pratique">
-                  <Select
-                    id="profile-physician-type"
-                    containerClassName="max-w-none"
-                    value={physicianType}
-                    onChange={(event) => setPhysicianType(event.target.value as PhysicianType | "")}
-                  >
-                    <option value="">—</option>
-                    {PHYSICIAN_TYPES.map((type) => (
-                      <option key={type.value} value={type.value}>
-                        {type.label}
-                      </option>
-                    ))}
-                  </Select>
-                </FormField>
-                <FormField id="profile-remuneration-type" label="Mode de rémunération">
-                  <Select
-                    id="profile-remuneration-type"
-                    containerClassName="max-w-none"
-                    value={remunerationType}
-                    onChange={(event) => setRemunerationType(event.target.value as RemunerationType | "")}
-                  >
-                    <option value="">—</option>
-                    {REMUNERATION_TYPES.map((type) => (
-                      <option key={type.value} value={type.value}>
-                        {type.label}
-                      </option>
-                    ))}
-                  </Select>
-                </FormField>
-                <FormField id="profile-patient-count" label="Nombre de patients" hint="Votre clientèle inscrite.">
-                  <TextField
-                    id="profile-patient-count"
-                    type="number"
-                    min={0}
-                    value={panelSize}
-                    onChange={(event) => setPanelSize(event.target.value)}
-                  />
-                </FormField>
-                <FormField
-                  id="profile-practice-number"
-                  label="Numéro de pratique"
-                  hint="5 ou 6 chiffres. Vos patients inscrits sont ceux dont le médecin de famille porte ce numéro."
-                >
-                  <TextField
+        {forcedPasswordChange && (
+          <Banner tone="warning">
+            Votre compte utilise un mot de passe temporaire. Choisissez votre propre mot de passe pour accéder à
+            l&apos;application.
+          </Banner>
+        )}
+        {!forcedPasswordChange && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-heading text-lg font-semibold">Renseignements</CardTitle>
+              <CardDescription>
+                Le type de pratique, la taille de votre clientèle inscrite et votre numéro de pratique déterminent les codes
+                admissibles. Chaque modification s&apos;applique à partir d&apos;aujourd&apos;hui.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleProfileSubmit} className="flex flex-col gap-5">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField id="profile-email" label="Courriel">
+                    <TextField id="profile-email" value={user.email} disabled />
+                  </FormField>
+                  <FormField id="profile-full-name" label="Nom complet">
+                    <TextField id="profile-full-name" value={fullName} onChange={(event) => setFullName(event.target.value)} />
+                  </FormField>
+                  <FormField id="profile-physician-type" label="Type de pratique">
+                    <Select
+                      id="profile-physician-type"
+                      containerClassName="max-w-none"
+                      value={physicianType}
+                      onChange={(event) => setPhysicianType(event.target.value as PhysicianType | "")}
+                    >
+                      <option value="">—</option>
+                      {PHYSICIAN_TYPES.map((type) => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormField>
+                  <FormField id="profile-remuneration-type" label="Mode de rémunération">
+                    <Select
+                      id="profile-remuneration-type"
+                      containerClassName="max-w-none"
+                      value={remunerationType}
+                      onChange={(event) => setRemunerationType(event.target.value as RemunerationType | "")}
+                    >
+                      <option value="">—</option>
+                      {REMUNERATION_TYPES.map((type) => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormField>
+                  <FormField id="profile-patient-count" label="Nombre de patients" hint="Votre clientèle inscrite.">
+                    <TextField
+                      id="profile-patient-count"
+                      type="number"
+                      min={0}
+                      value={panelSize}
+                      onChange={(event) => setPanelSize(event.target.value)}
+                    />
+                  </FormField>
+                  <FormField
                     id="profile-practice-number"
-                    value={practiceNumber}
-                    onChange={(event) => setPracticeNumber(event.target.value)}
-                    placeholder="12345"
-                  />
-                </FormField>
-              </div>
+                    label="Numéro de pratique"
+                    hint="5 ou 6 chiffres. Vos patients inscrits sont ceux dont le médecin de famille porte ce numéro."
+                  >
+                    <TextField
+                      id="profile-practice-number"
+                      value={practiceNumber}
+                      onChange={(event) => setPracticeNumber(event.target.value)}
+                      placeholder="12345"
+                    />
+                  </FormField>
+                </div>
 
-              {profileError && <Banner tone="error">{profileError}</Banner>}
+                {profileError && <Banner tone="error">{profileError}</Banner>}
 
-              <div className="flex justify-end">
-                <Button type="submit" disabled={profileSubmitting}>
-                  {profileSubmitting ? "Enregistrement..." : "Enregistrer"}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={profileSubmitting}>
+                    {profileSubmitting ? "Enregistrement..." : "Enregistrer"}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+        )}
 
         <Card>
           <CardHeader>
@@ -210,7 +222,11 @@ export default function ProfilePage() {
           <CardContent>
             <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
               <div className="grid gap-4 sm:grid-cols-2">
-                <FormField id="profile-current-password" label="Mot de passe actuel" className="sm:col-span-2 sm:max-w-[calc(50%-0.5rem)]">
+                <FormField
+                  id="profile-current-password"
+                  label={forcedPasswordChange ? "Mot de passe temporaire" : "Mot de passe actuel"}
+                  className="sm:col-span-2 sm:max-w-[calc(50%-0.5rem)]"
+                >
                   <TextField
                     id="profile-current-password"
                     type="password"

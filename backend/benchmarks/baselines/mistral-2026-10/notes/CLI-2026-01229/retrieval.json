@@ -1,0 +1,579 @@
+{
+  "patient_id": "CLI-2026-01229",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 767,
+      "output_tokens": null,
+      "latency_ms": 1766.919888992561,
+      "started_at": "2026-10-08T14:19:13.275853Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 767,
+    "output_tokens": 0,
+    "llm_latency_ms": 1766.919888992561,
+    "wall_ms": 1805.166364996694
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Bilan de santé périodique annuel pour un patient de 76 ans en bonne santé générale, avec examen physique complet, bilan sanguin demandé, vaccinations administrées et ajustement des conseils préventifs. Aucune nouvelle problématique médicale identifiée.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-06-02\nHeure de début: 09:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Bilan de santé périodique annuel chez un patient de 76 ans en bonne santé générale\nSystèmes/régions concernés: cardiovasculaire; uro-génital; cutané; musculo-squelettique; neurologique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Patient de 76 ans en bon état de santé général, HTA et hypertrophie bénigne de la prostate stables, aucune nouvelle problématique identifiée à ce bilan\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes vitaux; cardiovasculaire; pulmonaire; abdomen; prostate (toucher rectal); peau; pieds et démarche; cicatrice de hanche\nConstatations: TA 134/80, FC 72, IMC 25,1; prostate légèrement augmentée de volume, régulière, sans nodule suspect; quelques kératoses séborrhéiques bénignes; cicatrice de hanche droite bien guérie, mobilité normale\nActe réalisé 1 - Description: Vaccination antigrippale administrée\nActe réalisé 1 - Technique/approche: intramusculaire\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nActe réalisé 2 - Description: Examen de la prostate (toucher rectal)\nActe réalisé 2 - Site: prostate\nActe réalisé 2 - Technique/approche: toucher rectal\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript; Vaccin contre le zona et anti-pneumococcique vérifiés à jour mais non administrés lors de cette visite — facturation possible si facture distincte pour counseling ou vérification?",
+      "hits": [
+        {
+          "number": "20021",
+          "relevance": 0.02684684656560421
+        },
+        {
+          "number": "20023",
+          "relevance": 0.026491228491067886
+        },
+        {
+          "number": "15803",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08994",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08996",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09530",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15801",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09531",
+          "relevance": 0.015625
+        },
+        {
+          "number": "20022",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "06064",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20024",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20179",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08882",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00023",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09234",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08264",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08995",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08266",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Vaccination antigrippale administrée",
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "20021",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "20023",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "20024",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "00474",
+          "relevance": 0.03076923079788685
+        },
+        {
+          "number": "00431",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00152",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15801",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "98012",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09487",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00603",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09335",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00161",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09948",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00485",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00928",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00583",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00927",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00400",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Examen de la prostate (toucher rectal)",
+      "hits": [
+        {
+          "number": "06064",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "00227",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "06055",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "06051",
+          "relevance": 0.03030998818576336
+        },
+        {
+          "number": "06241",
+          "relevance": 0.029411764815449715
+        },
+        {
+          "number": "06242",
+          "relevance": 0.02877846732735634
+        },
+        {
+          "number": "06246",
+          "relevance": 0.027272727340459824
+        },
+        {
+          "number": "06060",
+          "relevance": 0.02690502069890499
+        },
+        {
+          "number": "06061",
+          "relevance": 0.026171742007136345
+        },
+        {
+          "number": "00362",
+          "relevance": 0.025833332911133766
+        },
+        {
+          "number": "00361",
+          "relevance": 0.025487013161182404
+        },
+        {
+          "number": "00857",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "05404",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06056",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06248",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00858",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09067",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06240",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06244",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08882",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "20021",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en cabinet"
+    },
+    {
+      "rank": 2,
+      "number": "20023",
+      "rrf_score": 0.03252247488101534,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en établissement"
+    },
+    {
+      "rank": 3,
+      "number": "20022",
+      "rrf_score": 0.030952380952380953,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour, en cabinet"
+    },
+    {
+      "rank": 4,
+      "number": "06064",
+      "rrf_score": 0.030751173708920186,
+      "header_path": "N — Appareil génital mâle > Prostate > Excision > Résection de tissu prostatique résiduel ou récidivant",
+      "description": "Résection de tissu prostatique pour fins diagnostiques non associée à une résection transurétrale de la prostate, ou pour drainage d'abcès, excision de la prostate"
+    },
+    {
+      "rank": 5,
+      "number": "20024",
+      "rrf_score": 0.02976190476190476,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour, en établissement"
+    },
+    {
+      "rank": 6,
+      "number": "15801",
+      "rrf_score": 0.029631255487269532,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 7,
+      "number": "08882",
+      "rrf_score": 0.026171741361614778,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > ordinaire > patient inscrit > sans déplacement",
+      "description": "Examen ordinaire sans déplacement d'un patient inscrit de 70 à 79 ans dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe"
+    },
+    {
+      "rank": 8,
+      "number": "00227",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Biopsie avec ou sans guidage échographique (unique ou multiple)",
+      "description": "Biopsie avec ou sans guidage échographique de prostate (à l'aiguille)"
+    },
+    {
+      "rank": 9,
+      "number": "15803",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 10,
+      "number": "06055",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "N — Appareil génital mâle > Prostate > Incision",
+      "description": "Biopsie ouverte de la prostate, voie périnéale, incision de la prostate"
+    },
+    {
+      "rank": 11,
+      "number": "00638",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 12,
+      "number": "06051",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "N — Appareil génital mâle > Prostate > Incision",
+      "description": "Implantation de substances radio-isotopes dans la prostate par voie ouverte, incision de la prostate"
+    },
+    {
+      "rank": 13,
+      "number": "08994",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 14,
+      "number": "00474",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen"
+    },
+    {
+      "rank": 15,
+      "number": "06241",
+      "rrf_score": 0.015625,
+      "header_path": "N — Appareil génital mâle > Prostate > Excision > Prostatectomie (incluant la vasectomie, le cas échéant)",
+      "description": "Prostatectomie rétropubienne simple, incluant la vasectomie le cas échéant, excision de la prostate"
+    },
+    {
+      "rank": 16,
+      "number": "00953",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 17,
+      "number": "00431",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou une articulation ou les deux incluant aspiration préliminaire (maximum trois (3))"
+    },
+    {
+      "rank": 18,
+      "number": "06242",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "N — Appareil génital mâle > Prostate > Excision > Prostatectomie (incluant la vasectomie, le cas échéant)",
+      "description": "Prostatectomie périnéale simple, incluant la vasectomie le cas échéant, excision de la prostate"
+    },
+    {
+      "rank": 19,
+      "number": "08996",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire"
+    },
+    {
+      "rank": 20,
+      "number": "00152",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie"
+    },
+    {
+      "rank": 21,
+      "number": "06246",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "N — Appareil génital mâle > Prostate > Excision > Prostatectomie (incluant la vasectomie, le cas échéant)",
+      "description": "Prostatectomie par cryochirurgie, excision de la prostate"
+    },
+    {
+      "rank": 22,
+      "number": "09530",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Pied > Reconstruction > transposition et réinsertion tendineuse, pied",
+      "description": "Transposition et réinsertion tendineuse du pied, un (1)"
+    },
+    {
+      "rank": 23,
+      "number": "06060",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "N — Appareil génital mâle > Prostate > Excision > Résection de tissu prostatique résiduel ou récidivant",
+      "description": "Résection de tissu prostatique résiduel ou récidivant, réintervention après un (1) an ou plus, excision de la prostate"
+    },
+    {
+      "rank": 24,
+      "number": "98012",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure"
+    },
+    {
+      "rank": 25,
+      "number": "06061",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "N — Appareil génital mâle > Prostate > Excision > Résection de tissu prostatique résiduel ou récidivant",
+      "description": "Résection de tissu prostatique résiduel ou récidivant, réintervention en moins d'un (1) an, excision de la prostate"
+    },
+    {
+      "rank": 26,
+      "number": "09531",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Pied > Reconstruction > transposition et réinsertion tendineuse, pied",
+      "description": "Transposition et réinsertion tendineuse du pied, plusieurs"
+    },
+    {
+      "rank": 27,
+      "number": "09487",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection unique ou multiple de toxine botulinique pour le soulagement des douleurs myofasciales, facettaires et de points gâchettes ou cervico-crâniennes réfractaires",
+      "description": "Injection unique ou multiple de toxine botulinique pour le soulagement des douleurs myofasciales, facettaires et de points gâchettes ou cervico-crâniennes réfractaires"
+    },
+    {
+      "rank": 28,
+      "number": "00362",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Urologie > Dilatation de la loge prostatique, par ballon hyperbare, incluant la cysto-urétroscopie sous anesthésie générale",
+      "description": "Dilatation de la loge prostatique, par ballon hyperbare, incluant la cysto-urétroscopie sous anesthésie générale, intervention subséquente, en urologie"
+    },
+    {
+      "rank": 29,
+      "number": "09334",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)"
+    },
+    {
+      "rank": 30,
+      "number": "00361",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Urologie > Dilatation de la loge prostatique, par ballon hyperbare, incluant la cysto-urétroscopie sous anesthésie générale",
+      "description": "Dilatation de la loge prostatique, par ballon hyperbare, incluant la cysto-urétroscopie sous anesthésie générale, première intervention, en urologie"
+    },
+    {
+      "rank": 31,
+      "number": "00603",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, chaque injection subséquente à la même séance"
+    },
+    {
+      "rank": 32,
+      "number": "00857",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Urologie > Profil urétral statique ou dynamique ou les deux",
+      "description": "Profil urétral statique ou dynamique ou les deux, comprenant la prise de pression intra-abdominale le cas échéant, la surveillance immédiate de l'acte, l'enregistrement graphique, l'interprétation et le compte rendu de même que les épreuves pharmacologiques, en urologie"
+    },
+    {
+      "rank": 33,
+      "number": "09335",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour"
+    },
+    {
+      "rank": 34,
+      "number": "05404",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "L — Système digestif > Rectum > Excision > Prolapsus rectal",
+      "description": "Excision de la muqueuse pour prolapsus rectal muqueux (P.C. 13), prolapsus rectal"
+    },
+    {
+      "rank": 35,
+      "number": "20179",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Stabilisation et maintien d'un donneur potentiel en vue d'une greffe d'organes, incluant les actes diagnostiques et thérapeutiques et les visites par jour, en établissement"
+    },
+    {
+      "rank": 36,
+      "number": "00161",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Traitement d'hyposensibilisation au venin d'insecte, une (1) ou plusieurs injections par séance, allergie"
+    },
+    {
+      "rank": 37,
+      "number": "06056",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "N — Appareil génital mâle > Prostate > Incision",
+      "description": "Exploration chirurgicale pour biopsies étagées des ganglions du petit bassin, incision de la prostate"
+    },
+    {
+      "rank": 38,
+      "number": "09948",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > Considération en raison de la complexité",
+      "description": "Considération en raison de la complexité accordée par le médecin de la Commission pour un dossier complexe, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles"
+    },
+    {
+      "rank": 39,
+      "number": "06248",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "N — Appareil génital mâle > Prostate > Excision > Prostatectomie (incluant la vasectomie, le cas échéant)",
+      "description": "Fulguration de la loge prostatique pour hémorragie, excision de la prostate"
+    },
+    {
+      "rank": 40,
+      "number": "00023",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Examen du personnel d'un établissement",
+      "description": "Examen du personnel d'un établissement, complet"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 76,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1768.2186029996956,
+  "db_ms": 36.24402500281576
+}

@@ -25,6 +25,14 @@ class _InMemoryUsers:
         pass
 
 
+class _NoThrottle:
+    async def reserve(self, email) -> None:
+        pass
+
+    async def clear(self, email) -> None:
+        pass
+
+
 class _RecordingHasher(PasswordHasher):
     """The real Argon2 hasher, noting which method ran and on which thread."""
 
@@ -51,8 +59,15 @@ def _user(hasher: PasswordHasher, **overrides):
         "email": "doc@example.test",
         "hashed_password": hasher.hash(PASSWORD),
         "is_active": True,
+        "session_version": 0,
+        "must_change_password": False,
     }
     return SimpleNamespace(**{**defaults, **overrides})
+
+
+class _NoAudit:
+    async def record(self, entry) -> None:
+        pass
 
 
 def _service(hasher: PasswordHasher, *users) -> AuthService:
@@ -60,6 +75,9 @@ def _service(hasher: PasswordHasher, *users) -> AuthService:
         user_repository=_InMemoryUsers(*users),
         password_hasher=hasher,
         token_service=TokenService("test-secret", 60, 120),
+        login_throttle=_NoThrottle(),
+        audit_log=_NoAudit(),
+        failure_audit_log=_NoAudit(),
     )
 
 

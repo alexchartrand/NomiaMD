@@ -1,0 +1,493 @@
+{
+  "patient_id": "GMF-2026-00411",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 522,
+      "output_tokens": null,
+      "latency_ms": 1436.631460004719,
+      "started_at": "2026-10-08T14:19:28.159443Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 522,
+    "output_tokens": 0,
+    "llm_latency_ms": 1436.631460004719,
+    "wall_ms": 1466.7915509926388
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Première visite d'une nouvelle patiente de 45 ans pour bilan de santé initial et mise à jour des suivis. Examen physique complet réalisé. Bilan sanguin et mammographie prescrits. Suivi prévu dans 6 semaines pour résultats.\nLieu (détail): GMF des Rivières\nDate: 2026-08-25\nHeure de début: 08:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Bilan de santé initial pour nouvelle patiente sans médecin de famille depuis 2022, sans plainte aiguë mais souhaitant un suivi complet\nSystèmes/régions concernés: endocrinien; neurologique; digestif; cardiovasculaire; gynécologique; cutané\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Hypothyroïdie sous traitement, migraine épisodique, antécédents familiaux de cancer du sein et de maladie cardiovasculaire précoce\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; pulmonaire; abdominal; thyroïdien; cutané; seins\nConstatations: TA 122/78, FC 68, IMC 27,3. Thyroïde non palpable. Cœur et poumons normaux. Abdomen souple. Pas de masse palpable aux seins. Peau sans lésion suspecte.\nAjouts possiblement facturables: communication_specialiste\nÉlément incertain: Durée exacte de la consultation non précisée dans le document.; Heure de fin de la consultation non indiquée.",
+      "hits": [
+        {
+          "number": "15804",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15812",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "15830",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "08776",
+          "relevance": 0.029571646824479103
+        },
+        {
+          "number": "15808",
+          "relevance": 0.0295138880610466
+        },
+        {
+          "number": "15806",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "15766",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "08819",
+          "relevance": 0.02877846732735634
+        },
+        {
+          "number": "08848",
+          "relevance": 0.02853124402463436
+        },
+        {
+          "number": "15774",
+          "relevance": 0.028484849259257317
+        },
+        {
+          "number": "15789",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "15802",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15832",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15639",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00561",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00551",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15145",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15648",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15144",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08800",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "hits": [
+        {
+          "number": "15842",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "15845",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00157",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "15898",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "00748",
+          "relevance": 0.03015873022377491
+        },
+        {
+          "number": "08113",
+          "relevance": 0.02964426949620247
+        },
+        {
+          "number": "04577",
+          "relevance": 0.028438886627554893
+        },
+        {
+          "number": "04568",
+          "relevance": 0.027071520686149597
+        },
+        {
+          "number": "04600",
+          "relevance": 0.025991560891270638
+        },
+        {
+          "number": "04576",
+          "relevance": 0.02597840689122677
+        },
+        {
+          "number": "15188",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00552",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04567",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15894",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04578",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15622",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08027",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08004",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15652",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08214",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15804",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 2,
+      "number": "15842",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Communications > Communication avec un médecin spécialiste",
+      "description": "Communication avec un médecin spécialiste, clientèle inscrite de 1 000 à moins de 1 500 patients"
+    },
+    {
+      "rank": 3,
+      "number": "15812",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 4,
+      "number": "15845",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications > Communication avec d'autres professionnels de la santé",
+      "description": "Communication avec d'autres professionnels de la santé, clientèle inscrite de 1 000 à moins de 1 500 patients"
+    },
+    {
+      "rank": 5,
+      "number": "15830",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 6,
+      "number": "00157",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 7,
+      "number": "08776",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 8,
+      "number": "15898",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)"
+    },
+    {
+      "rank": 9,
+      "number": "15808",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 10,
+      "number": "00748",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 11,
+      "number": "15806",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 12,
+      "number": "08113",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Thorax > Larynx, études spéciales > phonation",
+      "description": "Étude spéciale du larynx en phonation, thorax"
+    },
+    {
+      "rank": 13,
+      "number": "15766",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 14,
+      "number": "04577",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire multiple, au niveau des ventricules"
+    },
+    {
+      "rank": 15,
+      "number": "08819",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 16,
+      "number": "04568",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, au niveau des oreillettes"
+    },
+    {
+      "rank": 17,
+      "number": "08848",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 18,
+      "number": "04600",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > réparation d'une communication interauriculaire, type ostium secundum",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, supplément"
+    },
+    {
+      "rank": 19,
+      "number": "15774",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 20,
+      "number": "04576",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire unique ou postinfarctus, au niveau des ventricules"
+    },
+    {
+      "rank": 21,
+      "number": "15789",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 22,
+      "number": "15188",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite",
+      "description": "Supplément pour la communication par l'intermédiaire d'un interprète, pour un patient inscrit, en cabinet, à domicile ou en établissement"
+    },
+    {
+      "rank": 23,
+      "number": "15802",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 24,
+      "number": "00552",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Tonographie avec ou sans épreuve spéciale, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 25,
+      "number": "15832",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 26,
+      "number": "04567",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Création de communication interauriculaire, procédé de Blalock-Hanlon ou autres, au niveau des oreillettes"
+    },
+    {
+      "rank": 27,
+      "number": "15639",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A"
+    },
+    {
+      "rank": 28,
+      "number": "15894",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication par conseil numérique (eConsult)",
+      "description": "Communication par conseil numérique (eConsult), lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 29,
+      "number": "00561",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Interventions per-cutanées non vasculaires > Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique > Mammaire > Localisation d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie)",
+      "description": "Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique, mammaire, localisation d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie), incluant la mammographie postlocalisation et la biopsie, le cas échéant"
+    },
+    {
+      "rank": 30,
+      "number": "04578",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Agrandissement ou création de communication interventriculaire, au niveau des ventricules"
+    },
+    {
+      "rank": 31,
+      "number": "00551",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Interventions per-cutanées non vasculaires > Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique > Mammaire > Biopsie d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie)",
+      "description": "Biopsie/cytologie à l'aiguille, par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique, mammaire, biopsie d'une masse mammaire non palpable avec appareil dédié (plaque de compression quadrillée ou stéréotaxie), incluant la mammographie effectuée le même jour, le cas échéant"
+    },
+    {
+      "rank": 32,
+      "number": "15622",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 33,
+      "number": "15145",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 34,
+      "number": "08027",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Dacryocystographie, en examen spécial incluant la scopie"
+    },
+    {
+      "rank": 35,
+      "number": "15648",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B"
+    },
+    {
+      "rank": 36,
+      "number": "08004",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Encéphalographie, en examen spécial incluant la scopie"
+    },
+    {
+      "rank": 37,
+      "number": "15144",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 38,
+      "number": "15652",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, par période de quinze (15) minutes"
+    },
+    {
+      "rank": 39,
+      "number": "08800",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 40,
+      "number": "08214",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Fistulographie, en examen spécial incluant la scopie"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 45,
+    "panel_size": 1240,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1437.5928349909373,
+  "db_ms": 28.610954992473125
+}

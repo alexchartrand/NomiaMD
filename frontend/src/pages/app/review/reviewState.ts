@@ -46,7 +46,7 @@ export const initialReviewState: ReviewState = {
 
 export type ReviewAction =
   // `claim`: the one already saved from this encounter, whose codes start ticked.
-  // `preselect`: without a claim, start with the high-confidence codes ticked.
+  // `preselect`: without a claim, start with the retained codes ticked.
   | { type: "extracted"; result: BillingExtractionResponse; claim?: Claim | null; preselect?: boolean }
   | { type: "cleared" }
   | { type: "service-date-changed"; date: string }
@@ -69,7 +69,7 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
         ...(action.claim
           ? selectionFromClaim(action.result, action.claim)
           : action.preselect
-            ? { selection: highConfidence(action.result) }
+            ? { selection: retainedCodes(action.result) }
             : {}),
       };
     case "cleared":
@@ -104,7 +104,7 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
 function manualCodesChanged(state: ReviewState, action: ManualCodesAction): ReviewState {
   // A searched code the extraction already proposes is ticked rather than added twice.
   if (action.type === "manual-code-added") {
-    const proposed = state.result?.billing.result.codes.findIndex((c) => c.code === action.hit.number) ?? -1;
+    const proposed = state.result?.billing.codes.findIndex((c) => c.code === action.hit.number) ?? -1;
     if (proposed >= 0) {
       return { ...state, selection: new Set(state.selection).add(proposed), pristine: false };
     }
@@ -116,12 +116,12 @@ function manualCodesChanged(state: ReviewState, action: ManualCodesAction): Revi
   };
 }
 
-// What a fresh review starts with ticked: the codes the model is most sure of. The physician
-// still un-ticks or adds before anything is saved.
-function highConfidence(result: BillingExtractionResponse): Set<number> {
+// What a fresh review starts with ticked: the codes the model is sure of (retained). The
+// physician still un-ticks or adds before anything is saved.
+function retainedCodes(result: BillingExtractionResponse): Set<number> {
   const selection = new Set<number>();
-  result.billing.result.codes.forEach((code, i) => {
-    if (code.confidence === "high") selection.add(i);
+  result.billing.codes.forEach((code, i) => {
+    if (code.retained) selection.add(i);
   });
   return selection;
 }
@@ -137,7 +137,7 @@ function selectionFromClaim(
   const selection = new Set<number>();
   const feeSelection = new Map<number, number>();
   const lieuSelection = new Map<number, string>();
-  result.billing.result.codes.forEach((code, i) => {
+  result.billing.codes.forEach((code, i) => {
     const line = claimed.get(code.code);
     if (!line) return;
     selection.add(i);

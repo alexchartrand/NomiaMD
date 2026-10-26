@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import pytest_asyncio
 
-from app.auth import get_current_user
+from app.auth import get_authenticated_user, get_current_user
 from app.bootstrap import postgres_database
 from app.postgresdb import PostgresDB, User, UserRole
 from app.main import app
@@ -15,13 +15,12 @@ from app.lancedb.models import CodeRow, CodeRowFee
 from app.code_catalog import init_code_catalog
 from app.lancedb.eligibility import CodeEligibilityFilter
 from app.lancedb.repository import CodeRowLookupError, ICodeCatalogRepository
-from app.ramq_codes import BillingCodesTask, BillingContext
+from app.extraction import build_billing_pipeline, init_billing_pipeline
+from app.ramq_codes import BillingContext
 from app.ramq_codes.eligibility import CandidateSet
 from app.ramq_codes.models import Code, CodeFee
 from app.rate_limit import limiter
 from app.summary import ConsultationSummaryResult, render_for_billing_codes
-from app.summary import ConsultationSummaryTask
-from app.tasks.registry import register_tasks
 from tests.db_helpers import ensure_user_row
 
 SMALL_REFERENCE_PATH = Path(__file__).parent / "fixtures" / "reference_data_test.json"
@@ -53,7 +52,7 @@ class _KeywordStubRetriever:
 
 class StubCodeRepository(ICodeCatalogRepository):
     """Deterministic by-key lookup over the same fixture rows _KeywordStubRetriever ranks —
-    stands in for the real LanceDB-backed CodeRepository so BillingCodesTask.resolve_fees and
+    stands in for the real LanceDB-backed CodeRepository so FeeResolver and
     the hand-search/claim paths (app/code_catalog, app/claims) can be exercised without a real
     LanceDB connection. Eligibility is applied in Python with the same rule as the real WHERE
     (app/lancedb/eligibility.py: a null bound always passes); keyword search is a plain
@@ -77,8 +76,15 @@ class StubCodeRepository(ICodeCatalogRepository):
             if n in self._rows_by_number and self._eligible(self._rows_by_number[n], eligibility)
         ]
 
-    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None) -> list:
-        raise NotImplementedError("not exercised by BillingCodesTask.resolve_fees")
+    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None, sections=None) -> list:
+        raise NotImplementedError("not exercised by FeeResolver")
+
+    async def list_by_header_paths(
+        self, header_paths: list[str], eligibility: CodeEligibilityFilter | None = None
+    ) -> list[CodeRow]:
+        return [
+            r for r in self._rows_by_number.values() if r.header_path in header_paths and self._eligible(r, eligibility)
+        ]
 
     async def keyword_search(self, text: str, k: int, eligibility: CodeEligibilityFilter | None = None) -> list:
         needle = text.lower()
@@ -120,15 +126,14 @@ _ELIGIBILITY_AXES = (
 @pytest.fixture(autouse=True)
 def small_reference_table():
     """Points RAMQ candidate retrieval and code lookup at a tiny, stable fixture rather than
-    the real (large, network-backed) llama_index vector store and LanceDB `codes` table —
+    the real (large, network-backed) embedding API and LanceDB `codes` table —
     tests need candidate narrowing to behave predictably without a real vector index,
     API key, or network call.
 
-    Populates app.tasks.registry's task dict directly with a BillingCodesTask built from
-    these stubs (register_tasks — the same call app/bootstrap.py's init_tasks makes with
-    real collaborators), rather than patching attributes on a pre-built singleton: nothing
-    builds the task registry at import time any more (see app/bootstrap.py), so there's no
-    singleton for this fixture to reach into until it makes one itself.
+    Sets the process's billing pipeline to one built from these stubs (init_billing_pipeline
+    — the same call app/bootstrap.py's application_services() makes with real
+    collaborators): nothing builds it at import time, so there's no singleton for this
+    fixture to reach into until it makes one itself.
     """
     data = json.loads(SMALL_REFERENCE_PATH.read_text())
     entries = [
@@ -170,19 +175,16 @@ def small_reference_table():
     stub_codes = StubCodeRepository(rows)
     init_code_catalog(stub_codes)
 
-    register_tasks([
-        BillingCodesTask(stub_retriever, stub_codes),
-        ConsultationSummaryTask(),
-    ])
+    init_billing_pipeline(build_billing_pipeline(stub_codes, retriever=stub_retriever))
     yield
 
 
 @pytest.fixture(autouse=True)
 def no_real_lancedb_on_startup(monkeypatch):
     """TestClient(app) as a context manager triggers app.main's lifespan, which normally
-    opens a real LanceDB connection and rebuilds the task registry / chatbot engine from it
+    opens a real LanceDB connection and rebuilds the billing pipeline / chatbot engine from it
     (app/bootstrap.py's application_services()) — tests must not touch a real LanceDB, and
-    must not clobber the stub registry small_reference_table just set up. Stubs out the
+    must not clobber the stub pipeline small_reference_table just set up. Stubs out the
     lifespan's call to application_services with a no-op, so TestClient triggers no real
     startup work — postgres_db already opened and bound the (SQLite) relational DB.
     """
@@ -210,7 +212,9 @@ def no_real_api_keys(monkeypatch):
     # at a real openai_compatible host must not leak into tests either.
     for name in (
         "LLM_PROVIDER", "LLM_ENDPOINT", "LLM_API_KEY",
+        "LLM_MODEL_CONSULTATION_SUMMARY", "LLM_MODEL_BILLING_CODES", "LLM_MODEL_RAMQ_CHATBOT",
         "EMBEDDING_PROVIDER", "EMBEDDING_ENDPOINT", "EMBEDDING_MODEL", "EMBEDDING_API_KEY",
+        "BEDROCK_REGION",
         # And the Epic sandbox demo: a developer's flag/credentials must not turn its routes
         # on, or let a test reach fhir.epic.com (the contract test opts back in itself).
         "APP_ENV", "EPIC_SANDBOX_ENABLED", "EPIC_SANDBOX_CLIENT_ID", "EPIC_SANDBOX_PRIVATE_KEY_PATH",
@@ -278,5 +282,7 @@ async def default_authenticated_user():
     )
     await ensure_user_row(fake_user)
     app.dependency_overrides[get_current_user] = lambda: fake_user
+    app.dependency_overrides[get_authenticated_user] = lambda: fake_user
     yield fake_user
     app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_authenticated_user, None)

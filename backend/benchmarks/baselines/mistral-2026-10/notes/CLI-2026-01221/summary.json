@@ -1,0 +1,102 @@
+{
+  "patient_id": "CLI-2026-01221",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2091,
+      "output_tokens": 499,
+      "latency_ms": 2967.5200519995997,
+      "started_at": "2026-10-08T14:18:45.537139Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2091,
+    "output_tokens": 499,
+    "llm_latency_ms": 2967.5200519995997,
+    "wall_ms": 2967.9072229919257
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi annuel pour dyslipidémie chez une patiente de 61 ans sous rosuvastatine. Bilan lipidique presque à cible, pas de modification de traitement. Renforcement des conseils préventifs et planification du prochain suivi dans 12 mois.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-02-17",
+      "time_start": "13:40",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de dyslipidémie et prévention cardiovasculaire",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "métabolique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Dyslipidémie avec LDL légèrement au-dessus de l'objectif compte tenu du risque familial; statut post-ménopause sans facteur de risque additionnel",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes vitaux",
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "TA 128/78, FC 68, poids 68 kg, IMC 25,8; cardio-pulmonaire sans particularité"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript",
+      "Heure de fin de la consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-02-17",
+      "actual": "2026-02-17"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "13:40",
+      "actual": "13:40"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

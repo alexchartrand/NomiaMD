@@ -9,7 +9,7 @@ part of the pytest suite. From backend/, with the venv active:
 Checks the three DocumentRepository access patterns pytest only ever exercises against a
 tiny synthetic fixture (tests/test_lancedb_document_repository.py), against the real,
 ramq-ingestion-built table, plus one full /query round trip through
-RAMQManualQueryEngine.acustom_query — the same call app/ramq_chatbot/router.py makes.
+RAMQManualQueryEngine.aquery — the same call app/ramq_chatbot/router.py makes.
 
 Replaces the old scripts/simple_query.py: that script predated RAMQManualRetriever's
 required `reference_expander` argument and had been broken (TypeError on construction) since
@@ -62,10 +62,9 @@ async def main() -> None:
             print("    OK")
 
         # -- hybrid_search ------------------------------------------------------------------
-        from app.llm import get_embedding_model
+        from app.llm import get_embedding_client
 
-        embed_model = get_embedding_model()
-        vector = await embed_model.aget_query_embedding(KNOWN_QUERY)
+        vector = await get_embedding_client().embed_query(KNOWN_QUERY)
         hits = await documents.hybrid_search(text=KNOWN_QUERY, vector=vector, k=5)
         print(f"--- hybrid_search({KNOWN_QUERY!r}): {len(hits)} hit(s)")
         if not hits:
@@ -78,7 +77,7 @@ async def main() -> None:
         init_ramq_query_engine(codes, documents)
         engine = get_ramq_query_engine()
         question = "Quelle est la majoration de nuit?"
-        answer = await engine.acustom_query(question)
+        answer = await engine.aquery(question)
         print(f"--- /query: {question!r}")
         print(f"    answer: {answer[:200]}{'...' if len(answer) > 200 else ''}")
         if not answer.strip():

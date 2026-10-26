@@ -80,6 +80,9 @@ services:
       # The edge `caddy` terminates TLS, so the session cookie is always HTTPS-only here,
       # whatever a local .env says (COOKIE_SECURE=false is for uvicorn over plain HTTP).
       COOKIE_SECURE: "true"
+      # The deployed version on the admin console's system page: deploy/remote-deploy.sh exports
+      # it (git describe), else whatever the .env says.
+      APP_VERSION: ${APP_VERSION:-}
     volumes:
       # Produced by the separate ramq-ingestion repo, not by this compose file — must
       # already be populated at the host's DB_PATH before `backend` can start (LanceDB.open()
@@ -115,6 +118,9 @@ services:
       context: ./backend
     restart: unless-stopped
     command: ["arq", "app.worker.WorkerSettings"]
+    # The image's HEALTHCHECK probes the backend's /health, which nothing serves here.
+    healthcheck:
+      disable: true
     networks: [internal]
     env_file: .env
     environment:

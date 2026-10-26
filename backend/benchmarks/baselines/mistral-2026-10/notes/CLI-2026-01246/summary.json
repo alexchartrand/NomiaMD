@@ -1,0 +1,99 @@
+{
+  "patient_id": "CLI-2026-01246",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1591,
+      "output_tokens": 465,
+      "latency_ms": 3199.2720870039193,
+      "started_at": "2026-10-08T14:20:03.625597Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1591,
+    "output_tokens": 465,
+    "llm_latency_ms": 3199.2720870039193,
+    "wall_ms": 3199.597764003556
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Le patient Patrick Rioux, déjà vu pour une lombalgie le 6 août 2026 avec arrêt de travail de 4 semaines, consulte aujourd'hui uniquement pour faire compléter un formulaire d'invalidité de courte durée pour son assureur privé. Aucun nouvel examen ou plainte n'est rapporté. Le formulaire est rempli à partir du dossier existant et facturé directement au patient.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-08-27",
+      "time_start": "16:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Compléter un formulaire d'invalidité de courte durée pour l'assureur privé de l'employeur",
+      "systems_or_body_regions_involved": [
+        "système musculo-squelettique",
+        "lombaire"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Lombalgie (diagnostic antérieur)",
+      "recommendations_given_to_patient": false,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": false,
+      "regions_or_systems_examined": [],
+      "notable_findings": null
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "frais_administratifs_assureur"
+    ],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement indiquée dans le transcript."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-08-27",
+      "actual": "2026-08-27"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "16:00",
+      "actual": "16:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 1,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

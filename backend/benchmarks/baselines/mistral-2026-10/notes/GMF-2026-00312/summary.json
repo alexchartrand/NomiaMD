@@ -1,0 +1,104 @@
+{
+  "patient_id": "GMF-2026-00312",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1724,
+      "output_tokens": 525,
+      "latency_ms": 3050.3073879954172,
+      "started_at": "2026-10-08T14:19:34.465020Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1724,
+    "output_tokens": 525,
+    "llm_latency_ms": 3050.3073879954172,
+    "wall_ms": 3050.677965002251
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Séance de psychothérapie cognitivo-comportementale (TCC) de 45 minutes pour trouble dépressif majeur, incluant revue des devoirs, restructuration cognitive et activation comportementale. Pas de changement de médication.",
+    "encounter_setting": {
+      "location_detail": "Clinique GMF Boisé-des-Cèdres",
+      "date": "2026-09-17",
+      "time_start": "14:00",
+      "time_end": "14:45",
+      "duration_minutes": 45.0,
+      "duration_explicitly_stated": true,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Séance de psychothérapie (TCC) n° 4 pour trouble dépressif majeur",
+      "systems_or_body_regions_involved": [
+        "psychiatrique"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "trouble dépressif majeur en amélioration (PHQ-9 passé de 16 à 9)",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": false,
+      "regions_or_systems_examined": [],
+      "notable_findings": null
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Séance de thérapie cognitivo-comportementale structurée",
+        "body_site": null,
+        "technique_or_approach_mentioned": "TCC, restructuration cognitive, activation comportementale, revue des devoirs",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Le statut de vulnérabilité du patient (inscrite, vulnérable) est-il pertinent pour la facturation RAMQ ?"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-17",
+      "actual": "2026-09-17"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:00",
+      "actual": "14:00"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 1,
+    "systems": 1,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": true
+  }
+}

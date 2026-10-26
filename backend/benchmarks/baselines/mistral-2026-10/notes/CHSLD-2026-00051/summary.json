@@ -1,0 +1,100 @@
+{
+  "patient_id": "CHSLD-2026-00051",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1632,
+      "output_tokens": 485,
+      "latency_ms": 3019.000745000085,
+      "started_at": "2026-10-08T14:19:23.768800Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1632,
+    "output_tokens": 485,
+    "llm_latency_ms": 3019.000745000085,
+    "wall_ms": 3019.406554987654
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi hebdomadaire en CHSLD pour une patiente de 91 ans avec démence Alzheimer avancée. Constipation persistante malgré PEG 17 g die, ajustement du traitement (PEG bid x 7 jours puis reprise die) et ajout de sennosides PRN. Examen sommaire de l'abdomen sans particularité.",
+    "encounter_setting": {
+      "location_detail": "CHSLD Saint-Jude — Unité 2 Est",
+      "date": "2026-09-02",
+      "time_start": "09:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi courant en CHSLD — constipation persistante malgré PEG 17 g die",
+      "systems_or_body_regions_involved": [
+        "digestif",
+        "abdomen"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Constipation persistante chez patiente avec démence Alzheimer avancée",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "abdomen"
+      ],
+      "notable_findings": "Abdomen souple, non distendu à la palpation sommaire. Patiente souriante."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le transcript.",
+      "Absence de mention explicite de l'heure de fin de la consultation."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-02",
+      "actual": "2026-09-02"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:15",
+      "actual": "09:15"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

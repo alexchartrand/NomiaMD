@@ -1,0 +1,943 @@
+{
+  "patient_id": "URG-2026-04621",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 723,
+      "output_tokens": null,
+      "latency_ms": 1.223970000864938,
+      "started_at": "2026-10-09T17:41:43.498704Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 723,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.223970000864938,
+    "wall_ms": 45.61149199435022
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. urgence. Hôpital régional du Haut-Fleuve, urgence. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15659",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "15660",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "15661",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "15644",
+          "relevance": 0.0295138880610466
+        },
+        {
+          "number": "15056",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "15645",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "15646",
+          "relevance": 0.028006266802549362
+        },
+        {
+          "number": "15653",
+          "relevance": 0.027619047090411186
+        },
+        {
+          "number": "15655",
+          "relevance": 0.027071520686149597
+        },
+        {
+          "number": "15654",
+          "relevance": 0.026856524869799614
+        },
+        {
+          "number": "08815",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08928",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15193",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15847",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15848",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15634",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15849",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08884",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09946",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15633",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Patient de 73 ans non inscrit se présente à l'urgence pour une chute dans l'escalier ayant causé une lacération occipitale de 4 cm. Réparation de la plaie par 6 agrafes, TDM cérébral normal. Diagnostic de TCC léger sans lésion intracrânienne. Congé avec surveillance et instructions de retrait des agrafes.\nLieu (détail): Hôpital régional du Haut-Fleuve, urgence\nDate: 2026-09-26\nHeure de début: 22:15\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Chute dans l'escalier avec plaie au cuir chevelu (lacération occipitale de 4 cm).\nSystèmes/régions concernés: tête; neurologique; cutané\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: TCC léger sans lésion intracrânienne; lacération simple du cuir chevelu de 4 cm.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: oui\nRégions examinées: tête; cou; thorax; abdomen; neurologique\nConstatations: Lacération occipitale linéaire de 4 cm, bords nets, pas d'embarrure palpable; TA 156/88, FC 82 rég., SatO2 97 %, glycémie 6,4, GCS 15, TDM cérébral normal.\nActe réalisé 1 - Description: Réparation de la lacération occipitale de 4 cm par irrigation, fermeture en un plan avec 6 agrafes.\nActe réalisé 1 - Acte (générique): réparation de plaie cutanée\nActe réalisé 1 - Site: occiput\nActe réalisé 1 - Technique/approche: fermeture en un plan par agrafes\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de l'encounter non explicitement mentionnée dans le transcript.; Heure de fin de l'encounter non précisée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01320",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "01323",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "01322",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "07501",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07506",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07507",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01327",
+          "relevance": 0.015625
+        },
+        {
+          "number": "20025",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15053",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07502",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04588",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07505",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06100",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07500",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15056",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07504",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15059",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09231",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15062",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "réparation de plaie cutanée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "05431",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "01325",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "01320",
+          "relevance": 0.030578898265957832
+        },
+        {
+          "number": "01326",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "01322",
+          "relevance": 0.03009207360446453
+        },
+        {
+          "number": "01323",
+          "relevance": 0.0295138880610466
+        },
+        {
+          "number": "07386",
+          "relevance": 0.0279720276594162
+        },
+        {
+          "number": "07387",
+          "relevance": 0.02694394253194332
+        },
+        {
+          "number": "05347",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06325",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07410",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05376",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "05382",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "05327",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07434",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07413",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01405",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "07462",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "01417",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "01416",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Réparation de la lacération occipitale de 4 cm par irrigation, fermeture en un plan avec 6 agrafes.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "01320",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "01323",
+          "relevance": 0.029138512909412384
+        },
+        {
+          "number": "01322",
+          "relevance": 0.02905167080461979
+        },
+        {
+          "number": "07386",
+          "relevance": 0.02904040366411209
+        },
+        {
+          "number": "07678",
+          "relevance": 0.027313265949487686
+        },
+        {
+          "number": "05389",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "07506",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "05327",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "07501",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05328",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01145",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07504",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01146",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01327",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02953",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07507",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07387",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07505",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01371",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07502",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "01320",
+      "rrf_score": 0.04946236559139784,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération simple de moins de un (1) cm à la face et au cou, la somme des centimètres s'additionnant à la valeur de base payable qu'une fois",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "01323",
+      "rrf_score": 0.04817150063051703,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > autres localisations",
+      "description": "Réparation de plaies (débridement compris) d'une lacération simple de moins de un (1) cm à d'autres localisations que la face et le cou, la somme des centimètres s'additionnant à la valeur de base payable qu'une fois",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "01322",
+      "rrf_score": 0.04788306451612903,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) d'une lacération compliquée de moins de deux centimètres et demi (2,5 cm) à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "07386",
+      "rrf_score": 0.031024531024531024,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Réparation > Lacération de la paupière > n'intéressant pas le bord libre",
+      "description": "Réparation d'une lacération de la paupière n'intéressant pas le bord libre des paupières et des sourcils.",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "07501",
+      "rrf_score": 0.03057889822595705,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne, avec déchirure de la dure-mère, crâne et face",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "07500",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne, dure-mère intacte, crâne et face",
+      "expanded_from": "07501"
+    },
+    {
+      "rank": 7,
+      "number": "07503",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne intéressant les sinus, crâne et face",
+      "expanded_from": "07501"
+    },
+    {
+      "rank": 8,
+      "number": "07506",
+      "rrf_score": 0.030536130536130537,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture ouverte avec enfoncement",
+      "description": "Traitement opératoire d'une fracture ouverte avec enfoncement du crâne, avec déchirure de la dure-mère, crâne et face",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15056",
+      "rrf_score": 0.028958333333333336,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire avec déplacement (d'urgence avec déplacement)",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de 70 à 79 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "01327",
+      "rrf_score": 0.02862400327131466,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > débridement isolé de plaie (excluant les brûlures)",
+      "description": "Débridement isolé de plaie (excluant les brûlures), chaque unité de un (1) cm",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "05327",
+      "rrf_score": 0.02862400327131466,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Lacération mineure de la langue (P.G. 2.4.7.7 A) (P.C. 13), réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "05326",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Glossoplastie, réparation",
+      "expanded_from": "05327"
+    },
+    {
+      "rank": 13,
+      "number": "07507",
+      "rrf_score": 0.028484848484848488,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture ouverte avec enfoncement",
+      "description": "Traitement opératoire d'une fracture ouverte avec enfoncement du crâne, avec traumatisme cérébral important (corps étranger, hématome, etc.), crâne et face",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "07387",
+      "rrf_score": 0.028083267871170464,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Réparation > Lacération de la paupière > intéressant le bord libre sur toute son épaisseur",
+      "description": "Réparation d'une lacération de la paupière intéressant le bord libre sur toute son épaisseur des paupières et des sourcils.",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "07504",
+      "rrf_score": 0.027242401779095628,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne avec plastie de la dure-mère avec greffe pour hydrorrhée, crâne et face",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "07502",
+      "rrf_score": 0.02694394213381555,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture simple avec enfoncement",
+      "description": "Traitement opératoire d'une fracture simple avec enfoncement du crâne, avec traumatisme cérébral important, crâne et face",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "07505",
+      "rrf_score": 0.026875901875901876,
+      "header_path": "G — Appareil musculo-squelettique > Crâne et face > Fractures > crâne > traitement opératoire (non soumis au paragraphe 2.06 de l'appareil du musculo-squelettique) > fracture ouverte avec enfoncement",
+      "description": "Traitement opératoire d'une fracture ouverte avec enfoncement du crâne, dure-mère intacte, crâne et face",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15659",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "09231",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation mineure d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15659"
+    },
+    {
+      "rank": 20,
+      "number": "05431",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "L — Système digestif > Foie > Réparation",
+      "description": "Réparation de rupture ou plaie du foie, réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "05417",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Foie > Réparation",
+      "description": "Ligature de l'artère hépatique pour métastases du foie, réparation",
+      "expanded_from": "05431"
+    },
+    {
+      "rank": 22,
+      "number": "05430",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Foie > Réparation",
+      "description": "Marsupialisation de kyste ou d'abcès du foie, réparation",
+      "expanded_from": "05431"
+    },
+    {
+      "rank": 23,
+      "number": "15660",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "09234",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation ordinaire d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15660"
+    },
+    {
+      "rank": 25,
+      "number": "01325",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) de plaies étendues, multiples ou compliquées à la face et au cou, utilisant des techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut ou le débridement et la réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15661",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "09237",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation majeure d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15661"
+    },
+    {
+      "rank": 28,
+      "number": "15644",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "01326",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Plaie > exploration d'une plaie sous anesthésie",
+      "description": "Exploration d'une plaie sous anesthésie, sans réparation, d'une plaie complexe nécessitant un transfert à un autre médecin",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "00953",
+      "rrf_score": 0.015625,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "07678",
+      "rrf_score": 0.015625,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens > Divers > Crâniectomie décompressive sans autre intervention dans le même temps opératoire",
+      "description": "Crâniectomie décompressive sous-occipitale sans autre intervention dans le même temps opératoire, divers, neurochirurgie des nerfs crâniens",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "07677",
+      "rrf_score": 0.0,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens > Divers > Crâniectomie décompressive sans autre intervention dans le même temps opératoire",
+      "description": "Crâniectomie décompressive sous-temporale sans autre intervention dans le même temps opératoire, divers, neurochirurgie des nerfs crâniens",
+      "expanded_from": "07678"
+    },
+    {
+      "rank": 33,
+      "number": "15645",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "05389",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Réparation > Suture intestinale (lacération de part en part)",
+      "description": "Réparation pour suture intestinale (lacération de part en part), intestin (à l'exception du rectum)",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "15646",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15653",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "15655",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "20025",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Extraction de stérilet, acte compliqué en gynécologie (P.G. 2.4.7.7 A) (P.A.D.T. 1.4)",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "05347",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "L — Système digestif > Pharynx > Réparation",
+      "description": "Suture d'une plaie du pharynx",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "05342",
+      "rrf_score": 0.0,
+      "header_path": "L — Système digestif > Pharynx > Réparation",
+      "description": "Pharyngoplastie du pharynx",
+      "expanded_from": "05347"
+    },
+    {
+      "rank": 41,
+      "number": "15654",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "15053",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire sans déplacement",
+      "description": "Examen ordinaire sans déplacement d'un patient inscrit de 70 à 79 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "06325",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "M — Appareil urinaire > Rein > Réparation > Suture",
+      "description": "Suture d'une blessure du rein (non iatrogénique), réparation, suture",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "06326",
+      "rrf_score": 0.0,
+      "header_path": "M — Appareil urinaire > Rein > Réparation > Suture",
+      "description": "Fermeture de néphrostomie, de pyélostomie ou de toute autre fistule rénale, réparation, suture",
+      "expanded_from": "06325"
+    },
+    {
+      "rank": 45,
+      "number": "05328",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "L — Système digestif > Langue > Réparation",
+      "description": "Lacération étendue de la langue, réparation",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "08815",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation psychiatrique > ordinaire en établissement sauf en CLSC ou en GMF-U en établissement",
+      "description": "Consultation psychiatrique d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "08813",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation psychiatrique > ordinaire en établissement sauf en CLSC ou en GMF-U en établissement",
+      "description": "Consultation psychiatrique ordinaire d'un patient de soixante-dix (70) ans ou plus en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08815"
+    },
+    {
+      "rank": 48,
+      "number": "07410",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie locale",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "07411",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Plastie de plaie traumatique de la conjonctive avec greffe de la muqueuse conjonctivale ou buccale",
+      "expanded_from": "07410"
+    },
+    {
+      "rank": 50,
+      "number": "07413",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Fermeture secondaire d'une plaie opératoire de la conjonctive",
+      "expanded_from": "07410"
+    },
+    {
+      "rank": 51,
+      "number": "07434",
+      "rrf_score": 0.0,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Suture simple de plaie traumatique de la conjonctive sous anesthésie générale incluant l'examen sous anesthésie générale",
+      "expanded_from": "07410"
+    },
+    {
+      "rank": 52,
+      "number": "01145",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > Traitement des angiomes-plans par laser jaune, à vapeur de cuivre ou à argon modifié > sous anesthésie générale",
+      "description": "Traitement des angiomes-plans par laser jaune, à vapeur de cuivre ou à argon modifié, sous anesthésie générale, par cm carré",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "08928",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation psychiatrique > majeure en établissement sauf en CLSC ou en GMF-U en établissement",
+      "description": "Consultation psychiatrique d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "08926",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation psychiatrique > majeure en établissement sauf en CLSC ou en GMF-U en établissement",
+      "description": "Consultation psychiatrique majeure d'un patient de soixante-dix (70) ans ou plus en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08928"
+    },
+    {
+      "rank": 55,
+      "number": "04588",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Excision au coeur et péricarde, réparation aux ventricules, cardiorraphie, suture pour lacération cardiaque non iatrogénique",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "05376",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "L — Système digestif > Estomac > Réparation > Chirurgie pour obésité morbide, toute technique, toute voie d'approche",
+      "description": "Réparation de l'estomac : gastrorraphie ou duodénorraphie (pour ulcère perforé ou plaie) avec ou sans épiplooplastie",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "15193",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > préanesthésie",
+      "description": "Examen d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus réservé au médecin exerçant en anesthésie en centre hospitalier seulement",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "09093",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > préanesthésie",
+      "description": "Examen préanesthésie d'un patient de soixante-dix (70) ans ou plus réservé au médecin exerçant en anesthésie en établissement",
+      "expanded_from": "15193"
+    },
+    {
+      "rank": 59,
+      "number": "15847",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 7 h à 16 h en cabinet, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "15848",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 16 h à 24 h en cabinet, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "15634",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "15849",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 0 h à 7 h en cabinet, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "08884",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > ordinaire > patient inscrit > d'urgence avec déplacement",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de soixante-dix (70) à soixante-dix-neuf (79) ans dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "09946",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale en urgence par un médecin désigné par la Commission, examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "09902",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale par un médecin désigné par la Commission",
+      "expanded_from": "09946"
+    },
+    {
+      "rank": 66,
+      "number": "09977",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission lorsque le médecin rend son avis en cabinet privé",
+      "expanded_from": "09946"
+    },
+    {
+      "rank": 67,
+      "number": "09978",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Rapport d'évaluation médicale par un médecin désigné par la Commission, examen du travailleur, rédaction et expédition sans délai à la Commission du rapport prescrit",
+      "expanded_from": "09946"
+    },
+    {
+      "rank": 68,
+      "number": "09980",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour le rapport d'évaluation médicale en urgence par un médecin désigné par la Commission",
+      "expanded_from": "09946"
+    },
+    {
+      "rank": 69,
+      "number": "15633",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 73,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.3559590006479993,
+  "db_ms": 33.97648499230854
+}

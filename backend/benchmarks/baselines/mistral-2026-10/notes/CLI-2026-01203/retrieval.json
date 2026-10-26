@@ -1,0 +1,579 @@
+{
+  "patient_id": "CLI-2026-01203",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 866,
+      "output_tokens": null,
+      "latency_ms": 999.1660639934707,
+      "started_at": "2026-10-08T14:18:45.818558Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 866,
+    "output_tokens": 0,
+    "llm_latency_ms": 999.1660639934707,
+    "wall_ms": 1046.0849499941105
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation en médecine familiale pour fatigue persistante et troubles du sommeil depuis 2 mois chez un patient de 34 ans. Bilan sanguin demandé pour éliminer une cause organique. Impression diagnostique de symptomatologie dépressive légère à modérée dans un contexte de stress professionnel. Plan : suivi en 1 semaine pour résultats, discussion sur l'hygiène du sommeil et gestion du stress, référence en psychothérapie proposée, réévaluation dans 2 semaines.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-07-13\nHeure de début: 15:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nMotif de la référence: Symptomatologie dépressive légère à modérée dans un contexte de stress professionnel\nMotif de consultation: Fatigue persistante et troubles du sommeil depuis 2 mois, associés à une diminution de concentration et une perte d'intérêt pour les activités habituelles.\nSystèmes/régions concernés: psychiatrique; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Symptomatologie dépressive d'intensité légère à modérée, à corréler avec contexte de stress professionnel. À éliminer : cause organique (dysthyroïdie, anémie).\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes_vitaux; apparence_générale; thyroïde; général\nConstatations: TA 122/78, FC 70, perte de poids de 2 kg en 2 mois. Apparence générale fatiguée mais coopérative. Thyroïde sans particularité. Reste de l'examen physique sans particularité.\nActe réalisé 1 - Description: Bilan sanguin demandé (FSC, TSH, glycémie à jeun, ferritine, bilan hépatique, ions)\nActe réalisé 1 - Technique/approche: Prélèvement sanguin standard\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 2 - Description: Questionnaire PHQ-9 complété en clinique\nActe réalisé 2 - Technique/approche: Auto-questionnaire standardisé\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Absence de mention explicite d'un rapport écrit à produire ou requis pour la référence en psychothérapie.",
+      "hits": [
+        {
+          "number": "08800",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15785",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08803",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "20179",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08811",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00844",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00117",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20025",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15786",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06911",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08948",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09377",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08812",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09378",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08862",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09379",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00056",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09380",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Bilan sanguin demandé (FSC, TSH, glycémie à jeun, ferritine, bilan hépatique, ions)",
+      "hits": [
+        {
+          "number": "00113",
+          "relevance": 0.03109932504594326
+        },
+        {
+          "number": "09424",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00807",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09907",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00118",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09914",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15628",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09915",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09377",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09916",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00870",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15813",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15145",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15833",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09378",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09466",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09313",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00181",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00020",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00834",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Questionnaire PHQ-9 complété en clinique",
+      "hits": [
+        {
+          "number": "00056",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "08807",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "00097",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "08809",
+          "relevance": 0.02985074557363987
+        },
+        {
+          "number": "00057",
+          "relevance": 0.02911604568362236
+        },
+        {
+          "number": "08808",
+          "relevance": 0.028445512056350708
+        },
+        {
+          "number": "08811",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08812",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15066",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00098",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00005",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08810",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15069",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "05363",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15786",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08861",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09248",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08271",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08948",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08272",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "08811",
+      "rrf_score": 0.030303030303030304,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 2,
+      "number": "00056",
+      "rrf_score": 0.029487179487179487,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 3,
+      "number": "08812",
+      "rrf_score": 0.028438886647841874,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 4,
+      "number": "09377",
+      "rrf_score": 0.028404512489927477,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Soins médicaux prodigués par un médecin dans une unité d'hépatologie à la suite d'une transplantation hépatique, par jour, par patient > Honoraire global incluant actes diagnostiques et/ou thérapeutiques y afférents",
+      "description": "Soins médicaux prodigués par un médecin dans une unité d'hépatologie à la suite d'une transplantation hépatique, par jour, par patient, honoraire global incluant actes diagnostiques et/ou thérapeutiques y afférents, premier jour (journée de la greffe)"
+    },
+    {
+      "rank": 5,
+      "number": "15786",
+      "rrf_score": 0.027799227799227798,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, période supplémentaire de quinze (15) minutes, patients de moins de 70 ans"
+    },
+    {
+      "rank": 6,
+      "number": "09378",
+      "rrf_score": 0.02684684684684685,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Soins médicaux prodigués par un médecin dans une unité d'hépatologie à la suite d'une transplantation hépatique, par jour, par patient > Honoraire global incluant actes diagnostiques et/ou thérapeutiques y afférents",
+      "description": "Soins médicaux prodigués par un médecin dans une unité d'hépatologie à la suite d'une transplantation hépatique, par jour, par patient, honoraire global incluant actes diagnostiques et/ou thérapeutiques y afférents, deuxième au cinquième jour (par jour)"
+    },
+    {
+      "rank": 7,
+      "number": "08948",
+      "rrf_score": 0.026709401709401708,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 8,
+      "number": "08800",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 9,
+      "number": "00113",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Glycémie (par méthode biochimique quantitative incluant le prélèvement) en cabinet ou à domicile"
+    },
+    {
+      "rank": 10,
+      "number": "00638",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 11,
+      "number": "09424",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Bilan orthoptique avec enregistrement des mesures sur document permanent, excluant les traitements, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 12,
+      "number": "08807",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 13,
+      "number": "15785",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, première période de trente (30) minutes, patients de moins de 70 ans"
+    },
+    {
+      "rank": 14,
+      "number": "00807",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Épreuve à (au) > Épreuve de > dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation",
+      "description": "Épreuve à (au) dilution urinaire incluant les examens, les visites, les consultations, la surveillance et l'interprétation, épreuve cétogène, épreuves au glucagon et hypoglycémie cétogène comprises"
+    },
+    {
+      "rank": 15,
+      "number": "00097",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 16,
+      "number": "00953",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 17,
+      "number": "09907",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 6. Bilan médical > A) Nature du rapport",
+      "description": "Bilan médical d'un travailleur victime d'une lésion professionnelle, pour l'information verbale fournie au médecin de la Commission"
+    },
+    {
+      "rank": 18,
+      "number": "08809",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 19,
+      "number": "08803",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 20,
+      "number": "00118",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Laboratoire > Analyse de laboratoire en cabinet ou à domicile",
+      "description": "Hémoglobine (méthode quantitative par spectrophotométrie) en cabinet ou à domicile"
+    },
+    {
+      "rank": 21,
+      "number": "00057",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 22,
+      "number": "20179",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Stabilisation et maintien d'un donneur potentiel en vue d'une greffe d'organes, incluant les actes diagnostiques et thérapeutiques et les visites par jour, en établissement"
+    },
+    {
+      "rank": 23,
+      "number": "09914",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 6. Bilan médical > B) Considération en raison de la complexité",
+      "description": "Bilan médical d'un travailleur victime d'une lésion professionnelle, considération en raison de la complexité du dossier pour un montant minimal"
+    },
+    {
+      "rank": 24,
+      "number": "08808",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 25,
+      "number": "15628",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi exigeant un examen dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence"
+    },
+    {
+      "rank": 26,
+      "number": "00844",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Hyperalimentation",
+      "description": "Hyperalimentation parentérale permanente, soins du patient non hospitalisé, par mois (cet acte est réservé au seul médecin responsable de la mise en marche et du contrôle du traitement et comprend tous les services médicaux ou administratifs rendus par le médecin en rapport avec la pathologie en cause)"
+    },
+    {
+      "rank": 27,
+      "number": "09915",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 6. Bilan médical > B) Considération en raison de la complexité",
+      "description": "Bilan médical d'un travailleur victime d'une lésion professionnelle, considération en raison de la complexité du dossier pour un montant intermédiaire"
+    },
+    {
+      "rank": 28,
+      "number": "00117",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électroencéphalographie",
+      "description": "Mesures sériées de la latence d'endormissement, comprenant l'enregistrement et l'interprétation des données suivantes : monitoring électroencéphalographique, monitoring électrocardiographique, électro-oculogramme et électromyogramme, au cours d'un minimum de quatre (4) séances distinctes, d'une durée maximale de vingt (20) minutes chacune, réparties sur une période de huit (8) heures, par patient, la rédaction d'un rapport, sa communication et son incorporation au dossier du patient"
+    },
+    {
+      "rank": 29,
+      "number": "15066",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen psychiatrique principal sans déplacement",
+      "description": "Examen psychiatrique principal sans déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 30,
+      "number": "20025",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Extraction de stérilet, acte compliqué en gynécologie (P.G. 2.4.7.7 A) (P.A.D.T. 1.4)"
+    },
+    {
+      "rank": 31,
+      "number": "09916",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 6. Bilan médical > B) Considération en raison de la complexité",
+      "description": "Bilan médical d'un travailleur victime d'une lésion professionnelle, considération en raison de la complexité du dossier pour un montant maximal"
+    },
+    {
+      "rank": 32,
+      "number": "00098",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur d'urgence avec déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 33,
+      "number": "00870",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gastroentérologie > Mesure du débit hépatique selon la méthode de Bradley à l'aide de l'I.C.G. (indocyanide green)",
+      "description": "Mesure du débit hépatique selon la méthode de Bradley à l'aide de l'I.C.G. (indocyanide green), en gastroentérologie"
+    },
+    {
+      "rank": 34,
+      "number": "00005",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique ordinaire sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 35,
+      "number": "06911",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "Q — Obstétrique",
+      "description": "Non stress test comprenant l'interprétation incluant, le cas échéant la technique ou la surveillance ou les deux"
+    },
+    {
+      "rank": 36,
+      "number": "15813",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 37,
+      "number": "08810",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur d'urgence avec déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 38,
+      "number": "15145",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Supplément de responsabilité pour suivi de grossesse en CLSC et en GMF-U en établissement, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 39,
+      "number": "15069",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen psychiatrique principal avec déplacement",
+      "description": "Examen psychiatrique principal avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 40,
+      "number": "15833",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique de prise en charge et suivi pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 34,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1000.4619239916792,
+  "db_ms": 44.9013309989823
+}

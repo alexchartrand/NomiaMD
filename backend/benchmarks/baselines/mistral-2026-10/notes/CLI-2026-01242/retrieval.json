@@ -1,0 +1,423 @@
+{
+  "patient_id": "CLI-2026-01242",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 682,
+      "output_tokens": null,
+      "latency_ms": 262.9155150061706,
+      "started_at": "2026-10-08T14:19:37.494769Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 682,
+    "output_tokens": 0,
+    "llm_latency_ms": 262.9155150061706,
+    "wall_ms": 293.8687879941426
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Patient non inscrit se présente en clinique sans rendez-vous pour une lacération de 3 cm à l'avant-bras droit causée par une tôle. Une suture simple sous anesthésie locale a été réalisée après exploration et irrigation. Vaccin dT à jour, pas de rappel nécessaire. Suivi prévu au CLSC ou à la clinique.\nLieu (détail): Clinique médicale Les Tilleuls — plage sans rendez-vous\nDate: 2026-09-16\nHeure de début: 17:50\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Lacération linéaire de 3 cm à l'avant-bras droit causée par une tôle il y a 1 heure, avec saignement contrôlé par pression.\nSystèmes/régions concernés: cutané; avant-bras_droit\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Lacération simple de 3 cm à l'avant-bras droit\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: avant-bras_droit\nConstatations: Lacération linéaire face dorsale tiers moyen avant-bras droit, 3 cm, bords nets, profondeur sous-cutanée, pas d'exposition tendineuse. Mobilité complète poignet/doigts, force normale, sensibilité normale (nerfs radial, médian, cubital). Pouls radial présent.\nActe réalisé 1 - Description: Suture d'une lacération de 3 cm à l'avant-bras droit sous anesthésie locale\nActe réalisé 1 - Site: avant-bras droit\nActe réalisé 1 - Technique/approche: anesthésie locale lidocaïne 1 % 3 mL, irrigation au sérum physiologique 250 mL, exploration, fermeture en plan unique avec 5 points simples nylon 4-0\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: les_deux\nÉlément incertain: Durée de l'intervention non explicitement mentionnée dans le transcript.; Heure de fin de la consultation non précisée.",
+      "hits": [
+        {
+          "number": "09579",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "01323",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01322",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02746",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01320",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02996",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08065",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07410",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02278",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01326",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02360",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01325",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02806",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07387",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02355",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07434",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09580",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02318",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02538",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "04588",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Suture d'une lacération de 3 cm à l'avant-bras droit sous anesthésie locale",
+      "hits": [
+        {
+          "number": "07410",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "09579",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "02355",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "05195",
+          "relevance": 0.02982766181230545
+        },
+        {
+          "number": "01322",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07434",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01323",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07378",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07806",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04588",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07400",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04774",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02746",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02356",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02996",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04768",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "05389",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01320",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00827",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04772",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "09579",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras",
+      "description": "Suture tendineuse latéro-latérale, une (1) ou plusieurs, par membre à l'avant-bras"
+    },
+    {
+      "rank": 2,
+      "number": "01322",
+      "rrf_score": 0.031754032258064516,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation d'une lacération compliquée de moins de deux centimètres et demi (2,5 cm) à la face ou au cou, débridement compris, avec techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut et les procédures nécessaires, avec addition des deux centimètres et demi (2,5 cm) supplémentaires"
+    },
+    {
+      "rank": 3,
+      "number": "07410",
+      "rrf_score": 0.03159203980099502,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Réparation de plaie traumatique de la conjonctive, suture simple sous anesthésie locale"
+    },
+    {
+      "rank": 4,
+      "number": "01323",
+      "rrf_score": 0.031544957774465976,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > autres localisations",
+      "description": "Réparation d'une lacération simple de moins de un (1) centimètre à d'autres localisations que la face ou le cou, débridement compris, avec addition des centimètres supplémentaires à la valeur de base payable une seule fois"
+    },
+    {
+      "rank": 5,
+      "number": "02746",
+      "rrf_score": 0.02976190476190476,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > Allongement ou correction incluant ostéotomie > Allongement cubitus ou radius, ou les deux > avec fixateur externe (llizarov ou autre) > et reconstruction par allogreffe, incluant l'ostéosynthèse et l'autogreffe",
+      "description": "Allongement cubitus ou radius, ou les deux, avec fixateur externe (llizarov ou autre) et reconstruction par allogreffe, incluant l'ostéosynthèse et l'autogreffe, extrémités - membres supérieurs"
+    },
+    {
+      "rank": 6,
+      "number": "02355",
+      "rrf_score": 0.02964254577157803,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > avant-bras",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, avant-bras, divers, appareil musculo-squelettique."
+    },
+    {
+      "rank": 7,
+      "number": "02996",
+      "rrf_score": 0.0288981288981289,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > Allongement ou correction incluant ostéotomie > Allongement cubitus ou radius, ou les deux > avec fixateur externe (llizarov ou autre) > Excision > tumeur - radius ou cubitus",
+      "description": "Excision d'une tumeur du radius ou du cubitus avec greffe ou remplacement par prothèse incluant l'ostéosynthèse, le cas échéant, extrémités - membres supérieurs"
+    },
+    {
+      "rank": 8,
+      "number": "07434",
+      "rrf_score": 0.02871794871794872,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Réparation de plaie traumatique de la conjonctive, suture simple sous anesthésie générale incluant l'examen sous anesthésie générale"
+    },
+    {
+      "rank": 9,
+      "number": "01320",
+      "rrf_score": 0.028612012987012988,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations simples > face et cou",
+      "description": "Réparation d'une lacération simple de moins de un (1) centimètre à la face ou au cou, débridement compris, avec addition des centimètres supplémentaires à la valeur de base payable une seule fois"
+    },
+    {
+      "rank": 10,
+      "number": "04588",
+      "rrf_score": 0.02715098147128967,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Cardiorraphie : suture pour lacération cardiaque non iatrogénique, au niveau des ventricules"
+    },
+    {
+      "rank": 11,
+      "number": "05195",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées de la paroi abdominale de l'abdomen, du péritoine et de l'épiploon, sous anesthésie locale, par incision"
+    },
+    {
+      "rank": 12,
+      "number": "08065",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Membres supérieurs > Avant-bras",
+      "description": "Radiographie de l'avant-bras, membres supérieurs"
+    },
+    {
+      "rank": 13,
+      "number": "07378",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées",
+      "description": "Utilisation de sutures ajustables pour strabisme, incluant les ductions forcées, supplément incluant la retouche sous anesthésie locale"
+    },
+    {
+      "rank": 14,
+      "number": "02278",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > Amputation",
+      "description": "Amputation de l'avant-bras, extrémités - membres supérieurs"
+    },
+    {
+      "rank": 15,
+      "number": "07806",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "T — Appareil visuel > Cornée > Curetage et/ou cautérisation",
+      "description": "Curetage et/ou cautérisation sous anesthésie locale, cornée"
+    },
+    {
+      "rank": 16,
+      "number": "01326",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Plaie > exploration d'une plaie sous anesthésie",
+      "description": "Exploration, sans réparation, d'une plaie complexe sous anesthésie, nécessitant un transfert à un autre médecin"
+    },
+    {
+      "rank": 17,
+      "number": "02360",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > Greffe",
+      "description": "Greffe du radius et du cubitus à l'avant-bras"
+    },
+    {
+      "rank": 18,
+      "number": "07400",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "T — Appareil visuel > Cils",
+      "description": "Électrolyse ou cryothérapie sous anesthésie locale des cils"
+    },
+    {
+      "rank": 19,
+      "number": "01325",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) de plaies étendues, multiples ou compliquées à la face et au cou, utilisant des techniques spéciales de réparation en vue d'obtenir un résultat esthétique ou fonctionnel au maximum"
+    },
+    {
+      "rank": 20,
+      "number": "04774",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "J — Système cardiaque > Non thoracique > Thrombo-endartérectomie ouverte d'une artère périphérique > Réparation > Réparation pour traumatisme artériel et veineux au niveau des extrémités",
+      "description": "Réparation pour traumatisme artériel et veineux au niveau des extrémités par suture simple, non thoracique"
+    },
+    {
+      "rank": 21,
+      "number": "02806",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Divers > application de stimulateurs électriques > avant-bras",
+      "description": "Application de stimulateurs électriques à l'avant-bras, divers, appareil musculo-squelettique."
+    },
+    {
+      "rank": 22,
+      "number": "07387",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Réparation > Lacération de la paupière > intéressant le bord libre sur toute son épaisseur",
+      "description": "Réparation d'une lacération de la paupière intéressant le bord libre sur toute son épaisseur (paupières et sourcils)"
+    },
+    {
+      "rank": 23,
+      "number": "02356",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "G — Appareil musculo-squelettique > Divers > Réimplantation > bras",
+      "description": "Réimplantation après amputation complète avec suture de nerfs, artères, veines, sous microscope, bras, divers, appareil musculo-squelettique."
+    },
+    {
+      "rank": 24,
+      "number": "04768",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "J — Système cardiaque > Non thoracique > Thrombo-endartérectomie ouverte d'une artère périphérique > Réparation > Réparation d'une artère ou d'une veine majeure au niveau des extrémités par",
+      "description": "Réparation d'une artère ou d'une veine majeure au niveau des extrémités par suture simple, non thoracique"
+    },
+    {
+      "rank": 25,
+      "number": "09580",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras",
+      "description": "Transfert tendineux à l'avant-bras"
+    },
+    {
+      "rank": 26,
+      "number": "05389",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Réparation > Suture intestinale (lacération de part en part)",
+      "description": "Réparation, suture intestinale (lacération de part en part)"
+    },
+    {
+      "rank": 27,
+      "number": "02318",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Exérèse > de clou, vis, fils et broches à l'humérus (P.C. 13)",
+      "description": "Exérèse de clou, vis, fils et broches à l'humérus (P.C. 13)"
+    },
+    {
+      "rank": 28,
+      "number": "02538",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Avant-bras > Allongement ou correction incluant ostéotomie > Allongement cubitus ou radius, ou les deux",
+      "description": "Allongement cubitus ou radius, ou les deux avec ou sans greffe, extrémités - membres supérieurs"
+    },
+    {
+      "rank": 29,
+      "number": "00827",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie",
+      "description": "Étude de ductions forcées sous anesthésie locale, en ophtalmologie"
+    },
+    {
+      "rank": 30,
+      "number": "04772",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "J — Système cardiaque > Non thoracique > Thrombo-endartérectomie ouverte d'une artère périphérique > Réparation > Réparation pour traumatisme artériel et veineux au niveau de l'abdomen ou du cou",
+      "description": "Réparation pour traumatisme artériel et veineux au niveau de l'abdomen ou du cou par suture simple, non thoracique"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 41,
+    "panel_size": 420,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 263.98583700938616,
+  "db_ms": 29.253803004394285
+}

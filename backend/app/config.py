@@ -45,8 +45,8 @@ class Settings:
 
     @property
     def llm_provider(self) -> str:
-        """Which chat backend app/llm/chat.py builds: `mistral` (default) or
-        `openai_compatible`."""
+        """Which chat backend app/llm/chat.py builds: `mistral` (default),
+        `openai_compatible` or `bedrock`."""
         return os.environ.get("LLM_PROVIDER", "mistral").strip().lower()
 
     @property
@@ -60,10 +60,16 @@ class Settings:
         points chat at the fake server while embeddings stay on Mistral)."""
         return os.environ["LLM_API_KEY"]
 
+    def chat_model_for(self, name: str) -> str | None:
+        """LLM_MODEL_<NAME> (e.g. LLM_MODEL_BILLING_CODES), the chat model a call runs on
+        instead of its default — needed on a host whose model names differ from Mistral's.
+        Unset = the call's own default (e.g. CodeSelector.DEFAULT_MODEL)."""
+        return os.environ.get(f"LLM_MODEL_{name.upper()}") or None
+
     @property
     def embedding_provider(self) -> str:
-        """Which embedding backend app/llm/embeddings.py builds: `mistral` (default) or
-        `openai_compatible`."""
+        """Which embedding backend app/llm/embeddings.py builds: `mistral` (default),
+        `openai_compatible` or `bedrock`."""
         return os.environ.get("EMBEDDING_PROVIDER", "mistral").strip().lower()
 
     @property
@@ -79,8 +85,27 @@ class Settings:
     @property
     def embedding_api_key(self) -> str | None:
         """The embedding provider's key, whichever EMBEDDING_PROVIDER selects. Required by
-        mistral; optional for openai_compatible (TEI and vLLM run without auth by default)."""
+        mistral; optional for openai_compatible (TEI and vLLM run without auth by default);
+        unused by bedrock, whose credentials come from the AWS SDK's own chain."""
         return os.environ.get("EMBEDDING_API_KEY") or None
+
+    @property
+    def bedrock_region(self) -> str | None:
+        """The Region LLM_PROVIDER=bedrock and EMBEDDING_PROVIDER=bedrock call. Unset = the AWS SDK's own
+        configuration (AWS_REGION, ~/.aws/config)."""
+        return os.environ.get("BEDROCK_REGION") or None
+
+    @property
+    def app_version(self) -> str | None:
+        """APP_VERSION (e.g. the deployed git sha), shown on the admin console's system page."""
+        return os.environ.get("APP_VERSION") or None
+
+    @property
+    def llm_prices(self) -> str | None:
+        """LLM_PRICES: a JSON object of USD per million tokens by model name, e.g.
+        `{"mistral-medium-latest": {"input": 0.4, "output": 2.0}}`, layered over the admin
+        console's defaults (app/admin/pricing.py)."""
+        return os.environ.get("LLM_PRICES") or None
 
     @property
     def smtp_host(self) -> str | None:

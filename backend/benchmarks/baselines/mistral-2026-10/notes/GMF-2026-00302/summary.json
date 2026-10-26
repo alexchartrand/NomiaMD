@@ -1,0 +1,112 @@
+{
+  "patient_id": "GMF-2026-00302",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2180,
+      "output_tokens": 646,
+      "latency_ms": 4500.900234997971,
+      "started_at": "2026-10-08T14:18:46.865029Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2180,
+    "output_tokens": 646,
+    "llm_latency_ms": 4500.900234997971,
+    "wall_ms": 4501.2175559968455
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de grossesse de routine à 32 semaines d'aménorrhée pour une patiente de 32 ans (G1P0). Examen clinique normal, dépistage du diabète gestationnel négatif, anémie légère physiologique traitée par supplément de fer. Vaccin dcaT administré. Prochain rendez-vous dans 2 semaines.",
+    "encounter_setting": {
+      "location_detail": "Clinique GMF Boisé-des-Cèdres",
+      "date": "2026-06-09",
+      "time_start": "11:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": true,
+      "trimester": "troisième"
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de grossesse de routine à 32 semaines d'aménorrhée",
+      "systems_or_body_regions_involved": [
+        "obstétrique",
+        "génital",
+        "hématologique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Grossesse à 32 semaines d'aménorrhée évoluant normalement, G1P0. Anémie légère physiologique de grossesse. Dépistage du diabète gestationnel négatif.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "abdomen",
+        "membres_inférieurs",
+        "signes_vitaux",
+        "cœur_fœtal"
+      ],
+      "notable_findings": "Hauteur utérine 32 cm, présentation céphalique, cœur fœtal 142 bpm, œdème léger des chevilles godet 1+, TA 118/74, pas de protéinurie à la bandelette"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Administration du vaccin contre la coqueluche (dcaT)",
+        "body_site": "bras",
+        "technique_or_approach_mentioned": "injection intramusculaire",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript",
+      "Heure de fin de consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-06-09",
+      "actual": "2026-06-09"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "11:15",
+      "actual": "11:15"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": true,
+    "referral": false,
+    "duration_stated": false
+  }
+}

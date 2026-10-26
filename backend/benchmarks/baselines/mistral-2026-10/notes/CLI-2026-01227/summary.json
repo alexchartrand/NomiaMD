@@ -1,0 +1,110 @@
+{
+  "patient_id": "CLI-2026-01227",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2197,
+      "output_tokens": 640,
+      "latency_ms": 4049.8573609947925,
+      "started_at": "2026-10-08T14:19:00.081100Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2197,
+    "output_tokens": 640,
+    "llm_latency_ms": 4049.8573609947925,
+    "wall_ms": 4050.2366360015003
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation de 30 minutes pour évaluation initiale d'un trouble anxieux généralisé modéré à sévère chez un patient de 22 ans. Entrevue structurée, questionnaires GAD-7 et PHQ-9 complétés, bilan sanguin demandé. Plan de traitement incluant psychothérapie (TCC) et counseling sur hygiène de vie, avec suivi prévu dans 2 semaines.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-05-05",
+      "time_start": "17:00",
+      "time_end": "17:30",
+      "duration_minutes": 30.0,
+      "duration_explicitly_stated": true,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Prise en charge d'un trouble anxieux généralisé nouvellement identifié chez un patient de 22 ans avec symptômes persistants depuis 8 mois et impact significatif sur le fonctionnement académique et social",
+      "systems_or_body_regions_involved": [
+        "psychiatrique",
+        "neurologique",
+        "sommeil",
+        "musculaire"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Trouble anxieux généralisé modéré à sévère avec symptomatologie dépressive légère associée, consommation de cannabis récréative à surveiller",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "général",
+        "psychiatrique"
+      ],
+      "notable_findings": "Apparence générale tendue, contact visuel adéquat, discours cohérent et pertinent; examen physique sommaire sans particularité, signes vitaux normaux"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Administration et interprétation des questionnaires GAD-7 et PHQ-9",
+        "body_site": null,
+        "technique_or_approach_mentioned": "questionnaire standardisé",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Le type de consultation (initiale vs de suivi) n'est pas explicitement mentionné dans le texte, mais l'absence d'antécédents psychiatriques formels suggère une consultation initiale"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-05-05",
+      "actual": "2026-05-05"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "17:00",
+      "actual": "17:00"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 1,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": true
+  }
+}

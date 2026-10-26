@@ -1,0 +1,126 @@
+{
+  "patient_id": "URG-2026-04538",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2056,
+      "output_tokens": 787,
+      "latency_ms": 4764.721636005561,
+      "started_at": "2026-10-08T15:43:26.771381Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2056,
+    "output_tokens": 787,
+    "llm_latency_ms": 4764.721636005561,
+    "wall_ms": 4764.978908002377
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en urgence pour un enfant de 8 ans présentant une douleur abdominale évolutive avec fièvre et vomissements. L'examen clinique et les examens complémentaires confirment une appendicite aiguë non perforée. Le patient est admis en chirurgie pédiatrique pour appendicectomie dans les heures suivantes.",
+    "encounter_setting": {
+      "location_detail": "Urgence, CHU fictif",
+      "date": "2026-07-13",
+      "time_start": "19:20",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Douleur abdominale progressive depuis 18 heures avec fièvre et vomissements chez un enfant de 8 ans",
+      "systems_or_body_regions_involved": [
+        "abdominal",
+        "digestif"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Appendicite aiguë probable",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "abdomen",
+        "signes_vitaux"
+      ],
+      "notable_findings": "Sensibilité marquée au point de McBurney, défense volontaire, signe de Rovsing positif, fièvre à 38,4 °C, leucocytose à 14,2 x10⁹/L avec déviation gauche, CRP élevée à 48 mg/L"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Administration de soluté IV NaCl 0,9 % pour réhydratation",
+        "generic_act": "administration_de_soluté_intraveineux",
+        "body_site": null,
+        "technique_or_approach_mentioned": "NaCl 0,9 %",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Administration d'antipyrétique (acétaminophène) pour fièvre",
+        "generic_act": "administration_de_médicament_antipyrétique",
+        "body_site": null,
+        "technique_or_approach_mentioned": "acétaminophène",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      },
+      {
+        "procedure_description": "Administration d'antibiotique prophylactique IV selon protocole préopératoire",
+        "generic_act": "administration_d'antibiotique_intraveineux",
+        "body_site": null,
+        "technique_or_approach_mentioned": "protocole préopératoire",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement indiquée dans le document",
+      "Heure de fin de la consultation non mentionnée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "19:20",
+      "actual": "19:20"
+    }
+  ],
+  "stats": {
+    "procedures": 3,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

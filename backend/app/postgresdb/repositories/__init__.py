@@ -6,6 +6,7 @@ only `flush()` (to surface constraint violations and populate generated ids), an
 opened the session decides the outcome — see session.py. That's what lets a service compose
 several repositories into one atomic write."""
 
+from app.postgresdb.repositories.audit_events import AuditEventFilter, AuditEventInput, AuditEventRepository
 from app.postgresdb.repositories.bills import BillInput, BillRepository
 from app.postgresdb.repositories.claims import (
     ClaimAlreadyBilledError,
@@ -26,18 +27,31 @@ from app.postgresdb.repositories.encounters import (
     OverviewScope,
     EncounterInput,
     EncounterRepository,
+    FailedExtraction,
 )
 from app.postgresdb.repositories.extractions import (
     ExtractionRepository,
     ExtractionRunInput,
     ExtractionStageInput,
 )
+from app.postgresdb.repositories.llm_calls import LLMCallOwner, LLMCallRepository
+from app.postgresdb.repositories.login_throttles import LoginThrottleRepository
 from app.postgresdb.repositories.patients import DuplicatePatientRamqNumberError, PatientRepository
 from app.postgresdb.repositories.physician_profiles import PhysicianProfileRepository
 from app.postgresdb.repositories.roster import DuplicateRosterEntryError, PhysicianPatientRepository
-from app.postgresdb.repositories.users import DuplicatePracticeNumberError, UserRepository
+from app.postgresdb.repositories.table_stats import TableStatsRepository
+from app.postgresdb.repositories.users import (
+    AccountActivity,
+    DuplicateEmailError,
+    DuplicatePracticeNumberError,
+    UserRepository,
+)
 
 __all__ = [
+    "AccountActivity",
+    "AuditEventFilter",
+    "AuditEventInput",
+    "AuditEventRepository",
     "BillInput",
     "BillRepository",
     "ClaimAlreadyBilledError",
@@ -50,6 +64,7 @@ __all__ = [
     "ExtractionAlreadyClaimedError",
     "ContactRequestInput",
     "ContactRequestRepository",
+    "DuplicateEmailError",
     "DuplicateEncounterError",
     "DuplicatePatientRamqNumberError",
     "DuplicatePracticeNumberError",
@@ -61,8 +76,13 @@ __all__ = [
     "EncounterInput",
     "EncounterRepository",
     "ExtractionRepository",
+    "FailedExtraction",
+    "TableStatsRepository",
     "ExtractionRunInput",
     "ExtractionStageInput",
+    "LLMCallOwner",
+    "LLMCallRepository",
+    "LoginThrottleRepository",
     "PatientRepository",
     "PhysicianPatientRepository",
     "PhysicianProfileRepository",

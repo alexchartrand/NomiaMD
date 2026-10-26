@@ -58,3 +58,35 @@ class CurrentCodeTableProvider(ICodeTableProvider):
                 f"Expected exactly one current row in the code_versions registry, found {len(rows)}"
             )
         return CodeVersionRow.model_validate(rows[0])
+
+
+class UnknownCodesTableError(LookupError):
+    """A pinned table name has no row in the `code_versions` registry."""
+
+
+class PinnedCodeTableProvider(ICodeTableProvider):
+    """Always the same registered codes table, whether current or not — for evaluating a
+    table ramq-ingestion built but hasn't promoted (one re-embedded with a candidate
+    embedding model, say) without touching what production reads. Only the benchmark uses
+    it."""
+
+    def __init__(self, connection: AsyncConnection, registry_table: AsyncTable, table_name: str):
+        self._connection = connection
+        self._registry_table = registry_table
+        self._table_name = table_name
+        self._table: AsyncTable | None = None
+
+    async def current(self) -> AsyncTable:
+        if self._table is None:
+            await self.current_version()
+            self._table = await self._connection.open_table(self._table_name)
+        return self._table
+
+    async def current_version(self) -> CodeVersionRow:
+        quoted = self._table_name.replace("'", "''")
+        rows = await self._registry_table.query().where(f"table_name = '{quoted}'").to_list()
+        if len(rows) != 1:
+            raise UnknownCodesTableError(
+                f"{self._table_name!r} is not registered in code_versions (found {len(rows)} rows)"
+            )
+        return CodeVersionRow.model_validate(rows[0])

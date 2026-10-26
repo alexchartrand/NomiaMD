@@ -9,6 +9,7 @@ this class trivially fakeable in tests, same convention as app/patients/verifica
 from datetime import date
 
 from app.auth.profile import ProfileService
+from app.care_setting import CareSetting
 from app.clock import ClinicClock, Clock
 from app.patients.registration import resolve_registration
 from app.postgresdb import PatientRepository, User
@@ -38,6 +39,7 @@ class BillingContextBuilder:
         user: User,
         patient_id: int,
         encounter_date: date | None,
+        care_setting: CareSetting | None = None,
     ) -> BillingContext:
         """Best-effort: a missing profile or a since-deleted patient degrades that half to
         all-null rather than raising, mirroring extraction/router.py's existing "a lookup
@@ -48,22 +50,12 @@ class BillingContextBuilder:
         on_date = encounter_date or self._clock.today()
 
         profile = (await self._profiles.as_of(user, on_date)).profile
-        is_assumed = False
-        if profile is None:
-            # No profile version had taken effect yet as of the encounter date — most
-            # commonly, the physician's very first profile was entered after this encounter
-            # (e.g. a backfilled transcript predating their own onboarding). The earliest
-            # version on file is the closest estimate, but it's still a guess: it's marked
-            # assumed, so it never filters candidates and the physician confirms it.
-            profile = (await self._profiles.earliest(user)).profile
-            is_assumed = profile is not None
 
         physician = (
             PhysicianContext(
                 panel_size=profile.panel_size,
                 physician_type=profile.physician_type,
                 remuneration_type=profile.remuneration_type,
-                is_assumed=is_assumed,
             )
             if profile is not None
             else PhysicianContext()
@@ -78,4 +70,6 @@ class BillingContextBuilder:
                 is_vulnerable=record.is_vulnerable,
             )
 
-        return BillingContext(physician=physician, patient=patient, encounter_date=encounter_date)
+        return BillingContext(
+            physician=physician, patient=patient, encounter_date=encounter_date, care_setting=care_setting
+        )

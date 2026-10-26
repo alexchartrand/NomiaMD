@@ -107,7 +107,7 @@ Certified in Quebec's AI transcription program: Plume IA, CoeurWay, AutoScribe (
 - **Data residency (gating).** Real notes must not leave Canada. Two things are affected:
   - *Chat calls:* `app/extraction/engine.py` calls the Mistral API. Replace it with an **OpenAI-compatible endpoint** (vLLM or TGI) serving an open-weight model on Canadian GPUs. Candidates: OVHcloud Beauharnois QC, AWS ca-central-1, Azure Canada Central, or Cohere on Canadian infrastructure.
   - *Query-time embeddings:* retrieval embeds text derived from the transcript, so it also hits Mistral today. The embedding model must run locally, and **ramq-ingestion must re-embed the codes and documents tables with the same model** (a cross-repo change).
-  - Evaluate with `scripts/eval_extraction.py` on **2+ cases** before switching (per the retrieval-tuning memory).
+  - Evaluate with `scripts/benchmark.py` over all labeled `consultations/` notes before switching, comparing per note with the Mistral baseline (per the retrieval-tuning memory).
 - **Administrative facts come from structured source data, never from the LLM.** This extends the existing invariant to:
   - patient identity (NAM)
   - encounter start/end times
@@ -203,7 +203,7 @@ Certified in Quebec's AI transcription program: Plume IA, CoeurWay, AutoScribe (
   - the arq job with an in-memory Redis
 - **Contract test:** an Epic connector run against the fhir.epic.com sandbox, kept out of the default `uv run pytest`.
 - **Extension:** Playwright tests of each adapter against synthetic DMÉ page snapshots.
-- **Model switch:** `scripts/eval_extraction.py` on 2+ `consultations/` cases with the Canadian/local model and embeddings, compared with the current baseline.
+- **Model switch:** `scripts/benchmark.py` over the labeled `consultations/` notes with the Canadian/local model and embeddings, `report --baseline` against the Mistral run.
 - **End-to-end:** `make dev-fake` plus the worker; paste 3 notes, one of them with an unknown NAM. Check that they show in the inbox as `prêt` (2) and `à associer` (1), that the approve-all path creates claims, and that `npm run build` passes.
 
 ## 7. Working steps

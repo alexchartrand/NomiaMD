@@ -1,9 +1,9 @@
-"""Value objects for the administrative facts BillingCodesTask needs but can never derive
+"""Value objects for the administrative facts the billing_codes step needs but can never derive
 from a transcript (see CLAUDE.md): the billing physician's own practice facts, and the
 identified patient's roster status. Pure data — no I/O, no dependency on postgresdb or
 auth — assembled by BillingContextBuilder (context_builder.py) and consumed by the
-eligibility prefilter/UnresolvedAxisDetector (eligibility.py) and BillingCodesTask's prompt
-(task.py).
+eligibility prefilter/UnresolvedAxisDetector (eligibility.py) and the billing_codes prompt
+(prompt.py).
 
 Every field is nullable. An unresolved axis (no roster match, no profile on file) must
 degrade to "unknown", never to a guessed default — a wrong assumption here is worse than an
@@ -12,6 +12,8 @@ physician to confirm."""
 
 from dataclasses import dataclass, field
 from datetime import date
+
+from app.care_setting import CareSetting
 
 # Names for the eligibility axes a code variant can be bound on — shared vocabulary between
 # BillingContext.known_axes(), UnresolvedAxisDetector's unresolved-axis reporting, and the
@@ -41,26 +43,12 @@ class PhysicianContext:
     """The billing physician's own practice facts, as of the encounter date — see
     ProfileService.as_of, not .current: a past encounter is interpreted under the panel
     size in effect then, not today's (same reasoning as PhysicianProfile's docstring and
-    ClaimCode's fee snapshot).
-
-    `is_assumed` is True when no profile version was in effect yet on the encounter date and
-    BillingContextBuilder fell back to the earliest version on file. Those values are a
-    best guess, never an established fact: read `confirmed_panel_size`, not `panel_size`,
-    wherever the value would filter candidates or be recorded as fact, so an assumed panel
-    size stays an unresolved axis the physician confirms."""
+    ClaimCode's fee snapshot). An encounter older than the physician's first profile
+    version reads that first version."""
 
     panel_size: int | None = None
     physician_type: str | None = None
     remuneration_type: str | None = None
-    is_assumed: bool = False
-
-    @property
-    def confirmed_panel_size(self) -> int | None:
-        return None if self.is_assumed else self.panel_size
-
-    @property
-    def assumed_panel_size(self) -> int | None:
-        return self.panel_size if self.is_assumed else None
 
 
 @dataclass(frozen=True)
@@ -75,7 +63,7 @@ class PatientContext:
 
 @dataclass(frozen=True)
 class BillingContext:
-    """Everything BillingCodesTask's prompt states as authoritative fact rather than lets
+    """Everything the billing_codes prompt states as authoritative fact rather than lets
     the model infer from the transcript. Both halves are independently optional: a
     physician with no profile on file and/or a patient with no roster match still produce a
     valid (all-null) BillingContext — the pipeline degrades to today's guess-from-transcript
@@ -84,14 +72,18 @@ class BillingContext:
     physician: PhysicianContext = field(default_factory=PhysicianContext)
     patient: PatientContext = field(default_factory=PatientContext)
     encounter_date: date | None = None
+    # Where the encounter took place, from its source or the physician (see
+    # app/care_setting.py). Not an eligibility axis — no codes column is bound on it — it
+    # scopes the visit-code search (visit_query.py) and is stated in the prompt.
+    care_setting: CareSetting | None = None
 
     def known_axes(self) -> dict[str, bool | int | None]:
         """Which of the four eligibility axes this context can resolve, and to what value. A
         key is present only when the fact is actually known — an absent key means that axis
         filters nothing, and UnresolvedAxisDetector flags it if any candidate is bound on it."""
         axes: dict[str, bool | int | None] = {}
-        if self.physician.confirmed_panel_size is not None:
-            axes[AXIS_PANEL_SIZE] = self.physician.confirmed_panel_size
+        if self.physician.panel_size is not None:
+            axes[AXIS_PANEL_SIZE] = self.physician.panel_size
         if self.patient.is_registered is not None:
             axes[AXIS_REGISTRATION] = self.patient.is_registered
         if self.patient.is_vulnerable is not None:

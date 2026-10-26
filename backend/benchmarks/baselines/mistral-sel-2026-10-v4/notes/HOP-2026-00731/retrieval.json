@@ -1,0 +1,555 @@
+{
+  "patient_id": "HOP-2026-00731",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 529,
+      "output_tokens": null,
+      "latency_ms": 0.7904539961600676,
+      "started_at": "2026-10-09T17:40:48.945320Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 529,
+    "output_tokens": 0,
+    "llm_latency_ms": 0.7904539961600676,
+    "wall_ms": 30.622508988017216
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. sans rendez-vous. Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée). Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "08933",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15627",
+          "relevance": 0.02985074557363987
+        },
+        {
+          "number": "15628",
+          "relevance": 0.028985507786273956
+        },
+        {
+          "number": "08913",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "15626",
+          "relevance": 0.028484849259257317
+        },
+        {
+          "number": "08942",
+          "relevance": 0.02752639539539814
+        },
+        {
+          "number": "15766",
+          "relevance": 0.027272727340459824
+        },
+        {
+          "number": "15768",
+          "relevance": 0.026856524869799614
+        },
+        {
+          "number": "15774",
+          "relevance": 0.025320513173937798
+        },
+        {
+          "number": "15639",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15648",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08943",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15640",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08923",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15629",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15616",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15649",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15617",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08948",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15638",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Patient de 66 ans hospitalisé pour une pneumonie lobaire inférieure droite (J3 de traitement). Évolution clinique favorable avec amélioration des signes vitaux, des paramètres inflammatoires et de l'auscultation pulmonaire. Plan de traitement ajusté avec passage à une antibiothérapie orale et préparation de congé prévu sous 48 heures.\nLieu (détail): Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)\nDate: 2026-09-03\nHeure de début: 08:10\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Tournée — J3 de traitement pour pneumonie lobaire inférieure droite\nSystèmes/régions concernés: pulmonaire; infectieux\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Pneumonie lobaire inférieure droite en amélioration sous antibiothérapie (J3), MPOC GOLD 2 stable\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: pulmonaire\nConstatations: Crépitants à la base droite diminués par rapport à l'admission, absence de tirage, saturation en oxygène améliorée (94 % AA vs 89 % à l'admission)\nÉlément incertain: Durée de l'entrevue non explicitement mentionnée dans le document; Heure de fin de l'entrevue non précisée",
+      "sections": null,
+      "hits": [
+        {
+          "number": "03139",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00639",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15622",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09347",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00927",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15766",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15647",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15774",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15643",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09346",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00674",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00838",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00999",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15806",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15638",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08511",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15652",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15808",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15631",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15826",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15766",
+      "rrf_score": 0.030536130536130537,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15774",
+      "rrf_score": 0.029631255487269532,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "15638",
+      "rrf_score": 0.026171741361614778,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15638"
+    },
+    {
+      "rank": 5,
+      "number": "15642",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15638"
+    },
+    {
+      "rank": 6,
+      "number": "08933",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "03139",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "H — Système respiratoire > Poumons et plèvre > Excision > Lobectomie",
+      "description": "Lobectomie, réintervention plus de trente (30) jours après l'intervention initiale, supplément, poumons et plèvre, excision",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15627",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "00639",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque droit et/ou artère pulmonaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "15628",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi exigeant un examen dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "15622",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "08913",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "09347",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers",
+      "description": "Traitement en chambre hyperbare, pour chaque patient supplémentaire traité simultanément par quart d'heure ou portion de quart d'heure après la première heure, le patient et le médecin étant dans la chambre",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "15626",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "00927",
+      "rrf_score": 0.015625,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau I > Soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "description": "Contrôle subséquent, par examen, pour des soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "00928",
+      "rrf_score": 0.0,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau I > Soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "description": "Installation de l'équipement de ventilation pour des soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort (la valeur de durée de l'acte se calcule depuis le début de la mise en marche du traitement)",
+      "expanded_from": "00927"
+    },
+    {
+      "rank": 17,
+      "number": "08942",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen, subséquente dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15647",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15768",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "15643",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "15639",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "09346",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Médecine hyperbare > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, pour chaque patient supplémentaire traité simultanément pendant la première heure, le patient et le médecin étant dans la chambre",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "00837",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Médecine hyperbare > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, première heure, incluant la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre, le patient et le médecin étant dans la chambre",
+      "expanded_from": "09346"
+    },
+    {
+      "rank": 24,
+      "number": "15648",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "00674",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Traitements physiatriques",
+      "description": "Traitement physiatrique d'exercices de rééducation ou de respiration par séance, peu importe le nombre et le type de traitements dispensés",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "08943",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de transfert psychiatrique dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "00838",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Médecine hyperbare > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, par quart d'heure ou portion de quart d'heure après la première heure, le patient et le médecin étant dans la chambre",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "15640",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "00999",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par bloc plexique, neuraxial (péridural ou rachidien), intrapleural, incluant les examens, les visites et les consultations, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, supplément par jour, douleur aiguë ou douleur chronique",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "08923",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de prise en charge psychiatrique dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "15806",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "15629",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de transfert dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "15616",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "08511",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations pour lésions non cutanées, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "15649",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15652",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D)",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "15158",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D)",
+      "description": "Forfait de congé en établissement d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée",
+      "expanded_from": "15652"
+    },
+    {
+      "rank": 38,
+      "number": "15617",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "15808",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "08948",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "15631",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient (par période de quinze (15) minutes) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "15826",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente vulnérable inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [
+    "vulnerability"
+  ],
+  "eligibility": {
+    "age": 66,
+    "panel_size": 900,
+    "is_registered": null,
+    "is_vulnerable": null
+  },
+  "embedding_ms": 0.9050270018633455,
+  "db_ms": 19.799528003204614
+}

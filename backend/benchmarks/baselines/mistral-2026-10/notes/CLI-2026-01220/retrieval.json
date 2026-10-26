@@ -1,0 +1,267 @@
+{
+  "patient_id": "CLI-2026-01220",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 526,
+      "output_tokens": null,
+      "latency_ms": 1272.738607993233,
+      "started_at": "2026-10-08T14:18:44.336788Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 526,
+    "output_tokens": 0,
+    "llm_latency_ms": 1272.738607993233,
+    "wall_ms": 1308.1388889986556
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Première consultation pour découverte fortuite d'hypertension artérielle chez un homme de 45 ans sans suivi médical régulier. Bilan initial demandé (laboratoire, ECG, analyse d'urine) et counseling hygiéno-diététique instauré. Aucune médication antihypertensive débutée avant confirmation diagnostique.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-02-10\nHeure de début: 09:15\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Découverte fortuite d'hypertension artérielle lors d'un don de sang il y a 3 semaines; première visite de prise en charge pour un patient sans médecin de famille depuis l'âge adulte.\nSystèmes/régions concernés: cardiovasculaire; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Hypertension artérielle de grade 1 probable (à confirmer par mesures ambulatoires), surcharge pondérale avec obésité classe I (IMC 30,3), profil de risque cardiovasculaire à établir.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; pulmonaire; général\nConstatations: TA mesurée à 158/96 puis 154/94 après 5 minutes de repos (moyenne de 2 mesures), IMC 30,3, tour de taille 104 cm. Cardio et pulmonaire sans particularité.\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Temps de fin de consultation non précisé.",
+      "hits": [
+        {
+          "number": "15805",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "15801",
+          "relevance": 0.03021353855729103
+        },
+        {
+          "number": "15807",
+          "relevance": 0.030017921701073647
+        },
+        {
+          "number": "15803",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "09324",
+          "relevance": 0.028717948123812675
+        },
+        {
+          "number": "00132",
+          "relevance": 0.026198629289865494
+        },
+        {
+          "number": "00060",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15765",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15058",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15773",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00780",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00546",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15789",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00125",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15061",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15809",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15811",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08800",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15831",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15805",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 2,
+      "number": "15801",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 3,
+      "number": "15807",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 4,
+      "number": "15803",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 5,
+      "number": "09324",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test au captopril pour la recherche de l'hypertension renovasculaire, comprenant les examens, les visites, les consultations, la surveillance médicale et l'interprétation"
+    },
+    {
+      "rank": 6,
+      "number": "00132",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Angiologie > Angiographie artérielle > par dissection artérielle > aortographie non sélective (y compris l'aorte ascendante)",
+      "description": "Angiographie artérielle par dissection artérielle d'une aortographie non sélective (y compris l'aorte ascendante) d'un patient de deux (2) ans ou plus, en établissement"
+    },
+    {
+      "rank": 7,
+      "number": "00060",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré"
+    },
+    {
+      "rank": 8,
+      "number": "15765",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 9,
+      "number": "15058",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal sans déplacement",
+      "description": "Examen principal sans déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 10,
+      "number": "15773",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 11,
+      "number": "00780",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, en milieu hospitalier ou en gymnase, effectuée par le médecin, maximum quinze (15) patients"
+    },
+    {
+      "rank": 12,
+      "number": "00546",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Ophtalmodynamométrie (avec étude comparative de la pression moyenne de l'artère centrale de la rétine et de la pression moyenne de l'artère brachiale, inscrite au dossier), pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 13,
+      "number": "15789",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 14,
+      "number": "00125",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Monitoring continu de la pression artérielle, par technique non invasive, par période de vingt-quatre (24) heures, interprétation"
+    },
+    {
+      "rank": 15,
+      "number": "15790",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous"
+    },
+    {
+      "rank": 16,
+      "number": "15061",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal avec déplacement",
+      "description": "Examen principal avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 17,
+      "number": "15809",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 18,
+      "number": "15811",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 19,
+      "number": "08800",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 20,
+      "number": "15831",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 45,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1273.42688900535,
+  "db_ms": 34.215477004181594
+}

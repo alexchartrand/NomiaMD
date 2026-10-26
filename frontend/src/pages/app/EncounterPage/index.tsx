@@ -250,7 +250,7 @@ export default function EncounterPage() {
   }
 
   return (
-    <AppPage width={reviewing ? "wide" : "narrow"}>
+    <AppPage width="narrow">
       {dialog}
       <AppPageHeader
         back={{ to: backTo, label: "Rencontres" }}

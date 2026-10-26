@@ -9,16 +9,17 @@ LLM_PROVIDER=openai_compatible LLM_ENDPOINT=http://localhost:8080/v1 LLM_API_KEY
 a marker unique to that caller's fixed prompt text (see _classify_request) — never by which
 endpoint was hit, since they all share this one.
 
-- consultation_summary: matched on a fixed line from app/summary/task.py's _RULES. Echoes
+- consultation_summary: matched on a fixed line from app/summary/prompt.py's _RULES. Echoes
   the transcript's own **Date/heure :** header field back as the extracted encounter date
   (real fixtures under consultations/ all carry these — see CLAUDE.md). Returns JSON
-  matching that task's schema.
+  matching that call's schema.
 - billing_codes: the default/fallback bucket. Parses the candidate RAMQ codes out of the
-  prompt (built by app/ramq_codes/task.py::build_prompt) and picks a fixed number of them
-  back, with a placeholder confidence/quote. Fee data is NOT part of this response — the
+  prompt (built by app/ramq_codes/prompt.py's BillingPromptBuilder) and picks a fixed number of them
+  back, with a placeholder confidence/quote: the first as the code it is sure of (`codes`),
+  the rest as `other_possible_codes`. Fee data is NOT part of this response — the
   real model never sees a fee field either (see app/ramq_codes/models.py's ExtractedCode.fees
   server_only marker); fees are resolved server-side afterward, straight off the candidates'
-  own real data. Returns JSON matching that task's schema.
+  own real data. Returns JSON matching that call's schema.
 - ramq_chatbot_answer: matched on a fixed line from app/ramq_chatbot/engine.py's
   SYSTEM_PROMPT. Returns plain markdown text (not JSON — RAMQManualQueryEngine reads the
   chat response verbatim) that echoes back the query text pulled from the current turn's
@@ -42,7 +43,7 @@ from fastapi import FastAPI, Request
 app = FastAPI(title="fake-llm")
 
 # Matches the "- CODE | header_path" header line plus its indented description line,
-# exactly as _format_candidate() emits them (see app/ramq_codes/task.py) — the optional
+# exactly as _format_candidate() emits them (see app/ramq_codes/prompt.py) — the optional
 # "  Utilisation :"/"  Conditions :" lines that may follow are ignored here, not part of
 # this fake's stub output. Candidates never carry a "  Tarifs :" line at all any more — fee
 # data is resolved server-side, never shown to (or expected back from) the model — see the
@@ -57,7 +58,7 @@ PICK = 2  # overridden by --pick at startup
 
 # Fixed, non-templated markers from each prompt (see module docstring) — used to tell the
 # three request shapes apart.
-_CONSULTATION_SUMMARY_SYSTEM_MARKER = "clinical documentation parser"  # app/summary/task.py _RULES
+_CONSULTATION_SUMMARY_SYSTEM_MARKER = "clinical documentation parser"  # app/summary/prompt.py _RULES
 _RAMQ_CHATBOT_SYSTEM_MARKER = "RAMQ billing specialist chatbot"  # app/ramq_chatbot/engine.py SYSTEM_PROMPT
 
 # Matches the trailing "Query: {query_str}" line engine.py's USER_MESSAGE_TEMPLATE renders.
@@ -134,19 +135,26 @@ def _fake_billing_codes_content(user_message: str) -> str:
         {
             "code": code,
             "description": description,
-            "confidence": "medium",
+            "confidence": "high" if i == 0 else "medium",
             "explanation": "(stub explanation — fake LLM, not a real extraction)",
             "supporting_quote": description,
             "needs_confirmation": [],
         }
-        for code, description in chosen
+        for i, (code, description) in enumerate(chosen)
     ]
     notes = (
         None
         if codes
         else "Fake LLM: no candidate codes were present in the prompt to pick from."
     )
-    return json.dumps({"codes": codes, "notes": notes})
+    return json.dumps(
+        {
+            "analysis": "(stub analysis — fake LLM)",
+            "codes": codes[:1],
+            "other_possible_codes": codes[1:],
+            "notes": notes,
+        }
+    )
 
 
 def _fake_ramq_chatbot_answer_content(user_message: str) -> str:
@@ -171,9 +179,9 @@ def list_models():
 
 
 def _content_to_text(content) -> str:
-    """Message content is a bare string over the OpenAI wire format, but the Mistral
-    client (llama_index's MistralAI) always sends it as a list of {"type": "text", ...}
-    chunks instead — handle both."""
+    """Message content is a bare string over the OpenAI wire format (what the backend's
+    own client sends), but OpenAI's spec also allows a list of {"type": "text", ...} chunks
+    (what the Mistral SDK sends) — handle both."""
     if isinstance(content, str):
         return content
     if isinstance(content, list):

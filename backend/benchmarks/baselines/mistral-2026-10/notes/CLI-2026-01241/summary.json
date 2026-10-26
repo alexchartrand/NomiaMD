@@ -1,0 +1,99 @@
+{
+  "patient_id": "CLI-2026-01241",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1704,
+      "output_tokens": 469,
+      "latency_ms": 2859.0373560000444,
+      "started_at": "2026-10-08T14:19:20.179577Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1704,
+    "output_tokens": 469,
+    "llm_latency_ms": 2859.0373560000444,
+    "wall_ms": 2859.301176009467
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de fibrillation auriculaire permanente sous apixaban chez un patient de 84 ans. Pas de symptômes d'aggravation. Traitement maintenu avec apixaban 5 mg bid et métoprolol 25 mg bid. Contrôle biologique prévu dans 6 mois.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-08-20",
+      "time_start": "14:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de fibrillation auriculaire permanente sous apixaban",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Fibrillation auriculaire permanente, fréquence contrôlée. Apixaban 5 mg bid toujours approprié.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "TA 128/70, FC 76 irrégulière. Auscultation pulmonaire normale, pas d'œdème."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-08-20",
+      "actual": "2026-08-20"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "14:00",
+      "actual": "14:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 1,
+    "systems": 1,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "patient_id": "CLI-2026-01228",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 8496,
+      "output_tokens": 779,
+      "latency_ms": 7215.952625992941,
+      "started_at": "2026-10-08T17:06:14.893820Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 8496,
+    "output_tokens": 779,
+    "llm_latency_ms": 7215.952625992941,
+    "wall_ms": 7226.381458007381
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15803",
+    "15811",
+    "08848",
+    "08819",
+    "15765",
+    "15773",
+    "08913",
+    "15831",
+    "15801",
+    "08812",
+    "08811",
+    "09248",
+    "15789",
+    "08803",
+    "08802",
+    "08805",
+    "15144",
+    "15762",
+    "08776",
+    "98003",
+    "15790",
+    "08942",
+    "08511",
+    "08775",
+    "08933",
+    "15813",
+    "06040",
+    "06026",
+    "06027",
+    "06028",
+    "08777",
+    "08948",
+    "15809",
+    "08800",
+    "15805",
+    "15668",
+    "98010",
+    "08553",
+    "15617",
+    "15786",
+    "15785",
+    "15807"
+  ],
+  "prompt_chars": 33860,
+  "raw_code_count": 3,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15803",
+        "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "high",
+        "explanation": "Visite de suivi standard pour un patient inscrit, non vulnérable, de 40 ans, avec une clientèle de 320 patients (< 500). Le motif est un suivi de trouble dépressif majeur, sans élément justifiant un code plus spécifique.",
+        "supporting_quote": "Suivi médical pour trouble dépressif majeur en rémission quasi complète sous escitalopram et psychothérapie. Évaluation de la réponse au traitement, ajustement du plan de suivi et counseling sur la médication et les habitudes de vie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15801",
+        "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "medium",
+        "explanation": "Alternative possible si cette visite était considérée comme une prise en charge initiale plutôt qu'un suivi. Cependant, le résumé et le transcript indiquent clairement un suivi (8 semaines après le début du traitement).",
+        "supporting_quote": "Suivi de trouble dépressif majeur, 8 semaines après le début d'un traitement par ISRS.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "08776",
+        "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+        "confidence": "low",
+        "explanation": "Le motif de la visite est psychiatrique (trouble dépressif majeur) et non musculo-squelettique. Exclu car non pertinent.",
+        "supporting_quote": "Suivi médical pour trouble dépressif majeur en rémission quasi complète sous escitalopram et psychothérapie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la consultation n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code pour une visite de suivi standard. Aucun autre service billable (procédure, test, supplément) n'est documenté dans l'encounter.",
+    "analysis": "L'encounter est une visite de suivi en clinique médicale (Clinique médicale Les Tilleuls) pour un patient inscrit, non vulnérable, de 40 ans, sur rendez-vous. Le service principal est une visite de suivi pour un trouble dépressif majeur en rémission sous traitement. Aucune procédure, test, supplément, rencontre, formulaire ou certificat supplémentaire n'est mentionné ou effectué. La visite correspond à une visite de suivi standard pour un patient non vulnérable inscrit de moins de 80 ans, avec une clientèle de moins de 500 patients. Les codes psychiatriques (ex. 08848, 08819) ne s'appliquent pas car il n'y a pas de suivi conjoint en santé mentale ni d'évaluation psychiatrique spécifique documentée. Les codes de grossesse (ex. 15811, 15831) sont exclus car la patiente n'est pas enceinte. Les codes de visite ponctuelle (ex. 15765, 15773) ne s'appliquent pas car il s'agit d'un suivi planifié sur rendez-vous."
+  }
+}

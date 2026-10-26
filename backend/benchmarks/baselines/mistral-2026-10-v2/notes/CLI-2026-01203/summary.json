@@ -1,0 +1,119 @@
+{
+  "patient_id": "CLI-2026-01203",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2182,
+      "output_tokens": 784,
+      "latency_ms": 5000.376682000933,
+      "started_at": "2026-10-08T15:43:30.108026Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2182,
+    "output_tokens": 784,
+    "llm_latency_ms": 5000.376682000933,
+    "wall_ms": 5000.799433008069
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en médecine familiale pour fatigue persistante et troubles du sommeil depuis 2 mois chez un homme de 34 ans. Bilan sanguin demandé pour éliminer une cause organique. Impression diagnostique de symptomatologie dépressive légère à modérée dans un contexte de stress professionnel. Plan : suivi en 2 semaines, référence en psychothérapie et discussion sur la gestion du stress.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-07-13",
+      "time_start": "15:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Karim El-Amrani, MD",
+      "reason_for_referral": "Symptomatologie dépressive légère à modérée dans un contexte de stress professionnel",
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Fatigue persistante et troubles du sommeil depuis 2 mois",
+      "systems_or_body_regions_involved": [
+        "psychiatrique",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Symptomatologie dépressive d'intensité légère à modérée, à corréler avec contexte de stress professionnel. À éliminer : cause organique (dysthyroïdie, anémie)",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "général",
+        "thyroïde"
+      ],
+      "notable_findings": "Signes vitaux normaux (TA 122/78, FC 70), perte de poids de 2 kg en 2 mois, apparence fatiguée mais coopérative, examen thyroïdien sans particularité, reste de l'examen physique sans particularité"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Prélèvement sanguin pour bilan (FSC, TSH, glycémie à jeun, ferritine, bilan hépatique, ions)",
+        "generic_act": "Prélèvement sanguin",
+        "body_site": "veine périphérique",
+        "technique_or_approach_mentioned": "prélèvement veineux standard",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Administration et interprétation du questionnaire PHQ-9",
+        "generic_act": "Administration de questionnaire standardisé",
+        "body_site": null,
+        "technique_or_approach_mentioned": "questionnaire auto-administré en clinique",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le document",
+      "Heure de fin de la consultation non mentionnée",
+      "Absence de mention explicite d'un rapport écrit produit ou requis pour la référence en psychothérapie"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "15:30",
+      "actual": "15:30"
+    }
+  ],
+  "stats": {
+    "procedures": 2,
+    "add_ons": 0,
+    "uncertain_items": 3,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

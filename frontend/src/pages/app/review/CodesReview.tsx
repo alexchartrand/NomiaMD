@@ -1,11 +1,10 @@
-import { cn } from "@/lib/utils";
-import { Badge, Checkbox, type BadgeTone } from "../../../components";
+import { Checkbox } from "../../../components";
 import type { ConfidenceLevel, ExtractedCode } from "../../../api";
+import { CODE_LIST_CLASS, CodeRow, type CodeRowTone } from "./CodeRow";
 import { defaultLieu } from "./feeOptions";
-import { FeePicker } from "./FeePicker";
-import { NeedsConfirmation } from "./NeedsConfirmation";
+import { FeeAmount, FeePicker } from "./FeePicker";
 
-const CONFIDENCE_TONES: Record<ConfidenceLevel, BadgeTone> = {
+const CONFIDENCE_TONES: Record<ConfidenceLevel, CodeRowTone> = {
   high: "success",
   medium: "warning",
   low: "danger",
@@ -64,49 +63,32 @@ export function CodesReview({
 
   const renderCode = ({ c, i }: { c: ExtractedCode; i: number }) => {
     const checked = selection.has(i);
-    const bucket = c.confidence;
     const feeIndex = feeSelection.get(i) ?? 0;
     const lieu = c.fees[feeIndex]
       ? (lieuSelection.get(i) ?? defaultLieu(c.fees[feeIndex]))
       : null;
     return (
-      <li
+      <CodeRow
         key={i}
         onMouseEnter={() => onCodeFocused?.(i)}
         onFocus={() => onCodeFocused?.(i)}
-        className={cn(
-          "flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-[0.9rem] transition-colors",
-          checked && "border-primary bg-[color:var(--color-primary-tint)]",
-        )}
-      >
-        <Checkbox
-          id={`code-${i}`}
-          className="mt-[0.3rem]"
-          checked={checked}
-          disabled={disabled}
-          onCheckedChange={() => onToggle(i)}
-          aria-label={`Facturer le code ${c.code}`}
-        />
-
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <label
-            htmlFor={`code-${i}`}
-            className={cn("flex min-w-0 flex-col gap-1.5", !disabled && "cursor-pointer")}
-          >
-            <span className="flex items-center justify-between gap-3">
-              <span
-                className={cn(
-                  "-rotate-[1.5deg] rounded-lg border-2 border-foreground px-[0.55rem] py-[0.2rem] font-mono text-base font-[650] text-foreground",
-                  checked && "border-primary text-primary",
-                )}
-              >
-                {c.code}
-              </span>
-              <Badge tone={CONFIDENCE_TONES[bucket]}>{CONFIDENCE_LABELS[bucket]}</Badge>
-            </span>
-            <span className="font-heading text-[0.95rem] leading-snug font-semibold">{c.description}</span>
-          </label>
-
+        code={c.code}
+        description={c.description}
+        controlId={`code-${i}`}
+        control={
+          <Checkbox
+            id={`code-${i}`}
+            checked={checked}
+            disabled={disabled}
+            onCheckedChange={() => onToggle(i)}
+            aria-label={`Facturer le code ${c.code}`}
+          />
+        }
+        tone={CONFIDENCE_TONES[c.confidence]}
+        toneLabel={CONFIDENCE_LABELS[c.confidence]}
+        selected={checked}
+        amount={<FeeAmount fees={c.fees} feeIndex={feeIndex} />}
+        details={
           <FeePicker
             code={c.code}
             fees={c.fees}
@@ -115,37 +97,42 @@ export function CodesReview({
             onSelect={(chosenFee, chosenLieu) => onFeeSelected(i, chosenFee, chosenLieu)}
             disabled={disabled}
           />
-
-          {c.explanation && (
-            <p className="m-0 text-[0.92rem] text-muted-foreground">{c.explanation}</p>
-          )}
-
-          <NeedsConfirmation notes={c.needs_confirmation} />
-        </div>
-      </li>
+        }
+        warnings={c.needs_confirmation}
+        explanation={c.explanation || undefined}
+      />
     );
   };
 
-  // Low-confidence codes stay out of sight unless the physician asks, or already ticked one.
-  const likely = sorted.filter(({ c }) => c.confidence !== "low");
-  const unlikely = sorted.filter(({ c }) => c.confidence === "low");
+  // The codes the model is sure of first; then the other possible ones, the low-confidence
+  // ones out of sight unless the physician asks, or already ticked one.
+  const retained = sorted.filter(({ c }) => c.retained);
+  const possible = sorted.filter(({ c }) => !c.retained && c.confidence !== "low");
+  const unlikely = sorted.filter(({ c }) => !c.retained && c.confidence === "low");
 
   return (
     <div className="flex flex-col gap-3">
-      {likely.length > 0 && (
-        <ul className="m-0 flex flex-col gap-3 p-0">
-          {likely.map(renderCode)}
-        </ul>
+      {retained.length > 0 && (
+        <section aria-label="Codes retenus" className="flex flex-col gap-1.5">
+          <h3 className="m-0 font-heading text-sm font-semibold text-muted-foreground">Codes retenus</h3>
+          <ul className={CODE_LIST_CLASS}>{retained.map(renderCode)}</ul>
+        </section>
+      )}
+      {possible.length > 0 && (
+        <section aria-label="Autres possibilités" className="flex flex-col gap-1.5">
+          <h3 className="m-0 font-heading text-sm font-semibold text-muted-foreground">Autres possibilités</h3>
+          <ul className={CODE_LIST_CLASS}>{possible.map(renderCode)}</ul>
+        </section>
       )}
       {unlikely.length > 0 && (
         <details
           open={unlikely.some(({ i }) => selection.has(i))}
-          className="rounded-xl border border-border px-4 py-3"
+          className="rounded-lg border border-border px-3 py-2"
         >
-          <summary className="cursor-pointer font-heading font-semibold">
+          <summary className="cursor-pointer font-heading text-sm font-semibold">
             Autres codes ({unlikely.length})
           </summary>
-          <ul className="m-0 mt-3 flex flex-col gap-3 p-0">
+          <ul className={`${CODE_LIST_CLASS} mt-2`}>
             {unlikely.map(renderCode)}
           </ul>
         </details>

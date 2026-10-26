@@ -10,12 +10,22 @@ can still hand the pipeline a fake."""
 from datetime import date
 
 from app.auth.factory import build_profile_service
+from app.care_setting import CareSetting
 from app.postgresdb import PatientRepository, User, session_scope
 from app.ramq_codes import BillingContext, BillingContextBuilder
 
 
 class ScopedBillingContextBuilder:
-    async def build(self, *, user: User, patient_id: int, encounter_date: date | None) -> BillingContext:
+    async def build(
+        self,
+        *,
+        user: User,
+        patient_id: int,
+        encounter_date: date | None,
+        care_setting: CareSetting | None = None,
+    ) -> BillingContext:
         async with session_scope() as session:
             builder = BillingContextBuilder(build_profile_service(session), PatientRepository(session))
-            return await builder.build(user=user, patient_id=patient_id, encounter_date=encounter_date)
+            return await builder.build(
+                user=user, patient_id=patient_id, encounter_date=encounter_date, care_setting=care_setting
+            )

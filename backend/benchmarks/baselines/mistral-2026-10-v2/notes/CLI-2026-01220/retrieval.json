@@ -1,0 +1,601 @@
+{
+  "patient_id": "CLI-2026-01220",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 561,
+      "output_tokens": null,
+      "latency_ms": 263.59212599345483,
+      "started_at": "2026-10-08T15:43:36.009778Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 561,
+    "output_tokens": 0,
+    "llm_latency_ms": 263.59212599345483,
+    "wall_ms": 301.5744299918879
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15803",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "15801",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "15765",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "15773",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "15789",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "15790",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "08776",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "15811",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "15813",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "08848",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "08777",
+          "relevance": 0.027205882593989372
+        },
+        {
+          "number": "15809",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "08913",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15626",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15617",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15831",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15627",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "08819",
+          "relevance": 0.013513513840734959
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Première consultation pour prise en charge d'une hypertension artérielle de grade 1 découverte fortuitement lors d'un don de sang il y a 3 semaines. Bilan initial demandé (laboratoire, ECG, analyse d'urine) et suivi tensionnel à domicile prescrit avant initiation d'un traitement. Counseling hygiéno-diététique prodigué.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-02-10\nHeure de début: 09:15\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Découverte fortuite d'hypertension artérielle lors d'un don de sang il y a 3 semaines; première visite de prise en charge pour un patient sans médecin de famille depuis l'âge adulte\nSystèmes/régions concernés: cardiovasculaire; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Hypertension artérielle de grade 1 probable (à confirmer par mesures ambulatoires), surcharge pondérale avec obésité classe I, profil de risque cardiovasculaire à établir\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; pulmonaire; général\nConstatations: TA 158/96 puis 154/94 après 5 minutes de repos (moyenne de 2 mesures), IMC 30,3, tour de taille 104 cm, pas d'œdème des membres inférieurs, examen cardiaque et pulmonaire sans particularité\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript; Temps de fin de consultation non précisé",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15805",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15801",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15807",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "15809",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "15803",
+          "relevance": 0.029286926612257957
+        },
+        {
+          "number": "15811",
+          "relevance": 0.02703196369111538
+        },
+        {
+          "number": "00837",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "00060",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08775",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15058",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15789",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15667",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00546",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15765",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08800",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15773",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15061",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15833",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09324",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15801",
+      "rrf_score": 0.03278688524590164,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15803",
+      "rrf_score": 0.03229166666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "15811",
+      "rrf_score": 0.030309988518943745,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15789",
+      "rrf_score": 0.029910714285714284,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15809",
+      "rrf_score": 0.02976190476190476,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15765",
+      "rrf_score": 0.02964254577157803,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "08775",
+      "rrf_score": 0.029411764705882353,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15790",
+      "rrf_score": 0.029273504273504274,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15773",
+      "rrf_score": 0.029030910609857977,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "15805",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "15807",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "08776",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "00837",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, première heure, incluant la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "00838",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, par quart d'heure ou portion de quart d'heure après la première heure, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": "00837"
+    },
+    {
+      "rank": 15,
+      "number": "09346",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie > Traitement en chambre hyperbare (incluant, le cas échéant, la visite, la consultation ou l'examen préalable et la surveillance immédiate du patient après sa sortie de la chambre) > (le patient et le médecin sont dans la chambre)",
+      "description": "Traitement en chambre hyperbare, pour chaque patient supplémentaire traité simultanément lors de la première heure, le patient et le médecin étant dans la chambre, en établissement",
+      "expanded_from": "00837"
+    },
+    {
+      "rank": 16,
+      "number": "00060",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "00061",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 18,
+      "number": "00062",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 19,
+      "number": "15656",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'urgence avec déplacement d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 20,
+      "number": "15657",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 21,
+      "number": "15658",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'urgence avec déplacement d'un patient de moins de 70 ans en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "00060"
+    },
+    {
+      "rank": 22,
+      "number": "15813",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "15058",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal sans déplacement",
+      "description": "Examen principal sans déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "08848",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "08777",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15667",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "08913",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "00546",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Ophtalmodynamométrie (avec étude comparative de la pression moyenne de l'artère centrale de la rétine et de la pression moyenne de l'artère brachiale, inscrite au dossier), pour les deux yeux à moins de mention contraire",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "98010",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "15626",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "08800",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 33,
+      "number": "08803",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 34,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 35,
+      "number": "15144",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 36,
+      "number": "15762",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 37,
+      "number": "15617",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "15831",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "15061",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal avec déplacement",
+      "description": "Examen principal avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "15627",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi courant dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "15833",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique de prise en charge et suivi pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "08819",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "09324",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test au captopril pour la recherche de l'hypertension renovasculaire, comprenant les examens, les visites, les consultations, la surveillance médicale et l'interprétation",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "00348",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test respiratoire à hydrogène",
+      "expanded_from": "09324"
+    },
+    {
+      "rank": 45,
+      "number": "00711",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test de stimulation endorphinique incluant les examens, les visites, les consultations et la surveillance",
+      "expanded_from": "09324"
+    },
+    {
+      "rank": 46,
+      "number": "00831",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test de stimulation à l'EDTA",
+      "expanded_from": "09324"
+    },
+    {
+      "rank": 47,
+      "number": "09354",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test d'infusion de sulfate de sodium, incluant les examens, les visites et les consultations",
+      "expanded_from": "09324"
+    },
+    {
+      "rank": 48,
+      "number": "09417",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation) > Test",
+      "description": "Test à l'exercice physique (retard de croissance), incluant l'interprétation des épreuves sanguines",
+      "expanded_from": "09324"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 45,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 264.58978799928445,
+  "db_ms": 28.962388998479582
+}

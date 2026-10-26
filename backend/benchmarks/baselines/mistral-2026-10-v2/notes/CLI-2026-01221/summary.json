@@ -1,0 +1,101 @@
+{
+  "patient_id": "CLI-2026-01221",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2212,
+      "output_tokens": 506,
+      "latency_ms": 3658.311355000478,
+      "started_at": "2026-10-08T15:43:32.740193Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2212,
+    "output_tokens": 506,
+    "llm_latency_ms": 3658.311355000478,
+    "wall_ms": 3658.6247679952066
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi annuel pour dyslipidémie chez une patiente de 61 ans sous rosuvastatine. Bilan lipidique presque à cible, LDL légèrement au-dessus de l'objectif en raison du risque familial. Aucun changement thérapeutique, renforcement des conseils préventifs et planification d'un suivi dans 12 mois.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-02-17",
+      "time_start": "13:40",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de dyslipidémie et prévention cardiovasculaire",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "métabolique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Dyslipidémie avec LDL légèrement au-dessus de l'objectif compte tenu du risque familial; statut post-ménopause sans facteur de risque additionnel autre que l'histoire familiale",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "Signes vitaux normaux (TA 128/78, FC 68), examen cardio-pulmonaire sans particularité"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le texte",
+      "Heure de fin de la consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-02-17",
+      "actual": "2026-02-17"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "13:40",
+      "actual": "13:40"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

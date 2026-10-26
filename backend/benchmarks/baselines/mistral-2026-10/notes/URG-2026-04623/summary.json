@@ -1,0 +1,114 @@
+{
+  "patient_id": "URG-2026-04623",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1857,
+      "output_tokens": 750,
+      "latency_ms": 4939.984783006366,
+      "started_at": "2026-10-08T14:20:02.758670Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1857,
+    "output_tokens": 750,
+    "llm_latency_ms": 4939.984783006366,
+    "wall_ms": 4940.300178990583
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation d'urgence pour intoxication médicamenteuse volontaire (quétiapine et acétaminophène) avec prise en charge au déchocage incluant surveillance cardiaque, administration de N-acétylcystéine IV et consultation du centre antipoison. Patient non inscrit, amené par ambulance, avec risque suicidaire élevé nécessitant une admission aux soins intensifs.",
+    "encounter_setting": {
+      "location_detail": "Hôpital régional du Haut-Fleuve (déchocage)",
+      "date": "2026-10-04",
+      "time_start": "01:30",
+      "time_end": "02:20",
+      "duration_minutes": 50.0,
+      "duration_explicitly_stated": true,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Intoxication volontaire par ingestion médicamenteuse (quétiapine et acétaminophène) avec alcoolisation concomitante",
+      "systems_or_body_regions_involved": [
+        "neurologique",
+        "cardiovasculaire",
+        "digestif",
+        "psychiatrique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Intoxication médicamenteuse volontaire (quétiapine et acétaminophène) avec risque suicidaire élevé et allongement du QTc",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "neurologique",
+        "cardiovasculaire",
+        "respiratoire",
+        "cutané"
+      ],
+      "notable_findings": "GCS 11 (Y3 V3 M5), TA 92/54, FC 124, FR 14, SatO2 95 %, T 36,4, glycémie 5,8, pupilles 3 mm réactives, tachycardie sinusale à l'ECG avec QTc 478 ms"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Prise en charge initiale au déchocage incluant surveillance des voies respiratoires, oxygénothérapie, pose de 2 voies IV, administration de soluté physiologique 2 L, ECG, surveillance cardiaque continue et administration empirique de N-acétylcystéine IV",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Surveillance constante 1:1, retrait des objets dangereux, consultation du centre antipoison",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "les_deux"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "Le statut exact de l'assurance du patient (non inscrit) pourrait influencer la facturation, mais n'est pas précisé dans le contexte de facturation RAMQ."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-04",
+      "actual": "2026-10-04"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "01:30",
+      "actual": "01:30"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 1,
+    "uncertain_items": 1,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": true
+  }
+}

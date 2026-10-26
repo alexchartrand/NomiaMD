@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import IntegrityError
 
-from app.auth import get_current_user
+from app.auth import get_authenticated_user, get_current_user
 from app.auth.factory import get_profile_service
 from app.auth.profile import PracticeFacts, ProfileService
 from app.auth.security import PasswordHasher
@@ -102,14 +102,26 @@ async def test_past_date_reads_the_version_in_effect_then(db_session):
     assert today.remuneration_type == RemunerationType.MIXTE.value
 
 
-async def test_date_before_the_first_version_reads_as_none(db_session):
+async def test_date_before_the_first_version_reads_the_first_version(db_session):
+    # A backfilled encounter older than the physician's onboarding is read under the
+    # profile they first filled in, not left with no practice facts at all.
     user = await _create_user()
     profiles = _profile_service(db_session)
     await profiles.record_practice_facts(
         user.id, _facts(panel_size=500), effective_from=TODAY - timedelta(days=10)
     )
+    await profiles.record_practice_facts(user.id, _facts(panel_size=900))
 
-    assert (await profiles.as_of(user, TODAY - timedelta(days=30))).profile is None
+    before = (await profiles.as_of(user, TODAY - timedelta(days=30))).profile
+    assert before is not None
+    assert before.panel_size == 500
+
+
+async def test_a_physician_who_never_filled_a_profile_reads_as_none(db_session):
+    user = await _create_user()
+    profiles = _profile_service(db_session)
+
+    assert (await profiles.as_of(user, TODAY)).profile is None
 
 
 async def test_same_day_edits_overwrite_instead_of_piling_up(db_session):
@@ -159,6 +171,8 @@ async def test_profile_edit_does_not_rewrite_an_earlier_version():
         )
 
     app.dependency_overrides.pop(get_current_user, None)
+
+    app.dependency_overrides.pop(get_authenticated_user, None)
     with TestClient(app) as client:
         client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
         response = client.patch(
@@ -184,6 +198,8 @@ async def test_me_returns_nulls_for_a_physician_with_no_profile():
     user = await _create_user()
 
     app.dependency_overrides.pop(get_current_user, None)
+
+    app.dependency_overrides.pop(get_authenticated_user, None)
     with TestClient(app) as client:
         client.post("/auth/login", json={"email": user.email, "password": PASSWORD})
         response = client.get("/auth/me")
@@ -212,6 +228,8 @@ async def test_profile_edit_is_all_or_nothing():
     user = await _create_user()
 
     app.dependency_overrides.pop(get_current_user, None)
+
+    app.dependency_overrides.pop(get_authenticated_user, None)
     app.dependency_overrides[get_profile_service] = _profile_service_failing_on_the_profile_half
     try:
         with TestClient(app, raise_server_exceptions=False) as client:

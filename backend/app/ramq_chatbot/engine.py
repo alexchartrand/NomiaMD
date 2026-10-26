@@ -1,14 +1,10 @@
 
 import logging
-import time
 
-from llama_index.core.base.llms.types import ChatMessage, ChatResponse, MessageRole
-from llama_index.core.llms import LLM
-from llama_index.core.retrievers import BaseRetriever
-from llama_index.core.query_engine import CustomQueryEngine
-from llama_index.core.schema import MetadataMode, NodeWithScore
-
+from app.llm import ChatMessage, ChatResult, IChatClient, call_purpose
+from app.ramq_chatbot.chunks import ScoredChunk
 from app.ramq_chatbot.models import RAMQChatMessage
+from app.ramq_chatbot.retriever import IManualRetriever
 
 logger = logging.getLogger(__name__)
 
@@ -33,13 +29,11 @@ Given the context information and not prior knowledge, answer the query.
 Query: {query_str}
 """
 
-_ROLE_MAP = {"user": MessageRole.USER, "assistant": MessageRole.ASSISTANT}
-
 MAX_HISTORY_MESSAGES = 20
 
 
 def _to_chat_messages(history: list[RAMQChatMessage]) -> list[ChatMessage]:
-    return [ChatMessage(role=_ROLE_MAP[m.role], content=m.content) for m in history]
+    return [ChatMessage(role=m.role, content=m.content) for m in history]
 
 
 def _truncate_history(history: list[RAMQChatMessage]) -> list[RAMQChatMessage]:
@@ -49,11 +43,11 @@ def _truncate_history(history: list[RAMQChatMessage]) -> list[RAMQChatMessage]:
 def _build_messages(
     query_str: str, context_str: str, chat_history: list[RAMQChatMessage] | None
 ) -> list[ChatMessage]:
-    messages = [ChatMessage(role=MessageRole.SYSTEM, content=SYSTEM_PROMPT)]
+    messages = [ChatMessage(role="system", content=SYSTEM_PROMPT)]
     messages.extend(_to_chat_messages(_truncate_history(chat_history or [])))
     messages.append(
         ChatMessage(
-            role=MessageRole.USER,
+            role="user",
             content=USER_MESSAGE_TEMPLATE.format(context_str=context_str, query_str=query_str),
         )
     )
@@ -61,9 +55,9 @@ def _build_messages(
 
 
 def _citation_prefix(metadata: dict) -> str:
-    """Builds a "[Section 2.2.6, p.14-16, https://...]"-style prefix from a node's metadata,
+    """Builds a "[Section 2.2.6, p.14-16, https://...]"-style prefix from a chunk's metadata,
     so the model can follow the system prompt's "cite source" instruction. All fields
-    optional. Nodes ReferenceExpander pulled in (metadata["is_expansion"]) get a distinct
+    optional. Chunks ReferenceExpander pulled in (metadata["is_expansion"]) get a distinct
     label. `url` (the source document's own link) is appended whenever present — unlike
     section/page, it isn't gated on section_number, since it's the only citation available
     for a chunk ramq-ingestion didn't tag with a section."""
@@ -89,41 +83,34 @@ def _citation_prefix(metadata: dict) -> str:
     return f"[{', '.join(parts)}] "
 
 
-def _format_context_entry(n: NodeWithScore) -> str:
-    return _citation_prefix(n.node.metadata) + n.node.get_content(metadata_mode=MetadataMode.NONE)
+def _format_context_entry(hit: ScoredChunk) -> str:
+    return _citation_prefix(hit.chunk.metadata) + hit.chunk.text
 
 
-def _extract_content(response: ChatResponse) -> str:
-    content = response.message.content
-    if content is None:
+def _extract_content(response: ChatResult) -> str:
+    if response.content is None:
         raise RuntimeError("Model returned an empty chat response")
-    return content
+    return response.content
 
 
-class RAMQManualQueryEngine(CustomQueryEngine):
-    """RAMQManualRetriever is async-only (see retriever.py), so this engine is too.
-    app/ramq_chatbot/router.py's POST /query is the only real caller and already only calls
-    acustom_query() — custom_query() is a required override of CustomQueryEngine's abstract
-    method, kept only to raise rather than to actually run a sync query."""
+class RAMQManualQueryEngine:
+    """Retrieves manual passages for a question, then has the chat model answer from them.
+    Async-only, like its retriever. app/ramq_chatbot/router.py's POST /query is the only
+    caller."""
 
-    retriever: BaseRetriever
-    llm: LLM
+    def __init__(self, retriever: IManualRetriever, chat_client: IChatClient):
+        self.retriever = retriever
+        self.chat_client = chat_client
 
-    def custom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
-        raise NotImplementedError("RAMQManualQueryEngine is async-only — use acustom_query()")
-
-    async def acustom_query(self, query_str: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
-        nodes = await self.retriever.aretrieve(query_str)
-        context_str = "\n\n".join(_format_context_entry(n) for n in nodes)
-        messages = _build_messages(query_str, context_str, chat_history)
+    async def aquery(self, query: str, chat_history: list[RAMQChatMessage] | None = None) -> str:
+        hits = await self.retriever.aretrieve(query)
+        context_str = "\n\n".join(_format_context_entry(hit) for hit in hits)
+        messages = _build_messages(query, context_str, chat_history)
 
         logger.debug("RAMQManualQueryEngine final query", extra={"user_message": messages[-1].content})
 
-        llm_start = time.perf_counter()
-        response = await self.llm.achat(messages)
-        llm_duration_ms = (time.perf_counter() - llm_start) * 1000
-        logger.debug(
-            "RAMQManualQueryEngine llm call timing", extra={"llm_duration_ms": round(llm_duration_ms, 1)}
-        )
+        # Latency and token usage are metered per call by the client itself (app/llm/usage.py).
+        with call_purpose("ramq_chatbot"):
+            response = await self.chat_client.chat(messages)
 
         return _extract_content(response)

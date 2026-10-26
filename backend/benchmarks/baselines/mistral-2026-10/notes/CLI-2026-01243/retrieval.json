@@ -1,0 +1,444 @@
+{
+  "patient_id": "CLI-2026-01243",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 596,
+      "output_tokens": null,
+      "latency_ms": 1344.5086080027977,
+      "started_at": "2026-10-08T14:19:41.299318Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 596,
+    "output_tokens": 0,
+    "llm_latency_ms": 1344.5086080027977,
+    "wall_ms": 1373.5445350030204
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Patient non inscrit consulte en plage sans rendez-vous pour un abcès douloureux à la cuisse gauche. Le médecin procède à une incision et drainage sous anesthésie locale, avec envoi d'une culture. Diagnostic d'abcès cutané posé et plan de suivi établi.\nLieu (détail): Clinique médicale Les Tilleuls — plage sans rendez-vous\nDate: 2026-09-21\nHeure de début: 19:05\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Bouton douloureux à la cuisse gauche depuis 5 jours, évoluant en abcès fluctuant\nSystèmes/régions concernés: cutané; cuisse_gauche\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: abcès cutané cuisse gauche (R/O SARM-AC)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: oui\nRégions examinées: cutané; cuisse_gauche\nConstatations: abcès fluctuant 3 x 2,5 cm face interne cuisse gauche, érythème périphérique 1 cm, pas de lymphangite, pas d'adénopathie inguinale, température 37,4°C\nActe réalisé 1 - Description: incision et drainage d'abcès sous anesthésie locale\nActe réalisé 1 - Site: cuisse gauche\nActe réalisé 1 - Technique/approche: incision 1,5 cm, rupture des loculations, irrigation au sérum physiologique, mèche iodoformée\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: durée de l'intervention non précisée; heure de fin de consultation non indiquée",
+      "hits": [
+        {
+          "number": "01004",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "01006",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "01003",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "01005",
+          "relevance": 0.02804284356534481
+        },
+        {
+          "number": "02269",
+          "relevance": 0.02500000037252903
+        },
+        {
+          "number": "09517",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15765",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02775",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15773",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06062",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00953",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15811",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02426",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00124",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09460",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06394",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02295",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02704",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02008",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "07076",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "incision et drainage d'abcès sous anesthésie locale",
+      "hits": [
+        {
+          "number": "01006",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "07066",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "01005",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "01004",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "02008",
+          "relevance": 0.028205128386616707
+        },
+        {
+          "number": "01003",
+          "relevance": 0.02804284356534481
+        },
+        {
+          "number": "05021",
+          "relevance": 0.027783136814832687
+        },
+        {
+          "number": "05080",
+          "relevance": 0.02765064872801304
+        },
+        {
+          "number": "05016",
+          "relevance": 0.027598019689321518
+        },
+        {
+          "number": "02775",
+          "relevance": 0.02684684656560421
+        },
+        {
+          "number": "05036",
+          "relevance": 0.02654711715877056
+        },
+        {
+          "number": "01011",
+          "relevance": 0.02638888917863369
+        },
+        {
+          "number": "02311",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "07067",
+          "relevance": 0.015625
+        },
+        {
+          "number": "05004",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06394",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02875",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01008",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "05013",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "05001",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "01006",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Incision > Abcès : incision et drainage d'un abcès",
+      "description": "Incision et drainage d'un abcès sous-fascial ou sous-aponévrotique, unique ou multiple, de la peau, des phanères ou du tissu cellulaire sous-cutané."
+    },
+    {
+      "rank": 2,
+      "number": "01004",
+      "rrf_score": 0.032539682539682535,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Incision > Abcès : incision et drainage d'un abcès",
+      "description": "Incision et drainage d'un abcès périanal, unique ou multiple, de la peau, des phanères ou du tissu cellulaire sous-cutané."
+    },
+    {
+      "rank": 3,
+      "number": "01005",
+      "rrf_score": 0.03200204813108039,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Incision > Abcès : incision et drainage d'un abcès",
+      "description": "Incision et drainage d'un abcès sus-fascial ou sus-aponévrotique, unique ou multiple, de la peau, des phanères ou du tissu cellulaire sous-cutané."
+    },
+    {
+      "rank": 4,
+      "number": "01003",
+      "rrf_score": 0.0315136476426799,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Incision > Abcès : incision et drainage d'un abcès",
+      "description": "Incision et drainage d'un abcès palmaire ou plantaire, unique ou multiple, de la peau, des phanères ou du tissu cellulaire sous-cutané."
+    },
+    {
+      "rank": 5,
+      "number": "02775",
+      "rrf_score": 0.029418126757516764,
+      "header_path": "G — Appareil musculo-squelettique > Squelette axial > Bassin > Incision et drainage",
+      "description": "Incision et drainage d'un abcès d'ostéomyélite au bassin"
+    },
+    {
+      "rank": 6,
+      "number": "02008",
+      "rrf_score": 0.02844551282051282,
+      "header_path": "G — Appareil musculo-squelettique > Bourse séreuse > Drainage",
+      "description": "Drainage d'une bourse séreuse, drainage d'abcès sous anesthésie générale, soins complets"
+    },
+    {
+      "rank": 7,
+      "number": "06394",
+      "rrf_score": 0.02666666666666667,
+      "header_path": "N — Appareil génital mâle > Scrotum > Incision",
+      "description": "Ouverture et drainage d'abcès intra-scrotal ou d'un hématocèle, incision, scrotum"
+    },
+    {
+      "rank": 8,
+      "number": "07066",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Incision",
+      "description": "Anesthésie locale pour ouverture d'orgelet et drainage ou ouverture et drainage d'abcès de la paupière et des sourcils"
+    },
+    {
+      "rank": 9,
+      "number": "02269",
+      "rrf_score": 0.015625,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Fémur > Incision",
+      "description": "Incision du périoste pour abcès d'ostéomyélite au fémur avec ou sans fistulectomie cutanée ou osseuse"
+    },
+    {
+      "rank": 10,
+      "number": "09517",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Incision - drainage > abcès plantaire avec implication de la gaine tendineuse",
+      "description": "Incision et drainage d'un abcès plantaire avec implication de la gaine tendineuse du pied, avec précisions de facturation (P.C. 13)"
+    },
+    {
+      "rank": 11,
+      "number": "15765",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 12,
+      "number": "05021",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "L — Système digestif > Amygdales et adénoïdes > Incision",
+      "description": "Incision d'un abcès périamygdalien, ouverture"
+    },
+    {
+      "rank": 13,
+      "number": "05080",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision > Abcès péritonéal",
+      "description": "Drainage d'abcès péritonéal sous-phrénique de l'abdomen, du péritoine et de l'épiploon, par incision"
+    },
+    {
+      "rank": 14,
+      "number": "15773",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 15,
+      "number": "05016",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "L — Système digestif > Pharynx > Incision > Incision, drainage et soins d'abcès",
+      "description": "Incision, drainage et soins d'abcès du pharynx, intraoral"
+    },
+    {
+      "rank": 16,
+      "number": "06062",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "P — Gynécologie > Vulve et orifice inférieur du vagin > Incision",
+      "description": "Incision d'un patient pour ouverture et drainage d'un abcès de la vulve, glande de Bartholin ou glande de Skene"
+    },
+    {
+      "rank": 17,
+      "number": "00953",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 18,
+      "number": "05036",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "L — Système digestif > Appendice > Incision",
+      "description": "Drainage d'abcès appendiculaire, incision"
+    },
+    {
+      "rank": 19,
+      "number": "15811",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 20,
+      "number": "01011",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Seins > Incision",
+      "description": "Incision pour drainage d'abcès mammaire, unique ou à logettes"
+    },
+    {
+      "rank": 21,
+      "number": "02426",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cuisse",
+      "description": "Quadriceps plastie de la cuisse incluant arthrolyse"
+    },
+    {
+      "rank": 22,
+      "number": "02311",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Divers",
+      "description": "Incision au niveau d'une broche d'un fixateur externe sous anesthésie locale"
+    },
+    {
+      "rank": 23,
+      "number": "00124",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Interventions per-cutanées non vasculaires > Ponction et/ou drainage (kyste, abcès ou autre collection liquidienne ou aérique) incluant l'injection de médication ou de substance thérapeutique par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique > Kyste ou abcès profond > membre",
+      "description": "Ponction et/ou drainage (kyste, abcès ou autre collection liquidienne ou aérique) incluant l'injection de médication ou de substance thérapeutique par voie transcutanée, sous guidage échoscopique, fluoroscopique ou scanographique, kyste ou abcès profond, membre"
+    },
+    {
+      "rank": 24,
+      "number": "07067",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Incision",
+      "description": "Anesthésie générale comprenant l'examen sous anesthésie générale pour ouverture d'orgelet et drainage ou ouverture et drainage d'abcès de la paupière et des sourcils"
+    },
+    {
+      "rank": 25,
+      "number": "09460",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Interventions per-cutanées non vasculaires > Interventions neuro-squelettiques > Discographie",
+      "description": "Injection de stéroïdes avec discographie, supplément pour 1 niveau, interventions per-cutanées non vasculaires"
+    },
+    {
+      "rank": 26,
+      "number": "05004",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "L — Système digestif > Dents et gencives > Incision",
+      "description": "Incision d'un abcès alvéolo-dentaire et drainage, dents et gencives"
+    },
+    {
+      "rank": 27,
+      "number": "02295",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cuisse",
+      "description": "Amputation de la cuisse"
+    },
+    {
+      "rank": 28,
+      "number": "02875",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Tibia et péroné > Incision et drainage",
+      "description": "Incision et drainage d'un abcès d'ostéomyélite du tibia ou du péroné avec ou sans fistulectomie"
+    },
+    {
+      "rank": 29,
+      "number": "02704",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Incision et drainage > abcès palmaire et gaine tendineuse",
+      "description": "Incision et drainage d'un abcès palmaire et gaine tendineuse, extrémités - membres supérieurs, main et poignet"
+    },
+    {
+      "rank": 30,
+      "number": "01008",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Hématome > incision et drainage d'un hématome ou d'un sérome :",
+      "description": "Incision et drainage d'un hématome ou d'un sérome sous-fascial ou sous-aponévrotique, en cabinet ou non"
+    },
+    {
+      "rank": 31,
+      "number": "05013",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "L — Système digestif > Glandes salivaires > Incision > Ouverture et drainage d'un abcès de la glande sous-maxillaire",
+      "description": "Ouverture et drainage d'un abcès de la glande sous-maxillaire, incision d'une glande salivaire"
+    },
+    {
+      "rank": 32,
+      "number": "07076",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "U — Appareil auditif > Oreille externe > Incision",
+      "description": "Incision d'un abcès du conduit auditif externe"
+    },
+    {
+      "rank": 33,
+      "number": "05001",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "L — Système digestif > Bouche > Incision",
+      "description": "Incision d'un abcès sublingual, traitement complet, bouche"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 27,
+    "panel_size": 420,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1345.462255005259,
+  "db_ms": 27.37866301322356
+}

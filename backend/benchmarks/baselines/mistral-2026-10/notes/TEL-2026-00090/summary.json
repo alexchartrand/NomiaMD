@@ -1,0 +1,104 @@
+{
+  "patient_id": "TEL-2026-00090",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2153,
+      "output_tokens": 540,
+      "latency_ms": 3993.8353460020153,
+      "started_at": "2026-10-08T14:19:14.188179Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2153,
+    "output_tokens": 540,
+    "llm_latency_ms": 3993.8353460020153,
+    "wall_ms": 3994.224880996626
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Téléconsultation vidéo pour éruption cutanée folliculaire au tronc chez un patient de 29 ans, probablement liée à la chaleur et à la transpiration excessive. Diagnostic clinique de folliculite miliaire/friction posé, avec recommandations non pharmacologiques et traitement topique au besoin.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls (téléconsultation vidéo)",
+      "date": "2026-07-21",
+      "time_start": "16:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Éruption cutanée au tronc apparue depuis 5 jours avec prurit léger à modéré",
+      "systems_or_body_regions_involved": [
+        "peau",
+        "tronc",
+        "dos",
+        "épaules"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Folliculite probablement de type miliaire/friction, favorisée par la chaleur, la transpiration excessive et les douches fréquentes",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "peau"
+      ],
+      "notable_findings": "Papules érythémateuses multiples de 2-4 mm disposées de façon folliculaire au niveau du tronc, du dos et des épaules, sans vésicule ni pustule franche visible"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "téléconsultation"
+    ],
+    "notes_uncertain_items": [
+      "Durée exacte de la consultation non précisée dans le document",
+      "Absence de mention explicite de l'utilisation d'anesthésie pour l'examen (non applicable en téléconsultation)"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-21",
+      "actual": "2026-07-21"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "16:00",
+      "actual": "16:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

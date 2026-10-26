@@ -1,0 +1,1956 @@
+{
+  "patient_id": "URG-2026-04622",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 1360,
+      "output_tokens": null,
+      "latency_ms": 642.3165119922487,
+      "started_at": "2026-10-08T15:44:24.666773Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1360,
+    "output_tokens": 0,
+    "llm_latency_ms": 642.3165119922487,
+    "wall_ms": 756.6929229942616
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. urgence. Urgence, Hôpital régional du Haut-Fleuve. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15634",
+          "relevance": 0.02904040366411209
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "15635",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "15626",
+          "relevance": 0.026013514026999474
+        },
+        {
+          "number": "08979",
+          "relevance": 0.026013514026999474
+        },
+        {
+          "number": "15644",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15769",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15653",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15777",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15645",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15259",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15646",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08966",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15654",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08967",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08968",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15655",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09980",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08923",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15263",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Patiente de 82 ans non inscrite à l'urgence pour dyspnée et toux fébrile évoluant depuis 3 jours. Diagnostic de pneumonie acquise en communauté sévère avec exacerbation de MPOC. Traitement par antibiothérapie IV, nébulisations, corticoïdes et oxygénothérapie. Demande d'admission en médecine faite.\nLieu (détail): Urgence, Hôpital régional du Haut-Fleuve\nDate: 2026-10-03\nHeure de début: 02:10\nHeure de fin: 06:40\nDurée (minutes): 270.0\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Dyspnée et toux fébrile depuis 3 jours avec confusion légère\nSystèmes/régions concernés: respiratoire; neurologique; cardiovasculaire\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: oui\nDiagnostic/impression: Pneumonie acquise en communauté sévère (lobe inférieur gauche) avec exacerbation de MPOC\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cou; thorax; cœur; abdomen; mollets; neurologique\nConstatations: Tachycardie, crépitants base gauche, sibilances diffuses, désorientation temporelle, saturation en oxygène à 86 % à l'air ambiant\nActe réalisé 1 - Description: Interprétation d'un ECG\nActe réalisé 1 - Acte (générique): électrocardiogramme\nActe réalisé 1 - Technique/approche: interprétation\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 2 - Description: Prélèvement de deux hémocultures\nActe réalisé 2 - Acte (générique): hémocultures\nActe réalisé 2 - Technique/approche: prélèvement veineux\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 3 - Description: Administration de ceftriaxone 1 g IV\nActe réalisé 3 - Acte (générique): injection intraveineuse de médicament\nActe réalisé 3 - Site: intraveineuse\nActe réalisé 3 - Technique/approche: IV\nActe réalisé 3 - Anesthésie: aucun\nActe réalisé 3 - Diagnostique ou thérapeutique: thérapeutique\nActe réalisé 4 - Description: Administration d'azithromycine 500 mg IV\nActe réalisé 4 - Acte (générique): injection intraveineuse de médicament\nActe réalisé 4 - Site: intraveineuse\nActe réalisé 4 - Technique/approche: IV\nActe réalisé 4 - Anesthésie: aucun\nActe réalisé 4 - Diagnostique ou thérapeutique: thérapeutique\nActe réalisé 5 - Description: Administration de salbutamol/ipratropium en nébulisation\nActe réalisé 5 - Acte (générique): nébulisation de médicament\nActe réalisé 5 - Site: respiratoire\nActe réalisé 5 - Technique/approche: nébulisation\nActe réalisé 5 - Anesthésie: aucun\nActe réalisé 5 - Diagnostique ou thérapeutique: thérapeutique\nActe réalisé 6 - Description: Administration de prednisone 40 mg\nActe réalisé 6 - Acte (générique): administration de corticoïde oral\nActe réalisé 6 - Technique/approche: oral\nActe réalisé 6 - Anesthésie: aucun\nActe réalisé 6 - Diagnostique ou thérapeutique: thérapeutique\nAjouts possiblement facturables: deplacement_urgence\nÉlément incertain: Le statut d'inscription du patient (non inscrite) est-il confirmé pour la facturation RAMQ ?; La garde de 00h-08h est-elle facturée comme telle ?",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15777",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15769",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09530",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08813",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09531",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08993",
+          "relevance": 0.015625
+        },
+        {
+          "number": "20025",
+          "relevance": 0.015625
+        },
+        {
+          "number": "03141",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00407",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20024",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20179",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20023",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15796",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "20022",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15795",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "20021",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00347",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15622",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00302",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "électrocardiogramme",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00341",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "00340",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "00342",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "30120",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "00344",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "00545",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "30010",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "00756",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "00339",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "00630",
+          "relevance": 0.02857142873108387
+        },
+        {
+          "number": "00758",
+          "relevance": 0.028404513373970985
+        },
+        {
+          "number": "00757",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "30060",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "00535",
+          "relevance": 0.027242401614785194
+        },
+        {
+          "number": "00347",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00564",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00530",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "00313",
+          "relevance": 0.012987012974917889
+        },
+        {
+          "number": "00843",
+          "relevance": 0.012820512987673283
+        },
+        {
+          "number": "09412",
+          "relevance": 0.012658228166401386
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Interprétation d'un ECG",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00340",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "30010",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "00341",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "30120",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "00344",
+          "relevance": 0.030578898265957832
+        },
+        {
+          "number": "00545",
+          "relevance": 0.028665028512477875
+        },
+        {
+          "number": "00758",
+          "relevance": 0.028438886627554893
+        },
+        {
+          "number": "00342",
+          "relevance": 0.028370222076773643
+        },
+        {
+          "number": "00339",
+          "relevance": 0.027222221717238426
+        },
+        {
+          "number": "30110",
+          "relevance": 0.026198629289865494
+        },
+        {
+          "number": "00756",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00757",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08408",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08409",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00630",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08413",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00535",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "30060",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00783",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09389",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "hémocultures",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00403",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "05014",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00404",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00118",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00566",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "04524",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09382",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00617",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07590",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07581",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09383",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "04516",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09488",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "07580",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "04523",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "05481",
+          "relevance": 0.01315789483487606
+        },
+        {
+          "number": "06393",
+          "relevance": 0.012987012974917889
+        },
+        {
+          "number": "05310",
+          "relevance": 0.012820512987673283
+        },
+        {
+          "number": "00406",
+          "relevance": 0.012658228166401386
+        },
+        {
+          "number": "00147",
+          "relevance": 0.012500000186264515
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Prélèvement de deux hémocultures",
+      "sections": null,
+      "hits": [
+        {
+          "number": "04524",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "04611",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "04523",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "04491",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "01335",
+          "relevance": 0.029857397079467773
+        },
+        {
+          "number": "00683",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "09820",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01389",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04612",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "06948",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04722",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04607",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06949",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00566",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06951",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08577",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "20027",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "04826",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00403",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "00166",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "injection intraveineuse de médicament",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00734",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00479",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00583",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "00603",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "00480",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "00478",
+          "relevance": 0.029386529698967934
+        },
+        {
+          "number": "09477",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "00474",
+          "relevance": 0.028629032894968987
+        },
+        {
+          "number": "00431",
+          "relevance": 0.02812499925494194
+        },
+        {
+          "number": "00430",
+          "relevance": 0.027783136814832687
+        },
+        {
+          "number": "00988",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "00989",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "00429",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08165",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00473",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09306",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08181",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00228",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00529",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09307",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Administration de ceftriaxone 1 g IV",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00152",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00479",
+          "relevance": 0.02837301604449749
+        },
+        {
+          "number": "09335",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "00583",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00778",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00989",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00988",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00145",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01900",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00704",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00492",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08181",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00478",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00870",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01321",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "20025",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08165",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00734",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "98012",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00603",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "injection intraveineuse de médicament",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00734",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00479",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00583",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "00603",
+          "relevance": 0.03007688745856285
+        },
+        {
+          "number": "00480",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "00478",
+          "relevance": 0.029386529698967934
+        },
+        {
+          "number": "09477",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "00474",
+          "relevance": 0.028629032894968987
+        },
+        {
+          "number": "00431",
+          "relevance": 0.02812499925494194
+        },
+        {
+          "number": "00430",
+          "relevance": 0.027783136814832687
+        },
+        {
+          "number": "00988",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "00989",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "00429",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08165",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00473",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09306",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08181",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00228",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00529",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09307",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Administration d'azithromycine 500 mg IV",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09335",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "20022",
+          "relevance": 0.027799228206276894
+        },
+        {
+          "number": "20024",
+          "relevance": 0.02703196369111538
+        },
+        {
+          "number": "00928",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "20023",
+          "relevance": 0.02651914209127426
+        },
+        {
+          "number": "01900",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00988",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00479",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00989",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00704",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08181",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00583",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08165",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00603",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "98012",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00990",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00431",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01321",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "nébulisation de médicament",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00429",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "00480",
+          "relevance": 0.030578898265957832
+        },
+        {
+          "number": "00334",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "00430",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "00474",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00432",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00779",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15883",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09352",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00497",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00144",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09351",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09335",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09353",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00583",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00990",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "03003",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15884",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "03141",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00603",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Administration de salbutamol/ipratropium en nébulisation",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00928",
+          "relevance": 0.02943722903728485
+        },
+        {
+          "number": "00927",
+          "relevance": 0.028577260673046112
+        },
+        {
+          "number": "00382",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00432",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "98012",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00990",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09334",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00991",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09335",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00917",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20021",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20023",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09353",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "20022",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00384",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "20024",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09948",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09352",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00815",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "administration de corticoïde oral",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09546",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "09547",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "09335",
+          "relevance": 0.029236022382974625
+        },
+        {
+          "number": "08161",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00889",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09421",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00152",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01321",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09460",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "03346",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00736",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00367",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00466",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "03345",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01900",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "98012",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "20294",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00928",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00699",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Administration de prednisone 40 mg",
+      "sections": null,
+      "hits": [
+        {
+          "number": "09335",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "20022",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "20024",
+          "relevance": 0.028219396248459816
+        },
+        {
+          "number": "00988",
+          "relevance": 0.02788461558520794
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01321",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "98012",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01900",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09334",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00989",
+          "relevance": 0.015625
+        },
+        {
+          "number": "20021",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00431",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "20023",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00699",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "04670",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09948",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09352",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00928",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01438",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00927",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "deplacement_urgence",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15633",
+          "relevance": 0.02991071343421936
+        },
+        {
+          "number": "15634",
+          "relevance": 0.029877368360757828
+        },
+        {
+          "number": "15635",
+          "relevance": 0.029857397079467773
+        },
+        {
+          "number": "08968",
+          "relevance": 0.029386529698967934
+        },
+        {
+          "number": "08966",
+          "relevance": 0.02938045561313629
+        },
+        {
+          "number": "08967",
+          "relevance": 0.028949545696377754
+        },
+        {
+          "number": "09245",
+          "relevance": 0.028258707374334335
+        },
+        {
+          "number": "08815",
+          "relevance": 0.028169013559818268
+        },
+        {
+          "number": "15625",
+          "relevance": 0.027984345331788063
+        },
+        {
+          "number": "15623",
+          "relevance": 0.027863776311278343
+        },
+        {
+          "number": "08928",
+          "relevance": 0.02777777798473835
+        },
+        {
+          "number": "15624",
+          "relevance": 0.02715098112821579
+        },
+        {
+          "number": "15193",
+          "relevance": 0.02703196369111538
+        },
+        {
+          "number": "15967",
+          "relevance": 0.025657894089818
+        },
+        {
+          "number": "15655",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15646",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15653",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15644",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15654",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15645",
+          "relevance": 0.01515151560306549
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "09335",
+      "rrf_score": 0.09397304036153965,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "00152",
+      "rrf_score": 0.07846771284271284,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "00583",
+      "rrf_score": 0.07553348279154731,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, première injection",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "00988",
+      "rrf_score": 0.07452133273028795,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de 24 heures ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "00989",
+      "rrf_score": 0.07253913671549925,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 24 heures",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "00603",
+      "rrf_score": 0.07057600095574779,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique",
+      "description": "Injection intra-abdominale, intrapleurale, intrapyélique, intravésicale ou autre d'agent chimiothérapeutique incluant, s'il y a lieu, évacuation thérapeutique et prélèvement diagnostique, chaque injection subséquente à la même séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "98012",
+      "rrf_score": 0.07002331002331003,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00479",
+      "rrf_score": 0.06388621022179364,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > injection intraveineuse",
+      "description": "Injection intraveineuse au cuir chevelu, en cabinet ou à domicile, dans le cadre d'hyperalimentation, injection, insufflation ou ponction.",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "20022",
+      "rrf_score": 0.059813912272928677,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour, en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "20024",
+      "rrf_score": 0.05970167353868542,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "01900",
+      "rrf_score": 0.05852938438539844,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, par jour, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "00928",
+      "rrf_score": 0.05834720834720834,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau I > Soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "description": "Installation de l'équipement de ventilation pour des soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort (la valeur de durée de l'acte se calcule depuis le début de la mise en marche du traitement)",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "00927",
+      "rrf_score": 0.0,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau I > Soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "description": "Contrôle subséquent, par examen, pour des soins de ventilation de base sous la responsabilité du médecin anesthésiste (v.g. polioencéphalite, traumatismes thoraciques, soins de support postopératoires de la ventilation, autres qu'à la salle de réveil, etc.) incluant, le cas échéant, la surveillance, l'administration de bronchodilatateurs et de stéroïdes en aérosol, la ventilation à ratio inversé, l'hypercarbie permissive, la ventilation à pression contrôlée, la ventilation à poumon ouvert (open lung ventilation), la ventilation en décubitus ventral, l'administration de surfactant et la ventilation de l'espace mort",
+      "expanded_from": "00928"
+    },
+    {
+      "rank": 14,
+      "number": "20023",
+      "rrf_score": 0.057291666666666664,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "01321",
+      "rrf_score": 0.05648172988055852,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Brûlures",
+      "description": "Injection multiples de Kenalog sous anesthésie générale ou dans un centre désigné, par quart d'heure",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "01334",
+      "rrf_score": 0.0,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Brûlures",
+      "description": "Changement de pansement sous anesthésie générale pour une brûlure, incluant débridement",
+      "expanded_from": "01321"
+    },
+    {
+      "rank": 17,
+      "number": "00431",
+      "rrf_score": 0.0563167845686487,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou une articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "09334",
+      "rrf_score": 0.05560528146129551,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "08181",
+      "rrf_score": 0.054484803558191255,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies génito-urinaires > Pyélographie",
+      "description": "Pyélographie intraveineuse incluant injection, abdomen simple et films post-mictionnels",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "08186",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies génito-urinaires > Pyélographie",
+      "description": "Pyélographie rétrograde ou antégrade percutanée ou néphrostographie percutanée ou examen de vessie iléale, incluant abdomen simple",
+      "expanded_from": "08181"
+    },
+    {
+      "rank": 21,
+      "number": "08187",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies génito-urinaires > Pyélographie",
+      "description": "Urétrographie ou cystographie rétrograde ou les deux, incluant scopie et insertion de chaînette, le cas échéant",
+      "expanded_from": "08181"
+    },
+    {
+      "rank": 22,
+      "number": "08189",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies génito-urinaires > Pyélographie",
+      "description": "Vasographie - Déférentographie",
+      "expanded_from": "08181"
+    },
+    {
+      "rank": 23,
+      "number": "08191",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies génito-urinaires > Pyélographie",
+      "description": "Kystographie rénale",
+      "expanded_from": "08181"
+    },
+    {
+      "rank": 24,
+      "number": "08198",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies génito-urinaires > Pyélographie",
+      "description": "Pneumographie abdominale, pelvigraphie ou herniographie",
+      "expanded_from": "08181"
+    },
+    {
+      "rank": 25,
+      "number": "08165",
+      "rrf_score": 0.054253785147801006,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies gastro-intestinales et biliaires (incluant fluoroscopie) > Cholangiographie",
+      "description": "Cholangiographie par infusion intra-veineuse, incluant injection",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "08163",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies gastro-intestinales et biliaires (incluant fluoroscopie) > Cholangiographie",
+      "description": "Cholangiographie peropératoire",
+      "expanded_from": "08165"
+    },
+    {
+      "rank": 27,
+      "number": "08171",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies gastro-intestinales et biliaires (incluant fluoroscopie) > Cholangiographie",
+      "description": "Cholangiographie par tube en T, incluant injection",
+      "expanded_from": "08165"
+    },
+    {
+      "rank": 28,
+      "number": "08180",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies gastro-intestinales et biliaires (incluant fluoroscopie) > Cholangiographie",
+      "description": "Pancréatographie peropératoire",
+      "expanded_from": "08165"
+    },
+    {
+      "rank": 29,
+      "number": "08182",
+      "rrf_score": 0.0,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Voies gastro-intestinales et biliaires (incluant fluoroscopie) > Cholangiographie",
+      "description": "Pancréatographie et cholangiographie rétrograde par endoscopie",
+      "expanded_from": "08165"
+    },
+    {
+      "rank": 30,
+      "number": "00480",
+      "rrf_score": 0.047643442622950824,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > injection intrathécale de médicaments",
+      "description": "Injection intrathécale de médicaments, dans le cadre d'hyperalimentation, injection, insufflation ou ponction. Si injection de phénol, la rémunération est doublée (MOD 052).",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "00734",
+      "rrf_score": 0.04632034632034632,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > intraveineuse (injection d'une (1) ou plusieurs substances antinéoplasiques)",
+      "description": "Injection intraveineuse d'une (1) ou plusieurs substances antinéoplasiques",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "00474",
+      "rrf_score": 0.04547574626865672,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "00430",
+      "rrf_score": 0.04485852311939269,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > capsules, gaines, tendons, ligaments ou fascia",
+      "description": "Injection de médicament ou de substance thérapeutique dans les capsules, gaines, tendons, ligaments ou fascia",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "00478",
+      "rrf_score": 0.04465811965811966,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intraveineuse, enfant de quatre (4) ans ou plus, adulte, en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intraveineuse, enfant de quatre (4) ans ou plus, adulte, en cabinet ou à domicile, lorsque faite sans examen",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "00429",
+      "rrf_score": 0.04444444444444444,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > cornets du nez",
+      "description": "Injection de médicament ou de substance thérapeutique dans les cornets du nez",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "00990",
+      "rrf_score": 0.04164274322169059,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau II > Soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "description": "Installation de l'équipement de ventilation pour des soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle (la valeur de durée de l'acte se calcule depuis le début de la mise en marche du traitement)",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "00991",
+      "rrf_score": 0.0,
+      "header_path": "D — Anesthésie — réanimation > Soins de ventilation > Niveau II > Soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "description": "Contrôle subséquent, par examen, pour des soins de ventilation présentant un degré de complexité accrue sous la responsabilité du médecin anesthésiste, incluant, le cas échéant, la surveillance, la ventilation aux hallogènes pour status asthmaticus, la ventilation à haute fréquence (60 par minute ou plus), la ventilation différentielle avec diviseur trachéal, l'oxygénation à l'aide d'un oxygénateur extracorporel à membrane (ECMO), l'administration thérapeutique de vasodilatateurs pulmonaires par inhalation (monoxyde d'azote, prostaglandines), la ventilation liquide partielle",
+      "expanded_from": "00990"
+    },
+    {
+      "rank": 38,
+      "number": "20021",
+      "rrf_score": 0.04152811606480991,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "09352",
+      "rrf_score": 0.0406842899102961,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, cure de sténose trachéale inflammatoire",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "09351",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, traitement des hémoptysies ou hémostase de tumeurs hémorragiques",
+      "expanded_from": "09352"
+    },
+    {
+      "rank": 41,
+      "number": "09353",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Pneumologie > Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur",
+      "description": "Photocoagulation au laser par voie endobronchique, incluant les examens, les visites, les consultations et la surveillance rendus au cours de la même journée et les services d'un autre médecin à titre d'assistant ou de collaborateur, résection palliative d'une tumeur maligne sténosante",
+      "expanded_from": "09352"
+    },
+    {
+      "rank": 42,
+      "number": "15634",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "15633",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "00340",
+      "rrf_score": 0.03306010928961749,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Interprétation d'un électrocardiogramme en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "00341",
+      "rrf_score": 0.03279569892473118,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "15635",
+      "rrf_score": 0.03225806451612903,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "04524",
+      "rrf_score": 0.03205128205128205,
+      "header_path": "J — Système cardiaque > Actes généraux > Transplantation > Prélèvement de valve ou conduit, homogreffe fraîche",
+      "description": "Prélèvement de deux valves ou conduits, homogreffe fraîche, deux",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "04523",
+      "rrf_score": 0.0,
+      "header_path": "J — Système cardiaque > Actes généraux > Transplantation > Prélèvement de valve ou conduit, homogreffe fraîche",
+      "description": "Prélèvement d'une valve ou conduit, homogreffe fraîche, un",
+      "expanded_from": "04524"
+    },
+    {
+      "rank": 49,
+      "number": "30120",
+      "rrf_score": 0.031746031746031744,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme par enregistrement épicardique en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "30060",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Épreuve d'effort sub-maximal et maximal en établissement, incluant l'électrocardiogramme au repos exécuté au moyen d'un tapis roulant et/ou d'une bicyclette ergométrique avec monitoring continu de l'électrocardiogramme (surveillance et interprétation)",
+      "expanded_from": "30120"
+    },
+    {
+      "rank": 51,
+      "number": "30110",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Étude des paramètres d'un stimulateur cardiaque ou caractérisation d'arythmie par bande de rythme transmise par téléphone et venant de l'extérieur de l'hôpital en établissement (avec rédaction de rapport)",
+      "expanded_from": "30120"
+    },
+    {
+      "rank": 52,
+      "number": "30130",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Épreuve d'effort avec mesure de la consommation maximale d'oxygène en établissement (ne peut être facturé avec le code 30060 le même jour chez le même patient)",
+      "expanded_from": "30120"
+    },
+    {
+      "rank": 53,
+      "number": "30010",
+      "rrf_score": 0.031544957774465976,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme en établissement, incluant l'enregistrement du tracé, la lecture du tracé enregistré sur document permanent, la rédaction et la signature du rapport, sa communication et son intégration au dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15777",
+      "rrf_score": 0.03137254901960784,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15769",
+      "rrf_score": 0.03128054740957967,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "00344",
+      "rrf_score": 0.03125,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme à domicile",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "00342",
+      "rrf_score": 0.031054405392392875,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme avec épreuve d'effort en cabinet, incluant l'électrocardiogramme au repos",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "00432",
+      "rrf_score": 0.031009615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > trachée et bronches (incluant l'intubation et s'il y a lieu la laryngoscopie) par intubation trachéo-bronchique",
+      "description": "Injection de médicament ou de substance thérapeutique dans la trachée et les bronches (incluant l'intubation et s'il y a lieu la laryngoscopie) par intubation trachéo-bronchique (P.A.D.T. 1.4)",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "08966",
+      "rrf_score": 0.029513888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 7 h à 16 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 60,
+      "number": "08968",
+      "rrf_score": 0.029206349206349208,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 0 h à 7 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 61,
+      "number": "08967",
+      "rrf_score": 0.0288981288981289,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 16 h à 24 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "15644",
+      "rrf_score": 0.028371628371628373,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "15653",
+      "rrf_score": 0.028083267871170464,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "15646",
+      "rrf_score": 0.027417840375586856,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 65,
+      "number": "15645",
+      "rrf_score": 0.02715098147128967,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 66,
+      "number": "15655",
+      "rrf_score": 0.02667140825035562,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 67,
+      "number": "15654",
+      "rrf_score": 0.02651914295749912,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 68,
+      "number": "15626",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de prise en charge dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 69,
+      "number": "08979",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > psychiatrique complet > patient admis",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient admis de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 70,
+      "number": "08969",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe > psychiatrique complet > patient admis",
+      "description": "Examen psychiatrique complet sans déplacement d'un patient admis de 70 ans ou plus dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée",
+      "expanded_from": "08979"
+    },
+    {
+      "rank": 71,
+      "number": "15259",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > support médical à distance > support médical à distance des services préhospitaliers d'urgence - soins avancés",
+      "description": "Support médical à distance des services préhospitaliers d'urgence - soins avancés, forfait par quart de garde au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 72,
+      "number": "09980",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément en neurologie et neurochirurgie, ou supplément en toxicologie pour les médecins désignés par les parties à l'entente, pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 73,
+      "number": "09946",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Examen du travailleur dans un délai d'un à cinq jours consécutifs suivant la demande de la Commission, rédaction et expédition sans délai à la Commission du rapport d'évaluation médicale prescrit par un médecin désigné par la Commission, pour une évaluation faite en urgence en raison de la complexité du dossier",
+      "expanded_from": "09980"
+    },
+    {
+      "rank": 74,
+      "number": "09977",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > B) Médecin désigné > 2. évaluation faite en urgence à la demande de la Commission par un médecin désigné par celle-ci",
+      "description": "Supplément lorsque le médecin rend son avis en cabinet privé pour un rapport d'évaluation médicale en urgence par un médecin désigné par la Commission en raison de la complexité du dossier",
+      "expanded_from": "09980"
+    },
+    {
+      "rank": 75,
+      "number": "08923",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de prise en charge psychiatrique dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 76,
+      "number": "15263",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > orientation d'un patient vers un centre d'hémodynamie",
+      "description": "Orientation d'un patient vers un centre d'hémodynamie, démarches entreprises pendant un transport ambulancier menant à l'orientation d'un patient vers un centre d'hémodynamie au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 82,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 646.6476140049053,
+  "db_ms": 99.28217399283312
+}

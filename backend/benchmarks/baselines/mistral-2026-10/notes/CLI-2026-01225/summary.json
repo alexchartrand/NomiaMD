@@ -1,0 +1,112 @@
+{
+  "patient_id": "CLI-2026-01225",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2202,
+      "output_tokens": 676,
+      "latency_ms": 3951.724391998141,
+      "started_at": "2026-10-08T14:18:55.209569Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2202,
+    "output_tokens": 676,
+    "llm_latency_ms": 3951.724391998141,
+    "wall_ms": 3952.1373150055297
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en médecine familiale pour une deuxième opinion sur une gonalgie chronique droite référée par le médecin traitant. Diagnostic de gonarthrose modérée à sévère avec retentissement fonctionnel. Réalisation d'une infiltration intra-articulaire de corticostéroïde sous asepsie et transmission d'un rapport au médecin traitant.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-04-14",
+      "time_start": "10:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "médecin traitant (actuellement en congé)",
+      "reason_for_referral": "deuxième opinion sur une douleur chronique au genou droit avant référence en orthopédie",
+      "written_report_back_required_or_produced": true
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Douleur chronique au genou droit évoluant depuis 2 ans, aggravation progressive avec retentissement fonctionnel (limitation à la marche et aux activités).",
+      "systems_or_body_regions_involved": [
+        "musculo-squelettique",
+        "genou_droit"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "Gonarthrose droite modérée à sévère, compartiment médial prédominant, avec retentissement fonctionnel significatif malgré traitement conservateur optimisé.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "genou_droit",
+        "genou_gauche",
+        "marche"
+      ],
+      "notable_findings": "Légère boiterie antalgique à droite, léger épanchement au genou droit sans chaleur ni érythème, crépitements palpables, amplitude articulaire limitée (flexion à 100°), McMurray équivoque, sensibilité à l'interligne articulaire médial."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Infiltration intra-articulaire de corticostéroïde au genou droit sous asepsie",
+        "body_site": "genou droit",
+        "technique_or_approach_mentioned": "asepsie",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "communication_specialiste"
+    ],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le texte.",
+      "Heure de fin de la consultation non précisée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-04-14",
+      "actual": "2026-04-14"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:30",
+      "actual": "10:30"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

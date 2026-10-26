@@ -1,0 +1,768 @@
+{
+  "patient_id": "GMF-2026-00414",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 548,
+      "output_tokens": null,
+      "latency_ms": 433.5038340068422,
+      "started_at": "2026-10-08T15:44:18.312412Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 548,
+    "output_tokens": 0,
+    "llm_latency_ms": 433.5038340068422,
+    "wall_ms": 472.02253200521227
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite d'évaluation pour donner une opinion. avec rendez-vous. GMF des Rivières. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15789",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "08777",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15790",
+          "relevance": 0.03128054738044739
+        },
+        {
+          "number": "15642",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "15651",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "15619",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "08948",
+          "relevance": 0.029877368360757828
+        },
+        {
+          "number": "15668",
+          "relevance": 0.02967032976448536
+        },
+        {
+          "number": "15630",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "08819",
+          "relevance": 0.028370222076773643
+        },
+        {
+          "number": "08848",
+          "relevance": 0.02580752596259117
+        },
+        {
+          "number": "98010",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08776",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15615",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09922",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "09938",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15766",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15628",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15774",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "09826",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Suivi en santé mentale pour trouble bipolaire de type II chez un patient de 36 ans, en rémission partielle sous lamotrigine. Examen mental normal. Plan de poursuite du traitement et ajustement progressif du retour au travail.\nLieu (détail): GMF des Rivières\nDate: 2026-09-30\nHeure de début: 15:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_specialiste\nDemandeur (identifiant): Dr É. Gagnon\nMotif de la référence: trouble bipolaire de type II (évaluation initiale en juin 2026)\nRapport écrit requis/produit: oui\nMotif de consultation: Suivi conjoint en santé mentale pour trouble bipolaire de type II\nSystèmes/régions concernés: psychiatrique\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: TB II en rémission partielle, bonne réponse à la lamotrigine\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: psychiatrique\nConstatations: Examen mental : bien mis, contact adéquat, discours normal, humeur « correcte », affect eutyme, pensée organisée, pas d'idées délirantes, jugement et autocritique adéquats\nAjouts possiblement facturables: communication_specialiste\nÉlément incertain: Durée exacte de la consultation non précisée dans le document.; Formulaire de l'employeur à compléter mentionné, mais non précisé s'il s'agit d'une procédure facturable.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08819",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "08848",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "08942",
+          "relevance": 0.03009207360446453
+        },
+        {
+          "number": "08948",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "08811",
+          "relevance": 0.02547874115407467
+        },
+        {
+          "number": "08800",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15812",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15808",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15806",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08913",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08953",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08933",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08257",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15668",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15766",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08803",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15774",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08802",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09800",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08863",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00157",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15898",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "00748",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "08113",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "04577",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "04568",
+          "relevance": 0.02803921513259411
+        },
+        {
+          "number": "04600",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "04576",
+          "relevance": 0.026856524869799614
+        },
+        {
+          "number": "00552",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04567",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15894",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15622",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04578",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08027",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15652",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08004",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15643",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08214",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08098",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08025",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "08819",
+      "rrf_score": 0.03115942028985507,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "08948",
+      "rrf_score": 0.031024531024531024,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "08848",
+      "rrf_score": 0.030679156908665108,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15668",
+      "rrf_score": 0.02862400327131466,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15766",
+      "rrf_score": 0.02667140825035562,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15774",
+      "rrf_score": 0.025978407557354925,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15789",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00157",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "08777",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "15898",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "15790",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "08942",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen, subséquente dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "00748",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "15642",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 16,
+      "number": "15639",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 17,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 18,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 19,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, par période de quinze (15) minutes",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 20,
+      "number": "08113",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Thorax > Larynx, études spéciales > phonation",
+      "description": "Étude spéciale du larynx en phonation, thorax",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "15651",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "08811",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "08812",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans",
+      "expanded_from": "08811"
+    },
+    {
+      "rank": 24,
+      "number": "09248",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique d'urgence avec déplacement dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans",
+      "expanded_from": "08811"
+    },
+    {
+      "rank": 25,
+      "number": "04577",
+      "rrf_score": 0.015625,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire multiple, au niveau des ventricules",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15619",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "08800",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 29,
+      "number": "08803",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 30,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 31,
+      "number": "15144",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Supplément de responsabilité pour suivi de grossesse en cabinet, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 32,
+      "number": "15762",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD, examen d'un patient de moins de 70 ans",
+      "expanded_from": "08800"
+    },
+    {
+      "rank": 33,
+      "number": "04568",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, au niveau des oreillettes",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "15812",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "04600",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > réparation d'une communication interauriculaire, type ostium secundum",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15808",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "04576",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire unique ou postinfarctus, au niveau des ventricules",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "15630",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "15806",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "00552",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Tonographie avec ou sans épreuve spéciale, pour les deux yeux à moins de mention contraire",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "08913",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "04567",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Création de communication interauriculaire, procédé de Blalock-Hanlon ou autres, au niveau des oreillettes",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "08953",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Échanges interdisciplinaires avec les intervenants en santé mentale ou avec les proches du patient dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "15894",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication par conseil numérique (eConsult)",
+      "description": "Communication par conseil numérique (eConsult), lorsqu'effectuée en cabinet ou en établissement",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "98010",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "08933",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "15622",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "08776",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "08257",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Tomographie par ordinateur (un examen par région, par jour, par patient) > Tarif de révision en tomodensitométrie",
+      "description": "Tarif de révision en tomodensitométrie, révision, avec rapport écrit, à la demande du médecin, d'un examen de tomodensitométrie, un examen par région, par jour, par patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "04578",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Agrandissement ou création de communication interventriculaire, au niveau des ventricules",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15615",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Évaluation médicale globale en soins de longue durée dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "08027",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Dacryocystographie, en examen spécial incluant la scopie",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "09922",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 7. Opinion du médecin avant la consolidation de la lésion professionnelle > B) Approbation des mesures de réadaptation avant la consolidation de la lésion",
+      "description": "Approbation des mesures de réadaptation avant la consolidation de la lésion professionnelle pour un travailleur victime d'une lésion professionnelle, en raison de la complexité du dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "09938",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > Bureau d'évaluation médicale > Avis écrit",
+      "description": "Avis écrit motivé donné au vu du dossier par un médecin membre du Bureau d'évaluation médicale, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "09939",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > Bureau d'évaluation médicale > Avis écrit",
+      "description": "Avis écrit motivé donné après examen du travailleur par un médecin membre du Bureau d'évaluation médicale, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles",
+      "expanded_from": "09938"
+    },
+    {
+      "rank": 56,
+      "number": "15628",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite de suivi exigeant un examen dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "09826",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Santé et des Services sociaux",
+      "description": "Remplir le formulaire intitulé « réévaluation médicale » ou son équivalent pour un patient en vue d'un régime de protection public ou privé",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "09825",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Protocole d'accord entre la Fédération des médecins omnipraticiens du Québec et le Ministre de la Santé et des Services sociaux",
+      "description": "Remplir le formulaire intitulé « rapport du directeur-général - évaluation médicale » ou son équivalent pour un patient en vue d'un régime de protection public ou privé",
+      "expanded_from": "09826"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 36,
+    "panel_size": 860,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 434.86582799232565,
+  "db_ms": 28.76296099566389
+}

@@ -21,8 +21,8 @@ class RowBilling:
 
 class RowBillingSummarizer:
     """Once a claim exists, what it bills (the physician may have unticked or added codes).
-    Before, what the review starts with ticked — the latest run's high-confidence codes, each
-    at its first fee (useCodeReview's preselection) — so the list and the review agree."""
+    Before, what the review starts with ticked — the latest run's retained codes, each at its
+    first fee (useCodeReview's preselection) — so the list and the review agree."""
 
     def summarize(self, claim: ClaimDetail | None, extraction: BillingExtractionResponse | None) -> RowBilling:
         if claim is not None:
@@ -30,8 +30,8 @@ class RowBillingSummarizer:
             return RowBilling(len(claim.codes), [code.code for code in claim.codes], _total(amounts))
         if extraction is None:
             return RowBilling(None, None, None)
-        proposed = extraction.billing.result.codes
-        preselected = [code for code in proposed if code.confidence == "high"]
+        proposed = extraction.billing.codes
+        preselected = [code for code in proposed if code.retained]
         # A fee in "unités" counts anesthesia base units, never dollars.
         amounts = [
             Decimal(str(code.fees[0].amount))

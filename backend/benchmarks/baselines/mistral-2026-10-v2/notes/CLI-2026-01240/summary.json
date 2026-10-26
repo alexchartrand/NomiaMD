@@ -1,0 +1,112 @@
+{
+  "patient_id": "CLI-2026-01240",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1836,
+      "output_tokens": 578,
+      "latency_ms": 3683.730246993946,
+      "started_at": "2026-10-08T15:43:54.357294Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1836,
+    "output_tokens": 578,
+    "llm_latency_ms": 3683.730246993946,
+    "wall_ms": 3684.0548900072463
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation sans rendez-vous en clinique médicale pour mal de gorge évoluant depuis 3 jours. Examen clinique compatible avec pharyngite à streptocoque du groupe A (test rapide positif). Prescription d'antibiotique et recommandations de prise en charge.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls — plage sans rendez-vous",
+      "date": "2026-08-18",
+      "time_start": "18:35",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Mal de gorge depuis 3 jours avec fièvre et odynophagie",
+      "systems_or_body_regions_involved": [
+        "ORL",
+        "général"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Pharyngite à streptocoque du groupe A",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "ORL",
+        "cervical",
+        "tympanique",
+        "cutané"
+      ],
+      "notable_findings": "Amygdales hypertrophiées avec exsudat bilatéral, adénopathies cervicales antérieures sensibles, fièvre à 38,1°C, tachycardie à 92 bpm"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Test rapide de détection du streptocoque du groupe A",
+        "generic_act": "test rapide de détection du streptocoque du groupe A",
+        "body_site": null,
+        "technique_or_approach_mentioned": "prélèvement oropharyngé",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript",
+      "Heure de fin de la consultation non indiquée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-08-18",
+      "actual": "2026-08-18"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "18:35",
+      "actual": "18:35"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

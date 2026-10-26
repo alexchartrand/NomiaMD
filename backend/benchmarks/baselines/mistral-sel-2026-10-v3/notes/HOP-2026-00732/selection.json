@@ -1,0 +1,204 @@
+{
+  "patient_id": "HOP-2026-00732",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 15009,
+      "output_tokens": 1625,
+      "latency_ms": 12679.696712002624,
+      "started_at": "2026-10-08T17:07:49.369640Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 15009,
+    "output_tokens": 1625,
+    "llm_latency_ms": 12679.696712002624,
+    "wall_ms": 12687.754236991168
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15056",
+    "15062",
+    "15659",
+    "09231",
+    "09313",
+    "15660",
+    "09234",
+    "09425",
+    "09312",
+    "00780",
+    "00648",
+    "15661",
+    "09237",
+    "15633",
+    "15634",
+    "00535",
+    "09372",
+    "00119",
+    "00121",
+    "00128",
+    "09326",
+    "15053",
+    "15619",
+    "08995",
+    "08993",
+    "09424",
+    "30010",
+    "30060",
+    "30110",
+    "30130",
+    "15630",
+    "00566",
+    "09907",
+    "00341",
+    "15158",
+    "15642",
+    "15638",
+    "15639",
+    "15640",
+    "15641",
+    "15643",
+    "08997",
+    "08141",
+    "08140",
+    "30120",
+    "00674",
+    "15651",
+    "00953",
+    "00393",
+    "00344",
+    "20018",
+    "20019",
+    "20020",
+    "06924",
+    "08948",
+    "09914",
+    "09915",
+    "09916",
+    "00545",
+    "00673",
+    "00717",
+    "15668",
+    "08777",
+    "15789",
+    "15790",
+    "15628",
+    "15615",
+    "15629",
+    "15626",
+    "09946",
+    "09977",
+    "09980",
+    "15627"
+  ],
+  "prompt_chars": 58711,
+  "raw_code_count": 8,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15638",
+        "description": "Visite de prise en charge d'un patient admis dans un CHSGS, partie soins de courte durée, niveau A",
+        "confidence": "high",
+        "explanation": "Première visite de prise en charge d'un patient admis en unité de courte durée, avec évaluation complète, ajustement thérapeutique et plan de traitement. Le patient a 76 ans et est admis dans un CHSGS.",
+        "supporting_quote": "Admission à l'étage — insuffisance cardiaque décompensée (transfert de l'urgence, admis ce jour).; Évaluation initiale, ajustement des médicaments, bilan paraclinique et plan de traitement incluant diurèse IV et surveillance étroite.",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour valider l'alternative 15639 (visite de suivi, première) si applicable."
+        ],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "09234",
+        "description": "Consultation ordinaire d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+        "confidence": "medium",
+        "explanation": "Le patient a 76 ans et est évalué dans un contexte d'urgence (transfert de l'urgence), mais le code 15638 (visite de prise en charge) est plus spécifique pour un patient admis. Ce code est une alternative moins précise si le contexte d'admission n'est pas retenu.",
+        "supporting_quote": "Admission à l'étage — insuffisance cardiaque décompensée (transfert de l'urgence, admis ce jour).",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour valider l'alternative 15053 (examen ordinaire sans déplacement) ou 15056 (examen ordinaire avec déplacement)."
+        ],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15639",
+        "description": "Visite de suivi, première d'un patient admis dans un CHSGS, partie soins de courte durée, niveau A",
+        "confidence": "medium",
+        "explanation": "Alternative si la visite est considérée comme un suivi plutôt qu'une prise en charge initiale. Moins probable car le patient est admis ce jour (première évaluation).",
+        "supporting_quote": "Admission à l'étage — insuffisance cardiaque décompensée (transfert de l'urgence, admis ce jour).",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour valider cette alternative."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15053",
+        "description": "Examen ordinaire sans déplacement d'un patient inscrit de 70 à 79 ans au service d'urgence",
+        "confidence": "medium",
+        "explanation": "Alternative si le patient est inscrit et que l'encounter est considéré comme un examen d'urgence sans déplacement. Moins précis car le patient est admis à l'étage, pas vu directement à l'urgence.",
+        "supporting_quote": "transfert de l'urgence, admis ce jour",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15056",
+        "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de 70 à 79 ans au service d'urgence",
+        "confidence": "low",
+        "explanation": "Moins applicable car le médecin n'a pas effectué de déplacement vers l'urgence (le patient a été transféré à l'étage).",
+        "supporting_quote": "transfert de l'urgence, admis ce jour",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "09231",
+        "description": "Consultation mineure d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+        "confidence": "low",
+        "explanation": "Moins précis car la consultation est majeure (évaluation complète, ajustement thérapeutique, plan de traitement).",
+        "supporting_quote": "Évaluation initiale, ajustement des médicaments, bilan paraclinique et plan de traitement incluant diurèse IV et surveillance étroite.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "09237",
+        "description": "Consultation majeure d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+        "confidence": "medium",
+        "explanation": "Alternative si la consultation est considérée comme majeure. Cependant, le code 15638 (visite de prise en charge) est plus adapté pour un patient admis.",
+        "supporting_quote": "Évaluation initiale, ajustement des médicaments, bilan paraclinique et plan de traitement incluant diurèse IV et surveillance étroite.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15642",
+        "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un CHSGS, partie soins de courte durée, niveau A",
+        "confidence": "low",
+        "explanation": "Moins applicable car il s'agit d'une prise en charge initiale, pas d'une évaluation pour suivi conjoint ou opinion.",
+        "supporting_quote": "Admission à l'étage — insuffisance cardiaque décompensée (transfert de l'urgence, admis ce jour).",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Le statut d'inscription du patient (inscrit/non inscrit) n'est pas établi, ce qui limite la précision du choix entre les codes pour patients inscrits (ex. 15053, 15056) et non inscrits. Aucun acte diagnostique ou thérapeutique spécifique réalisé par le médecin n'est facturable séparément (ex. ECG, radiographie pulmonaire sont interprétés par d'autres professionnels). L'enseignement sur l'insuffisance cardiaque est réalisé par une infirmière clinicienne, donc non facturable par le médecin. Aucun supplément pour déplacement d'urgence n'est applicable car le patient est déjà admis à l'étage.",
+    "analysis": "L'encounter a lieu dans une unité de soins de courte durée d'un CHSGS (Hôpital régional du Haut-Fleuve), pour un patient de 76 ans admis en urgence pour insuffisance cardiaque décompensée. Le service principal est une visite d'évaluation initiale avec examen physique complet, anamnèse, ajustement thérapeutique et plan de traitement. Aucun acte diagnostique ou thérapeutique spécifique (ex. cathétérisme, ECG interprété par le médecin) n'est explicitement réalisé par le médecin lui-même dans le transcript ou le summary, à l'exception du bilan paraclinique standard (non facturable séparément). L'enseignement sur l'insuffisance cardiaque est réalisé par une infirmière clinicienne, donc non facturable par le médecin. Le statut d'inscription du patient (inscrit/non inscrit) n'est pas établi, ce qui influence le choix entre les codes pour patients inscrits ou non. Aucun supplément pour déplacement d'urgence n'est applicable car le patient est déjà admis à l'étage (pas de déplacement du médecin vers l'urgence)."
+  }
+}

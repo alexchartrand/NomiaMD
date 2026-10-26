@@ -1,0 +1,159 @@
+{
+  "patient_id": "HOP-2026-00734",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 11525,
+      "output_tokens": 1948,
+      "latency_ms": 12755.419702996733,
+      "started_at": "2026-10-09T17:42:30.411687Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 11525,
+    "output_tokens": 1948,
+    "llm_latency_ms": 12755.419702996733,
+    "wall_ms": 12777.46255400416
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "08943",
+    "15629",
+    "15632",
+    "08933",
+    "15627",
+    "15641",
+    "15642",
+    "15626",
+    "15808",
+    "08913",
+    "15628",
+    "15806",
+    "08923",
+    "15667",
+    "15828",
+    "15634",
+    "09234",
+    "15660",
+    "15639",
+    "15826",
+    "15648",
+    "09231",
+    "15659",
+    "98003",
+    "15640",
+    "15643",
+    "05920",
+    "05922",
+    "05923",
+    "05924",
+    "05925",
+    "15616",
+    "15650",
+    "15638",
+    "05921",
+    "15649",
+    "08942",
+    "09348",
+    "00839",
+    "00840",
+    "15617",
+    "15631",
+    "08948",
+    "09349",
+    "15630",
+    "15668"
+  ],
+  "prompt_chars": 46587,
+  "raw_code_count": 8,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15638",
+        "description": "Visite de prise en charge d'un patient admis dans un CHSGS ou un CHSP, pour sa partie des soins de courte durée, niveau A",
+        "confidence": "high",
+        "explanation": "La visite de transfert à 08h30 correspond à la prise en charge initiale du patient admis en unité de courte durée, avec examen clinique, ajustement du traitement et planification. Le code 15638 est spécifique à cette situation et inclut la visite elle-même.",
+        "supporting_quote": "08h30 — Visite de transfert. Revu dossier, imagerie, notes de physio/ergo/orthophonie. Examen : éveillé, aphasie d'expression, compréhension partielle, force MSD 3/5, MID 3+/5. TA 138/80, FC 74 irrégulière. Plan : poursuivre apixaban, atorvastatine 80 mg; candidat à la réadaptation intensive (URFI) — demande à compléter.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15643",
+        "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de 15 minutes, pour un patient admis dans un CHSGS ou un CHSP, niveau A",
+        "confidence": "high",
+        "explanation": "La rencontre familiale de 15h00-15h30 (30 minutes) correspond à un échange avec les proches du patient admis. Le code 15643 couvre deux périodes de 15 minutes et est applicable car l'échange est distinct, documenté et concerne un patient en soins de courte durée.",
+        "supporting_quote": "15h00-15h30 — Rencontre avec l'épouse et la fille (30 min), séance distincte, salle des familles, avec la travailleuse sociale. Explication du pronostic fonctionnel, du plan de réadaptation et du risque de récidive; discussion du niveau d'intervention médicale.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15641",
+        "description": "Visite de transfert d'un patient admis dans un CHSGS ou un CHSP, niveau A",
+        "confidence": "medium",
+        "explanation": "Le code 15641 décrit une visite de transfert, mais la visite documentée est une **prise en charge initiale** (incluant examen et planification), ce qui correspond mieux au code 15638. Le 15641 pourrait s'appliquer si la visite était strictement un transfert sans prise en charge initiale, mais ce n'est pas le cas ici.",
+        "supporting_quote": "08h30 — Visite de transfert. Revu dossier, imagerie, notes de physio/ergo/orthophonie. Examen : éveillé, aphasie d'expression, compréhension partielle, force MSD 3/5, MID 3+/5.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15640",
+        "description": "Visite de suivi, subséquente d'un patient admis dans un CHSGS ou un CHSP, niveau A",
+        "confidence": "low",
+        "explanation": "La visite documentée est une prise en charge initiale, pas une visite de suivi subséquente. Le code 15640 ne s'applique donc pas.",
+        "supporting_quote": "08h30 — Visite de transfert. Revu dossier, imagerie, notes de physio/ergo/orthophonie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15648",
+        "description": "Visite de suivi, première d'un patient admis dans un CHSGS ou un CHSP, niveau B",
+        "confidence": "low",
+        "explanation": "Le niveau B s'applique aux CHSP désignés pour la géronto-psychiatrie ou aux médecins désignés par le comité paritaire. Aucune indication que l'établissement ou le médecin remplisse ces critères. De plus, il s'agit d'une prise en charge initiale, pas d'une première visite de suivi.",
+        "supporting_quote": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)",
+        "needs_confirmation": [
+          "Confirmer si le médecin est désigné par le comité paritaire pour une unité de géronto-psychiatrie dans un CHSP désigné."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15642",
+        "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un CHSGS ou un CHSP, niveau A",
+        "confidence": "medium",
+        "explanation": "La visite de transfert inclut une évaluation, mais elle est décrite comme une **prise en charge initiale** plutôt qu'une évaluation pour suivi conjoint ou opinion. Le code 15638 est donc plus précis.",
+        "supporting_quote": "08h30 — Visite de transfert. Revu dossier, imagerie, notes de physio/ergo/orthophonie. Examen : éveillé, aphasie d'expression, compréhension partielle, force MSD 3/5, MID 3+/5.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "08948",
+        "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un CHSGS ou un CHSP",
+        "confidence": "low",
+        "explanation": "La visite ne concerne pas une évaluation psychiatrique, mais une prise en charge médicale pour un AVC. Ce code est donc exclu.",
+        "supporting_quote": "admis pour AVC ischémique sylvien gauche (non thrombolysé), hémiparésie droite 3/5, aphasie d'expression, dysphagie, fibrillation auriculaire nouvelle à la télémétrie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée totale de l'encounter (450 minutes) est une estimation et non explicitement déclarée. La rencontre familiale (30 minutes) est distincte de la visite de transfert et justifie un code séparé pour les échanges avec les proches. Aucun code spécifique aux patients vulnérables ne peut être confirmé en l'absence de statut de vulnérabilité établi. Les codes de niveau B (15638, 15648) dépendent de critères administratifs non confirmés (médecin ou établissement désigné).",
+    "analysis": "L'encounter a lieu dans un CHSGS (Hôpital régional du Haut-Fleuve, unité de médecine courte durée) pour un patient de 79 ans admis pour un AVC ischémique. Deux services distincts sont documentés : une **visite de transfert** à 08h30 (examen clinique, ajustement du traitement, évaluation du pronostic et planification de la réadaptation) et une **rencontre familiale** à 15h00-15h30 (discussion du pronostic, du plan de réadaptation et du niveau d'intervention médicale). La visite de transfert correspond à une prise en charge initiale en établissement, tandis que la rencontre familiale relève d'un échange avec les proches. Aucun autre acte (procédure, test, supplément) n'est mentionné. Le patient a 79 ans, ce qui exclut les codes réservés aux patients de 80 ans ou plus. Le statut de vulnérabilité du patient n'est pas établi, ce qui empêche de confirmer les codes spécifiques aux patients vulnérables. La visite de transfert est clairement une **visite de prise en charge** (code 15638, niveau A) car elle inclut l'examen initial et la planification. La rencontre familiale correspond à un **échange avec les proches** (code 15643, niveau A) car elle est distincte, documentée et dure 30 minutes (soit deux périodes de 15 minutes)."
+  }
+}

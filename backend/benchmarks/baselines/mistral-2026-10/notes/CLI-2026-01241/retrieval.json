@@ -1,0 +1,267 @@
+{
+  "patient_id": "CLI-2026-01241",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 400,
+      "output_tokens": null,
+      "latency_ms": 707.1866050100653,
+      "started_at": "2026-10-08T14:19:23.039658Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 400,
+    "output_tokens": 0,
+    "llm_latency_ms": 707.1866050100653,
+    "wall_ms": 728.5946820047684
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi de fibrillation auriculaire permanente sous apixaban chez un patient de 84 ans. Pas de symptômes d'aggravation. Traitement maintenu avec apixaban 5 mg bid et métoprolol 25 mg bid. Contrôle biologique prévu dans 6 mois.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-08-20\nHeure de début: 14:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de fibrillation auriculaire permanente sous apixaban\nSystèmes/régions concernés: cardiovasculaire\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Fibrillation auriculaire permanente, fréquence contrôlée. Apixaban 5 mg bid toujours approprié.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; pulmonaire\nConstatations: TA 128/70, FC 76 irrégulière. Auscultation pulmonaire normale, pas d'œdème.\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "hits": [
+        {
+          "number": "15837",
+          "relevance": 0.02964254654943943
+        },
+        {
+          "number": "00780",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00844",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00685",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00693",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00979",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01900",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01214",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00291",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08848",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00313",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08776",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00988",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15771",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00248",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09424",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00989",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08511",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00176",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15188",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15837",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 2,
+      "number": "00780",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, en milieu hospitalier ou en gymnase, effectuée par le médecin, maximum quinze (15) patients"
+    },
+    {
+      "rank": 3,
+      "number": "00844",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Hyperalimentation",
+      "description": "Hyperalimentation parentérale permanente, soins du patient non hospitalisé, par mois (cet acte est réservé au seul médecin responsable de la mise en marche et du contrôle du traitement et comprend tous les services médicaux ou administratifs rendus par le médecin en rapport avec la pathologie en cause)"
+    },
+    {
+      "rank": 4,
+      "number": "00685",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques > Programmations initiale et subséquentes d'un stimulateur cardiaque unifocal sous contrôle électrocardiographique (maximum deux re-programmations par année)",
+      "description": "Programmations initiale et subséquentes d'un stimulateur cardiaque unifocal sous contrôle électrocardiographique (maximum deux re-programmations par année) pour un patient de deux (2) ans ou plus, cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 5,
+      "number": "00693",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques > Programmations initiale et subséquentes d'un stimulateur cardiaque bifocal sous contrôle électrocardiographique (maximum deux re-programmations par année)",
+      "description": "Programmations initiale et subséquentes d'un stimulateur cardiaque bifocal sous contrôle électrocardiographique (maximum deux re-programmations par année) pour un patient de deux (2) ans ou plus, cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 6,
+      "number": "00979",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "D — Anesthésie — réanimation > Divers",
+      "description": "Anesthésie pour homogreffe pour remplacement au système cardiovasculaire"
+    },
+    {
+      "rank": 7,
+      "number": "01900",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 96 heures, par jour, supplément"
+    },
+    {
+      "rank": 8,
+      "number": "01214",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle d'autres régions"
+    },
+    {
+      "rank": 9,
+      "number": "00291",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Ablation",
+      "description": "Ablation d'arythmie avec cardiopathie congénitale complexe, d'un ou plusieurs foyers de tachycardie ventriculaire cicatricielle ou au niveau des veines pulmonaires, incluant le cathétérisme cardiaque gauche et le transseptal, supplément en électrophysiologie"
+    },
+    {
+      "rank": 10,
+      "number": "08848",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 11,
+      "number": "00313",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Programmation et/ou vérification d'un défibrillateur interne sous contrôle électrocardiographique (maximum six (6) programmations et/ou vérifications par année), cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 12,
+      "number": "08776",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 13,
+      "number": "00988",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de 24 heures ou moins"
+    },
+    {
+      "rank": 14,
+      "number": "15771",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit"
+    },
+    {
+      "rank": 15,
+      "number": "00248",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Ablation",
+      "description": "Ablation du nœud A/V, d'une ou de plusieurs voies accessoires, de flutter auriculaire, de réentrée intranodale et d'un ou plusieurs foyers de tachycardie ventriculaire originant du ventricule droit, supplément en électrophysiologie"
+    },
+    {
+      "rank": 16,
+      "number": "09424",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Bilan orthoptique avec enregistrement des mesures sur document permanent, excluant les traitements, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 17,
+      "number": "00989",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie diagnostique et thérapeutique",
+      "description": "Prise en charge par un médecin anesthésiste chez un patient hospitalisé, de l'analgésie par administration continue de médicaments à l'aide d'une pompe programmable, par voie intraveineuse, incluant les visites, la surveillance, l'installation du cathéter, l'enseignement au patient et les injections, anesthésie diagnostique et thérapeutique, période de plus de 24 heures"
+    },
+    {
+      "rank": 18,
+      "number": "08511",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations pour lésions non cutanées"
+    },
+    {
+      "rank": 19,
+      "number": "00176",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Stimulation programmée du cœur",
+      "description": "Stimulation programmée du cœur incluant l'insertion des cathéters, les études pharmacologiques et la correction de l'arythmie, si nécessaire en électrophysiologie"
+    },
+    {
+      "rank": 20,
+      "number": "15188",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite",
+      "description": "Supplément pour la communication par l'intermédiaire d'un interprète, pour un patient inscrit, en cabinet, à domicile ou en établissement"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 84,
+    "panel_size": 420,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 707.9274040006567,
+  "db_ms": 20.220719001372345
+}

@@ -56,15 +56,10 @@ class ProfileService:
     async def as_of(self, user: User, on: date) -> PhysicianAccount:
         """The account as it stood on `on`. Use this, not `current`, when interpreting a
         past encounter: whether a code was billable depends on the physician's
-        remuneration type and panel size at the time of service, not today's."""
+        remuneration type and panel size at the time of service, not today's. A date before
+        the physician's first version reads that first version (see
+        PhysicianProfileRepository.get_effective_on)."""
         return PhysicianAccount(user=user, profile=await self._profiles.get_effective_on(user.id, on))
-
-    async def earliest(self, user: User) -> PhysicianAccount:
-        """The physician's very first profile version on file, regardless of date. Not a
-        substitute for `as_of` — only app/ramq_codes/context_builder.py's best-effort
-        fallback should call this, for an encounter dated before any version had taken
-        effect (see PhysicianProfileRepository.get_earliest's docstring)."""
-        return PhysicianAccount(user=user, profile=await self._profiles.get_earliest(user.id))
 
     async def record_practice_facts(
         self, user_id: int, facts: PracticeFacts, *, effective_from: date | None = None

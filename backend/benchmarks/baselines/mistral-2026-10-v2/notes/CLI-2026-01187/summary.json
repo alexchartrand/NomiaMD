@@ -1,0 +1,102 @@
+{
+  "patient_id": "CLI-2026-01187",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2215,
+      "output_tokens": 548,
+      "latency_ms": 3251.3204330025474,
+      "started_at": "2026-10-08T15:43:26.772240Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2215,
+    "output_tokens": 548,
+    "llm_latency_ms": 3251.3204330025474,
+    "wall_ms": 3251.580993004609
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi trimestriel pour diabète de type 2 et hypertension chez une patiente de 58 ans. Ajustement du traitement antidiabétique avec ajout d'un inhibiteur du SGLT2 (empagliflozine) et renforcement des conseils hygiéno-diététiques. Bilan sanguin de contrôle prévu dans 3 mois.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-07-13",
+      "time_start": "10:00",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Isabelle Roy, MD",
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de diabète de type 2 et hypertension",
+      "systems_or_body_regions_involved": [
+        "endocrinien",
+        "cardiovasculaire"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Diabète de type 2 (contrôle sous-optimal HbA1c 7,8 %), HTA (contrôle limite), dyslipidémie (sous statine, cible non atteinte)",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "pieds",
+        "cardiovasculaire",
+        "pulmonaire"
+      ],
+      "notable_findings": "TA 138/86, IMC 29,4, sensibilité au monofilament préservée bilatéralement aux pieds, pouls pédieux palpables"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le texte",
+      "Absence de mention explicite de l'heure de fin de la consultation"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:00",
+      "actual": "10:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

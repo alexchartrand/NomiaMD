@@ -5,15 +5,12 @@
 No network calls / real API keys: DocumentRepository is an in-memory fake whose
 hybrid_search ranks by cosine similarity against precomputed row vectors (real FTS ranking
 is LanceDB's own job — see tests/test_lancedb_document_repository.py — not something this
-retriever does or needs to fake); the injected embed_model is a deterministic
-exact-text-lookup fake (mirrors tests/test_vector_retrieval.py's _LookupEmbedding)."""
+retriever does or needs to fake); the injected embedding client is a deterministic
+exact-text-lookup fake (tests/llm_helpers.py's FakeEmbeddingClient)."""
 
-from typing import Any, List, Tuple
+from typing import List, Tuple
 
-import pytest
-from llama_index.core.base.embeddings.base import BaseEmbedding
-from llama_index.core.schema import NodeWithScore
-
+from app.ramq_chatbot.chunks import ScoredChunk
 from app.ramq_chatbot.converter import DocumentRowConverter
 from app.ramq_codes.converter import CodesRowConverter
 from app.lancedb.models import DocumentRow
@@ -22,6 +19,7 @@ from app.ramq_chatbot.manual_references import ManualSectionLookup
 from app.ramq_chatbot.reference_expansion import ReferenceExpander
 from app.ramq_chatbot.retriever import RAMQManualRetriever
 from app.ramq_codes.codes_data import CodesData
+from tests.llm_helpers import FakeEmbeddingClient
 
 
 def _cosine(a: list[float], b: list[float]) -> float:
@@ -60,30 +58,9 @@ class _FakeDocumentRepository(IDocumentRepository):
         return list(scored[:k])
 
 
-class _LookupEmbedding(BaseEmbedding):
-    """Exact text->vector lookup, passed as RAMQManualRetriever's embed_model."""
-
-    vectors: dict[str, list[float]]
-
-    def __init__(self, vectors: dict[str, list[float]], **kwargs: Any):
-        super().__init__(vectors=vectors, **kwargs)
-
-    def _get_query_embedding(self, query: str) -> list[float]:
-        return self.vectors[query]
-
-    async def _aget_query_embedding(self, query: str) -> list[float]:
-        return self.vectors[query]
-
-    def _get_text_embedding(self, text: str) -> list[float]:
-        return self.vectors[text]
-
-    async def _aget_text_embedding(self, text: str) -> list[float]:
-        return self.vectors[text]
-
-
 class _NoOpReferenceExpander:
-    async def aexpand(self, nodes: list[NodeWithScore]) -> list[NodeWithScore]:
-        return nodes
+    async def aexpand(self, hits: list[ScoredChunk]) -> list[ScoredChunk]:
+        return hits
 
 
 class _EmptyCodesTableReader(ICodeRepository):
@@ -94,6 +71,9 @@ class _EmptyCodesTableReader(ICodeRepository):
         return []
 
     async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+        raise NotImplementedError
+
+    async def list_by_header_paths(self, header_paths: list[str], eligibility=None) -> list:
         raise NotImplementedError
 
 
@@ -119,7 +99,7 @@ def _build_retriever(
     documents = _FakeDocumentRepository(rows, vectors)
     retriever = RAMQManualRetriever(
         documents=documents,
-        embed_model=_LookupEmbedding(vectors),
+        embedding_client=FakeEmbeddingClient(vectors),
         converter=DocumentRowConverter(),
         reference_expander=reference_expander or _NoOpReferenceExpander(),
         similarity_top_k=similarity_top_k,
@@ -135,14 +115,6 @@ def _build_reference_expander(rows: list[DocumentRow], vectors: dict[str, list[f
     )
 
 
-def test_retrieve_raises_not_implemented():
-    # RAMQManualRetriever is async-only — IDocumentRepository has no sync query path.
-    retriever, _ = _build_retriever({}, [])
-
-    with pytest.raises(NotImplementedError):
-        retriever.retrieve("urgence de nuit")
-
-
 async def test_aretrieve_ranks_best_match_first():
     vectors = {
         "urgence de nuit": [1.0, 0.0],
@@ -154,7 +126,7 @@ async def test_aretrieve_ranks_best_match_first():
     retriever, _ = _build_retriever(vectors, [row_a, row_b])
     results = await retriever.aretrieve("urgence de nuit")
 
-    assert results[0].node.node_id == "A"
+    assert results[0].chunk.id == "A"
 
 
 async def test_empty_table_returns_no_hits():
@@ -194,18 +166,18 @@ async def test_aretrieve_delegates_final_nodes_to_reference_expander():
 
     class _SpyReferenceExpander:
         def __init__(self):
-            self.received: list[NodeWithScore] | None = None
+            self.received: list[ScoredChunk] | None = None
 
-        async def aexpand(self, nodes: list[NodeWithScore]) -> list[NodeWithScore]:
-            self.received = nodes
-            return [*nodes, NodeWithScore(node=DocumentRowConverter().convert(_row("Z", "expansion")), score=None)]
+        async def aexpand(self, hits: list[ScoredChunk]) -> list[ScoredChunk]:
+            self.received = hits
+            return [*hits, ScoredChunk(chunk=DocumentRowConverter().convert(_row("Z", "expansion")), score=None)]
 
     spy = _SpyReferenceExpander()
     retriever, _ = _build_retriever(vectors, rows, reference_expander=spy)
     results = await retriever.aretrieve("urgence")
 
-    assert [n.node.node_id for n in spy.received] == ["A"]
-    assert [n.node.node_id for n in results] == ["A", "Z"]
+    assert [h.chunk.id for h in spy.received] == ["A"]
+    assert [h.chunk.id for h in results] == ["A", "Z"]
 
 
 # -- reference expansion: RAMQManualRetriever wired with a real ReferenceExpander ----------
@@ -238,7 +210,7 @@ async def test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ra
     )
     retriever = RAMQManualRetriever(
         documents=documents,
-        embed_model=_LookupEmbedding(vectors),
+        embedding_client=FakeEmbeddingClient(vectors),
         converter=DocumentRowConverter(),
         reference_expander=reference_expander,
         similarity_top_k=top_k,
@@ -246,8 +218,8 @@ async def test_retrieve_includes_section_referenced_by_a_top_hit_even_when_it_ra
 
     results = await retriever.aretrieve("code 0")
 
-    assert "target" in {n.node.node_id for n in results}
-    assert next(n for n in results if n.node.node_id == "target").node.metadata["is_expansion"] is True
+    assert "target" in {h.chunk.id for h in results}
+    assert next(n for n in results if n.chunk.id == "target").chunk.metadata["is_expansion"] is True
 
 
 async def test_retrieve_does_not_crash_on_a_section_reference_with_no_match():
@@ -259,7 +231,7 @@ async def test_retrieve_does_not_crash_on_a_section_reference_with_no_match():
 
     results = await retriever.aretrieve("urgence")
 
-    assert [n.node.node_id for n in results] == ["A"]
+    assert [n.chunk.id for n in results] == ["A"]
 
 
 async def test_retrieve_does_not_duplicate_a_reference_that_is_already_a_direct_hit():
@@ -271,5 +243,5 @@ async def test_retrieve_does_not_duplicate_a_reference_that_is_already_a_direct_
     retriever, _ = _build_retriever(vectors, rows, reference_expander=_build_reference_expander(rows, vectors))
     results = await retriever.aretrieve("urgence")
 
-    node_ids = [n.node.node_id for n in results]
+    node_ids = [n.chunk.id for n in results]
     assert node_ids.count("B") == 1

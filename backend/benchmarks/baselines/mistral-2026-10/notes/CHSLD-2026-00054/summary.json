@@ -1,0 +1,114 @@
+{
+  "patient_id": "CHSLD-2026-00054",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1759,
+      "output_tokens": 654,
+      "latency_ms": 4275.187854989781,
+      "started_at": "2026-10-08T14:19:55.007005Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1759,
+    "output_tokens": 654,
+    "llm_latency_ms": 4275.187854989781,
+    "wall_ms": 4275.503623997793
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Constat de décès en CHSLD pour un patient en fin de vie sous soins de confort. Décès naturel constaté après appel initial pour détresse respiratoire et administration de médicaments de confort. Famille présente, bulletin de décès complété.",
+    "encounter_setting": {
+      "location_detail": "CHSLD Saint-Jude (fictif) — Unité 1 Nord",
+      "date": "2026-10-05",
+      "time_start": "17:45",
+      "time_end": "17:52",
+      "duration_minutes": 7.0,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Constat de décès en contexte de fin de vie (détresse respiratoire préalable, soins de confort en cours)",
+      "systems_or_body_regions_involved": [
+        "respiratoire",
+        "neurologique",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Décès naturel (pneumonie d'aspiration sur démence avancée)",
+      "recommendations_given_to_patient": false,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cervical (pouls carotidien)",
+        "thorax (bruits cardiaques)",
+        "respiratoire",
+        "neurologique (pupilles, réactivité)"
+      ],
+      "notable_findings": "Absence de pouls carotidien et de bruits cardiaques à l'auscultation x 1 min, absence de respiration, pupilles fixes et dilatées, aucune réponse aux stimuli"
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Constat de décès",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Examen clinique (auscultation, évaluation des signes vitaux, réactivité)",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "La durée de 7 minutes est estimée à partir des heures de début et de fin; non explicitement indiquée dans le texte.",
+      "Le statut de la famille (présente ou non) lors du déplacement n'est pas clairement précisé dans la section dédiée au déplacement (mentionné seulement pour le constat de décès)."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-05",
+      "actual": "2026-10-05"
+    },
+    {
+      "name": "time_start",
+      "passed": false,
+      "expected": "10:20",
+      "actual": "17:45"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

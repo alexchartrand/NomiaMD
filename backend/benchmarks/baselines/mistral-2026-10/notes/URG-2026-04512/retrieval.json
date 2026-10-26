@@ -1,0 +1,665 @@
+{
+  "patient_id": "URG-2026-04512",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 936,
+      "output_tokens": null,
+      "latency_ms": 1884.9414399883244,
+      "started_at": "2026-10-08T14:18:38.853852Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 936,
+    "output_tokens": 0,
+    "llm_latency_ms": 1884.9414399883244,
+    "wall_ms": 1942.6411889871815
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Patiente de 24 ans présentant une plaie profonde de 3,5 cm à la paume gauche suite à un accident de cuisine. Suture sous anesthésie locale réalisée aux urgences avec exploration complète, sans atteinte tendineuse ni neurovasculaire. Rappel antitétanique administré et consignes de soins données.\nLieu (détail): Urgence, CHU fictif\nDate: 2026-07-13\nHeure de début: 14:15\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Plaie profonde à la paume de la main gauche suite à un accident de cuisine\nSystèmes/régions concernés: main_gauche; peau; tissu_sous_cutané\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Plaie par lacération simple, paume gauche, sans atteinte tendineuse ni neurovasculaire\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes_vitaux; main_gauche; sensibilité_distale; mobilité_des_doigts; remplissage_capillaire; pouls_radial\nConstatations: Plaie linéaire de 3,5 cm à la paume gauche, zone thénar, bords nets, profondeur atteignant le tissu sous-cutané, pas d'atteinte tendineuse visible à l'exploration. Sensibilité distale intacte, flexion/extension complète des doigts, force préservée.\nActe réalisé 1 - Description: Suture de plaie sous anesthésie locale\nActe réalisé 1 - Site: paume gauche, zone thénar\nActe réalisé 1 - Technique/approche: Champ stérile installé, irrigation abondante au NaCl 0,9 % sous pression, exploration complète de la plaie, fermeture en plan unique avec 5 points simples au nylon 4-0, pansement stérile non compressif appliqué\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: les_deux\nActe réalisé 2 - Description: Exploration de plaie sous anesthésie locale\nActe réalisé 2 - Site: paume gauche, zone thénar\nActe réalisé 2 - Technique/approche: Anesthésie locale : lidocaïne 1 % avec épinéphrine, 4 mL infiltrés autour de la plaie\nActe réalisé 2 - Anesthésie: local\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 3 - Description: Administration d'un rappel antitétanique (dcaT)\nActe réalisé 3 - Anesthésie: aucun\nActe réalisé 3 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de l'intervention non explicitement mentionnée dans le texte (estimation impossible à partir des informations fournies).; Heure de fin de consultation non indiquée dans le texte.",
+      "hits": [
+        {
+          "number": "07410",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "01326",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "07434",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "05196",
+          "relevance": 0.027619047090411186
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02704",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00953",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01322",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09530",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01325",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09531",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01415",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02698",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "07317",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01414",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07081",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07327",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02896",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00401",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "02699",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Suture de plaie sous anesthésie locale",
+      "hits": [
+        {
+          "number": "07410",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "07434",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "05195",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "05196",
+          "relevance": 0.03100961446762085
+        },
+        {
+          "number": "05347",
+          "relevance": 0.03030998818576336
+        },
+        {
+          "number": "07428",
+          "relevance": 0.028258707374334335
+        },
+        {
+          "number": "01210",
+          "relevance": 0.028169013559818268
+        },
+        {
+          "number": "07066",
+          "relevance": 0.027205882593989372
+        },
+        {
+          "number": "01326",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06325",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07378",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "07806",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04762",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "07400",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "04768",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00827",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "04772",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "07154",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "05389",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "07204",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Exploration de plaie sous anesthésie locale",
+      "hits": [
+        {
+          "number": "01326",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "07410",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "07434",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "01210",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "07066",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "05195",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "05196",
+          "relevance": 0.02741784043610096
+        },
+        {
+          "number": "07204",
+          "relevance": 0.02699275314807892
+        },
+        {
+          "number": "07428",
+          "relevance": 0.026742734014987946
+        },
+        {
+          "number": "07178",
+          "relevance": 0.026356857270002365
+        },
+        {
+          "number": "02015",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07806",
+          "relevance": 0.015625
+        },
+        {
+          "number": "07400",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05477",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00827",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00953",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07154",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04666",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02311",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "02014",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Administration d'un rappel antitétanique (dcaT)",
+      "hits": [
+        {
+          "number": "20022",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "20021",
+          "relevance": 0.03125763311982155
+        },
+        {
+          "number": "20024",
+          "relevance": 0.03083491511642933
+        },
+        {
+          "number": "20023",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "09335",
+          "relevance": 0.028958333656191826
+        },
+        {
+          "number": "00906",
+          "relevance": 0.02704678289592266
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "98012",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09334",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00485",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00474",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00431",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "07293",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00161",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09948",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00400",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00928",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09307",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00927",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "09938",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "07410",
+      "rrf_score": 0.04972677595628415,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Réparation de plaie traumatique de la conjonctive, suture simple sous anesthésie locale"
+    },
+    {
+      "rank": 2,
+      "number": "07434",
+      "rrf_score": 0.048651507139079855,
+      "header_path": "T — Appareil visuel > Conjonctive > Réparation de plaie traumatique",
+      "description": "Réparation de plaie traumatique de la conjonctive, suture simple sous anesthésie générale incluant l'examen sous anesthésie générale"
+    },
+    {
+      "rank": 3,
+      "number": "01326",
+      "rrf_score": 0.04776599164255867,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Plaie > exploration d'une plaie sous anesthésie",
+      "description": "Exploration, sans réparation, d'une plaie complexe sous anesthésie, nécessitant un transfert à un autre médecin"
+    },
+    {
+      "rank": 4,
+      "number": "05196",
+      "rrf_score": 0.046897546897546896,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées de la paroi abdominale de l'abdomen, du péritoine et de l'épiploon, sous anesthésie générale et révision de toute la plaie, par incision"
+    },
+    {
+      "rank": 5,
+      "number": "05195",
+      "rrf_score": 0.0315136476426799,
+      "header_path": "L — Système digestif > Abdomen, péritoine et épiploon > Incision",
+      "description": "Sutures infectées de la paroi abdominale de l'abdomen, du péritoine et de l'épiploon, sous anesthésie locale, par incision"
+    },
+    {
+      "rank": 6,
+      "number": "01210",
+      "rrf_score": 0.031024531024531024,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle > Liposuccion d'un lambeau préalablement greffé",
+      "description": "Liposuccion d'un lambeau préalablement greffé sous anesthésie locale"
+    },
+    {
+      "rank": 7,
+      "number": "07066",
+      "rrf_score": 0.03055037313432836,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Incision",
+      "description": "Anesthésie locale pour ouverture d'orgelet et drainage ou ouverture et drainage d'abcès de la paupière et des sourcils"
+    },
+    {
+      "rank": 8,
+      "number": "07428",
+      "rrf_score": 0.030090497737556562,
+      "header_path": "T — Appareil visuel > Paupières et sourcils > Séparation des paupières post-tarsorraphie ou blépharorraphie",
+      "description": "Séparation des paupières post-tarsorraphie ou blépharorraphie sous anesthésie locale"
+    },
+    {
+      "rank": 9,
+      "number": "00953",
+      "rrf_score": 0.028484848484848488,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 10,
+      "number": "07806",
+      "rrf_score": 0.028169014084507043,
+      "header_path": "T — Appareil visuel > Cornée > Curetage et/ou cautérisation",
+      "description": "Curetage et/ou cautérisation sous anesthésie locale, cornée"
+    },
+    {
+      "rank": 11,
+      "number": "07400",
+      "rrf_score": 0.02758751902587519,
+      "header_path": "T — Appareil visuel > Cils",
+      "description": "Électrolyse ou cryothérapie sous anesthésie locale des cils"
+    },
+    {
+      "rank": 12,
+      "number": "07204",
+      "rrf_score": 0.027583600982429624,
+      "header_path": "T — Appareil visuel > Corps étranger > Extraction d'un corps étranger > conjonctival > sous anesthésie locale",
+      "description": "Extraction d'un corps étranger conjonctival sous anesthésie locale."
+    },
+    {
+      "rank": 13,
+      "number": "00827",
+      "rrf_score": 0.02684684684684685,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie",
+      "description": "Étude de ductions forcées sous anesthésie locale, en ophtalmologie"
+    },
+    {
+      "rank": 14,
+      "number": "07154",
+      "rrf_score": 0.026144907723855092,
+      "header_path": "T — Appareil visuel > Corps étranger > Extraction d'un corps étranger > cornéen > sous anesthésie locale",
+      "description": "Extraction d'un corps étranger cornéen sous anesthésie locale."
+    },
+    {
+      "rank": 15,
+      "number": "20022",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter du 201e le même jour, en cabinet"
+    },
+    {
+      "rank": 16,
+      "number": "20021",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en cabinet",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en cabinet"
+    },
+    {
+      "rank": 17,
+      "number": "20024",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient supplémentaire dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, pour chaque patient supplémentaire à compter de la 201e le même jour, en établissement"
+    },
+    {
+      "rank": 18,
+      "number": "20023",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe indentifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale > en établissement",
+      "description": "Évaluation d'un patient dans le cadre d'une séance de vaccination antigrippale de masse, à l'exclusion d'un groupe identifiable, aux fins d'administration du vaccin par voie intramusculaire ou intranasale, en établissement"
+    },
+    {
+      "rank": 19,
+      "number": "00638",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 20,
+      "number": "05347",
+      "rrf_score": 0.015625,
+      "header_path": "L — Système digestif > Pharynx > Réparation",
+      "description": "Suture d'une plaie du pharynx"
+    },
+    {
+      "rank": 21,
+      "number": "09335",
+      "rrf_score": 0.015625,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour"
+    },
+    {
+      "rank": 22,
+      "number": "02704",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Incision et drainage > abcès palmaire et gaine tendineuse",
+      "description": "Incision et drainage d'un abcès palmaire et gaine tendineuse, extrémités - membres supérieurs, main et poignet"
+    },
+    {
+      "rank": 23,
+      "number": "00906",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour un acte de chirurgie dentaire administré au cabinet du dentiste ou du médecin où il n'y a pas d'appareil d'anesthésie et de réanimation en permanence, donnant droit uniquement à l'examen préanesthésique et aux unités de durée en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 24,
+      "number": "00152",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie"
+    },
+    {
+      "rank": 25,
+      "number": "01322",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation d'une lacération compliquée de moins de deux centimètres et demi (2,5 cm) à la face ou au cou, débridement compris, avec techniques spéciales pour un résultat esthétique ou fonctionnel maximal, incluant la mise à plat du défaut et les procédures nécessaires, avec addition des deux centimètres et demi (2,5 cm) supplémentaires"
+    },
+    {
+      "rank": 26,
+      "number": "98012",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure"
+    },
+    {
+      "rank": 27,
+      "number": "09530",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Pied > Reconstruction > transposition et réinsertion tendineuse, pied",
+      "description": "Transposition et réinsertion tendineuse du pied, un (1)"
+    },
+    {
+      "rank": 28,
+      "number": "09334",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)"
+    },
+    {
+      "rank": 29,
+      "number": "01325",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Réparation de plaies (débridement compris) > Lacérations compliquées > face et cou",
+      "description": "Réparation de plaies (débridement compris) de plaies étendues, multiples ou compliquées à la face et au cou, utilisant des techniques spéciales de réparation en vue d'obtenir un résultat esthétique ou fonctionnel au maximum"
+    },
+    {
+      "rank": 30,
+      "number": "06325",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "M — Appareil urinaire > Rein > Suture",
+      "description": "Suture d'une blessure du rein (non iatrogénique), suture, rein"
+    },
+    {
+      "rank": 31,
+      "number": "07178",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "T — Appareil visuel > Conjonctive > Excision de tumeur",
+      "description": "Excision de tumeur bénigne ou kyste de la conjonctive sous anesthésie locale (P.G. 2.4.7.7 A)"
+    },
+    {
+      "rank": 32,
+      "number": "00485",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intramusculaire de toxine botulinique pour le traitement de la dystonie ou de la spasticité d'origine neurologique excluant le spasme hémifacial et le blépharospasme",
+      "description": "Injection intramusculaire de toxine botulinique pour le traitement de la dystonie ou de la spasticité d'origine neurologique excluant le spasme hémifacial et le blépharospasme"
+    },
+    {
+      "rank": 33,
+      "number": "09531",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Pied > Reconstruction > transposition et réinsertion tendineuse, pied",
+      "description": "Transposition et réinsertion tendineuse du pied, plusieurs"
+    },
+    {
+      "rank": 34,
+      "number": "07378",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "T — Appareil visuel > Muscles oculaires > Strabisme : incluant les ductions forcées",
+      "description": "Utilisation de sutures ajustables pour strabisme, incluant les ductions forcées, supplément incluant la retouche sous anesthésie locale"
+    },
+    {
+      "rank": 35,
+      "number": "02015",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "G — Appareil musculo-squelettique > Tendons, gaines tendineuses, aponévroses et ligaments > Incision et exérèse > exploration de fascia, ligament et/ou exploration de nodule et/ou exérèse de corps étranger",
+      "description": "Exploration de fascia, ligament et/ou exploration de nodule et/ou exérèse de corps étranger"
+    },
+    {
+      "rank": 36,
+      "number": "00474",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection > injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen",
+      "description": "Injection intradermique, sous-cutanée et intramusculaire pour fins de prévention et de traitement, inoculation, vaccination, etc., en cabinet ou à domicile, lorsque faite sans examen"
+    },
+    {
+      "rank": 37,
+      "number": "01415",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Fistule cutanée",
+      "description": "Exérèse de fistule cutanée profonde sous-aponévrotique"
+    },
+    {
+      "rank": 38,
+      "number": "00431",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou une articulation ou les deux incluant aspiration préliminaire (maximum trois (3))"
+    },
+    {
+      "rank": 39,
+      "number": "02698",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Incision et drainage > séquestrectomie ou mise à plat avec ou sans greffe, saucérisation > phalange, métacarpien",
+      "description": "Séquestrectomie ou mise à plat avec ou sans greffe, saucérisation au niveau de la phalange ou du métacarpien, extrémités - membres supérieurs, main et poignet"
+    },
+    {
+      "rank": 40,
+      "number": "04762",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "J — Système cardiaque > Non thoracique > Thrombo-endartérectomie ouverte d'une artère périphérique > Réparation > Réparation d'une artère ou d'une veine abdominale ou de la jugulaire interne ou de la carotide par",
+      "description": "Réparation d'une artère ou d'une veine abdominale ou de la jugulaire interne ou de la carotide par suture simple, non thoracique"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 24,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1886.3893870002357,
+  "db_ms": 55.53299699386116
+}

@@ -1,0 +1,133 @@
+{
+  "patient_id": "DOM-2026-00021",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 9085,
+      "output_tokens": 1189,
+      "latency_ms": 8280.199747998267,
+      "started_at": "2026-10-09T17:40:55.668888Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 9085,
+    "output_tokens": 1189,
+    "llm_latency_ms": 8280.199747998267,
+    "wall_ms": 8284.6652159933
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "08777",
+    "15783",
+    "15784",
+    "15619",
+    "09063",
+    "15668",
+    "09100",
+    "15789",
+    "15642",
+    "15638",
+    "15639",
+    "15640",
+    "15641",
+    "15643",
+    "15763",
+    "15790",
+    "15776",
+    "15630",
+    "15824",
+    "15651",
+    "08948",
+    "15820",
+    "15822",
+    "08819",
+    "15808",
+    "15615",
+    "09234",
+    "15660",
+    "15890",
+    "09101",
+    "98010",
+    "15806",
+    "15622",
+    "15828",
+    "08857",
+    "98000",
+    "15826",
+    "08859",
+    "09231",
+    "15659"
+  ],
+  "prompt_chars": 36421,
+  "raw_code_count": 5,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15783",
+        "description": "Visite à domicile d'un patient vulnérable en perte sévère d'autonomie, premier patient",
+        "confidence": "high",
+        "explanation": "Visite à domicile planifiée pour un patient vulnérable de 71 ans en perte sévère d'autonomie, premier patient sous ce toit. Le résumé et le transcript confirment le lieu (domicile), le statut vulnérable, la perte sévère d'autonomie et l'absence de mention d'autres patients vus sous le même toit ce jour-là.",
+        "supporting_quote": "Visite à domicile planifiée pour un patient de 71 ans atteint de SLA (forme bulbaire) avec perte sévère d'autonomie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15784",
+        "description": "Visite à domicile d'un patient vulnérable en perte sévère d'autonomie, patient additionnel en perte sévère d'autonomie",
+        "confidence": "medium",
+        "explanation": "Le code 15784 s'applique si le patient était le deuxième ou troisième vu sous le même toit. Le transcript ne mentionne pas d'autres patients vus ce jour-là, mais l'axe 'nombre de patients vus sous le même toit' n'est pas explicitement confirmé comme étant 1.",
+        "supporting_quote": "Visite à domicile planifiée pour un patient de 71 ans atteint de SLA (forme bulbaire) avec perte sévère d'autonomie.",
+        "needs_confirmation": [
+          "Confirmer si ce patient était le seul vu sous ce toit ce jour-là pour exclure 15784 au profit de 15783."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "09063",
+        "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, lorsqu'effectué à domicile",
+        "confidence": "low",
+        "explanation": "Aucune mention explicite dans le résumé ou le transcript d'un examen d'évaluation médicale formel en vue d'allocation de ressources ou de rédaction de formulaire. Le code est donc peu probable.",
+        "supporting_quote": "Références en orthophonie et nutrition, ajustement du traitement (glycopyrrolate), discussion sur les objectifs de soins et la VNI nocturne, ainsi que sur la gastrostomie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "09100",
+        "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié",
+        "confidence": "low",
+        "explanation": "Aucune mention d'un examen formel pour allocation de ressources ou de rédaction de formulaire. Le code est donc exclu.",
+        "supporting_quote": "Références en orthophonie et nutrition, ajustement du traitement (glycopyrrolate), discussion sur les objectifs de soins et la VNI nocturne, ainsi que sur la gastrostomie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "09101",
+        "description": "Rédaction du formulaire approprié suite à un examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources",
+        "confidence": "low",
+        "explanation": "Aucune mention de rédaction de formulaire dans le résumé ou le transcript. Le code est donc exclu.",
+        "supporting_quote": "Élément incertain: Absence de mention explicite d'un rapport écrit produit ou requis",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la visite n'est pas explicitement documentée, mais cela n'affecte pas le choix du code 15783. Aucun autre patient vu sous le même toit n'est mentionné, donc 15783 est retenu comme code principal. Les codes 09063, 09100 et 09101 sont exclus en raison de l'absence de mention d'évaluation formelle pour allocation de ressources ou de rédaction de formulaire.",
+    "analysis": "L'encounter est une visite à domicile planifiée pour un patient de 71 ans, inscrit et vulnérable, souffrant de SLA avec perte sévère d'autonomie. La visite inclut une évaluation complète de problèmes musculo-squelettiques et neurologiques (dysphagie, sialorrhée, dénutrition, hypoventilation), un examen physique détaillé, des ajustements thérapeutiques (glycopyrrolate), des références en orthophonie et nutrition, ainsi qu'une discussion sur les objectifs de soins et des interventions potentielles (VNI nocturne, gastrostomie). Le lieu est le domicile du patient, dans le cadre des soins à domicile du GMF. Aucun examen d'évaluation médicale formelle pour allocation de ressources n'est explicitement mentionné, ni rédaction de formulaire. La visite correspond à une évaluation d'un patient en perte sévère d'autonomie à domicile, premier patient sous ce toit. Les codes 15783 (premier patient vulnérable en perte sévère d'autonomie) et 09063 (supplément pour évaluation médicale à domicile en vue d'allocation de ressources) sont exclus car aucun formulaire ou allocation de ressources n'est documenté. Les codes hospitaliers (156xx) sont exclus car le lieu est le domicile, non un établissement."
+  }
+}

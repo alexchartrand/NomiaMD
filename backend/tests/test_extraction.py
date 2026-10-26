@@ -4,25 +4,23 @@ environment. Once LLM_API_KEY and EMBEDDING_API_KEY are configured, see scripts/
 live smoke test.
 
 Uses the small tests/fixtures/reference_data_test.json table (via the small_reference_table
-fixture in conftest.py) rather than the real llama_index vector store, so these tests don't
+fixture in conftest.py) rather than the real LanceDB codes table, so these tests don't
 depend on its size, network access, or exact content."""
 
 import itertools
-import json
 from datetime import date
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
-from app.extraction.engine import run_extraction
-from app.main import app
 from app.intake import content_hash
+from app.llm import ExtractionOutputError
+from app.main import app
 from app.postgresdb import Encounter, ExtractionRun, ExtractionRunResult, Gender, PatientRepository, session_scope
-from app.ramq_codes import BillingCodesInput, BillingContext
-from app.summary import ConsultationSummaryResult
-from app.tasks.registry import get_task
+from app.summary import ConsultationSummarizer
+from tests.llm_helpers import fake_chat_result
 
 SAMPLE_TRANSCRIPT = (
     "Patiente de 58 ans suivie pour diabète de type 2 depuis 6 ans et hypertension "
@@ -73,6 +71,7 @@ MOCK_SUMMARY_RESULT = {
 }
 
 MOCK_RESULT = {
+    "analysis": "Suivi d'hypertension en cabinet; un bilan sanguin de contrôle est demandé.",
     "codes": [
         {
             "code": "TEST-BP-MGMT",
@@ -82,6 +81,8 @@ MOCK_RESULT = {
             "supporting_quote": "hypertension artérielle depuis 10 ans",
             "needs_confirmation": [],
         },
+    ],
+    "other_possible_codes": [
         {
             "code": "TEST-BLOODWORK-ORDER",
             "description": "Demande et révision d'un bilan sanguin de routine",
@@ -95,91 +96,25 @@ MOCK_RESULT = {
 }
 
 
-def _billing_codes_input() -> BillingCodesInput:
-    # run_extraction(task, task_input) now takes BillingCodesTask's own input bundle
-    # (see app/ramq_codes/task.py's BillingCodesInput) rather than a bare transcript string
-    # — the retriever needs the structured summary to plan retrieval queries from, and the
-    # rendered text of MOCK_SUMMARY_RESULT is what the small_reference_table stub retriever
-    # (conftest.py) keyword-matches against.
-    return BillingCodesInput(
-        summary=ConsultationSummaryResult.model_validate(MOCK_SUMMARY_RESULT),
-        transcript=SAMPLE_TRANSCRIPT,
-        context=BillingContext(),
-    )
-
-
 def _mock_response(payload=MOCK_RESULT):
-    return SimpleNamespace(
-        message=SimpleNamespace(content=json.dumps(payload)),
-        raw={
-            "model": "mistral-small-latest",
-            "choices": [SimpleNamespace(finish_reason="stop")],
-        },
-    )
-
-
-async def test_run_extraction_parses_mocked_response():
-    task = get_task("billing_codes")
-    with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response())
-        result = await run_extraction(task, _billing_codes_input())
-
-    assert result.task == "billing_codes"
-    assert [c.code for c in result.result.codes] == [
-        "TEST-BP-MGMT",
-        "TEST-BLOODWORK-ORDER",
-    ]
-    # The prompt actually sent to the model should have narrowed candidates via keyword
-    # match, not dumped the whole reference table — confirm the call args reflect that.
-    call_kwargs = mock_get_client.return_value.achat.call_args.kwargs
-    user_message = call_kwargs["messages"][1].content
-    assert "TEST-BP-MGMT" in user_message
-    assert "TEST-CONSULT-NEW" not in user_message  # not relevant to this transcript
-
-
-async def test_run_extraction_drops_malformed_bare_string_codes():
-    """A small local model sometimes collapses the codes array to bare code strings
-    instead of {code, description, confidence, explanation} objects, especially with
-    a large real candidate list — this must not crash the request, and must not fabricate
-    an explanation for something the model didn't actually justify."""
-    task = get_task("billing_codes")
-    mock_result = {
-        "codes": [
-            "TEST-BP-MGMT",
-            {
-                "code": "TEST-BLOODWORK-ORDER",
-                "description": "Demande et révision d'un bilan sanguin de routine",
-                "confidence": "medium",
-                "explanation": "Bilan sanguin de contrôle demandé",
-                "supporting_quote": "Bilan sanguin de contrôle demandé",
-                "needs_confirmation": [],
-            },
-        ],
-        "notes": None,
-    }
-    with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(return_value=_mock_response(mock_result))
-        result = await run_extraction(task, _billing_codes_input())
-
-    assert [c.code for c in result.result.codes] == ["TEST-BLOODWORK-ORDER"]
-    assert result.result.notes is not None
-    assert "1 candidate code" in result.result.notes
+    return fake_chat_result(payload)
 
 
 def _extract(client: TestClient, *, patient_id: int, summary=MOCK_SUMMARY_RESULT, billing=MOCK_RESULT, side_effect=None):
-    with patch("app.extraction.engine.get_client") as mock_get_client:
-        mock_get_client.return_value.achat = AsyncMock(
+    """POSTs /extract with the model mocked; returns the response and the mocked chat."""
+    with patch("app.llm.structured.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(
             side_effect=side_effect or [_mock_response(summary), _mock_response(billing)]
         )
-        return client.post(
+        response = client.post(
             "/extract",
             json={
                 "transcript": SAMPLE_TRANSCRIPT,
-                "task": "billing_codes",
                 "patient_id": patient_id,
                 "source": {"system": "plume_ai", "encounter_id": "enc-123"},
             },
         )
+    return response, mock_get_client.return_value.chat
 
 
 # Patients are globally unique by NAM now, and the test DB is shared across the whole
@@ -204,12 +139,15 @@ async def test_extract_endpoint_end_to_end():
     # off that summary) — two chat-completion calls happen, so mock two responses in order.
     with TestClient(app) as client:
         patient = await _seed_patient()
-        response = _extract(client, patient_id=patient.id)
+        response, chat = _extract(client, patient_id=patient.id)
 
     assert response.status_code == 200
     body = response.json()
-    assert body["billing"]["task"] == "billing_codes"
-    assert len(body["billing"]["result"]["codes"]) == 2
+    assert [c["code"] for c in body["billing"]["codes"]] == ["TEST-BP-MGMT", "TEST-BLOODWORK-ORDER"]
+    # The billing prompt lists the retrieved candidates only, not the whole reference table.
+    billing_user_message = chat.call_args_list[1].kwargs["messages"][1].content
+    assert "TEST-BP-MGMT" in billing_user_message
+    assert "TEST-CONSULT-NEW" not in billing_user_message  # not relevant to this transcript
     # One run for the chosen patient, transcript stored once, a result row per stage.
     async with session_scope() as session:
         run = await session.get(ExtractionRun, body["extraction_run_id"])
@@ -233,13 +171,16 @@ async def test_extract_endpoint_end_to_end():
     # MOCK_SUMMARY_RESULT's encounter_setting.date is null -> must stay null, never "today".
     assert body["encounter_date"] is None
     assert body["encounter_date_raw"] is None
+    assert body["summary"]["short_description"] == MOCK_SUMMARY_RESULT["short_description"]
+    assert body["summary"]["procedures"] == []
+    assert body["summary"]["referral"] is None
 
 
 async def test_extract_endpoint_sets_the_encounters_service_date_from_the_summary():
     summary = {**MOCK_SUMMARY_RESULT, "encounter_setting": {**MOCK_SUMMARY_RESULT["encounter_setting"], "date": "2026-02-10"}}
     with TestClient(app) as client:
         patient = await _seed_patient()
-        response = _extract(client, patient_id=patient.id, summary=summary)
+        response, _ = _extract(client, patient_id=patient.id, summary=summary)
 
     assert response.status_code == 200
     async with session_scope() as session:
@@ -251,7 +192,7 @@ async def test_extract_endpoint_sets_the_encounters_service_date_from_the_summar
 async def test_extract_endpoint_records_a_pipeline_failure_on_the_encounter():
     with TestClient(app, raise_server_exceptions=False) as client:
         patient = await _seed_patient()
-        response = _extract(client, patient_id=patient.id, side_effect=RuntimeError("model unavailable"))
+        response, _ = _extract(client, patient_id=patient.id, side_effect=RuntimeError("model unavailable"))
 
     assert response.status_code == 500
     async with session_scope() as session:
@@ -267,14 +208,14 @@ async def test_extract_endpoint_resolves_fees_from_the_real_candidate_data():
     # The mocked model response above carries no fee data at all (the model is never asked
     # for one — see app/ramq_codes/models.py's ExtractedCode.fees server_only marker); fees
     # must come from the pipeline's post-extraction resolution step
-    # (BillingCodesTask.resolve_fees) reading the real fixture data
-    # (tests/fixtures/reference_data_test.json), not from the mock.
+    # (FeeResolver) reading the real fixture data (tests/fixtures/reference_data_test.json),
+    # not from the mock.
     with TestClient(app) as client:
         patient = await _seed_patient()
-        response = _extract(client, patient_id=patient.id)
+        response, _ = _extract(client, patient_id=patient.id)
 
     assert response.status_code == 200
-    codes = {c["code"]: c for c in response.json()["billing"]["result"]["codes"]}
+    codes = {c["code"]: c for c in response.json()["billing"]["codes"]}
     assert codes["TEST-BP-MGMT"]["fees"] == [
         {
             "amount": 33.15,
@@ -291,14 +232,62 @@ async def test_extract_endpoint_resolves_fees_from_the_real_candidate_data():
 
 async def test_extract_endpoint_requires_a_known_patient_id():
     with TestClient(app) as client:
-        response = _extract(client, patient_id=999999)
+        response, _ = _extract(client, patient_id=999999)
 
     assert response.status_code == 404
 
 
-def test_unknown_task_returns_400():
-    with TestClient(app) as client:
-        response = client.post(
-            "/extract", json={"transcript": "hello", "task": "not_a_real_task", "patient_id": 1}
-        )
-    assert response.status_code == 400
+# -- model resolution and unusable output (app/llm/structured.py) -----------------------
+
+
+async def _summarize(summarizer: ConsultationSummarizer, payload=MOCK_SUMMARY_RESULT, **chat_result):
+    with patch("app.llm.structured.get_client") as mock_get_client:
+        mock_get_client.return_value.chat = AsyncMock(return_value=fake_chat_result(payload, **chat_result))
+        await summarizer.summarize(SAMPLE_TRANSCRIPT)
+    return mock_get_client
+
+
+async def test_a_call_uses_its_default_model():
+    mock_get_client = await _summarize(ConsultationSummarizer())
+
+    mock_get_client.assert_called_once_with(ConsultationSummarizer.DEFAULT_MODEL)
+
+
+async def test_the_model_env_override_beats_the_default(monkeypatch):
+    monkeypatch.setenv("LLM_MODEL_CONSULTATION_SUMMARY", "qwen3-32b")
+    mock_get_client = await _summarize(ConsultationSummarizer())
+
+    mock_get_client.assert_called_once_with("qwen3-32b")
+
+
+async def test_an_explicit_model_beats_the_env_override(monkeypatch):
+    monkeypatch.setenv("LLM_MODEL_CONSULTATION_SUMMARY", "qwen3-32b")
+    mock_get_client = await _summarize(ConsultationSummarizer(model="llama-70b"))
+
+    mock_get_client.assert_called_once_with("llama-70b")
+
+
+async def test_the_call_asks_for_its_output_models_strict_schema():
+    mock_get_client = await _summarize(ConsultationSummarizer())
+
+    response_format = mock_get_client.return_value.chat.call_args.kwargs["response_format"]
+    assert response_format["json_schema"]["name"] == "consultation_summary"
+    assert response_format["json_schema"]["strict"] is True
+    assert "clinical_summary" in response_format["json_schema"]["schema"]["properties"]
+
+
+@pytest.mark.parametrize(
+    ("content", "finish_reason"),
+    [
+        ("{not json", "stop"),
+        ('{"short_description": 3}', "stop"),
+        ('{"codes": [', "length"),
+        ("{}", "content_filter"),
+    ],
+)
+async def test_unusable_output_raises_extraction_output_error_with_the_raw_content(content, finish_reason):
+    with pytest.raises(ExtractionOutputError) as excinfo:
+        await _summarize(ConsultationSummarizer(), content, finish_reason=finish_reason)
+
+    assert excinfo.value.raw_content == content
+    assert excinfo.value.finish_reason == finish_reason

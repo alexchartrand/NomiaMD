@@ -1,0 +1,103 @@
+{
+  "patient_id": "GMF-2026-00311",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1789,
+      "output_tokens": 582,
+      "latency_ms": 3510.965977999149,
+      "started_at": "2026-10-08T14:19:19.522090Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1789,
+    "output_tokens": 582,
+    "llm_latency_ms": 3510.965977999149,
+    "wall_ms": 3511.2771849962883
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi de routine d'une patiente de 67 ans avec diabète de type 2 (DB2) et insuffisance rénale chronique (IRC) stade 3a. Ajout d'un nouveau traitement (empagliflozine) pour néphroprotection, ajustement des médicaments existants, et prescription d'examens de laboratoire dans 4 semaines. Consultation en cabinet avec rendez-vous.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-08-12",
+      "time_start": "10:40",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de diabète de type 2 et insuffisance rénale chronique stade 3a",
+      "systems_or_body_regions_involved": [
+        "endocrinien",
+        "rénal",
+        "musculo-squelettique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "DB2 contrôle acceptable pour l'âge; IRC 3a stable avec albuminurie modérée; crampes nocturnes aux mollets probablement bénignes",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "pieds",
+        "abdominal"
+      ],
+      "notable_findings": "TA 138/76, FC 74, poids stable à 79,4 kg; monofilament normal bilatéral, pouls pédieux perçus, pas de plaie; HbA1c 7,4 %, DFGe 52 (stable), RAC 4,1 mg/mmol, K 4,8"
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement indiquée dans le transcript",
+      "Heure de fin de la consultation non mentionnée"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-08-12",
+      "actual": "2026-08-12"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:40",
+      "actual": "10:40"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

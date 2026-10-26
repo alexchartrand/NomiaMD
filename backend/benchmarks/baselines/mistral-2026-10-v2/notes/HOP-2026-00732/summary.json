@@ -1,0 +1,124 @@
+{
+  "patient_id": "HOP-2026-00732",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2196,
+      "output_tokens": 845,
+      "latency_ms": 5238.22964799183,
+      "started_at": "2026-10-08T15:44:10.235471Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2196,
+    "output_tokens": 845,
+    "llm_latency_ms": 5238.22964799183,
+    "wall_ms": 5238.528777001193
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Hospitalisation pour insuffisance cardiaque décompensée chez un patient de 76 ans avec non-adhésion thérapeutique (furosémide et restriction sodée). Évaluation initiale, ajustement des médicaments, bilan paraclinique et plan de traitement incluant diurèse IV et surveillance étroite.",
+    "encounter_setting": {
+      "location_detail": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)",
+      "date": "2026-09-24",
+      "time_start": "16:20",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": "Dr. Marc-André Tremblay, MD",
+      "reason_for_referral": "insuffisance cardiaque décompensée (transfert de l'urgence)",
+      "written_report_back_required_or_produced": true
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Insuffisance cardiaque décompensée avec dyspnée progressive, orthopnée, œdème des membres inférieurs et prise de poids",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "respiratoire",
+        "rénal",
+        "métabolique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "1. Insuffisance cardiaque à fraction d'éjection réduite décompensée (non-adhésion au furosémide et à la restriction sodée). 2. Insuffisance rénale aiguë sur insuffisance rénale chronique (syndrome cardio-rénal probable). 3. Fibrillation auriculaire permanente avec contrôle de fréquence sous-optimal.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "respiratoire",
+        "abdominal",
+        "membres_inférieurs"
+      ],
+      "notable_findings": "TA 142/88, FC 96 irrégulière, FR 24, SatO2 91 % sous 2 L. TVJ +6 cm, RHJ +. Crépitants bibasilaires jusqu'à mi-champs. Œdème MI godet 3+ jusqu'aux genoux."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Bilan paraclinique incluant ECG, radiographie pulmonaire, dosage du BNP, troponine hs, créatinine, potassium et sodium",
+        "generic_act": "bilan paraclinique",
+        "body_site": null,
+        "technique_or_approach_mentioned": null,
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Enseignement sur l'insuffisance cardiaque par l'infirmière clinicienne avant congé",
+        "generic_act": "enseignement thérapeutique",
+        "body_site": null,
+        "technique_or_approach_mentioned": null,
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [
+      "deplacement_urgence"
+    ],
+    "notes_uncertain_items": [
+      "Durée de l'hospitalisation non explicitement mentionnée dans le texte.",
+      "Heure de fin de la consultation non précisée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-24",
+      "actual": "2026-09-24"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "16:20",
+      "actual": "16:20"
+    }
+  ],
+  "stats": {
+    "procedures": 2,
+    "add_ons": 1,
+    "uncertain_items": 2,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

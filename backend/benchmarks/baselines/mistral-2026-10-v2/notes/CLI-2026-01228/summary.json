@@ -1,0 +1,99 @@
+{
+  "patient_id": "CLI-2026-01228",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2218,
+      "output_tokens": 507,
+      "latency_ms": 2991.837270994438,
+      "started_at": "2026-10-08T15:43:45.459608Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2218,
+    "output_tokens": 507,
+    "llm_latency_ms": 2991.837270994438,
+    "wall_ms": 2992.1816080022836
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Suivi médical pour trouble dépressif majeur en rémission quasi complète sous escitalopram et psychothérapie. Évaluation de la réponse au traitement, ajustement du plan de suivi et counseling sur la médication et les habitudes de vie.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-05-12",
+      "time_start": "09:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Suivi de trouble dépressif majeur sous traitement par ISRS (escitalopram) avec évaluation de la réponse thérapeutique et ajustement du plan de traitement.",
+      "systems_or_body_regions_involved": [
+        "psychiatrique"
+      ],
+      "single_vs_multi_system": "single",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Trouble dépressif majeur en rémission quasi complète sous traitement pharmacologique et psychothérapie combinés, bonne réponse au traitement.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "psychiatrique"
+      ],
+      "notable_findings": "Affect nettement plus euthymique qu'à la visite initiale, contact visuel bon, discours fluide et cohérent. Signes vitaux dans les limites normales. Aucun signe de détresse aiguë."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Heure de fin de la consultation non indiquée dans le transcript."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-05-12",
+      "actual": "2026-05-12"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "09:30",
+      "actual": "09:30"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 1,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

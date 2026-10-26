@@ -21,7 +21,10 @@ class _FakeCodeRepository(ICodeRepository):
         self.list_by_numbers_calls.append(list(numbers))
         return [self._rows_by_number[n] for n in numbers if n in self._rows_by_number]
 
-    async def hybrid_search(self, text: str, vector: list[float], k: int) -> list:
+    async def hybrid_search(self, text: str, vector: list[float], k: int, eligibility=None, sections=None) -> list:
+        raise NotImplementedError("not exercised by CodesData")
+
+    async def list_by_header_paths(self, header_paths: list[str], eligibility=None) -> list:
         raise NotImplementedError("not exercised by CodesData")
 
 

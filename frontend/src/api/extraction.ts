@@ -25,26 +25,44 @@ export interface ExtractedCode {
   supporting_quote: string;
   needs_confirmation: string[];
   fees: ExtractedFee[];
+  // The model is sure of it: the review starts with it ticked, and approving from the inbox
+  // bills it. The others are only possible codes.
+  retained: boolean;
 }
 
 export interface BillingCodesResult {
+  // Retained codes first, then the other possible ones.
   codes: ExtractedCode[];
   notes: string | null;
+  // The model's reasoning before it chose; null for results stored before it existed.
+  analysis?: string | null;
 }
 
-export interface ExtractionResult {
-  task: string;
-  result: BillingCodesResult;
-  model: string;
-  created_at: string;
+export interface ReferralDigest {
+  requester: string | null;
+  reason: string | null;
+}
+
+// The consultation summary as the review shows it above the codes.
+export interface ConsultationDigest {
+  short_description: string;
+  reason_for_visit: string | null;
+  procedures: string[];
+  billable_add_ons: string[];
+  // Only an incoming referral: another professional asked this physician to see the patient.
+  referral: ReferralDigest | null;
+  // What the summary couldn't settle, phrased as questions for the physician.
+  open_questions: string[];
 }
 
 export interface BillingExtractionResponse {
-  billing: ExtractionResult;
+  billing: BillingCodesResult;
   // What POST /claims takes — the run carries the patient and both stages' results.
   extraction_run_id: number;
   encounter_date: string | null; // ISO date (YYYY-MM-DD)
   encounter_date_raw: string | null;
+  // Null for a run whose summary is missing or was stored under an older schema.
+  summary?: ConsultationDigest | null;
 }
 
 export async function extractBillingCodes(
@@ -56,7 +74,7 @@ export async function extractBillingCodes(
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ transcript, task: "billing_codes", patient_id: patientId, source: { system: source } }),
+    body: JSON.stringify({ transcript, patient_id: patientId, source: { system: source } }),
   });
   return unwrap<BillingExtractionResponse>(response);
 }

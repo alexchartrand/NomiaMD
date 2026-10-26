@@ -1,0 +1,106 @@
+{
+  "patient_id": "GMF-2026-00314",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2065,
+      "output_tokens": 565,
+      "latency_ms": 4165.654821001226,
+      "started_at": "2026-10-08T15:44:20.170484Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2065,
+    "output_tokens": 565,
+    "llm_latency_ms": 4165.654821001226,
+    "wall_ms": 4165.994083989062
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Première visite de prise en charge d'un patient de 68 ans nouvellement inscrit au GMF, avec MPOC, diabète de type 2 et hypertension artérielle non contrôlés. Examen physique réalisé, bilan paraclinique et références prescrits. Communication avec interprète en arabe.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-10-05",
+      "time_start": "10:00",
+      "time_end": null,
+      "duration_minutes": 40.0,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Visite de prise en charge (inscription) pour établir un suivi médical de routine et renouveler les médicaments.",
+      "systems_or_body_regions_involved": [
+        "respiratoire",
+        "cardiovasculaire",
+        "métabolique",
+        "neurologique_périphérique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "MPOC probablement modérée, DB2 avec contrôle inconnu et neuropathie périphérique, HTA non contrôlée.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "cardiovasculaire",
+        "respiratoire",
+        "pieds",
+        "fond_oeil"
+      ],
+      "notable_findings": "TA 146/88, FC 80, SatO2 94 % AA, IMC 29. MV diminué globalement, expirium prolongé. Sensibilité diminuée au monofilament (2/10 sites) aux pieds. Fond d'œil non fait."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [
+      "communication_interprète"
+    ],
+    "notes_uncertain_items": [
+      "Durée de la visite non explicitement indiquée dans le texte, estimée à 40 minutes d'après le rendez-vous planifié."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-05",
+      "actual": "2026-10-05"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:00",
+      "actual": "10:00"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 1,
+    "uncertain_items": 1,
+    "systems": 4,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

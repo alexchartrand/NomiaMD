@@ -1,0 +1,89 @@
+{
+  "patient_id": "GMF-2026-00411",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 8138,
+      "output_tokens": 542,
+      "latency_ms": 5039.036087007844,
+      "started_at": "2026-10-09T17:40:43.901877Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 8138,
+    "output_tokens": 542,
+    "llm_latency_ms": 5039.036087007844,
+    "wall_ms": 5043.278710989398
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15804",
+    "15766",
+    "15802",
+    "15774",
+    "15812",
+    "15806",
+    "08776",
+    "15808",
+    "08819",
+    "08848",
+    "08775",
+    "15789",
+    "15790",
+    "15814",
+    "15810",
+    "08777",
+    "00060",
+    "00061",
+    "00062",
+    "15656",
+    "15657",
+    "15658",
+    "15639",
+    "15638",
+    "15640",
+    "15641",
+    "15642",
+    "15643",
+    "20022",
+    "20021",
+    "20023",
+    "20024",
+    "98010",
+    "15627",
+    "08942",
+    "15626",
+    "15651",
+    "15052"
+  ],
+  "prompt_chars": 32621,
+  "raw_code_count": 1,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15802",
+        "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus",
+        "confidence": "high",
+        "explanation": "Première visite de prise en charge pour une patiente inscrite, non vulnérable, de 45 ans, sur rendez-vous, avec clientèle de 1240 patients. Le transcript confirme explicitement qu'il s'agit d'une 'première visite' et d'une 'nouvelle patiente attribuée via le GAMF'.",
+        "supporting_quote": "Première visite — nouvelle patiente attribuée via le GAMF, inscription ce jour.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      }
+    ],
+    "notes": "La durée de la consultation n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code 15802, qui ne dépend pas de la durée. Le type de rendez-vous (avec ou sans) est confirmé par le contexte du GAMF et la présence d'un dossier structuré, bien que non explicitement écrit dans le transcript.",
+    "analysis": "Rencontre en cabinet (GMF des Rivières) avec une patiente de 45 ans, inscrite, non vulnérable, sur rendez-vous. Il s'agit d'une première visite de prise en charge pour une nouvelle patiente attribuée via le GAMF. L'examen physique complet, l'anamnèse détaillée et la planification d'un suivi confirment qu'il s'agit d'une visite de prise en charge initiale. Aucune procédure, test ou supplément (déplacement, heure, interprète) n'est documenté comme ayant été effectué pendant cette rencontre. Les codes de suivi (15804) ou de visite ponctuelle (15766, 15774) ne s'appliquent pas car il s'agit d'une première prise en charge. Les codes spécifiques à la grossesse (15806, 15808, 15810, 15812) ou pédiatriques (15814) sont exclus en raison de l'âge et du contexte. Les codes de communication (00060, 00061, 00062, etc.) ou hospitaliers (15638, 15639, etc.) ne correspondent pas au lieu (GMF)."
+  }
+}

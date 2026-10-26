@@ -1,0 +1,117 @@
+{
+  "patient_id": "GMF-2026-00306",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2368,
+      "output_tokens": 678,
+      "latency_ms": 4208.150616002968,
+      "started_at": "2026-10-08T15:43:46.470758Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2368,
+    "output_tokens": 678,
+    "llm_latency_ms": 4208.150616002968,
+    "wall_ms": 4208.476694999263
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Visite périodique annuelle d'une patiente de 88 ans résidente en établissement avec assistance, suivie pour insuffisance cardiaque, fibrillation auriculaire et déclin cognitif léger. Examen physique stable, bilan sanguin et ECG demandés. Plan de surveillance et ajustement des soins sans changement médicamenteux immédiat.",
+    "encounter_setting": {
+      "location_detail": "GMF Boisé-des-Cèdres",
+      "date": "2026-05-26",
+      "time_start": "10:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Visite périodique annuelle pour patiente vulnérable résidente en établissement avec assistance, suivie pour insuffisance cardiaque, fibrillation auriculaire et déclin cognitif léger.",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "cognitif",
+        "urinaire",
+        "cutané",
+        "musculo-squelettique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Insuffisance cardiaque et fibrillation auriculaire chroniques stables; déclin cognitif léger progressif; statut fonctionnel globalement préservé.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes_vitaux",
+        "cardiovasculaire",
+        "pulmonaire",
+        "membres_inférieurs",
+        "cognitif",
+        "peau"
+      ],
+      "notable_findings": "Rythme irrégulier confirmé (FA), souffle systolique doux 2/6 au foyer aortique connu et stable; œdème léger godet 1+ bilatéral stable; score MoCA 23/30 (légère baisse par rapport à 25/30 l'an dernier)."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Mini-examen cognitif (MoCA) avec score de 23/30",
+        "generic_act": "examen cognitif",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Mini-examen cognitif (MoCA)",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Temps de fin de la consultation non précisé."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-05-26",
+      "actual": "2026-05-26"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "10:15",
+      "actual": "10:15"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 5,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

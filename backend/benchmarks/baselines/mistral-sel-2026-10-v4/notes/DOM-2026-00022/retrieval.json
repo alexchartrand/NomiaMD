@@ -1,0 +1,990 @@
+{
+  "patient_id": "DOM-2026-00022",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 765,
+      "output_tokens": null,
+      "latency_ms": 1.2504750047810376,
+      "started_at": "2026-10-09T17:41:47.859630Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 765,
+    "output_tokens": 0,
+    "llm_latency_ms": 1.2504750047810376,
+    "wall_ms": 47.96271599479951
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite d'évaluation pour donner une opinion. sans rendez-vous. Soins à domicile — GMF des Rivières. Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15789",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15619",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "08777",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "15790",
+          "relevance": 0.03128054738044739
+        },
+        {
+          "number": "15642",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "15630",
+          "relevance": 0.030330881476402283
+        },
+        {
+          "number": "08948",
+          "relevance": 0.029877368360757828
+        },
+        {
+          "number": "15651",
+          "relevance": 0.02985074557363987
+        },
+        {
+          "number": "15668",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "15770",
+          "relevance": 0.027826087549328804
+        },
+        {
+          "number": "09063",
+          "relevance": 0.027619047090411186
+        },
+        {
+          "number": "08819",
+          "relevance": 0.027598019689321518
+        },
+        {
+          "number": "15781",
+          "relevance": 0.02654711715877056
+        },
+        {
+          "number": "15778",
+          "relevance": 0.025657894089818
+        },
+        {
+          "number": "15890",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15782",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08994",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "98010",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "08996",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15615",
+          "relevance": 0.01315789483487606
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Visite à domicile pour fatigue et étourdissements chez une patiente de 88 ans avec perte d'autonomie sévère. Découverte d'une bradycardie symptomatique, hypotension orthostatique et probable toxicité digitalique. Ajustement des médicaments, prélèvements sanguins à domicile et suivi rapproché organisé.\nLieu (détail): Soins à domicile — GMF des Rivières\nDate: 2026-09-29\nHeure de début: 14:00\nDurée déclarée explicitement: non\nRendez-vous: sans rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): autre_professionnel\nDemandeur (identifiant): infirmière du SAD\nMotif de la référence: fatigue et étourdissements depuis 1 semaine\nMotif de consultation: Fatigue et étourdissements depuis 1 semaine\nSystèmes/régions concernés: cardiovasculaire; général\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Bradycardie symptomatique + hypotension orthostatique, probable toxicité digitalique/bêtabloquant ± déshydratation (diurétique)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cardiovasculaire; général\nConstatations: TA couchée 112/64, debout 96/58. FC 48 rég. Œdème MI 1+. Muqueuses sèches. Bradycardie sinusale 46/min, PR 220 ms (BAV 1er degré), sous-décalage ST en cupule V4-V6 (effet digitalique)\nActe réalisé 1 - Description: ECG à domicile avec appareil portatif (technique + interprétation)\nActe réalisé 1 - Acte (générique): électrocardiogramme\nActe réalisé 1 - Technique/approche: appareil portatif du GMF\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nAjouts possiblement facturables: deplacement_urgence\nÉlément incertain: Durée de la visite non explicitement mentionnée dans le transcript; Absence de mention explicite de l'heure de fin de la visite",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15781",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15782",
+          "relevance": 0.032258063554763794
+        },
+        {
+          "number": "15763",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "00344",
+          "relevance": 0.029009880498051643
+        },
+        {
+          "number": "15770",
+          "relevance": 0.027402402833104134
+        },
+        {
+          "number": "15778",
+          "relevance": 0.025833332911133766
+        },
+        {
+          "number": "00953",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08994",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08861",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08996",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08883",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09582",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09234",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09231",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06100",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09116",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00889",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00386",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08092",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "20179",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "électrocardiogramme",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00545",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "00340",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "00341",
+          "relevance": 0.0314980149269104
+        },
+        {
+          "number": "30120",
+          "relevance": 0.03128054738044739
+        },
+        {
+          "number": "30010",
+          "relevance": 0.02990695647895336
+        },
+        {
+          "number": "00342",
+          "relevance": 0.029857397079467773
+        },
+        {
+          "number": "00344",
+          "relevance": 0.029709506779909134
+        },
+        {
+          "number": "00756",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "30060",
+          "relevance": 0.029418127611279488
+        },
+        {
+          "number": "00535",
+          "relevance": 0.029083246365189552
+        },
+        {
+          "number": "00630",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "00758",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "00757",
+          "relevance": 0.027973396703600883
+        },
+        {
+          "number": "00564",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "09412",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "00843",
+          "relevance": 0.013333333656191826
+        },
+        {
+          "number": "00355",
+          "relevance": 0.01315789483487606
+        },
+        {
+          "number": "00347",
+          "relevance": 0.012987012974917889
+        },
+        {
+          "number": "00530",
+          "relevance": 0.012820512987673283
+        },
+        {
+          "number": "09345",
+          "relevance": 0.012658228166401386
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "ECG à domicile avec appareil portatif (technique + interprétation)",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00344",
+          "relevance": 0.032786883413791656
+        },
+        {
+          "number": "00341",
+          "relevance": 0.03036576882004738
+        },
+        {
+          "number": "09390",
+          "relevance": 0.028371628373861313
+        },
+        {
+          "number": "30120",
+          "relevance": 0.027809742838144302
+        },
+        {
+          "number": "00340",
+          "relevance": 0.027783136814832687
+        },
+        {
+          "number": "30010",
+          "relevance": 0.027313265949487686
+        },
+        {
+          "number": "00342",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00180",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09423",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00630",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00638",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00758",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00127",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00757",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00748",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00756",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15188",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "30060",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09386",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00747",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "deplacement_urgence",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15644",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15646",
+          "relevance": 0.030886195600032806
+        },
+        {
+          "number": "15655",
+          "relevance": 0.02964254654943943
+        },
+        {
+          "number": "15653",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "15645",
+          "relevance": 0.028991596773266792
+        },
+        {
+          "number": "15659",
+          "relevance": 0.028898129239678383
+        },
+        {
+          "number": "15654",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "15847",
+          "relevance": 0.028629032894968987
+        },
+        {
+          "number": "15660",
+          "relevance": 0.028484849259257317
+        },
+        {
+          "number": "08815",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "15661",
+          "relevance": 0.02808326855301857
+        },
+        {
+          "number": "08928",
+          "relevance": 0.027783136814832687
+        },
+        {
+          "number": "15193",
+          "relevance": 0.026153845712542534
+        },
+        {
+          "number": "15623",
+          "relevance": 0.025316456332802773
+        },
+        {
+          "number": "09245",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15848",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15849",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15634",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15635",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15633",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00344",
+      "rrf_score": 0.04769119769119769,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Technique et interprétation d'un électrocardiogramme à domicile",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "00125",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Monitoring continu de la pression artérielle, par technique non invasive, par période de vingt-quatre (24) heures, interprétation",
+      "expanded_from": "00344"
+    },
+    {
+      "rank": 3,
+      "number": "00182",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Intubation endotrachéale seule, non reliée aux services médicaux prévus au préambule particulier d'anesthésie réanimation",
+      "expanded_from": "00344"
+    },
+    {
+      "rank": 4,
+      "number": "00406",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Plaquettophérèse",
+      "expanded_from": "00344"
+    },
+    {
+      "rank": 5,
+      "number": "00647",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Transfusion directe ou exsanguino-transfusion (chacune)",
+      "expanded_from": "00344"
+    },
+    {
+      "rank": 6,
+      "number": "00780",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme",
+      "description": "Surveillance pour réadaptation de patients cardiaques, par heure, par patient, maximum quinze (15) patients",
+      "expanded_from": "00344"
+    },
+    {
+      "rank": 7,
+      "number": "00341",
+      "rrf_score": 0.03252247488101534,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > en cabinet",
+      "description": "Technique et interprétation d'un électrocardiogramme en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "00339",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > en cabinet",
+      "description": "Épreuve d'effort submaximal et maximal au moyen d'un tapis roulant ou d'une bicyclette ergométrique en cabinet, incluant le monitoring continu de l'E.C.G. et l'E.C.G. au repos (surveillance et interprétation)",
+      "expanded_from": "00341"
+    },
+    {
+      "rank": 9,
+      "number": "00340",
+      "rrf_score": 0.032018442622950824,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > en cabinet",
+      "description": "Interprétation d'un électrocardiogramme en cabinet",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "30120",
+      "rrf_score": 0.031746031746031744,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme par enregistrement épicardique en établissement, incluant la rédaction du rapport",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "30110",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Étude des paramètres d'un stimulateur cardiaque ou caractérisation d'arythmie par bande de rythme transmise par téléphone et venant de l'extérieur de l'hôpital en établissement (avec rédaction de rapport)",
+      "expanded_from": "30120"
+    },
+    {
+      "rank": 12,
+      "number": "30130",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Épreuve d'effort avec mesure de la consommation maximale d'oxygène en établissement (ne peut être facturé avec le code 30060 le même jour chez le même patient)",
+      "expanded_from": "30120"
+    },
+    {
+      "rank": 13,
+      "number": "30010",
+      "rrf_score": 0.031009615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Interprétation d'un électrocardiogramme en établissement, incluant l'enregistrement du tracé, la lecture du tracé enregistré sur document permanent, la rédaction et la signature du rapport, sa communication et son intégration au dossier",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "15781",
+      "rrf_score": 0.030555555555555555,
+      "header_path": "B — Consultation, examen et visite > Visites à domicile > Patient non vulnérable > Visite d'un patient en perte sévère d'autonomie",
+      "description": "Visite à domicile d'un patient non vulnérable en perte sévère d'autonomie, premier patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "00342",
+      "rrf_score": 0.030536130536130537,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > en cabinet",
+      "description": "Technique et interprétation d'un électrocardiogramme avec épreuve d'effort en cabinet, incluant l'E.C.G. au repos",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "15770",
+      "rrf_score": 0.030117753623188408,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "15782",
+      "rrf_score": 0.029726775956284153,
+      "header_path": "B — Consultation, examen et visite > Visites à domicile > Patient non vulnérable > Visite d'un patient en perte sévère d'autonomie",
+      "description": "Visite à domicile d'un patient non vulnérable en perte sévère d'autonomie, patient additionnel en perte sévère d'autonomie",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "15778",
+      "rrf_score": 0.029083245521601686,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de 500 patients ou plus",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "00630",
+      "rrf_score": 0.02877846790890269,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps réel), par vingt-quatre (24) heures",
+      "description": "Technique et interprétation d'un électrocardiogramme dynamique (analyse en temps réel), par vingt-quatre (24) heures",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "00756",
+      "rrf_score": 0.028258706467661692,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé) > interprétation seulement",
+      "description": "Interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour une bande de douze (12) heures",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "00758",
+      "rrf_score": 0.028169014084507043,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé) > visualisation, enregistrement, interprétation",
+      "description": "Visualisation, enregistrement et interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour les bandes de douze (12) heures subséquentes et consécutives, chacune",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "08994",
+      "rrf_score": 0.028083267871170464,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, patient inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "30060",
+      "rrf_score": 0.027692895339954164,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme en établissement",
+      "description": "Épreuve d'effort sub-maximal et maximal incluant l'électrocardiogramme au repos exécuté au moyen d'un tapis roulant et/ou d'une bicyclette ergométrique avec monitoring continu de l'électrocardiogramme en établissement (surveillance et interprétation)",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "00757",
+      "rrf_score": 0.02758751902587519,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Électrocardiogramme > Électrocardiogramme dynamique (analyse en temps différé) > visualisation, enregistrement, interprétation",
+      "description": "Visualisation, enregistrement et interprétation d'un électrocardiogramme dynamique (analyse en temps différé) pour les deux premières bandes de douze (12) heures, chacune",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "08996",
+      "rrf_score": 0.027313266443701224,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, patient inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée ou dans une clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15789",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "00545",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Électrocardiogramme endocavitaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "15644",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "15619",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "15646",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "08777",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "15763",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > examen à domicile du premier patient en perte sévère d'autonomie",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie d'un patient de soixante-dix (70) ans ou plus par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "09390",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Photopléthysmographie > Étude des flots avec enregistrement graphique > flots supraorbitaires",
+      "description": "Photopléthysmographie, étude des flots avec enregistrement graphique, flots supraorbitaires, technique et interprétation",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "09389",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Photopléthysmographie > Étude des flots avec enregistrement graphique > flots supraorbitaires",
+      "description": "Photopléthysmographie, étude des flots avec enregistrement graphique, flots supraorbitaires, interprétation",
+      "expanded_from": "09390"
+    },
+    {
+      "rank": 35,
+      "number": "15655",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15790",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sur rendez-vous ou sans rendez-vous, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "15653",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "15642",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 40,
+      "number": "15639",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 41,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 42,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 43,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient, par période de quinze (15) minutes, pour un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 44,
+      "number": "15645",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "15630",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "15659",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "09231",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation mineure d'un patient de soixante-dix (70) ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15659"
+    },
+    {
+      "rank": 48,
+      "number": "08948",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "00953",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "15654",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15651",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "00180",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tonale > interprétation et technique de procédé",
+      "description": "Interprétation et technique de procédé d'une audiométrie tonale",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "15847",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 7 h à 16 h en cabinet, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15848",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 16 h à 24 h en cabinet, en communications",
+      "expanded_from": "15847"
+    },
+    {
+      "rank": 55,
+      "number": "15849",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 0 h à 7 h en cabinet, en communications",
+      "expanded_from": "15847"
+    },
+    {
+      "rank": 56,
+      "number": "15668",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "08861",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Intervention clinique (individuelle ou collective)",
+      "description": "Supplément pour le déplacement à domicile de dix (10) kilomètres ou plus, par quinze (15) minutes, maximum de six (6) périodes pour l'aller-retour dans le cadre d'une intervention clinique individuelle ou collective",
+      "expanded_from": null
+    },
+    {
+      "rank": 58,
+      "number": "09063",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, lorsqu'effectué à domicile",
+      "expanded_from": null
+    },
+    {
+      "rank": 59,
+      "number": "09100",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié, examen d'évaluation médicale",
+      "expanded_from": "09063"
+    },
+    {
+      "rank": 60,
+      "number": "09101",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié suite à un examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources, examen d'évaluation médicale",
+      "expanded_from": "09063"
+    },
+    {
+      "rank": 61,
+      "number": "08819",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 62,
+      "number": "15890",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Évaluation à distance du décès hors d'un centre désigné d'un patient décédé à domicile et inscrit au programme de soins à domicile du CLSC",
+      "expanded_from": null
+    },
+    {
+      "rank": 63,
+      "number": "98010",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents, rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "expanded_from": null
+    },
+    {
+      "rank": 64,
+      "number": "15615",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Évaluation médicale globale en soins de longue durée dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 88,
+    "panel_size": 540,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1.3925660023232922,
+  "db_ms": 35.7844429963734
+}

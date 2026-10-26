@@ -1,0 +1,472 @@
+{
+  "patient_id": "CLI-2026-01228",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 566,
+      "output_tokens": null,
+      "latency_ms": 1332.4906199995894,
+      "started_at": "2026-10-08T14:19:06.798554Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 566,
+    "output_tokens": 0,
+    "llm_latency_ms": 1332.4906199995894,
+    "wall_ms": 1374.413450001157
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Suivi de trouble dépressif majeur chez une patiente de 40 ans sous escitalopram 10 mg DIE depuis 8 semaines. Amélioration significative des symptômes avec rémission quasi complète (PHQ-9 à 6/27). Poursuite du traitement actuel et psychothérapie hebdomadaire, avec plan de suivi dans 6-8 semaines.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-05-12\nHeure de début: 09:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de trouble dépressif majeur après 8 semaines de traitement par ISRS (escitalopram 10 mg DIE)\nSystèmes/régions concernés: psychiatrique\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Trouble dépressif majeur en rémission quasi complète sous traitement pharmacologique et psychothérapie combinés, bonne réponse au traitement\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: général; psychiatrique\nConstatations: Affect nettement plus euthymique qu'à la visite initiale, contact visuel bon, discours fluide et cohérent; signes vitaux dans les limites normales; aucun signe de détresse aiguë\nActe réalisé 1 - Description: Administration et interprétation du questionnaire PHQ-9\nActe réalisé 1 - Technique/approche: Questionnaire standardisé PHQ-9\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nÉlément incertain: Durée de la consultation non explicitement indiquée dans le transcript; estimation impossible à partir des informations fournies.",
+      "hits": [
+        {
+          "number": "08812",
+          "relevance": 0.03053613007068634
+        },
+        {
+          "number": "08819",
+          "relevance": 0.029206348583102226
+        },
+        {
+          "number": "08803",
+          "relevance": 0.028893442824482918
+        },
+        {
+          "number": "00097",
+          "relevance": 0.02817460335791111
+        },
+        {
+          "number": "08809",
+          "relevance": 0.026685643941164017
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15785",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15811",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15803",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15786",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15831",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06952",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08948",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08848",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08511",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "08942",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15765",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08933",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15773",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15668",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Administration et interprétation du questionnaire PHQ-9",
+      "hits": [
+        {
+          "number": "00158",
+          "relevance": 0.02547874115407467
+        },
+        {
+          "number": "08811",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00152",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08953",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08408",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08812",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08409",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15066",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08413",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00056",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "05363",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08807",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "98012",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08948",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00783",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15069",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09334",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09248",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09335",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00097",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "08812",
+      "rrf_score": 0.03205128205128205,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 2,
+      "number": "00097",
+      "rrf_score": 0.028531243721117136,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 3,
+      "number": "08948",
+      "rrf_score": 0.02758751902587519,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 4,
+      "number": "00158",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > corticale",
+      "description": "Interprétation d'une audiométrie corticale"
+    },
+    {
+      "rank": 5,
+      "number": "08819",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 6,
+      "number": "08811",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 7,
+      "number": "08803",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans en établissement sauf en CLSC ou en GMF-U en établissement"
+    },
+    {
+      "rank": 8,
+      "number": "00152",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Allergie",
+      "description": "Perfusion intraveineuse de gamma globuline, incluant la surveillance, allergie"
+    },
+    {
+      "rank": 9,
+      "number": "08953",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Échanges interdisciplinaires avec les intervenants en santé mentale ou avec les proches du patient dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 10,
+      "number": "08809",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet majeur sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 11,
+      "number": "08408",
+      "rrf_score": 0.015625,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > non sélective",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, non sélective, interprétation, angioradiologie"
+    },
+    {
+      "rank": 12,
+      "number": "00953",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 13,
+      "number": "15785",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, première période de trente (30) minutes, patients de moins de 70 ans"
+    },
+    {
+      "rank": 14,
+      "number": "08409",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective autre que spinale, par vaisseau, maximum 4",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective autre que spinale, par vaisseau, maximum 4, interprétation, angioradiologie"
+    },
+    {
+      "rank": 15,
+      "number": "15811",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 16,
+      "number": "15066",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen psychiatrique principal sans déplacement",
+      "description": "Examen psychiatrique principal sans déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 17,
+      "number": "15803",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 18,
+      "number": "08413",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Angioradiologie (Interprétation) > Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences > sélective, spinale, par vaisseau, maximum 8 vaisseaux",
+      "description": "Angiographie par cathétérisme (abdominale, thoracique, cervicale ou crânienne) avec changeur de film, ciné ou caméra multiformat, une ou plusieurs incidences, sélective, spinale, par vaisseau, maximum 8 vaisseaux, interprétation, angioradiologie"
+    },
+    {
+      "rank": 19,
+      "number": "15786",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications > Psychothérapie (individuelle) > Psychothérapie individuelle",
+      "description": "Psychothérapie individuelle, période supplémentaire de quinze (15) minutes, patients de moins de 70 ans"
+    },
+    {
+      "rank": 20,
+      "number": "00056",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 21,
+      "number": "15831",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 22,
+      "number": "05363",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "L — Système digestif > Estomac > Réparation",
+      "description": "Pyloroplastie (P.G. 2.9), réparation de l'estomac"
+    },
+    {
+      "rank": 23,
+      "number": "06952",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet",
+      "description": "Reprise de dilatation et curetage (ou recuretage) dans les 6 semaines suivant un avortement thérapeutique ou incomplet"
+    },
+    {
+      "rank": 24,
+      "number": "08807",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique complet sans déplacement en clinique externe, patient inscrit, examen d'un patient de moins de 70 ans"
+    },
+    {
+      "rank": 25,
+      "number": "98012",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Temps de la vacation à la cour ou au tribunal administratif, par demi-heure"
+    },
+    {
+      "rank": 26,
+      "number": "08848",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 27,
+      "number": "08511",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Radio-oncologie",
+      "description": "Planification du traitement par radiations pour lésions non cutanées"
+    },
+    {
+      "rank": 28,
+      "number": "00783",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 29,
+      "number": "08942",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen, subséquente dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 30,
+      "number": "15069",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen psychiatrique principal avec déplacement",
+      "description": "Examen psychiatrique principal avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde"
+    },
+    {
+      "rank": 31,
+      "number": "15765",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 32,
+      "number": "09334",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Mise en place d'un cathéter péricardique (incluant la ponction et l'administration de médicaments)"
+    },
+    {
+      "rank": 33,
+      "number": "08933",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée"
+    },
+    {
+      "rank": 34,
+      "number": "09248",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Communications > Dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS (patients de moins de 70 ans)",
+      "description": "Examen psychiatrique d'urgence avec déplacement dans un centre d'hébergement et de soins de longue durée, dans un centre de réadaptation, dans une unité de soins de longue durée d'un CHSGS, patient de moins de 70 ans"
+    },
+    {
+      "rank": 35,
+      "number": "15773",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients"
+    },
+    {
+      "rank": 36,
+      "number": "09335",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Mise en place d'un cathéter péricardique",
+      "description": "Administration de médicaments par le cathéter péricardique au-delà de la première journée, par jour"
+    },
+    {
+      "rank": 37,
+      "number": "15668",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 40,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 1333.652073997655,
+  "db_ms": 39.96646100131329
+}

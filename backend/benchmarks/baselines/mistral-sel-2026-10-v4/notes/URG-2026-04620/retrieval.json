@@ -1,0 +1,673 @@
+{
+  "patient_id": "URG-2026-04620",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 526,
+      "output_tokens": null,
+      "latency_ms": 0.7312259986065328,
+      "started_at": "2026-10-09T17:40:54.434532Z",
+      "finish_reason": null,
+      "cached": true,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 526,
+    "output_tokens": 0,
+    "llm_latency_ms": 0.7312259986065328,
+    "wall_ms": 33.09354900557082
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. urgence. Hôpital régional du Haut-Fleuve (urgence). Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15657",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "15658",
+          "relevance": 0.03102453052997589
+        },
+        {
+          "number": "15055",
+          "relevance": 0.029286926612257957
+        },
+        {
+          "number": "15192",
+          "relevance": 0.02905167080461979
+        },
+        {
+          "number": "15656",
+          "relevance": 0.028958333656191826
+        },
+        {
+          "number": "15644",
+          "relevance": 0.028612013906240463
+        },
+        {
+          "number": "15645",
+          "relevance": 0.027745885774493217
+        },
+        {
+          "number": "15646",
+          "relevance": 0.02715098112821579
+        },
+        {
+          "number": "15653",
+          "relevance": 0.02678571455180645
+        },
+        {
+          "number": "00006",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00057",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15634",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15061",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08806",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15633",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08808",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00098",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15847",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15635",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15848",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Patient de 34 ans se présente à l'urgence pour un traumatisme de la cheville gauche (inversion forcée lors d'une partie de soccer). Diagnostic d'entorse grade I-II avec prise en charge conservatrice (orthèse, béquilles, AINS, exercices) et congé.\nLieu (détail): Hôpital régional du Haut-Fleuve (urgence)\nDate: 2026-09-05\nHeure de début: 15:40\nDurée déclarée explicitement: non\nRendez-vous: urgence\nGrossesse: non\nRéférence: non\nMotif de consultation: Traumatisme cheville gauche par inversion forcée lors d'une partie de soccer il y a 2 heures. Boiterie, œdème et ecchymose à la malléole latérale gauche.\nSystèmes/régions concernés: musculo-squelettique; cheville_gauche\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Entorse cheville gauche grade I-II (atteinte du ligament talo-fibulaire antérieur).\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: cheville_gauche; pied_gauche\nConstatations: Œdème et ecchymose à la malléole latérale gauche. Sensibilité au ligament talo-fibulaire antérieur. Mise en charge possible (4 pas). Pouls pédieux présent. Règles d'Ottawa négatives.\nÉlément incertain: Durée de l'entrevue non explicitement mentionnée dans le document.; Heure de fin de la consultation non indiquée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08775",
+          "relevance": 0.028629032894968987
+        },
+        {
+          "number": "02708",
+          "relevance": 0.028370222076773643
+        },
+        {
+          "number": "15061",
+          "relevance": 0.027587518095970154
+        },
+        {
+          "number": "15055",
+          "relevance": 0.027071520686149597
+        },
+        {
+          "number": "02887",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04583",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04640",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "09549",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09492",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15796",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09493",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08776",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02751",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15657",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09422",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08777",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "05164",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02199",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15052",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00060",
+          "relevance": 0.014492753893136978
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15055",
+      "rrf_score": 0.03200204813108039,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire avec déplacement (d'urgence avec déplacement)",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "15657",
+      "rrf_score": 0.030365296803652967,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "00061",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "15657"
+    },
+    {
+      "rank": 4,
+      "number": "00062",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": "15657"
+    },
+    {
+      "rank": 5,
+      "number": "15061",
+      "rrf_score": 0.030017921146953404,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal avec déplacement",
+      "description": "Examen principal avec déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "08775",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15658",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "02708",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cheville > Fracture > uni, bi, tri-malléolaire > réduction fermée",
+      "description": "Réduction fermée de fracture uni, bi, tri-malléolaire de la cheville (P.C. 13)",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "15192",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen d'urgence avec déplacement d'un patient de moins de 70 ans, en centre hospitalier seulement, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "08800",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 11,
+      "number": "08802",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique ordinaire d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 12,
+      "number": "08803",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 13,
+      "number": "08805",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Consultation psychiatrique majeure d'urgence avec déplacement d'un patient de moins de 70 ans, en établissement sauf en CLSC ou en GMF-U en établissement, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 14,
+      "number": "09092",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications",
+      "description": "Examen préanesthésie d'un patient de moins de 70 ans, réservé au médecin exerçant en anesthésie, en communications",
+      "expanded_from": "15192"
+    },
+    {
+      "rank": 15,
+      "number": "15656",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation mineure d'urgence avec déplacement d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "02887",
+      "rrf_score": 0.015625,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cheville > Fracture > uni, bi, tri-malléolaire > réduction ouverte > malléolaire avec déchirure ligamentaire",
+      "description": "Fracture uni, bi, tri-malléolaire de la cheville, réduction ouverte, malléolaire avec déchirure ligamentaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "15644",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "04583",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Excision au coeur et péricarde, réparation aux ventricules, réparation de sténose de l'infundibulum gauche",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15645",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 16 h à 24 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "04640",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Appareil vasculaire thoracique > Chirurgie congénitale",
+      "description": "Anastomose de la veine pulmonaire gauche à l'oreillette gauche en chirurgie congénitale de l'appareil vasculaire thoracique",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "15646",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "09549",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Fracture rotule",
+      "description": "Réduction ouverte, exérèse totale ou partielle avec réparation tissus mous, pour fracture de la rotule, au genou",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "02680",
+      "rrf_score": 0.0,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Fracture rotule",
+      "description": "Fixation de fragment ostéochondral (fémur, tibia ou rotule), toute voie d'approche, au genou",
+      "expanded_from": "09549"
+    },
+    {
+      "rank": 24,
+      "number": "15653",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "15654",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 16 h à 24 h",
+      "expanded_from": "15653"
+    },
+    {
+      "rank": 26,
+      "number": "15655",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h",
+      "expanded_from": "15653"
+    },
+    {
+      "rank": 27,
+      "number": "09492",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque gauche avec voie d'approche transseptale, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "00006",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "00005",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > ordinaire",
+      "description": "Examen ordinaire d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": "00006"
+    },
+    {
+      "rank": 30,
+      "number": "15796",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 20. Rapports pour les victimes d'actes criminels (IVAC) > B) Rapport médical IVAC-CIVISME",
+      "description": "Rapport médical IVAC-CIVISME pour la rédaction et expédition immédiate à la Commission du formulaire de rapport médical prescrit par la Commission, comportant notamment la date de l'acte criminel ou du sauvetage, le diagnostic principal et les renseignements complémentaires pertinents, la période prévisible de consolidation de la blessure, l'évolution de la blessure et l'évaluation des séquelles à prévoir",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "00057",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "00056",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet",
+      "description": "Examen complet d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": "00057"
+    },
+    {
+      "rank": 33,
+      "number": "09493",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque gauche avec voie d'approche transventriculaire, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "15634",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "08776",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "02751",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cheville > Luxation > réduction fermée",
+      "description": "Luxation de la cheville, réduction fermée",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "08806",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient admis de moins de 70 ans en clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "08807",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": "08806"
+    },
+    {
+      "rank": 39,
+      "number": "08903",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'un patient admis de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": "08806"
+    },
+    {
+      "rank": 40,
+      "number": "15633",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "09422",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Ablation",
+      "description": "Ablation d'arythmie en électrophysiologie avec mapping gauche, supplément",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "00248",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Ablation",
+      "description": "Ablation du nœud A/V, d'une ou de plusieurs voies accessoires, de flutter auriculaire, de réentrée intranodale et d'un ou plusieurs foyers de tachycardie ventriculaire originant du ventricule droit en électrophysiologie, supplément",
+      "expanded_from": "09422"
+    },
+    {
+      "rank": 43,
+      "number": "00291",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Ablation",
+      "description": "Ablation d'arythmie avec cardiopathie congénitale complexe, d'un ou plusieurs foyers de tachycardie ventriculaire cicatricielle ou au niveau des veines pulmonaires en électrophysiologie, incluant le cathétérisme cardiaque gauche et le transseptal, supplément",
+      "expanded_from": "09422"
+    },
+    {
+      "rank": 44,
+      "number": "00323",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Ablation",
+      "description": "Ablation d'arythmie en électrophysiologie avec mapping auriculo-ventriculaire, supplément",
+      "expanded_from": "09422"
+    },
+    {
+      "rank": 45,
+      "number": "09471",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cardiologie et angiologie > Électrophysiologie > Ablation",
+      "description": "Cartographie tridimensionnelle et analyse des tracés lors d'ablation d'arythmies complexes en électrophysiologie, supplément",
+      "expanded_from": "09422"
+    },
+    {
+      "rank": 46,
+      "number": "08808",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > psychiatrique complet",
+      "description": "Examen psychiatrique complet d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "08777",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion, sur rendez-vous, patient inscrit ou non inscrit, sans égard à l'âge",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "00098",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet majeur",
+      "description": "Examen complet majeur d'urgence avec déplacement d'un patient inscrit de moins de 70 ans en clinique externe",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "00097",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Examen (patients de moins de 70 ans) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de moins de 70 ans) > complet majeur",
+      "description": "Examen complet majeur d'un patient inscrit de moins de 70 ans en clinique externe, sans déplacement",
+      "expanded_from": "00098"
+    },
+    {
+      "rank": 50,
+      "number": "05164",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Résection intestinale avec anastomose > hémicolectomie gauche",
+      "description": "Résection intestinale avec anastomose pour hémicolectomie gauche, intestin (à l'exception du rectum)",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15847",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 7 h à 16 h en cabinet, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "15849",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 0 h à 7 h en cabinet, en communications",
+      "expanded_from": "15847"
+    },
+    {
+      "rank": 53,
+      "number": "02199",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Cheville > Reconstruction - réparation > réparation ligamentaire (immédiate)",
+      "description": "Réparation ligamentaire immédiate de la cheville",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15635",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "15052",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire sans déplacement",
+      "description": "Examen ordinaire sans déplacement d'un patient inscrit de moins de 70 ans au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15848",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Communications > Suppléments d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement",
+      "description": "Supplément d'honoraires pour déplacement d'urgence à domicile, en cabinet, en CLSC ou en GMF-U en établissement, période de 16 h à 24 h en cabinet, en communications",
+      "expanded_from": null
+    },
+    {
+      "rank": 57,
+      "number": "00060",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Communications > Consultation (patients de moins de 70 ans)",
+      "description": "Consultation ordinaire d'un patient de moins de 70 ans, en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré, en communications",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 34,
+    "panel_size": 0,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 0.8618449937785044,
+  "db_ms": 21.883440000237897
+}

@@ -1,0 +1,150 @@
+{
+  "patient_id": "CHSLD-2026-00053",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 13088,
+      "output_tokens": 1024,
+      "latency_ms": 9334.934816986788,
+      "started_at": "2026-10-08T17:07:45.221139Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 13088,
+    "output_tokens": 1024,
+    "llm_latency_ms": 9334.934816986788,
+    "wall_ms": 9344.19494800386
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "01327",
+    "07413",
+    "15659",
+    "07007",
+    "01320",
+    "01323",
+    "01322",
+    "01325",
+    "15623",
+    "15634",
+    "15625",
+    "15660",
+    "15633",
+    "15635",
+    "15661",
+    "09237",
+    "07411",
+    "07410",
+    "15063",
+    "15624",
+    "08995",
+    "08993",
+    "15057",
+    "08997",
+    "15616",
+    "00953",
+    "15617",
+    "09234",
+    "15621",
+    "00638",
+    "00783",
+    "09231",
+    "05196",
+    "08968",
+    "08966",
+    "08967",
+    "15626",
+    "01326",
+    "02434",
+    "02041",
+    "02295",
+    "02426",
+    "15667",
+    "20025",
+    "07434",
+    "00640",
+    "00633",
+    "00641",
+    "00642",
+    "09406",
+    "15619",
+    "01370",
+    "01371",
+    "01372",
+    "15627",
+    "15628",
+    "15632",
+    "09245",
+    "08998",
+    "08999",
+    "15629",
+    "15622",
+    "15889"
+  ],
+  "prompt_chars": 49494,
+  "raw_code_count": 4,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "09245",
+        "description": "Examen d'urgence avec déplacement pour un patient de 70 ans ou plus, dans un centre d'hébergement et de soins de longue durée",
+        "confidence": "high",
+        "explanation": "Consultation d'urgence avec déplacement pour un patient de 89 ans en CHSLD, correspondant à la description du code. Le médecin s'est déplacé immédiatement après l'appel.",
+        "supporting_quote": "Appelé par l'inf. à 21h10 (j'étais à la maison) : chute avec plaie au front, patient sous apixaban. Déplacement immédiat, arrivé à 21h40.",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour valider l'admissibilité du code 09245 (alternative : 15616 ou 15617 si non inscrit)."
+        ],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15616",
+        "description": "Visite de suivi courant dans un CHSLD",
+        "confidence": "medium",
+        "explanation": "Alternative si le patient n'est pas inscrit auprès du médecin, mais la nature urgente de la consultation favorise 09245.",
+        "supporting_quote": "Consultation en urgence au CHSLD pour chute avec plaie frontale chez un patient de 89 ans sous apixaban.",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour écarter ce code au profit de 09245."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15617",
+        "description": "Visite de suivi exigeant un examen dans un CHSLD",
+        "confidence": "medium",
+        "explanation": "Alternative si le patient n'est pas inscrit et que la visite nécessite un examen approfondi, mais l'urgence et le déplacement penchent pour 09245.",
+        "supporting_quote": "Évaluation clinique, nettoyage et rapprochement de la plaie avec bandelettes adhésives. Surveillance neurologique renforcée et ajustement temporaire de l'anticoagulation.",
+        "needs_confirmation": [
+          "Confirmer si le patient est inscrit auprès du médecin pour écarter ce code au profit de 09245."
+        ],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15624",
+        "description": "Supplément pour déplacement d'urgence période de 16 h à 24 h dans un CHSLD",
+        "confidence": "medium",
+        "explanation": "Le déplacement a eu lieu à 21h40, donc dans la période 16h-24h. Cependant, ce code est un supplément et non une visite en soi, donc il ne remplace pas 09245 mais pourrait s'y ajouter si applicable.",
+        "supporting_quote": "Déplacement immédiat, arrivé à 21h40.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "Le statut d'inscription du patient auprès du médecin n'est pas confirmé, ce qui influence le choix entre 09245 (si inscrit) et 15616/15617 (si non inscrit). Aucun acte de réparation complexe ou de débridement n'a été réalisé, donc les codes 01320, 01322, etc. sont exclus. Le code 15624 pourrait être ajouté comme supplément si le déplacement en urgence est éligible, mais cela dépend des règles de facturation combinée.",
+    "analysis": "Rencontre en urgence au CHSLD pour un patient de 89 ans, inscrit dans la clientèle du médecin (900 patients). Une consultation d'urgence avec déplacement a été réalisée entre 21h40 et une heure non précisée. Une plaie frontale de 2 cm a été nettoyée et rapprochée avec des bandelettes adhésives (Steri-Strip). Aucun autre acte chirurgical ou diagnostic n'est mentionné. Le code de visite doit correspondre à une consultation d'urgence avec déplacement pour un patient de 70 ans ou plus en CHSLD. Le statut d'inscription du patient auprès du médecin n'est pas confirmé, mais la clientèle du médecin est établie à 900 patients. Aucun débridement ou réparation complexe n'a été effectué, donc les codes de réparation de plaie (01320, 01322, etc.) ne s'appliquent pas. Le code 07007 (application d'adhésif pour plaie cornéenne) est exclu car la plaie est frontale, pas cornéenne."
+  }
+}

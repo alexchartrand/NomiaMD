@@ -1,0 +1,101 @@
+{
+  "patient_id": "HOP-2026-00734",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1930,
+      "output_tokens": 603,
+      "latency_ms": 3736.796504002996,
+      "started_at": "2026-10-08T15:44:24.199021Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1930,
+    "output_tokens": 603,
+    "llm_latency_ms": 3736.796504002996,
+    "wall_ms": 3737.060379004106
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Visite de transfert et rencontre familiale pour un patient de 79 ans admis pour AVC ischémique sylvien gauche. Examen clinique, ajustement du traitement (apixaban, atorvastatine), évaluation du pronostic et planification de la réadaptation intensive. Discussion du niveau d'intervention médicale avec la famille.",
+    "encounter_setting": {
+      "location_detail": "Hôpital régional du Haut-Fleuve — Unité de médecine 4e Nord (courte durée)",
+      "date": "2026-10-05",
+      "time_start": "08:30",
+      "time_end": "15:30",
+      "duration_minutes": 450.0,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Prise en charge en relève comme médecin traitant de l'unité de médecine (remplacement du Dr Pelletier).",
+      "systems_or_body_regions_involved": [
+        "neurologique",
+        "cardiovasculaire",
+        "digestif"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": true,
+      "existing_treatment_reviewed_or_adjusted": true,
+      "diagnosis_or_impression_stated": "AVC ischémique sylvien gauche (non thrombolysé), hémiparésie droite 3/5, aphasie d'expression, dysphagie, fibrillation auriculaire nouvelle à la télémétrie.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "neurologique",
+        "cardiovasculaire"
+      ],
+      "notable_findings": "Éveillé, aphasie d'expression, compréhension partielle, force MSD 3/5, MID 3+/5, TA 138/80, FC 74 irrégulière. Pas de signe d'aspiration."
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "La durée totale de l'encounter (450 minutes) est une estimation basée sur les deux plages horaires mentionnées (08h30-15h30). La durée_explicitly_stated est donc false."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-10-05",
+      "actual": "2026-10-05"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "08:30",
+      "actual": "08:30"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 1,
+    "systems": 3,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

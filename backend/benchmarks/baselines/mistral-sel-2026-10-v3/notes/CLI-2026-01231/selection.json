@@ -1,0 +1,122 @@
+{
+  "patient_id": "CLI-2026-01231",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 8948,
+      "output_tokens": 1125,
+      "latency_ms": 8156.162084007519,
+      "started_at": "2026-10-08T17:06:39.669137Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 8948,
+    "output_tokens": 1125,
+    "llm_latency_ms": 8156.162084007519,
+    "wall_ms": 8165.39330399246
+  },
+  "error": null,
+  "candidates_run": "mistral-2026-10-v2",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15823",
+    "08776",
+    "15811",
+    "15821",
+    "15819",
+    "15627",
+    "15775",
+    "15807",
+    "15767",
+    "15805",
+    "09353",
+    "06952",
+    "08775",
+    "15789",
+    "09352",
+    "06953",
+    "06192",
+    "06193",
+    "06194",
+    "06195",
+    "06951",
+    "15790",
+    "00991",
+    "00990",
+    "08848",
+    "08511",
+    "08777",
+    "00753",
+    "15809",
+    "00979",
+    "08819",
+    "08913",
+    "00953",
+    "98010",
+    "15617",
+    "06989",
+    "06990",
+    "15626",
+    "09351",
+    "08553",
+    "08861"
+  ],
+  "prompt_chars": 35680,
+  "raw_code_count": 4,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15823",
+        "description": "Visite de suivi d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "high",
+        "explanation": "La patiente est vulnérable, inscrite, a moins de 80 ans, et la visite est un suivi sur rendez-vous en clinique. La clientèle du médecin est de 320 patients (< 500).",
+        "supporting_quote": "Suivi de cessation tabagique après 6 semaines de succès, avec découverte d'une MPOC légère (GOLD 1) confirmée par spirométrie. Renforcement positif, ajustement du traitement de remplacement nicotinique, counseling nutritionnel et prescription de bronchodilatateur de secours.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      },
+      {
+        "code": "15819",
+        "description": "Visite périodique d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "medium",
+        "explanation": "La visite pourrait être interprétée comme périodique, mais le motif principal est un suivi spécifique (cessation tabagique et MPOC) plutôt qu'une visite périodique générale.",
+        "supporting_quote": "Suivi de cessation tabagique après 6 semaines de succès, avec découverte d'une MPOC légère (GOLD 1) confirmée par spirométrie.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15821",
+        "description": "Visite de prise en charge d'un patient vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "medium",
+        "explanation": "La visite pourrait être considérée comme une prise en charge initiale pour la MPOC, mais le contexte est clairement un suivi (cessation tabagique déjà amorcée).",
+        "supporting_quote": "Suivi de démarche de cessation tabagique amorcée il y a 2 mois, patiente inscrite suivie de longue date.",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      },
+      {
+        "code": "15775",
+        "description": "Visite ponctuelle complexe d'un patient vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+        "confidence": "low",
+        "explanation": "La patiente est inscrite et la visite est sur rendez-vous, ce qui exclut ce code. De plus, la visite n'est pas décrite comme ponctuelle ou complexe au sens administratif.",
+        "supporting_quote": "Rendez-vous: avec rendez-vous",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": false
+      }
+    ],
+    "notes": "La durée de la consultation n'est pas explicitement mentionnée, mais cela n'affecte pas le choix du code de visite. Aucun acte diagnostique ou thérapeutique (ex. spirométrie) n'est facturable séparément car la spirométrie a été réalisée 3 semaines avant cette visite (hors de la journée de l'encounter).",
+    "analysis": "L'encounter est une visite de suivi en clinique médicale (Clinique Les Tilleuls) pour une patiente de 55 ans, inscrite et désignée vulnérable au sens de la RAMQ, avec une clientèle de 320 patients. La consultation porte sur un suivi de cessation tabagique réussie après 6 semaines, incluant une évaluation pulmonaire avec découverte d'une MPOC légère (GOLD 1) confirmée par spirométrie. Les services réalisés incluent : une visite de suivi, un examen physique (pulmonaire et cardiovasculaire), un counseling nutritionnel, un ajustement du traitement de remplacement nicotinique, et une prescription de bronchodilatateur de secours. Aucune procédure invasive, test supplémentaire ou supplément (déplacement, heure, etc.) n'est mentionné. Le code 15823 (visite de suivi pour patient vulnérable inscrit de moins de 80 ans) est le plus adapté car la patiente est vulnérable, inscrite, et la visite est un suivi. Les codes de grossesse (15805, 15807, 15809, 15811) sont exclus car la patiente n'est pas enceinte. Les codes musculo-squelettiques (08775, 08776, 08777) ou psychiatriques (08819, 08848, 08913, 98010) ne s'appliquent pas. Les codes hospitaliers (15617, 15626, 15627) ou de réadaptation sont exclus car la visite a lieu en clinique. Aucun acte diagnostique ou thérapeutique (ex. 00753, 09351, 09352, 09353) n'est réalisé."
+  }
+}

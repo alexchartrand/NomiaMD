@@ -8,6 +8,7 @@ from datetime import date
 import pytest
 from sqlalchemy import func, select
 
+from app.care_setting import CareSetting
 from app.intake import (
     Channel,
     DedupOutcome,
@@ -143,14 +144,30 @@ def test_batch_label_propagates_to_every_piece():
     assert {note.batch_label for note in notes} == {"Urgence 2026-10-01 nuit"}
 
 
+def test_care_setting_propagates_to_every_piece():
+    paste = "\n---\n".join(_note(None, f"Note {i}.") for i in range(3))
+
+    notes = ManualConnector().from_paste(paste, source_system="manual", care_setting=CareSetting.URGENCE)
+
+    assert {note.meta.care_setting for note in notes} == {CareSetting.URGENCE}
+
+
+def test_a_paste_without_a_care_setting_leaves_it_unknown():
+    [note] = ManualConnector().from_paste(_note(None, "Toux."), source_system="manual")
+    assert note.meta.care_setting is None
+
+
 def test_upload_reads_a_text_file_like_a_paste():
     content = ("﻿" + _note("DESR81021001", "Toux.")).encode("utf-8")
 
-    [note] = ManualConnector().from_upload("notes.MD", content, source_system="manual", batch_label="Lot")
+    [note] = ManualConnector().from_upload(
+        "notes.MD", content, source_system="manual", batch_label="Lot", care_setting=CareSetting.CABINET
+    )
 
     assert note.channel == Channel.UPLOAD
     assert note.nam == "DESR81021001"
     assert note.batch_label == "Lot"
+    assert note.meta.care_setting is CareSetting.CABINET
     assert not note.text.startswith("﻿")
 
 

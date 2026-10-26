@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 # Loads the repo-root .env — must run before the app imports below read their settings.
 import app.config  # noqa: E402,F401
 
-from app.llm import get_embedding_model
+from app.llm import get_embedding_client
 from app.lancedb import CodeRepository, LanceDB
 
 # (query, expected top-ranked code) — a handful of unambiguous cases from the real manual.
@@ -45,11 +45,11 @@ async def main() -> None:
         version = await db.code_tables.current_version()
         print(f"current codes table: {version.table_name} ({version.code_count} codes)")
         codes = CodeRepository(db.code_tables)
-        embed_model = get_embedding_model()
+        embedding_client = get_embedding_client()
 
         all_passed = True
         for query, expected_top_code in KNOWN_QUERIES:
-            vector = await embed_model.aget_query_embedding(query)
+            vector = await embedding_client.embed_query(query)
             candidates = [row for row, _score in await codes.hybrid_search(query, vector, k=10)]
             numbers = [c.number for c in candidates]
 

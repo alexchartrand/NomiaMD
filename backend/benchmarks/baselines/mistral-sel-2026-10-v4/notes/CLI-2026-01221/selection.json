@@ -1,0 +1,90 @@
+{
+  "patient_id": "CLI-2026-01221",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-medium-latest",
+      "purpose": "billing_codes",
+      "input_tokens": 7975,
+      "output_tokens": 607,
+      "latency_ms": 4952.457764011342,
+      "started_at": "2026-10-09T17:39:19.276689Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 7975,
+    "output_tokens": 607,
+    "llm_latency_ms": 4952.457764011342,
+    "wall_ms": 4956.789040006697
+  },
+  "error": null,
+  "candidates_run": "current-table-sel",
+  "summary_run": "mistral-2026-10-v2",
+  "model": "mistral-medium-latest",
+  "offered": [
+    "15803",
+    "15811",
+    "08776",
+    "15801",
+    "15765",
+    "15773",
+    "08819",
+    "15627",
+    "15805",
+    "15807",
+    "15790",
+    "15789",
+    "15052",
+    "08775",
+    "15813",
+    "15668",
+    "08777",
+    "08848",
+    "08942",
+    "00020",
+    "00023",
+    "00026",
+    "15055",
+    "98010",
+    "15144",
+    "15626",
+    "15058",
+    "15145",
+    "15061",
+    "15880",
+    "15882",
+    "15881",
+    "15640",
+    "15638",
+    "15641",
+    "15642",
+    "15643",
+    "15639",
+    "08579"
+  ],
+  "prompt_chars": 32083,
+  "raw_code_count": 1,
+  "dropped_not_offered": [],
+  "dropped_malformed": 0,
+  "result": {
+    "codes": [
+      {
+        "code": "15803",
+        "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+        "confidence": "high",
+        "explanation": "Visite de suivi planifiée avec rendez-vous pour une patiente de 61 ans, inscrite, non vulnérable, dans une clinique avec clientèle de 320 patients (<500). Aucun autre service ou supplément n'est documenté.",
+        "supporting_quote": "Suivi annuel pour dyslipidémie chez une patiente de 61 ans sous rosuvastatine. [...] Rendez-vous: avec rendez-vous",
+        "needs_confirmation": [],
+        "fees": [],
+        "retained": true
+      }
+    ],
+    "notes": null,
+    "analysis": "Rencontre en clinique médicale (Clinique Les Tilleuls) pour un suivi annuel planifié avec rendez-vous. Service unique : une visite de suivi pour dyslipidémie chez une patiente de 61 ans, inscrite, non vulnérable, avec examen physique complet et conseils préventifs. Aucune procédure, test supplémentaire, supplément ou certificat n'est documenté. Le code 15803 (visite de suivi pour patient non vulnérable inscrit <80 ans, clientèle <500) correspond parfaitement au contexte. Les codes de grossesse (15805, 15807, 15811, 15144, 15145) sont exclus car la patiente n'est pas enceinte. Les codes de visite ponctuelle (15765, 15773) ou de prise en charge initiale (15801) ne s'appliquent pas car il s'agit d'un suivi. Les codes musculo-squelettiques (08775, 08776, 08777) ou psychiatriques (08819, 08848, 15626, 15638, 15639, 15640, 15641, 15642, 15643, 08942) sont sans lien avec le motif. Les codes d'urgence (15052, 15055, 15058, 15061) ou hospitaliers (15627, 15626, 15638, 15639, 15640, 15641, 15642, 15643) ne correspondent pas au lieu (clinique)."
+  }
+}

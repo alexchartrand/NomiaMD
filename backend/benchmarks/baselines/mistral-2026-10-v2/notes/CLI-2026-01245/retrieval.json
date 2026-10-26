@@ -1,0 +1,799 @@
+{
+  "patient_id": "CLI-2026-01245",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 765,
+      "output_tokens": null,
+      "latency_ms": 252.7277339977445,
+      "started_at": "2026-10-08T15:44:27.612403Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 765,
+    "output_tokens": 0,
+    "llm_latency_ms": 252.7277339977445,
+    "wall_ms": 301.7059429985238
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite. avec rendez-vous. Clinique médicale Les Tilleuls. Un seul système",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15803",
+          "relevance": 0.03177805617451668
+        },
+        {
+          "number": "15765",
+          "relevance": 0.03151364624500275
+        },
+        {
+          "number": "15801",
+          "relevance": 0.03131881728768349
+        },
+        {
+          "number": "15773",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "15789",
+          "relevance": 0.029957523569464684
+        },
+        {
+          "number": "15811",
+          "relevance": 0.029631255194544792
+        },
+        {
+          "number": "08776",
+          "relevance": 0.029386529698967934
+        },
+        {
+          "number": "15790",
+          "relevance": 0.028958333656191826
+        },
+        {
+          "number": "08848",
+          "relevance": 0.028404513373970985
+        },
+        {
+          "number": "08775",
+          "relevance": 0.02830941043794155
+        },
+        {
+          "number": "15813",
+          "relevance": 0.02765064872801304
+        },
+        {
+          "number": "08777",
+          "relevance": 0.02678571455180645
+        },
+        {
+          "number": "15809",
+          "relevance": 0.025487013161182404
+        },
+        {
+          "number": "08913",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15805",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "98010",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15617",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08819",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15831",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "15807",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Insertion d'un dispositif intra-utérin (DIU) au lévonorgestrel (Kyleena) pour contraception chez une patiente de 27 ans. Procédure réalisée sans complication après évaluation pré-procédure incluant examen gynécologique et counseling. Conseils post-procédure prodigués.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-10-06\nHeure de début: 11:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Insertion de DIU au lévonorgestrel (Kyleena) pour contraception\nSystèmes/régions concernés: gynécologique; utérus; vulve; vagin\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: oui\nTraitement existant révisé: non\nDiagnostic/impression: Insertion réussie de DIU au lévonorgestrel (Kyleena) sans complication\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: oui\nRégions examinées: gynécologique; vulve; vagin; col utérin; utérus; annexes\nConstatations: Vulve/vagin normaux, col sain, pas d'écoulement. Utérus antéversé, taille normale, mobile, annexes libres.\nActe réalisé 1 - Description: Insertion d'un dispositif intra-utérin (DIU) au lévonorgestrel (Kyleena) avec hystérométrie, utilisation de spéculum, désinfection du col, pince de Pozzi, et coupe des fils à 3 cm\nActe réalisé 1 - Acte (générique): insertion de dispositif intra-utérin\nActe réalisé 1 - Site: utérus\nActe réalisé 1 - Technique/approche: spéculum, désinfection du col, pince de Pozzi, hystérométrie 7 cm, fils coupés à 3 cm\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de la procédure non explicitement mentionnée dans le texte.; Heure de fin de la consultation non indiquée.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "00205",
+          "relevance": 0.03109932504594326
+        },
+        {
+          "number": "06909",
+          "relevance": 0.02955133654177189
+        },
+        {
+          "number": "06457",
+          "relevance": 0.02633402682840824
+        },
+        {
+          "number": "06982",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06908",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06980",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06941",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06983",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00638",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06148",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "20025",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "06981",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06938",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08527",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06939",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06266",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06265",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00953",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06464",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06431",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "insertion de dispositif intra-utérin",
+      "sections": null,
+      "hits": [
+        {
+          "number": "06464",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "06916",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "06928",
+          "relevance": 0.03077651560306549
+        },
+        {
+          "number": "08527",
+          "relevance": 0.03015873022377491
+        },
+        {
+          "number": "06908",
+          "relevance": 0.02919863536953926
+        },
+        {
+          "number": "06817",
+          "relevance": 0.029083246365189552
+        },
+        {
+          "number": "06909",
+          "relevance": 0.0279720276594162
+        },
+        {
+          "number": "06930",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00205",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08528",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06452",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "06267",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06049",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "04513",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "06980",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00492",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "00777",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "06072",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "03022",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "00709",
+          "relevance": 0.013698630034923553
+        }
+      ]
+    },
+    {
+      "source": "procedure_detail",
+      "text": "Insertion d'un dispositif intra-utérin (DIU) au lévonorgestrel (Kyleena) avec hystérométrie, utilisation de spéculum, désinfection du col, pince de Pozzi, et coupe des fils à 3 cm",
+      "sections": null,
+      "hits": [
+        {
+          "number": "08527",
+          "relevance": 0.0317540317773819
+        },
+        {
+          "number": "06908",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "06909",
+          "relevance": 0.028717948123812675
+        },
+        {
+          "number": "06143",
+          "relevance": 0.028438886627554893
+        },
+        {
+          "number": "06142",
+          "relevance": 0.02819138392806053
+        },
+        {
+          "number": "06268",
+          "relevance": 0.02632034569978714
+        },
+        {
+          "number": "06145",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "02303",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "06148",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "06266",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00172",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "06267",
+          "relevance": 0.015625
+        },
+        {
+          "number": "06464",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "06154",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "06941",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "06265",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06408",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "06930",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00709",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "06817",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "06909",
+      "rrf_score": 0.04767399003253049,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Avortement thérapeutique > par curetage (incluant le bloc paracervical, la dilatation du col, l'insertion de tiges laminaires)",
+      "description": "Avortement thérapeutique par curetage (incluant le bloc paracervical, la dilatation du col, l'insertion de tiges laminaires), utérus et col utérin",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "06908",
+      "rrf_score": 0.047643442622950824,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Avortement thérapeutique > par extraction menstruelle (incluant le bloc paracervical, la dilatation du col, l'insertion de tiges laminaires)",
+      "description": "Avortement thérapeutique par extraction menstruelle (incluant le bloc paracervical, la dilatation du col, l'insertion de tiges laminaires), utérus et col utérin",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "08527",
+      "rrf_score": 0.046238312676668836,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Curiethérapie > Implant endocavitaire de matériel guide temporaire",
+      "description": "Implant endocavitaire de matériel guide temporaire au col utérin en curiethérapie (maximum 2 applications/patient pour la curiethérapie à bas débit)",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "06464",
+      "rrf_score": 0.043376068376068375,
+      "header_path": "P — Gynécologie > Divers",
+      "description": "Injection intrautérine ou intrafoetale sous guidage échographique à partir de vingt (20) semaines de grossesse en prévision d'un avortement thérapeutique, une ou plusieurs, incluant l'amniocentèse, le cas échéant, et l'examen",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "00205",
+      "rrf_score": 0.03137254901960784,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Insertion de stérilet incluant l'examen, la visite ou la consultation effectué antérieurement ou concurremment à cet égard en gynécologie (P.A.D.T. 1.4)",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "06148",
+      "rrf_score": 0.02919863597612958,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Excision conventionnelle ou au laser",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, hystérectomie subtotale avec ou sans salpingo-ovariectomie unilatérale ou bilatérale, avec ou sans curetage",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "06980",
+      "rrf_score": 0.0288981288981289,
+      "header_path": "P — Gynécologie > Divers > Implantation sous-cutanée d'un implant contraceptif",
+      "description": "Implantation sous-cutanée d'un seul implant contraceptif",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "06981",
+      "rrf_score": 0.0,
+      "header_path": "P — Gynécologie > Divers > Implantation sous-cutanée d'un implant contraceptif",
+      "description": "Implantation sous-cutanée de plus d'un implant contraceptif à la même séance",
+      "expanded_from": "06980"
+    },
+    {
+      "rank": 9,
+      "number": "06941",
+      "rrf_score": 0.028665028665028666,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Avortement thérapeutique à partir de 14 semaines : Un temps : (incluant le bloc paracervical, la dilatation du col, l'insertion de tiges laminaires) > aspiration, curetage et évacuation du foetus",
+      "description": "Avortement thérapeutique à partir de 14 semaines : aspiration, curetage et évacuation du foetus (incluant le bloc paracervical, la dilatation du col, l'insertion de tiges laminaires), utérus et col utérin",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "06267",
+      "rrf_score": 0.028169014084507043,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Trachélectomie",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, trachélectomie abdominale",
+      "expanded_from": null
+    },
+    {
+      "rank": 11,
+      "number": "06817",
+      "rrf_score": 0.02804284323271665,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Manipulation > Réduction manuelle inversion utérine",
+      "description": "Réduction manuelle inversion utérine, manipulation, utérus et col utérin",
+      "expanded_from": null
+    },
+    {
+      "rank": 12,
+      "number": "06930",
+      "rrf_score": 0.027912386121341344,
+      "header_path": "Q — Obstétrique",
+      "description": "Transfusion foetale intra-utérine",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "06266",
+      "rrf_score": 0.02782608695652174,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Excision conventionnelle ou au laser",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, hystérectomie vaginale totale avec ou sans salpingo-ovariectomie unilatérale ou bilatérale, avec ou sans curetage",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "06265",
+      "rrf_score": 0.02649122807017544,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Excision conventionnelle ou au laser",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, hystérectomie abdominale totale avec ou sans salpingo-ovariectomie unilatérale ou bilatérale, avec ou sans curetage",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "00709",
+      "rrf_score": 0.025478740668614087,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Urologie > Cystoscopies (incluant l'urétroscopie et la dilatation urétrale et l'injection de colorant)",
+      "description": "Installation par cystoscopie d'un cathéter urétéral double J, incluant la dilatation urétérale, le cas échéant, en urologie",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "15803",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "15765",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "06916",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "Q — Obstétrique",
+      "description": "Installation, contrôle et surveillance de moniteurs foetaux internes ou de tocomètre, ou les deux, incluant l'insertion de cathéter intra-amniotique, l'enregistrement graphique et l'interprétation (une fois seulement pendant le travail)",
+      "expanded_from": null
+    },
+    {
+      "rank": 19,
+      "number": "15801",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "06457",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Réparation > Réparation de rupture utérine avec ou sans ligature des trompes",
+      "description": "Réparation de rupture utérine avec ou sans ligature des trompes, réparation, utérus et col utérin",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "06928",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "Q — Obstétrique",
+      "description": "Ponction intra-utérine d'organes foetaux et du cordon ombilical, une ou plusieurs, incluant amniocentèse, examen et visite",
+      "expanded_from": null
+    },
+    {
+      "rank": 22,
+      "number": "15773",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de moins de 80 ans inscrit ou non inscrit) > Patient non vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient non vulnérable de moins de 80 ans, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "06982",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "P — Gynécologie > Divers > Exérèse d'un implant contraceptif sous-cutané",
+      "description": "Exérèse d'un implant contraceptif sous-cutané",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "06143",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Excision conventionnelle ou au laser > Myomectomie",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, myomectomie, plus de cinq (5) cm ou plus de cinq (5) myomes",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "15789",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "06142",
+      "rrf_score": 0.015625,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Excision conventionnelle ou au laser > Myomectomie",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, myomectomie, cinq (5) cm ou moins et cinq (5) myomes ou moins",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "15811",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 28,
+      "number": "06268",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Trachélectomie",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, trachélectomie vaginale",
+      "expanded_from": null
+    },
+    {
+      "rank": 29,
+      "number": "08776",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 30,
+      "number": "06145",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Excision conventionnelle ou au laser",
+      "description": "Excision conventionnelle ou au laser de l'utérus et du col utérin, dilatation et curetage biopsique avec ou sans polypectomie ou cautérisation",
+      "expanded_from": null
+    },
+    {
+      "rank": 31,
+      "number": "15790",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 32,
+      "number": "06983",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "P — Gynécologie > Divers > Exérèse d'un implant contraceptif sous-cutané",
+      "description": "Exérèse de plus d'un implant contraceptif sous-cutané à la même séance",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "02303",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "G — Appareil musculo-squelettique > Divers",
+      "description": "Insertion de pince à traction squelettique crânienne",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "08848",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi conjoint en santé mentale",
+      "description": "Visite de suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "00638",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "00783",
+      "rrf_score": 0.0,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Interprétation en rhinomanométrie",
+      "expanded_from": "00638"
+    },
+    {
+      "rank": 37,
+      "number": "08775",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 38,
+      "number": "08528",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Curiethérapie > Implant endocavitaire de matériel guide temporaire",
+      "description": "Implant endocavitaire de matériel guide temporaire au corps utérin en curiethérapie",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "15813",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi pédiatrique > Visite périodique pédiatrique",
+      "description": "Visite périodique pédiatrique d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "20025",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Gynécologie",
+      "description": "Extraction de stérilet, acte compliqué en gynécologie (P.G. 2.4.7.7 A) (P.A.D.T. 1.4)",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "06452",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "P — Gynécologie > Utérus et col utérin > Réparation > Hystéropexie ou réparation inversion utérine voie abdominale",
+      "description": "Hystéropexie ou réparation inversion utérine voie abdominale, réparation, utérus et col utérin",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "00172",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Biopsie avec ou sans guidage échographique (unique ou multiple)",
+      "description": "Biopsie avec ou sans guidage échographique (unique ou multiple) du col utérin ou curetage endocervical ou les deux",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "08777",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "15809",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse au-delà du premier trimestre",
+      "description": "Visite de prise en charge de grossesse au-delà du premier trimestre, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "08913",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite de suivi psychiatrique exigeant un examen dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 46,
+      "number": "15805",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, sans référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "98010",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Rémunération de certaines évaluations médicales effectuées par les médecins omnipraticiens",
+      "description": "Évaluation psychiatrique – Système de justice pénale pour les adolescents",
+      "expanded_from": null
+    },
+    {
+      "rank": 48,
+      "number": "15617",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 49,
+      "number": "08819",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "15831",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Visite de prise en charge de grossesse au-delà du premier trimestre > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, au-delà du premier trimestre, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15807",
+      "rrf_score": 0.012658227848101266,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi",
+      "description": "Visite de prise en charge de grossesse durant le premier trimestre, avec référence à un autre médecin durant le premier trimestre pour assurer le suivi, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 27,
+    "panel_size": 420,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 254.20232200121973,
+  "db_ms": 37.772469004266895
+}

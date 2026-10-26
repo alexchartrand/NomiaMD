@@ -1,0 +1,115 @@
+{
+  "patient_id": "URG-2026-04621",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1827,
+      "output_tokens": 668,
+      "latency_ms": 3924.810873999377,
+      "started_at": "2026-10-08T14:19:45.466558Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1827,
+    "output_tokens": 668,
+    "llm_latency_ms": 3924.810873999377,
+    "wall_ms": 3925.1460770028643
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Patient de 73 ans non inscrit à l'urgence pour chute dans l'escalier avec plaie au cuir chevelu. Réparation de lacération occipitale de 4 cm par 6 agrafes. TCC léger sans lésion intracrânienne confirmé par TDM. Congé avec surveillance et instructions de suivi.",
+    "encounter_setting": {
+      "location_detail": "Hôpital régional du Haut-Fleuve, urgence",
+      "date": "2026-09-26",
+      "time_start": "22:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "urgence"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Chute dans l'escalier avec plaie au cuir chevelu et céphalée légère.",
+      "systems_or_body_regions_involved": [
+        "tête",
+        "cou",
+        "thorax",
+        "abdomen",
+        "neurologique"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "TCC léger sans lésion intracrânienne; lacération simple du cuir chevelu de 4 cm.",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": false
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "tête",
+        "cou",
+        "thorax",
+        "abdomen",
+        "neurologique"
+      ],
+      "notable_findings": "Lacération occipitale linéaire de 4 cm, bords nets, pas d'embarrure palpable; TA 156/88, FC 82 rég., SatO2 97 %, glycémie 6,4, GCS 15, pupilles égales réactives, nerfs crâniens N, force/sensibilité N, Romberg négatif, marche normale."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Réparation de lacération occipitale de 4 cm par irrigation et fermeture en un plan avec 6 agrafes",
+        "body_site": "occiput",
+        "technique_or_approach_mentioned": "irrigation, fermeture en un plan par agrafes",
+        "anesthesia_used": "local",
+        "diagnostic_or_therapeutic": "thérapeutique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'encounter non explicitement mentionnée dans le transcript.",
+      "Heure de fin de l'encounter non précisée."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-26",
+      "actual": "2026-09-26"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "22:15",
+      "actual": "22:15"
+    }
+  ],
+  "stats": {
+    "procedures": 1,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 5,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

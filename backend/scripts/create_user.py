@@ -1,5 +1,6 @@
-"""Manually provision a login — there is no signup page/API, accounts are created by an
-operator running this script. From backend/, with the venv active:
+"""Provision a login from the command line — there is no signup page. Accounts are normally
+created from the admin console (/app/admin, app/admin/); this script bootstraps the first
+admin, or works when the app isn't running. From backend/, with the venv active:
 
     python scripts/create_user.py --email doc@example.com --full-name "Dr. X" --role physician \\
         [--physician-type med_fam] [--panel-size 850] [--remuneration-type mixte]
@@ -19,13 +20,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 # Loads the repo-root .env — must run before the app imports below read their settings.
 import app.config  # noqa: E402,F401
 
-from sqlalchemy.exc import IntegrityError  # noqa: E402
-
 from app.auth.factory import build_profile_service  # noqa: E402
 from app.auth.profile import PracticeFacts  # noqa: E402
 from app.auth.security import PasswordHasher  # noqa: E402
 from app.bootstrap import postgres_database  # noqa: E402
 from app.postgresdb import (  # noqa: E402
+    DuplicateEmailError,
     DuplicatePracticeNumberError,
     PhysicianType,
     RemunerationType,
@@ -74,7 +74,7 @@ async def main() -> None:
             except DuplicatePracticeNumberError:
                 print(f"Practice number {args.practice_number!r} is already on another account.", file=sys.stderr)
                 raise SystemExit(1)
-            except IntegrityError:
+            except DuplicateEmailError:
                 print(f"A user with email {args.email!r} already exists.", file=sys.stderr)
                 raise SystemExit(1)
 

@@ -1,6 +1,6 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Isabelle Roy, MD, médecine familiale
-**Patient :** Fortin, Ginette — 58 ans (F)
+**Patient :** Fortin, Ginette — 58 ans (F), inscrite, vulnérable
 **NAM :** FORG68571301
 **Dossier :** #CLI-2026-01187
 **Date/heure :** 13 juillet 2026, 10h00

@@ -1,0 +1,118 @@
+{
+  "patient_id": "CLI-2026-01203",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 2061,
+      "output_tokens": 776,
+      "latency_ms": 5083.693419001065,
+      "started_at": "2026-10-08T14:18:40.732936Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 2061,
+    "output_tokens": 776,
+    "llm_latency_ms": 5083.693419001065,
+    "wall_ms": 5084.27274999849
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Consultation en médecine familiale pour fatigue persistante et troubles du sommeil depuis 2 mois chez un patient de 34 ans. Bilan sanguin demandé pour éliminer une cause organique. Impression diagnostique de symptomatologie dépressive légère à modérée dans un contexte de stress professionnel. Plan : suivi en 1 semaine pour résultats, discussion sur l'hygiène du sommeil et gestion du stress, référence en psychothérapie proposée, réévaluation dans 2 semaines.",
+    "encounter_setting": {
+      "location_detail": "Clinique médicale Les Tilleuls",
+      "date": "2026-07-13",
+      "time_start": "15:30",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "avec rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": true,
+      "requester_role": "medecin_omnipraticien",
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": "Symptomatologie dépressive légère à modérée dans un contexte de stress professionnel",
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Fatigue persistante et troubles du sommeil depuis 2 mois, associés à une diminution de concentration et une perte d'intérêt pour les activités habituelles.",
+      "systems_or_body_regions_involved": [
+        "psychiatrique",
+        "général"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": true,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": "Symptomatologie dépressive d'intensité légère à modérée, à corréler avec contexte de stress professionnel. À éliminer : cause organique (dysthyroïdie, anémie).",
+      "recommendations_given_to_patient": true,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": true,
+      "regions_or_systems_examined": [
+        "signes_vitaux",
+        "apparence_générale",
+        "thyroïde",
+        "général"
+      ],
+      "notable_findings": "TA 122/78, FC 70, perte de poids de 2 kg en 2 mois. Apparence générale fatiguée mais coopérative. Thyroïde sans particularité. Reste de l'examen physique sans particularité."
+    },
+    "procedures_performed": [
+      {
+        "procedure_description": "Bilan sanguin demandé (FSC, TSH, glycémie à jeun, ferritine, bilan hépatique, ions)",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Prélèvement sanguin standard",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      },
+      {
+        "procedure_description": "Questionnaire PHQ-9 complété en clinique",
+        "body_site": null,
+        "technique_or_approach_mentioned": "Auto-questionnaire standardisé",
+        "anesthesia_used": "aucun",
+        "diagnostic_or_therapeutic": "diagnostique"
+      }
+    ],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de la consultation non explicitement mentionnée dans le transcript.",
+      "Absence de mention explicite d'un rapport écrit à produire ou requis pour la référence en psychothérapie."
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-07-13",
+      "actual": "2026-07-13"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "15:30",
+      "actual": "15:30"
+    }
+  ],
+  "stats": {
+    "procedures": 2,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": true,
+    "duration_stated": false
+  }
+}

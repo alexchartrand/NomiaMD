@@ -1,0 +1,579 @@
+{
+  "patient_id": "CLI-2026-01225",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 770,
+      "output_tokens": null,
+      "latency_ms": 866.9827869889559,
+      "started_at": "2026-10-08T14:18:59.162773Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 770,
+    "output_tokens": 0,
+    "llm_latency_ms": 866.9827869889559,
+    "wall_ms": 917.4638190015685
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation en médecine familiale pour une deuxième opinion sur une gonalgie chronique droite référée par le médecin traitant. Diagnostic de gonarthrose modérée à sévère avec retentissement fonctionnel. Réalisation d'une infiltration intra-articulaire de corticostéroïde sous asepsie et transmission d'un rapport au médecin traitant.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-04-14\nHeure de début: 10:30\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nDemandeur (identifiant): médecin traitant (actuellement en congé)\nMotif de la référence: deuxième opinion sur une douleur chronique au genou droit avant référence en orthopédie\nRapport écrit requis/produit: oui\nMotif de consultation: Douleur chronique au genou droit évoluant depuis 2 ans, aggravation progressive avec retentissement fonctionnel (limitation à la marche et aux activités).\nSystèmes/régions concernés: musculo-squelettique; genou_droit\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Gonarthrose droite modérée à sévère, compartiment médial prédominant, avec retentissement fonctionnel significatif malgré traitement conservateur optimisé.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: genou_droit; genou_gauche; marche\nConstatations: Légère boiterie antalgique à droite, léger épanchement au genou droit sans chaleur ni érythème, crépitements palpables, amplitude articulaire limitée (flexion à 100°), McMurray équivoque, sensibilité à l'interligne articulaire médial.\nActe réalisé 1 - Description: Infiltration intra-articulaire de corticostéroïde au genou droit sous asepsie\nActe réalisé 1 - Site: genou droit\nActe réalisé 1 - Technique/approche: asepsie\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nAjouts possiblement facturables: communication_specialiste\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le texte.; Heure de fin de la consultation non précisée.",
+      "hits": [
+        {
+          "number": "02724",
+          "relevance": 0.029286926612257957
+        },
+        {
+          "number": "02966",
+          "relevance": 0.02633402682840824
+        },
+        {
+          "number": "00431",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "05142",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01209",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02577",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04582",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "18161",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00639",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15896",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02937",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09547",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02016",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09546",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00906",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02253",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "03127",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09910",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00844",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00175",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Infiltration intra-articulaire de corticostéroïde au genou droit sous asepsie",
+      "hits": [
+        {
+          "number": "02102",
+          "relevance": 0.03154495730996132
+        },
+        {
+          "number": "00431",
+          "relevance": 0.03109932504594326
+        },
+        {
+          "number": "02016",
+          "relevance": 0.03055037371814251
+        },
+        {
+          "number": "00201",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "09540",
+          "relevance": 0.027619047090411186
+        },
+        {
+          "number": "02473",
+          "relevance": 0.026144906878471375
+        },
+        {
+          "number": "09539",
+          "relevance": 0.02500000037252903
+        },
+        {
+          "number": "02724",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02103",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02056",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02937",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "18160",
+          "relevance": 0.015625
+        },
+        {
+          "number": "18161",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02854",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02013",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02577",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09547",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "02966",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "18162",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "05142",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "hits": [
+        {
+          "number": "00157",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15898",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "00748",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "08113",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "04577",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "04568",
+          "relevance": 0.02803921513259411
+        },
+        {
+          "number": "04600",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "04576",
+          "relevance": 0.026856524869799614
+        },
+        {
+          "number": "00552",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04567",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15894",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15622",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04578",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08027",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15652",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08004",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15643",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08214",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08098",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08025",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00431",
+      "rrf_score": 0.03252247488101534,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > bourse séreuse ou articulation ou les deux incluant aspiration préliminaire (maximum trois (3))",
+      "description": "Injection de médicament ou de substance thérapeutique dans une bourse séreuse ou une articulation ou les deux incluant aspiration préliminaire (maximum trois (3))"
+    },
+    {
+      "rank": 2,
+      "number": "02724",
+      "rrf_score": 0.03159203980099502,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroscopie",
+      "description": "Arthroscopie simple du genou avec un ou plusieurs des procédés thérapeutiques suivants : méniscectomie, débridement articulaire, section de l'aileron externe, exérèse de souris ou de corps étranger (P.C. 13)"
+    },
+    {
+      "rank": 3,
+      "number": "02016",
+      "rrf_score": 0.030017921146953404,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrolyse",
+      "description": "Arthrolyse directe du genou, toute voie d'approche"
+    },
+    {
+      "rank": 4,
+      "number": "02966",
+      "rrf_score": 0.02938045560996381,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrodèse",
+      "description": "Arthrodèse post-arthroplastie du genou, incluant l'exérèse du matériel, dans un même temps, le cas échéant"
+    },
+    {
+      "rank": 5,
+      "number": "18161",
+      "rrf_score": 0.028814262023217248,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroplastie de remplacement",
+      "description": "Arthroplastie de remplacement du genou en un seul temps (incluant l'exérèse de prothèse fémorale, tibiale et rotulienne et, le cas échéant, l'ostéotomie fémorale ou tibiale ou la fenêtre)"
+    },
+    {
+      "rank": 6,
+      "number": "02577",
+      "rrf_score": 0.02871794871794872,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroscopie",
+      "description": "Arthroscopie simple du genou, incluant, le cas échéant, la biopsie synoviale, la résection du plica et le lavage (P.C. 13)"
+    },
+    {
+      "rank": 7,
+      "number": "02937",
+      "rrf_score": 0.02857142857142857,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrodèse",
+      "description": "Arthrodèse simple du genou"
+    },
+    {
+      "rank": 8,
+      "number": "05142",
+      "rrf_score": 0.028531243721117136,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Résection intestinale avec anastomose > iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)",
+      "description": "Résection intestinale avec anastomose de l'iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)"
+    },
+    {
+      "rank": 9,
+      "number": "09547",
+      "rrf_score": 0.027242401779095628,
+      "header_path": "G — Appareil musculo-squelettique > Divers",
+      "description": "Injection intra-osseuse de corticoïdes avec ou sans scopie pour un os majeur"
+    },
+    {
+      "rank": 10,
+      "number": "02102",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (technique intra-articulaire)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur (technique intra-articulaire), toute voie d'approche, au genou"
+    },
+    {
+      "rank": 11,
+      "number": "00157",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 12,
+      "number": "15898",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)"
+    },
+    {
+      "rank": 13,
+      "number": "00748",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 14,
+      "number": "00201",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > articulation temporo-mandibulaire > médication ou substance thérapeutique intra-articulaire",
+      "description": "Injection de médicament ou de substance thérapeutique dans l'articulation temporo-mandibulaire, médication ou substance thérapeutique intra-articulaire"
+    },
+    {
+      "rank": 15,
+      "number": "08113",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Thorax > Larynx, études spéciales > phonation",
+      "description": "Étude spéciale du larynx en phonation, thorax"
+    },
+    {
+      "rank": 16,
+      "number": "01209",
+      "rrf_score": 0.015625,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle pour diastasis des grands droits"
+    },
+    {
+      "rank": 17,
+      "number": "09540",
+      "rrf_score": 0.015625,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Arthroplastie (incluant tout service médical aux tissus mous, la plastie de la rotule et l'installation de prothèse de la rotule, le cas échéant) > prothèse totale de rotule",
+      "description": "Prothèse totale de rotule, incluant le cas échéant, la synovectomie et le débridement articulaire, au genou"
+    },
+    {
+      "rank": 18,
+      "number": "04577",
+      "rrf_score": 0.015625,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire multiple, au niveau des ventricules"
+    },
+    {
+      "rank": 19,
+      "number": "02473",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroplastie de remplacement > manipulation du genou pour ankylose",
+      "description": "Manipulation du genou pour ankylose, sous anesthésie régionale ou générale"
+    },
+    {
+      "rank": 20,
+      "number": "04568",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, au niveau des oreillettes"
+    },
+    {
+      "rank": 21,
+      "number": "04582",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Réparation de sténose de l'infundibulum droit, au niveau des ventricules"
+    },
+    {
+      "rank": 22,
+      "number": "09539",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Exérèse de prothèse",
+      "description": "Exérèse de prothèse totale du genou, incluant le cas échéant, la synovectomie, le débridement articulaire, l'exérèse de prothèse de la rotule et la fixation temporaire"
+    },
+    {
+      "rank": 23,
+      "number": "04600",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > réparation d'une communication interauriculaire, type ostium secundum",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, supplément"
+    },
+    {
+      "rank": 24,
+      "number": "04576",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire unique ou postinfarctus, au niveau des ventricules"
+    },
+    {
+      "rank": 25,
+      "number": "00639",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque droit et/ou artère pulmonaire, cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 26,
+      "number": "02103",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Reconstruction au-delà de six (6) semaines du traumatisme (toute voie d'approche) > croisé antérieur (techniques intra et extra-articulaires)",
+      "description": "Reconstruction au-delà de six (6) semaines du traumatisme du ligament croisé antérieur (techniques intra et extra-articulaires), toute voie d'approche, au genou"
+    },
+    {
+      "rank": 27,
+      "number": "00552",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Tonographie avec ou sans épreuve spéciale, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 28,
+      "number": "15896",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > Consultations virtuelles en temps différé > Gestion en douleur chronique",
+      "description": "Gestion en douleur chronique, consultations virtuelles en temps différé, lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 29,
+      "number": "02056",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrotomie ou capsulotomie",
+      "description": "Arthrotomie ou capsulotomie du genou incluant, le cas échéant, l'exploration, le drainage, le rasage, la résection de corps étranger (souris articulaire), l'exérèse de coussinet graisseux, la méniscectomie ou la section de l'aileron externe"
+    },
+    {
+      "rank": 30,
+      "number": "04567",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Création de communication interauriculaire, procédé de Blalock-Hanlon ou autres, au niveau des oreillettes"
+    },
+    {
+      "rank": 31,
+      "number": "15894",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication par conseil numérique (eConsult)",
+      "description": "Communication par conseil numérique (eConsult), lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 32,
+      "number": "18160",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthroplastie de remplacement",
+      "description": "Arthroplastie de remplacement du genou avec lavage de prothèse infectée incluant l'arthrotomie, le débridement et, le cas échéant, la synovectomie, le changement de polyéthylène ou la composante modulaire"
+    },
+    {
+      "rank": 33,
+      "number": "15622",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Réponse téléphonique à une demande du personnel de l'établissement dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée"
+    },
+    {
+      "rank": 34,
+      "number": "04578",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Agrandissement ou création de communication interventriculaire, au niveau des ventricules"
+    },
+    {
+      "rank": 35,
+      "number": "09546",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "G — Appareil musculo-squelettique > Divers",
+      "description": "Injection intra-osseuse de corticoïdes avec ou sans scopie pour un os mineur"
+    },
+    {
+      "rank": 36,
+      "number": "02854",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "G — Appareil musculo-squelettique > Divers > application de stimulateurs électriques > membre inférieur > sous-genou (incluant le pied)",
+      "description": "Application de stimulateurs électriques sous le genou (incluant le pied), membre inférieur, divers, appareil musculo-squelettique."
+    },
+    {
+      "rank": 37,
+      "number": "08027",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Examens spéciaux, incluant la scopie, le cas échéant",
+      "description": "Dacryocystographie, en examen spécial incluant la scopie"
+    },
+    {
+      "rank": 38,
+      "number": "00906",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour un acte de chirurgie dentaire administré au cabinet du dentiste ou du médecin où il n'y a pas d'appareil d'anesthésie et de réanimation en permanence, donnant droit uniquement à l'examen préanesthésique et aux unités de durée en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 39,
+      "number": "02013",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres inférieurs > Genou > Arthrolyse",
+      "description": "Arthrolyse du genou avec correction progressive d'ankylose avec fixateur externe"
+    },
+    {
+      "rank": 40,
+      "number": "15652",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, par période de quinze (15) minutes"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 63,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 868.7723629991524,
+  "db_ms": 47.949642001185566
+}

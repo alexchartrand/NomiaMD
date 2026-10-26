@@ -1,6 +1,6 @@
 """Tests for the LanceDB row converters — app/lancedb/converter.py's IConverter ABC contract,
 app/ramq_codes/converter.py's CodesRowConverter (CodeRow -> this backend's own Code) and
-app/ramq_chatbot/converter.py's DocumentRowConverter (DocumentRow -> TextNode)."""
+app/ramq_chatbot/converter.py's DocumentRowConverter (DocumentRow -> ManualChunk)."""
 
 import pytest
 

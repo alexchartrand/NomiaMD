@@ -6,17 +6,23 @@ from datetime import date, datetime, time
 
 from pydantic import BaseModel, Field
 
+from app.care_setting import CareSetting
 from app.intake.channels import Channel
 
 
 class EncounterMeta(BaseModel):
-    """Source facts that drive no query, stored as `encounters.encounter_meta`. Direct RAMQ
-    submission will need most of them; the LLM only ever flags them as missing."""
+    """Source facts, stored as `encounters.encounter_meta`. Direct RAMQ submission will need
+    most of them; the LLM only ever flags them as missing. Only `care_setting` drives a
+    query."""
 
     time_start: time | None = None
     time_end: time | None = None
     location_label: str | None = None
     etablissement_number: str | None = None
+    # The source's own place of service (an Epic encounter's department, a schedule entry),
+    # or the one the physician picked for the batch. Scopes the visit-code search — see
+    # app/ramq_codes/visit_query.py.
+    care_setting: CareSetting | None = None
     # The note's author in the source system's own terms (a user id, a licence number...).
     # Also half of the deduplicator's fallback key when there's no external note id.
     author_ref: str | None = None
@@ -51,6 +57,8 @@ class PastedNotes(BaseModel):
     text: str = Field(min_length=1)
     source_system: str = Field(default="manual", min_length=1, max_length=64)
     batch_label: str | None = Field(default=None, max_length=64)
+    # Where every note in the paste took place, as the physician picked it; None = unknown.
+    care_setting: CareSetting | None = None
 
 
 class ReceiveOutcomeOut(BaseModel):

@@ -4,6 +4,7 @@ import type {
   ClaimCodeLine,
   CodeDetail,
   CodeHit,
+  ConsultationDigest,
   Dashboard,
   DashboardKpis,
   DashboardTasks,
@@ -31,6 +32,7 @@ export function makeFee(overrides: Partial<ExtractedFee> = {}): ExtractedFee {
   };
 }
 
+// `retained` defaults to a high confidence, as the server reads a result stored before it existed.
 export function makeProposedCode(overrides: Partial<ExtractedCode> = {}): ExtractedCode {
   return {
     code: "00103",
@@ -40,6 +42,19 @@ export function makeProposedCode(overrides: Partial<ExtractedCode> = {}): Extrac
     supporting_quote: "",
     needs_confirmation: [],
     fees: [makeFee()],
+    retained: (overrides.confidence ?? "high") === "high",
+    ...overrides,
+  };
+}
+
+export function makeDigest(overrides: Partial<ConsultationDigest> = {}): ConsultationDigest {
+  return {
+    short_description: "Consultation pour une toux depuis trois jours.",
+    reason_for_visit: null,
+    procedures: [],
+    billable_add_ons: [],
+    referral: null,
+    open_questions: [],
     ...overrides,
   };
 }
@@ -49,15 +64,11 @@ export function makeExtraction(
   overrides: Partial<BillingExtractionResponse> = {},
 ): BillingExtractionResponse {
   return {
-    billing: {
-      task: "billing_codes",
-      result: { codes, notes: null },
-      model: "test-model",
-      created_at: "2026-10-01T12:00:00Z",
-    },
+    billing: { codes, notes: null },
     extraction_run_id: 1,
     encounter_date: "2026-10-01",
     encounter_date_raw: null,
+    summary: null,
     ...overrides,
   };
 }

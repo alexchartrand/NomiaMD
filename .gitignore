@@ -2,6 +2,8 @@
 .env
 .env.*
 !.env.example
+# deploy/deploy.sh's DEPLOY_SSH and checkout paths
+deploy/deploy.local.env
 
 # Python
 __pycache__/
@@ -32,3 +34,7 @@ Thumbs.db
 # Project outputs
 *.log
 *.jar
+
+# Benchmark runs and the embedding cache (backend/app/benchmark/); baselines/ is committed
+backend/benchmarks/runs/
+backend/benchmarks/.cache/

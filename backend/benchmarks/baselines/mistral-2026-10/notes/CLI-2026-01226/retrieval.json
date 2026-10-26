@@ -1,0 +1,665 @@
+{
+  "patient_id": "CLI-2026-01226",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 891,
+      "output_tokens": null,
+      "latency_ms": 306.36909799068235,
+      "started_at": "2026-10-08T14:19:02.634876Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 891,
+    "output_tokens": 0,
+    "llm_latency_ms": 306.36909799068235,
+    "wall_ms": 404.4258229987463
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation en médecine familiale pour une lésion pigmentée suspecte au dos chez une patiente de 51 ans. Le médecin a évalué les critères ABCDE, utilisé un dermoscope et recommandé une référence urgente en dermatologie pour exérèse-biopsie. Aucun traitement initié sur place, counseling sur la protection solaire et l'auto-examen fourni.\nLieu (détail): Clinique médicale Les Tilleuls\nDate: 2026-04-21\nHeure de début: 15:00\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nDemandeur (identifiant): Dr. Isabelle Roy, MD, médecine familiale\nMotif de la référence: Lésion pigmentée suspecte de mélanome au dos avec critères ABCDE positifs et changement rapporté par l'entourage\nRapport écrit requis/produit: oui\nMotif de consultation: Opinion sur un grain de beauté changeant d'aspect au dos, remarqué par le conjoint\nSystèmes/régions concernés: tégument; dos; région scapulaire droite\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: non\nDiagnostic/impression: Lésion pigmentée suspecte de mélanome (critères ABCDE positifs, changement rapporté)\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: non\nExamen physique effectué: oui\nRégions examinées: tégument; dos; région scapulaire droite\nConstatations: Lésion pigmentée de 8 mm de diamètre au dos avec asymétrie, bords irréguliers, coloration hétérogène, diamètre > 6 mm et évolution rapportée. Réseau pigmentaire atypique et zones de régression notés au dermoscope. Plusieurs nævus banals dispersés, aucun autre suspect. Pas d'adénopathie palpable régionale.\nActe réalisé 1 - Description: Examen dermatologique dirigé de la lésion au dos avec dermoscope de bureau\nActe réalisé 1 - Site: dos, région scapulaire droite\nActe réalisé 1 - Technique/approche: Critères ABCDE évalués, réseau pigmentaire atypique et zones de régression notés\nActe réalisé 1 - Anesthésie: aucun\nActe réalisé 1 - Diagnostique ou thérapeutique: diagnostique\nActe réalisé 2 - Description: Photographie clinique de la lésion prise et conservée au dossier\nActe réalisé 2 - Site: dos\nActe réalisé 2 - Anesthésie: aucun\nActe réalisé 2 - Diagnostique ou thérapeutique: diagnostique\nAjouts possiblement facturables: communication_specialiste\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Aucune mention de l'heure de fin de la consultation.",
+      "hits": [
+        {
+          "number": "01240",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "09372",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01182",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01184",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00335",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01241",
+          "relevance": 0.015625
+        },
+        {
+          "number": "00345",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01185",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "00953",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01183",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00347",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01188",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15795",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01222",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "09315",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01238",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "09931",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01244",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08257",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Examen dermatologique dirigé de la lésion au dos avec dermoscope de bureau",
+      "hits": [
+        {
+          "number": "00468",
+          "relevance": 0.03125
+        },
+        {
+          "number": "15895",
+          "relevance": 0.028219396248459816
+        },
+        {
+          "number": "01227",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00830",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01222",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00821",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01153",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "00425",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01158",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09939",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01185",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09938",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01184",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09372",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01223",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01165",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00328",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01240",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "00335",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01246",
+          "relevance": 0.014084506779909134
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Photographie clinique de la lésion prise et conservée au dossier",
+      "hits": [
+        {
+          "number": "01222",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04233",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "01300",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00553",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "01153",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "09922",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "01158",
+          "relevance": 0.015625
+        },
+        {
+          "number": "09947",
+          "relevance": 0.015625
+        },
+        {
+          "number": "01223",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "09911",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "01165",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "09912",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "01236",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09913",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "01238",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "08142",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "01156",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08143",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "01151",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "09914",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "communication_specialiste",
+      "hits": [
+        {
+          "number": "00157",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "15898",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "00748",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "08113",
+          "relevance": 0.03079838864505291
+        },
+        {
+          "number": "04577",
+          "relevance": 0.029469123110175133
+        },
+        {
+          "number": "04568",
+          "relevance": 0.02803921513259411
+        },
+        {
+          "number": "04600",
+          "relevance": 0.026875901967287064
+        },
+        {
+          "number": "04576",
+          "relevance": 0.026856524869799614
+        },
+        {
+          "number": "00552",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "04567",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15894",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15622",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "04578",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "08027",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15652",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08004",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "15643",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08214",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08098",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08025",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "01222",
+      "rrf_score": 0.04580518018018018,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > non faciale",
+      "description": "Excision chirurgicale d'une verrue non faciale, première verrue lors de la même séance"
+    },
+    {
+      "rank": 2,
+      "number": "01153",
+      "rrf_score": 0.030776515151515152,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de plus de cinq (5) cm > premiers cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de plus de cinq (5) centimètres, premiers cinq (5) centimètres."
+    },
+    {
+      "rank": 3,
+      "number": "09372",
+      "rrf_score": 0.03009207275993712,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Épreuves, études et tests (prélèvement, surveillance et interprétation)",
+      "description": "Évaluation d'une dose thérapeutique d'iode"
+    },
+    {
+      "rank": 4,
+      "number": "01158",
+      "rrf_score": 0.029857397504456328,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de quatre (4) cm ou cinq (5) cm",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de quatre (4) centimètres ou cinq (5) centimètres."
+    },
+    {
+      "rank": 5,
+      "number": "01240",
+      "rrf_score": 0.029653679653679654,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau au tronc, aux bras ou aux jambes, diamètre de un (1) cm ou moins, biopsies comprises"
+    },
+    {
+      "rank": 6,
+      "number": "01184",
+      "rrf_score": 0.029513888888888888,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située au tronc, aux bras ou aux jambes, d'un diamètre de un (1) cm ou moins"
+    },
+    {
+      "rank": 7,
+      "number": "01185",
+      "rrf_score": 0.028991596638655463,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située au tronc, aux bras ou aux jambes, d'un diamètre de plus de un (1) cm"
+    },
+    {
+      "rank": 8,
+      "number": "01223",
+      "rrf_score": 0.02821939586645469,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > faciale",
+      "description": "Excision chirurgicale d'une verrue faciale, première verrue lors de la même séance"
+    },
+    {
+      "rank": 9,
+      "number": "00335",
+      "rrf_score": 0.028205128205128206,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Insulinothérapie intensive à doses multiples et variables, traitement initial par patient"
+    },
+    {
+      "rank": 10,
+      "number": "01165",
+      "rrf_score": 0.02761904761904762,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeur bénigne > Excision chirurgicale (incluant fermeture simple) > cuir chevelu, cou, mains, pieds, organes génitaux externes > diamètre de trois (3) cm ou moins",
+      "description": "Excision chirurgicale d'une tumeur bénigne (naevi, angiomes, lipomes, etc.) du cuir chevelu, du cou, des mains, des pieds ou des organes génitaux externes, incluant fermeture simple, diamètre de trois (3) centimètres ou moins."
+    },
+    {
+      "rank": 11,
+      "number": "01238",
+      "rrf_score": 0.02667140825035562,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, diamètre de un (1) cm ou moins, biopsies comprises"
+    },
+    {
+      "rank": 12,
+      "number": "00468",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Injection de substance sclérosante, intralésionnelle (une (1) ou plusieurs lésions) en dermatologie, chimiothérapie d'une lésion cutanée"
+    },
+    {
+      "rank": 13,
+      "number": "00157",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 14,
+      "number": "15895",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > Consultations virtuelles en temps différé > Télédermatologie",
+      "description": "Télédermatologie, consultations virtuelles en temps différé, lorsqu'effectuée en cabinet ou en établissement"
+    },
+    {
+      "rank": 15,
+      "number": "04233",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "K — Système lymphatique et hématopoïétique > Évidement cervical",
+      "description": "Évidement cervical de type fonctionnel (Bocca) conservant muscles, vaisseaux et nerfs"
+    },
+    {
+      "rank": 16,
+      "number": "15898",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Frais de kilométrage (réf. : préambule général, règle 2.4.2) > Téléconsultations > eConsult > Communication médecin - répondant par conseil numérique (eConsult)",
+      "description": "Communication médecin - répondant par conseil numérique (eConsult)"
+    },
+    {
+      "rank": 17,
+      "number": "01182",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, d'un diamètre de un (1) cm ou moins"
+    },
+    {
+      "rank": 18,
+      "number": "01227",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Excision chirurgicale > en mosaïque (excision totale) par séance",
+      "description": "Excision chirurgicale d'une verrue en mosaïque (excision totale) par séance"
+    },
+    {
+      "rank": 19,
+      "number": "01300",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Verrue > Cautérisation > Électrocoagulation",
+      "description": "Cautérisation par électrocoagulation d'une verrue, première lésion"
+    },
+    {
+      "rank": 20,
+      "number": "00748",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Audiométrie et examens vestibulaires > tests spéciaux",
+      "description": "Interprétation et technique de procédé de tests spéciaux en audiométrie"
+    },
+    {
+      "rank": 21,
+      "number": "00638",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 22,
+      "number": "00830",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Photochimiothérapie en dermatologie, chimiothérapie d'une lésion cutanée"
+    },
+    {
+      "rank": 23,
+      "number": "00553",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Rétinophotographie, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 24,
+      "number": "08113",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Thorax > Larynx, études spéciales > phonation",
+      "description": "Étude spéciale du larynx en phonation, thorax"
+    },
+    {
+      "rank": 25,
+      "number": "04577",
+      "rrf_score": 0.015625,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire multiple, au niveau des ventricules"
+    },
+    {
+      "rank": 26,
+      "number": "00821",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Traitement de Goekerman en dermatologie, chimiothérapie d'une lésion cutanée"
+    },
+    {
+      "rank": 27,
+      "number": "09922",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 7. Opinion du médecin avant la consolidation de la lésion professionnelle > B) Approbation des mesures de réadaptation avant la consolidation de la lésion",
+      "description": "Approbation des mesures de réadaptation avant la consolidation de la lésion professionnelle pour un travailleur victime d'une lésion professionnelle, en raison de la complexité du dossier"
+    },
+    {
+      "rank": 28,
+      "number": "04568",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, au niveau des oreillettes"
+    },
+    {
+      "rank": 29,
+      "number": "01241",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Cryochirurgie > Tumeurs précancéreuses de la peau (biopsies comprises) > tronc, bras, jambes",
+      "description": "Cryochirurgie d'une tumeur précancéreuse de la peau au tronc, aux bras ou aux jambes, diamètre de plus de un (1) cm, biopsies comprises"
+    },
+    {
+      "rank": 30,
+      "number": "04600",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "J — Système cardiaque > Chirurgie coronarienne > Réparation > réparation d'une communication interauriculaire, type ostium secundum",
+      "description": "Réparation d'une communication interauriculaire, type ostium secundum, supplément"
+    },
+    {
+      "rank": 31,
+      "number": "00345",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Divers > Diabétothérapie",
+      "description": "Insulinothérapie intensive à doses multiples et variables, installation initiale de la pompe et du cathéter (Le nettoyage ou l'exérèse de l'appareillage est inclus dans le tarif de l'acte associé)"
+    },
+    {
+      "rank": 32,
+      "number": "00425",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Infiltration intralésionnelle (une (1) ou plusieurs lésions) en dermatologie, chimiothérapie d'une lésion cutanée"
+    },
+    {
+      "rank": 33,
+      "number": "09947",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 10. Rapport d'évaluation médicale > C) Considération en raison de la complexité",
+      "description": "Considération en raison de la complexité de l'évaluation médicale accordée par le médecin de la Commission, pour un travailleur victime de lésion professionnelle"
+    },
+    {
+      "rank": 34,
+      "number": "04576",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules > réparation d'une communication interventriculaire",
+      "description": "Réparation d'une communication interventriculaire unique ou postinfarctus, au niveau des ventricules"
+    },
+    {
+      "rank": 35,
+      "number": "00552",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Ophtalmologie > Oeil",
+      "description": "Tonographie avec ou sans épreuve spéciale, pour les deux yeux à moins de mention contraire"
+    },
+    {
+      "rank": 36,
+      "number": "00953",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 37,
+      "number": "09939",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > Bureau d'évaluation médicale > Avis écrit",
+      "description": "Avis écrit motivé donné après examen du travailleur par un médecin membre du Bureau d'évaluation médicale, dans le cadre de la rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles"
+    },
+    {
+      "rank": 38,
+      "number": "09911",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Rémunération des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels > 16. Étude de dossiers particuliers > B) Considération en raison de la complexité",
+      "description": "Rémunération pour une considération accordée dans certains dossiers par le médecin de la Commission en raison de la complexité du dossier particulier, dans le cadre de l'étude de dossiers particuliers visant à déterminer toute question relative notamment à la pathologie ou au décès du travailleur, dans le cadre des services médico-administratifs visés par la Loi sur les accidents du travail et les maladies professionnelles, la loi sur les accidents du travail et la loi sur l'indemnisation des victimes d'actes criminels"
+    },
+    {
+      "rank": 39,
+      "number": "04567",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Oreillettes",
+      "description": "Création de communication interauriculaire, procédé de Blalock-Hanlon ou autres, au niveau des oreillettes"
+    },
+    {
+      "rank": 40,
+      "number": "01183",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Tumeurs précancéreuses de la peau (biopsies comprises) > face, cuir chevelu, oreilles, cou, mains, pieds, organes génitaux",
+      "description": "Excision d'une tumeur précancéreuse de la peau (biopsie comprise) située à la face, au cuir chevelu, aux oreilles, au cou, aux mains, aux pieds ou aux organes génitaux, d'un diamètre de plus de un (1) cm"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 51,
+    "panel_size": 320,
+    "is_registered": false,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 308.6337299901061,
+  "db_ms": 95.00561500317417
+}

@@ -1,0 +1,416 @@
+{
+  "patient_id": "GMF-2026-00413",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 598,
+      "output_tokens": null,
+      "latency_ms": 239.81440700299572,
+      "started_at": "2026-10-08T14:19:39.764492Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 598,
+    "output_tokens": 0,
+    "llm_latency_ms": 239.81440700299572,
+    "wall_ms": 268.231467998703
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-base",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Résumé: Consultation de suivi pour tendinopathie de la coiffe des rotateurs droite réfractaire à la physiothérapie. Infiltration sous-acromiale réalisée avec triamcinolone et lidocaïne. Recommandations post-procédure et suivi à 6 semaines.\nLieu (détail): GMF des Rivières\nDate: 2026-09-18\nHeure de début: 09:40\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: non\nMotif de consultation: Suivi de tendinopathie de la coiffe des rotateurs droite avec échec de la physiothérapie après 8 semaines, douleurs persistantes et réveils nocturnes.\nSystèmes/régions concernés: musculo-squelettique; épaule_droite\nSystème unique ou multiple: single\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Tendinopathie du sus-épineux avec bursite sous-acromiale droite, réfractaire à la physiothérapie.\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: épaule_droite\nConstatations: Abduction active douloureuse à 120°, arc douloureux entre 70° et 120°, tests de Jobe, Hawkins et Neer positifs. Force de rotation externe à 5/5. Pas de signe de rupture (test du drop arm négatif).\nActe réalisé 1 - Description: Infiltration sous-acromiale droite\nActe réalisé 1 - Site: épaule_droite\nActe réalisé 1 - Technique/approche: approche postérieure\nActe réalisé 1 - Anesthésie: local\nActe réalisé 1 - Diagnostique ou thérapeutique: thérapeutique\nÉlément incertain: Durée de la consultation non explicitement mentionnée dans le transcript.; Heure de fin de la consultation non indiquée.",
+      "hits": [
+        {
+          "number": "02035",
+          "relevance": 0.02881426177918911
+        },
+        {
+          "number": "15804",
+          "relevance": 0.028006266802549362
+        },
+        {
+          "number": "02973",
+          "relevance": 0.027313265949487686
+        },
+        {
+          "number": "02156",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "00953",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "08776",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "00638",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "02157",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "05142",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02120",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04582",
+          "relevance": 0.015625
+        },
+        {
+          "number": "08775",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02833",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08777",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00639",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15812",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00430",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00906",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02037",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01209",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    },
+    {
+      "source": "procedure",
+      "text": "Infiltration sous-acromiale droite",
+      "hits": [
+        {
+          "number": "02120",
+          "relevance": 0.032522473484277725
+        },
+        {
+          "number": "00292",
+          "relevance": 0.02964254654943943
+        },
+        {
+          "number": "00293",
+          "relevance": 0.029206348583102226
+        },
+        {
+          "number": "00953",
+          "relevance": 0.025645241141319275
+        },
+        {
+          "number": "05142",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "04727",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "02158",
+          "relevance": 0.015625
+        },
+        {
+          "number": "04582",
+          "relevance": 0.015625
+        },
+        {
+          "number": "02037",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "07674",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "02156",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "00639",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "02973",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "00722",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "02157",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "00429",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "02035",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "00425",
+          "relevance": 0.014492753893136978
+        },
+        {
+          "number": "08075",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "01209",
+          "relevance": 0.014285714365541935
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "00953",
+      "rrf_score": 0.03149801587301587,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour infiltration d'une branche du trijumeau pour fins diagnostiques (une (1) ou plusieurs non suivies d'un acte chirurgical dans la même séance) en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 2,
+      "number": "02120",
+      "rrf_score": 0.03115942028985507,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Excision",
+      "description": "Excision de l'épaule par acromioplastie ou acromiectomie ouverte ou par voie arthroscopique incluant, le cas échéant, la bursectomie, la méniscectomie acromio-claviculaire, l'exérèse de l'extrémité distale de la clavicule et le curetage tendineux, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 3,
+      "number": "05142",
+      "rrf_score": 0.030330882352941176,
+      "header_path": "L — Système digestif > Intestin (à l'exception du rectum) > Résection intestinale avec anastomose > iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)",
+      "description": "Résection intestinale avec anastomose de l'iléon terminal, caecum, côlon ascendant et angle hépatique (hémicolectomie droite)"
+    },
+    {
+      "rank": 4,
+      "number": "02156",
+      "rrf_score": 0.030158730158730156,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > réparation de la coiffe incluant l'acromioplastie, le cas échéant",
+      "description": "Réparation de la coiffe des rotateurs incluant l'acromioplastie, le cas échéant, à l'épaule, par reconstruction (ouverte ou par voie arthroscopique)"
+    },
+    {
+      "rank": 5,
+      "number": "02973",
+      "rrf_score": 0.030017921146953404,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthrolyse",
+      "description": "Arthrolyse gléno-humérale de l'épaule, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 6,
+      "number": "02035",
+      "rrf_score": 0.02982456140350877,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthroscopie",
+      "description": "Arthroscopie gléno-humérale de l'épaule avec un ou plusieurs des procédés thérapeutiques suivants : débridement articulaire, exérèse de souris ou de corps étranger, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 7,
+      "number": "04582",
+      "rrf_score": 0.029211087420042643,
+      "header_path": "J — Système cardiaque > Coeur et péricarde > Excision > Réparation > Ventricules",
+      "description": "Réparation de sténose de l'infundibulum droit, au niveau des ventricules"
+    },
+    {
+      "rank": 8,
+      "number": "02157",
+      "rrf_score": 0.028438886647841874,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > coiffe des rotateurs > reconstruction de la coiffe (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant",
+      "description": "Reconstruction de la coiffe des rotateurs (mobilisation et réinsertion osseuse de la coiffe) incluant l'acromioplastie, le cas échéant, à l'épaule, par reconstruction (ouverte ou par voie arthroscopique)"
+    },
+    {
+      "rank": 9,
+      "number": "00639",
+      "rrf_score": 0.027598020555767037,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Cathétérisme cardiaque et études hémodynamiques",
+      "description": "Cathétérisme cardiaque droit et/ou artère pulmonaire, cathétérisme cardiaque et études hémodynamiques"
+    },
+    {
+      "rank": 10,
+      "number": "02037",
+      "rrf_score": 0.027526395173453996,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Arthrotomie",
+      "description": "Arthrotomie ou capsulotomie gléno-humérale de l'épaule avec exploration, drainage ou résection de corps étranger ou souris articulaire (ostéochondrite) avec ou sans fixation, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 11,
+      "number": "01209",
+      "rrf_score": 0.02531645569620253,
+      "header_path": "F — Peau phanères — tissu cellulaire sous-cutané > Lipectomie fonctionnelle",
+      "description": "Lipectomie fonctionnelle pour diastasis des grands droits"
+    },
+    {
+      "rank": 12,
+      "number": "15804",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient non vulnérable inscrit de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 13,
+      "number": "00292",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques > Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "description": "Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée d'un patient, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée, une (1) racine"
+    },
+    {
+      "rank": 14,
+      "number": "00293",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques > Infiltration dans le foramen sous télévision d'une racine nerveuse lombaire ou sacrée, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée",
+      "description": "Infiltration dans le foramen sous télévision de deux (2) racines nerveuses lombaires ou sacrées ou plus d'un patient, incluant la surveillance, les examens, les visites et les consultations au cours de la même journée"
+    },
+    {
+      "rank": 15,
+      "number": "08776",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 16,
+      "number": "04727",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "J — Système cardiaque > Non thoracique > Thrombo-endartérectomie ouverte d'une artère périphérique > Pontage d'une artère périphérique > Autres pontages > Artères carotide ou vertébrale ou sous-clavière ou axillaire ou humérale ou radiale ou cubitale avec ou sans shunt incluant l'infiltration du sinus carotidien, le cas échéant",
+      "description": "Pontage ou dérivation d'une artère carotide ou vertébrale ou sous-clavière ou axillaire ou humérale ou radiale ou cubitale avec ou sans shunt incluant l'infiltration du sinus carotidien, le cas échéant, non thoracique"
+    },
+    {
+      "rank": 17,
+      "number": "00638",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Oto-rhino-laryngologie > Rhinomanométrie",
+      "description": "Technique et interprétation en rhinomanométrie"
+    },
+    {
+      "rank": 18,
+      "number": "02158",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Reconstruction (ouverte ou par voie arthroscopique) incluant la synovectomie, le cas échéant > reconstruction ligamentaire acromio ou sterno-claviculaire incluant l'exérèse de l'extrémité distale de la clavicule, le cas échéant",
+      "description": "Reconstruction ligamentaire acromio ou sterno-claviculaire incluant l'exérèse de l'extrémité distale de la clavicule, le cas échéant, à l'épaule, par reconstruction (ouverte ou par voie arthroscopique)"
+    },
+    {
+      "rank": 19,
+      "number": "07674",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "S — Système nerveux > Neurochirurgie des nerfs crâniens",
+      "description": "Thermocoagulation ou infiltration intracrânienne du trijumeau, neurochirurgie des nerfs crâniens"
+    },
+    {
+      "rank": 20,
+      "number": "08775",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de prise en charge d'un problème musculo-squelettique",
+      "description": "Visite de prise en charge d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 21,
+      "number": "02833",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "G — Appareil musculo-squelettique > Extrémités - membres supérieurs > Épaule > Examen et manipulation",
+      "description": "Examen et manipulation de l'épaule sous anesthésie générale, intervention côté droit ou côté gauche"
+    },
+    {
+      "rank": 22,
+      "number": "08777",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous"
+    },
+    {
+      "rank": 23,
+      "number": "00722",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Blocages nerveux diagnostiques et thérapeutiques",
+      "description": "Bloc veineux d'un patient"
+    },
+    {
+      "rank": 24,
+      "number": "15812",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de moins de 80 ans) > Patient non vulnérable inscrit > Prise en charge et suivi de grossesse (patiente inscrite ou non inscrite) > Visite de suivi de grossesse",
+      "description": "Visite de suivi de grossesse, d'une patiente inscrite ou non inscrite de moins de 80 ans, sur rendez-vous, clientèle inscrite de 500 patients ou plus"
+    },
+    {
+      "rank": 25,
+      "number": "00429",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > cornets du nez",
+      "description": "Injection de médicament ou de substance thérapeutique dans les cornets du nez"
+    },
+    {
+      "rank": 26,
+      "number": "00430",
+      "rrf_score": 0.013157894736842105,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Hyperalimentation, injection, insufflation, ponction > Injection de médicament ou de substance thérapeutique dans > capsules, gaines, tendons, ligaments ou fascia",
+      "description": "Injection de médicament ou de substance thérapeutique dans les capsules, gaines, tendons, ligaments ou fascia"
+    },
+    {
+      "rank": 27,
+      "number": "00906",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "D — Anesthésie — réanimation > Anesthésie pour chirurgie dentaire et buccale",
+      "description": "Anesthésie pour un acte de chirurgie dentaire administré au cabinet du dentiste ou du médecin où il n'y a pas d'appareil d'anesthésie et de réanimation en permanence, donnant droit uniquement à l'examen préanesthésique et aux unités de durée en chirurgie dentaire et buccale"
+    },
+    {
+      "rank": 28,
+      "number": "00425",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "C — Actes diagnostiques et thérapeutiques > Dermatologie > Chimiothérapie > Cryothérapie d'une lésion",
+      "description": "Infiltration intralésionnelle (une (1) ou plusieurs lésions) en dermatologie, chimiothérapie d'une lésion cutanée"
+    },
+    {
+      "rank": 29,
+      "number": "08075",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "V — Radiologie diagnostique > Tableau des honoraires > Membres supérieurs > Articulations acromioclaviculaires",
+      "description": "Radiographie des articulations acromioclaviculaires, membres supérieurs"
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 55,
+    "panel_size": 1240,
+    "is_registered": true,
+    "is_vulnerable": false
+  },
+  "embedding_ms": 240.73657300323248,
+  "db_ms": 26.90593499573879
+}

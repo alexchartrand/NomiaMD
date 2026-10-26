@@ -1,0 +1,98 @@
+{
+  "patient_id": "GMF-2026-00415",
+  "calls": [
+    {
+      "kind": "chat",
+      "provider": "mistral",
+      "model": "mistral-small-latest",
+      "purpose": "consultation_summary",
+      "input_tokens": 1721,
+      "output_tokens": 461,
+      "latency_ms": 3026.971268001944,
+      "started_at": "2026-10-08T15:44:27.914597Z",
+      "finish_reason": "stop",
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 1721,
+    "output_tokens": 461,
+    "llm_latency_ms": 3026.971268001944,
+    "wall_ms": 3027.3219810042065
+  },
+  "error": null,
+  "model": "mistral-small-latest",
+  "result": {
+    "short_description": "Renouvellement d'ordonnances de rosuvastatine et lévothyroxine pour une patiente de 63 ans, sans consultation en personne. Le renouvellement a été signé et transmis par télécopieur à la pharmacie à la demande de celle-ci.",
+    "encounter_setting": {
+      "location_detail": "GMF des Rivières",
+      "date": "2026-09-08",
+      "time_start": "12:15",
+      "time_end": null,
+      "duration_minutes": null,
+      "duration_explicitly_stated": false,
+      "appointment_type": "sans rendez-vous"
+    },
+    "pregnancy_context": {
+      "present": false,
+      "trimester": null
+    },
+    "referral_information": {
+      "present": false,
+      "requester_role": null,
+      "requester_identifier_mentioned": null,
+      "reason_for_referral": null,
+      "written_report_back_required_or_produced": null
+    },
+    "clinical_summary": {
+      "chief_complaint_or_reason_for_visit": "Renouvellement d'ordonnances de rosuvastatine 10 mg die et lévothyroxine 88 mcg die à la demande de la pharmacie Jean Coutu.",
+      "systems_or_body_regions_involved": [
+        "cardiovasculaire",
+        "endocrinien"
+      ],
+      "single_vs_multi_system": "multi",
+      "history_taken": false,
+      "new_treatment_initiated": false,
+      "existing_treatment_reviewed_or_adjusted": false,
+      "diagnosis_or_impression_stated": null,
+      "recommendations_given_to_patient": false,
+      "orders_or_prescriptions_mentioned": true
+    },
+    "physical_examination": {
+      "performed": false,
+      "regions_or_systems_examined": [],
+      "notable_findings": null
+    },
+    "procedures_performed": [],
+    "possible_billable_add_ons": [],
+    "notes_uncertain_items": [
+      "Durée de l'acte non explicitement mentionnée dans le document.",
+      "Absence de consultation en personne — l'acte de renouvellement est-il facturable comme consultation ou comme acte de suivi à distance ?"
+    ]
+  },
+  "checks": [
+    {
+      "name": "date",
+      "passed": true,
+      "expected": "2026-09-08",
+      "actual": "2026-09-08"
+    },
+    {
+      "name": "time_start",
+      "passed": true,
+      "expected": "12:15",
+      "actual": "12:15"
+    }
+  ],
+  "stats": {
+    "procedures": 0,
+    "add_ons": 0,
+    "uncertain_items": 2,
+    "systems": 2,
+    "pregnancy": false,
+    "referral": false,
+    "duration_stated": false
+  }
+}

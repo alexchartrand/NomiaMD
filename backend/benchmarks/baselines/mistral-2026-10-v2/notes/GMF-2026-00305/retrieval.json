@@ -1,0 +1,752 @@
+{
+  "patient_id": "GMF-2026-00305",
+  "calls": [
+    {
+      "kind": "embedding",
+      "provider": "mistral",
+      "model": "mistral-embed",
+      "purpose": "billing_codes.retrieval",
+      "input_tokens": 760,
+      "output_tokens": null,
+      "latency_ms": 274.9824130005436,
+      "started_at": "2026-10-08T15:43:49.664920Z",
+      "finish_reason": null,
+      "cached": false,
+      "error": null
+    }
+  ],
+  "totals": {
+    "calls": 1,
+    "input_tokens": 760,
+    "output_tokens": 0,
+    "llm_latency_ms": 274.9824130005436,
+    "wall_ms": 318.09303699992597
+  },
+  "error": null,
+  "query_source": "summary",
+  "summary_run": "mistral-2026-10-v2",
+  "queries": [
+    {
+      "source": "visit",
+      "text": "Visite d'évaluation pour donner une opinion. avec rendez-vous. domicile du patient (GMF Boisé-des-Cèdres). Plusieurs systèmes",
+      "sections": [
+        "B — Consultation, examen et visite"
+      ],
+      "hits": [
+        {
+          "number": "15619",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "15789",
+          "relevance": 0.03201844170689583
+        },
+        {
+          "number": "08777",
+          "relevance": 0.0320020467042923
+        },
+        {
+          "number": "15790",
+          "relevance": 0.031054405495524406
+        },
+        {
+          "number": "08948",
+          "relevance": 0.029877368360757828
+        },
+        {
+          "number": "15642",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "15668",
+          "relevance": 0.029206348583102226
+        },
+        {
+          "number": "15651",
+          "relevance": 0.028850145637989044
+        },
+        {
+          "number": "15630",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "08819",
+          "relevance": 0.027799228206276894
+        },
+        {
+          "number": "15784",
+          "relevance": 0.027313265949487686
+        },
+        {
+          "number": "09063",
+          "relevance": 0.027242401614785194
+        },
+        {
+          "number": "15771",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15779",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15783",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15615",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "08994",
+          "relevance": 0.013888888992369175
+        },
+        {
+          "number": "08996",
+          "relevance": 0.013698630034923553
+        },
+        {
+          "number": "15890",
+          "relevance": 0.013513513840734959
+        },
+        {
+          "number": "15763",
+          "relevance": 0.013333333656191826
+        }
+      ]
+    },
+    {
+      "source": "overview",
+      "text": "Résumé: Visite à domicile de suivi pour un patient de 84 ans atteint de maladie de Parkinson avancée, avec aggravation de la rigidité, dysphagie aux liquides et risque de chute. Examen physique réalisé, ajustement du traitement laxatif et référence en orthophonie. Objectifs de soins discutés avec le patient et son épouse.\nLieu (détail): domicile du patient (GMF Boisé-des-Cèdres)\nDate: 2026-05-19\nHeure de début: 13:00\nDurée (minutes): 30.0\nDurée déclarée explicitement: non\nRendez-vous: avec rendez-vous\nGrossesse: non\nRéférence: oui\nDemandeur (rôle): medecin_omnipraticien\nDemandeur (identifiant): Dr. Naomi Fortier, MD\nMotif de la référence: Orthophonie à domicile pour évaluation formelle de la déglutition en raison de l'aggravation de la dysphagie\nRapport écrit requis/produit: oui\nMotif de consultation: Suivi à domicile d'un patient de 84 ans atteint de maladie de Parkinson avancée avec aggravation de la rigidité, dysphagie aux liquides et risque de chute\nSystèmes/régions concernés: neurologique; digestif; cardiovasculaire; musculo-squelettique\nSystème unique ou multiple: multi\nAnamnèse effectuée: oui\nNouveau traitement amorcé: non\nTraitement existant révisé: oui\nDiagnostic/impression: Maladie de Parkinson avancée avec aggravation de la dysphagie et du risque de chute; hypotension orthostatique légère; constipation chronique mal contrôlée\nRecommandations données au patient: oui\nOrdonnances/tests mentionnés: oui\nExamen physique effectué: oui\nRégions examinées: signes vitaux; apparence générale; mobilité; déglutition; cardio-pulmonaire; abdomen; peau\nConstatations: Rigidité axiale marquée, tremblement de repos bilatéral, bradykinésie importante, hypotension orthostatique légère, ralentissement à la déglutition des liquides sans toux franche, stase stercorale au cadre colique, pas de lésion de pression\nAjouts possiblement facturables: deplacement_urgence\nÉlément incertain: Durée exacte de la visite non précisée dans le document (estimée à 30 minutes).; Aucune mention explicite de l'heure de fin de la visite.",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15784",
+          "relevance": 0.03226645663380623
+        },
+        {
+          "number": "15783",
+          "relevance": 0.03128054738044739
+        },
+        {
+          "number": "08776",
+          "relevance": 0.030117753893136978
+        },
+        {
+          "number": "15837",
+          "relevance": 0.029462365433573723
+        },
+        {
+          "number": "15779",
+          "relevance": 0.0292735043913126
+        },
+        {
+          "number": "07844",
+          "relevance": 0.029213955625891685
+        },
+        {
+          "number": "15763",
+          "relevance": 0.02903090976178646
+        },
+        {
+          "number": "15771",
+          "relevance": 0.02699275314807892
+        },
+        {
+          "number": "15839",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15617",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "08777",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15668",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "09063",
+          "relevance": 0.014925372786819935
+        },
+        {
+          "number": "15835",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15616",
+          "relevance": 0.014705882407724857
+        },
+        {
+          "number": "15063",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15789",
+          "relevance": 0.014285714365541935
+        },
+        {
+          "number": "15054",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "15790",
+          "relevance": 0.014084506779909134
+        },
+        {
+          "number": "08994",
+          "relevance": 0.013888888992369175
+        }
+      ]
+    },
+    {
+      "source": "add_on",
+      "text": "deplacement_urgence",
+      "sections": null,
+      "hits": [
+        {
+          "number": "15057",
+          "relevance": 0.02938045561313629
+        },
+        {
+          "number": "15659",
+          "relevance": 0.02921108715236187
+        },
+        {
+          "number": "15660",
+          "relevance": 0.028790390118956566
+        },
+        {
+          "number": "15633",
+          "relevance": 0.028624003753066063
+        },
+        {
+          "number": "15634",
+          "relevance": 0.028594771400094032
+        },
+        {
+          "number": "15635",
+          "relevance": 0.028577260673046112
+        },
+        {
+          "number": "08968",
+          "relevance": 0.028445512056350708
+        },
+        {
+          "number": "15661",
+          "relevance": 0.02838164195418358
+        },
+        {
+          "number": "15625",
+          "relevance": 0.02597840689122677
+        },
+        {
+          "number": "15623",
+          "relevance": 0.025657894089818
+        },
+        {
+          "number": "15655",
+          "relevance": 0.016393441706895828
+        },
+        {
+          "number": "15646",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "08966",
+          "relevance": 0.016129031777381897
+        },
+        {
+          "number": "15653",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "08967",
+          "relevance": 0.01587301678955555
+        },
+        {
+          "number": "15644",
+          "relevance": 0.015625
+        },
+        {
+          "number": "15654",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15063",
+          "relevance": 0.015384615398943424
+        },
+        {
+          "number": "15645",
+          "relevance": 0.01515151560306549
+        },
+        {
+          "number": "15070",
+          "relevance": 0.01515151560306549
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "number": "15784",
+      "rrf_score": 0.030952380952380953,
+      "header_path": "B — Consultation, examen et visite > Visites à domicile > Patient vulnérable > Visite d'un patient en perte sévère d'autonomie",
+      "description": "Visite à domicile d'un patient vulnérable en perte sévère d'autonomie, patient additionnel en perte sévère d'autonomie",
+      "expanded_from": null
+    },
+    {
+      "rank": 2,
+      "number": "08777",
+      "rrf_score": 0.0304147465437788,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème musculo-squelettique pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 3,
+      "number": "15783",
+      "rrf_score": 0.029906956136464335,
+      "header_path": "B — Consultation, examen et visite > Visites à domicile > Patient vulnérable > Visite d'un patient en perte sévère d'autonomie",
+      "description": "Visite à domicile d'un patient vulnérable en perte sévère d'autonomie, premier patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 4,
+      "number": "15789",
+      "rrf_score": 0.029551337359792925,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème mineur pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème mineur pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 5,
+      "number": "15779",
+      "rrf_score": 0.0293236301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle complexe",
+      "description": "Visite ponctuelle complexe d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 6,
+      "number": "15668",
+      "rrf_score": 0.029236022193768675,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins psychiatriques (CHSP) désigné par le comité paritaire, dans une unité ou un programme de géronto-psychiatrie, effectuée par un médecin désigné par le comité paritaire, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 7,
+      "number": "15771",
+      "rrf_score": 0.028814262023217248,
+      "header_path": "B — Consultation, examen et visite > Visites sans rendez-vous, ou sur rendez-vous pour un patient non inscrit (patient de 80 ans ou plus inscrit ou non inscrit) > Patient vulnérable > Visite ponctuelle mineure",
+      "description": "Visite ponctuelle mineure d'un patient vulnérable de 80 ans ou plus, sans rendez-vous ou sur rendez-vous pour un patient non inscrit",
+      "expanded_from": null
+    },
+    {
+      "rank": 8,
+      "number": "15790",
+      "rrf_score": 0.028693528693528692,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous ou sans rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation d'un problème complexe pour donner une opinion",
+      "description": "Visite d'évaluation d'un problème complexe pour donner une opinion d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous ou sans rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 9,
+      "number": "09063",
+      "rrf_score": 0.02797339593114241,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Supplément à l'examen d'évaluation médicale d'un patient en perte d'autonomie lorsqu'effectué à domicile",
+      "expanded_from": null
+    },
+    {
+      "rank": 10,
+      "number": "09100",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Examen d'évaluation médicale d'un patient en perte d'autonomie en vue d'allocation de ressources et en vue de la rédaction du formulaire approprié",
+      "expanded_from": "09063"
+    },
+    {
+      "rank": 11,
+      "number": "09101",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Examen d'évaluation médicale (réf. : P.G. 2.2.6)",
+      "description": "Rédaction du formulaire approprié dans le cadre d'un examen d'évaluation médicale d'un patient en perte d'autonomie",
+      "expanded_from": "09063"
+    },
+    {
+      "rank": 12,
+      "number": "15763",
+      "rrf_score": 0.027809742999616416,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Examen (70 ans ou plus) > examen à domicile du premier patient en perte sévère d'autonomie",
+      "description": "Examen à domicile du premier patient en perte sévère d'autonomie de 70 ans ou plus par un médecin qui exerce dans le cadre d'un programme de gériatrie de courte durée dans un CHSGS ou un CHSLD",
+      "expanded_from": null
+    },
+    {
+      "rank": 13,
+      "number": "15063",
+      "rrf_score": 0.02632034632034632,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen principal avec déplacement",
+      "description": "Examen principal avec déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 14,
+      "number": "08994",
+      "rrf_score": 0.02581612258494337,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 15,
+      "number": "15619",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite d'évaluation en vue de donner une opinion dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 16,
+      "number": "15057",
+      "rrf_score": 0.016666666666666666,
+      "header_path": "B — Consultation, examen et visite > Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C) > patient inscrit > examen ordinaire avec déplacement (d'urgence avec déplacement)",
+      "description": "Examen ordinaire d'urgence avec déplacement d'un patient inscrit de 80 ans ou plus au service d'urgence d'un centre hospitalier ou du CLSC du réseau de garde",
+      "expanded_from": null
+    },
+    {
+      "rank": 17,
+      "number": "15659",
+      "rrf_score": 0.01639344262295082,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 18,
+      "number": "09231",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > mineure",
+      "description": "Consultation mineure d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15659"
+    },
+    {
+      "rank": 19,
+      "number": "08776",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite de suivi d'un problème musculo-squelettique",
+      "description": "Visite de suivi d'un problème musculo-squelettique d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 20,
+      "number": "15660",
+      "rrf_score": 0.016129032258064516,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation d'urgence avec déplacement d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 21,
+      "number": "09234",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > ordinaire",
+      "description": "Consultation ordinaire d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15660"
+    },
+    {
+      "rank": 22,
+      "number": "15837",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite de suivi",
+      "description": "Visite de suivi d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 23,
+      "number": "15633",
+      "rrf_score": 0.015873015873015872,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 7 h à 16 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 24,
+      "number": "08948",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G)",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint ou pour donner une opinion dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 25,
+      "number": "15634",
+      "rrf_score": 0.015625,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 16 h à 24 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 26,
+      "number": "15642",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": null
+    },
+    {
+      "rank": 27,
+      "number": "15638",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de prise en charge d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 28,
+      "number": "15639",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, première d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 29,
+      "number": "15640",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de suivi, subséquente d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 30,
+      "number": "15641",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Visite de transfert d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 31,
+      "number": "15643",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A",
+      "description": "Échanges interdisciplinaires ou avec les proches du patient d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, par période de quinze (15) minutes",
+      "expanded_from": "15642"
+    },
+    {
+      "rank": 32,
+      "number": "07844",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "S — Système nerveux > Rachis, moelle, queue de cheval > Neurochirurgie fonctionnelle > Programmation d'un neurostimulateur excluant la maladie de Parkinson, la dystonie ou les tremblements essentiels incluant l'examen ou la visite effectué à la même séance",
+      "description": "Programmation d'un neurostimulateur excluant la maladie de Parkinson, la dystonie ou les tremblements essentiels incluant l'examen ou la visite effectué à la même séance, neurochirurgie fonctionnelle, maximum : 1 par trois mois, par patient",
+      "expanded_from": null
+    },
+    {
+      "rank": 33,
+      "number": "15635",
+      "rrf_score": 0.015384615384615385,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Supplément pour déplacement d'urgence (période de 0 h à 7 h) dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 34,
+      "number": "08968",
+      "rrf_score": 0.015151515151515152,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 0 h à 7 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 35,
+      "number": "15651",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B",
+      "expanded_from": null
+    },
+    {
+      "rank": 36,
+      "number": "15661",
+      "rrf_score": 0.014925373134328358,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation d'urgence avec déplacement d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": null
+    },
+    {
+      "rank": 37,
+      "number": "09237",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Consultation > majeure",
+      "description": "Consultation majeure d'un patient de 70 ans ou plus en clinique externe, au service d'urgence et au CLSC du réseau de garde intégré",
+      "expanded_from": "15661"
+    },
+    {
+      "rank": 38,
+      "number": "15630",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence (P.G. 2.2.6 F)",
+      "description": "Visite d'évaluation en vue d'un suivi conjoint ou pour donner une opinion dans un centre de réadaptation ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour la partie des soins en toxicomanie ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) qui n'opère pas une unité de soins de courte durée ni un service d'urgence",
+      "expanded_from": null
+    },
+    {
+      "rank": 39,
+      "number": "15839",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite périodique",
+      "description": "Visite périodique d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 40,
+      "number": "15625",
+      "rrf_score": 0.014705882352941176,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence période de 0 h à 7 h dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 41,
+      "number": "08819",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient inscrit ou non inscrit, sans égard à l'âge) > Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale",
+      "description": "Visite d'évaluation psychiatrique en vue d'un suivi conjoint en santé mentale d'un patient inscrit ou non inscrit, sans égard à l'âge, sur rendez-vous",
+      "expanded_from": null
+    },
+    {
+      "rank": 42,
+      "number": "15617",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi exigeant un examen dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 43,
+      "number": "15623",
+      "rrf_score": 0.014492753623188406,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Supplément pour déplacement d'urgence période de 7 h à 16 h dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 44,
+      "number": "15655",
+      "rrf_score": 0.014285714285714285,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 45,
+      "number": "15654",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 16 h à 24 h",
+      "expanded_from": "15655"
+    },
+    {
+      "rank": 46,
+      "number": "15646",
+      "rrf_score": 0.014084507042253521,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 0 h à 7 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 47,
+      "number": "15644",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 7 h à 16 h",
+      "expanded_from": "15646"
+    },
+    {
+      "rank": 48,
+      "number": "15645",
+      "rrf_score": 0.0,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau A > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau A, période de 16 h à 24 h",
+      "expanded_from": "15646"
+    },
+    {
+      "rank": 49,
+      "number": "08966",
+      "rrf_score": 0.013888888888888888,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 7 h à 16 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 50,
+      "number": "15835",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Visites sur rendez-vous (patient de 80 ans ou plus) > Patient vulnérable inscrit > Visite de prise en charge",
+      "description": "Visite de prise en charge d'un patient vulnérable inscrit de 80 ans ou plus, sur rendez-vous, clientèle inscrite de moins de 500 patients",
+      "expanded_from": null
+    },
+    {
+      "rank": 51,
+      "number": "15653",
+      "rrf_score": 0.0136986301369863,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D) > Niveau B > Supplément pour déplacement d'urgence",
+      "description": "Supplément pour déplacement d'urgence d'un patient admis dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de courte durée, niveau B, période de 7 h à 16 h",
+      "expanded_from": null
+    },
+    {
+      "rank": 52,
+      "number": "15616",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Visite de suivi courant dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 53,
+      "number": "08967",
+      "rrf_score": 0.013513513513513514,
+      "header_path": "B — Consultation, examen et visite > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée (P.G. 2.2.6 G) > Suppléments d’honoraires pour déplacement d’urgence",
+      "description": "Supplément d’honoraires pour déplacement d’urgence, période de 16 h à 24 h dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée et pour un centre hospitalier de soins psychiatriques (CHSP) pour sa partie de soins de courte durée ou de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 54,
+      "number": "15615",
+      "rrf_score": 0.013333333333333334,
+      "header_path": "B — Consultation, examen et visite > Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée (P.G. 2.2.6 E))",
+      "description": "Évaluation médicale globale en soins de longue durée dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), pour sa partie des soins de longue durée",
+      "expanded_from": null
+    },
+    {
+      "rank": 55,
+      "number": "08996",
+      "rrf_score": 0.012987012987012988,
+      "header_path": "B — Consultation, examen et visite > Consultation et examen pour les patients de soixante-dix (70) ans ou plus (paragraphe 2.4.5 du préambule général) > Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) et dans une clinique externe (patients de 70 ans et plus) > ordinaire > patient inscrit (2) > sans déplacement > complet",
+      "description": "Consultation et examen complet sans déplacement d'un patient de 70 ans ou plus, inscrit, dans un centre hospitalier de soins généraux et spécialisés (CHSGS) pour sa partie de soins de courte durée (pour les examens psychiatriques) ou dans une clinique externe, ordinaire",
+      "expanded_from": null
+    },
+    {
+      "rank": 56,
+      "number": "15890",
+      "rrf_score": 0.01282051282051282,
+      "header_path": "B — Consultation, examen et visite > Psychothérapie (individuelle ou collective) > Constatation de décès",
+      "description": "Évaluation à distance du décès hors d'un centre désigné d'un patient décédé à domicile et inscrit au programme de soins à domicile du CLSC",
+      "expanded_from": null
+    }
+  ],
+  "unresolved_axes": [],
+  "eligibility": {
+    "age": 84,
+    "panel_size": 320,
+    "is_registered": true,
+    "is_vulnerable": true
+  },
+  "embedding_ms": 276.34481999848504,
+  "db_ms": 33.75608001078945
+}

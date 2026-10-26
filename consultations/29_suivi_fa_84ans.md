@@ -1,6 +1,6 @@
 **Clinique :** Clinique médicale Les Tilleuls
 **Médecin :** Dr. Julie Ouellet, MD, médecine familiale
-**Patient :** Dion, Gérard — 84 ans (H), inscrit
+**Patient :** Dion, Gérard — 84 ans (H), inscrit, vulnérable
 **NAM :** DIOG42012001
 **Dossier :** #CLI-2026-01241
 **Date/heure :** 20 août 2026, 14h00
