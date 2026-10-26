@@ -229,6 +229,25 @@ nearly the whole subsection, and its hits are pinned first. Same command, compar
 - The Sonnet table is the only one to reach every code: it also finds 01323 on URG-2026-04512, which the
   current table misses. It still ranks lower overall (MRR 0.32 vs 0.38).
 
+Selection by mistral-medium on those candidates (`run --stages selection --candidates-from <cands>
+--selection-model mistral-medium-latest`):
+
+| run | candidates | retained P / R / F1 | correct / wrong retained | exact notes | overall recall | offered, left out | in tok/note |
+|---|---|---|---|---|---|---|---|
+| `mistral-medium-sel` (before the subsections) | `bedrock-cands` | 68% / 65% / 67% | 49 / 23 | 56% | 88% | 7 | 11.9k |
+| `current-table-sel-v2` | `current-table-cands-v2` | **70% / 67% / 68%** | **50 / 21** | **61%** | **89%** | 7 | 12.0k |
+| `sonnet-table-sel` | `sonnet-table-cands-v2` | 64% / 63% / 64% | 47 / 26 | 54% | 85% | 11 | 13.3k |
+
+- **The Sonnet table's extra recall doesn't reach the selection.** It offers every expected code, but the
+  model leaves 11 out, against 7 on the current table. That is 3 fewer correct and 5 more wrong retained
+  codes: about at the noise level, but the same direction as on 10/9 (`sonnet-sel`).
+- **The losses are the visit variants that rank lower on this table.** The model retains the neighbouring
+  code instead of the expected one: 15765 → 15773, 15790 → 08777, 15783 → 15837, 08848 → 08819, and
+  15055 instead of 15052 on URG-2026-04620 and of 15064 on URG-2026-04623. The gains are add-ons ranked
+  higher on this table: 01323 on two notes, 15188, 00431.
+- **The ward and CHSLD subsections help on the current table**: 50 / 21 against 49 / 23, also within the
+  noise. 15158 is now offered and retained with high confidence on both tables.
+
 ## Care setting (2026-10-09)
 
 The section-B-wide visit query's « urgence » ranks the « déplacement d'urgence » supplements (15633–15635,
