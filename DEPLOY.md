@@ -26,6 +26,36 @@ one never restarts the other. `caddy` reaches each stack's `frontend` over the s
 only: `APP_ENV=development` there is what lets the sandbox run, and prod is pinned to
 `production`, which refuses it.
 
+## The short version: `deploy/`
+
+From your machine, with `DEPLOY_SSH=user@nomiamd.com` in the environment or in
+`deploy/deploy.local.env` (gitignored):
+
+```bash
+make deploy-prod TAG=vX.Y.Z      # deploy/deploy.sh prod vX.Y.Z — a tag already pushed (step 1)
+make deploy-demo                 # deploy/deploy.sh demo [branch] — dev by default
+make deploy-demo ARGS=--reset-data   # demo only: drop its volumes and reseed
+```
+
+`deploy/deploy.sh` does step 3's checks and deploy (below):
+- It shows the commits and the `.env.example`, ORM-model and `edge/` changes since the version
+  the server runs, then asks before going on. A prod schema change asks for a typed `yes`,
+  even with `--yes`.
+- Over SSH, it checks out the version and runs that version's own `deploy/remote-deploy.sh`:
+  1. `deploy/check-env.sh` on the server's `.env`: missing or renamed keys, empty required
+     values, a `.env` that belongs to the other stack. It stops the deploy on any error.
+  2. Prod only: caddy is recreated or reloaded if `edge/` changed.
+  3. `docker compose up --build -d`, with `APP_VERSION` set to the deployed `git describe`.
+  4. It waits for `backend` and `frontend` to report healthy, then calls `/api/health` through
+     nginx.
+
+`--dry-run` prints the remote command instead of running it. Steps 2 (RAMQ data) and 4 (accounts)
+stay manual. A new stack's `.env` comes from `deploy/init-env.sh prod|demo`: `.env.example`
+plus the stack's template in `deploy/env/`, with the secrets generated (see the demo's one-time
+setup).
+
+The sections below are what the scripts do, step by step, for doing it by hand.
+
 ## 1. Tag the release
 
 Version tags follow [SemVer](https://semver.org): `vMAJOR.MINOR.PATCH` — bump
@@ -144,7 +174,8 @@ docker compose exec backend python scripts/reset_password.py --email you@example
 
 ## Demo stack (`demo.nomiamd.com`)
 
-Same steps as prod, from `/opt/nomiamd/NomiaMD-demo/`, on a branch instead of a tag. It
+Same steps as prod, from `/opt/nomiamd/NomiaMD-demo/`, on a branch instead of a tag
+(`make deploy-demo [REF=branch]`). It
 shares the RAMQ LanceDB directory with prod (same `DB_PATH`, mounted read-only).
 
 ### Deploy a new version
@@ -168,18 +199,15 @@ only, never prod's) then re-seed.
    ```bash
    git clone <repo> /opt/nomiamd/NomiaMD-demo && cd /opt/nomiamd/NomiaMD-demo
    git checkout dev
-   cp .env.example .env
+   deploy/init-env.sh demo
    ```
-   Fill it in like prod's (its own `POSTGRES_PASSWORD` and `JWT_SECRET_KEY`), plus:
-   ```bash
-   COMPOSE_PROJECT_NAME=nomiamd-demo
-   COMPOSE_FILE=docker-compose.yml:docker-compose.demo.yml
-   NETWORK_PREFIX=172.28.1
-   EDGE_ALIAS=demo-frontend
-   EPIC_SANDBOX_ENABLED=true
-   EPIC_SANDBOX_CLIENT_ID=<the fhir.epic.com app's non-production client id>
-   EPIC_SANDBOX_PRIVATE_KEY_PATH=/opt/nomiamd/secrets/epic-sandbox.pem
-   ```
+   It writes `.env` from `.env.example` and `deploy/env/demo.env`: the demo's own compose
+   project, network and edge alias (`COMPOSE_PROJECT_NAME=nomiamd-demo`,
+   `COMPOSE_FILE=docker-compose.yml:docker-compose.demo.yml`, `NETWORK_PREFIX=172.28.1`,
+   `EDGE_ALIAS=demo-frontend`) and the Epic sandbox settings. It also generates
+   `POSTGRES_PASSWORD`, `JWT_SECRET_KEY` and `SEED_ADMIN_PASSWORD`. Then it lists what's left to
+   fill, like `EPIC_SANDBOX_CLIENT_ID` (the fhir.epic.com app's non-production client id). Re-run
+   `deploy/check-env.sh demo` until it passes.
 3. The Epic private key, readable by the containers' user (uid 10001). Its public half
    must already be served by prod at `https://nomiamd.com/.well-known/jwks.json`:
    ```bash

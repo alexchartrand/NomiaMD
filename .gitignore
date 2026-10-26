@@ -2,6 +2,8 @@
 .env
 .env.*
 !.env.example
+# deploy/deploy.sh's DEPLOY_SSH and checkout paths
+deploy/deploy.local.env
 
 # Python
 __pycache__/

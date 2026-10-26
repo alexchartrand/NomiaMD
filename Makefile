@@ -1,4 +1,4 @@
-.PHONY: dev backend frontend fake-llm dev-fake worker redis bench
+.PHONY: dev backend frontend fake-llm dev-fake worker redis bench deploy-prod deploy-demo
 
 dev:
 	@echo "Starting backend and frontend..."
@@ -42,3 +42,12 @@ fake-llm:
 # See backend/scripts/benchmark.py.
 bench:
 	cd backend && uv run python scripts/benchmark.py $(ARGS)
+
+# Deploy over SSH (DEPLOY_SSH, see deploy/deploy.sh), e.g.
+#   make deploy-prod TAG=v3.1.0
+#   make deploy-demo [REF=dev] [ARGS=--reset-data]
+deploy-prod:
+	deploy/deploy.sh prod $(TAG) $(ARGS)
+
+deploy-demo:
+	deploy/deploy.sh demo $(REF) $(ARGS)
