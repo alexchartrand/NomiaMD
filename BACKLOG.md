@@ -76,10 +76,15 @@
 
 ## ✨ Features
 
-- [ ] 🔴 Validate the curated shift code list before merge — *added 10/27, from shift claims (PR 4)*
-  - `backend/app/shift_claims/catalog/shift_codes.yaml` holds 09791 and 19953 (P.G. 2.2.9 B, p. 71). The manual states fees up to $156.40 per 4-hour quart (from 2019-10-01): confirm no newer amount, that both codes apply to the hospital ER as well as the CLSC réseau de garde, and that partial hours are paid by whole hours.
-  - Both are set to secteur de dispensation 07 (Service d'urgence), by analogy with 09996. Confirm it isn't the time-specific 32/33/34 (« Service d'urgence d'un établissement », 20 h–24 h / weekend). Note the manual's own instruction for these codes names a fee-for-service « secteur d'activité » instead (« Service d'urgence CLSC réseau de garde », guide 5.2.7), not a numbered secteur de dispensation.
-  - The P.G. 1.4 garde-sur-place forfaits (09998, 19055, 09996, 09994, 19056, 42265, 42266; p. 22) are suggested only under the physician's per-shift choice (`GardeOption`: premier, second, partage). To confirm: 09996 (20 h–24 h, « 1er » médecin) is also offered under « partage », whose sharing only covers 0 h–8 h; the second physician earns no 20 h–24 h forfait; and établissements adhering to EP 43 (their own forfaits) aren't told apart — the physician should stay « à l'acte » there. Nothing else in the manual's text is a patient-less shift code (15259 and the other « divisible » codes are per-patient and already in the codes table).
+- [ ] 🔴 Confirm the 09791/19953 fees and scope — *added 10/27, from shift claims (PR 4), open question*
+  - `backend/app/shift_claims/catalog/shift_codes.yaml` (P.G. 2.2.9 B, p. 71). The manual's last stated fee is $156.40 per 4-hour quart (from 2019-10-01): is there a newer amount? Do both codes apply at a hospital ER as well as a CLSC réseau de garde? Are partial hours paid by whole hours (the rules round down)? Ask the clinic's billing agent or RAMQ.
+
+- [ ] 🟡 Confirm the shift codes' secteur de dispensation — *added 10/27, from shift claims, open question*
+  - Every shift code is set to 07 (Service d'urgence), by analogy with 09996. For 09791/19953, it may instead be the time-specific 32/33/34 (« Service d'urgence d'un établissement », 20 h–24 h / weekend). The manual's own instruction for those two names a fee-for-service « secteur d'activité » (« Service d'urgence CLSC réseau de garde », guide 5.2.7) rather than a numbered secteur de dispensation.
+
+- [ ] 🟡 Confirm the P.G. 1.4 garde forfaits' details — *added 10/27, from shift claims, open question*
+  - Suggested only under the physician's per-shift `GardeOption` (premier, second, partage; p. 22). Open: 09996 (20 h–24 h, « 1er » médecin) is also offered under « partage », whose sharing only covers 0 h–8 h; the second (additional) physician earns no 20 h–24 h forfait; établissements adhering to EP 43 (their own forfaits) aren't told apart — the physician should stay « à l'acte » there until a per-site flag exists.
+  - Settled 10/27: 09996 is never billed with 09791/19953 on the same shift, whatever the hours (catalog `excludes`).
 
 - [ ] 🔴 A P.G. 1.4 forfait doesn't apply MOD=097/096 to the period's patient claims — *added 10/27, from shift claims*
   - Under option b) the services of the garde period are paid at 101 % (0 h–8 h, MOD=097) or 53,2 % (20 h–24 h, MOD=096), with the element of context « Service dispensé pendant la période où un forfait du PG 1.4 est réclamé ». The shift dialog only warns; patient claims of encounters in a forfait shift are saved at 100 %. Carry the shift claim's `garde_option` into those claims (modifier + context element), or block the forfait until it does.
