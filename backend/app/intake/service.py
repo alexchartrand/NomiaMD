@@ -25,6 +25,7 @@ from app.postgresdb import (
     EncounterInput,
     EncounterRepository,
     PatientRepository,
+    ShiftRepository,
     User,
     session_scope,
 )
@@ -32,6 +33,10 @@ from app.postgresdb import (
 
 class EmptyNoteError(ValueError):
     """Nothing is left of the note once normalized (e.g. an HTML capture with no text)."""
+
+
+class UnknownShiftError(ValueError):
+    """The note names a shift that isn't one of the physician's live shifts."""
 
 
 class EncounterNotFoundError(LookupError):
@@ -112,6 +117,8 @@ class IntakeService:
     async def _store(
         self, session: AsyncSession, note: SourceNote, user: User, text: str, note_hash: str, service_date: date | None
     ) -> ReceiveOutcome:
+        if note.shift_id is not None and await ShiftRepository(session).get_for_user(note.shift_id, user.id) is None:
+            raise UnknownShiftError(note.shift_id)
         patient_id = await PatientResolver(PatientRepository(session)).resolve(note.nam)
         encounters = EncounterRepository(session)
         dedup = await Deduplicator(encounters).check(
@@ -140,6 +147,7 @@ class IntakeService:
                 external_encounter_id=note.external_encounter_id,
                 service_date=service_date,
                 encounter_meta=_encounter_meta(note),
+                shift_id=note.shift_id,
             )
         )
         return ReceiveOutcome(dedup.outcome, encounter.id, patient_id, enqueued=False)

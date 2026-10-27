@@ -1,7 +1,17 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { Route, Routes, useLocation, useParams } from "react-router-dom";
-import { makeEncounterDetail, makeEncounterPatient, makeEncounterRow, makeExtraction, makeFee, makePatient, makeProposedCode } from "../../../test/factories";
+import {
+  makeEncounterDetail,
+  makeEncounterPatient,
+  makeEncounterRow,
+  makeEncounterSetting,
+  makeExtraction,
+  makeFee,
+  makePatient,
+  makeProposedCode,
+  makeShift,
+} from "../../../test/factories";
 import { makeUser, renderWithProviders, serveSession } from "../../../test/render";
 import { server } from "../../../test/server";
 import type { EncounterRow } from "../../../api";
@@ -91,6 +101,23 @@ describe("loading the list", () => {
     expect(row("Patient 3").getByText("Extraction en attente")).toBeInTheDocument();
     // The day's total, in its header.
     expect(screen.getByRole("region", { name: /1 octobre 2026/ })).toHaveTextContent("Total indicatif 87,05 $");
+  });
+
+  it("shows each row's shift, or that it's still to confirm or changed since its extraction", async () => {
+    const shift = makeShift();
+    serveEncounters([
+      ready(1, { setting: makeEncounterSetting({ care_setting: "urgence", shift }) }),
+      ready(2, { setting: makeEncounterSetting({ needs_shift_choice: true, shift_options: [shift] }) }),
+      ready(3, { setting: makeEncounterSetting({ shift, shift_picked: true, differs_from_run: true }) }),
+      ready(4),
+    ]);
+    renderInbox();
+    const row = (name: string) => within(screen.getByText(name).closest("tr")!);
+    expect(await screen.findByText("Patient 1")).toBeInTheDocument();
+    expect(row("Patient 1").getByText("Urgence soir")).toBeInTheDocument();
+    expect(row("Patient 2").getByText("Quart à confirmer")).toBeInTheDocument();
+    expect(row("Patient 3").getByText("Quart modifié")).toBeInTheDocument();
+    expect(row("Patient 4").queryByText(/Quart|Urgence/)).not.toBeInTheDocument();
   });
 
   it("groups rows by day, most recent first, with batch labels", async () => {

@@ -31,6 +31,7 @@ import { ReviewStep } from "../review/ReviewStep";
 import { useCodeReview } from "../review/useCodeReview";
 import { useSaveShortcut } from "../review/useSaveShortcut";
 import { EncounterFacts } from "./EncounterFacts";
+import { EncounterShift } from "./EncounterShift";
 import { useEncounterNeighbours } from "./useEncounterNeighbours";
 
 // A step to a neighbouring encounter, carrying the inbox's period and filters along; inert
@@ -316,6 +317,18 @@ export default function EncounterPage() {
 
       <div className="flex flex-col gap-4">
         <EncounterFacts encounter={encounter} />
+        <EncounterShift encounter={encounter} disabled={readOnly !== null} onChanged={setEncounter} />
+        {canRerun && encounter.setting.differs_from_run && (
+          <Banner tone="warning">
+            <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              Le quart ou le lieu a changé depuis l&apos;extraction : les codes proposés ont été choisis pour
+              l&apos;ancien.
+              <Button type="button" variant="secondary" size="sm" onClick={handleExtract} disabled={extracting}>
+                {extracting ? <Spinner label="Extraction en cours…" /> : "Relancer l'extraction"}
+              </Button>
+            </span>
+          </Banner>
+        )}
 
         {encounter.status === "à associer" && (
           <Card>

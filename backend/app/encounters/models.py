@@ -4,9 +4,11 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
+from app.care_setting import CareSetting
 from app.claims.models import ClaimOut, Money
 from app.extraction.models import BillingExtractionResponse
 from app.intake import EncounterStatus
+from app.shifts import ShiftOut
 
 
 class MaskedPatientOut(BaseModel):
@@ -29,6 +31,24 @@ class PatientOut(BaseModel):
     date_of_birth: date
     is_vulnerable: bool
     is_registered: bool | None
+
+
+class EncounterSettingOut(BaseModel):
+    """Where and during which shift the encounter took place — see
+    app/shifts/encounter_setting.py for the order it's resolved in."""
+
+    care_setting: CareSetting | None
+    # The physician's pick, else the one shift its date and time fall in.
+    shift: ShiftOut | None
+    # `shift` is the physician's pick, not a match.
+    shift_picked: bool
+    # Several shifts fit and none was picked: "quart à confirmer".
+    needs_shift_choice: bool
+    # The shift or care setting isn't the one its latest run chose codes under: re-extract.
+    differs_from_run: bool
+    # The shifts the physician may pick from: those overlapping the service date, plus the
+    # picked one.
+    shift_options: list[ShiftOut]
 
 
 class EncounterRowOut(BaseModel):
@@ -56,6 +76,7 @@ class EncounterRowOut(BaseModel):
     all_clean: bool
     # Deletable: no live claim (see app/encounters/removal.py).
     deletable: bool
+    setting: EncounterSettingOut
 
 
 class EncounterDetailOut(BaseModel):
@@ -77,7 +98,13 @@ class EncounterDetailOut(BaseModel):
     extraction: BillingExtractionResponse | None
     # The live claim saved from one of its runs: the codes the physician selected.
     claim: ClaimOut | None
+    setting: EncounterSettingOut
 
 
 class PatientPick(BaseModel):
     patient_id: int
+
+
+class ShiftPick(BaseModel):
+    # None withdraws the pick: the shift is derived from the date and time again.
+    shift_id: int | None

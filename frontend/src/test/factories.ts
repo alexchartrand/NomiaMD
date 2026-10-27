@@ -11,9 +11,11 @@ import type {
   EncounterDetail,
   EncounterPatient,
   EncounterRow,
+  EncounterSetting,
   ExtractedCode,
   ExtractedFee,
   Patient,
+  Shift,
 } from "../api";
 
 // Synthetic fixtures only (no real NAMs or names). Typed against src/api so a drift in the
@@ -138,6 +140,36 @@ export function makeCodeDetail(overrides: Partial<CodeDetail> = {}): CodeDetail 
   };
 }
 
+export function makeShift(overrides: Partial<Shift> = {}): Shift {
+  return {
+    id: 10,
+    series_id: null,
+    work_site_id: 1,
+    work_site_name: "Urgence Saint-Luc",
+    care_setting: "urgence",
+    period: "soir",
+    service_date: "2026-10-01",
+    start_time: "16:00:00",
+    end_time: "00:00:00",
+    ends_next_day: true,
+    day_type: "semaine",
+    ...overrides,
+  };
+}
+
+// No shift, no place: nothing is known of where the encounter took place.
+export function makeEncounterSetting(overrides: Partial<EncounterSetting> = {}): EncounterSetting {
+  return {
+    care_setting: null,
+    shift: null,
+    shift_picked: false,
+    needs_shift_choice: false,
+    differs_from_run: false,
+    shift_options: [],
+    ...overrides,
+  };
+}
+
 export function makeEncounterRow(overrides: Partial<EncounterRow> = {}): EncounterRow {
   return {
     id: 1,
@@ -155,6 +187,7 @@ export function makeEncounterRow(overrides: Partial<EncounterRow> = {}): Encount
     possible_duplicate_ids: [],
     all_clean: false,
     deletable: true,
+    setting: makeEncounterSetting(),
     ...overrides,
   };
 }
@@ -219,6 +252,7 @@ export function makeEncounterDetail(overrides: Partial<EncounterDetail> = {}): E
     extraction_error: null,
     extraction: makeExtraction([makeProposedCode()]),
     claim: null,
+    setting: makeEncounterSetting(),
     ...overrides,
   };
 }

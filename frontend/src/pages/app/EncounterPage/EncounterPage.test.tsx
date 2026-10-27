@@ -9,9 +9,11 @@ import {
   makeEncounterDetail,
   makeEncounterPatient,
   makeEncounterRow,
+  makeEncounterSetting,
   makeExtraction,
   makeFee,
   makeProposedCode,
+  makeShift,
 } from "../../../test/factories";
 import { makeUser, renderWithProviders, serveSession } from "../../../test/render";
 import { server } from "../../../test/server";
@@ -596,6 +598,73 @@ describe("re-running the extraction", () => {
     renderEncounter();
     await screen.findByText(/marquée comme doublon/);
     expect(screen.queryByRole("button", { name: "Relancer l'extraction" })).not.toBeInTheDocument();
+  });
+});
+
+describe("the encounter's shift", () => {
+  const evening = makeShift({ id: 10 });
+  const day = makeShift({ id: 11, period: "jour", start_time: "08:00:00", end_time: "16:00:00", ends_next_day: false });
+
+  it("shows the matched shift", async () => {
+    serveEncounter(withCodes({ setting: makeEncounterSetting({ care_setting: "urgence", shift: evening, shift_options: [evening] }) }));
+    renderEncounter();
+    expect(await screen.findByText(/Quart : Urgence soir, .* · Urgence Saint-Luc \(16:00–00:00\)/)).toBeInTheDocument();
+    expect(screen.getByText("Déduit de l'heure")).toBeInTheDocument();
+    expect(screen.getByLabelText("Quart de la rencontre")).toHaveValue("auto");
+  });
+
+  it("shows the place alone without a shift", async () => {
+    serveEncounter(withCodes({ setting: makeEncounterSetting({ care_setting: "chsld" }) }));
+    renderEncounter();
+    expect(await screen.findByText("CHSLD")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Quart de la rencontre")).not.toBeInTheDocument();
+  });
+
+  it("asks for the shift when several fit, then offers to re-extract once picked", async () => {
+    const ambiguous = makeEncounterSetting({ needs_shift_choice: true, shift_options: [day, evening] });
+    let body: unknown;
+    serveEncounter(withCodes({ setting: ambiguous }));
+    server.use(
+      http.put("/api/encounters/5/shift", async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json(
+          withCodes({
+            setting: makeEncounterSetting({
+              care_setting: "urgence",
+              shift: day,
+              shift_picked: true,
+              differs_from_run: true,
+              shift_options: [day, evening],
+            }),
+          }),
+        );
+      }),
+    );
+    const { user } = renderEncounter();
+    expect(await screen.findByText("Quart à confirmer")).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("Quart de la rencontre"), "11");
+    expect(body).toEqual({ shift_id: 11 });
+    expect(await screen.findByText(/a changé depuis l'extraction/)).toBeInTheDocument();
+    expect(screen.queryByText("Quart à confirmer")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Quart de la rencontre")).toHaveValue("11");
+  });
+
+  it("re-extracts from the changed-shift banner", async () => {
+    let extracted = false;
+    serveEncounter(() =>
+      withCodes({ setting: makeEncounterSetting({ shift: day, shift_picked: true, differs_from_run: !extracted, shift_options: [day] }) }),
+    );
+    server.use(
+      http.post("/api/encounters/5/extract", () => {
+        extracted = true;
+        return HttpResponse.json(makeExtraction([visit]));
+      }),
+    );
+    const { user } = renderEncounter();
+    const banner = (await screen.findByText(/a changé depuis l'extraction/)).closest("[role=alert]") as HTMLElement;
+    await user.click(within(banner).getByRole("button", { name: "Relancer l'extraction" }));
+    await waitFor(() => expect(screen.queryByText(/a changé depuis l'extraction/)).not.toBeInTheDocument());
+    expect(extracted).toBe(true);
   });
 });
 

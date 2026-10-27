@@ -10,9 +10,8 @@ from app.postgresdb import (
     WorkSiteInput,
     WorkSiteRepository,
 )
-from app.shifts.day_type import DayTypeResolver
+from app.shifts.mapper import ShiftMapper
 from app.shifts.models import ShiftIn, ShiftOut, ShiftSeriesIn, ShiftSeriesUpdateIn, WorkSiteIn, WorkSiteOut
-from app.shifts.periods import ShiftHours
 
 # The calendar shows a month at most (plus the days of the weeks it starts and ends in).
 MAX_RANGE = timedelta(days=62)
@@ -85,11 +84,11 @@ class ShiftService:
         self,
         shifts: ShiftRepository,
         sites: WorkSiteRepository,
-        day_types: DayTypeResolver | None = None,
+        mapper: ShiftMapper | None = None,
     ) -> None:
         self._shifts = shifts
         self._sites = sites
-        self._day_types = day_types or DayTypeResolver()
+        self._mapper = mapper or ShiftMapper()
 
     async def list_between(self, user_id: int, start: date, end: date) -> list[ShiftOut]:
         if end < start or end - start > MAX_RANGE:
@@ -97,14 +96,14 @@ class ShiftService:
         shifts = await self._shifts.list_between(user_id, start, end)
         # Deactivated sites too: their past shifts still show.
         sites = {site.id: site for site in await self._sites.list_for_user(user_id, include_inactive=True)}
-        return [self._out(shift, sites[shift.work_site_id]) for shift in shifts]
+        return [self._mapper.out(shift, sites[shift.work_site_id]) for shift in shifts]
 
     async def create(self, user_id: int, body: ShiftIn) -> ShiftOut:
         site = await self._sites.get_for_user(body.work_site_id, user_id)
         if site is None or not site.is_active:
             raise SiteUnavailableError
         shift = await self._shifts.create(user_id, self._input(body, site.care_setting))
-        return self._out(shift, site)
+        return self._mapper.out(shift, site)
 
     async def create_series(self, user_id: int, body: ShiftSeriesIn) -> list[ShiftOut]:
         """All of the series' shifts or none: they're written in the request's one transaction."""
@@ -132,7 +131,7 @@ class ShiftService:
                 end_time=body.end_time,
             )
             shift = await self._shifts.create(user_id, self._input(shift_body, site.care_setting), series_id)
-            created.append(self._out(shift, site))
+            created.append(self._mapper.out(shift, site))
         return created
 
     async def update(self, user_id: int, shift_id: int, body: ShiftIn) -> ShiftOut | None:
@@ -143,7 +142,7 @@ class ShiftService:
         if site is None:
             raise SiteUnavailableError
         shift = await self._shifts.update(shift, self._input(body, self._care_setting_for(shift, site)))
-        return self._out(shift, site)
+        return self._mapper.out(shift, site)
 
     async def update_series(self, user_id: int, series_id: int, body: ShiftSeriesUpdateIn) -> list[ShiftOut] | None:
         """Every live shift of the series (from `body.from_date` on), each on its own date.
@@ -164,7 +163,7 @@ class ShiftService:
                 end_time=body.end_time,
             )
             shift = await self._shifts.update(shift, self._input(shift_body, self._care_setting_for(shift, site)))
-            updated.append(self._out(shift, site))
+            updated.append(self._mapper.out(shift, site))
         return updated
 
     async def void(self, user_id: int, shift_id: int) -> bool:
@@ -200,20 +199,4 @@ class ShiftService:
             service_date=body.service_date,
             start_time=body.start_time,
             end_time=body.end_time,
-        )
-
-    def _out(self, shift: Shift, site: WorkSite) -> ShiftOut:
-        hours = ShiftHours(shift.service_date, shift.start_time, shift.end_time)
-        return ShiftOut(
-            id=shift.id,
-            series_id=shift.series_id,
-            work_site_id=site.id,
-            work_site_name=site.name,
-            care_setting=shift.care_setting,
-            period=shift.period,
-            service_date=shift.service_date,
-            start_time=shift.start_time,
-            end_time=shift.end_time,
-            ends_next_day=hours.ends_next_day,
-            day_type=self._day_types.day_type(shift.service_date),
         )

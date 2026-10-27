@@ -22,6 +22,7 @@ from app.postgresdb import (
     ExtractionStageInput,
     LLMCallOwner,
     LLMCallRepository,
+    RunSettingInput,
     session_scope,
 )
 from app.ramq_codes import CodeSelector
@@ -65,9 +66,11 @@ class ExtractionRecorder:
         service_date: date | None,
         result: PipelineResult,
         llm_calls: Sequence[LLMCallRecord] = (),
+        setting: RunSettingInput = RunSettingInput(),
     ) -> ExtractionRun:
         """The run, one stored stage per LLM step, the metered calls that produced it, and the
-        service date the summary found if the encounter had none yet, in one transaction."""
+        service date the summary found if the encounter had none yet, in one transaction.
+        `setting`: where the run took the encounter to be (unknown by default)."""
         async with session_scope() as session:
             encounters = EncounterRepository(session)
             encounter = await encounters.get_for_user(encounter_id, user_id)
@@ -88,6 +91,7 @@ class ExtractionRecorder:
                             task=CodeSelector.NAME, model=result.billing_model, result=result.billing.model_dump()
                         ),
                     ],
+                    setting=setting,
                 )
             )
             await LLMCallRepository(session).add_many(

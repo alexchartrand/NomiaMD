@@ -16,6 +16,7 @@ from app.intake.normalizers import NormalizerRegistry, default_normalizers
 from app.intake.queue import EncounterExtractor, ExtractionQueue, InlineExtractionQueue
 from app.intake.service import (
     EmptyNoteError,
+    UnknownShiftError,
     EncounterNotFoundError,
     IntakeService,
     PatientAlreadyAssignedError,
@@ -31,6 +32,7 @@ __all__ = [
     "Channel",
     "DedupOutcome",
     "EmptyNoteError",
+    "UnknownShiftError",
     "EncounterExtractor",
     "EncounterNotFoundError",
     "EncounterMeta",

@@ -33,6 +33,7 @@ from app.postgresdb.repositories.extractions import (
     ExtractionRepository,
     ExtractionRunInput,
     ExtractionStageInput,
+    RunSettingInput,
 )
 from app.postgresdb.repositories.llm_calls import LLMCallOwner, LLMCallRepository
 from app.postgresdb.repositories.login_throttles import LoginThrottleRepository
@@ -82,6 +83,7 @@ __all__ = [
     "TableStatsRepository",
     "ExtractionRunInput",
     "ExtractionStageInput",
+    "RunSettingInput",
     "LLMCallOwner",
     "LLMCallRepository",
     "LoginThrottleRepository",

@@ -1,6 +1,7 @@
 import { unwrap, unwrapVoid } from "./http";
 import type { Claim } from "./claims";
 import type { BillingExtractionResponse } from "./extraction";
+import type { CareSetting, Shift } from "./shifts";
 
 // Kept in sync by hand with app/intake/status.py's EncounterStatus. Derived server-side,
 // never set — see that module for which rule wins when several hold.
@@ -26,6 +27,23 @@ export interface EncounterPatient {
   date_of_birth: string; // ISO date (YYYY-MM-DD)
   is_vulnerable: boolean;
   is_registered: boolean | null;
+}
+
+// Where and during which shift the encounter took place: the physician's pick, else the one
+// shift its date and time fall in, else the care setting its source or paste gave
+// (app/shifts/encounter_setting.py).
+export interface EncounterSetting {
+  care_setting: CareSetting | null;
+  shift: Shift | null;
+  // `shift` is the physician's pick, not a match.
+  shift_picked: boolean;
+  // Several shifts fit and none was picked: "quart à confirmer".
+  needs_shift_choice: boolean;
+  // The shift or care setting isn't the one its latest run chose codes under: re-extract.
+  differs_from_run: boolean;
+  // What the physician may pick from: the shifts overlapping the service date, plus the
+  // picked one.
+  shift_options: Shift[];
 }
 
 export interface EncounterRow {
@@ -55,6 +73,7 @@ export interface EncounterRow {
   all_clean: boolean;
   // No live claim, so DELETE /encounters/:id will be accepted.
   deletable: boolean;
+  setting: EncounterSetting;
 }
 
 export interface EncounterDetail {
@@ -76,6 +95,7 @@ export interface EncounterDetail {
   extraction: BillingExtractionResponse | null;
   // The live claim saved from one of its runs: the codes the physician selected.
   claim: Claim | null;
+  setting: EncounterSetting;
 }
 
 // Service dates from `date_from` through `date_to`, both included (YYYY-MM-DD); either may
@@ -114,6 +134,19 @@ export async function assignEncounterPatient(id: number, patientId: number): Pro
 export async function extractEncounter(id: number): Promise<BillingExtractionResponse> {
   return unwrap<BillingExtractionResponse>(
     await fetch(`/api/encounters/${id}/extract`, { method: "POST", credentials: "same-origin" }),
+  );
+}
+
+// The shift the encounter took place during; null withdraws the pick (derived again). Codes
+// already extracted stay until the physician re-extracts.
+export async function setEncounterShift(id: number, shiftId: number | null): Promise<EncounterDetail> {
+  return unwrap<EncounterDetail>(
+    await fetch(`/api/encounters/${id}/shift`, {
+      method: "PUT",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ shift_id: shiftId }),
+    }),
   );
 }
 

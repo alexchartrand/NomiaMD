@@ -1,10 +1,11 @@
 import { Fragment, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronRight, RotateCw, Trash2 } from "lucide-react";
+import { CalendarClock, ChevronRight, RotateCw, Trash2 } from "lucide-react";
 import { deleteEncounter, describeError, extractEncounter, type EncounterRow } from "../../../api";
-import { Button, CodeChips, RowActions, Spinner, TableCell, TableRow, useConfirm } from "../../../components";
+import { Badge, Button, CodeChips, RowActions, Spinner, TableCell, TableRow, useConfirm } from "../../../components";
 import { formatClinicTime } from "../../../utils/date";
 import { formatMoney } from "../../../utils/money";
+import { shiftKind, shiftLabel } from "../../../utils/shifts";
 import { sourceLabel } from "../../../utils/sources";
 import { AssociatePatient } from "./AssociatePatient";
 import { DuplicateBadge, StatusChip } from "./StatusChip";
@@ -35,6 +36,25 @@ function noCodesText(row: EncounterRow): string {
   const toChoose = row.code_count ?? 0;
   if (toChoose > 0) return `${toChoose} code${toChoose > 1 ? "s" : ""} à confirmer`;
   return "Aucun code proposé";
+}
+
+// The shift the encounter took place during, or what's left to settle about it.
+function ShiftBadge({ row }: { row: EncounterRow }) {
+  const { setting } = row;
+  if (setting.needs_shift_choice) return <Badge tone="warning">Quart à confirmer</Badge>;
+  if (!setting.shift) return null;
+  if (setting.differs_from_run) {
+    return (
+      <Badge tone="warning" icon={CalendarClock} title="Le quart a changé depuis l'extraction : relancez-la.">
+        Quart modifié
+      </Badge>
+    );
+  }
+  return (
+    <Badge tone="neutral" icon={CalendarClock} title={shiftLabel(setting.shift)}>
+      {shiftKind(setting.shift)}
+    </Badge>
+  );
 }
 
 export function EncounterRowItem({ row, onChanged, onOpenDuplicate }: EncounterRowItemProps) {
@@ -161,6 +181,7 @@ export function EncounterRowItem({ row, onChanged, onOpenDuplicate }: EncounterR
           <div className="flex flex-wrap items-center gap-1.5">
             <StatusChip status={row.status} />
             {row.possible_duplicate_ids.length > 0 && <DuplicateBadge onClick={() => onOpenDuplicate(row)} />}
+            <ShiftBadge row={row} />
           </div>
         </TableCell>
         <TableCell className="py-2.5 pr-3">
