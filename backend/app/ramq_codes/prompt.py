@@ -3,10 +3,12 @@ candidates, the established facts, the consultation summary and the redacted tra
 
 import math
 from dataclasses import dataclass
+from datetime import time
 
 from app.care_setting import CARE_SETTING_LABELS_FR, CareSetting
 from app.patients import nam
-from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext
+from app.shifts import DAY_TYPE_LABELS_FR, SHIFT_PERIOD_LABELS_FR
+from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext, ShiftContext
 from app.ramq_codes.eligibility import CandidateSet
 from app.ramq_codes.models import Code
 from app.summary import ConsultationSummaryResult, render_for_billing_codes
@@ -72,8 +74,10 @@ Reading the candidate list:
 
 Established facts and open questions for this encounter:
 - The user message may state facts about the billing physician's practice or the identified
-  patient (panel size, registration, vulnerability, exact age) as established and
-  authoritative. Treat them as certain and prioritize them over anything the transcript or
+  patient (panel size, registration, vulnerability, exact age), and about when and where the
+  encounter took place (care setting, shift and its hours, day type, start time), as
+  established and authoritative. A supplement or majoration bound to a time of day or a
+  day type applies only when these facts fall within it. Treat them as certain and prioritize them over anything the transcript or
   summary implies to the contrary — they come from the physician's own records, not from
   inference.
 - The user message may also list axes that could NOT be established for this encounter.
@@ -118,6 +122,17 @@ def _format_candidate(c: Code) -> str:
     return "\n".join(lines)
 
 
+def _clock(t: time) -> str:
+    return f"{t.hour} h" if t.minute == 0 else f"{t.hour} h {t.minute:02d}"
+
+
+def _shift_text(shift: ShiftContext) -> str:
+    # 00:00 as an end is midnight, which the manual writes "24 h" (e.g. "de 20 h à 24 h").
+    end = "24 h" if shift.end_time == time(0, 0) else _clock(shift.end_time)
+    next_day = " le lendemain" if shift.end_time <= shift.start_time and shift.end_time != time(0, 0) else ""
+    return f"{SHIFT_PERIOD_LABELS_FR[shift.period].lower()}, de {_clock(shift.start_time)} à {end}{next_day}"
+
+
 def _known_facts_text(context: BillingContext) -> str | None:
     lines: list[str] = []
     physician = context.physician
@@ -137,6 +152,12 @@ def _known_facts_text(context: BillingContext) -> str | None:
         lines.append(f"- Âge du patient au moment de la consultation : {math.floor(patient.age_years)} ans.")
     if context.care_setting is not None:
         lines.append(f"- Lieu de la consultation : {CARE_SETTING_LABELS_FR[context.care_setting]}.")
+    if context.shift is not None:
+        lines.append(f"- Quart de travail du médecin : {_shift_text(context.shift)}.")
+    if context.day_type is not None:
+        lines.append(f"- Jour de la consultation : {DAY_TYPE_LABELS_FR[context.day_type]}.")
+    if context.encounter_time is not None:
+        lines.append(f"- Heure de début de la consultation : {_clock(context.encounter_time)}.")
     if context.care_setting is CareSetting.URGENCE:
         lines.append(
             "- Au service d'urgence, « patient inscrit » dans le libellé d'un code désigne un patient "

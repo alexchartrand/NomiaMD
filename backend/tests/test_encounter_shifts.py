@@ -12,7 +12,8 @@ from sqlalchemy import select
 from app.auth import get_current_user
 from app.main import app
 from app.postgresdb import Encounter, ExtractionRun, Gender, PatientRepository, Shift, session_scope
-from app.shifts import EncounterSetting, RunSettingSnapshot, ShiftMatcher, ShiftMatchOutcome
+from app.ramq_codes import ShiftContext
+from app.shifts import EncounterSetting, RunSettingSnapshot, ShiftMatcher, ShiftMatchOutcome, ShiftPeriod
 from tests.db_helpers import ensure_user_row, physician
 from tests.test_encounters_api import CLEAN_RESULT, _model, _note_text, _paste, _push, _row
 
@@ -177,7 +178,7 @@ async def test_a_note_in_a_shift_is_matched_and_extracted_under_its_care_setting
     }
 
 
-async def test_the_matched_shifts_care_setting_reaches_the_pipeline(me, client, monkeypatch):
+async def test_the_matched_shift_and_start_time_reach_the_pipeline(me, client, monkeypatch):
     _schedule(client, _site(client, "chsld"), "08:00", "16:00", period="jour")
     seen = {}
     from app.extraction.pipeline import BillingPipeline
@@ -185,13 +186,15 @@ async def test_the_matched_shifts_care_setting_reaches_the_pipeline(me, client, 
     original = BillingPipeline.run
 
     async def spy(self, transcript, **kwargs):
-        seen["care_setting"] = kwargs.get("care_setting")
+        seen.update(kwargs)
         return await original(self, transcript, **kwargs)
 
     monkeypatch.setattr(BillingPipeline, "run", spy)
     patient = await _seed_patient()
     _push(client, patient, service_date=TUESDAY, time_start="10:00")
     assert seen["care_setting"] == "chsld"
+    assert seen["shift"] == ShiftContext(ShiftPeriod.JOUR, TUESDAY, time(8), time(16))
+    assert seen["encounter_time"] == time(10)
 
 
 async def test_several_shifts_on_the_day_wait_for_the_physician(me, client):

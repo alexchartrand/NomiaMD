@@ -104,7 +104,7 @@ and Postgres, builds the billing pipeline), used by `main.py`'s lifespan, the wo
 Extraction flow: the physician picks a patient *first* (global search), then `POST /extract`
 (requires `patient_id`) stores the note as an `Encounter` (the retention purge target; runs
 cascade from it) and runs `consultation_summary` → resolves a `BillingContext`
-(physician practice facts + patient age/vulnerability/registration + the encounter's care setting) → `billing_codes`
+(physician practice facts + patient age/vulnerability/registration + the encounter's care setting, its shift — period and hours —, the day type of its date and its start time, all stated in the prompt's facts, none an eligibility axis) → `billing_codes`
 (multi-query hybrid retrieval: a visit query rendered from the encounter's form only and scoped to the
 manual's visit section — run again within the care setting's own subsection when it has one (ER for now; its hits pinned first), the full summary, one per procedure/add-on; eligibility-filtered, RRF-fused with every
 visit hit kept, small code families completed → LLM picks from candidates: a short `analysis`, then the codes it is sure of
@@ -131,7 +131,7 @@ on `/app/ajouter`. `/app/admin` is the admin console (admins only, `RequireAdmin
   care setting (`app/care_setting.py`), resolved in one place (`app/shifts/encounter_setting.py`):
   the shift the physician picked (`Encounter.shift_id`), else the one shift its date/time falls
   in (derived, never stored), else the note's source or paste pick (`EncounterMeta.care_setting`),
-  else unknown — never from the note text. Each run snapshots the setting it used. Fees are
+  else unknown — never from the note text. The same goes for the shift, the day type (`DayTypeResolver`, from the encounter's date, else its shift's) and the start time (the source's `time_start`) the prompt states. Each run snapshots the setting it used. Fees are
   resolved server-side by code number after the LLM call (`server_only` schema fields).
 - **Eligibility is deterministic.** Code variants carry typed bounds; contradicted variants
   are filtered in the LanceDB `WHERE`. Axes the context can't resolve are surfaced as

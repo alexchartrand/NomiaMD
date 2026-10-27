@@ -3,6 +3,7 @@ candidate-formatting/context-rendering, SelectionParser's malformed-/uncandidate
 handling, CodeSelector's call (mocked model), and FeeResolver — the full pipeline is covered
 end to end in tests/test_extraction.py and tests/test_pipeline.py."""
 
+from datetime import date, time
 from unittest.mock import AsyncMock, patch
 
 from app.care_setting import CareSetting
@@ -10,10 +11,11 @@ from app.lancedb.models import CodeRow, CodeRowFee
 from app.lancedb.repository import ICodeRepository
 from app.llm.schema import to_strict_schema
 from app.ramq_codes import BillingPrompt, BillingPromptBuilder, CodeSelector, FeeResolver, SelectionParser
-from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
+from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext, ShiftContext
 from app.ramq_codes.eligibility import CandidateSet
 from app.ramq_codes.models import BillingCodesOutput, BillingCodesResult, Code, CodeFee
 from app.ramq_codes.prompt import SYSTEM_PROMPT
+from app.shifts import DayType, ShiftPeriod
 from app.summary import ConsultationSummaryResult
 from tests.llm_helpers import fake_chat_result
 from tests.test_consultation_summary import MOCK_RESULT
@@ -169,6 +171,26 @@ def test_build_prompt_explains_the_er_meaning_of_inscrit_only_at_the_er():
 
     assert "Lieu de la consultation : cabinet" in prompt.user
     assert "inscrit à l'urgence" not in prompt.user
+
+
+def test_build_prompt_states_the_shift_the_day_type_and_the_start_time():
+    shift = ShiftContext(ShiftPeriod.SOIR, date(2026, 10, 27), time(16), time(0))
+    context = BillingContext(shift=shift, day_type=DayType.SEMAINE, encounter_time=time(18, 30))
+    prompt = _prompt(context=context)
+
+    # Midnight as an end reads "24 h", the manual's own wording ("de 20 h à 24 h").
+    assert "Quart de travail du médecin : soir, de 16 h à 24 h." in prompt.user
+    assert "Jour de la consultation : jour de semaine." in prompt.user
+    assert "Heure de début de la consultation : 18 h 30." in prompt.user
+
+
+def test_build_prompt_says_when_a_shift_ends_the_next_day():
+    shift = ShiftContext(ShiftPeriod.NUIT, date(2026, 10, 31), time(23), time(7))
+    prompt = _prompt(context=BillingContext(shift=shift, day_type=DayType.FIN_DE_SEMAINE))
+
+    assert "Quart de travail du médecin : nuit, de 23 h à 7 h le lendemain." in prompt.user
+    assert "Jour de la consultation : fin de semaine." in prompt.user
+    assert "Heure de début" not in prompt.user
 
 
 def test_build_prompt_omits_known_facts_section_when_context_is_empty():

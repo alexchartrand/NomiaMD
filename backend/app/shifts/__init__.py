@@ -10,10 +10,11 @@ from app.shifts.encounter_setting import EncounterSetting, EncounterSettingResol
 from app.shifts.mapper import ShiftMapper
 from app.shifts.matching import ShiftMatch, ShiftMatcher, ShiftMatchOutcome
 from app.shifts.models import ShiftOut
-from app.shifts.periods import SHIFT_PERIOD_LABELS_FR, ShiftHours, ShiftPeriod
+from app.shifts.periods import DEFAULT_PERIOD_HOURS, SHIFT_PERIOD_LABELS_FR, ShiftHours, ShiftPeriod
 from app.shifts.router import shifts_router, work_sites_router
 
 __all__ = [
+    "DEFAULT_PERIOD_HOURS",
     "DAY_TYPE_LABELS_FR",
     "DayType",
     "DayTypeResolver",

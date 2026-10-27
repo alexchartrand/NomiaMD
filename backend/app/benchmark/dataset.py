@@ -2,20 +2,23 @@
 context, label status, difficulty) joined to its `consultations/` note.
 
 The billing context comes straight from the fixture rather than BillingContextBuilder: the
-benchmark is deterministic and needs no physician login or patient row. So does the care
-setting (`encounter_context`), which in the app comes from the note's source or the
-physician, never the note text."""
+benchmark is deterministic and needs no physician login or patient row. So do the care
+setting, the shift and the start time (`encounter_context`), which in the app come from the
+note's source or the physician's schedule, never the note text; the day type is derived from
+the shift's date, as the app derives it."""
 
 import hashlib
 import json
 from collections.abc import Callable, Collection
 from dataclasses import dataclass
+from datetime import date, time
 from pathlib import Path
 from typing import Literal
 
 from app.care_setting import CareSetting
-from app.ramq_codes import BillingContext, PatientContext, PhysicianContext
+from app.ramq_codes import BillingContext, PatientContext, PhysicianContext, ShiftContext
 from app.sample_patients import SamplePatient, get_sample_patient
+from app.shifts import DEFAULT_PERIOD_HOURS, DayTypeResolver, ShiftPeriod
 
 DEFAULT_EVAL_PATH = Path(__file__).parent.parent.parent / "tests" / "fixtures" / "eval_billing_codes.jsonl"
 
@@ -102,9 +105,12 @@ class EvalSetLoader:
     def _context(entry: dict) -> BillingContext:
         physician = entry.get("physician_context") or {}
         patient = entry.get("patient_context") or {}
-        # A misspelled setting fails loudly (ValueError) rather than silently searching
-        # without it.
-        care_setting = (entry.get("encounter_context") or {}).get("care_setting")
+        encounter = entry.get("encounter_context") or {}
+        # A misspelled setting, period or time fails loudly (ValueError) rather than silently
+        # running without it.
+        care_setting = encounter.get("care_setting")
+        shift = _shift(encounter["shift"]) if encounter.get("shift") else None
+        encounter_time = encounter.get("encounter_time")
         return BillingContext(
             physician=PhysicianContext(
                 panel_size=physician.get("panel_size"),
@@ -117,4 +123,20 @@ class EvalSetLoader:
                 is_vulnerable=patient.get("is_vulnerable"),
             ),
             care_setting=CareSetting(care_setting) if care_setting is not None else None,
+            shift=shift,
+            day_type=DayTypeResolver().day_type(shift.service_date) if shift is not None else None,
+            encounter_time=time.fromisoformat(encounter_time) if encounter_time else None,
         )
+
+
+def _shift(raw: dict) -> ShiftContext:
+    """`{"period", "date", "start"?, "end"?}`: the hours default to the period's, as the
+    calendar prefills them."""
+    period = ShiftPeriod(raw["period"])
+    hours = DEFAULT_PERIOD_HOURS[period]
+    return ShiftContext(
+        period=period,
+        service_date=date.fromisoformat(raw["date"]),
+        start_time=time.fromisoformat(raw["start"]) if raw.get("start") else hours.start_time,
+        end_time=time.fromisoformat(raw["end"]) if raw.get("end") else hours.end_time,
+    )

@@ -11,8 +11,9 @@ from app.extraction.pipeline import BillingPipeline
 from app.extraction.recorder import ExtractionRecorder
 from app.intake import NormalizerRegistry, default_normalizers
 from app.llm.usage import usage_scope
-from app.postgresdb import EncounterRepository, UserRepository, session_scope
-from app.shifts import EncounterSettingResolver, RunSettingSnapshot
+from app.postgresdb import EncounterRepository, Shift, UserRepository, session_scope
+from app.ramq_codes import ShiftContext
+from app.shifts import EncounterSettingResolver, RunSettingSnapshot, ShiftPeriod
 
 
 class EncounterNotExtractableError(Exception):
@@ -52,6 +53,8 @@ class PipelineEncounterExtractor:
                     patient_id=encounter.patient_id,
                     date_order=date_order,
                     care_setting=setting.care_setting,
+                    shift=_shift_context(setting.shift),
+                    encounter_time=setting.start_time,
                 )
             except Exception as exc:
                 await self._recorder.record_failure(
@@ -69,3 +72,14 @@ class PipelineEncounterExtractor:
             llm_calls=usage.records,
             setting=self._snapshot.of(setting, service_date),
         )
+
+
+def _shift_context(shift: Shift | None) -> ShiftContext | None:
+    if shift is None:
+        return None
+    return ShiftContext(
+        period=ShiftPeriod(shift.period),
+        service_date=shift.service_date,
+        start_time=shift.start_time,
+        end_time=shift.end_time,
+    )

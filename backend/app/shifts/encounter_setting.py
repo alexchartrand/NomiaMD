@@ -34,6 +34,8 @@ class EncounterSetting:
     # What the physician may pick from: the shifts overlapping the service date, plus the
     # picked one wherever it is.
     options: list[Shift] = field(default_factory=list)
+    # When the encounter started, from its source (EncounterMeta.time_start); None = unknown.
+    start_time: time | None = None
 
 
 class EncounterSettingResolver:
@@ -62,17 +64,23 @@ class EncounterSettingResolver:
 
     def _settle(self, encounter: Encounter, picked: Shift | None, nearby: list[Shift]) -> EncounterSetting:
         options = self._matcher.overlapping(encounter.service_date, nearby) if encounter.service_date else []
+        start = _start_time(encounter)
         if picked is not None:
             if picked not in options:
                 options = [picked, *options]
-            return EncounterSetting(parse_care_setting(picked.care_setting), picked, picked=True, options=options)
-        match = self._matcher.match(encounter.service_date, _start_time(encounter), nearby)
+            return EncounterSetting(
+                parse_care_setting(picked.care_setting), picked, picked=True, options=options, start_time=start
+            )
+        match = self._matcher.match(encounter.service_date, start, nearby)
         if match.shift is not None:
-            return EncounterSetting(parse_care_setting(match.shift.care_setting), match.shift, options=options)
+            return EncounterSetting(
+                parse_care_setting(match.shift.care_setting), match.shift, options=options, start_time=start
+            )
         return EncounterSetting(
             parse_care_setting((encounter.encounter_meta or {}).get("care_setting")),
             needs_shift_choice=match.outcome == ShiftMatchOutcome.AMBIGUOUS,
             options=options,
+            start_time=start,
         )
 
     async def _shifts_by_day(self, user_id: int, days: list[date]) -> dict[date, list[Shift]]:

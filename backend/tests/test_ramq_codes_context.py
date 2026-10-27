@@ -4,12 +4,14 @@ test_ramq_codes_task.py's _FakeRetriever. Constructs User/Patient (plain SQLAlch
 declarative models) directly rather than through a DB session: attribute access alone
 doesn't need a session, and these tests have nothing to do with persistence."""
 
-from datetime import date
+from datetime import date, time
 
 from app.auth.profile import PhysicianAccount
 from app.care_setting import CareSetting
 from app.postgresdb import Gender, Patient, PhysicianProfile, User, UserRole
+from app.ramq_codes.context import ShiftContext
 from app.ramq_codes.context_builder import BillingContextBuilder
+from app.shifts import DayType, ShiftPeriod
 
 PATIENT_ID = 2
 
@@ -75,6 +77,45 @@ async def test_the_care_setting_carries_through_as_given():
     )
 
     assert context.care_setting is CareSetting.URGENCE
+
+
+SATURDAY_NIGHT = ShiftContext(ShiftPeriod.NUIT, date(2026, 10, 31), time(0), time(8))
+
+
+async def test_the_shift_and_start_time_carry_through_as_given():
+    builder = BillingContextBuilder(_FakeProfileService(None), _FakePatientRepository(None))
+
+    context = await builder.build(
+        user=_user(), patient_id=999, encounter_date=None, shift=SATURDAY_NIGHT, encounter_time=time(2, 10)
+    )
+
+    assert context.shift == SATURDAY_NIGHT
+    assert context.encounter_time == time(2, 10)
+
+
+async def test_the_day_type_is_the_encounter_dates_else_the_shifts():
+    builder = BillingContextBuilder(_FakeProfileService(None), _FakePatientRepository(None))
+
+    # Monday 2026-10-12 is Thanksgiving (Action de grâce), a jour férié.
+    on_holiday = await builder.build(
+        user=_user(), patient_id=999, encounter_date=date(2026, 10, 12), shift=SATURDAY_NIGHT
+    )
+    from_shift = await builder.build(user=_user(), patient_id=999, encounter_date=None, shift=SATURDAY_NIGHT)
+    on_weekday = await builder.build(user=_user(), patient_id=999, encounter_date=date(2026, 10, 27))
+
+    assert on_holiday.day_type is DayType.FERIE
+    assert from_shift.day_type is DayType.FIN_DE_SEMAINE
+    assert on_weekday.day_type is DayType.SEMAINE
+
+
+async def test_an_unknown_date_without_a_shift_leaves_the_day_type_unknown():
+    builder = BillingContextBuilder(_FakeProfileService(None), _FakePatientRepository(None))
+
+    context = await builder.build(user=_user(), patient_id=999, encounter_date=None)
+
+    assert context.day_type is None
+    assert context.shift is None
+    assert context.encounter_time is None
 
 
 async def test_profile_facts_carry_through_when_a_profile_exists():

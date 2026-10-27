@@ -11,9 +11,10 @@ admitted gap, since it would silently narrow the candidate list instead of askin
 physician to confirm."""
 
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, time
 
 from app.care_setting import CareSetting
+from app.shifts import DayType, ShiftPeriod
 
 # Names for the eligibility axes a code variant can be bound on — shared vocabulary between
 # BillingContext.known_axes(), UnresolvedAxisDetector's unresolved-axis reporting, and the
@@ -62,6 +63,18 @@ class PatientContext:
 
 
 @dataclass(frozen=True)
+class ShiftContext:
+    """The shift the encounter took place in — the physician's pick, else the one its date
+    and time fall in (app/shifts/encounter_setting.py) — with its hours in the clinic's local
+    time, the end at or before the start being the next day."""
+
+    period: ShiftPeriod
+    service_date: date
+    start_time: time
+    end_time: time
+
+
+@dataclass(frozen=True)
 class BillingContext:
     """Everything the billing_codes prompt states as authoritative fact rather than lets
     the model infer from the transcript. Both halves are independently optional: a
@@ -76,6 +89,12 @@ class BillingContext:
     # app/care_setting.py). Not an eligibility axis — no codes column is bound on it — it
     # scopes the visit-code search (visit_query.py) and is stated in the prompt.
     care_setting: CareSetting | None = None
+    # When the encounter took place, for the time-based supplements and majorations: its
+    # shift, the day type of its date (else its shift's), and its start time from the
+    # source. Not eligibility axes either — stated in the prompt only.
+    shift: ShiftContext | None = None
+    day_type: DayType | None = None
+    encounter_time: time | None = None
 
     def known_axes(self) -> dict[str, bool | int | None]:
         """Which of the four eligibility axes this context can resolve, and to what value. A
