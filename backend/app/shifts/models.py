@@ -60,8 +60,20 @@ class ShiftSeriesIn(BaseModel):
     weekdays_only: bool = False
 
 
+class ShiftSeriesUpdateIn(BaseModel):
+    """New site, period and hours for a series' shifts — every one of them, or those from
+    `from_date` on. Each keeps its own date."""
+
+    work_site_id: int
+    period: ShiftPeriod
+    start_time: time
+    end_time: time
+    from_date: date | None = None
+
+
 class ShiftOut(BaseModel):
     id: int
+    series_id: int | None
     work_site_id: int
     work_site_name: str
     care_setting: CareSetting

@@ -227,6 +227,17 @@ class WorkSite(TimestampMixin, Base):
     deactivated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+class ShiftSeries(CreatedAtMixin, Base):
+    """Groups the shifts saved together over a date range (two weeks at a clinic, a week on
+    call), so the physician can edit or remove them as one. Only an identity: each shift
+    keeps its own date, hours and site."""
+
+    __tablename__ = "shift_series"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+
 class Shift(TimestampMixin, Base):
     """One block of work at a site — an ER evening, a CHSLD morning — in the clinic's local
     time (America/Montreal), the way RAMQ states its hours: a date and a start and end time,
@@ -236,6 +247,9 @@ class Shift(TimestampMixin, Base):
     `care_setting` is copied from the site when the shift is saved, so editing or deactivating
     a site never changes what past shifts were billed under. `period` is the physician's pick
     (jour/soir/nuit — app/shifts/periods.py), not derived from the hours.
+
+    `series_id` links the shifts saved together over a date range (ShiftSeries); null for a
+    shift saved on its own.
 
     Never hard-deleted: removing a shift sets `voided_at`."""
 
@@ -253,6 +267,9 @@ class Shift(TimestampMixin, Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     work_site_id: Mapped[int] = mapped_column(ForeignKey("work_sites.id", ondelete="RESTRICT"), index=True)
+    series_id: Mapped[int | None] = mapped_column(
+        ForeignKey("shift_series.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
     care_setting: Mapped[str] = mapped_column(String(32))
     period: Mapped[str] = mapped_column(String(8))
     # The day the shift starts on, in the clinic's calendar.

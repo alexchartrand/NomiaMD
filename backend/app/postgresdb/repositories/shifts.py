@@ -5,7 +5,7 @@ from datetime import date, datetime, time, timezone
 
 from sqlalchemy import select
 
-from app.postgresdb.models import Shift
+from app.postgresdb.models import Shift, ShiftSeries
 from app.postgresdb.repositories.base import SessionRepository
 
 
@@ -22,8 +22,14 @@ class ShiftInput:
 class ShiftRepository(SessionRepository):
     """Stores shifts. Every read is scoped to its owner; voided shifts are invisible."""
 
-    async def create(self, user_id: int, data: ShiftInput) -> Shift:
-        shift = Shift(user_id=user_id, **vars(data))
+    async def new_series(self, user_id: int) -> int:
+        series = ShiftSeries(user_id=user_id)
+        self._session.add(series)
+        await self._session.flush()
+        return series.id
+
+    async def create(self, user_id: int, data: ShiftInput, series_id: int | None = None) -> Shift:
+        shift = Shift(user_id=user_id, series_id=series_id, **vars(data))
         self._session.add(shift)
         await self._session.flush()
         return shift
@@ -46,6 +52,18 @@ class ShiftRepository(SessionRepository):
             )
             .order_by(Shift.service_date, Shift.start_time, Shift.id)
         )
+        return list(result.scalars().all())
+
+    async def list_in_series(self, user_id: int, series_id: int, from_date: date | None = None) -> list[Shift]:
+        """The series' live shifts — from `from_date` on (included) when given."""
+        query = select(Shift).where(
+            Shift.user_id == user_id,
+            Shift.series_id == series_id,
+            Shift.voided_at.is_(None),
+        )
+        if from_date is not None:
+            query = query.where(Shift.service_date >= from_date)
+        result = await self._session.execute(query.order_by(Shift.service_date, Shift.id))
         return list(result.scalars().all())
 
     async def get_for_user(self, shift_id: int, user_id: int) -> Shift | None:

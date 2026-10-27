@@ -48,6 +48,7 @@ export interface WorkSiteInput {
 
 export interface Shift {
   id: number;
+  series_id: number | null; // the shifts saved together over a date range
   work_site_id: number;
   work_site_name: string;
   care_setting: CareSetting;
@@ -76,6 +77,15 @@ export interface ShiftSeriesInput {
   start_time: string;
   end_time: string;
   weekdays_only: boolean;
+}
+
+// New site, period and hours for a series' shifts — all of them, or from from_date on.
+export interface ShiftSeriesUpdateInput {
+  work_site_id: number;
+  period: ShiftPeriod;
+  start_time: string;
+  end_time: string;
+  from_date: string | null;
 }
 
 export interface PeriodDefault {
@@ -165,4 +175,23 @@ export async function updateShift(id: number, payload: ShiftInput): Promise<Shif
 
 export async function deleteShift(id: number): Promise<void> {
   return unwrapVoid(await fetch(`/api/shifts/${id}`, { method: "DELETE", credentials: "same-origin" }));
+}
+
+export async function updateShiftSeries(seriesId: number, payload: ShiftSeriesUpdateInput): Promise<Shift[]> {
+  return unwrap<Shift[]>(
+    await fetch(`/api/shifts/series/${seriesId}`, {
+      method: "PUT",
+      credentials: "same-origin",
+      headers: JSON_HEADERS,
+      body: JSON.stringify(payload),
+    }),
+  );
+}
+
+// Every shift of the series, or those from `fromDate` on.
+export async function deleteShiftSeries(seriesId: number, fromDate: string | null = null): Promise<void> {
+  const query = fromDate ? `?${new URLSearchParams({ from_date: fromDate })}` : "";
+  return unwrapVoid(
+    await fetch(`/api/shifts/series/${seriesId}${query}`, { method: "DELETE", credentials: "same-origin" }),
+  );
 }

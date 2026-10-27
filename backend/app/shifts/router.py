@@ -5,7 +5,15 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.auth import get_current_user
 from app.postgresdb import User
 from app.shifts.factory import get_shift_service, get_work_site_service
-from app.shifts.models import PeriodDefaultOut, ShiftIn, ShiftOut, ShiftSeriesIn, WorkSiteIn, WorkSiteOut
+from app.shifts.models import (
+    PeriodDefaultOut,
+    ShiftIn,
+    ShiftOut,
+    ShiftSeriesIn,
+    ShiftSeriesUpdateIn,
+    WorkSiteIn,
+    WorkSiteOut,
+)
 from app.shifts.periods import DEFAULT_PERIOD_HOURS, SHIFT_PERIOD_LABELS_FR
 from app.shifts.service import (
     EmptySeriesError,
@@ -20,6 +28,7 @@ shifts_router = APIRouter(prefix="/shifts", tags=["shifts"])
 
 _SITE_NOT_FOUND = "Lieu de travail introuvable"
 _SHIFT_NOT_FOUND = "Quart introuvable"
+_SERIES_NOT_FOUND = "Série de quarts introuvable"
 
 
 @work_sites_router.get("", response_model=list[WorkSiteOut])
@@ -125,6 +134,34 @@ async def create_shift_series(
         raise HTTPException(status_code=422, detail="Période invalide (62 jours au plus)") from exc
     except EmptySeriesError as exc:
         raise HTTPException(status_code=422, detail="Aucun jour à l'horaire dans cette période") from exc
+
+
+@shifts_router.put("/series/{series_id}", response_model=list[ShiftOut])
+async def update_shift_series(
+    series_id: int,
+    body: ShiftSeriesUpdateIn,
+    current_user: User = Depends(get_current_user),
+    service: ShiftService = Depends(get_shift_service),
+) -> list[ShiftOut]:
+    try:
+        shifts = await service.update_series(current_user.id, series_id, body)
+    except SiteUnavailableError as exc:
+        raise HTTPException(status_code=422, detail=_SITE_NOT_FOUND) from exc
+    if shifts is None:
+        raise HTTPException(status_code=404, detail=_SERIES_NOT_FOUND)
+    return shifts
+
+
+@shifts_router.delete("/series/{series_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_shift_series(
+    series_id: int,
+    from_date: date | None = None,
+    current_user: User = Depends(get_current_user),
+    service: ShiftService = Depends(get_shift_service),
+) -> None:
+    """Every shift of the series, or those from `from_date` on."""
+    if not await service.void_series(current_user.id, series_id, from_date):
+        raise HTTPException(status_code=404, detail=_SERIES_NOT_FOUND)
 
 
 @shifts_router.put("/{shift_id}", response_model=ShiftOut)

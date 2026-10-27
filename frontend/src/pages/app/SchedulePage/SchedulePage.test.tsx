@@ -19,6 +19,7 @@ const periods = [
 function makeShift(overrides: Partial<Shift> = {}): Shift {
   return {
     id: 10,
+    series_id: null,
     work_site_id: 1,
     work_site_name: "Urgence Saint-Luc",
     care_setting: "urgence",
@@ -133,5 +134,46 @@ describe("schedule", () => {
         weekdays_only: true,
       },
     ]);
+  });
+
+  it("edits a series' shifts from this one on", async () => {
+    serveSchedule({ shifts: [makeShift({ id: 11, series_id: 4, period: "jour", start_time: "08:00:00", end_time: "16:00:00", ends_next_day: false })] });
+    const bodies: unknown[] = [];
+    server.use(
+      http.put("/api/shifts/series/4", async ({ request }) => {
+        bodies.push(await request.json());
+        return HttpResponse.json([]);
+      }),
+    );
+    const { user } = renderSchedule();
+    await user.click(await screen.findByRole("button", { name: /08:00–16:00/ }));
+    await user.click(screen.getByRole("button", { name: "Ce quart et les suivants" }));
+    expect(screen.queryByLabelText("Date")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Soir" }));
+    await user.click(screen.getByRole("button", { name: "Enregistrer" }));
+
+    expect(await screen.findByText("Horaire mis à jour.")).toBeInTheDocument();
+    expect(bodies).toEqual([{ work_site_id: 1, period: "soir", start_time: "16:00", end_time: "00:00", from_date: monday }]);
+  });
+
+  it("deletes a whole series after confirming", async () => {
+    serveSchedule({ shifts: [makeShift({ series_id: 4 })] });
+    const deleted: string[] = [];
+    server.use(
+      http.delete("/api/shifts/series/4", ({ request }) => {
+        deleted.push(request.url);
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const { user } = renderSchedule();
+    await user.click(await screen.findByRole("button", { name: /16:00–00:00/ }));
+    await user.click(screen.getByRole("button", { name: "Toute la série" }));
+    await user.click(screen.getByRole("button", { name: "Supprimer" }));
+    const confirmDialog = (await screen.findByText("Supprimer toute la série ?")).closest("[role=dialog],[role=alertdialog]");
+    await user.click(within(confirmDialog as HTMLElement).getByRole("button", { name: "Supprimer" }));
+
+    expect(await screen.findByText("Quarts supprimés.")).toBeInTheDocument();
+    expect(deleted).toHaveLength(1);
+    expect(new URL(deleted[0]).search).toBe("");
   });
 });

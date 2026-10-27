@@ -11,7 +11,7 @@ from app.postgresdb import (
     WorkSiteRepository,
 )
 from app.shifts.day_type import DayTypeResolver
-from app.shifts.models import ShiftIn, ShiftOut, ShiftSeriesIn, WorkSiteIn, WorkSiteOut
+from app.shifts.models import ShiftIn, ShiftOut, ShiftSeriesIn, ShiftSeriesUpdateIn, WorkSiteIn, WorkSiteOut
 from app.shifts.periods import ShiftHours
 
 # The calendar shows a month at most (plus the days of the weeks it starts and ends in).
@@ -121,6 +121,7 @@ class ShiftService:
             days = [day for day in days if day.weekday() < _SATURDAY]
         if not days:
             raise EmptySeriesError
+        series_id = await self._shifts.new_series(user_id)
         created = []
         for day in days:
             shift_body = ShiftIn(
@@ -130,26 +131,41 @@ class ShiftService:
                 start_time=body.start_time,
                 end_time=body.end_time,
             )
-            created.append(self._out(await self._shifts.create(user_id, self._input(shift_body, site.care_setting)), site))
+            shift = await self._shifts.create(user_id, self._input(shift_body, site.care_setting), series_id)
+            created.append(self._out(shift, site))
         return created
 
     async def update(self, user_id: int, shift_id: int, body: ShiftIn) -> ShiftOut | None:
-        """The care setting is re-read from the site only when the shift moves to another one:
-        editing a shift's hours never reinterprets where it took place."""
         shift = await self._shifts.get_for_user(shift_id, user_id)
         if shift is None:
             return None
         site = await self._sites.get_for_user(body.work_site_id, user_id)
         if site is None:
             raise SiteUnavailableError
-        if site.id != shift.work_site_id:
-            if not site.is_active:
-                raise SiteUnavailableError
-            care_setting = site.care_setting
-        else:
-            care_setting = shift.care_setting
-        shift = await self._shifts.update(shift, self._input(body, care_setting))
+        shift = await self._shifts.update(shift, self._input(body, self._care_setting_for(shift, site)))
         return self._out(shift, site)
+
+    async def update_series(self, user_id: int, series_id: int, body: ShiftSeriesUpdateIn) -> list[ShiftOut] | None:
+        """Every live shift of the series (from `body.from_date` on), each on its own date.
+        None when there's none left to edit."""
+        shifts = await self._shifts.list_in_series(user_id, series_id, body.from_date)
+        if not shifts:
+            return None
+        site = await self._sites.get_for_user(body.work_site_id, user_id)
+        if site is None:
+            raise SiteUnavailableError
+        updated = []
+        for shift in shifts:
+            shift_body = ShiftIn(
+                work_site_id=body.work_site_id,
+                period=body.period,
+                service_date=shift.service_date,
+                start_time=body.start_time,
+                end_time=body.end_time,
+            )
+            shift = await self._shifts.update(shift, self._input(shift_body, self._care_setting_for(shift, site)))
+            updated.append(self._out(shift, site))
+        return updated
 
     async def void(self, user_id: int, shift_id: int) -> bool:
         shift = await self._shifts.get_for_user(shift_id, user_id)
@@ -157,6 +173,23 @@ class ShiftService:
             return False
         await self._shifts.void(shift)
         return True
+
+    async def void_series(self, user_id: int, series_id: int, from_date: date | None = None) -> int:
+        """Voids the series' live shifts (from `from_date` on); how many it voided."""
+        shifts = await self._shifts.list_in_series(user_id, series_id, from_date)
+        for shift in shifts:
+            await self._shifts.void(shift)
+        return len(shifts)
+
+    @staticmethod
+    def _care_setting_for(shift: Shift, site: WorkSite) -> str:
+        """Re-read from the site only when the shift moves to another one: editing a shift's
+        hours never reinterprets where it took place. A shift can't move to an archived site."""
+        if site.id == shift.work_site_id:
+            return shift.care_setting
+        if not site.is_active:
+            raise SiteUnavailableError
+        return site.care_setting
 
     @staticmethod
     def _input(body: ShiftIn, care_setting: str) -> ShiftInput:
@@ -173,6 +206,7 @@ class ShiftService:
         hours = ShiftHours(shift.service_date, shift.start_time, shift.end_time)
         return ShiftOut(
             id=shift.id,
+            series_id=shift.series_id,
             work_site_id=site.id,
             work_site_name=site.name,
             care_setting=shift.care_setting,

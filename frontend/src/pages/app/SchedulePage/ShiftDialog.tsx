@@ -5,6 +5,7 @@ import {
   createShiftSeries,
   describeError,
   updateShift,
+  updateShiftSeries,
   type PeriodDefault,
   type Shift,
   type ShiftPeriod,
@@ -21,8 +22,17 @@ interface ShiftDialogProps {
   periods: PeriodDefault[];
   onClose: () => void;
   onSaved: () => void;
-  onDelete: (shift: Shift) => void;
+  onDelete: (shift: Shift, scope: SeriesScope) => void;
 }
+
+// Which of a series' shifts an edit or a removal applies to.
+export type SeriesScope = "one" | "following" | "all";
+
+const SCOPES: { id: SeriesScope; label: string }[] = [
+  { id: "one", label: "Ce quart" },
+  { id: "following", label: "Ce quart et les suivants" },
+  { id: "all", label: "Toute la série" },
+];
 
 const hhmm = (time: string) => time.slice(0, 5);
 
@@ -51,6 +61,7 @@ export function ShiftDialog({ shift, day, sites, periods, onClose, onSaved, onDe
   const [period, setPeriod] = useState<ShiftPeriod>(initialPeriod);
   const [startTime, setStartTime] = useState(hhmm(shift?.start_time ?? defaults(initialPeriod)?.start_time ?? "08:00"));
   const [endTime, setEndTime] = useState(hhmm(shift?.end_time ?? defaults(initialPeriod)?.end_time ?? "16:00"));
+  const [scope, setScope] = useState<SeriesScope>("one");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -77,7 +88,9 @@ export function ShiftDialog({ shift, day, sites, periods, onClose, onSaved, onDe
     setSubmitting(true);
     const hours = { work_site_id: siteId, period, start_time: startTime, end_time: endTime };
     try {
-      if (shift) await updateShift(shift.id, { ...hours, service_date: serviceDate });
+      if (shift?.series_id != null && scope !== "one")
+        await updateShiftSeries(shift.series_id, { ...hours, from_date: scope === "following" ? shift.service_date : null });
+      else if (shift) await updateShift(shift.id, { ...hours, service_date: serviceDate });
       else if (isSeries)
         await createShiftSeries({ ...hours, start_date: serviceDate, end_date: lastDate, weekdays_only: weekdaysOnly });
       else await createShift({ ...hours, service_date: serviceDate });
@@ -115,7 +128,13 @@ export function ShiftDialog({ shift, day, sites, periods, onClose, onSaved, onDe
             ))}
           </Select>
         </FormField>
-        {shift ? (
+        {shift?.series_id != null && (
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-foreground">Appliquer à</span>
+            <SegmentedControl ariaLabel="Appliquer à" segments={SCOPES} value={scope} onChange={setScope} className="w-fit" />
+          </div>
+        )}
+        {shift && scope !== "one" ? null : shift ? (
           <FormField id="shift-date" label="Date">
             <TextField
               id="shift-date"
@@ -194,7 +213,7 @@ export function ShiftDialog({ shift, day, sites, periods, onClose, onSaved, onDe
         <div className="flex items-center justify-between gap-2">
           <div>
             {shift && (
-              <Button type="button" variant="ghost" className="text-destructive" onClick={() => onDelete(shift)}>
+              <Button type="button" variant="ghost" className="text-destructive" onClick={() => onDelete(shift, scope)}>
                 Supprimer
               </Button>
             )}

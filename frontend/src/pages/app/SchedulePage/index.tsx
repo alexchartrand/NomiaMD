@@ -6,6 +6,7 @@ import {
   CARE_SETTING_LABELS,
   SHIFT_PERIODS,
   deleteShift,
+  deleteShiftSeries,
   describeError,
   listPeriodDefaults,
   listShifts,
@@ -17,7 +18,7 @@ import {
 import { AppPage, AppPageHeader, Badge, Banner, Button, EmptyState, Spinner, useConfirm } from "../../../components";
 import { cn } from "@/lib/utils";
 import { addDays, clinicToday, weekdayIndex } from "../../../utils/date";
-import { ShiftDialog } from "./ShiftDialog";
+import { ShiftDialog, type SeriesScope } from "./ShiftDialog";
 
 const PERIOD_LABELS = Object.fromEntries(SHIFT_PERIODS.map((p) => [p.value, p.label]));
 
@@ -68,19 +69,22 @@ export default function SchedulePage() {
 
   useEffect(loadWeek, [loadWeek]);
 
-  async function handleDelete(shift: Shift) {
-    const confirmed = await confirm({
-      title: "Supprimer ce quart ?",
-      message: `${shift.work_site_name}, ${hhmm(shift.start_time)}–${hhmm(shift.end_time)}.`,
-      confirmLabel: "Supprimer",
-      tone: "danger",
-    });
+  async function handleDelete(shift: Shift, scope: SeriesScope) {
+    const hours = `${shift.work_site_name}, ${hhmm(shift.start_time)}–${hhmm(shift.end_time)}`;
+    const question = {
+      one: { title: "Supprimer ce quart ?", message: `${hours}.` },
+      following: { title: "Supprimer ce quart et les suivants ?", message: `${hours}, à partir du ${shift.service_date}.` },
+      all: { title: "Supprimer toute la série ?", message: `${hours}, tous les jours de la série.` },
+    }[shift.series_id != null ? scope : "one"];
+    const confirmed = await confirm({ ...question, confirmLabel: "Supprimer", tone: "danger" });
     if (!confirmed) return;
     try {
-      await deleteShift(shift.id);
+      if (shift.series_id != null && scope !== "one")
+        await deleteShiftSeries(shift.series_id, scope === "following" ? shift.service_date : null);
+      else await deleteShift(shift.id);
       setDialog(null);
-      setShifts((current) => current?.filter((s) => s.id !== shift.id) ?? null);
-      toast.success("Quart supprimé.");
+      loadWeek();
+      toast.success(scope === "one" ? "Quart supprimé." : "Quarts supprimés.");
     } catch (err) {
       toast.error(describeError(err));
     }
@@ -207,7 +211,7 @@ export default function SchedulePage() {
             loadWeek();
             toast.success("Horaire mis à jour.");
           }}
-          onDelete={(shift) => void handleDelete(shift)}
+          onDelete={(shift, scope) => void handleDelete(shift, scope)}
         />
       )}
       {confirmDialog}

@@ -210,3 +210,69 @@ def test_series_validation():
         assert client.post("/shifts/series", json=backwards).status_code == 422
         too_long = _series_body(site["id"], start_date="2027-01-01", end_date="2027-04-01")
         assert client.post("/shifts/series", json=too_long).status_code == 422
+
+
+def _week_of(client, start, end):
+    return client.get("/shifts", params={"start": start, "end": end}).json()
+
+
+def test_single_shift_has_no_series():
+    with TestClient(app) as client:
+        site = _create_site(client, name="Urgence solo")
+        assert client.post("/shifts", json=_shift_body(site["id"], service_date="2027-02-01")).json()["series_id"] is None
+
+
+def test_edit_series_from_a_date_on():
+    with TestClient(app) as client:
+        site = _create_site(client, name="Garde série", care_setting="hospitalisation")
+        shifts = client.post(
+            "/shifts/series", json=_series_body(site["id"], start_date="2027-02-08", end_date="2027-02-12", end_time="16:00")
+        ).json()
+        series_id = shifts[0]["series_id"]
+        assert series_id is not None and {s["series_id"] for s in shifts} == {series_id}
+
+        response = client.put(
+            f"/shifts/series/{series_id}",
+            json={"work_site_id": site["id"], "period": "soir", "start_time": "16:00", "end_time": "00:00", "from_date": "2027-02-10"},
+        )
+        assert response.status_code == 200, response.text
+        assert [s["service_date"] for s in response.json()] == ["2027-02-10", "2027-02-11", "2027-02-12"]
+
+        week = _week_of(client, "2027-02-08", "2027-02-12")
+        assert [(s["service_date"], s["period"]) for s in week if s["series_id"] == series_id] == [
+            ("2027-02-08", "jour"),
+            ("2027-02-09", "jour"),
+            ("2027-02-10", "soir"),
+            ("2027-02-11", "soir"),
+            ("2027-02-12", "soir"),
+        ]
+
+
+def test_delete_series_whole_or_from_a_date():
+    with TestClient(app) as client:
+        site = _create_site(client, name="GMF série", care_setting="gmf")
+        series_id = client.post(
+            "/shifts/series", json=_series_body(site["id"], start_date="2027-03-01", end_date="2027-03-05", end_time="16:00")
+        ).json()[0]["series_id"]
+
+        assert client.delete(f"/shifts/series/{series_id}", params={"from_date": "2027-03-04"}).status_code == 204
+        assert [s["service_date"] for s in _week_of(client, "2027-03-01", "2027-03-07")] == ["2027-03-01", "2027-03-02", "2027-03-03"]
+
+        assert client.delete(f"/shifts/series/{series_id}").status_code == 204
+        assert _week_of(client, "2027-03-01", "2027-03-07") == []
+        assert client.delete(f"/shifts/series/{series_id}").status_code == 404
+
+
+async def test_series_is_scoped_to_its_owner():
+    other = User(id=97, email="other-series@example.test", full_name="Dr. Série", role=UserRole.PHYSICIAN, is_active=True)
+    await ensure_user_row(other)
+    with TestClient(app) as client:
+        site = _create_site(client, name="Urgence série privée")
+        series_id = client.post(
+            "/shifts/series", json=_series_body(site["id"], start_date="2027-04-05", end_date="2027-04-06")
+        ).json()[0]["series_id"]
+
+        app.dependency_overrides[get_current_user] = lambda: other
+        assert client.delete(f"/shifts/series/{series_id}").status_code == 404
+        body = {"work_site_id": site["id"], "period": "soir", "start_time": "16:00", "end_time": "00:00"}
+        assert client.put(f"/shifts/series/{series_id}", json=body).status_code == 404
