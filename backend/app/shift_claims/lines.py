@@ -5,8 +5,13 @@ and fee snapshotted from the catalog on the shift's date — never from the requ
 from app.care_setting import CareSetting
 from app.claims.origin import CodeOrigin
 from app.postgresdb import ShiftClaimCodeInput
-from app.shift_claims.catalog import ShiftCodeCatalog
-from app.shift_claims.errors import EmptyShiftClaimError, HoursExceedShiftError, UnknownShiftCodeError
+from app.shift_claims.catalog import GardeOption, ShiftCodeCatalog
+from app.shift_claims.errors import (
+    EmptyShiftClaimError,
+    HoursExceedShiftError,
+    UnknownShiftCodeError,
+    WholeQuartsOnlyError,
+)
 from app.shift_claims.fees import ShiftFeeResolver
 from app.shift_claims.models import ShiftClaimLineIn
 from app.shift_claims.rules import SuggestedShiftLine
@@ -25,6 +30,7 @@ class ShiftClaimLineBuilder:
         care_setting: CareSetting | None,
         hours: ShiftHours,
         suggested: list[SuggestedShiftLine],
+        garde_option: GardeOption = GardeOption.ACTE,
     ) -> list[ShiftClaimCodeInput]:
         """First line per code wins. A code may run up to the shift's whole hours: the rules'
         count is a suggestion, and an établissement's own holiday calendar can differ from
@@ -39,10 +45,12 @@ class ShiftClaimLineBuilder:
         rows = []
         for line in by_code.values():
             code = self._catalog.get(line.code)
-            if code is None or care_setting is None or care_setting not in code.care_settings:
+            if code is None or care_setting is None or not code.applies_to(care_setting, garde_option):
                 raise UnknownShiftCodeError(line.code)
             if line.hours > shift_hours:
                 raise HoursExceedShiftError(line.code, line.hours, shift_hours)
+            if not code.divisible_in_hours and line.hours % code.quart_hours:
+                raise WholeQuartsOnlyError(line.code, code.quart_hours)
             fee = self._fees.resolve(code, hours.service_date, line.hours)
             rows.append(
                 ShiftClaimCodeInput(

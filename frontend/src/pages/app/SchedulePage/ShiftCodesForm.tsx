@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { describeError, saveShiftClaim, type ShiftBilling, type ShiftClaim } from "../../../api";
-import { Badge, Banner, Button, Checkbox, TextField } from "../../../components";
+import { describeError, saveShiftClaim, type GardeOption, type ShiftBilling, type ShiftClaim } from "../../../api";
+import { Badge, Banner, Button, Checkbox, FormField, Select, TextField } from "../../../components";
 import { formatMoney } from "../../../utils/money";
 
 interface ShiftCodesFormProps {
   billing: ShiftBilling;
   onSaved: (claim: ShiftClaim) => void;
+  // The physician picked another garde option: the billing is read again under it.
+  onGardeOptionChange: (option: GardeOption) => void;
 }
 
 // Hours as typed: the field may be blank or invalid while the physician edits it.
@@ -18,9 +20,10 @@ function parseHours(raw: string): number | null {
   return raw.trim() !== "" && Number.isInteger(hours) && hours >= 1 && hours <= 24 ? hours : null;
 }
 
-// Starts from the claim when there is one, else from what the shift's rules suggest.
+// Starts from the claim when there is one under the same garde option, else from what the
+// shift's rules suggest.
 function initialDraft(billing: ShiftBilling): Draft {
-  const source = billing.claim?.codes ?? billing.suggested;
+  const source = billing.claim?.garde_option === billing.garde_option ? billing.claim.codes : billing.suggested;
   return Object.fromEntries(
     billing.available_codes.map((code) => {
       const line = source.find((l) => l.code === code.code);
@@ -32,14 +35,14 @@ function initialDraft(billing: ShiftBilling): Draft {
 // The shift's own codes — billed for the hours worked, no patient — ticked as suggested,
 // hours editable, saved as the shift's draft claim. Fees are the server's: the total here
 // is indicative.
-export function ShiftCodesForm({ billing, onSaved }: ShiftCodesFormProps) {
+export function ShiftCodesForm({ billing, onSaved, onGardeOptionChange }: ShiftCodesFormProps) {
   const [draft, setDraft] = useState<Draft>(() => initialDraft(billing));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const billed = billing.claim?.status === "soumis";
   const suggested = new Set(billing.suggested.map((line) => line.code));
 
-  if (billing.available_codes.length === 0) {
+  if (billing.available_codes.length === 0 && billing.garde_choices.length === 0) {
     return <p className="m-0 text-sm text-muted-foreground">Aucun code de quart pour ce type de lieu.</p>;
   }
 
@@ -58,6 +61,7 @@ export function ShiftCodesForm({ billing, onSaved }: ShiftCodesFormProps) {
       const claim = await saveShiftClaim(
         billing.shift.id,
         lines.map((code) => ({ code: code.code, hours: parseHours(draft[code.code].hours)! })),
+        billing.garde_option,
       );
       toast.success("Réclamation du quart enregistrée.");
       onSaved(claim);
@@ -71,6 +75,29 @@ export function ShiftCodesForm({ billing, onSaved }: ShiftCodesFormProps) {
   return (
     <div className="flex flex-col gap-3">
       {billed && <Banner tone="success">Réclamation facturée. Pour la modifier, annulez d'abord sa facture.</Banner>}
+      {billing.garde_choices.length > 0 && (
+        <FormField label="Garde sur place (P.G. 1.4)" id="garde-option">
+          <Select
+            id="garde-option"
+            containerClassName="max-w-none"
+            value={billing.garde_option}
+            disabled={billed}
+            onChange={(event) => onGardeOptionChange(event.target.value as GardeOption)}
+          >
+            {billing.garde_choices.map((choice) => (
+              <option key={choice.value} value={choice.value}>
+                {choice.label}
+              </option>
+            ))}
+          </Select>
+        </FormField>
+      )}
+      {billing.garde_option !== "acte" && (
+        <Banner tone="warning">
+          Avec le forfait, les services rendus aux patients pendant la période sont payés à 101 % de 0 h à 8 h (MOD=097)
+          et à 53,2 % de 20 h à 24 h (MOD=096) : ajoutez ce modificateur à leurs réclamations.
+        </Banner>
+      )}
       {billing.suggested.length === 0 && !billing.claim && (
         <p className="m-0 text-sm text-muted-foreground">Ce quart ne donne droit à aucun supplément selon ses heures.</p>
       )}

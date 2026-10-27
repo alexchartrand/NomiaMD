@@ -36,6 +36,7 @@ class ShiftClaimInput:
     period: str
     work_site_name: str
     etablissement_number: str | None
+    garde_option: str
     codes: Sequence[ShiftClaimCodeInput]
 
 
@@ -68,6 +69,7 @@ class ShiftClaimRepository(SessionRepository):
             period=data.period,
             work_site_name=data.work_site_name,
             etablissement_number=data.etablissement_number,
+            garde_option=data.garde_option,
         )
         self._session.add(claim)
         try:

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 
 from app.care_setting import CareSetting
-from app.shift_claims.catalog import ShiftCode, ShiftCodeCatalog
+from app.shift_claims.catalog import GardeOption, ShiftCode, ShiftCodeCatalog
 from app.shifts import DayTypeResolver, ShiftHours
 
 _MINUTES_PER_HOUR = 60
@@ -26,13 +26,19 @@ class ShiftCodeRules:
         self._catalog = catalog
         self._day_types = day_types or DayTypeResolver()
 
-    def suggest(self, care_setting: CareSetting | None, hours: ShiftHours) -> list[SuggestedShiftLine]:
-        """The codes the shift earns, in catalog order; a code it earns no billable hour of is
-        left out. An unknown care setting earns nothing."""
+    def suggest(
+        self,
+        care_setting: CareSetting | None,
+        hours: ShiftHours,
+        garde_option: GardeOption = GardeOption.ACTE,
+    ) -> list[SuggestedShiftLine]:
+        """The codes the shift earns under the physician's garde option, in catalog order; a
+        code it earns no billable hour of is left out — a forfait not divisible in hours needs
+        its whole period. An unknown care setting earns nothing."""
         if care_setting is None:
             return []
         lines = []
-        for code in self._catalog.for_care_setting(care_setting):
+        for code in self._catalog.for_care_setting(care_setting, garde_option):
             billable = self.billable_hours(code, self._minutes_in_window(code, hours))
             if billable > 0:
                 lines.append(SuggestedShiftLine(code=code, hours=billable))

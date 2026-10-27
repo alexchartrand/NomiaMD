@@ -10,6 +10,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.care_setting import CareSetting
+from app.shift_claims.catalog.garde import GardeOption
 from app.shifts import DayType
 
 DEFAULT_CATALOG_PATH = Path(__file__).with_name("shift_codes.yaml")
@@ -50,6 +51,8 @@ class ShiftCode(BaseModel):
     quart_hours: int = Field(gt=0, le=24)
     divisible_in_hours: bool
     secteur_dispensation: str = Field(pattern=r"^\d{2}$")
+    # Empty: applies whatever the garde option. Never ACTE: à l'acte earns no forfait.
+    garde_options: frozenset[GardeOption] = frozenset()
     fees: tuple[DatedFee, ...] = Field(min_length=1)
     source: ShiftCodeSource
 
@@ -57,6 +60,16 @@ class ShiftCode(BaseModel):
     @classmethod
     def _oldest_first(cls, fees: tuple[DatedFee, ...]) -> tuple[DatedFee, ...]:
         return tuple(sorted(fees, key=lambda fee: fee.effective_from))
+
+    @field_validator("garde_options")
+    @classmethod
+    def _no_acte(cls, options: frozenset[GardeOption]) -> frozenset[GardeOption]:
+        if GardeOption.ACTE in options:
+            raise ValueError("à l'acte earns no forfait")
+        return options
+
+    def applies_to(self, care_setting: CareSetting, garde_option: GardeOption) -> bool:
+        return care_setting in self.care_settings and (not self.garde_options or garde_option in self.garde_options)
 
     def fee_on(self, day: date) -> DatedFee | None:
         """The fee in effect on `day`; None before the first one."""
@@ -113,5 +126,7 @@ class ShiftCodeCatalog:
     def get(self, number: str) -> ShiftCode | None:
         return self._codes.get(number)
 
-    def for_care_setting(self, care_setting: CareSetting) -> list[ShiftCode]:
-        return [code for code in self._codes.values() if care_setting in code.care_settings]
+    def for_care_setting(
+        self, care_setting: CareSetting, garde_option: GardeOption = GardeOption.ACTE
+    ) -> list[ShiftCode]:
+        return [code for code in self._codes.values() if code.applies_to(care_setting, garde_option)]

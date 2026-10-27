@@ -22,11 +22,20 @@ class EmptyShiftClaimError(Exception):
 
 
 class UnknownShiftCodeError(Exception):
-    """Not a catalog shift code, or not one the shift's care setting allows."""
+    """Not a catalog shift code, or not one the shift's care setting and garde option allow."""
 
     def __init__(self, code: str) -> None:
         super().__init__(code)
         self.code = code
+
+
+class WholeQuartsOnlyError(Exception):
+    """A code not divisible in hours is billed by whole quarts (a forfait: its whole period)."""
+
+    def __init__(self, code: str, quart_hours: int) -> None:
+        super().__init__(code)
+        self.code = code
+        self.quart_hours = quart_hours
 
 
 class HoursExceedShiftError(Exception):

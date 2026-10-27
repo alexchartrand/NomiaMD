@@ -7,6 +7,7 @@ import {
   listEncounters,
   SHIFT_PERIODS,
   type EncounterRow,
+  type GardeOption,
   type Shift,
   type ShiftBilling,
 } from "../../../api";
@@ -30,11 +31,16 @@ export function ShiftDetailDialog({ shift, onClose, onEdit }: ShiftDetailDialogP
   const [billing, setBilling] = useState<ShiftBilling | null>(null);
   const [encounters, setEncounters] = useState<EncounterRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // null: the one its claim was saved under (the server's default).
+  const [gardeOption, setGardeOption] = useState<GardeOption | null>(null);
 
   useEffect(() => {
-    getShiftBilling(shift.id)
+    getShiftBilling(shift.id, gardeOption)
       .then(setBilling)
       .catch((err) => setError(describeError(err)));
+  }, [shift.id, gardeOption]);
+
+  useEffect(() => {
     // Its encounters are those the inbox places in it: the physician's pick, else the match.
     listEncounters({
       date_from: shift.service_date,
@@ -103,10 +109,12 @@ export function ShiftDetailDialog({ shift, onClose, onEdit }: ShiftDetailDialogP
             !error && <Spinner />
           ) : (
             <ShiftCodesForm
-              // A fresh form once saved: it starts again from the stored claim.
-              key={billing.claim?.id ?? "new"}
+              // A fresh form once saved (it starts again from the stored claim), or under
+              // another garde option.
+              key={`${billing.claim?.id ?? "new"}-${billing.garde_option}`}
               billing={billing}
               onSaved={(claim) => setBilling({ ...billing, claim })}
+              onGardeOptionChange={setGardeOption}
             />
           )}
         </section>

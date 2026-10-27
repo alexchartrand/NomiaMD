@@ -650,6 +650,9 @@ class ShiftClaim(TimestampMixin, Base):
     __tablename__ = "shift_claims"
     __table_args__ = (
         Index("ix_shift_claims_physician_service_date", "physician_id", "service_date"),
+        CheckConstraint(
+            "garde_option IN ('acte', 'premier', 'second', 'partage')", name="ck_shift_claims_garde_option"
+        ),
         # One live claim per shift. Partial so voiding a draft frees its shift to be claimed again.
         Index(
             "ix_shift_claims_shift_active",
@@ -670,6 +673,9 @@ class ShiftClaim(TimestampMixin, Base):
     period: Mapped[str] = mapped_column(String(8))
     work_site_name: Mapped[str] = mapped_column(String(120))
     etablissement_number: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    # The physician's choice for the garde (app/shift_claims/catalog/garde.py): à l'acte, or a
+    # P.G. 1.4 forfait — and then the period's patient services are paid at 101 % or 53,2 %.
+    garde_option: Mapped[str] = mapped_column(String(16), default="acte", server_default="acte")
     bill_id: Mapped[int | None] = mapped_column(ForeignKey("bills.id", ondelete="SET NULL"), nullable=True, index=True)
     voided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

@@ -14,7 +14,7 @@ from app.auth import get_current_user
 from app.care_setting import CareSetting
 from app.clock import ClinicClock
 from app.main import app
-from app.shift_claims.catalog import ShiftCodeCatalog
+from app.shift_claims.catalog import GardeOption, ShiftCodeCatalog
 from app.shift_claims.fees import ShiftFeeResolver
 from app.shift_claims.rules import ShiftCodeRules
 from app.shifts import ShiftHours
@@ -29,13 +29,17 @@ SATURDAY = date(2026, 10, 31)
 THANKSGIVING = date(2026, 10, 12)  # Action de grâces, a Monday
 
 
-def _suggest(care_setting, day, start, end):
-    lines = RULES.suggest(care_setting, ShiftHours(day, start, end))
+def _suggest(care_setting, day, start, end, garde_option=GardeOption.ACTE):
+    lines = RULES.suggest(care_setting, ShiftHours(day, start, end), garde_option)
     return {line.code.number: line.hours for line in lines}
 
 
-def test_catalog_holds_the_er_supplements():
-    assert {code.number for code in CATALOG.all()} == {"09791", "19953"}
+def test_catalog_holds_the_er_supplements_and_garde_forfaits():
+    assert {code.number for code in CATALOG.all()} == {
+        "09791", "19953", "09998", "19055", "09996", "09994", "19056", "42265", "42266"
+    }
+    # À l'acte, only the supplements: the forfaits need the physician's choice.
+    assert [code.number for code in CATALOG.for_care_setting(CareSetting.URGENCE)] == ["09791", "19953"]
     assert CATALOG.get("09791").citation == "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)"
     assert CATALOG.for_care_setting(CareSetting.GMF) == []
     assert {code.secteur_dispensation for code in CATALOG.all()} == {"07"}
@@ -103,6 +107,35 @@ def test_other_settings_earn_nothing():
     assert _suggest(None, TUESDAY, time(16), time(0)) == {}
 
 
+@pytest.mark.parametrize(
+    ("garde_option", "day", "expected"),
+    [
+        (GardeOption.PREMIER, TUESDAY, {"09791": 4, "09996": 4, "09998": 8}),
+        (GardeOption.SECOND, TUESDAY, {"09791": 4, "09994": 8}),
+        (GardeOption.PARTAGE, TUESDAY, {"09791": 4, "09996": 4, "42265": 8}),
+        # Friday 20 h to Saturday 8 h: the night is a weekend one.
+        (GardeOption.PREMIER, FRIDAY, {"09791": 4, "09996": 4, "19055": 8}),
+        (GardeOption.SECOND, FRIDAY, {"09791": 4, "19056": 8}),
+        (GardeOption.PARTAGE, FRIDAY, {"09791": 4, "09996": 4, "42266": 8}),
+    ],
+)
+def test_garde_forfaits_follow_the_physicians_option(garde_option, day, expected):
+    assert _suggest(CareSetting.URGENCE, day, time(20), time(8), garde_option) == expected
+
+
+def test_a_forfait_not_divisible_needs_its_whole_period():
+    # 2 h to 8 h: the premier médecin's forfait isn't earned; a shared night's one is, by the hour.
+    assert _suggest(CareSetting.URGENCE, TUESDAY, time(2), time(8), GardeOption.PREMIER) == {}
+    assert _suggest(CareSetting.URGENCE, TUESDAY, time(2), time(8), GardeOption.PARTAGE) == {"42265": 6}
+
+
+def test_catalog_refuses_a_forfait_for_acte(tmp_path):
+    path = tmp_path / "codes.yaml"
+    path.write_text('secteurs_dispensation: {"07": "Service d\'urgence"}\ncodes:' + _ENTRY + "    garde_options: [acte]\n")
+    with pytest.raises(ValidationError):
+        ShiftCodeCatalog(path).all()
+
+
 def test_a_code_not_divisible_in_hours_counts_whole_quarts():
     code = CATALOG.get("09791").model_copy(update={"divisible_in_hours": False})
     assert ShiftCodeRules.billable_hours(code, 7 * 60) == 4
@@ -115,6 +148,8 @@ def test_fee_is_the_one_in_effect_on_the_shift_date():
     assert (current.hourly_fee, current.amount) == (Decimal("39.10"), Decimal("156.40"))
     assert ShiftFeeResolver.resolve(code, date(2018, 9, 15), 2).amount == Decimal("69.90")
     assert ShiftFeeResolver.resolve(code, date(2018, 8, 1), 4).amount is None
+    assert ShiftFeeResolver.resolve(CATALOG.get("09998"), TUESDAY, 8).amount == Decimal("715.20")
+    assert ShiftFeeResolver.resolve(CATALOG.get("42266"), TUESDAY, 3).amount == Decimal("326.85")
 
 
 # --- API ---------------------------------------------------------------------------------
@@ -170,6 +205,34 @@ def test_billing_shows_suggestions_and_available_codes(client):
     ]
     assert [code["code"] for code in billing["available_codes"]] == ["09791", "19953"]
     assert billing["claim"] is None
+    assert billing["garde_option"] == "acte"
+    assert [choice["value"] for choice in billing["garde_choices"]] == ["acte", "premier", "second", "partage"]
+
+
+def test_a_garde_forfait_is_saved_with_its_option(client):
+    shift = _shift(client, _site(client), start="20:00", end="08:00", period="nuit")
+    billing = client.get(f"/shifts/{shift['id']}/billing", params={"garde_option": "premier"}).json()
+    assert [(c["code"], c["hours"], c["fee_amount"]) for c in billing["suggested"]] == [
+        ("09791", 4, 156.40),
+        ("09998", 8, 715.20),
+        ("09996", 4, 174.85),
+    ]
+    # À l'acte, a forfait isn't billable; a forfait isn't by the hour.
+    assert client.put(f"/shifts/{shift['id']}/claim", json={"codes": [{"code": "09998", "hours": 8}]}).status_code == 422
+    partial = client.put(
+        f"/shifts/{shift['id']}/claim", json={"codes": [{"code": "09996", "hours": 3}], "garde_option": "premier"}
+    )
+    assert partial.status_code == 422
+    assert partial.json()["detail"] == "Code 09996 : par période complète de 4 h seulement"
+
+    saved = client.put(
+        f"/shifts/{shift['id']}/claim",
+        json={"codes": [{"code": c["code"], "hours": c["hours"]} for c in billing["suggested"]], "garde_option": "premier"},
+    ).json()
+    assert saved["garde_option"] == "premier"
+    assert saved["total_amount"] == 1046.45
+    # Reopened, the shift reads under the option its claim was saved with.
+    assert client.get(f"/shifts/{shift['id']}/billing").json()["garde_option"] == "premier"
 
 
 def test_save_then_replace_a_draft(client):
@@ -217,7 +280,7 @@ def test_save_refuses(client, codes, detail):
 def test_a_gmf_shift_has_no_shift_codes(client):
     shift = _shift(client, _site(client, care_setting="gmf", name="GMF Test"))
     billing = client.get(f"/shifts/{shift['id']}/billing").json()
-    assert billing["suggested"] == [] and billing["available_codes"] == []
+    assert billing["suggested"] == [] and billing["available_codes"] == [] and billing["garde_choices"] == []
     assert client.put(f"/shifts/{shift['id']}/claim", json={"codes": [{"code": "09791", "hours": 4}]}).status_code == 422
 
 

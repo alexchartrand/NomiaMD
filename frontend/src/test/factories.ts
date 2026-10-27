@@ -170,6 +170,7 @@ export function makeShiftClaim(overrides: Partial<ShiftClaim> = {}): ShiftClaim 
     care_setting: "urgence",
     period: "soir",
     work_site_name: "Urgence Saint-Luc",
+    garde_option: "acte",
     status: "brouillon",
     bill_id: null,
     codes: [

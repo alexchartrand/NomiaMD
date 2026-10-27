@@ -13,7 +13,9 @@ from app.shift_claims.errors import (
     ShiftClaimOnBillError,
     ShiftNotFoundError,
     UnknownShiftCodeError,
+    WholeQuartsOnlyError,
 )
+from app.shift_claims.catalog import GardeOption
 from app.shift_claims.factory import get_shift_claim_service
 from app.shift_claims.models import ShiftBillingOut, ShiftClaimIn, ShiftClaimOut
 from app.shift_claims.service import ShiftClaimService
@@ -28,12 +30,14 @@ _ON_BILL = "Cette réclamation de quart est sur une facture : annulez d'abord la
 @shift_billing_router.get("/{shift_id}/billing", response_model=ShiftBillingOut)
 async def get_shift_billing(
     shift_id: int,
+    garde_option: GardeOption | None = None,
     current_user: User = Depends(get_current_user),
     service: ShiftClaimService = Depends(get_shift_claim_service),
 ) -> ShiftBillingOut:
-    """The shift, the codes its rules suggest, the others its care setting allows, its claim."""
+    """The shift, the codes its rules suggest under `garde_option` (default: its claim's, else
+    à l'acte), the others its care setting and that option allow, its claim."""
     try:
-        return await service.billing(current_user.id, shift_id)
+        return await service.billing(current_user.id, shift_id, garde_option)
     except ShiftNotFoundError as exc:
         raise HTTPException(status_code=404, detail=_SHIFT_NOT_FOUND) from exc
 
@@ -58,6 +62,10 @@ async def save_shift_claim(
         raise HTTPException(status_code=422, detail="Au moins un code doit être sélectionné") from exc
     except UnknownShiftCodeError as exc:
         raise HTTPException(status_code=422, detail=f"Code {exc.code} non applicable à ce quart") from exc
+    except WholeQuartsOnlyError as exc:
+        raise HTTPException(
+            status_code=422, detail=f"Code {exc.code} : par période complète de {exc.quart_hours} h seulement"
+        ) from exc
     except HoursExceedShiftError as exc:
         raise HTTPException(
             status_code=422, detail=f"Code {exc.code} : {exc.hours} h dépasse la durée du quart ({exc.shift_hours} h)"

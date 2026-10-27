@@ -15,6 +15,9 @@
 #   divisible_in_hours  whether part of a quart is paid, by whole hours
 #   secteur_dispensation  the RAMQ secteur de dispensation the code is billed under (one of
 #                  `secteurs_dispensation` below)
+#   garde_options  only for the P.G. 1.4 forfaits: the physician's choice for the shift that
+#                  earns it (app/shift_claims/garde.py — premier, second, partage); left out,
+#                  the code applies whatever the choice
 #   fees           amount per quart, dated: the one in effect on the shift's date applies
 #   source         where it's stated in the manual
 
@@ -89,3 +92,113 @@ codes:
       - {effective_from: 2018-10-01, per_quart: "154.80"}
       - {effective_from: 2019-10-01, per_quart: "156.40"}
     source: {section: "P.G. 2.2.9 B", page: 71, manual_rev: "2026-06-05"}
+
+  # P.G. 1.4 — garde sur place à l'urgence de première ligne, option b): a forfait
+  # compensatoire, the services of the period paid at 101 % (0 h–8 h, MOD=097) or 53,2 %
+  # (20 h–24 h, MOD=096). The physician's daily choice, in établissements not adhering to
+  # EP 43. Non-divisible forfaits need the whole period.
+
+  - number: "09998"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), seul médecin ou premier médecin — de 0 h à 8 h, du lundi au vendredi
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: false
+    secteur_dispensation: "07"
+    garde_options: [premier]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "708.00"}
+      - {effective_from: 2019-10-01, per_quart: "715.20"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "19055"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), seul médecin ou premier médecin — de 0 h à 8 h, la fin de semaine ou un jour férié
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: false
+    secteur_dispensation: "07"
+    garde_options: [premier]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "862.80"}
+      - {effective_from: 2019-10-01, per_quart: "871.60"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "09996"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), seul médecin — de 20 h à 24 h, tous les jours
+    care_settings: [urgence]
+    day_types: [semaine, fin_de_semaine, ferie]
+    window: {start: "20:00", end: "00:00"}
+    quart_hours: 4
+    divisible_in_hours: false
+    secteur_dispensation: "07"
+    garde_options: [premier, partage]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "173.10"}
+      - {effective_from: 2019-10-01, per_quart: "174.85"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "09994"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), médecin additionnel autorisé — de 0 h à 8 h, du lundi au vendredi, divisible en heures
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [second]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "708.00"}
+      - {effective_from: 2019-10-01, per_quart: "715.20"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "19056"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), médecin additionnel autorisé — de 0 h à 8 h, la fin de semaine ou un jour férié, divisible en heures
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [second]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "862.80"}
+      - {effective_from: 2019-10-01, per_quart: "871.60"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "42265"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), garde de 0 h à 8 h partagée entre deux médecins — du lundi au vendredi, divisible en heures
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [partage]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "708.00"}
+      - {effective_from: 2019-10-01, per_quart: "715.20"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "42266"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), garde de 0 h à 8 h partagée entre deux médecins — la fin de semaine ou un jour férié, divisible en heures
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [partage]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "862.80"}
+      - {effective_from: 2019-10-01, per_quart: "871.60"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}

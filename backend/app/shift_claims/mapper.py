@@ -38,6 +38,7 @@ class ShiftClaimMapper:
             care_setting=claim.care_setting,
             period=claim.period,
             work_site_name=claim.work_site_name,
+            garde_option=claim.garde_option,
             status=ClaimLifecycle.status_of(claim),
             bill_id=claim.bill_id,
             codes=codes,

@@ -14,7 +14,8 @@ from app.postgresdb import (
     WorkSite,
     WorkSiteRepository,
 )
-from app.shift_claims.catalog import ShiftCodeCatalog
+from app.care_setting import CareSetting
+from app.shift_claims.catalog import GARDE_OPTION_LABELS_FR, GardeOption, ShiftCodeCatalog
 from app.shift_claims.errors import (
     ShiftClaimConflictError,
     ShiftClaimNotFoundError,
@@ -23,7 +24,7 @@ from app.shift_claims.errors import (
 )
 from app.shift_claims.lines import ShiftClaimLineBuilder
 from app.shift_claims.mapper import ShiftClaimMapper, ShiftCodeMapper
-from app.shift_claims.models import ShiftBillingOut, ShiftClaimIn, ShiftClaimOut
+from app.shift_claims.models import GardeChoiceOut, ShiftBillingOut, ShiftClaimIn, ShiftClaimOut
 from app.shift_claims.rules import ShiftCodeRules
 from app.shifts import ShiftHours, ShiftMapper
 
@@ -49,21 +50,43 @@ class ShiftClaimService:
         self._code_mapper = code_mapper or ShiftCodeMapper(catalog)
         self._shift_mapper = shift_mapper or ShiftMapper()
 
-    async def billing(self, user_id: int, shift_id: int) -> ShiftBillingOut:
+    async def billing(self, user_id: int, shift_id: int, garde_option: GardeOption | None = None) -> ShiftBillingOut:
+        """Under `garde_option` — by default the one its claim was saved under, else à l'acte."""
         shift, site = await self._owned_shift(user_id, shift_id)
         care_setting = parse_care_setting(shift.care_setting)
-        suggested = self._rules.suggest(care_setting, _hours(shift))
         claim = await self._claims.live_for_shift(shift.id, user_id)
+        if garde_option is None:
+            garde_option = GardeOption(claim.claim.garde_option) if claim is not None else GardeOption.ACTE
+        suggested = self._rules.suggest(care_setting, _hours(shift), garde_option)
         return ShiftBillingOut(
             shift=self._shift_mapper.out(shift, site),
+            garde_option=garde_option,
+            garde_choices=self._garde_choices(care_setting),
             suggested=[self._code_mapper.suggested(line, shift.service_date) for line in suggested],
             available_codes=(
-                [self._code_mapper.available(code, shift.service_date) for code in self._catalog.for_care_setting(care_setting)]
+                [
+                    self._code_mapper.available(code, shift.service_date)
+                    for code in self._catalog.for_care_setting(care_setting, garde_option)
+                ]
                 if care_setting is not None
                 else []
             ),
             claim=ShiftClaimMapper.from_detail(claim) if claim is not None else None,
         )
+
+    def _garde_choices(self, care_setting: CareSetting | None) -> list[GardeChoiceOut]:
+        if care_setting is None:
+            return []
+        forfaits = {
+            option for code in self._catalog.all() if care_setting in code.care_settings for option in code.garde_options
+        }
+        if not forfaits:
+            return []
+        return [
+            GardeChoiceOut(value=option, label=GARDE_OPTION_LABELS_FR[option])
+            for option in GardeOption
+            if option is GardeOption.ACTE or option in forfaits
+        ]
 
     async def save(self, user_id: int, shift_id: int, body: ShiftClaimIn) -> ShiftClaimOut:
         """The shift's claim, created — or its draft replaced: the draft is voided and the new
@@ -76,7 +99,8 @@ class ShiftClaimService:
             body.codes,
             care_setting=care_setting,
             hours=hours,
-            suggested=self._rules.suggest(care_setting, hours),
+            suggested=self._rules.suggest(care_setting, hours, body.garde_option),
+            garde_option=body.garde_option,
         )
         existing = await self._claims.live_for_shift(shift.id, user_id)
         if existing is not None:
@@ -95,6 +119,7 @@ class ShiftClaimService:
                     period=shift.period,
                     work_site_name=site.name,
                     etablissement_number=site.etablissement_number,
+                    garde_option=body.garde_option.value,
                     codes=codes,
                 )
             )

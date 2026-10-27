@@ -56,6 +56,8 @@ function serveSchedule({ sites = [site], shifts = [] as Shift[] } = {}) {
     http.get("/api/shifts/:id/billing", ({ params }) =>
       HttpResponse.json({
         shift: shifts.find((s) => s.id === Number(params.id)),
+        garde_option: "acte",
+        garde_choices: [],
         suggested: [],
         available_codes: [],
         claim: null,
@@ -235,6 +237,8 @@ describe("schedule", () => {
     serveSchedule({ shifts: [shift] });
     const billing: ShiftBilling = {
       shift,
+      garde_option: "acte",
+      garde_choices: [],
       suggested: [
         {
           code: "09791",
@@ -286,7 +290,57 @@ describe("schedule", () => {
     await user.click(within(codes).getByRole("button", { name: "Enregistrer la réclamation" }));
 
     expect(await screen.findByText("Réclamation du quart enregistrée.")).toBeInTheDocument();
-    expect(bodies).toEqual([{ codes: [{ code: "09791", hours: 4 }, { code: "19953", hours: 2 }] }]);
+    expect(bodies).toEqual([{ codes: [{ code: "09791", hours: 4 }, { code: "19953", hours: 2 }], garde_option: "acte" }]);
     expect(within(codes).getByRole("button", { name: "Mettre à jour la réclamation" })).toBeInTheDocument();
+  });
+
+  it("picks a garde forfait: its codes, the modifier warning, saved with the option", async () => {
+    const shift = makeShift({ start_time: "20:00:00", end_time: "08:00:00", period: "nuit" });
+    serveSchedule({ shifts: [shift] });
+    const choices = [
+      { value: "acte", label: "Rémunération à l'acte" },
+      { value: "premier", label: "Forfait de garde — seul médecin ou premier médecin" },
+    ] as const;
+    const code09998 = {
+      ...code09791,
+      code: "09998",
+      description: "Forfait de garde sur place — 0 h à 8 h, en semaine",
+      quart_hours: 8,
+      divisible_in_hours: false,
+      hourly_fee: 89.4,
+    };
+    const asked: (string | null)[] = [];
+    const bodies: unknown[] = [];
+    server.use(
+      http.get("/api/shifts/10/billing", ({ request }) => {
+        const option = new URL(request.url).searchParams.get("garde_option");
+        asked.push(option);
+        const premier = option === "premier";
+        return HttpResponse.json({
+          shift,
+          garde_option: premier ? "premier" : "acte",
+          garde_choices: choices,
+          suggested: premier ? [{ ...code09998, hours: 8, fee_amount: 715.2 }] : [],
+          available_codes: premier ? [code09998] : [code09791],
+          claim: null,
+        });
+      }),
+      http.put("/api/shifts/10/claim", async ({ request }) => {
+        bodies.push(await request.json());
+        return HttpResponse.json(makeShiftClaim({ shift_id: 10, garde_option: "premier" }));
+      }),
+    );
+    const { user } = renderSchedule();
+    await user.click(await screen.findByRole("button", { name: /20:00–08:00/ }));
+    const codes = screen.getByRole("region", { name: "Codes du quart" });
+    expect(within(codes).queryByText(/MOD=096/)).not.toBeInTheDocument();
+
+    await user.selectOptions(await within(codes).findByLabelText("Garde sur place (P.G. 1.4)"), "premier");
+    expect(await within(codes).findByLabelText("Code 09998")).toBeChecked();
+    expect(within(codes).getByText(/MOD=096/)).toBeInTheDocument();
+    await user.click(within(codes).getByRole("button", { name: "Enregistrer la réclamation" }));
+
+    await waitFor(() => expect(bodies).toEqual([{ codes: [{ code: "09998", hours: 8 }], garde_option: "premier" }]));
+    expect(asked).toEqual([null, "premier"]);
   });
 });
