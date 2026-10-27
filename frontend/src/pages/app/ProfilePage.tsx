@@ -24,6 +24,7 @@ import {
   TextField,
 } from "../../components";
 import { useAuth } from "../../AuthContext";
+import { WorkSitesCard } from "./profile/WorkSitesCard";
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
@@ -212,8 +213,9 @@ export default function ProfilePage() {
               </form>
             </CardContent>
           </Card>
-
         )}
+
+        {!forcedPasswordChange && <WorkSitesCard />}
 
         <Card>
           <CardHeader>

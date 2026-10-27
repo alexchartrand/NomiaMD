@@ -26,11 +26,26 @@ from app.summary.models import ConsultationSummaryResult
 VISIT_SECTION_PREFIX = "B — Consultation, examen et visite"
 
 # The section-B subsection each care setting's visits are billed under, same coupling. Only
-# the settings whose visit codes lose to other sections' wording are listed.
+# the settings whose visit codes lose to other sections' wording are listed. The ward and
+# CHSLD subsections hold 21 and 11 codes: the subsection query returns nearly all of them,
+# so a code the note's wording doesn't reach (the ward's discharge fee 15158, the CHSLD's
+# phone answer 15622) is still offered.
 CARE_SETTING_VISIT_SECTIONS: dict[CareSetting, str] = {
     CareSetting.URGENCE: (
         f"{VISIT_SECTION_PREFIX} > "
         "Service d'urgence des centres hospitaliers et du CLSC du réseau de garde (P.G. 2.2.6 C)"
+    ),
+    CareSetting.HOSPITALISATION: (
+        f"{VISIT_SECTION_PREFIX} > "
+        "Dans un centre hospitalier de soins généraux et spécialisés (CHSGS) ou un centre hospitalier de "
+        "soins psychiatriques (CHSP), pour sa partie des soins de courte durée (P.G. 2.2.6 D)"
+    ),
+    # The doubled closing parenthesis is ramq-ingestion's, kept so the prefix matches.
+    CareSetting.CHSLD: (
+        f"{VISIT_SECTION_PREFIX} > "
+        "Dans un centre d'hébergement et de soins de longue durée (CHSLD) ou dans un centre hospitalier de "
+        "soins généraux et spécialisés (CHSGS) ou un centre hospitalier de soins psychiatriques (CHSP), "
+        "pour sa partie des soins de longue durée (P.G. 2.2.6 E))"
     ),
 }
 

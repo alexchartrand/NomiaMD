@@ -17,6 +17,7 @@ import FacturationPage from "./pages/app/FacturationPage";
 import FacturerPage from "./pages/app/FacturerPage";
 import CodesPage from "./pages/app/CodesPage";
 import ProfilePage from "./pages/app/ProfilePage";
+import SchedulePage from "./pages/app/SchedulePage";
 import AdminPage from "./pages/app/AdminPage";
 import { RequireAdmin, RequireAuth } from "./AuthContext";
 
@@ -45,6 +46,7 @@ export default function AppRouter() {
         <Route path="ajouter" element={<AddNotesPage />} />
         <Route path="chat" element={<ChatbotPage />} />
         <Route path="patients" element={<PatientsPage />} />
+        <Route path="horaire" element={<SchedulePage />} />
         <Route path="facturation" element={<FacturationPage />} />
         <Route path="facturer" element={<FacturerPage />} />
         <Route path="facturer/:claimId" element={<FacturerPage />} />

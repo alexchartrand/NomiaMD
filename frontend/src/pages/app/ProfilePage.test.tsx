@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { makeUser, renderWithProviders, serveSession } from "../../test/render";
 import { server } from "../../test/server";
@@ -16,6 +16,7 @@ const doctor = makeUser({
 
 async function renderProfile(user: UserOut = doctor) {
   serveSession(user);
+  server.use(http.get("/api/work-sites", () => HttpResponse.json([])));
   const view = renderWithProviders(<ProfilePage />);
   await screen.findByRole("heading", { name: "Profil" });
   // The form is filled from the loaded user by an effect, after the first render.
@@ -202,7 +203,10 @@ describe("password change", () => {
 describe("on a temporary password", () => {
   it("asks for a new password only, then opens the rest of the profile", async () => {
     serveSession(makeUser({ must_change_password: true }));
-    server.use(http.post("/api/auth/me/password", () => new HttpResponse(null, { status: 204 })));
+    server.use(
+      http.post("/api/auth/me/password", () => new HttpResponse(null, { status: 204 })),
+      http.get("/api/work-sites", () => HttpResponse.json([])),
+    );
     const { user } = renderWithProviders(<ProfilePage />);
 
     expect(await screen.findByText(/mot de passe temporaire/)).toBeInTheDocument();
@@ -215,5 +219,28 @@ describe("on a temporary password", () => {
 
     expect(await screen.findByLabelText("Nom complet")).toBeInTheDocument();
     expect(screen.queryByText(/mot de passe temporaire\./)).not.toBeInTheDocument();
+  });
+});
+
+describe("work sites", () => {
+  it("adds a site with its care setting", async () => {
+    const bodies: unknown[] = [];
+    server.use(
+      http.post("/api/work-sites", async ({ request }) => {
+        const body = (await request.json()) as Record<string, unknown>;
+        bodies.push(body);
+        return HttpResponse.json({ id: 7, is_active: true, ...body }, { status: 201 });
+      }),
+    );
+    const user = (await renderProfile()).user;
+    expect(await screen.findByText("Aucun lieu de travail")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Ajouter" }));
+    await user.type(screen.getByLabelText("Nom"), "Urgence Saint-Luc");
+    await user.selectOptions(screen.getByLabelText("Milieu de soins"), "urgence");
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Enregistrer" }));
+
+    expect(await screen.findByText("Urgence Saint-Luc")).toBeInTheDocument();
+    expect(bodies).toEqual([{ name: "Urgence Saint-Luc", care_setting: "urgence", etablissement_number: null }]);
   });
 });

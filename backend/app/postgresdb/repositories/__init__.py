@@ -38,6 +38,7 @@ from app.postgresdb.repositories.llm_calls import LLMCallOwner, LLMCallRepositor
 from app.postgresdb.repositories.login_throttles import LoginThrottleRepository
 from app.postgresdb.repositories.patients import DuplicatePatientRamqNumberError, PatientRepository
 from app.postgresdb.repositories.physician_profiles import PhysicianProfileRepository
+from app.postgresdb.repositories.shifts import ShiftInput, ShiftRepository
 from app.postgresdb.repositories.roster import DuplicateRosterEntryError, PhysicianPatientRepository
 from app.postgresdb.repositories.table_stats import TableStatsRepository
 from app.postgresdb.repositories.users import (
@@ -46,6 +47,7 @@ from app.postgresdb.repositories.users import (
     DuplicatePracticeNumberError,
     UserRepository,
 )
+from app.postgresdb.repositories.work_sites import WorkSiteInput, WorkSiteRepository
 
 __all__ = [
     "AccountActivity",
@@ -86,5 +88,9 @@ __all__ = [
     "PatientRepository",
     "PhysicianPatientRepository",
     "PhysicianProfileRepository",
+    "ShiftInput",
+    "ShiftRepository",
     "UserRepository",
+    "WorkSiteInput",
+    "WorkSiteRepository",
 ]
