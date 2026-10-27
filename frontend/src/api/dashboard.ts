@@ -12,6 +12,8 @@ export interface DashboardTasks {
   failed: number;
   extracting: number;
   possible_duplicates: number;
+  // Past shifts (within the billing deadline) that earn a shift code and aren't claimed yet.
+  unclaimed_shifts: number;
 }
 
 export interface DashboardKpis {

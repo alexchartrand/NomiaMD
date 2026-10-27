@@ -87,6 +87,7 @@ def test_task_counter():
         "failed": 1,
         "extracting": 1,
         "possible_duplicates": 2,
+        "unclaimed_shifts": 0,
     }
 
 

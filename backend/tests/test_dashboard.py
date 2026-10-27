@@ -138,6 +138,7 @@ async def test_tasks_count_what_is_left_to_do(me, client):
         "failed": 1,
         "extracting": 0,
         "possible_duplicates": 0,
+        "unclaimed_shifts": 0,
     }
     recent = [row["id"] for row in _dashboard(client)["recent_encounters"]]
     assert recent == [failed["encounter_id"], unmatched["encounter_id"], to_review, clean]

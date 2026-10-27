@@ -1,0 +1,208 @@
+# Shift codes: billed for the hours a physician works, not for a patient — no NAM on the
+# claim. Curated by hand from the omnipraticien manual, because the codes table that
+# ramq-ingestion builds only holds per-patient codes, and these exist only in its text.
+#
+# The one deliberate, temporary exception to "RAMQ data is an external artifact" (CLAUDE.md):
+# move this list to ramq-ingestion once it extracts shift codes itself.
+#
+# Per code:
+#   care_settings  where the shift must take place (app/care_setting.py)
+#   day_types      the days the window applies on (app/shifts/day_type.py), each hour read
+#                  on its own calendar day — a Friday evening shift running past midnight
+#                  is a weekday until 24 h, then Saturday
+#   window         the hours paid, local time; an end at or before the start is midnight
+#   quart_hours    the length of the quart the fee is stated for
+#   divisible_in_hours  whether part of a quart is paid, by whole hours
+#   secteur_dispensation  the RAMQ secteur de dispensation the code is billed under (one of
+#                  `secteurs_dispensation` below)
+#   garde_options  only for the P.G. 1.4 forfaits: the physician's choice for the shift that
+#                  earns it (app/shift_claims/garde.py — premier, second, partage); left out,
+#                  the code applies whatever the choice
+#   excludes       codes that can't be billed with it (both ways): it wins over them in the
+#                  suggestions, and a claim holding both is refused
+#   fees           amount per quart, dated: the one in effect on the shift's date applies
+#   source         where it's stated in the manual
+
+# RAMQ's secteurs de dispensation (Guide de facturation – honoraires fixes, vacation, tarif
+# horaire, per diem et rémunération mixte, 1.2.3 and 2.2.4).
+secteurs_dispensation:
+  "01": Clinique externe
+  "02": Moyen séjour
+  "03": Courte durée (section générale)
+  "04": Longue durée – Soins prolongés
+  "05": Unité de soins intensifs
+  "06": Unité de soins coronariens
+  "07": Service d'urgence
+  "08": Département de psychiatrie (sauf en centre hospitalier de soins psychiatriques)
+  "09": Hôpital de jour
+  "10": Hôpital à domicile
+  "11": Laboratoire
+  "13": Services en gériatrie (dans un centre hospitalier de soins psychiatriques)
+  "23": CLSC sauf services d'urgence, GMF-U (lundi au jeudi, 18 h à 20 h, sauf jour férié)
+  "24": CLSC sauf services d'urgence, GMF-U (lundi au jeudi, 20 h à 22 h, sauf jour férié)
+  "25": CLSC sauf services d'urgence, GMF-U (vendredi, 18 h à 20 h, sauf jour férié)
+  "26": CLSC sauf services d'urgence, GMF-U (vendredi, 20 h à 22 h, sauf jour férié)
+  "27": CLSC sauf services d'urgence, GMF-U (samedi, dimanche ou jour férié, 8 h à 24 h)
+  "28": Clinique réseau – Sans rendez-vous (samedi, dimanche ou jour férié, 8 h à 24 h)
+  "29": Auprès d'un malade admis (lundi au jeudi, 20 h à 24 h, sauf jour férié)
+  "30": Auprès d'un malade admis (vendredi, 20 h à 24 h, sauf jour férié)
+  "31": Auprès d'un malade admis (samedi, dimanche ou jour férié, 8 h à 24 h)
+  "32": Service d'urgence d'un établissement (lundi au jeudi, 20 h à 24 h, sauf jour férié)
+  "33": Service d'urgence d'un établissement (vendredi, 20 h à 24 h, sauf jour férié)
+  "34": Service d'urgence d'un établissement (samedi, dimanche ou jour férié, 8 h à 24 h)
+  "35": Service d'urgence d'un établissement (dimanche au samedi, 0 h à 8 h)
+  "36": Services cliniques dans un territoire désigné (EP 32 – Nunavik, Baie-James, Basse-Côte-Nord) (samedi, dimanche ou jour férié, 8 h à 24 h)
+  "37": Prise en charge d'un service d'urgence (LE 132) (lundi au vendredi, 8 h à 20 h, sauf jour férié)
+  "38": Prise en charge d'un service d'urgence (LE 132) (lundi au jeudi, 20 h à 24 h, sauf jour férié)
+  "39": Prise en charge d'un service d'urgence (LE 132) (vendredi, 20 h à 24 h, sauf jour férié)
+  "40": Prise en charge d'un service d'urgence (LE 132) (samedi, dimanche ou jour férié, 8 h à 24 h)
+  "41": Prise en charge d'un service d'urgence (LE 132) (dimanche au samedi, 0 h à 8 h)
+  "43": EP 24 – Santé publique (lundi au vendredi, 20 h à 24 h, sauf jour férié)
+  "44": EP 24 – Santé publique (samedi, dimanche ou jour férié, 8 h à 24 h)
+  "45": EP 24 – Santé publique (dimanche au samedi, 0 h à 8 h)
+  "47": LE 269 – Activités de fonctionnement en GMF
+
+codes:
+  - number: "09791"
+    description: >-
+      Supplément de garde au service d'urgence d'un centre hospitalier ou d'un CLSC du réseau
+      de garde — de 20 h à 24 h, du lundi au vendredi (sauf jour férié)
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "20:00", end: "00:00"}
+    quart_hours: 4
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "139.80"}
+      - {effective_from: 2018-10-01, per_quart: "154.80"}
+      - {effective_from: 2019-10-01, per_quart: "156.40"}
+    source: {section: "P.G. 2.2.9 B", page: 71, manual_rev: "2026-06-05"}
+
+  - number: "19953"
+    description: >-
+      Supplément de garde au service d'urgence d'un centre hospitalier ou d'un CLSC du réseau
+      de garde — de 8 h à 24 h, le samedi, le dimanche ou un jour férié
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "08:00", end: "00:00"}
+    quart_hours: 4
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "139.80"}
+      - {effective_from: 2018-10-01, per_quart: "154.80"}
+      - {effective_from: 2019-10-01, per_quart: "156.40"}
+    source: {section: "P.G. 2.2.9 B", page: 71, manual_rev: "2026-06-05"}
+
+  # P.G. 1.4 — garde sur place à l'urgence de première ligne, option b): a forfait
+  # compensatoire, the services of the period paid at 101 % (0 h–8 h, MOD=097) or 53,2 %
+  # (20 h–24 h, MOD=096). The physician's daily choice, in établissements not adhering to
+  # EP 43. Non-divisible forfaits need the whole period.
+
+  - number: "09998"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), seul médecin ou premier médecin — de 0 h à 8 h, du lundi au vendredi
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: false
+    secteur_dispensation: "07"
+    garde_options: [premier]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "708.00"}
+      - {effective_from: 2019-10-01, per_quart: "715.20"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "19055"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), seul médecin ou premier médecin — de 0 h à 8 h, la fin de semaine ou un jour férié
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: false
+    secteur_dispensation: "07"
+    garde_options: [premier]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "862.80"}
+      - {effective_from: 2019-10-01, per_quart: "871.60"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "09996"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), seul médecin — de 20 h à 24 h, tous les jours
+    care_settings: [urgence]
+    day_types: [semaine, fin_de_semaine, ferie]
+    window: {start: "20:00", end: "00:00"}
+    quart_hours: 4
+    divisible_in_hours: false
+    secteur_dispensation: "07"
+    garde_options: [premier, partage]
+    # Never on the same shift claim, whatever the hours (validated by the physician, 2026-10-27).
+    excludes: ["09791", "19953"]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "173.10"}
+      - {effective_from: 2019-10-01, per_quart: "174.85"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "09994"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), médecin additionnel autorisé — de 0 h à 8 h, du lundi au vendredi, divisible en heures
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [second]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "708.00"}
+      - {effective_from: 2019-10-01, per_quart: "715.20"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "19056"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), médecin additionnel autorisé — de 0 h à 8 h, la fin de semaine ou un jour férié, divisible en heures
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [second]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "862.80"}
+      - {effective_from: 2019-10-01, per_quart: "871.60"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "42265"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), garde de 0 h à 8 h partagée entre deux médecins — du lundi au vendredi, divisible en heures
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [partage]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "708.00"}
+      - {effective_from: 2019-10-01, per_quart: "715.20"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}
+
+  - number: "42266"
+    description: >-
+      Forfait de garde sur place à l'urgence (P.G. 1.4), garde de 0 h à 8 h partagée entre deux médecins — la fin de semaine ou un jour férié, divisible en heures
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "00:00", end: "08:00"}
+    quart_hours: 8
+    divisible_in_hours: true
+    secteur_dispensation: "07"
+    garde_options: [partage]
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "862.80"}
+      - {effective_from: 2019-10-01, per_quart: "871.60"}
+    source: {section: "P.G. 1.4", page: 22, manual_rev: "2026-06-05"}

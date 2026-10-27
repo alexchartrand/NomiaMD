@@ -4,6 +4,7 @@ from datetime import date, timedelta
 
 from app.postgresdb import (
     Shift,
+    ShiftClaimRepository,
     ShiftInput,
     ShiftRepository,
     WorkSite,
@@ -23,6 +24,10 @@ class SiteUnavailableError(Exception):
 
 class RangeTooLongError(Exception):
     pass
+
+
+class ShiftBilledError(Exception):
+    """The shift's claim is on a bill: the shift stays until that bill is voided."""
 
 
 class EmptySeriesError(Exception):
@@ -84,10 +89,12 @@ class ShiftService:
         self,
         shifts: ShiftRepository,
         sites: WorkSiteRepository,
+        shift_claims: ShiftClaimRepository,
         mapper: ShiftMapper | None = None,
     ) -> None:
         self._shifts = shifts
         self._sites = sites
+        self._shift_claims = shift_claims
         self._mapper = mapper or ShiftMapper()
 
     async def list_between(self, user_id: int, start: date, end: date) -> list[ShiftOut]:
@@ -170,15 +177,31 @@ class ShiftService:
         shift = await self._shifts.get_for_user(shift_id, user_id)
         if shift is None:
             return False
-        await self._shifts.void(shift)
+        await self._void_with_claim(user_id, [shift])
         return True
 
     async def void_series(self, user_id: int, series_id: int, from_date: date | None = None) -> int:
-        """Voids the series' live shifts (from `from_date` on); how many it voided."""
+        """Voids the series' live shifts (from `from_date` on); how many it voided. None of
+        them if one is billed."""
         shifts = await self._shifts.list_in_series(user_id, series_id, from_date)
+        await self._void_with_claim(user_id, shifts)
+        return len(shifts)
+
+    async def _void_with_claim(self, user_id: int, shifts: list[Shift]) -> None:
+        """A shift's draft claim goes with it; a shift whose claim is on a bill can't go."""
+        drafts = []
+        for shift in shifts:
+            claim = await self._shift_claims.live_for_shift(shift.id, user_id)
+            if claim is None:
+                continue
+            # On a bill = "soumis" (app/claims/status.py, not imported: claims reads shifts).
+            if claim.claim.bill_id is not None:
+                raise ShiftBilledError
+            drafts.append(claim.claim)
+        for draft in drafts:
+            await self._shift_claims.void(draft)
         for shift in shifts:
             await self._shifts.void(shift)
-        return len(shifts)
 
     @staticmethod
     def _care_setting_for(shift: Shift, site: WorkSite) -> str:

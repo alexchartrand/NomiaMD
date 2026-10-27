@@ -16,6 +16,7 @@ import type {
   ExtractedFee,
   Patient,
   Shift,
+  ShiftClaim,
 } from "../api";
 
 // Synthetic fixtures only (no real NAMs or names). Typed against src/api so a drift in the
@@ -157,6 +158,41 @@ export function makeShift(overrides: Partial<Shift> = {}): Shift {
   };
 }
 
+// A draft claim for a weekday ER evening: 4 h of 09791.
+export function makeShiftClaim(overrides: Partial<ShiftClaim> = {}): ShiftClaim {
+  return {
+    id: 30,
+    shift_id: 10,
+    service_date: "2026-10-01",
+    start_time: "16:00:00",
+    end_time: "00:00:00",
+    ends_next_day: true,
+    care_setting: "urgence",
+    period: "soir",
+    work_site_name: "Urgence Saint-Luc",
+    garde_option: "acte",
+    status: "brouillon",
+    bill_id: null,
+    codes: [
+      {
+        code: "09791",
+        description: "Supplément de garde au service d'urgence — de 20 h à 24 h, du lundi au vendredi",
+        origin: "suggested",
+        hours: 4,
+        hourly_fee: 39.1,
+        fee_amount: 156.4,
+        secteur_dispensation: "07",
+        secteur_dispensation_label: "Service d'urgence",
+        source: "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)",
+      },
+    ],
+    total_amount: 156.4,
+    created_at: "2026-10-02T12:00:00Z",
+    updated_at: "2026-10-02T12:00:00Z",
+    ...overrides,
+  };
+}
+
 // No shift, no place: nothing is known of where the encounter took place.
 export function makeEncounterSetting(overrides: Partial<EncounterSetting> = {}): EncounterSetting {
   return {
@@ -208,6 +244,7 @@ export function makeDashboard(
       failed: 0,
       extracting: 0,
       possible_duplicates: 0,
+      unclaimed_shifts: 0,
       ...tasks,
     },
     kpis: { encounters_this_week: 0, draft_count: 0, draft_total: 0, billed_this_month: 0, ...kpis },

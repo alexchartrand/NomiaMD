@@ -637,6 +637,78 @@ class ClaimCode(CreatedAtMixin, Base):
     manual_rev: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
 
+class ShiftClaim(TimestampMixin, Base):
+    """A claim for a shift's own codes (09791, 19953 — app/shift_claims/), billed for the hours
+    worked rather than for a patient: no patient, no NAM. Its code lines are ShiftClaimCode.
+
+    The shift's site, care setting and hours are snapshotted at save time, like a Claim's
+    billing context: editing the shift or its site later never reinterprets what was claimed.
+
+    Status is derived like a Claim's (app/claims/status.py): "soumis" exactly when on a bill.
+    Never hard-deleted: removing a draft sets `voided_at`."""
+
+    __tablename__ = "shift_claims"
+    __table_args__ = (
+        Index("ix_shift_claims_physician_service_date", "physician_id", "service_date"),
+        CheckConstraint(
+            "garde_option IN ('acte', 'premier', 'second', 'partage')", name="ck_shift_claims_garde_option"
+        ),
+        # One live claim per shift. Partial so voiding a draft frees its shift to be claimed again.
+        Index(
+            "ix_shift_claims_shift_active",
+            "shift_id",
+            unique=True,
+            postgresql_where=text("voided_at IS NULL"),
+            sqlite_where=text("voided_at IS NULL"),
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    physician_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    shift_id: Mapped[int] = mapped_column(ForeignKey("shifts.id", ondelete="RESTRICT"))
+    service_date: Mapped[date] = mapped_column(Date)
+    start_time: Mapped[time] = mapped_column(Time)
+    end_time: Mapped[time] = mapped_column(Time)
+    care_setting: Mapped[str] = mapped_column(String(32))
+    period: Mapped[str] = mapped_column(String(8))
+    work_site_name: Mapped[str] = mapped_column(String(120))
+    etablissement_number: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    # The physician's choice for the garde (app/shift_claims/catalog/garde.py): à l'acte, or a
+    # P.G. 1.4 forfait — and then the period's patient services are paid at 101 % or 53,2 %.
+    garde_option: Mapped[str] = mapped_column(String(16), default="acte", server_default="acte")
+    bill_id: Mapped[int | None] = mapped_column(ForeignKey("bills.id", ondelete="SET NULL"), nullable=True, index=True)
+    voided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class ShiftClaimCode(CreatedAtMixin, Base):
+    """One shift code on a shift claim, for a number of hours. Description and fees are
+    snapshotted from the curated catalog at save time, like ClaimCode's from the codes table."""
+
+    __tablename__ = "shift_claim_codes"
+    __table_args__ = (
+        UniqueConstraint("shift_claim_id", "code", name="uq_shift_claim_codes_claim_code"),
+        CheckConstraint("origin IN ('suggested', 'manual')", name="ck_shift_claim_codes_origin"),
+        CheckConstraint("hours > 0", name="ck_shift_claim_codes_hours"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shift_claim_id: Mapped[int] = mapped_column(ForeignKey("shift_claims.id", ondelete="CASCADE"))
+    code: Mapped[str] = mapped_column(String(32))
+    description: Mapped[str] = mapped_column(Text)
+    # "suggested" — the shift's rules earned it (app/shift_claims/rules.py); "manual" — the
+    # physician added a code the rules didn't suggest (an établissement's own holiday, say).
+    origin: Mapped[str] = mapped_column(String(16))
+    hours: Mapped[int] = mapped_column(Integer)
+    # Null when the catalog stated no fee on the shift's date.
+    hourly_fee: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    fee_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    # The RAMQ secteur de dispensation the code is billed under ("07") and its name.
+    secteur_dispensation: Mapped[str] = mapped_column(String(2))
+    secteur_dispensation_label: Mapped[str] = mapped_column(Text)
+    # Where the catalog says the code is stated in the manual, e.g. "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)".
+    source: Mapped[str] = mapped_column(Text)
+
+
 class ContactRole(str, enum.Enum):
     PHYSICIAN = "medecin"
     CLINIC_MANAGER = "gestionnaire"

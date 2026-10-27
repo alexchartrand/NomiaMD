@@ -21,6 +21,9 @@ class TaskCountsOut(BaseModel):
     failed: int
     extracting: int
     possible_duplicates: int
+    # Past shifts (within the billing deadline) that earn a shift code and aren't claimed yet
+    # — not inbox rows, so not in `to_do`.
+    unclaimed_shifts: int = 0
 
 
 class KpisOut(BaseModel):

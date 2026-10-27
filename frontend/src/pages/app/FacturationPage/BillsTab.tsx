@@ -244,6 +244,17 @@ export function BillsTab({ period, onPeriodChange }: BillsTabProps) {
                                 )}
                               </li>
                             ))}
+                            {/* Older bills, from before shift claims, carry none. */}
+                            {(expandedDetail.shift_claims ?? []).map((c) => (
+                              <li key={`shift-${c.id}`} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                <span className="w-24 tabular-nums text-muted-foreground">{formatDate(c.service_date)}</span>
+                                <span className="min-w-40 font-semibold">Quart — {c.work_site_name}</span>
+                                <CodeChips codes={c.codes.map((code) => `${code.code} · ${code.hours} h`)} />
+                                {c.total_amount != null && (
+                                  <span className="ml-auto font-semibold tabular-nums">{formatMoney(c.total_amount)}</span>
+                                )}
+                              </li>
+                            ))}
                           </ul>
                         )}
                       </TableCell>

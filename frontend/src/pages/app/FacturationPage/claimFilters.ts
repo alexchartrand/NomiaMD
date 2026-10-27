@@ -1,4 +1,4 @@
-import type { Claim } from "../../../api";
+import type { Claim, ShiftClaim } from "../../../api";
 import { fold } from "../../../utils/text";
 import { daysLeft, isAtRisk } from "./deadline";
 
@@ -15,11 +15,11 @@ export const NO_FILTERS: ClaimFilters = { status: "", source: "", patient: "" };
 
 const STATUS_FILTERS: ClaimStatusFilter[] = ["", "brouillon", "échéance", "soumis"];
 
-export function isDeadlineAtRisk(claim: Claim, today: string): boolean {
+export function isDeadlineAtRisk(claim: Claim | ShiftClaim, today: string): boolean {
   return claim.status === "brouillon" && isAtRisk(daysLeft(claim.service_date, today));
 }
 
-function matchesStatus(claim: Claim, status: ClaimStatusFilter, today: string): boolean {
+function matchesStatus(claim: Claim | ShiftClaim, status: ClaimStatusFilter, today: string): boolean {
   if (status === "échéance") return isDeadlineAtRisk(claim, today);
   return !status || claim.status === status;
 }
@@ -29,6 +29,12 @@ export function matches(claim: Claim, filters: ClaimFilters, today: string): boo
   if (filters.source && claim.source_system !== filters.source) return false;
   const query = fold(filters.patient.trim());
   return !query || fold(claim.patient_full_name).includes(query);
+}
+
+// A shift claim has no patient or source: a filter on either leaves it out.
+export function matchesShift(claim: ShiftClaim, filters: ClaimFilters, today: string): boolean {
+  if (filters.source || filters.patient.trim()) return false;
+  return matchesStatus(claim, filters.status, today);
 }
 
 interface StatusTab {

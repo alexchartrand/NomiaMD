@@ -1,9 +1,9 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { makeClaim, makeClaimLine } from "../../../test/factories";
+import { makeClaim, makeClaimLine, makeShiftClaim } from "../../../test/factories";
 import { makeUser, renderWithProviders, serveSession } from "../../../test/render";
 import { server } from "../../../test/server";
-import type { Bill, Claim } from "../../../api";
+import type { Bill, Claim, ShiftClaim } from "../../../api";
 import { Route, Routes, useParams } from "react-router-dom";
 import FacturationPage from ".";
 
@@ -32,9 +32,14 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-10-07T16:00:00Z"));
   serveSession(makeUser());
+  serveShiftClaims([]);
 });
 
 afterEach(() => vi.useRealTimers());
+
+function serveShiftClaims(shiftClaims: ShiftClaim[]) {
+  server.use(http.get("/api/shift-claims", () => HttpResponse.json(shiftClaims)));
+}
 
 // Serves /claims, recording each request's query string.
 function serveClaims(claims: Claim[] | ((params: URLSearchParams) => Claim[])) {
@@ -419,11 +424,47 @@ describe("billing from the list", () => {
     expect(within(selectionBar()).getByText("du 03/10/2026 au 05/10/2026")).toBeInTheDocument();
 
     await user.click(within(selectionBar()).getByRole("button", { name: "Générer la facture" }));
-    await waitFor(() => expect(body).toEqual({ start_date: "2026-10-03", end_date: "2026-10-05", claim_ids: [2, 3] }));
+    await waitFor(() =>
+      expect(body).toEqual({ start_date: "2026-10-03", end_date: "2026-10-05", claim_ids: [2, 3], shift_claim_ids: [] }),
+    );
     expect(await screen.findByText("Facture F-2026-0009 générée.")).toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "Sélection" })).not.toBeInTheDocument();
     // The physician stays on the claims, to keep billing.
     expect(screen.getByRole("tab", { name: "Réclamations" })).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("bills a shift's own claim with the patients' claims", async () => {
+    serveClaims([claimFor(2, "Marc Roy", { service_date: "2026-10-05" })]);
+    serveShiftClaims([makeShiftClaim({ id: 30, service_date: "2026-10-01" })]);
+    let body: unknown;
+    server.use(
+      http.post("/api/bills", async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json(makeBill());
+      }),
+    );
+    const { user } = renderPage();
+    const shifts = await screen.findByRole("region", { name: "Réclamations de quart" });
+    expect(within(shifts).getByText("09791 · 4 h")).toBeInTheDocument();
+
+    await user.click(screen.getByLabelText("Sélectionner la réclamation de Marc Roy"));
+    await user.click(within(shifts).getByLabelText("Sélectionner le quart Urgence Saint-Luc, 16:00–00:00"));
+    expect(within(selectionBar()).getByText("2 réclamations sélectionnées")).toBeInTheDocument();
+    expect(within(selectionBar()).getByText("208,40 $")).toBeInTheDocument();
+
+    await user.click(within(selectionBar()).getByRole("button", { name: "Générer la facture" }));
+    await waitFor(() =>
+      expect(body).toEqual({ start_date: "2026-10-01", end_date: "2026-10-05", claim_ids: [2], shift_claim_ids: [30] }),
+    );
+  });
+
+  it("leaves the shifts' claims out under a patient filter", async () => {
+    serveClaims([claimFor(2, "Marc Roy")]);
+    serveShiftClaims([makeShiftClaim()]);
+    const { user } = renderPage();
+    await screen.findByRole("region", { name: "Réclamations de quart" });
+    await user.type(screen.getByLabelText("Patient"), "marc");
+    expect(screen.queryByRole("region", { name: "Réclamations de quart" })).not.toBeInTheDocument();
   });
 
   it("re-reads the list once billed, so the billed claims show as submitted", async () => {

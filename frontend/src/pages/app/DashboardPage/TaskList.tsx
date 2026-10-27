@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { ChevronRight, Copy, FileWarning, Loader, ReceiptText, ScanSearch, UserRoundPlus } from "lucide-react";
+import { CalendarClock, ChevronRight, Copy, FileWarning, Loader, ReceiptText, ScanSearch, UserRoundPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import type { Dashboard } from "../../../api";
@@ -57,6 +57,13 @@ function tasksOf({ tasks, kpis }: Dashboard): Task[] {
       to: inboxUrl("reçu"),
       icon: Loader,
       tone: "neutral",
+    },
+    tasks.unclaimed_shifts > 0 && {
+      label: plural(tasks.unclaimed_shifts, "quart sans réclamation", "quarts sans réclamation"),
+      detail: "suppléments de garde",
+      to: "/app/horaire",
+      icon: CalendarClock,
+      tone: "warning",
     },
     kpis.draft_count > 0 && {
       label: plural(kpis.draft_count, "réclamation à facturer", "réclamations à facturer"),

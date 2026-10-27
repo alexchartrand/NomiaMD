@@ -39,6 +39,14 @@ from app.postgresdb.repositories.llm_calls import LLMCallOwner, LLMCallRepositor
 from app.postgresdb.repositories.login_throttles import LoginThrottleRepository
 from app.postgresdb.repositories.patients import DuplicatePatientRamqNumberError, PatientRepository
 from app.postgresdb.repositories.physician_profiles import PhysicianProfileRepository
+from app.postgresdb.repositories.shift_claims import (
+    ShiftAlreadyClaimedError,
+    ShiftClaimAlreadyBilledError,
+    ShiftClaimCodeInput,
+    ShiftClaimDetail,
+    ShiftClaimInput,
+    ShiftClaimRepository,
+)
 from app.postgresdb.repositories.shifts import ShiftInput, ShiftRepository
 from app.postgresdb.repositories.roster import DuplicateRosterEntryError, PhysicianPatientRepository
 from app.postgresdb.repositories.table_stats import TableStatsRepository
@@ -90,6 +98,12 @@ __all__ = [
     "PatientRepository",
     "PhysicianPatientRepository",
     "PhysicianProfileRepository",
+    "ShiftAlreadyClaimedError",
+    "ShiftClaimAlreadyBilledError",
+    "ShiftClaimCodeInput",
+    "ShiftClaimDetail",
+    "ShiftClaimInput",
+    "ShiftClaimRepository",
     "ShiftInput",
     "ShiftRepository",
     "UserRepository",

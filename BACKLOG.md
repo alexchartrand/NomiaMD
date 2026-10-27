@@ -76,6 +76,31 @@
 
 ## ✨ Features
 
+- [ ] 🔴 Confirm the 09791/19953 fees and scope — *added 10/27, from shift claims (PR 4), open question*
+  - `backend/app/shift_claims/catalog/shift_codes.yaml` (P.G. 2.2.9 B, p. 71). The manual's last stated fee is $156.40 per 4-hour quart (from 2019-10-01): is there a newer amount? Do both codes apply at a hospital ER as well as a CLSC réseau de garde? Are partial hours paid by whole hours (the rules round down)? Ask the clinic's billing agent or RAMQ.
+
+- [ ] 🟡 Confirm the shift codes' secteur de dispensation — *added 10/27, from shift claims, open question*
+  - Every shift code is set to 07 (Service d'urgence), by analogy with 09996. For 09791/19953, it may instead be the time-specific 32/33/34 (« Service d'urgence d'un établissement », 20 h–24 h / weekend). The manual's own instruction for those two names a fee-for-service « secteur d'activité » (« Service d'urgence CLSC réseau de garde », guide 5.2.7) rather than a numbered secteur de dispensation.
+
+- [ ] 🟡 Confirm the P.G. 1.4 garde forfaits' details — *added 10/27, from shift claims, open question*
+  - Suggested only under the physician's per-shift `GardeOption` (premier, second, partage; p. 22). Open: 09996 (20 h–24 h, « 1er » médecin) is also offered under « partage », whose sharing only covers 0 h–8 h; the second (additional) physician earns no 20 h–24 h forfait; établissements adhering to EP 43 (their own forfaits) aren't told apart — the physician should stay « à l'acte » there until a per-site flag exists.
+  - Settled 10/27: 09996 is never billed with 09791/19953 on the same shift, whatever the hours (catalog `excludes`).
+
+- [ ] 🔴 A P.G. 1.4 forfait doesn't apply MOD=097/096 to the period's patient claims — *added 10/27, from shift claims*
+  - Under option b) the services of the garde period are paid at 101 % (0 h–8 h, MOD=097) or 53,2 % (20 h–24 h, MOD=096), with the element of context « Service dispensé pendant la période où un forfait du PG 1.4 est réclamé ». The shift dialog only warns; patient claims of encounters in a forfait shift are saved at 100 %. Carry the shift claim's `garde_option` into those claims (modifier + context element), or block the forfait until it does.
+
+- [ ] 🟡 Move the shift code catalog to ramq-ingestion — *added 10/27, from shift claims*
+  - The one deliberate exception to « RAMQ data is an external artifact »: ramq-ingestion only extracts per-patient codes. Once it extracts shift codes (window, day types, quart, dated fees), read them from a LanceDB table and delete the YAML.
+
+- [ ] 🟡 Shift codes read the default holiday calendar, not the établissement's — *added 10/27, from shift claims*
+  - 09791 vs 19953 turns on jours fériés, and an établissement's own dates (sent to RAMQ before April 30) win over the Entente's (`app/shifts/holidays.py`). Until a per-site calendar exists, the physician adds 19953 by hand (origin « manual ») on a day the site counts as a holiday.
+
+- [ ] 🟢 Shift claims don't carry RAMQ's « secteur d'activité » or per-day dates — *added 10/27, from shift claims*
+  - RAMQ asks for the garde's start and end time (the claim keeps them) and, for a CLSC, the « Service d'urgence CLSC réseau de garde » sector. A Friday-evening shift running into Saturday bills its 19953 hours under the Friday date on the PDF. Settle both when building direct RAMQ submission.
+
+- [ ] 🟢 Facturation's status tabs count patient claims only — *added 10/27, from shift claims*
+  - Shift claims are listed under them (and hidden by a patient or source filter) but not counted in the tab badges.
+
 - [ ] 🟡 Read the care setting from Epic encounters — *added 10/9, from the care-setting work*
   - `EncounterMeta.care_setting` is only set by paste/upload today. Epic doesn't expose a standard code for it: the sandbox's `Encounter.class` is Epic-local ("Support OP Encounter") and its location a department name ("EMC Family Medicine"). Add a per-site mapping (department or class → `CareSetting`) to `EpicNoteMapper`; unmapped = unknown. A schedule-entry connector would fill the same field.
 

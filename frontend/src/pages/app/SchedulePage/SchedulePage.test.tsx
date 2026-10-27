@@ -2,7 +2,8 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { renderWithProviders, serveSession, makeUser } from "../../../test/render";
 import { server } from "../../../test/server";
-import type { Shift, WorkSite } from "../../../api";
+import type { Shift, ShiftBilling, WorkSite } from "../../../api";
+import { makeEncounterRow, makeEncounterSetting, makeShiftClaim } from "../../../test/factories";
 import { addDays, clinicToday, weekdayIndex } from "../../../utils/date";
 import SchedulePage from ".";
 
@@ -51,9 +52,34 @@ function serveSchedule({ sites = [site], shifts = [] as Shift[] } = {}) {
       queries.push(new URL(request.url).searchParams);
       return HttpResponse.json(shifts);
     }),
+    // An opened shift: no shift code, no encounter, unless a test says otherwise.
+    http.get("/api/shifts/:id/billing", ({ params }) =>
+      HttpResponse.json({
+        shift: shifts.find((s) => s.id === Number(params.id)),
+        garde_option: "acte",
+        garde_choices: [],
+        suggested: [],
+        available_codes: [],
+        claim: null,
+      }),
+    ),
+    http.get("/api/encounters", () => HttpResponse.json([])),
   );
   return queries;
 }
+
+const code09791 = {
+  code: "09791",
+  description: "Supplément de garde au service d'urgence — de 20 h à 24 h, du lundi au vendredi",
+  quart_hours: 4,
+  divisible_in_hours: true,
+  hourly_fee: 39.1,
+  secteur_dispensation: "07",
+  secteur_dispensation_label: "Service d'urgence",
+  excludes: [] as string[],
+  source: "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)",
+};
+const code19953 = { ...code09791, code: "19953", description: "Supplément de garde — fin de semaine ou jour férié" };
 
 function renderSchedule() {
   serveSession(makeUser());
@@ -175,6 +201,7 @@ describe("schedule", () => {
     );
     const { user } = renderSchedule();
     await user.click(await screen.findByRole("button", { name: /08:00–16:00/ }));
+    await user.click(screen.getByRole("button", { name: "Modifier le quart" }));
     await user.click(screen.getByRole("button", { name: "Ce quart et les suivants" }));
     expect(screen.queryByLabelText("Date")).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Soir" }));
@@ -195,6 +222,7 @@ describe("schedule", () => {
     );
     const { user } = renderSchedule();
     await user.click(await screen.findByRole("button", { name: /16:00–00:00/ }));
+    await user.click(screen.getByRole("button", { name: "Modifier le quart" }));
     await user.click(screen.getByRole("button", { name: "Toute la série" }));
     await user.click(screen.getByRole("button", { name: "Supprimer" }));
     const confirmDialog = (await screen.findByText("Supprimer toute la série ?")).closest("[role=dialog],[role=alertdialog]");
@@ -203,5 +231,129 @@ describe("schedule", () => {
     expect(await screen.findByText("Quarts supprimés.")).toBeInTheDocument();
     expect(deleted).toHaveLength(1);
     expect(new URL(deleted[0]).search).toBe("");
+  });
+
+  it("opens a shift: its encounters, and its suggested codes saved as its claim", async () => {
+    const shift = makeShift();
+    serveSchedule({ shifts: [shift] });
+    const billing: ShiftBilling = {
+      shift,
+      garde_option: "acte",
+      garde_choices: [],
+      suggested: [
+        {
+          code: "09791",
+          description: code09791.description,
+          hours: 4,
+          hourly_fee: 39.1,
+          fee_amount: 156.4,
+          secteur_dispensation: "07",
+          secteur_dispensation_label: "Service d'urgence",
+          source: code09791.source,
+        },
+      ],
+      available_codes: [code09791, code19953],
+      claim: null,
+    };
+    const bodies: unknown[] = [];
+    server.use(
+      http.get("/api/shifts/10/billing", () => HttpResponse.json(billing)),
+      http.get("/api/encounters", () =>
+        HttpResponse.json([
+          makeEncounterRow({ id: 7, setting: makeEncounterSetting({ shift }) }),
+          // Same day, another shift: not this one's.
+          makeEncounterRow({ id: 8, setting: makeEncounterSetting({ shift: makeShift({ id: 99 }) }) }),
+        ]),
+      ),
+      http.put("/api/shifts/10/claim", async ({ request }) => {
+        const body = (await request.json()) as { codes: { code: string; hours: number }[] };
+        bodies.push(body);
+        return HttpResponse.json(makeShiftClaim({ shift_id: 10 }));
+      }),
+    );
+    const { user } = renderSchedule();
+    await user.click(await screen.findByRole("button", { name: /16:00–00:00/ }));
+
+    const encounters = await screen.findByRole("region", { name: "Rencontres du quart" });
+    await waitFor(() => expect(within(encounters).getAllByRole("link")).toHaveLength(1));
+    expect(within(encounters).getByRole("link")).toHaveAttribute("href", "/app/inbox/7");
+
+    const codes = screen.getByRole("region", { name: "Codes du quart" });
+    expect(await within(codes).findByLabelText("Code 09791")).toBeChecked();
+    expect(within(codes).getByLabelText("Code 19953")).not.toBeChecked();
+    expect(within(codes).getByText("156,40 $")).toBeInTheDocument();
+    expect(within(codes).getAllByText(/Secteur 07 — Service d'urgence/)).toHaveLength(2);
+
+    await user.click(within(codes).getByLabelText("Code 19953"));
+    const hours = within(codes).getByLabelText("Heures, code 19953");
+    await user.clear(hours);
+    await user.type(hours, "2");
+    await user.click(within(codes).getByRole("button", { name: "Enregistrer la réclamation" }));
+
+    expect(await screen.findByText("Réclamation du quart enregistrée.")).toBeInTheDocument();
+    expect(bodies).toEqual([{ codes: [{ code: "09791", hours: 4 }, { code: "19953", hours: 2 }], garde_option: "acte" }]);
+    expect(within(codes).getByRole("button", { name: "Mettre à jour la réclamation" })).toBeInTheDocument();
+  });
+
+  it("picks a garde forfait: its codes, the modifier warning, saved with the option", async () => {
+    const shift = makeShift({ start_time: "20:00:00", end_time: "08:00:00", period: "nuit" });
+    serveSchedule({ shifts: [shift] });
+    const choices = [
+      { value: "acte", label: "Rémunération à l'acte" },
+      { value: "premier", label: "Forfait de garde — seul médecin ou premier médecin" },
+    ] as const;
+    const code09998 = {
+      ...code09791,
+      code: "09998",
+      description: "Forfait de garde sur place — 0 h à 8 h, en semaine",
+      quart_hours: 8,
+      divisible_in_hours: false,
+      hourly_fee: 89.4,
+    };
+    const code09996 = {
+      ...code09791,
+      code: "09996",
+      description: "Forfait de garde sur place — 20 h à 24 h",
+      hourly_fee: 43.71,
+      excludes: ["09791", "19953"],
+    };
+    const asked: (string | null)[] = [];
+    const bodies: unknown[] = [];
+    server.use(
+      http.get("/api/shifts/10/billing", ({ request }) => {
+        const option = new URL(request.url).searchParams.get("garde_option");
+        asked.push(option);
+        const premier = option === "premier";
+        return HttpResponse.json({
+          shift,
+          garde_option: premier ? "premier" : "acte",
+          garde_choices: choices,
+          suggested: premier ? [{ ...code09998, hours: 8, fee_amount: 715.2 }] : [],
+          available_codes: premier ? [code09998, code09996, { ...code09791, excludes: ["09996"] }] : [code09791],
+          claim: null,
+        });
+      }),
+      http.put("/api/shifts/10/claim", async ({ request }) => {
+        bodies.push(await request.json());
+        return HttpResponse.json(makeShiftClaim({ shift_id: 10, garde_option: "premier" }));
+      }),
+    );
+    const { user } = renderSchedule();
+    await user.click(await screen.findByRole("button", { name: /20:00–08:00/ }));
+    const codes = screen.getByRole("region", { name: "Codes du quart" });
+    expect(within(codes).queryByText(/MOD=096/)).not.toBeInTheDocument();
+
+    await user.selectOptions(await within(codes).findByLabelText("Garde sur place (P.G. 1.4)"), "premier");
+    expect(await within(codes).findByLabelText("Code 09998")).toBeChecked();
+    expect(within(codes).getByText(/MOD=096/)).toBeInTheDocument();
+    // 09996 and 09791 can't go together: ticking one unticks the other.
+    await user.click(within(codes).getByLabelText("Code 09996"));
+    await user.click(within(codes).getByLabelText("Code 09791"));
+    expect(within(codes).getByLabelText("Code 09996")).not.toBeChecked();
+    await user.click(within(codes).getByLabelText("Code 09791"));
+    await user.click(within(codes).getByRole("button", { name: "Enregistrer la réclamation" }));
+
+    await waitFor(() => expect(bodies).toEqual([{ codes: [{ code: "09998", hours: 8 }], garde_option: "premier" }]));
+    expect(asked).toEqual([null, "premier"]);
   });
 });
