@@ -24,6 +24,8 @@ export interface ShiftCode {
   // The RAMQ secteur de dispensation it's billed under, e.g. "07" — Service d'urgence.
   secteur_dispensation: string;
   secteur_dispensation_label: string;
+  // The codes it can't be billed with, e.g. 09996 and 09791.
+  excludes: string[];
   source: string;
 }
 

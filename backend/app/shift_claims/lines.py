@@ -9,6 +9,7 @@ from app.shift_claims.catalog import GardeOption, ShiftCodeCatalog
 from app.shift_claims.errors import (
     EmptyShiftClaimError,
     HoursExceedShiftError,
+    IncompatibleShiftCodesError,
     UnknownShiftCodeError,
     WholeQuartsOnlyError,
 )
@@ -40,6 +41,10 @@ class ShiftClaimLineBuilder:
             by_code.setdefault(line.code, line)
         if not by_code:
             raise EmptyShiftClaimError()
+        for number in by_code:
+            clash = sorted(self._catalog.excluded_with(number) & by_code.keys())
+            if clash:
+                raise IncompatibleShiftCodesError(number, clash[0])
         suggested_codes = {line.code.number for line in suggested}
         shift_hours = int(hours.duration.total_seconds() // 3600)
         rows = []

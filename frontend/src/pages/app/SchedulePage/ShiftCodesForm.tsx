@@ -54,6 +54,15 @@ export function ShiftCodesForm({ billing, onSaved, onGardeOptionChange }: ShiftC
     setDraft((prev) => ({ ...prev, [code]: { ...prev[code], ...change } }));
   }
 
+  // Ticking a code unticks those it can't be billed with (09996 and 09791, say).
+  function tick(code: ShiftBilling["available_codes"][number], checked: boolean) {
+    setDraft((prev) => {
+      const next = { ...prev, [code.code]: { ...prev[code.code], checked } };
+      if (checked) for (const other of code.excludes) if (next[other]) next[other] = { ...next[other], checked: false };
+      return next;
+    });
+  }
+
   async function save() {
     setError(null);
     setSaving(true);
@@ -110,7 +119,7 @@ export function ShiftCodesForm({ billing, onSaved, onGardeOptionChange }: ShiftC
                 id={`shift-code-${code.code}`}
                 checked={line.checked}
                 disabled={billed}
-                onCheckedChange={(checked) => update(code.code, { checked: checked === true })}
+                onCheckedChange={(checked) => tick(code, checked === true)}
                 aria-label={`Code ${code.code}`}
                 className="mt-0.5"
               />

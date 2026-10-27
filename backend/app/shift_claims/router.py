@@ -8,6 +8,7 @@ from app.postgresdb import User
 from app.shift_claims.errors import (
     EmptyShiftClaimError,
     HoursExceedShiftError,
+    IncompatibleShiftCodesError,
     ShiftClaimConflictError,
     ShiftClaimNotFoundError,
     ShiftClaimOnBillError,
@@ -62,6 +63,10 @@ async def save_shift_claim(
         raise HTTPException(status_code=422, detail="Au moins un code doit être sélectionné") from exc
     except UnknownShiftCodeError as exc:
         raise HTTPException(status_code=422, detail=f"Code {exc.code} non applicable à ce quart") from exc
+    except IncompatibleShiftCodesError as exc:
+        raise HTTPException(
+            status_code=422, detail=f"Les codes {exc.code} et {exc.other} ne peuvent pas être facturés ensemble"
+        ) from exc
     except WholeQuartsOnlyError as exc:
         raise HTTPException(
             status_code=422, detail=f"Code {exc.code} : par période complète de {exc.quart_hours} h seulement"

@@ -110,17 +110,31 @@ def test_other_settings_earn_nothing():
 @pytest.mark.parametrize(
     ("garde_option", "day", "expected"),
     [
-        (GardeOption.PREMIER, TUESDAY, {"09791": 4, "09996": 4, "09998": 8}),
+        # 09996 can't be billed with 09791/19953: the forfait wins.
+        (GardeOption.PREMIER, TUESDAY, {"09996": 4, "09998": 8}),
         (GardeOption.SECOND, TUESDAY, {"09791": 4, "09994": 8}),
-        (GardeOption.PARTAGE, TUESDAY, {"09791": 4, "09996": 4, "42265": 8}),
+        (GardeOption.PARTAGE, TUESDAY, {"09996": 4, "42265": 8}),
         # Friday 20 h to Saturday 8 h: the night is a weekend one.
-        (GardeOption.PREMIER, FRIDAY, {"09791": 4, "09996": 4, "19055": 8}),
+        (GardeOption.PREMIER, FRIDAY, {"09996": 4, "19055": 8}),
         (GardeOption.SECOND, FRIDAY, {"09791": 4, "19056": 8}),
-        (GardeOption.PARTAGE, FRIDAY, {"09791": 4, "09996": 4, "42266": 8}),
+        (GardeOption.PARTAGE, FRIDAY, {"09996": 4, "42266": 8}),
     ],
 )
 def test_garde_forfaits_follow_the_physicians_option(garde_option, day, expected):
     assert _suggest(CareSetting.URGENCE, day, time(20), time(8), garde_option) == expected
+
+
+def test_exclusions_read_both_ways():
+    assert CATALOG.excluded_with("09996") == {"09791", "19953"}
+    assert CATALOG.excluded_with("19953") == {"09996"}
+    assert CATALOG.excluded_with("09998") == frozenset()
+
+
+def test_catalog_refuses_an_unknown_exclusion(tmp_path):
+    path = tmp_path / "codes.yaml"
+    path.write_text('secteurs_dispensation: {"07": "Service d\'urgence"}\ncodes:' + _ENTRY + '    excludes: ["99999"]\n')
+    with pytest.raises(ValidationError, match="excludes unknown codes"):
+        ShiftCodeCatalog(path).all()
 
 
 def test_a_forfait_not_divisible_needs_its_whole_period():
@@ -213,10 +227,16 @@ def test_a_garde_forfait_is_saved_with_its_option(client):
     shift = _shift(client, _site(client), start="20:00", end="08:00", period="nuit")
     billing = client.get(f"/shifts/{shift['id']}/billing", params={"garde_option": "premier"}).json()
     assert [(c["code"], c["hours"], c["fee_amount"]) for c in billing["suggested"]] == [
-        ("09791", 4, 156.40),
         ("09998", 8, 715.20),
         ("09996", 4, 174.85),
     ]
+    assert {c["code"]: c["excludes"] for c in billing["available_codes"]}["09996"] == ["09791", "19953"]
+    together = client.put(
+        f"/shifts/{shift['id']}/claim",
+        json={"codes": [{"code": "09791", "hours": 4}, {"code": "09996", "hours": 4}], "garde_option": "premier"},
+    )
+    assert together.status_code == 422
+    assert together.json()["detail"] == "Les codes 09791 et 09996 ne peuvent pas être facturés ensemble"
     # À l'acte, a forfait isn't billable; a forfait isn't by the hour.
     assert client.put(f"/shifts/{shift['id']}/claim", json={"codes": [{"code": "09998", "hours": 8}]}).status_code == 422
     partial = client.put(
@@ -230,7 +250,7 @@ def test_a_garde_forfait_is_saved_with_its_option(client):
         json={"codes": [{"code": c["code"], "hours": c["hours"]} for c in billing["suggested"]], "garde_option": "premier"},
     ).json()
     assert saved["garde_option"] == "premier"
-    assert saved["total_amount"] == 1046.45
+    assert saved["total_amount"] == 890.05
     # Reopened, the shift reads under the option its claim was saved with.
     assert client.get(f"/shifts/{shift['id']}/billing").json()["garde_option"] == "premier"
 

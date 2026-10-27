@@ -79,5 +79,6 @@ class ShiftCodeMapper:
             hourly_fee=self._fees.resolve(code, service_date, 1).hourly_fee,
             secteur_dispensation=code.secteur_dispensation,
             secteur_dispensation_label=self._secteur_label(code),
+            excludes=sorted(self._catalog.excluded_with(code.number)),
             source=code.citation,
         )

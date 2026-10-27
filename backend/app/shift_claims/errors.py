@@ -38,6 +38,15 @@ class WholeQuartsOnlyError(Exception):
         self.quart_hours = quart_hours
 
 
+class IncompatibleShiftCodesError(Exception):
+    """Two codes of the claim can't be billed together (09996 with 09791 or 19953)."""
+
+    def __init__(self, code: str, other: str) -> None:
+        super().__init__(code)
+        self.code = code
+        self.other = other
+
+
 class HoursExceedShiftError(Exception):
     def __init__(self, code: str, hours: int, shift_hours: int) -> None:
         super().__init__(code)

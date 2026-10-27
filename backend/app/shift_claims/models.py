@@ -23,6 +23,8 @@ class ShiftCodeOut(BaseModel):
     # The RAMQ secteur de dispensation it's billed under, e.g. "07" — Service d'urgence.
     secteur_dispensation: str
     secteur_dispensation_label: str
+    # The codes it can't be billed with, e.g. 09996 and 09791.
+    excludes: list[str]
     source: str
 
 

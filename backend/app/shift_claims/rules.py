@@ -42,7 +42,10 @@ class ShiftCodeRules:
             billable = self.billable_hours(code, self._minutes_in_window(code, hours))
             if billable > 0:
                 lines.append(SuggestedShiftLine(code=code, hours=billable))
-        return lines
+        # A code that excludes others wins over them: 09996, the forfait the physician chose,
+        # over the 09791/19953 supplements.
+        excluded = {number for line in lines for number in line.code.excludes}
+        return [line for line in lines if line.code.number not in excluded]
 
     @staticmethod
     def billable_hours(code: ShiftCode, minutes: int) -> int:

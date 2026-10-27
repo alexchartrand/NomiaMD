@@ -76,6 +76,7 @@ const code09791 = {
   hourly_fee: 39.1,
   secteur_dispensation: "07",
   secteur_dispensation_label: "Service d'urgence",
+  excludes: [] as string[],
   source: "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)",
 };
 const code19953 = { ...code09791, code: "19953", description: "Supplément de garde — fin de semaine ou jour férié" };
@@ -309,6 +310,13 @@ describe("schedule", () => {
       divisible_in_hours: false,
       hourly_fee: 89.4,
     };
+    const code09996 = {
+      ...code09791,
+      code: "09996",
+      description: "Forfait de garde sur place — 20 h à 24 h",
+      hourly_fee: 43.71,
+      excludes: ["09791", "19953"],
+    };
     const asked: (string | null)[] = [];
     const bodies: unknown[] = [];
     server.use(
@@ -321,7 +329,7 @@ describe("schedule", () => {
           garde_option: premier ? "premier" : "acte",
           garde_choices: choices,
           suggested: premier ? [{ ...code09998, hours: 8, fee_amount: 715.2 }] : [],
-          available_codes: premier ? [code09998] : [code09791],
+          available_codes: premier ? [code09998, code09996, { ...code09791, excludes: ["09996"] }] : [code09791],
           claim: null,
         });
       }),
@@ -338,6 +346,11 @@ describe("schedule", () => {
     await user.selectOptions(await within(codes).findByLabelText("Garde sur place (P.G. 1.4)"), "premier");
     expect(await within(codes).findByLabelText("Code 09998")).toBeChecked();
     expect(within(codes).getByText(/MOD=096/)).toBeInTheDocument();
+    // 09996 and 09791 can't go together: ticking one unticks the other.
+    await user.click(within(codes).getByLabelText("Code 09996"));
+    await user.click(within(codes).getByLabelText("Code 09791"));
+    expect(within(codes).getByLabelText("Code 09996")).not.toBeChecked();
+    await user.click(within(codes).getByLabelText("Code 09791"));
     await user.click(within(codes).getByRole("button", { name: "Enregistrer la réclamation" }));
 
     await waitFor(() => expect(bodies).toEqual([{ codes: [{ code: "09998", hours: 8 }], garde_option: "premier" }]));

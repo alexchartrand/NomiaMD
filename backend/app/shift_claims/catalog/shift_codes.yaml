@@ -18,6 +18,8 @@
 #   garde_options  only for the P.G. 1.4 forfaits: the physician's choice for the shift that
 #                  earns it (app/shift_claims/garde.py — premier, second, partage); left out,
 #                  the code applies whatever the choice
+#   excludes       codes that can't be billed with it (both ways): it wins over them in the
+#                  suggestions, and a claim holding both is refused
 #   fees           amount per quart, dated: the one in effect on the shift's date applies
 #   source         where it's stated in the manual
 
@@ -138,6 +140,7 @@ codes:
     divisible_in_hours: false
     secteur_dispensation: "07"
     garde_options: [premier, partage]
+    excludes: ["09791", "19953"]
     fees:
       - {effective_from: 2018-09-01, per_quart: "173.10"}
       - {effective_from: 2019-10-01, per_quart: "174.85"}

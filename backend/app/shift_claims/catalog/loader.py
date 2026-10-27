@@ -53,6 +53,8 @@ class ShiftCode(BaseModel):
     secteur_dispensation: str = Field(pattern=r"^\d{2}$")
     # Empty: applies whatever the garde option. Never ACTE: à l'acte earns no forfait.
     garde_options: frozenset[GardeOption] = frozenset()
+    # Codes it can't be billed with — read both ways through ShiftCodeCatalog.excluded_with.
+    excludes: frozenset[str] = frozenset()
     fees: tuple[DatedFee, ...] = Field(min_length=1)
     source: ShiftCodeSource
 
@@ -95,6 +97,15 @@ class _CatalogFile(BaseModel):
         return codes
 
     @model_validator(mode="after")
+    def _known_exclusions(self) -> "_CatalogFile":
+        numbers = {code.number for code in self.codes}
+        for code in self.codes:
+            unknown = code.excludes - numbers
+            if unknown:
+                raise ValueError(f"{code.number}: excludes unknown codes {sorted(unknown)}")
+        return self
+
+    @model_validator(mode="after")
     def _known_secteurs(self) -> "_CatalogFile":
         for code in self.codes:
             if code.secteur_dispensation not in self.secteurs_dispensation:
@@ -125,6 +136,12 @@ class ShiftCodeCatalog:
 
     def get(self, number: str) -> ShiftCode | None:
         return self._codes.get(number)
+
+    def excluded_with(self, number: str) -> frozenset[str]:
+        """The codes that can't be billed with `number`, whichever of the two states it."""
+        code = self._codes.get(number)
+        stated = code.excludes if code is not None else frozenset()
+        return stated | {other.number for other in self._codes.values() if number in other.excludes}
 
     def for_care_setting(
         self, care_setting: CareSetting, garde_option: GardeOption = GardeOption.ACTE
