@@ -11,7 +11,7 @@ from app.postgresdb import (
     WorkSiteRepository,
 )
 from app.shifts.day_type import DayTypeResolver
-from app.shifts.models import ShiftIn, ShiftOut, WorkSiteIn, WorkSiteOut
+from app.shifts.models import ShiftIn, ShiftOut, ShiftSeriesIn, WorkSiteIn, WorkSiteOut
 from app.shifts.periods import ShiftHours
 
 # The calendar shows a month at most (plus the days of the weeks it starts and ends in).
@@ -24,6 +24,13 @@ class SiteUnavailableError(Exception):
 
 class RangeTooLongError(Exception):
     pass
+
+
+class EmptySeriesError(Exception):
+    """A series whose range holds no day to schedule (only a weekend, weekdays only)."""
+
+
+_SATURDAY = 5
 
 
 def _site_out(site: WorkSite) -> WorkSiteOut:
@@ -98,6 +105,33 @@ class ShiftService:
             raise SiteUnavailableError
         shift = await self._shifts.create(user_id, self._input(body, site.care_setting))
         return self._out(shift, site)
+
+    async def create_series(self, user_id: int, body: ShiftSeriesIn) -> list[ShiftOut]:
+        """All of the series' shifts or none: they're written in the request's one transaction."""
+        if body.end_date < body.start_date or body.end_date - body.start_date > MAX_RANGE:
+            raise RangeTooLongError
+        site = await self._sites.get_for_user(body.work_site_id, user_id)
+        if site is None or not site.is_active:
+            raise SiteUnavailableError
+        days = [
+            body.start_date + timedelta(days=offset)
+            for offset in range((body.end_date - body.start_date).days + 1)
+        ]
+        if body.weekdays_only:
+            days = [day for day in days if day.weekday() < _SATURDAY]
+        if not days:
+            raise EmptySeriesError
+        created = []
+        for day in days:
+            shift_body = ShiftIn(
+                work_site_id=body.work_site_id,
+                period=body.period,
+                service_date=day,
+                start_time=body.start_time,
+                end_time=body.end_time,
+            )
+            created.append(self._out(await self._shifts.create(user_id, self._input(shift_body, site.care_setting)), site))
+        return created
 
     async def update(self, user_id: int, shift_id: int, body: ShiftIn) -> ShiftOut | None:
         """The care setting is re-read from the site only when the shift moves to another one:

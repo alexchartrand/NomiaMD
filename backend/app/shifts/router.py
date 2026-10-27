@@ -5,9 +5,15 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.auth import get_current_user
 from app.postgresdb import User
 from app.shifts.factory import get_shift_service, get_work_site_service
-from app.shifts.models import PeriodDefaultOut, ShiftIn, ShiftOut, WorkSiteIn, WorkSiteOut
+from app.shifts.models import PeriodDefaultOut, ShiftIn, ShiftOut, ShiftSeriesIn, WorkSiteIn, WorkSiteOut
 from app.shifts.periods import DEFAULT_PERIOD_HOURS, SHIFT_PERIOD_LABELS_FR
-from app.shifts.service import RangeTooLongError, ShiftService, SiteUnavailableError, WorkSiteService
+from app.shifts.service import (
+    EmptySeriesError,
+    RangeTooLongError,
+    ShiftService,
+    SiteUnavailableError,
+    WorkSiteService,
+)
 
 work_sites_router = APIRouter(prefix="/work-sites", tags=["shifts"])
 shifts_router = APIRouter(prefix="/shifts", tags=["shifts"])
@@ -103,6 +109,22 @@ async def create_shift(
         return await service.create(current_user.id, body)
     except SiteUnavailableError as exc:
         raise HTTPException(status_code=422, detail=_SITE_NOT_FOUND) from exc
+
+
+@shifts_router.post("/series", response_model=list[ShiftOut], status_code=status.HTTP_201_CREATED)
+async def create_shift_series(
+    body: ShiftSeriesIn,
+    current_user: User = Depends(get_current_user),
+    service: ShiftService = Depends(get_shift_service),
+) -> list[ShiftOut]:
+    try:
+        return await service.create_series(current_user.id, body)
+    except SiteUnavailableError as exc:
+        raise HTTPException(status_code=422, detail=_SITE_NOT_FOUND) from exc
+    except RangeTooLongError as exc:
+        raise HTTPException(status_code=422, detail="Période invalide (62 jours au plus)") from exc
+    except EmptySeriesError as exc:
+        raise HTTPException(status_code=422, detail="Aucun jour à l'horaire dans cette période") from exc
 
 
 @shifts_router.put("/{shift_id}", response_model=ShiftOut)

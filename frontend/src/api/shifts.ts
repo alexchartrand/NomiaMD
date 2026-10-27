@@ -67,6 +67,17 @@ export interface ShiftInput {
   end_time: string;
 }
 
+// One shift a day from start_date to end_date (both included), same site and hours.
+export interface ShiftSeriesInput {
+  work_site_id: number;
+  period: ShiftPeriod;
+  start_date: string;
+  end_date: string;
+  start_time: string;
+  end_time: string;
+  weekdays_only: boolean;
+}
+
 export interface PeriodDefault {
   period: ShiftPeriod;
   label: string;
@@ -122,6 +133,17 @@ export async function listPeriodDefaults(): Promise<PeriodDefault[]> {
 export async function createShift(payload: ShiftInput): Promise<Shift> {
   return unwrap<Shift>(
     await fetch("/api/shifts", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: JSON_HEADERS,
+      body: JSON.stringify(payload),
+    }),
+  );
+}
+
+export async function createShiftSeries(payload: ShiftSeriesInput): Promise<Shift[]> {
+  return unwrap<Shift[]>(
+    await fetch("/api/shifts/series", {
       method: "POST",
       credentials: "same-origin",
       headers: JSON_HEADERS,

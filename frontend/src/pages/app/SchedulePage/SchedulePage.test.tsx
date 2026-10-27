@@ -96,9 +96,42 @@ describe("schedule", () => {
     expect(screen.getByText("Le lendemain.")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Enregistrer" }));
 
-    expect(await screen.findByText("Quart enregistré.")).toBeInTheDocument();
+    expect(await screen.findByText("Horaire mis à jour.")).toBeInTheDocument();
     expect(bodies).toEqual([
       { work_site_id: 1, period: "soir", service_date: monday, start_time: "16:00", end_time: "00:00" },
+    ]);
+  });
+
+  it("adds one shift a day over a date range, weekdays only", async () => {
+    serveSchedule();
+    const bodies: unknown[] = [];
+    server.use(
+      http.post("/api/shifts/series", async ({ request }) => {
+        bodies.push(await request.json());
+        return HttpResponse.json([], { status: 201 });
+      }),
+    );
+    const { user } = renderSchedule();
+    await user.click(await screen.findByRole("button", { name: `Ajouter un quart le ${monday}` }));
+    const last = screen.getByLabelText("Au");
+    await user.clear(last);
+    await user.type(last, addDays(monday, 13));
+    expect(screen.getByText("14 quarts, un par jour.")).toBeInTheDocument();
+    await user.click(screen.getByLabelText("Jours de semaine seulement"));
+    expect(screen.getByText("10 quarts, un par jour.")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Enregistrer 10 quarts" }));
+
+    expect(await screen.findByText("Horaire mis à jour.")).toBeInTheDocument();
+    expect(bodies).toEqual([
+      {
+        work_site_id: 1,
+        period: "jour",
+        start_time: "08:00",
+        end_time: "16:00",
+        start_date: monday,
+        end_date: addDays(monday, 13),
+        weekdays_only: true,
+      },
     ]);
   });
 });

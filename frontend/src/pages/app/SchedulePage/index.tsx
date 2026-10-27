@@ -205,7 +205,7 @@ export default function SchedulePage() {
           onSaved={() => {
             setDialog(null);
             loadWeek();
-            toast.success("Quart enregistré.");
+            toast.success("Horaire mis à jour.");
           }}
           onDelete={(shift) => void handleDelete(shift)}
         />

@@ -165,3 +165,48 @@ def test_period_defaults():
         periods = {p["period"]: p for p in client.get("/shifts/periods").json()}
         assert periods["soir"]["start_time"] == "16:00:00"
         assert periods["soir"]["end_time"] == "00:00:00"
+
+
+def _series_body(site_id, **overrides):
+    return {
+        "work_site_id": site_id,
+        "period": "jour",
+        "start_date": "2026-12-07",
+        "end_date": "2026-12-13",
+        "start_time": "08:00",
+        "end_time": "08:00",
+        **overrides,
+    }
+
+
+def test_series_creates_one_shift_a_day():
+    with TestClient(app) as client:
+        site = _create_site(client, name="Garde hôpital", care_setting="hospitalisation")
+        response = client.post("/shifts/series", json=_series_body(site["id"]))
+        assert response.status_code == 201, response.text
+        shifts = response.json()
+        assert [s["service_date"] for s in shifts] == [f"2026-12-{d:02d}" for d in range(7, 14)]
+        assert all(s["care_setting"] == "hospitalisation" and s["ends_next_day"] for s in shifts)
+
+
+def test_series_weekdays_only():
+    with TestClient(app) as client:
+        site = _create_site(client, name="GMF Est", care_setting="gmf")
+        shifts = client.post(
+            "/shifts/series",
+            json=_series_body(site["id"], start_date="2027-01-04", end_date="2027-01-17", end_time="16:00", weekdays_only=True),
+        ).json()
+        assert len(shifts) == 10
+        assert {s["day_type"] for s in shifts} == {"semaine"}
+
+
+def test_series_validation():
+    with TestClient(app) as client:
+        site = _create_site(client, name="GMF Ouest", care_setting="gmf")
+        # A weekend only, weekdays only: nothing to schedule.
+        weekend = _series_body(site["id"], start_date="2027-01-09", end_date="2027-01-10", weekdays_only=True)
+        assert client.post("/shifts/series", json=weekend).status_code == 422
+        backwards = _series_body(site["id"], start_date="2027-01-10", end_date="2027-01-09")
+        assert client.post("/shifts/series", json=backwards).status_code == 422
+        too_long = _series_body(site["id"], start_date="2027-01-01", end_date="2027-04-01")
+        assert client.post("/shifts/series", json=too_long).status_code == 422

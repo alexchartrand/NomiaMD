@@ -46,6 +46,20 @@ class ShiftIn(BaseModel):
     end_time: time
 
 
+class ShiftSeriesIn(BaseModel):
+    """One shift on each day from `start_date` to `end_date` (both included), all at the same
+    site and hours — two weeks at a clinic, a week on call at the hospital."""
+
+    work_site_id: int
+    period: ShiftPeriod
+    start_date: date
+    end_date: date
+    start_time: time
+    end_time: time
+    # Skips Saturdays and Sundays (not jours fériés: those are removed one by one if needed).
+    weekdays_only: bool = False
+
+
 class ShiftOut(BaseModel):
     id: int
     work_site_id: int
