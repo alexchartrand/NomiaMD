@@ -180,6 +180,8 @@ export function makeShiftClaim(overrides: Partial<ShiftClaim> = {}): ShiftClaim 
         hours: 4,
         hourly_fee: 39.1,
         fee_amount: 156.4,
+        secteur_dispensation: "07",
+        secteur_dispensation_label: "Service d'urgence",
         source: "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)",
       },
     ],

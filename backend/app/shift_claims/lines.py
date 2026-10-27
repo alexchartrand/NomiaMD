@@ -1,6 +1,6 @@
 """The physician's confirmed codes -> the shift_claim_codes rows a shift claim is saved with:
-each code checked against the catalog and the shift, its description and fee snapshotted
-from the catalog on the shift's date — never from the request."""
+each code checked against the catalog and the shift, its description, secteur de dispensation
+and fee snapshotted from the catalog on the shift's date — never from the request."""
 
 from app.care_setting import CareSetting
 from app.claims.origin import CodeOrigin
@@ -52,6 +52,8 @@ class ShiftClaimLineBuilder:
                     hours=line.hours,
                     hourly_fee=fee.hourly_fee,
                     fee_amount=fee.amount,
+                    secteur_dispensation=code.secteur_dispensation,
+                    secteur_dispensation_label=self._catalog.secteur_label(code.secteur_dispensation) or "",
                     source=code.citation,
                 )
             )

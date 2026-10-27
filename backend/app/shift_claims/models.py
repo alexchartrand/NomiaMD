@@ -19,6 +19,9 @@ class ShiftCodeOut(BaseModel):
     quart_hours: int
     divisible_in_hours: bool
     hourly_fee: Money | None
+    # The RAMQ secteur de dispensation it's billed under, e.g. "07" — Service d'urgence.
+    secteur_dispensation: str
+    secteur_dispensation_label: str
     source: str
 
 
@@ -30,6 +33,8 @@ class SuggestedShiftCodeOut(BaseModel):
     hours: int
     hourly_fee: Money | None
     fee_amount: Money | None
+    secteur_dispensation: str
+    secteur_dispensation_label: str
     source: str
 
 
@@ -52,6 +57,8 @@ class ShiftClaimCodeOut(BaseModel):
     hours: int
     hourly_fee: Money | None
     fee_amount: Money | None
+    secteur_dispensation: str
+    secteur_dispensation_label: str
     source: str
 
     model_config = {"from_attributes": True}

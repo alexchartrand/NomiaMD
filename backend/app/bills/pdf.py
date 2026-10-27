@@ -20,8 +20,9 @@ class BillLineItem:
     service_date: date
     code: str
     fee_amount: Decimal | None
-    # A shift code's hours; None on a patient's code.
+    # A shift code's hours and secteur de dispensation; None on a patient's code.
     hours: int | None = None
+    secteur: str | None = None
 
 
 @dataclass
@@ -139,10 +140,12 @@ class BillPdfRenderer:
                     group_style,
                 )
             )
-            rows = [["Date", "Code", "Heures", "Honoraire"]]
+            rows = [["Date", "Code", "Secteur", "Heures", "Honoraire"]]
             for line in shift.lines:
-                rows.append([_fmt_date(line.service_date), line.code, str(line.hours), _fmt_amount(line.fee_amount)])
-            table = Table(rows, colWidths=[3 * cm, 4 * cm, 2 * cm, 3 * cm], hAlign="LEFT")
+                rows.append(
+                    [_fmt_date(line.service_date), line.code, line.secteur or "", str(line.hours), _fmt_amount(line.fee_amount)]
+                )
+            table = Table(rows, colWidths=[3 * cm, 4 * cm, 2 * cm, 2 * cm, 3 * cm], hAlign="LEFT")
             table.setStyle(_TABLE_STYLE)
             story.append(table)
 

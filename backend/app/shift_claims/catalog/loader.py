@@ -7,7 +7,7 @@ from functools import cached_property
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.care_setting import CareSetting
 from app.shifts import DayType
@@ -49,6 +49,7 @@ class ShiftCode(BaseModel):
     window: HourWindow
     quart_hours: int = Field(gt=0, le=24)
     divisible_in_hours: bool
+    secteur_dispensation: str = Field(pattern=r"^\d{2}$")
     fees: tuple[DatedFee, ...] = Field(min_length=1)
     source: ShiftCodeSource
 
@@ -69,6 +70,7 @@ class ShiftCode(BaseModel):
 
 
 class _CatalogFile(BaseModel):
+    secteurs_dispensation: dict[str, str]
     codes: list[ShiftCode]
 
     @field_validator("codes")
@@ -79,6 +81,13 @@ class _CatalogFile(BaseModel):
             raise ValueError("duplicate shift code number")
         return codes
 
+    @model_validator(mode="after")
+    def _known_secteurs(self) -> "_CatalogFile":
+        for code in self.codes:
+            if code.secteur_dispensation not in self.secteurs_dispensation:
+                raise ValueError(f"{code.number}: unknown secteur de dispensation {code.secteur_dispensation}")
+        return self
+
 
 class ShiftCodeCatalog:
     """The curated shift codes, by number. Read once, on first use."""
@@ -87,9 +96,16 @@ class ShiftCodeCatalog:
         self._path = path
 
     @cached_property
+    def _file(self) -> _CatalogFile:
+        return _CatalogFile.model_validate(yaml.safe_load(self._path.read_text(encoding="utf-8")))
+
+    @cached_property
     def _codes(self) -> dict[str, ShiftCode]:
-        raw = yaml.safe_load(self._path.read_text(encoding="utf-8"))
-        return {code.number: code for code in _CatalogFile.model_validate(raw).codes}
+        return {code.number: code for code in self._file.codes}
+
+    def secteur_label(self, secteur: str) -> str | None:
+        """A secteur de dispensation's name, e.g. "07" -> "Service d'urgence"."""
+        return self._file.secteurs_dispensation.get(secteur)
 
     def all(self) -> list[ShiftCode]:
         return list(self._codes.values())

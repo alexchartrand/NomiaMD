@@ -71,7 +71,11 @@ export function ShiftClaimsTable({ claims, selected, onToggle, onDelete, footer 
                 <TableCell>
                   <span className="flex flex-wrap gap-1">
                     {claim.codes.map((code) => (
-                      <Badge key={code.code} tone="neutral" title={code.description}>
+                      <Badge
+                        key={code.code}
+                        tone="neutral"
+                        title={`${code.description} — secteur ${code.secteur_dispensation} (${code.secteur_dispensation_label})`}
+                      >
                         {code.code} · {code.hours} h
                       </Badge>
                     ))}

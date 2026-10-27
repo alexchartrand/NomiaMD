@@ -696,6 +696,9 @@ class ShiftClaimCode(CreatedAtMixin, Base):
     # Null when the catalog stated no fee on the shift's date.
     hourly_fee: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
     fee_amount: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    # The RAMQ secteur de dispensation the code is billed under ("07") and its name.
+    secteur_dispensation: Mapped[str] = mapped_column(String(2))
+    secteur_dispensation_label: Mapped[str] = mapped_column(Text)
     # Where the catalog says the code is stated in the manual, e.g. "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)".
     source: Mapped[str] = mapped_column(Text)
 

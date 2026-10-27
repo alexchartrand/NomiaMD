@@ -97,7 +97,9 @@ export function ShiftCodesForm({ billing, onSaved }: ShiftCodesFormProps) {
                   )}
                 </label>
                 <span className="text-sm">{code.description}</span>
-                <span className="text-xs text-muted-foreground">{code.source}</span>
+                <span className="text-xs text-muted-foreground">
+                  Secteur {code.secteur_dispensation} — {code.secteur_dispensation_label} · {code.source}
+                </span>
               </div>
               <div className="flex shrink-0 items-center gap-1.5">
                 <TextField

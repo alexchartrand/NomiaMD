@@ -77,7 +77,9 @@
 ## ✨ Features
 
 - [ ] 🔴 Validate the curated shift code list before merge — *added 10/27, from shift claims (PR 4)*
-  - `backend/app/shift_claims/catalog/shift_codes.yaml` holds 09791 and 19953 (P.G. 2.2.9 B, p. 71). The manual states fees up to $156.40 per 4-hour quart (from 2019-10-01): confirm no newer amount, that both codes apply to the hospital ER as well as the CLSC réseau de garde, and that partial hours are paid by whole hours. Nothing else in the manual's text is a patient-less shift code (15259 and the other « divisible » codes are per-patient and already in the codes table).
+  - `backend/app/shift_claims/catalog/shift_codes.yaml` holds 09791 and 19953 (P.G. 2.2.9 B, p. 71). The manual states fees up to $156.40 per 4-hour quart (from 2019-10-01): confirm no newer amount, that both codes apply to the hospital ER as well as the CLSC réseau de garde, and that partial hours are paid by whole hours.
+  - Both are set to secteur de dispensation 07 (Service d'urgence), by analogy with 09996. Confirm it isn't the time-specific 32/33/34 (« Service d'urgence d'un établissement », 20 h–24 h / weekend). Note the manual's own instruction for these codes names a fee-for-service « secteur d'activité » instead (« Service d'urgence CLSC réseau de garde », guide 5.2.7), not a numbered secteur de dispensation.
+  - Not in the catalog yet: the garde-sur-place forfaits of P.G. 1.4 (09996, 09998, 19055, 09994, 19056, 42265, 42266…), which depend on how many physicians are authorized for the garde and the option the établissement chose. Nothing else in the manual's text is a patient-less shift code (15259 and the other « divisible » codes are per-patient and already in the codes table).
 
 - [ ] 🟡 Move the shift code catalog to ramq-ingestion — *added 10/27, from shift claims*
   - The one deliberate exception to « RAMQ data is an external artifact »: ramq-ingestion only extracts per-patient codes. Once it extracts shift codes (window, day types, quart, dated fees), read them from a LanceDB table and delete the YAML.

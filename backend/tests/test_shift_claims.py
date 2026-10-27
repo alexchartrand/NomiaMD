@@ -38,10 +38,11 @@ def test_catalog_holds_the_er_supplements():
     assert {code.number for code in CATALOG.all()} == {"09791", "19953"}
     assert CATALOG.get("09791").citation == "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)"
     assert CATALOG.for_care_setting(CareSetting.GMF) == []
+    assert {code.secteur_dispensation for code in CATALOG.all()} == {"07"}
+    assert CATALOG.secteur_label("07") == "Service d'urgence"
 
 
-def test_catalog_refuses_duplicate_numbers(tmp_path):
-    entry = """
+_ENTRY = """
   - number: "09791"
     description: x
     care_settings: [urgence]
@@ -49,12 +50,23 @@ def test_catalog_refuses_duplicate_numbers(tmp_path):
     window: {start: "20:00", end: "00:00"}
     quart_hours: 4
     divisible_in_hours: true
+    secteur_dispensation: "07"
     fees: [{effective_from: 2019-10-01, per_quart: "156.40"}]
     source: {section: "P.G. 2.2.9 B", manual_rev: "2026-06-05"}
 """
+
+
+def test_catalog_refuses_duplicate_numbers(tmp_path):
     path = tmp_path / "codes.yaml"
-    path.write_text("codes:" + entry + entry)
+    path.write_text('secteurs_dispensation: {"07": "Service d\'urgence"}\ncodes:' + _ENTRY + _ENTRY)
     with pytest.raises(ValidationError):
+        ShiftCodeCatalog(path).all()
+
+
+def test_catalog_refuses_an_unknown_secteur(tmp_path):
+    path = tmp_path / "codes.yaml"
+    path.write_text('secteurs_dispensation: {"32": "Service d\'urgence d\'un établissement"}\ncodes:' + _ENTRY)
+    with pytest.raises(ValidationError, match="unknown secteur de dispensation 07"):
         ShiftCodeCatalog(path).all()
 
 
@@ -151,6 +163,8 @@ def test_billing_shows_suggestions_and_available_codes(client):
             "hours": 4,
             "hourly_fee": 39.10,
             "fee_amount": 156.40,
+            "secteur_dispensation": "07",
+            "secteur_dispensation_label": "Service d'urgence",
             "source": "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)",
         }
     ]
@@ -168,6 +182,7 @@ def test_save_then_replace_a_draft(client):
     assert claim["work_site_name"] == "Urgence Hôpital Test"
     assert claim["ends_next_day"] is True
     assert claim["codes"][0]["origin"] == "suggested"
+    assert claim["codes"][0]["secteur_dispensation"] == "07"
 
     # The établissement counts this Tuesday as a holiday: 19953 by hand.
     replaced = client.put(

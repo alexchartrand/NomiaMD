@@ -46,7 +46,7 @@ class ShiftClaimService:
         self._catalog = catalog
         self._rules = rules
         self._line_builder = line_builder
-        self._code_mapper = code_mapper or ShiftCodeMapper()
+        self._code_mapper = code_mapper or ShiftCodeMapper(catalog)
         self._shift_mapper = shift_mapper or ShiftMapper()
 
     async def billing(self, user_id: int, shift_id: int) -> ShiftBillingOut:

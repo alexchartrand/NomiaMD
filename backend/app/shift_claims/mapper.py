@@ -7,7 +7,7 @@ from typing import Iterable
 
 from app.claims.status import ClaimLifecycle
 from app.postgresdb import ShiftClaimCode, ShiftClaimDetail
-from app.shift_claims.catalog import ShiftCode
+from app.shift_claims.catalog import ShiftCode, ShiftCodeCatalog
 from app.shift_claims.fees import ShiftFeeResolver
 from app.shift_claims.models import ShiftClaimCodeOut, ShiftClaimOut, ShiftCodeOut, SuggestedShiftCodeOut
 from app.shift_claims.rules import SuggestedShiftLine
@@ -48,8 +48,13 @@ class ShiftClaimMapper:
 
 
 class ShiftCodeMapper:
-    def __init__(self, fees: ShiftFeeResolver | None = None) -> None:
+    def __init__(self, catalog: ShiftCodeCatalog, fees: ShiftFeeResolver | None = None) -> None:
+        self._catalog = catalog
         self._fees = fees or ShiftFeeResolver()
+
+    def _secteur_label(self, code: ShiftCode) -> str:
+        # The catalog checks every code's secteur on load: never missing.
+        return self._catalog.secteur_label(code.secteur_dispensation) or ""
 
     def suggested(self, line: SuggestedShiftLine, service_date: date) -> SuggestedShiftCodeOut:
         fee = self._fees.resolve(line.code, service_date, line.hours)
@@ -59,6 +64,8 @@ class ShiftCodeMapper:
             hours=line.hours,
             hourly_fee=fee.hourly_fee,
             fee_amount=fee.amount,
+            secteur_dispensation=line.code.secteur_dispensation,
+            secteur_dispensation_label=self._secteur_label(line.code),
             source=line.code.citation,
         )
 
@@ -69,5 +76,7 @@ class ShiftCodeMapper:
             quart_hours=code.quart_hours,
             divisible_in_hours=code.divisible_in_hours,
             hourly_fee=self._fees.resolve(code, service_date, 1).hourly_fee,
+            secteur_dispensation=code.secteur_dispensation,
+            secteur_dispensation_label=self._secteur_label(code),
             source=code.citation,
         )

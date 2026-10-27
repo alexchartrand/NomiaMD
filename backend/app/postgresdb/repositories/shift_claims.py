@@ -20,6 +20,8 @@ class ShiftClaimCodeInput:
     hours: int
     hourly_fee: Decimal | None
     fee_amount: Decimal | None
+    secteur_dispensation: str
+    secteur_dispensation_label: str
     source: str
 
 

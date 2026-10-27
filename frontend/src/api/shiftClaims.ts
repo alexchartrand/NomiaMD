@@ -11,6 +11,9 @@ export interface ShiftCode {
   quart_hours: number;
   divisible_in_hours: boolean;
   hourly_fee: number | null;
+  // The RAMQ secteur de dispensation it's billed under, e.g. "07" — Service d'urgence.
+  secteur_dispensation: string;
+  secteur_dispensation_label: string;
   source: string;
 }
 
@@ -21,6 +24,8 @@ export interface SuggestedShiftCode {
   hours: number;
   hourly_fee: number | null;
   fee_amount: number | null;
+  secteur_dispensation: string;
+  secteur_dispensation_label: string;
   source: string;
 }
 
@@ -31,6 +36,8 @@ export interface ShiftClaimCode {
   hours: number;
   hourly_fee: number | null;
   fee_amount: number | null;
+  secteur_dispensation: string;
+  secteur_dispensation_label: string;
   source: string;
 }
 

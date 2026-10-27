@@ -178,6 +178,7 @@ class BillService:
                         code=code.code,
                         fee_amount=code.fee_amount,
                         hours=code.hours,
+                        secteur=code.secteur_dispensation,
                     )
                     for code in shift_claim.codes
                 ],

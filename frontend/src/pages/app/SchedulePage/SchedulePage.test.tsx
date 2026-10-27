@@ -72,6 +72,8 @@ const code09791 = {
   quart_hours: 4,
   divisible_in_hours: true,
   hourly_fee: 39.1,
+  secteur_dispensation: "07",
+  secteur_dispensation_label: "Service d'urgence",
   source: "P.G. 2.2.9 B, p. 71 (manuel 2026-06-05)",
 };
 const code19953 = { ...code09791, code: "19953", description: "Supplément de garde — fin de semaine ou jour férié" };
@@ -233,7 +235,18 @@ describe("schedule", () => {
     serveSchedule({ shifts: [shift] });
     const billing: ShiftBilling = {
       shift,
-      suggested: [{ code: "09791", description: code09791.description, hours: 4, hourly_fee: 39.1, fee_amount: 156.4, source: code09791.source }],
+      suggested: [
+        {
+          code: "09791",
+          description: code09791.description,
+          hours: 4,
+          hourly_fee: 39.1,
+          fee_amount: 156.4,
+          secteur_dispensation: "07",
+          secteur_dispensation_label: "Service d'urgence",
+          source: code09791.source,
+        },
+      ],
       available_codes: [code09791, code19953],
       claim: null,
     };
@@ -264,6 +277,7 @@ describe("schedule", () => {
     expect(await within(codes).findByLabelText("Code 09791")).toBeChecked();
     expect(within(codes).getByLabelText("Code 19953")).not.toBeChecked();
     expect(within(codes).getByText("156,40 $")).toBeInTheDocument();
+    expect(within(codes).getAllByText(/Secteur 07 — Service d'urgence/)).toHaveLength(2);
 
     await user.click(within(codes).getByLabelText("Code 19953"));
     const hours = within(codes).getByLabelText("Heures, code 19953");
