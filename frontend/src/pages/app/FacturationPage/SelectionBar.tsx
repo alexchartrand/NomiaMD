@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { FilePlus2 } from "lucide-react";
-import { createBill, describeError, StaleBillSelectionError, type Bill, type Claim } from "../../../api";
+import {
+  createBill,
+  describeError,
+  StaleBillSelectionError,
+  type Bill,
+  type Claim,
+  type ShiftClaim,
+} from "../../../api";
 import { Banner, Button } from "../../../components";
 import { formatDate } from "../../../utils/date";
 import { formatMoney } from "../../../utils/money";
 
 interface SelectionBarProps {
   selected: Claim[];
+  // The shifts' own claims ticked too: they go on the same bill.
+  selectedShifts?: ShiftClaim[];
   onClear: () => void;
   onCreated: (bill: Bill) => void;
   // A ticked claim was billed or deleted elsewhere: the list needs re-reading.
@@ -14,17 +23,18 @@ interface SelectionBarProps {
 }
 
 // The bill's period is the one its claims span — nothing to type, never wrong.
-function periodOf(claims: Claim[]): { start_date: string; end_date: string } {
+function periodOf(claims: (Claim | ShiftClaim)[]): { start_date: string; end_date: string } {
   const dates = claims.map((claim) => claim.service_date).sort();
   return { start_date: dates[0], end_date: dates[dates.length - 1] };
 }
 
 // Under the claims while some are ticked: what they add up to, and one click bills them.
-export function SelectionBar({ selected, onClear, onCreated, onStale }: SelectionBarProps) {
+export function SelectionBar({ selected, selectedShifts = [], onClear, onCreated, onStale }: SelectionBarProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (selected.length === 0) {
+  const all = [...selected, ...selectedShifts];
+  if (all.length === 0) {
     return error ? (
       <div className="border-t border-border px-4 py-3">
         <Banner tone="error">{error}</Banner>
@@ -32,9 +42,9 @@ export function SelectionBar({ selected, onClear, onCreated, onStale }: Selectio
     ) : null;
   }
 
-  const period = periodOf(selected);
-  const total = selected.reduce((sum, claim) => sum + (claim.total_amount ?? 0), 0);
-  const count = `${selected.length} réclamation${selected.length > 1 ? "s" : ""} sélectionnée${selected.length > 1 ? "s" : ""}`;
+  const period = periodOf(all);
+  const total = all.reduce((sum, claim) => sum + (claim.total_amount ?? 0), 0);
+  const count = `${all.length} réclamation${all.length > 1 ? "s" : ""} sélectionnée${all.length > 1 ? "s" : ""}`;
   const span =
     period.start_date === period.end_date
       ? `le ${formatDate(period.start_date)}`
@@ -44,7 +54,13 @@ export function SelectionBar({ selected, onClear, onCreated, onStale }: Selectio
     setError(null);
     setSubmitting(true);
     try {
-      onCreated(await createBill({ ...period, claim_ids: selected.map((claim) => claim.id) }));
+      onCreated(
+        await createBill({
+          ...period,
+          claim_ids: selected.map((claim) => claim.id),
+          shift_claim_ids: selectedShifts.map((claim) => claim.id),
+        }),
+      );
     } catch (err) {
       if (err instanceof StaleBillSelectionError) {
         setError(`${err.message} La liste a été mise à jour, veuillez vérifier votre sélection.`);

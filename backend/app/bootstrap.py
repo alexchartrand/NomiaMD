@@ -19,6 +19,7 @@ from app.lancedb import CodeRepository, DocumentRepository, LanceDB
 from app.llm import EmbeddingModelGuard, chat_provider, embedding_provider, get_embedding_client
 from app.postgresdb import PostgresDB, bind_database
 from app.ramq_chatbot import init_ramq_query_engine
+from app.shift_claims import shift_code_catalog
 
 
 @asynccontextmanager
@@ -38,6 +39,8 @@ async def application_services() -> AsyncIterator[LanceDB]:
     chat_provider()
     embedding_provider()
     check_sandbox_startup(settings)
+    # A malformed shift code catalog fails the boot, not the first shift billed.
+    shift_code_catalog().all()
     async with postgres_database():
         db = await LanceDB.open()
         try:

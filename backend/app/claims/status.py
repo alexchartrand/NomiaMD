@@ -8,13 +8,18 @@ voided. A future real RAMQ submission response would add its own state — with 
 column, since the bill link can't express it."""
 
 from enum import StrEnum
-
-from app.postgresdb import Claim
+from typing import Protocol
 
 
 class ClaimStatus(StrEnum):
     BROUILLON = "brouillon"
     SOUMIS = "soumis"
+
+
+class Billable(Protocol):
+    """A Claim, or a ShiftClaim (app/shift_claims/): both are billed the same way."""
+
+    bill_id: int | None
 
 
 class ClaimLifecycle:
@@ -23,7 +28,7 @@ class ClaimLifecycle:
     shrink behind the physician's back."""
 
     @staticmethod
-    def status_of(claim: Claim) -> ClaimStatus:
+    def status_of(claim: Billable) -> ClaimStatus:
         return ClaimStatus.SOUMIS if claim.bill_id is not None else ClaimStatus.BROUILLON
 
     @staticmethod
@@ -32,9 +37,9 @@ class ClaimLifecycle:
         return status == ClaimStatus.SOUMIS
 
     @classmethod
-    def can_be_billed(cls, claim: Claim) -> bool:
+    def can_be_billed(cls, claim: Billable) -> bool:
         return cls.status_of(claim) == ClaimStatus.BROUILLON
 
     @classmethod
-    def can_be_voided(cls, claim: Claim) -> bool:
+    def can_be_voided(cls, claim: Billable) -> bool:
         return cls.status_of(claim) == ClaimStatus.BROUILLON

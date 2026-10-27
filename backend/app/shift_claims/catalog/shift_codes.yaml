@@ -1,0 +1,48 @@
+# Shift codes: billed for the hours a physician works, not for a patient — no NAM on the
+# claim. Curated by hand from the omnipraticien manual, because the codes table that
+# ramq-ingestion builds only holds per-patient codes, and these exist only in its text.
+#
+# The one deliberate, temporary exception to "RAMQ data is an external artifact" (CLAUDE.md):
+# move this list to ramq-ingestion once it extracts shift codes itself.
+#
+# Per code:
+#   care_settings  where the shift must take place (app/care_setting.py)
+#   day_types      the days the window applies on (app/shifts/day_type.py), each hour read
+#                  on its own calendar day — a Friday evening shift running past midnight
+#                  is a weekday until 24 h, then Saturday
+#   window         the hours paid, local time; an end at or before the start is midnight
+#   quart_hours    the length of the quart the fee is stated for
+#   divisible_in_hours  whether part of a quart is paid, by whole hours
+#   fees           amount per quart, dated: the one in effect on the shift's date applies
+#   source         where it's stated in the manual
+
+codes:
+  - number: "09791"
+    description: >-
+      Supplément de garde au service d'urgence d'un centre hospitalier ou d'un CLSC du réseau
+      de garde — de 20 h à 24 h, du lundi au vendredi (sauf jour férié)
+    care_settings: [urgence]
+    day_types: [semaine]
+    window: {start: "20:00", end: "00:00"}
+    quart_hours: 4
+    divisible_in_hours: true
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "139.80"}
+      - {effective_from: 2018-10-01, per_quart: "154.80"}
+      - {effective_from: 2019-10-01, per_quart: "156.40"}
+    source: {section: "P.G. 2.2.9 B", page: 71, manual_rev: "2026-06-05"}
+
+  - number: "19953"
+    description: >-
+      Supplément de garde au service d'urgence d'un centre hospitalier ou d'un CLSC du réseau
+      de garde — de 8 h à 24 h, le samedi, le dimanche ou un jour férié
+    care_settings: [urgence]
+    day_types: [fin_de_semaine, ferie]
+    window: {start: "08:00", end: "00:00"}
+    quart_hours: 4
+    divisible_in_hours: true
+    fees:
+      - {effective_from: 2018-09-01, per_quart: "139.80"}
+      - {effective_from: 2018-10-01, per_quart: "154.80"}
+      - {effective_from: 2019-10-01, per_quart: "156.40"}
+    source: {section: "P.G. 2.2.9 B", page: 71, manual_rev: "2026-06-05"}

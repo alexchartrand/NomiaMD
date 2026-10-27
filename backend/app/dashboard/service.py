@@ -12,11 +12,13 @@ from decimal import Decimal
 from app.claims.mapper import ClaimMapper
 from app.clock import Clock, clinic_day_bounds
 from app.dashboard.activity import WeeklyActivity, clinic_day_of, week_start
+from app.dashboard.deadline import BillingDeadline
 from app.dashboard.deadlines import DeadlineWatch
 from app.dashboard.models import DashboardOut, KpisOut
 from app.dashboard.tasks import TaskCounter
 from app.encounters.inbox import EncounterInbox
 from app.postgresdb import BillRepository, ClaimDetail, ClaimRepository
+from app.shift_claims import UnclaimedShifts
 
 RECENT_COUNT = 6
 
@@ -30,6 +32,8 @@ class DashboardService:
         clock: Clock,
         deadlines: DeadlineWatch,
         activity: WeeklyActivity,
+        unclaimed_shifts: UnclaimedShifts,
+        deadline: BillingDeadline,
     ) -> None:
         self._inbox = inbox
         self._claims = claims
@@ -37,6 +41,8 @@ class DashboardService:
         self._clock = clock
         self._deadlines = deadlines
         self._activity = activity
+        self._unclaimed_shifts = unclaimed_shifts
+        self._deadline = deadline
 
     async def for_physician(self, user_id: int) -> DashboardOut:
         today = self._clock.today()
@@ -45,7 +51,9 @@ class DashboardService:
         this_week = week_start(today)
         return DashboardOut(
             today=today,
-            tasks=TaskCounter.count(rows),
+            tasks=TaskCounter.count(rows).model_copy(
+                update={"unclaimed_shifts": await self._unclaimed_shifts_before(user_id, today)}
+            ),
             kpis=KpisOut(
                 encounters_this_week=sum(1 for row in rows if week_start(clinic_day_of(row)) == this_week),
                 draft_count=len(drafts),
@@ -55,6 +63,12 @@ class DashboardService:
             deadlines=self._deadlines.items(rows, drafts, today),
             weekly_activity=self._activity.buckets(rows, today),
             recent_encounters=sorted(rows, key=lambda row: (row.received_at, row.id), reverse=True)[:RECENT_COUNT],
+        )
+
+    async def _unclaimed_shifts_before(self, user_id: int, today: date) -> int:
+        """Shifts from before today, back to the billing deadline: older ones can't be billed anymore."""
+        return await self._unclaimed_shifts.count(
+            user_id, today - timedelta(days=self._deadline.deadline_days), today - timedelta(days=1)
         )
 
     async def _billed_in_month_of(self, user_id: int, today: date) -> Decimal:

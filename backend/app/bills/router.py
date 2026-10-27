@@ -21,6 +21,7 @@ async def create_bill(
             start_date=body.start_date,
             end_date=body.end_date,
             claim_ids=body.claim_ids,
+            shift_claim_ids=body.shift_claim_ids,
         )
     except EmptySelectionError as exc:
         raise HTTPException(status_code=422, detail="Au moins une facturation doit être sélectionnée") from exc

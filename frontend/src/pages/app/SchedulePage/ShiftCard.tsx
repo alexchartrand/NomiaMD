@@ -13,7 +13,7 @@ interface ShiftCardProps {
   onOpen: () => void;
 }
 
-// A shift on the calendar; opens it for editing.
+// A shift on the calendar; opens its details (encounters, shift codes).
 export function ShiftCard({ shift, compact = false, onOpen }: ShiftCardProps) {
   const hours = (
     <>

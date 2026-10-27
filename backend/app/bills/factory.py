@@ -9,6 +9,7 @@ from app.postgresdb import (
     DbSession,
     PatientRepository,
     PhysicianProfileRepository,
+    ShiftClaimRepository,
     UserRepository,
 )
 
@@ -17,6 +18,7 @@ def get_bill_service(session: DbSession) -> BillService:
     return BillService(
         BillRepository(session),
         ClaimRepository(session),
+        ShiftClaimRepository(session),
         PatientRepository(session),
         UserRepository(session),
         PhysicianProfileRepository(session),

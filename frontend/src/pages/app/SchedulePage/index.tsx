@@ -28,6 +28,7 @@ import { useStoredFlag } from "@/lib/useStoredFlag";
 import { clinicToday } from "../../../utils/date";
 import { rangeLabel, sameMonth, step, visibleDays, weekStartOf, type CalendarView } from "./calendar";
 import { ShiftCard, hhmm } from "./ShiftCard";
+import { ShiftDetailDialog } from "./ShiftDetailDialog";
 import { ShiftDialog, type SeriesScope } from "./ShiftDialog";
 
 const VIEWS: { id: CalendarView; label: string }[] = [
@@ -62,6 +63,8 @@ export default function SchedulePage() {
   const [shifts, setShifts] = useState<Shift[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dialog, setDialog] = useState<DialogState>(null);
+  // A shift opened from the calendar, before (or instead of) editing it.
+  const [opened, setOpened] = useState<Shift | null>(null);
   const { confirm, dialog: confirmDialog } = useConfirm();
 
   useEffect(() => {
@@ -228,7 +231,7 @@ export default function SchedulePage() {
                       key={shift.id}
                       shift={shift}
                       compact={view === "month"}
-                      onOpen={() => setDialog({ shift, day })}
+                      onOpen={() => setOpened(shift)}
                     />
                   ))}
                 </li>
@@ -238,6 +241,16 @@ export default function SchedulePage() {
         </>
       )}
 
+      {opened && (
+        <ShiftDetailDialog
+          shift={opened}
+          onClose={() => setOpened(null)}
+          onEdit={() => {
+            setOpened(null);
+            setDialog({ shift: opened, day: opened.service_date });
+          }}
+        />
+      )}
       {dialog && sites && (
         <ShiftDialog
           shift={dialog.shift}

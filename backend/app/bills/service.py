@@ -1,12 +1,12 @@
-"""Business logic for grouping physician-confirmed claims into a generated bill.
-Constructor-injected (BillRepository, ClaimRepository, PatientRepository,
-UserRepository, BillPdfRenderer) — composed at the module boundary by factory.py, no
-FastAPI/HTTP concerns here."""
+"""Business logic for grouping physician-confirmed claims — patient claims and shift claims
+(app/shift_claims/) — into a generated bill. Constructor-injected (BillRepository,
+ClaimRepository, ShiftClaimRepository, PatientRepository, UserRepository, BillPdfRenderer) —
+composed at the module boundary by factory.py, no FastAPI/HTTP concerns here."""
 
 from decimal import Decimal
 
 from app.bills.models import BillDetailOut, BillOut
-from app.bills.pdf import BillDocument, BillLineItem, BillPatientGroup, BillPdfRenderer
+from app.bills.pdf import BillDocument, BillLineItem, BillPatientGroup, BillPdfRenderer, BillShiftGroup
 from app.claims.mapper import ClaimMapper
 from app.claims.status import ClaimLifecycle
 from app.postgresdb import (
@@ -18,8 +18,11 @@ from app.postgresdb import (
     PatientRepository,
     PhysicianProfileRepository,
     PhysicianType,
+    ShiftClaimAlreadyBilledError,
+    ShiftClaimRepository,
     UserRepository,
 )
+from app.shift_claims import ShiftClaimMapper
 
 
 class EmptySelectionError(Exception):
@@ -55,6 +58,7 @@ class BillService:
         self,
         bill_repository: BillRepository,
         claim_repository: ClaimRepository,
+        shift_claim_repository: ShiftClaimRepository,
         patient_repository: PatientRepository,
         user_repository: UserRepository,
         profile_repository: PhysicianProfileRepository,
@@ -62,14 +66,18 @@ class BillService:
     ):
         self._bill_repository = bill_repository
         self._claim_repository = claim_repository
+        self._shift_claim_repository = shift_claim_repository
         self._patient_repository = patient_repository
         self._user_repository = user_repository
         self._profile_repository = profile_repository
         self._pdf_renderer = pdf_renderer
 
-    async def create(self, *, physician_id: int, start_date, end_date, claim_ids: list[int]) -> BillOut:
+    async def create(
+        self, *, physician_id: int, start_date, end_date, claim_ids: list[int], shift_claim_ids: list[int] | None = None
+    ) -> BillOut:
         deduped = list(dict.fromkeys(claim_ids))
-        if not deduped:
+        shift_deduped = list(dict.fromkeys(shift_claim_ids or []))
+        if not deduped and not shift_deduped:
             raise EmptySelectionError()
 
         # Total is computed from each claim's own snapshotted code rows (never invented,
@@ -80,27 +88,30 @@ class BillService:
         details = await self._claim_repository.list_by_ids(physician_id, deduped)
         if len(details) != len(deduped) or not all(ClaimLifecycle.can_be_billed(d.claim) for d in details):
             raise StaleSelectionError()
+        shift_details = await self._shift_claim_repository.list_by_ids(physician_id, shift_deduped)
+        if len(shift_details) != len(shift_deduped) or not all(
+            ClaimLifecycle.can_be_billed(d.claim) for d in shift_details
+        ):
+            raise StaleSelectionError()
 
-        total = Decimal("0")
-        has_amount = False
-        for detail in details:
-            claim_amount = ClaimMapper.from_detail(detail).total_amount
-            if claim_amount is not None:
-                total += claim_amount
-                has_amount = True
+        amounts = [ClaimMapper.from_detail(detail).total_amount for detail in details] + [
+            ShiftClaimMapper.from_detail(detail).total_amount for detail in shift_details
+        ]
+        priced = [amount for amount in amounts if amount is not None]
 
         bill = await self._bill_repository.create(
             BillInput(
                 physician_id=physician_id,
                 start_date=start_date,
                 end_date=end_date,
-                claim_count=len(deduped),
-                total_amount=total if has_amount else None,
+                claim_count=len(deduped) + len(shift_deduped),
+                total_amount=sum(priced, Decimal("0")) if priced else None,
             )
         )
         try:
             await self._claim_repository.attach_to_bill(deduped, bill.id)
-        except ClaimAlreadyBilledError as exc:
+            await self._shift_claim_repository.attach_to_bill(shift_deduped, bill.id)
+        except (ClaimAlreadyBilledError, ShiftClaimAlreadyBilledError) as exc:
             raise StaleSelectionError() from exc
         return _bill_to_out(bill)
 
@@ -113,7 +124,12 @@ class BillService:
         if bill is None:
             return None
         details = await self._claim_repository.list_for_bill(bill_id, physician_id)
-        return BillDetailOut(**_bill_to_out(bill).model_dump(), claims=[ClaimMapper.from_detail(d) for d in details])
+        shift_details = await self._shift_claim_repository.list_for_bill(bill_id, physician_id)
+        return BillDetailOut(
+            **_bill_to_out(bill).model_dump(),
+            claims=[ClaimMapper.from_detail(d) for d in details],
+            shift_claims=[ShiftClaimMapper.from_detail(d) for d in shift_details],
+        )
 
     async def render_pdf(self, bill_id: int, physician_id: int) -> bytes | None:
         bill = await self._bill_repository.get_for_physician(bill_id, physician_id)
@@ -150,6 +166,28 @@ class BillService:
                     )
                 )
 
+        shift_groups = [
+            BillShiftGroup(
+                work_site_name=shift_claim.work_site_name,
+                service_date=shift_claim.service_date,
+                start_time=shift_claim.start_time,
+                end_time=shift_claim.end_time,
+                lines=[
+                    BillLineItem(
+                        service_date=shift_claim.service_date,
+                        code=code.code,
+                        fee_amount=code.fee_amount,
+                        hours=code.hours,
+                    )
+                    for code in shift_claim.codes
+                ],
+            )
+            for shift_claim in sorted(
+                (ShiftClaimMapper.from_detail(d) for d in await self._shift_claim_repository.list_for_bill(bill_id, physician_id)),
+                key=lambda shift_claim: (shift_claim.service_date, shift_claim.start_time),
+            )
+        ]
+
         document = BillDocument(
             number=_bill_number(bill.id),
             start_date=bill.start_date,
@@ -158,6 +196,7 @@ class BillService:
             physician_name=physician.full_name if physician is not None else "",
             physician_type=self._physician_type_label(profile.physician_type if profile is not None else None),
             patient_groups=list(groups_by_patient.values()),
+            shift_groups=shift_groups,
             total_amount=bill.total_amount,
             claim_count=bill.claim_count,
         )
@@ -183,4 +222,5 @@ class BillService:
             return False
         await self._bill_repository.void(bill)
         await self._claim_repository.detach_from_bill(bill.id)
+        await self._shift_claim_repository.detach_from_bill(bill.id)
         return True

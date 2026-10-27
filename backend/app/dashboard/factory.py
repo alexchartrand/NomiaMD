@@ -10,14 +10,18 @@ from app.dashboard.deadlines import DeadlineWatch
 from app.dashboard.service import DashboardService
 from app.encounters.inbox import EncounterInbox
 from app.postgresdb import BillRepository, ClaimRepository, DbSession
+from app.shift_claims import unclaimed_shifts
 
 
 def get_dashboard_service(session: DbSession, clock: Clock = Depends(get_clock)) -> DashboardService:
+    deadline = BillingDeadline()
     return DashboardService(
         EncounterInbox(session),
         ClaimRepository(session),
         BillRepository(session),
         clock,
-        DeadlineWatch(BillingDeadline()),
+        DeadlineWatch(deadline),
         WeeklyActivity(),
+        unclaimed_shifts(session),
+        deadline,
     )

@@ -18,6 +18,7 @@ from app.shifts.periods import DEFAULT_PERIOD_HOURS, SHIFT_PERIOD_LABELS_FR
 from app.shifts.service import (
     EmptySeriesError,
     RangeTooLongError,
+    ShiftBilledError,
     ShiftService,
     SiteUnavailableError,
     WorkSiteService,
@@ -29,6 +30,7 @@ shifts_router = APIRouter(prefix="/shifts", tags=["shifts"])
 _SITE_NOT_FOUND = "Lieu de travail introuvable"
 _SHIFT_NOT_FOUND = "Quart introuvable"
 _SERIES_NOT_FOUND = "Série de quarts introuvable"
+_SHIFT_BILLED = "Ce quart est facturé : annulez d'abord la facture qui contient sa réclamation."
 
 
 @work_sites_router.get("", response_model=list[WorkSiteOut])
@@ -160,7 +162,11 @@ async def delete_shift_series(
     service: ShiftService = Depends(get_shift_service),
 ) -> None:
     """Every shift of the series, or those from `from_date` on."""
-    if not await service.void_series(current_user.id, series_id, from_date):
+    try:
+        voided = await service.void_series(current_user.id, series_id, from_date)
+    except ShiftBilledError as exc:
+        raise HTTPException(status_code=409, detail=_SHIFT_BILLED) from exc
+    if not voided:
         raise HTTPException(status_code=404, detail=_SERIES_NOT_FOUND)
 
 
@@ -186,5 +192,9 @@ async def delete_shift(
     current_user: User = Depends(get_current_user),
     service: ShiftService = Depends(get_shift_service),
 ) -> None:
-    if not await service.void(current_user.id, shift_id):
+    try:
+        voided = await service.void(current_user.id, shift_id)
+    except ShiftBilledError as exc:
+        raise HTTPException(status_code=409, detail=_SHIFT_BILLED) from exc
+    if not voided:
         raise HTTPException(status_code=404, detail=_SHIFT_NOT_FOUND)

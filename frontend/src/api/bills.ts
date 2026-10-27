@@ -1,6 +1,7 @@
 import type { Claim } from "./claims";
 import { unwrap, unwrapVoid } from "./http";
 import { fetchAllPages } from "./paging";
+import type { ShiftClaim } from "./shiftClaims";
 
 export interface Bill {
   id: number;
@@ -9,17 +10,21 @@ export interface Bill {
   end_date: string;
   generated_at: string;
   total_amount: number | null;
+  // Patient and shift claims together.
   claim_count: number;
 }
 
 export interface BillDetail extends Bill {
   claims: Claim[];
+  shift_claims: ShiftClaim[];
 }
 
 export interface BillCreateInput {
   start_date: string;
   end_date: string;
   claim_ids: number[];
+  // The shifts' own claims (09791, 19953…), billed alongside.
+  shift_claim_ids?: number[];
 }
 
 export class StaleBillSelectionError extends Error {}

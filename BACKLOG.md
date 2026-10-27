@@ -76,6 +76,21 @@
 
 ## ✨ Features
 
+- [ ] 🔴 Validate the curated shift code list before merge — *added 10/27, from shift claims (PR 4)*
+  - `backend/app/shift_claims/catalog/shift_codes.yaml` holds 09791 and 19953 (P.G. 2.2.9 B, p. 71). The manual states fees up to $156.40 per 4-hour quart (from 2019-10-01): confirm no newer amount, that both codes apply to the hospital ER as well as the CLSC réseau de garde, and that partial hours are paid by whole hours. Nothing else in the manual's text is a patient-less shift code (15259 and the other « divisible » codes are per-patient and already in the codes table).
+
+- [ ] 🟡 Move the shift code catalog to ramq-ingestion — *added 10/27, from shift claims*
+  - The one deliberate exception to « RAMQ data is an external artifact »: ramq-ingestion only extracts per-patient codes. Once it extracts shift codes (window, day types, quart, dated fees), read them from a LanceDB table and delete the YAML.
+
+- [ ] 🟡 Shift codes read the default holiday calendar, not the établissement's — *added 10/27, from shift claims*
+  - 09791 vs 19953 turns on jours fériés, and an établissement's own dates (sent to RAMQ before April 30) win over the Entente's (`app/shifts/holidays.py`). Until a per-site calendar exists, the physician adds 19953 by hand (origin « manual ») on a day the site counts as a holiday.
+
+- [ ] 🟢 Shift claims don't carry RAMQ's « secteur d'activité » or per-day dates — *added 10/27, from shift claims*
+  - RAMQ asks for the garde's start and end time (the claim keeps them) and, for a CLSC, the « Service d'urgence CLSC réseau de garde » sector. A Friday-evening shift running into Saturday bills its 19953 hours under the Friday date on the PDF. Settle both when building direct RAMQ submission.
+
+- [ ] 🟢 Facturation's status tabs count patient claims only — *added 10/27, from shift claims*
+  - Shift claims are listed under them (and hidden by a patient or source filter) but not counted in the tab badges.
+
 - [ ] 🟡 Read the care setting from Epic encounters — *added 10/9, from the care-setting work*
   - `EncounterMeta.care_setting` is only set by paste/upload today. Epic doesn't expose a standard code for it: the sandbox's `Encounter.class` is Epic-local ("Support OP Encounter") and its location a department name ("EMC Family Medicine"). Add a per-site mapping (department or class → `CareSetting`) to `EpicNoteMapper`; unmapped = unknown. A schedule-entry connector would fill the same field.
 
