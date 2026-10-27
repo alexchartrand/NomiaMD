@@ -24,6 +24,7 @@ from app.ramq_chatbot import ramq_chatbot_router
 from app.rate_limit import limiter
 from app.request_logging import RequestLoggingMiddleware
 from app.sample_patients import sample_patients_router
+from app.shifts import shifts_router, work_sites_router
 
 configure_logging(settings.log_level)
 
@@ -58,6 +59,8 @@ app.include_router(jwks_router)
 app.include_router(patients_router)
 app.include_router(ramq_chatbot_router)
 app.include_router(sample_patients_router)
+app.include_router(shifts_router)
+app.include_router(work_sites_router)
 
 
 @app.get("/health")

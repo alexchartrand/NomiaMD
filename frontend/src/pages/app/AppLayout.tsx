@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { BookOpen, Inbox, LayoutDashboard, MessagesSquare, ReceiptText, ShieldCheck, Users } from "lucide-react";
+import { BookOpen, CalendarDays, Inbox, LayoutDashboard, MessagesSquare, ReceiptText, ShieldCheck, Users } from "lucide-react";
 import { useAuth } from "../../AuthContext";
 import { NavItem, NavSection, Sidebar } from "../../components";
 import { RamqChatProvider } from "../../chat/RamqChatProvider";
@@ -21,6 +21,9 @@ export default function AppLayout() {
           </NavItem>
           <NavItem to="/app/inbox" icon={Inbox} count={inboxCount}>
             Rencontres
+          </NavItem>
+          <NavItem to="/app/horaire" icon={CalendarDays}>
+            Horaire
           </NavItem>
           <NavItem to="/app/facturation" icon={ReceiptText} alsoActiveOn={["/app/facturer"]}>
             Facturation

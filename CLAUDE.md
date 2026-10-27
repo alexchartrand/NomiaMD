@@ -92,6 +92,7 @@ Backend modules (`backend/app/`):
 | `admin/` | the admin console's API (`/admin/*`, `require_admin`): `UserAdminService` (create with a one-time temporary password, edit, deactivate/reactivate — never delete —, reset password, revoke sessions; an admin can't remove their own access or the last active admin), `UsageReport` over `llm_calls` (clinic days, by model/purpose/physician; cost from `PriceTable`: defaults + `LLM_PRICES`, unknown model = unpriced), `SystemStatus`, failed extractions + re-queue, lockouts, contact requests, the audit list. Metadata and counts only — never note text |
 | `audit/` | append-only `audit_events`: `SessionAuditLog` (in the change's own transaction — admin actions, successful logins) and `DetachedAuditLog` (own session — failed logins, whose 401 rolls the request back); unknown emails are never recorded |
 | `patients/` | global patient identity, search, per-physician roster, registration |
+| `shifts/` | where and when the physician works: `WorkSite`s (name + care setting: urgence, hospitalisation, CHSLD, GMF; deactivated, never deleted) and `Shift`s on them (`/work-sites`, `/shifts`) — local date + start/end time (end ≤ start = next day, `ShiftHours`), period picked (jour/soir/nuit, `DEFAULT_PERIOD_HOURS` prefilled), care setting snapshotted from the site at save; `DayTypeResolver` (semaine / fin de semaine / férié from `QuebecHolidays`, P.G. 2.4.7.6's 13 nominal dates) |
 | `claims/`, `bills/` | saving reviewed codes as claims — the run's suggestions plus codes added from the search (`ClaimCode.origin`), or a claim with no encounter at all (`POST/PUT /claims/manual`, `source_system="manual"`, no duplicate guard); grouping claims into bills (+ PDF) |
 | `jwks/` | public `GET /.well-known/jwks.json`: the public keys committed in `jwks/public_keys/` (loaded at startup), what Epic's JWK Set URL points at; `kid` = RFC 7638 thumbprint, which the Epic signer derives from its private key |
 | `contact/` | public `POST /contact` (no login): the site's contact form → `contact_requests`, best-effort email via SMTP (`LogContactNotifier` when unset), honeypot + 5/hour limit |
@@ -121,7 +122,7 @@ client per domain under `api/`. The public site (`/`, `/prix`, `/contact`, `/sec
 `pricing.ts`) — the one place to edit them. The landing page after login is the dashboard (`/app`, `pages/app/DashboardPage/`: tasks, KPIs, activity chart, latest encounters, and the RAMQ assistant beside them — one conversation shared with `/app/chat` through `chat/RamqChatProvider.tsx`, mounted in `AppLayout`). The inbox is `/app/inbox`; a row opens
 `/app/inbox/:encounterId` (note + code review, `pages/app/review/`); notes are added by hand
 on `/app/ajouter`. `/app/admin` is the admin console (admins only, `RequireAdmin`; tab in `?tab=`), and a user on a temporary password is sent to `/app/profile` by `RequireAuth` until they change it. `/app/facturer` bills without an encounter (and edits such a draft at
-`/app/facturer/:claimId`); `/app/codes` is the RAMQ code reference. `/api/*` proxies to the backend (`vite.config.ts`).
+`/app/facturer/:claimId`); `/app/codes` is the RAMQ code reference. `/app/horaire` is the shift calendar (a week at a time); work sites are edited on `/app/profile`. `/api/*` proxies to the backend (`vite.config.ts`).
 
 ### Invariants — don't break these
 

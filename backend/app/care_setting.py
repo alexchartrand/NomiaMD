@@ -12,6 +12,7 @@ from enum import StrEnum
 
 class CareSetting(StrEnum):
     CABINET = "cabinet"
+    GMF = "gmf"
     DOMICILE = "domicile"
     URGENCE = "urgence"
     HOSPITALISATION = "hospitalisation"
@@ -20,7 +21,8 @@ class CareSetting(StrEnum):
 
 # How the billing_codes prompt states it (see app/ramq_codes/prompt.py).
 CARE_SETTING_LABELS_FR = {
-    CareSetting.CABINET: "cabinet privé, GMF ou CLSC",
+    CareSetting.CABINET: "cabinet privé ou CLSC",
+    CareSetting.GMF: "GMF (groupe de médecine de famille)",
     CareSetting.DOMICILE: "à domicile",
     CareSetting.URGENCE: "service d'urgence d'un centre hospitalier ou d'un CLSC du réseau de garde",
     CareSetting.HOSPITALISATION: "patient admis en centre hospitalier (soins de courte durée)",

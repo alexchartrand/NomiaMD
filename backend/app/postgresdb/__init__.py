@@ -27,8 +27,10 @@ from app.postgresdb.models import (
     PhysicianProfile,
     PhysicianType,
     RemunerationType,
+    Shift,
     User,
     UserRole,
+    WorkSite,
 )
 from app.postgresdb.repositories import (
     AccountActivity,
@@ -69,7 +71,11 @@ from app.postgresdb.repositories import (
     PatientRepository,
     PhysicianPatientRepository,
     PhysicianProfileRepository,
+    ShiftInput,
+    ShiftRepository,
     UserRepository,
+    WorkSiteInput,
+    WorkSiteRepository,
 )
 from app.postgresdb.session import DatabaseNotOpenError, bind_database, session_scope
 
@@ -102,8 +108,10 @@ __all__ = [
     "PhysicianProfile",
     "PhysicianType",
     "RemunerationType",
+    "Shift",
     "User",
     "UserRole",
+    "WorkSite",
     "BillInput",
     "BillRepository",
     "ClaimAlreadyBilledError",
@@ -138,5 +146,9 @@ __all__ = [
     "PatientRepository",
     "PhysicianPatientRepository",
     "PhysicianProfileRepository",
+    "ShiftInput",
+    "ShiftRepository",
     "UserRepository",
+    "WorkSiteInput",
+    "WorkSiteRepository",
 ]
