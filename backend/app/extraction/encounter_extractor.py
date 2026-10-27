@@ -5,7 +5,6 @@ because the pipeline reaches into ramq_codes and the intake context never does.
 Same short-session pattern as ExtractionRecorder: the encounter and its physician are read
 in one scope, closed before the LLM calls."""
 
-from app.care_setting import parse_care_setting
 from app.extraction.encounter_date import parse_encounter_date
 from app.extraction.factory import get_billing_pipeline
 from app.extraction.pipeline import BillingPipeline
@@ -13,6 +12,7 @@ from app.extraction.recorder import ExtractionRecorder
 from app.intake import NormalizerRegistry, default_normalizers
 from app.llm.usage import usage_scope
 from app.postgresdb import EncounterRepository, UserRepository, session_scope
+from app.shifts import EncounterSettingResolver, RunSettingSnapshot
 
 
 class EncounterNotExtractableError(Exception):
@@ -31,13 +31,16 @@ class PipelineEncounterExtractor:
         self._recorder = recorder or ExtractionRecorder()
         self._normalizers = normalizers or default_normalizers()
         self._pipeline = pipeline
+        self._snapshot = RunSettingSnapshot()
 
     async def extract(self, encounter_id: int) -> None:
         async with session_scope() as session:
             encounter = await EncounterRepository(session).get(encounter_id)
             user = await UserRepository(session).get_by_id(encounter.user_id) if encounter is not None else None
+            setting = await EncounterSettingResolver(session).resolve(encounter) if encounter is not None else None
         if encounter is None or user is None or encounter.patient_id is None:
             raise EncounterNotExtractableError(encounter_id)
+        assert setting is not None
 
         date_order = self._normalizers.for_source(encounter.source_system).date_order
         pipeline = self._pipeline or get_billing_pipeline()
@@ -48,7 +51,7 @@ class PipelineEncounterExtractor:
                     user=user,
                     patient_id=encounter.patient_id,
                     date_order=date_order,
-                    care_setting=parse_care_setting((encounter.encounter_meta or {}).get("care_setting")),
+                    care_setting=setting.care_setting,
                 )
             except Exception as exc:
                 await self._recorder.record_failure(
@@ -56,11 +59,13 @@ class PipelineEncounterExtractor:
                 )
                 raise
 
+        service_date = encounter.service_date or parse_encounter_date(result.summary.encounter_setting.date, date_order)
         await self._recorder.save(
             encounter_id=encounter.id,
             user_id=user.id,
             patient_id=encounter.patient_id,
-            service_date=parse_encounter_date(result.summary.encounter_setting.date, date_order),
+            service_date=service_date,
             result=result,
             llm_calls=usage.records,
+            setting=self._snapshot.of(setting, service_date),
         )

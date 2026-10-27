@@ -22,12 +22,14 @@ from app.encounters.factory import (
     get_encounter_removal,
     get_encounter_inbox,
     get_extraction_queue,
+    get_encounter_shift_link,
     get_on_demand_extraction,
 )
 from app.encounters.inbox import EncounterInbox
-from app.encounters.models import EncounterDetailOut, EncounterRowOut, PatientPick
+from app.encounters.models import EncounterDetailOut, EncounterRowOut, PatientPick, ShiftPick
 from app.encounters.on_demand import EncounterHasNoPatientError, OnDemandExtraction
 from app.encounters.removal import EncounterHasClaimError, EncounterRemoval
+from app.encounters.shift_link import EncounterShiftLink, ShiftNotFoundError
 from app.extraction.models import BillingExtractionResponse
 from app.intake import (
     EncounterNotFoundError,
@@ -37,7 +39,7 @@ from app.intake import (
     PatientNotFoundError,
 )
 from app.intake.dependencies import get_intake_service
-from app.postgresdb import User, session_scope
+from app.postgresdb import DbSession, User, session_scope
 from app.rate_limit import limiter
 
 router = APIRouter(prefix="/encounters", tags=["encounters"])
@@ -108,6 +110,28 @@ async def assign_patient(
         raise HTTPException(status_code=409, detail="Cette rencontre est déjà associée à un patient") from exc
     async with session_scope() as session:
         detail = await EncounterInbox(session).detail(current_user, encounter_id)
+    assert detail is not None
+    return detail
+
+
+@router.put("/{encounter_id}/shift", response_model=EncounterDetailOut)
+async def set_encounter_shift(
+    encounter_id: int,
+    body: ShiftPick,
+    session: DbSession,
+    current_user: User = Depends(get_current_user),
+    link: EncounterShiftLink = Depends(get_encounter_shift_link),
+) -> EncounterDetailOut:
+    """The physician's pick of the shift the encounter took place during (None: derive it
+    again). Re-extracting is theirs to do: the detail says when the setting differs from the
+    latest run's."""
+    try:
+        await link.set(encounter_id, current_user.id, body.shift_id)
+    except EncounterNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=_NOT_FOUND) from exc
+    except ShiftNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Quart introuvable") from exc
+    detail = await EncounterInbox(session).detail(current_user, encounter_id)
     assert detail is not None
     return detail
 

@@ -1,4 +1,5 @@
 import { unwrap } from "./http";
+import type { CareSetting, DayType, ShiftPeriod } from "./shifts";
 
 // A candidate's real fee entry, resolved server-side after the LLM call — the model never
 // picks a fee (see CLAUDE.md's billing_codes architecture note); the physician picks among
@@ -55,6 +56,15 @@ export interface ConsultationDigest {
   open_questions: string[];
 }
 
+// Where the run took the encounter to be (app/extraction/models.py's RunSettingOut); each
+// null when unknown.
+export interface RunSetting {
+  care_setting: CareSetting | null;
+  shift_id: number | null;
+  shift_period: ShiftPeriod | null;
+  day_type: DayType | null;
+}
+
 export interface BillingExtractionResponse {
   billing: BillingCodesResult;
   // What POST /claims takes — the run carries the patient and both stages' results.
@@ -63,6 +73,8 @@ export interface BillingExtractionResponse {
   encounter_date_raw: string | null;
   // Null for a run whose summary is missing or was stored under an older schema.
   summary?: ConsultationDigest | null;
+  // The setting the codes were chosen under, as the run stored it; absent in POST /extract's own response.
+  setting?: RunSetting | null;
 }
 
 export async function extractBillingCodes(

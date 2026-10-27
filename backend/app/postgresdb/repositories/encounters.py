@@ -23,6 +23,7 @@ class EncounterInput:
     external_encounter_id: str | None = None
     service_date: date | None = None
     encounter_meta: dict | None = None
+    shift_id: int | None = None
 
 
 @dataclass
@@ -147,6 +148,7 @@ class EncounterRepository(SessionRepository):
             service_date=data.service_date,
             encounter_meta=data.encounter_meta,
             note_text=data.note_text,
+            shift_id=data.shift_id,
         )
         self._session.add(encounter)
         try:
@@ -292,6 +294,10 @@ class EncounterRepository(SessionRepository):
 
     async def set_patient(self, encounter: Encounter, patient_id: int) -> None:
         encounter.patient_id = patient_id
+        await self._session.flush()
+
+    async def set_shift(self, encounter: Encounter, shift_id: int | None) -> None:
+        encounter.shift_id = shift_id
         await self._session.flush()
 
     async def set_service_date(self, encounter: Encounter, service_date: date) -> None:

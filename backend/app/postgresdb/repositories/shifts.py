@@ -1,5 +1,6 @@
 """`shifts` — a physician's blocks of work at their sites."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date, datetime, time, timezone
 
@@ -71,6 +72,15 @@ class ShiftRepository(SessionRepository):
         if shift is None or shift.user_id != user_id or shift.voided_at is not None:
             return None
         return shift
+
+    async def get_many_for_user(self, shift_ids: Sequence[int], user_id: int) -> list[Shift]:
+        """Those of `shift_ids` that are the user's live shifts; the others are left out."""
+        if not shift_ids:
+            return []
+        result = await self._session.execute(
+            select(Shift).where(Shift.id.in_(shift_ids), Shift.user_id == user_id, Shift.voided_at.is_(None))
+        )
+        return list(result.scalars().all())
 
     async def void(self, shift: Shift) -> None:
         shift.voided_at = datetime.now(timezone.utc)

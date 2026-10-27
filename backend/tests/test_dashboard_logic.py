@@ -10,7 +10,7 @@ from app.dashboard.activity import WeeklyActivity, clinic_day_of
 from app.dashboard.deadline import BillingDeadline
 from app.dashboard.deadlines import DeadlineWatch
 from app.dashboard.tasks import TaskCounter
-from app.encounters.models import EncounterRowOut, MaskedPatientOut
+from app.encounters.models import EncounterRowOut, EncounterSettingOut, MaskedPatientOut
 from app.intake import EncounterStatus
 
 TODAY = date(2026, 10, 7)  # a Wednesday
@@ -41,6 +41,14 @@ def _row(
         possible_duplicate_ids=duplicates or [],
         all_clean=all_clean,
         deletable=True,
+        setting=EncounterSettingOut(
+            care_setting=None,
+            shift=None,
+            shift_picked=False,
+            needs_shift_choice=False,
+            differs_from_run=False,
+            shift_options=[],
+        ),
     )
 
 

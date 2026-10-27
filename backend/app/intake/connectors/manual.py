@@ -25,11 +25,12 @@ class ManualConnector:
         source_system: str,
         batch_label: str | None = None,
         care_setting: CareSetting | None = None,
+        shift_id: int | None = None,
     ) -> list[SourceNote]:
         """One SourceNote per note in the paste, all sharing `batch_label` (e.g. "Urgence
-        2026-10-01 nuit") and `care_setting` — a pasted shift is all one place. An empty
-        paste gives none."""
-        return self._notes(text, source_system, batch_label, care_setting, Channel.PASTE)
+        2026-10-01 nuit"), `care_setting` and `shift_id` — a pasted shift is all one place.
+        An empty paste gives none."""
+        return self._notes(text, source_system, batch_label, care_setting, shift_id, Channel.PASTE)
 
     def from_upload(
         self,
@@ -38,6 +39,7 @@ class ManualConnector:
         source_system: str,
         batch_label: str | None = None,
         care_setting: CareSetting | None = None,
+        shift_id: int | None = None,
     ) -> list[SourceNote]:
         """An uploaded file, read as the same text a paste of it would be."""
         if PurePath(filename).suffix.lower() not in _UPLOAD_SUFFIXES:
@@ -47,7 +49,7 @@ class ManualConnector:
             text = content.decode("utf-8-sig")
         except UnicodeDecodeError as error:
             raise UnsupportedUploadError("The file isn't UTF-8 text") from error
-        return self._notes(text, source_system, batch_label, care_setting, Channel.UPLOAD)
+        return self._notes(text, source_system, batch_label, care_setting, shift_id, Channel.UPLOAD)
 
     def _notes(
         self,
@@ -55,6 +57,7 @@ class ManualConnector:
         source_system: str,
         batch_label: str | None,
         care_setting: CareSetting | None,
+        shift_id: int | None,
         channel: Channel,
     ) -> list[SourceNote]:
         return [
@@ -65,6 +68,7 @@ class ManualConnector:
                 meta=EncounterMeta(care_setting=care_setting),
                 text=piece,
                 batch_label=batch_label,
+                shift_id=shift_id,
             )
             for piece in self._splitter.split(text)
         ]

@@ -437,6 +437,12 @@ class Encounter(TimestampMixin, Base):
     )
     duplicate_dismissed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     purge_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    # The shift the physician said this encounter belongs to (picked at paste/upload or on the
+    # encounter). Null means "not stated": the shift is then derived from the encounter's date
+    # and time (app/shifts/matching.py), never stored.
+    shift_id: Mapped[int | None] = mapped_column(
+        ForeignKey("shifts.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
 
 
 class ExtractionRun(CreatedAtMixin, Base):
@@ -456,6 +462,13 @@ class ExtractionRun(CreatedAtMixin, Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     encounter_id: Mapped[int] = mapped_column(ForeignKey("encounters.id", ondelete="CASCADE"), index=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="RESTRICT"), index=True)
+    # Where and when the run took the encounter to be (app/shifts/encounter_setting.py), as
+    # it was then: the shift or care setting can change afterwards, and the codes were chosen
+    # under these. Each null when unknown.
+    care_setting: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    shift_id: Mapped[int | None] = mapped_column(ForeignKey("shifts.id", ondelete="RESTRICT"), nullable=True)
+    shift_period: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    day_type: Mapped[str | None] = mapped_column(String(16), nullable=True)
 
 
 class ExtractionRunResult(CreatedAtMixin, Base):

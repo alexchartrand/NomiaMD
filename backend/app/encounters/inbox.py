@@ -12,6 +12,7 @@ from app.encounters.masking import mask_name, mask_nam
 from app.encounters.models import EncounterDetailOut, EncounterRowOut, MaskedPatientOut, PatientOut
 from app.encounters.readiness import is_all_clean
 from app.encounters.row_billing import RowBillingSummarizer
+from app.encounters.shift_link import EncounterSettingPresenter
 from app.extraction.stored import StoredExtractionLoader
 from app.intake import status_of
 from app.patients.registration import resolve_registration
@@ -26,6 +27,7 @@ from app.postgresdb import (
     ReceivedWindow,
     User,
 )
+from app.shifts import EncounterSettingResolver
 
 
 class EncounterInbox:
@@ -36,6 +38,8 @@ class EncounterInbox:
         self._patients = PatientRepository(session)
         self._extractions = StoredExtractionLoader(session)
         self._claims = ClaimRepository(session)
+        self._settings = EncounterSettingResolver(session)
+        self._session = session
 
     async def period(self, user_id: int, first: date | None, last: date | None) -> list[EncounterRowOut]:
         """Service dates `first` through `last`, both included; either may be open — a
@@ -60,6 +64,8 @@ class EncounterInbox:
         patient_ids = {e.patient_id for e in encounters if e.patient_id is not None}
         patients = {p.id: p for p in await self._patients.get_many(list(patient_ids))} if patient_ids else {}
         duplicates = self._flagger.flags(encounters)
+        settings = await self._settings.resolve_many(user_id, encounters)
+        presenter = await EncounterSettingPresenter.for_user(self._session, user_id)
         rows = []
         for activity in activities:
             encounter = activity.encounter
@@ -68,6 +74,7 @@ class EncounterInbox:
             patient = patients.get(encounter.patient_id) if encounter.patient_id is not None else None
             possible_duplicate_ids = duplicates.get(encounter.id, [])
             billing = self._row_billing.summarize(claims.get(encounter.id), extraction)
+            setting = presenter.out(settings[encounter.id], extraction)
             rows.append(
                 EncounterRowOut(
                     id=encounter.id,
@@ -89,7 +96,9 @@ class EncounterInbox:
                         extraction,
                         service_date=encounter.service_date,
                         possible_duplicate=bool(possible_duplicate_ids),
+                        setting_unsettled=setting.needs_shift_choice or setting.differs_from_run,
                     ),
+                    setting=setting,
                 )
             )
         return rows
@@ -103,6 +112,8 @@ class EncounterInbox:
         # stays readable.
         patients = await self._patients.get_many([encounter.patient_id]) if encounter.patient_id is not None else []
         claim = (await self._claims.live_for_encounters(user.id, [encounter.id])).get(encounter.id)
+        extraction = await self._extractions.latest_one(encounter)
+        presenter = await EncounterSettingPresenter.for_user(self._session, user.id)
         return EncounterDetailOut(
             id=encounter.id,
             status=status_of(activity),
@@ -118,8 +129,9 @@ class EncounterInbox:
             duplicate_of_id=encounter.duplicate_of_id,
             note_text=encounter.note_text,
             extraction_error=encounter.extraction_error,
-            extraction=await self._extractions.latest_one(encounter),
+            extraction=extraction,
             claim=ClaimMapper.from_detail(claim) if claim is not None else None,
+            setting=presenter.out(await self._settings.resolve(encounter), extraction),
         )
 
 

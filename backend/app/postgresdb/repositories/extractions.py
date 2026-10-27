@@ -16,12 +16,23 @@ class ExtractionStageInput:
     result: dict
 
 
+@dataclass(frozen=True)
+class RunSettingInput:
+    """See ExtractionRun's setting columns; every field None = unknown."""
+
+    care_setting: str | None = None
+    shift_id: int | None = None
+    shift_period: str | None = None
+    day_type: str | None = None
+
+
 @dataclass
 class ExtractionRunInput:
     user_id: int
     encounter_id: int
     patient_id: int
     stages: Sequence[ExtractionStageInput]
+    setting: RunSettingInput = RunSettingInput()
 
 
 class ExtractionRepository(SessionRepository):
@@ -31,6 +42,7 @@ class ExtractionRepository(SessionRepository):
             user_id=data.user_id,
             encounter_id=data.encounter_id,
             patient_id=data.patient_id,
+            **vars(data.setting),
         )
         self._session.add(run)
         await self._session.flush()  # populate run.id for the result rows' FK
@@ -64,6 +76,12 @@ class ExtractionRepository(SessionRepository):
             .group_by(ExtractionRun.encounter_id)
         )
         return {encounter_id: run_id for encounter_id, run_id in rows.all()}
+
+    async def get_runs(self, run_ids: Sequence[int]) -> dict[int, ExtractionRun]:
+        if not run_ids:
+            return {}
+        rows = await self._session.scalars(select(ExtractionRun).where(ExtractionRun.id.in_(run_ids)))
+        return {run.id: run for run in rows.all()}
 
     async def get_results(self, run_ids: Sequence[int], task: str) -> dict[int, ExtractionRunResult]:
         """One stage's result for each of `run_ids`, keyed by run id."""

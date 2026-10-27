@@ -4,7 +4,9 @@ from datetime import date
 
 from pydantic import BaseModel, Field
 
+from app.care_setting import CareSetting
 from app.ramq_codes import BillingCodesResult
+from app.shifts import DayType, ShiftPeriod
 from app.summary import ConsultationDigest
 
 
@@ -24,6 +26,16 @@ class ExtractionRequest(BaseModel):
     source: TranscriptSource | None = None
 
 
+class RunSettingOut(BaseModel):
+    """Where the run took the encounter to be (ExtractionRun's setting columns); each None
+    when unknown."""
+
+    care_setting: CareSetting | None = None
+    shift_id: int | None = None
+    shift_period: ShiftPeriod | None = None
+    day_type: DayType | None = None
+
+
 class BillingExtractionResponse(BaseModel):
     """/extract's response, and an encounter's stored run read back in the same shape
     (app/extraction/stored.py)."""
@@ -36,3 +48,6 @@ class BillingExtractionResponse(BaseModel):
     # The consultation summary as the review shows it above the codes; None for a run whose
     # summary is missing or was stored under an older schema.
     summary: ConsultationDigest | None = None
+    # The setting the codes were chosen under, as the run stored it; None in POST /extract's
+    # own response.
+    setting: RunSettingOut | None = None

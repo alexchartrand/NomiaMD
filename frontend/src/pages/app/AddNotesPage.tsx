@@ -11,6 +11,7 @@ import {
 } from "../../api";
 import { CloudDownload, FileUp } from "lucide-react";
 import { AppPage, AppPageHeader, Banner, Button, Card, FormField, Spinner, Tabs, TextArea, TextField } from "../../components";
+import { BatchSettingFields, initialBatchSetting, useRecentShifts, type BatchSetting } from "./BatchSettingFields";
 
 // What the inbox shows once it's done: see InboxPage's ReceivedBanner.
 export interface ReceivedSummary {
@@ -40,6 +41,13 @@ export default function AddNotesPage() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [epicSandbox, setEpicSandbox] = useState<EpicSandboxStatus | null>(null);
+  const shifts = useRecentShifts();
+  const [setting, setSetting] = useState<BatchSetting>({ shiftId: null, careSetting: null });
+
+  // Once the shifts are in: the one under way or just ended, picked for the physician.
+  useEffect(() => {
+    if (shifts) setSetting(initialBatchSetting(shifts));
+  }, [shifts]);
 
   useEffect(() => {
     // Off (a 404) or unreachable: the tab just stays hidden.
@@ -69,10 +77,13 @@ export default function AddNotesPage() {
     if (!ready) return;
     setSending(true);
     setError(null);
-    const label = batchLabel.trim() || null;
+    const facts = {
+      batch_label: batchLabel.trim() || null,
+      shift_id: setting.shiftId,
+      care_setting: setting.shiftId === null ? setting.careSetting : null,
+    };
     try {
-      const outcomes =
-        mode === "paste" ? await pushNotes({ text, batch_label: label }) : await uploadNotes(file as File, label);
+      const outcomes = mode === "paste" ? await pushNotes({ text, ...facts }) : await uploadNotes(file as File, facts);
       navigate("/app/inbox", { state: { received: summarize(outcomes) } });
     } catch (err) {
       setError(describeError(err));
@@ -160,6 +171,8 @@ export default function AddNotesPage() {
                 </button>
               </div>
             )}
+
+            {shifts && <BatchSettingFields shifts={shifts} value={setting} onChange={setSetting} />}
 
             <FormField
               id="batch-label"

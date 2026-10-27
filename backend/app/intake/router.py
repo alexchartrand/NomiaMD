@@ -13,7 +13,7 @@ from app.care_setting import CareSetting
 from app.intake.connectors import ManualConnector, UnsupportedUploadError
 from app.intake.dependencies import get_intake_service, get_manual_connector
 from app.intake.models import PastedNotes, ReceiveOutcomeOut, SourceNote
-from app.intake.service import EmptyNoteError, IntakeService, ReceiveOutcome
+from app.intake.service import EmptyNoteError, IntakeService, ReceiveOutcome, UnknownShiftError
 from app.postgresdb import User
 from app.rate_limit import limiter
 
@@ -33,7 +33,7 @@ async def receive_notes(
     connector: ManualConnector = Depends(get_manual_connector),
 ) -> list[ReceiveOutcomeOut]:
     notes = (
-        connector.from_paste(body.text, body.source_system, body.batch_label, body.care_setting)
+        connector.from_paste(body.text, body.source_system, body.batch_label, body.care_setting, body.shift_id)
         if isinstance(body, PastedNotes)
         else body
     )
@@ -48,6 +48,7 @@ async def upload_notes(
     source_system: str = Form(default="manual", min_length=1, max_length=64),
     batch_label: str | None = Form(default=None, max_length=64),
     care_setting: CareSetting | None = Form(default=None),
+    shift_id: int | None = Form(default=None),
     current_user: User = Depends(get_current_user),
     service: IntakeService = Depends(get_intake_service),
     connector: ManualConnector = Depends(get_manual_connector),
@@ -56,7 +57,9 @@ async def upload_notes(
     if len(content) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="Fichier trop volumineux (2 Mo maximum)")
     try:
-        notes = connector.from_upload(file.filename or "", content, source_system, batch_label, care_setting)
+        notes = connector.from_upload(
+            file.filename or "", content, source_system, batch_label, care_setting, shift_id
+        )
     except UnsupportedUploadError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return await receive_and_report(service, notes, current_user)
@@ -71,6 +74,8 @@ async def receive_and_report(service: IntakeService, notes: list[SourceNote], us
         # Notes before it are already stored; resending the corrected batch is safe, since
         # those come back as duplicates.
         raise HTTPException(status_code=422, detail="Une note est vide une fois nettoyée") from exc
+    except UnknownShiftError as exc:
+        raise HTTPException(status_code=422, detail="Ce quart n'existe pas ou a été supprimé") from exc
     return [_out(outcome) for outcome in outcomes]
 
 

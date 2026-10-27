@@ -3,7 +3,8 @@ import { http, HttpResponse } from "msw";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { makeUser, renderWithProviders, serveSession } from "../../test/render";
 import { server } from "../../test/server";
-import type { ReceiveOutcome } from "../../api";
+import type { ReceiveOutcome, Shift } from "../../api";
+import { addDays, clinicToday } from "../../utils/date";
 import AddNotesPage from "./AddNotesPage";
 
 const outcome = (overrides: Partial<ReceiveOutcome> = {}): ReceiveOutcome => ({
@@ -39,7 +40,11 @@ function renderPage() {
 beforeEach(() => {
   serveSession(makeUser());
   // The Epic sandbox demo is off by default (404): its tab stays hidden.
-  server.use(http.get("/api/intake/epic-sandbox", () => new HttpResponse(null, { status: 404 })));
+  server.use(
+    http.get("/api/intake/epic-sandbox", () => new HttpResponse(null, { status: 404 })),
+    // No shifts scheduled by default: no shift picker, only the place.
+    http.get("/api/shifts", () => HttpResponse.json([])),
+  );
 });
 
 const submit = () => screen.getByRole("button", { name: "Ajouter aux rencontres" });
@@ -65,7 +70,12 @@ describe("pasting notes", () => {
     await user.type(screen.getByLabelText("Lot (facultatif)"), "  Urgence nuit  ");
     await user.click(submit());
     expect(await screen.findByTestId("landed")).toHaveTextContent("/app/inbox");
-    expect(body).toEqual({ text: "**NAM :** TEST12345678 note", batch_label: "Urgence nuit" });
+    expect(body).toEqual({
+      text: "**NAM :** TEST12345678 note",
+      batch_label: "Urgence nuit",
+      shift_id: null,
+      care_setting: null,
+    });
     expect(JSON.parse(screen.getByTestId("received").textContent!)).toEqual({ received: 2, duplicates: 1 });
   });
 
@@ -110,6 +120,68 @@ describe("pasting notes", () => {
     expect(await screen.findByRole("button", { name: "Réception et extraction en cours…" })).toBeDisabled();
     release();
     await screen.findByTestId("landed");
+  });
+});
+
+describe("the shift the notes come from", () => {
+  const shift = (overrides: Partial<Shift> = {}): Shift => ({
+    id: 7,
+    series_id: null,
+    work_site_id: 1,
+    work_site_name: "Hôpital Test",
+    care_setting: "urgence",
+    period: "jour",
+    service_date: clinicToday(),
+    // All day: under way whenever the test runs.
+    start_time: "00:00:00",
+    end_time: "00:00:00",
+    ends_next_day: true,
+    day_type: "semaine",
+    ...overrides,
+  });
+
+  function capturePaste() {
+    const sent: { body?: Record<string, unknown> } = {};
+    server.use(
+      http.post("/api/intake/notes", async ({ request }) => {
+        sent.body = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json([outcome()]);
+      }),
+    );
+    return sent;
+  }
+
+  it("picks the shift under way and sends it", async () => {
+    const earlier = shift({ id: 3, service_date: addDays(clinicToday(), -2), start_time: "08:00:00", end_time: "16:00:00", ends_next_day: false });
+    server.use(http.get("/api/shifts", () => HttpResponse.json([earlier, shift()])));
+    const sent = capturePaste();
+    const { user } = renderPage();
+    const picker = await screen.findByLabelText("Quart");
+    expect(picker).toHaveValue("7");
+    // A shift is picked: its own place, not a separate one.
+    expect(screen.queryByLabelText("Lieu (facultatif)")).not.toBeInTheDocument();
+    await user.type(screen.getByLabelText("Notes à ajouter"), "note");
+    await user.click(submit());
+    await screen.findByTestId("landed");
+    expect(sent.body).toMatchObject({ shift_id: 7, care_setting: null });
+  });
+
+  it("without a shift, sends the place picked instead", async () => {
+    server.use(http.get("/api/shifts", () => HttpResponse.json([shift()])));
+    const sent = capturePaste();
+    const { user } = renderPage();
+    await user.selectOptions(await screen.findByLabelText("Quart"), "");
+    await user.selectOptions(screen.getByLabelText("Lieu (facultatif)"), "chsld");
+    await user.type(screen.getByLabelText("Notes à ajouter"), "note");
+    await user.click(submit());
+    await screen.findByTestId("landed");
+    expect(sent.body).toMatchObject({ shift_id: null, care_setting: "chsld" });
+  });
+
+  it("has no shift picker when none is scheduled", async () => {
+    renderPage();
+    expect(await screen.findByLabelText("Lieu (facultatif)")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Quart")).not.toBeInTheDocument();
   });
 });
 

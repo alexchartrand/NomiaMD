@@ -48,6 +48,9 @@ class SourceNote(BaseModel):
     text: str = Field(min_length=1)
     # Groups notes received together, e.g. one ER shift pasted at the end of the night.
     batch_label: str | None = Field(default=None, max_length=64)
+    # The physician's shift the note was written during, as they picked it (one of their
+    # live shifts — checked on receipt). None = not stated: derived from the date and time.
+    shift_id: int | None = None
 
 
 class PastedNotes(BaseModel):
@@ -58,7 +61,10 @@ class PastedNotes(BaseModel):
     source_system: str = Field(default="manual", min_length=1, max_length=64)
     batch_label: str | None = Field(default=None, max_length=64)
     # Where every note in the paste took place, as the physician picked it; None = unknown.
+    # A picked `shift_id` wins over it (app/shifts/encounter_setting.py).
     care_setting: CareSetting | None = None
+    # The shift every note in the paste was written during.
+    shift_id: int | None = None
 
 
 class ReceiveOutcomeOut(BaseModel):
