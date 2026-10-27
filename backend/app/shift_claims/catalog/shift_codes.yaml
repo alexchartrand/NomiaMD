@@ -140,6 +140,7 @@ codes:
     divisible_in_hours: false
     secteur_dispensation: "07"
     garde_options: [premier, partage]
+    # Never on the same shift claim, whatever the hours (validated by the physician, 2026-10-27).
     excludes: ["09791", "19953"]
     fees:
       - {effective_from: 2018-09-01, per_quart: "173.10"}
