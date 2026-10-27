@@ -1,4 +1,4 @@
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { renderWithProviders, serveSession, makeUser } from "../../../test/render";
 import { server } from "../../../test/server";
@@ -6,7 +6,16 @@ import type { Shift, WorkSite } from "../../../api";
 import { addDays, clinicToday, weekdayIndex } from "../../../utils/date";
 import SchedulePage from ".";
 
-const monday = addDays(clinicToday(), -weekdayIndex(clinicToday()));
+const today = clinicToday();
+const monday = addDays(today, -weekdayIndex(today));
+const firstOfMonth = `${today.slice(0, 7)}-01`;
+const gridStart = addDays(firstOfMonth, -weekdayIndex(firstOfMonth));
+const nextMonth = `${addDays(firstOfMonth, 31).slice(0, 7)}-01`;
+const lastOfMonth = addDays(nextMonth, -1);
+const gridEnd = addDays(lastOfMonth, 6 - weekdayIndex(lastOfMonth));
+
+// The view picked is remembered in localStorage; each test starts on the default (month).
+beforeEach(() => localStorage.clear());
 
 const site: WorkSite = { id: 1, name: "Urgence Saint-Luc", care_setting: "urgence", etablissement_number: null, is_active: true };
 
@@ -52,23 +61,42 @@ function renderSchedule() {
 }
 
 describe("schedule", () => {
-  it("shows the week's shifts on their day", async () => {
+  it("shows the month by default, the shifts on their day", async () => {
     const queries = serveSchedule({ shifts: [makeShift()] });
     renderSchedule();
     const day = await screen.findByRole("listitem", { name: monday });
     expect(await within(day).findByText("Urgence Saint-Luc")).toBeInTheDocument();
-    expect(within(day).getByText("Urgence · Soir")).toBeInTheDocument();
-    expect(queries[0].get("start")).toBe(monday);
-    expect(queries[0].get("end")).toBe(addDays(monday, 6));
+    expect(queries[0].get("start")).toBe(gridStart);
+    // Whole weeks, Monday to Sunday, covering the month.
+    expect(queries[0].get("end")).toBe(gridEnd);
   });
 
-  it("loads the next week", async () => {
+  it("shows only the week, and remembers it", async () => {
+    const queries = serveSchedule({ shifts: [makeShift()] });
+    const { user, unmount } = renderSchedule();
+    await screen.findByRole("listitem", { name: monday });
+    await user.click(screen.getByRole("button", { name: "Semaine" }));
+    await waitFor(() => expect(queries[queries.length - 1].get("start")).toBe(monday));
+    expect(queries[queries.length - 1].get("end")).toBe(addDays(monday, 6));
+    const day = await screen.findByRole("listitem", { name: monday });
+    expect(within(day).getByText("Urgence · Soir")).toBeInTheDocument();
+
+    unmount();
+    renderSchedule();
+    expect(await screen.findByRole("button", { name: "Semaine suivante" })).toBeInTheDocument();
+  });
+
+  it("loads the next month, and in the week view the next week", async () => {
     const queries = serveSchedule();
     const { user } = renderSchedule();
     await screen.findByRole("listitem", { name: monday });
-    await user.click(screen.getByRole("button", { name: "Semaine suivante" }));
-    await screen.findByRole("listitem", { name: addDays(monday, 7) });
-    expect(queries[queries.length - 1].get("start")).toBe(addDays(monday, 7));
+    await user.click(screen.getByRole("button", { name: "Mois suivant" }));
+    await waitFor(() => expect(queries[queries.length - 1].get("start")).toBe(addDays(nextMonth, -weekdayIndex(nextMonth))));
+
+    await user.click(screen.getByRole("button", { name: "Aujourd'hui" }));
+    await user.click(screen.getByRole("button", { name: "Semaine" }));
+    await user.click(await screen.findByRole("button", { name: "Semaine suivante" }));
+    await waitFor(() => expect(queries[queries.length - 1].get("start")).toBe(addDays(monday, 7)));
   });
 
   it("sends to the profile when there is no work site yet", async () => {

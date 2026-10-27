@@ -122,7 +122,7 @@ client per domain under `api/`. The public site (`/`, `/prix`, `/contact`, `/sec
 `pricing.ts`) — the one place to edit them. The landing page after login is the dashboard (`/app`, `pages/app/DashboardPage/`: tasks, KPIs, activity chart, latest encounters, and the RAMQ assistant beside them — one conversation shared with `/app/chat` through `chat/RamqChatProvider.tsx`, mounted in `AppLayout`). The inbox is `/app/inbox`; a row opens
 `/app/inbox/:encounterId` (note + code review, `pages/app/review/`); notes are added by hand
 on `/app/ajouter`. `/app/admin` is the admin console (admins only, `RequireAdmin`; tab in `?tab=`), and a user on a temporary password is sent to `/app/profile` by `RequireAuth` until they change it. `/app/facturer` bills without an encounter (and edits such a draft at
-`/app/facturer/:claimId`); `/app/codes` is the RAMQ code reference. `/app/horaire` is the shift calendar (a week at a time); work sites are edited on `/app/profile`. `/api/*` proxies to the backend (`vite.config.ts`).
+`/app/facturer/:claimId`); `/app/codes` is the RAMQ code reference. `/app/horaire` is the shift calendar (the month by default, or a week); work sites are edited on `/app/profile`. `/api/*` proxies to the backend (`vite.config.ts`).
 
 ### Invariants — don't break these
 

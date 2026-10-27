@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { Building2, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
-  CARE_SETTING_LABELS,
-  SHIFT_PERIODS,
   deleteShift,
   deleteShiftSeries,
   describeError,
@@ -15,15 +13,29 @@ import {
   type Shift,
   type WorkSite,
 } from "../../../api";
-import { AppPage, AppPageHeader, Badge, Banner, Button, EmptyState, Spinner, useConfirm } from "../../../components";
+import {
+  AppPage,
+  AppPageHeader,
+  Banner,
+  Button,
+  EmptyState,
+  SegmentedControl,
+  Spinner,
+  useConfirm,
+} from "../../../components";
 import { cn } from "@/lib/utils";
-import { addDays, clinicToday, weekdayIndex } from "../../../utils/date";
+import { useStoredFlag } from "@/lib/useStoredFlag";
+import { clinicToday } from "../../../utils/date";
+import { rangeLabel, sameMonth, step, visibleDays, weekStartOf, type CalendarView } from "./calendar";
+import { ShiftCard, hhmm } from "./ShiftCard";
 import { ShiftDialog, type SeriesScope } from "./ShiftDialog";
 
-const PERIOD_LABELS = Object.fromEntries(SHIFT_PERIODS.map((p) => [p.value, p.label]));
+const VIEWS: { id: CalendarView; label: string }[] = [
+  { id: "month", label: "Mois" },
+  { id: "week", label: "Semaine" },
+];
 
-const weekStartOf = (day: string) => addDays(day, -weekdayIndex(day));
-const hhmm = (time: string) => time.slice(0, 5);
+const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 function dayHeading(day: string): { weekday: string; date: string } {
   const d = new Date(`${day}T00:00:00Z`);
@@ -33,17 +45,18 @@ function dayHeading(day: string): { weekday: string; date: string } {
   };
 }
 
-function weekLabel(start: string): string {
-  const format = new Intl.DateTimeFormat("fr-CA", { timeZone: "UTC", day: "numeric", month: "long", year: "numeric" });
-  return `Semaine du ${format.format(new Date(`${start}T00:00:00Z`))}`;
-}
-
 type DialogState = { shift: Shift | null; day: string } | null;
 
-// The physician's schedule, a week at a time: their shifts at each of their work sites.
+// The physician's schedule — the month, or a week — their shifts at each of their work sites.
 export default function SchedulePage() {
   const today = clinicToday();
-  const [weekStart, setWeekStart] = useState(() => weekStartOf(today));
+  // Any day of the week or month on screen.
+  const [anchor, setAnchor] = useState(today);
+  const [weekView, setWeekView] = useStoredFlag("nomiamd.schedule.week");
+  const view: CalendarView = weekView ? "week" : "month";
+  const days = visibleDays(view, anchor);
+  const first = days[0];
+  const last = days[days.length - 1];
   const [sites, setSites] = useState<WorkSite[] | null>(null);
   const [periods, setPeriods] = useState<PeriodDefault[]>([]);
   const [shifts, setShifts] = useState<Shift[] | null>(null);
@@ -60,14 +73,14 @@ export default function SchedulePage() {
       .catch((err) => setError(describeError(err)));
   }, []);
 
-  const loadWeek = useCallback(() => {
+  const loadShifts = useCallback(() => {
     setShifts(null);
-    listShifts(weekStart, addDays(weekStart, 6))
+    listShifts(first, last)
       .then(setShifts)
       .catch((err) => setError(describeError(err)));
-  }, [weekStart]);
+  }, [first, last]);
 
-  useEffect(loadWeek, [loadWeek]);
+  useEffect(loadShifts, [loadShifts]);
 
   async function handleDelete(shift: Shift, scope: SeriesScope) {
     const hours = `${shift.work_site_name}, ${hhmm(shift.start_time)}–${hhmm(shift.end_time)}`;
@@ -83,14 +96,13 @@ export default function SchedulePage() {
         await deleteShiftSeries(shift.series_id, scope === "following" ? shift.service_date : null);
       else await deleteShift(shift.id);
       setDialog(null);
-      loadWeek();
+      loadShifts();
       toast.success(scope === "one" ? "Quart supprimé." : "Quarts supprimés.");
     } catch (err) {
       toast.error(describeError(err));
     }
   }
 
-  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
   const hasActiveSite = sites?.some((site) => site.is_active) ?? false;
 
   return (
@@ -100,7 +112,7 @@ export default function SchedulePage() {
         description="Vos quarts de travail. Le lieu et la période de chaque quart orientent le choix des codes de vos rencontres."
         actions={
           hasActiveSite && (
-            <Button onClick={() => setDialog({ shift: null, day: weekStart <= today && today <= days[6] ? today : weekStart })}>
+            <Button onClick={() => setDialog({ shift: null, day: first <= today && today <= last ? today : view === "month" ? `${anchor.slice(0, 7)}-01` : first })}>
               <Plus aria-hidden className="size-4" />
               Ajouter un quart
             </Button>
@@ -125,78 +137,105 @@ export default function SchedulePage() {
       )}
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <Button variant="secondary" size="icon" aria-label="Semaine précédente" onClick={() => setWeekStart(addDays(weekStart, -7))}>
+        <Button
+          variant="secondary"
+          size="icon"
+          aria-label={view === "week" ? "Semaine précédente" : "Mois précédent"}
+          onClick={() => setAnchor(step(view, anchor, -1))}
+        >
           <ChevronLeft aria-hidden className="size-4" />
         </Button>
-        <Button variant="secondary" size="icon" aria-label="Semaine suivante" onClick={() => setWeekStart(addDays(weekStart, 7))}>
+        <Button
+          variant="secondary"
+          size="icon"
+          aria-label={view === "week" ? "Semaine suivante" : "Mois suivant"}
+          onClick={() => setAnchor(step(view, anchor, 1))}
+        >
           <ChevronRight aria-hidden className="size-4" />
         </Button>
-        <Button variant="ghost" onClick={() => setWeekStart(weekStartOf(today))}>
+        <Button variant="ghost" onClick={() => setAnchor(today)}>
           Aujourd&apos;hui
         </Button>
-        <h2 className="m-0 ml-2 font-heading text-lg font-semibold">{weekLabel(weekStart)}</h2>
+        <h2 className="m-0 ml-2 font-heading text-lg font-semibold">{rangeLabel(view, anchor)}</h2>
+        <SegmentedControl
+          ariaLabel="Affichage"
+          segments={VIEWS}
+          value={view}
+          onChange={(next) => {
+            // Into the week: today's when it's in the month shown, else the month's first.
+            if (next === "week" && !(first <= today && today <= last)) setAnchor(weekStartOf(`${anchor.slice(0, 7)}-01`));
+            setWeekView(next === "week");
+          }}
+          className="ml-auto"
+        />
       </div>
 
       {shifts === null && !error ? (
         <Spinner />
       ) : (
-        <ol className="m-0 grid list-none gap-2 p-0 md:grid-cols-7">
-          {days.map((day) => {
-            const heading = dayHeading(day);
-            const dayShifts = shifts?.filter((shift) => shift.service_date === day) ?? [];
-            return (
-              <li
-                key={day}
-                aria-label={day}
-                className={cn(
-                  "flex min-h-32 flex-col gap-2 rounded-xl border border-border bg-card p-2",
-                  day === today && "border-primary",
-                )}
-              >
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-sm">
-                    <span className="font-semibold capitalize">{heading.weekday}</span>{" "}
-                    <span className="text-muted-foreground">{heading.date}</span>
-                  </span>
-                  {hasActiveSite && (
-                    <button
-                      type="button"
-                      aria-label={`Ajouter un quart le ${day}`}
-                      onClick={() => setDialog({ shift: null, day })}
-                      className="inline-flex size-6 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
-                    >
-                      <Plus aria-hidden className="size-4" />
-                    </button>
+        <>
+          {view === "month" && (
+            <div aria-hidden className="mb-1 hidden grid-cols-7 gap-1 md:grid">
+              {WEEKDAYS.map((weekday) => (
+                <span key={weekday} className="px-2 text-xs font-semibold text-muted-foreground uppercase">
+                  {weekday}
+                </span>
+              ))}
+            </div>
+          )}
+          <ol className={cn("m-0 grid list-none p-0 md:grid-cols-7", view === "month" ? "gap-1" : "gap-2")}>
+            {days.map((day) => {
+              const dayShifts = shifts?.filter((shift) => shift.service_date === day) ?? [];
+              const outside = view === "month" && !sameMonth(day, anchor);
+              const heading = dayHeading(day);
+              return (
+                <li
+                  key={day}
+                  aria-label={day}
+                  className={cn(
+                    "flex flex-col rounded-xl border border-border bg-card",
+                    view === "month" ? "min-h-24 gap-1 p-1.5" : "min-h-32 gap-2 p-2",
+                    // Out of the month: dimmed, and left off the phone's one-column list.
+                    outside && "hidden bg-muted/40 md:flex",
+                    day === today && "border-primary",
                   )}
-                </div>
-                {dayShifts.map((shift) => (
-                  <button
-                    key={shift.id}
-                    type="button"
-                    onClick={() => setDialog({ shift, day })}
-                    className="flex cursor-pointer flex-col items-start gap-1 rounded-lg border-none bg-[color:var(--color-primary-tint)] p-2 text-left transition-colors hover:bg-accent"
-                  >
-                    <span className="text-sm font-semibold">
-                      {hhmm(shift.start_time)}–{hhmm(shift.end_time)}
-                      {shift.ends_next_day && <span className="font-normal text-muted-foreground"> +1</span>}
-                    </span>
-                    <span className="text-xs">{shift.work_site_name}</span>
-                    <span className="flex flex-wrap gap-1">
-                      <Badge tone="primary" className="text-[0.7rem]">
-                        {CARE_SETTING_LABELS[shift.care_setting]} · {PERIOD_LABELS[shift.period]}
-                      </Badge>
-                      {shift.day_type === "ferie" && (
-                        <Badge tone="warning" className="text-[0.7rem]">
-                          Férié
-                        </Badge>
-                      )}
-                    </span>
-                  </button>
-                ))}
-              </li>
-            );
-          })}
-        </ol>
+                >
+                  <div className="flex items-center justify-between px-1">
+                    {view === "month" ? (
+                      <span className={cn("text-sm font-semibold", outside && "text-muted-foreground")}>
+                        <span className="md:hidden">{heading.weekday} </span>
+                        {Number(day.slice(8))}
+                      </span>
+                    ) : (
+                      <span className="text-sm">
+                        <span className="font-semibold capitalize">{heading.weekday}</span>{" "}
+                        <span className="text-muted-foreground">{heading.date}</span>
+                      </span>
+                    )}
+                    {hasActiveSite && (
+                      <button
+                        type="button"
+                        aria-label={`Ajouter un quart le ${day}`}
+                        onClick={() => setDialog({ shift: null, day })}
+                        className="inline-flex size-6 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
+                      >
+                        <Plus aria-hidden className="size-4" />
+                      </button>
+                    )}
+                  </div>
+                  {dayShifts.map((shift) => (
+                    <ShiftCard
+                      key={shift.id}
+                      shift={shift}
+                      compact={view === "month"}
+                      onOpen={() => setDialog({ shift, day })}
+                    />
+                  ))}
+                </li>
+              );
+            })}
+          </ol>
+        </>
       )}
 
       {dialog && sites && (
@@ -208,7 +247,7 @@ export default function SchedulePage() {
           onClose={() => setDialog(null)}
           onSaved={() => {
             setDialog(null);
-            loadWeek();
+            loadShifts();
             toast.success("Horaire mis à jour.");
           }}
           onDelete={(shift, scope) => void handleDelete(shift, scope)}
