@@ -393,6 +393,34 @@ another are left out).
 Before switching models, commit a larger output cap (or one per model), then rerun the control and
 Ossington 5 once each to confirm the gap; Sonnet 4.6 and Qwen3-VL are the fallbacks.
 
+## Shift facts (2026-10-27)
+
+The prompt's established facts now give the encounter's shift (period and hours), the day type of its date
+and its start time. In the app these come from the physician's shift calendar and the note's source. Here
+they come from the fixture's `encounter_context`: a `shift` and an `encounter_time` on the 7 URG notes,
+taken from each note's own date and time, with the day type derived from the shift's date. The system
+prompt also says that a supplement bound to a time of day or a day type applies only within it, so every
+note's prompt changed. mistral-medium on the same candidates as the control:
+
+```
+run --name shift-facts-sel --stages selection --candidates-from current-table-cands-v2 --selection-model mistral-medium-latest
+```
+
+| run | retained P / R / F1 | correct / wrong retained | exact notes | overall recall | possible/note | clean negatives | in tok/note | p50 |
+|---|---|---|---|---|---|---|---|---|
+| `current-table-sel-v2` (control) | 70% / 67% / 68% | 50 / 21 | 61% | 89% | 2.6 | 4/4 | 12.0k | 8.0 s |
+| `shift-facts-sel` | 68% / 67% / 68% | 50 / 23 | 59% | 87% | 2.2 | 4/4 | 12.0k | 8.1 s |
+
+- **No measurable change, as expected.** The totals are within the ±3 noise. 6 notes regressed, 6 improved
+  and 5 were mixed: the usual churn, spread over every setting, with no shared cause.
+- **ER notes (7 notes, 11 codes):** 2 correct retained codes against 3, and 5 found overall against 7. On 7 notes
+  1–2 codes is noise. The model does read the new facts: its `analysis` restates them (« en soirée (16 h à
+  24 h), un fin de semaine »). The remaining misses are still the ER variant questions (*Where the remaining
+  misses are*).
+- **No label tests these facts yet.** No expected code is a time-of-day or day-type supplement, so this run
+  checks for regressions only. Shift codes such as 09791/19953 aren't in the codes table and come with the
+  curated shift-code list (plan PR 4).
+
 ## Where the remaining misses are
 
 - **ER visit variant** (*Care setting*): every ER visit code is offered near the top now, and the model

@@ -6,14 +6,15 @@ app/extraction/router.py's HTTP concerns, per this repo's one-class-one-job conv
 Constructor-injected with ProfileService and PatientRepository, not global lookups — makes
 this class trivially fakeable in tests, same convention as app/patients/verification.py."""
 
-from datetime import date
+from datetime import date, time
 
 from app.auth.profile import ProfileService
 from app.care_setting import CareSetting
 from app.clock import ClinicClock, Clock
 from app.patients.registration import resolve_registration
 from app.postgresdb import PatientRepository, User
-from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext
+from app.ramq_codes.context import BillingContext, PatientContext, PhysicianContext, ShiftContext
+from app.shifts import DayTypeResolver
 
 
 def _age_years_on(date_of_birth: date, on_date: date) -> float:
@@ -27,11 +28,16 @@ def _age_years_on(date_of_birth: date, on_date: date) -> float:
 
 class BillingContextBuilder:
     def __init__(
-        self, profile_service: ProfileService, patient_repository: PatientRepository, clock: Clock | None = None
+        self,
+        profile_service: ProfileService,
+        patient_repository: PatientRepository,
+        clock: Clock | None = None,
+        day_types: DayTypeResolver | None = None,
     ):
         self._profiles = profile_service
         self._patients = patient_repository
         self._clock = clock or ClinicClock()
+        self._day_types = day_types or DayTypeResolver()
 
     async def build(
         self,
@@ -40,6 +46,8 @@ class BillingContextBuilder:
         patient_id: int,
         encounter_date: date | None,
         care_setting: CareSetting | None = None,
+        shift: ShiftContext | None = None,
+        encounter_time: time | None = None,
     ) -> BillingContext:
         """Best-effort: a missing profile or a since-deleted patient degrades that half to
         all-null rather than raising, mirroring extraction/router.py's existing "a lookup
@@ -70,6 +78,15 @@ class BillingContextBuilder:
                 is_vulnerable=record.is_vulnerable,
             )
 
+        # The encounter's own date, else its shift's — the same day RunSettingSnapshot records.
+        # Never today's: an unknown date leaves the day type unknown.
+        day = encounter_date or (shift.service_date if shift is not None else None)
         return BillingContext(
-            physician=physician, patient=patient, encounter_date=encounter_date, care_setting=care_setting
+            physician=physician,
+            patient=patient,
+            encounter_date=encounter_date,
+            care_setting=care_setting,
+            shift=shift,
+            day_type=self._day_types.day_type(day) if day is not None else None,
+            encounter_time=encounter_time,
         )

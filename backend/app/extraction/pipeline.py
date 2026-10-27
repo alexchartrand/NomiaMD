@@ -16,13 +16,20 @@ clinical detail the summarizer dropped would be unrecoverable downstream."""
 
 import logging
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, time
 from typing import Protocol
 
 from app.care_setting import CareSetting
 from app.extraction.encounter_date import DateOrder, parse_encounter_date
 from app.postgresdb import User
-from app.ramq_codes import BillingCodesResult, BillingContext, CodeSelector, FeeResolver, ICodesRetriever
+from app.ramq_codes import (
+    BillingCodesResult,
+    BillingContext,
+    CodeSelector,
+    FeeResolver,
+    ICodesRetriever,
+    ShiftContext,
+)
 from app.summary import ConsultationSummarizer, ConsultationSummaryResult
 
 logger = logging.getLogger(__name__)
@@ -39,6 +46,8 @@ class ContextBuilder(Protocol):
         patient_id: int,
         encounter_date: date | None,
         care_setting: CareSetting | None = None,
+        shift: ShiftContext | None = None,
+        encounter_time: time | None = None,
     ) -> BillingContext: ...
 
 
@@ -73,9 +82,12 @@ class BillingPipeline:
         patient_id: int,
         date_order: DateOrder = DateOrder.DMY,
         care_setting: CareSetting | None = None,
+        shift: ShiftContext | None = None,
+        encounter_time: time | None = None,
     ) -> PipelineResult:
         """`date_order` is how the note's source writes slash dates; `care_setting` is where
-        the encounter took place, as its source or the physician stated it (None = unknown)."""
+        the encounter took place, `shift` the shift it took place in and `encounter_time` when
+        it started, as its source or the physician stated them (None = unknown)."""
         summarized = await self._summarizer.summarize(transcript)
         summary = summarized.summary
 
@@ -84,6 +96,8 @@ class BillingPipeline:
             patient_id=patient_id,
             encounter_date=parse_encounter_date(summary.encounter_setting.date, date_order),
             care_setting=care_setting,
+            shift=shift,
+            encounter_time=encounter_time,
         )
         candidates = await self._retriever.aretrieve(summary, context)
         selection = await self._selector.select(candidates, summary, transcript, context)
@@ -103,13 +117,20 @@ class BillingPipeline:
         patient_id: int,
         encounter_date: date | None,
         care_setting: CareSetting | None,
+        shift: ShiftContext | None,
+        encounter_time: time | None,
     ) -> BillingContext:
         # Best effort: a profile-lookup failure must degrade to an all-null BillingContext
         # (every axis then stays unresolved), not crash the extraction the physician is
         # waiting on.
         try:
             return await self._context_builder.build(
-                user=user, patient_id=patient_id, encounter_date=encounter_date, care_setting=care_setting
+                user=user,
+                patient_id=patient_id,
+                encounter_date=encounter_date,
+                care_setting=care_setting,
+                shift=shift,
+                encounter_time=encounter_time,
             )
         except Exception:
             logger.exception("Billing context lookup failed; billing_codes proceeds with an empty context")

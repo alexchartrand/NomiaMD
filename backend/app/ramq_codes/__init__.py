@@ -4,7 +4,7 @@ summary -> candidate RAMQ codes -> the model's selection -> fees.
 Public interface — everything else that needs it imports it from here rather than reaching
 into the modules directly."""
 
-from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext, PatientContext, PhysicianContext
+from app.ramq_codes.context import AXIS_LABELS_FR, BillingContext, PatientContext, PhysicianContext, ShiftContext
 from app.ramq_codes.context_builder import BillingContextBuilder
 from app.ramq_codes.converter import CodesRowConverter
 from app.ramq_codes.eligibility import EligibilityFilterFactory, UnresolvedAxisDetector
@@ -46,6 +46,7 @@ __all__ = [
     "BillingContextBuilder",
     "PatientContext",
     "PhysicianContext",
+    "ShiftContext",
     "ExtractedCode",
     "CodeFeeOut",
     "FeeUnit",

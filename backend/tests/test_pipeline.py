@@ -30,9 +30,16 @@ class _FakeContextBuilder:
         self._context = context
         self.build_calls: list[dict] = []
 
-    async def build(self, *, user, patient_id, encounter_date, care_setting=None):
+    async def build(self, *, user, patient_id, encounter_date, care_setting=None, shift=None, encounter_time=None):
         self.build_calls.append(
-            {"user": user, "patient_id": patient_id, "encounter_date": encounter_date, "care_setting": care_setting}
+            {
+                "user": user,
+                "patient_id": patient_id,
+                "encounter_date": encounter_date,
+                "care_setting": care_setting,
+                "shift": shift,
+                "encounter_time": encounter_time,
+            }
         )
         return self._context
 
@@ -160,7 +167,14 @@ async def test_context_builder_receives_the_encounter_date_parsed_from_the_summa
     _result, _client, context_builder = await _run_pipeline()
 
     assert context_builder.build_calls == [
-        {"user": USER, "patient_id": PATIENT_ID, "encounter_date": None, "care_setting": None}
+        {
+            "user": USER,
+            "patient_id": PATIENT_ID,
+            "encounter_date": None,
+            "care_setting": None,
+            "shift": None,
+            "encounter_time": None,
+        }
     ]
 
 

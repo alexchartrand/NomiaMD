@@ -7,12 +7,12 @@ both of them. This opens one only for the profile/patient reads and closes it be
 billing_codes call starts. Same `build(...)` signature as BillingContextBuilder, so tests
 can still hand the pipeline a fake."""
 
-from datetime import date
+from datetime import date, time
 
 from app.auth.factory import build_profile_service
 from app.care_setting import CareSetting
 from app.postgresdb import PatientRepository, User, session_scope
-from app.ramq_codes import BillingContext, BillingContextBuilder
+from app.ramq_codes import BillingContext, BillingContextBuilder, ShiftContext
 
 
 class ScopedBillingContextBuilder:
@@ -23,9 +23,16 @@ class ScopedBillingContextBuilder:
         patient_id: int,
         encounter_date: date | None,
         care_setting: CareSetting | None = None,
+        shift: ShiftContext | None = None,
+        encounter_time: time | None = None,
     ) -> BillingContext:
         async with session_scope() as session:
             builder = BillingContextBuilder(build_profile_service(session), PatientRepository(session))
             return await builder.build(
-                user=user, patient_id=patient_id, encounter_date=encounter_date, care_setting=care_setting
+                user=user,
+                patient_id=patient_id,
+                encounter_date=encounter_date,
+                care_setting=care_setting,
+                shift=shift,
+                encounter_time=encounter_time,
             )
