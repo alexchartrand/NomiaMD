@@ -105,7 +105,6 @@ export default function PatientsPage() {
       {confirmDialog}
       <AppPageHeader
         title="Patients"
-        description="Votre liste de patients. Leur âge, leur inscription auprès de vous et leur vulnérabilité déterminent les codes admissibles."
         actions={
           <>
             <Button type="button" variant="secondary" onClick={() => createPatientForm.open()}>

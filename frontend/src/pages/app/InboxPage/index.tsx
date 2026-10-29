@@ -97,7 +97,6 @@ export default function InboxPage() {
     <AppPage>
       <AppPageHeader
         title="Rencontres"
-        description="Les notes reçues, avec les codes proposés. Révisez-les une à une, ou approuvez en lot celles qui ne présentent aucune ambiguïté."
         actions={addNotes}
       />
 

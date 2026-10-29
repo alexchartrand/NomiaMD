@@ -112,7 +112,6 @@ export default function SchedulePage() {
     <AppPage width="wide">
       <AppPageHeader
         title="Horaire"
-        description="Vos quarts de travail. Le lieu et la période de chaque quart orientent le choix des codes de vos rencontres."
         actions={
           hasActiveSite && (
             <Button onClick={() => setDialog({ shift: null, day: first <= today && today <= last ? today : view === "month" ? `${anchor.slice(0, 7)}-01` : first })}>

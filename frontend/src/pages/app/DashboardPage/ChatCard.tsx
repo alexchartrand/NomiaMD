@@ -8,9 +8,9 @@ import { panelLinkClasses } from "./Panel";
 export function ChatCard() {
   const { messages, loading, clear } = useRamqChat();
   return (
-    <aside aria-label="Assistant RAMQ" className="flex flex-col lg:sticky lg:top-0">
+    <aside aria-label="Assistant" className="flex flex-col lg:sticky lg:top-0">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="font-heading text-base font-semibold">Assistant RAMQ</h2>
+        <h2 className="font-heading text-base font-semibold">Assistant</h2>
         <div className="flex items-center gap-4">
           <button
             type="button"

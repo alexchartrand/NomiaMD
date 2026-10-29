@@ -34,10 +34,10 @@ export default function AppLayout() {
         </NavSection>
         <NavSection title="Référence RAMQ">
           <NavItem to="/app/codes" icon={BookOpen}>
-            Codes RAMQ
+            Codes de facturation
           </NavItem>
           <NavItem to="/app/chat" icon={MessagesSquare}>
-            Assistant RAMQ
+            Assistant
           </NavItem>
         </NavSection>
         {user?.role === "admin" && (

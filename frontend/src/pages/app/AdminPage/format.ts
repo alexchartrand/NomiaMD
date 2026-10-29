@@ -64,6 +64,6 @@ export const PURPOSE_LABELS: Record<string, string> = {
   consultation_summary: "Résumé de la consultation",
   billing_codes: "Choix des codes",
   "billing_codes.retrieval": "Recherche des codes",
-  ramq_chatbot: "Assistant RAMQ",
+  ramq_chatbot: "Assistant",
   "ramq_chatbot.retrieval": "Recherche de l'assistant",
 };

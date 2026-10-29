@@ -38,7 +38,7 @@ export default function CodesPage() {
   return (
     <AppPage width="narrow" className="flex flex-col gap-5">
       <AppPageHeader
-        title="Codes RAMQ"
+        title="Codes de facturation"
         description="Recherchez un code du manuel des omnipraticiens par numéro ou par description : ses tarifs, son admissibilité et quand l'utiliser."
         className="mb-1"
       />
