@@ -63,7 +63,6 @@ export default function FacturationPage() {
     <AppPage>
       <AppPageHeader
         title="Facturation"
-        description="Vos réclamations enregistrées, et les factures qui les regroupent pour la RAMQ. Cochez les brouillons à facturer."
         actions={
           <>
             <Button asChild variant="secondary">

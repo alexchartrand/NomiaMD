@@ -81,7 +81,7 @@ describe("the app area", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Bonjour, Dr Test" })).toBeInTheDocument();
     const sidebar = within(screen.getByRole("navigation").closest("aside")!);
     expect(sidebar.getByText("Dr Test")).toBeInTheDocument();
-    for (const name of ["Tableau de bord", "Rencontres", "Facturation", "Patients", "Codes RAMQ", "Assistant RAMQ"]) {
+    for (const name of ["Tableau de bord", "Rencontres", "Facturation", "Patients", "Codes de facturation", "Assistant"]) {
       expect(sidebar.getByRole("link", { name })).toBeInTheDocument();
     }
     expect(sidebar.getByRole("link", { name: "Profil — Dr Test" })).toBeInTheDocument();
@@ -95,12 +95,12 @@ describe("the app area", () => {
     serveEmptyApp();
     server.use(http.post("/api/query", () => HttpResponse.json({ answer: "Le code 00103 s'applique." })));
     const { user } = renderWithProviders(<AppRouter />, { route: "/app" });
-    const assistant = within(await screen.findByRole("complementary", { name: "Assistant RAMQ" }));
+    const assistant = within(await screen.findByRole("complementary", { name: "Assistant" }));
     await user.type(assistant.getByPlaceholderText("Posez une question de facturation..."), "Quel code ?{Enter}");
     expect(await assistant.findByText("Le code 00103 s'applique.")).toBeInTheDocument();
 
     await user.click(assistant.getByRole("link", { name: "Agrandir" }));
-    expect(await screen.findByRole("heading", { level: 1, name: "Assistant RAMQ" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Assistant" })).toBeInTheDocument();
     expect(screen.getByText("Quel code ?")).toBeInTheDocument();
     expect(screen.getByText("Le code 00103 s'applique.")).toBeInTheDocument();
   });

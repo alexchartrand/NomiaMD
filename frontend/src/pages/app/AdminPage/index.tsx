@@ -27,7 +27,6 @@ export default function AdminPage() {
     <AppPage>
       <AppPageHeader
         title="Administration"
-        description="Les comptes, l'utilisation de l'IA, le journal d'audit et l'état du système. Aucune note de patient n'est affichée ici."
       />
       <Tabs<Tab>
         ariaLabel="Administration"

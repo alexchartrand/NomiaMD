@@ -36,7 +36,7 @@ const FEATURES = [
   },
   {
     icon: MessageCircleQuestionIcon,
-    title: "Assistant RAMQ",
+    title: "Assistant automatisé de facturation",
     body: "Une question sur une règle de facturation ? Posez-la : l'assistant répond à partir du manuel des omnipraticiens.",
   },
 ];

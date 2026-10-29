@@ -1,5 +1,6 @@
 import { memo } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 
 type ChatBubbleProps = {
@@ -25,10 +26,23 @@ function ChatBubbleComponent({ role, content }: ChatBubbleProps) {
               "whitespace-normal [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
               "[&_ul]:my-2 [&_ul]:pl-5 [&_ol]:my-2 [&_ol]:pl-5 [&_p]:my-2 [&_li+li]:mt-1",
               "[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.88em]",
+              "[&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:px-2 [&_th]:py-1 [&_th]:font-semibold",
+              "[&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_td]:align-top",
               "[&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-muted [&_pre]:p-3 [&_pre_code]:bg-transparent [&_pre_code]:p-0",
             )}
           >
-            <ReactMarkdown>{content}</ReactMarkdown>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                table: ({ node: _node, ...props }) => (
+                  <div className="my-2 overflow-x-auto">
+                    <table className="w-full border-collapse text-left" {...props} />
+                  </div>
+                ),
+              }}
+            >
+              {content}
+            </ReactMarkdown>
           </div>
         ) : (
           content
