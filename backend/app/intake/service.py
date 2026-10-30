@@ -2,6 +2,9 @@
 resolve its patient, deduplicate it, store it as an Encounter, and queue its extraction
 once a patient is known.
 
+A note received again after its text was scrubbed for retention (app/retention/) is the
+same duplicate as always, and brings that text back: the hash match proves it's the same note.
+
 Opens its own short session_scope rather than taking the caller's: an InlineExtractionQueue
 makes LLM calls, which must not hold a pooled connection (same reasoning as
 app/extraction/recorder.py)."""
@@ -12,6 +15,7 @@ from datetime import date
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.clock import ClinicClock, Clock
 from app.extraction.encounter_date import DateOrder, parse_encounter_date
 from app.intake.deduplicator import DedupKey, DedupOutcome, Deduplicator
 from app.intake.hashing import content_hash
@@ -62,9 +66,12 @@ class ReceiveOutcome:
 
 
 class IntakeService:
-    def __init__(self, queue: ExtractionQueue, normalizers: NormalizerRegistry | None = None) -> None:
+    def __init__(
+        self, queue: ExtractionQueue, normalizers: NormalizerRegistry | None = None, clock: Clock | None = None
+    ) -> None:
         self._queue = queue
         self._normalizers = normalizers or default_normalizers()
+        self._clock = clock or ClinicClock()
 
     async def receive(self, note: SourceNote, user: User) -> ReceiveOutcome:
         normalizer = self._normalizers.for_source(note.source_system)
@@ -131,6 +138,8 @@ class IntakeService:
         )
         if dedup.outcome == DedupOutcome.DUPLICATE:
             assert dedup.existing is not None
+            if dedup.existing.note_text is None:
+                await encounters.restore_note(dedup.existing, text, self._clock.now())
             return _not_stored(dedup.existing)
 
         # TODO(step 16): on NEW_VERSION, mark dedup.existing superseded by the new row and

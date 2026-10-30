@@ -5,7 +5,7 @@ sessions."""
 
 import ast
 import itertools
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from contextlib import contextmanager
 from unittest.mock import AsyncMock, Mock, patch
@@ -25,7 +25,7 @@ from app.intake import (
     IntakeService,
     SourceNote,
 )
-from app.postgresdb import Encounter, ExtractionRun, Gender, PatientRepository, session_scope
+from app.postgresdb import Encounter, EncounterRepository, ExtractionRun, Gender, PatientRepository, session_scope
 from app.ramq_codes import BillingCodesResult
 from app.summary import ConsultationSummaryResult
 from tests.db_helpers import ensure_user_row, physician
@@ -63,6 +63,9 @@ async def nam():
             is_vulnerable=False,
         )
     return ramq_number
+
+
+_NOW = datetime(2026, 10, 30, 12, tzinfo=timezone.utc)
 
 
 def _note(**overrides) -> SourceNote:
@@ -179,6 +182,36 @@ async def test_receive_the_same_paste_twice_is_a_duplicate(user, nam):
     assert again.outcome == DedupOutcome.DUPLICATE
     assert again.encounter_id == first.encounter_id
     assert queue.enqueued == [first.encounter_id]
+
+
+async def test_receive_a_scrubbed_note_again_restores_its_text(user, nam):
+    service = IntakeService(RecordingQueue())
+    note = _note(source_system="omnimed", channel=Channel.EXTENSION, external_note_id="N-1", nam=nam)
+    first = await service.receive(note, user)
+    async with session_scope() as session:
+        await EncounterRepository(session).scrub_note(await session.get(Encounter, first.encounter_id), _NOW)
+
+    again = await service.receive(note, user)
+
+    assert again.outcome == DedupOutcome.DUPLICATE
+    assert again.encounter_id == first.encounter_id
+    encounter = await _get(first.encounter_id)
+    assert encounter.note_text == note.text
+    assert encounter.note_scrubbed_at is None
+    assert encounter.note_restored_at is not None
+
+
+async def test_receive_an_amended_scrubbed_note_is_a_new_version_as_always(user, nam):
+    service = IntakeService(RecordingQueue())
+    note = _note(source_system="omnimed", channel=Channel.EXTENSION, external_note_id="N-1", nam=nam)
+    first = await service.receive(note, user)
+    async with session_scope() as session:
+        await EncounterRepository(session).scrub_note(await session.get(Encounter, first.encounter_id), _NOW)
+
+    amended = await service.receive(note.model_copy(update={"text": f"{note.text}\nAddendum."}), user)
+
+    assert amended.outcome == DedupOutcome.NEW_VERSION
+    assert (await _get(first.encounter_id)).note_text is None
 
 
 async def test_receive_keeps_every_visit_of_the_same_day(user, nam):
