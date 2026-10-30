@@ -128,6 +128,7 @@ class EncounterInbox:
             meta=encounter.encounter_meta or {},
             duplicate_of_id=encounter.duplicate_of_id,
             note_text=encounter.note_text,
+            note_scrubbed_at=encounter.note_scrubbed_at,
             extraction_error=encounter.extraction_error,
             extraction=extraction,
             claim=ClaimMapper.from_detail(claim) if claim is not None else None,

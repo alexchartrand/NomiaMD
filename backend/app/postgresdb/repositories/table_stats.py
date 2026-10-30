@@ -10,6 +10,7 @@ from app.postgresdb.models import (
     Encounter,
     ExtractionRun,
     LLMCall,
+    LLMUsageDay,
     Patient,
     User,
 )
@@ -24,6 +25,7 @@ _COUNTED = {
     "bills": Bill,
     "contact_requests": ContactRequest,
     "llm_calls": LLMCall,
+    "llm_usage_daily": LLMUsageDay,
     "audit_events": AuditEvent,
 }
 

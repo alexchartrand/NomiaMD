@@ -77,10 +77,19 @@ export default function Privacy() {
         <ul>
           <li>Demandes de contact : le temps de traiter votre demande et de maintenir la relation, puis elles sont supprimées.</li>
           <li>
-            Notes de consultation : le temps nécessaire à la facturation, selon la durée convenue avec la clinique,
-            puis elles sont supprimées.
+            Texte des notes de consultation et résumé clinique qui en est tiré : 180 jours après la visite, ou un
+            an après la dernière facturation de la réclamation qui en découle si c&rsquo;est plus tard (le temps des
+            suivis avec la RAMQ), puis ils sont supprimés. La note reste dans votre dossier médical électronique.
           </li>
-          <li>Réclamations et factures : selon les durées exigées par la loi.</li>
+          <li>Réclamations, codes facturés et factures : selon les durées exigées par la loi.</li>
+          <li>
+            Journal de sécurité (connexions, actions d&rsquo;administration et adresses IP) : un an, puis il est
+            supprimé.
+          </li>
+          <li>
+            Utilisation de l&rsquo;IA : le détail de chaque appel pendant 90 jours, puis seulement des totaux par
+            jour (nombre d&rsquo;appels et de jetons), sans aucun renseignement sur les patients.
+          </li>
         </ul>
       </ProseSection>
 

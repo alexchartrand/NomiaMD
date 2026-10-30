@@ -10,6 +10,8 @@ Stack: `caddy` (TLS + reverse proxy, the only public ingress) → `frontend`
 (nginx serving the built SPA, proxies `/api/*` to `backend`) → `backend`
 (FastAPI/uvicorn) → `postgres` (users, physician profiles, patients, extraction
 runs, claims, bills) + `redis` (rate-limit storage, extraction queue for `worker`).
+`worker` also runs the nightly retention job (`app/retention/`, 08:00 UTC): without it,
+note text is never scrubbed — the admin console's Système tab warns when notes are overdue.
 The RAMQ LanceDB directory is a read-only bind mount into `backend`, not a service.
 
 The host runs three independent compose projects:

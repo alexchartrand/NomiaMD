@@ -42,6 +42,12 @@ class Settings:
         # Concurrent extractions per worker process; size to the LLM endpoint's throughput.
         self.worker_max_jobs = int(os.environ.get("WORKER_MAX_JOBS", 4))
         self.log_level = os.environ.get("LOG_LEVEL", "INFO")
+        # Retention (app/retention/policy.py), in days. The privacy policy names these
+        # (frontend/src/pages/Privacy.tsx): change both together.
+        self.retention_note_unbilled_days = int(os.environ.get("RETENTION_NOTE_UNBILLED_DAYS", 180))
+        self.retention_note_after_claim_days = int(os.environ.get("RETENTION_NOTE_AFTER_CLAIM_DAYS", 365))
+        self.retention_audit_days = int(os.environ.get("RETENTION_AUDIT_DAYS", 365))
+        self.retention_llm_raw_days = int(os.environ.get("RETENTION_LLM_RAW_DAYS", 90))
 
     @property
     def llm_provider(self) -> str:

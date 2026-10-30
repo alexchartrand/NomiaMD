@@ -13,10 +13,16 @@ CLINIC_ZONE = ZoneInfo("America/Montreal")
 class Clock(Protocol):
     def today(self) -> date: ...
 
+    def now(self) -> datetime: ...
+
 
 class ClinicClock:
     def today(self) -> date:
         return datetime.now(CLINIC_ZONE).date()
+
+    def now(self) -> datetime:
+        """The current instant, in UTC — what database timestamps are compared against."""
+        return datetime.now(timezone.utc)
 
 
 def get_clock() -> Clock:
@@ -30,3 +36,11 @@ def clinic_day_bounds(day: date) -> tuple[datetime, datetime]:
     start = datetime.combine(day, time.min, CLINIC_ZONE)
     end = datetime.combine(day + timedelta(days=1), time.min, CLINIC_ZONE)
     return start.astimezone(timezone.utc), end.astimezone(timezone.utc)
+
+
+def clinic_day_of(instant: datetime) -> date:
+    """The clinic's day an instant falls on. SQLite hands timestamps back naive; they were
+    stored in UTC."""
+    if instant.tzinfo is None:
+        instant = instant.replace(tzinfo=timezone.utc)
+    return instant.astimezone(CLINIC_ZONE).date()

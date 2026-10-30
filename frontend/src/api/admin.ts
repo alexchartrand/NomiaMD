@@ -88,7 +88,9 @@ export interface SystemReport {
   };
   row_counts: Record<string, number>;
   failed_extractions: number;
-  encounters_past_purge: number;
+  // Past retention but not scrubbed yet: the nightly job isn't running if this stays above 0.
+  notes_due_for_scrub: number;
+  notes_scrubbed: number;
 }
 
 export interface FailedExtraction {

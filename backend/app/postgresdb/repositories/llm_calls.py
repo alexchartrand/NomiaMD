@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import select
+from sqlalchemy import delete, func, select
 
 from app.postgresdb.models import LLMCall
 from app.postgresdb.repositories.base import SessionRepository
@@ -56,3 +56,25 @@ class LLMCallRepository(SessionRepository):
             .order_by(LLMCall.started_at, LLMCall.id)
         )
         return list(result.scalars())
+
+    async def list_before(self, until: datetime) -> list[LLMCall]:
+        """Calls started before `until` (excluded) — what the retention rollup folds."""
+        result = await self._session.execute(
+            select(LLMCall).where(LLMCall.started_at < until).order_by(LLMCall.started_at, LLMCall.id)
+        )
+        return list(result.scalars())
+
+    async def count_before(self, until: datetime) -> int:
+        result = await self._session.execute(
+            select(func.count()).select_from(LLMCall).where(LLMCall.started_at < until)
+        )
+        return result.scalar_one()
+
+    async def delete_before(self, until: datetime) -> int:
+        """The retention rollup's own operation, once the calls are folded (app/retention/llm_usage.py)."""
+        # No in-session sync: SQLite's naive timestamps can't be compared in Python, and the
+        # deleted calls aren't read again.
+        result = await self._session.execute(
+            delete(LLMCall).where(LLMCall.started_at < until).execution_options(synchronize_session=False)
+        )
+        return result.rowcount

@@ -225,7 +225,8 @@ export default function EncounterPage() {
     encounter.patient !== null &&
     (encounter.status === "reçu" || encounter.status === "échec");
   // A new reading of a note whose codes can still change.
-  const canRerun = reviewing && readOnly === null;
+  // A scrubbed note has nothing left to extract from (the server refuses it too).
+  const canRerun = reviewing && readOnly === null && encounter?.note_text != null;
   const savable = review.canSave && !review.state.saved && !review.state.saving;
   useSaveShortcut(savable ? (nextId !== null ? handleSaveAndNext : review.save) : null);
 
@@ -367,13 +368,18 @@ export default function EncounterPage() {
           <ReviewStep
             result={encounter.extraction!}
             noteText={encounter.note_text}
+            noteScrubbedAt={encounter.note_scrubbed_at}
             patientId={encounter.patient!.id}
             review={review}
             onSaveAndNext={nextId !== null ? handleSaveAndNext : undefined}
             onNext={nextId !== null ? () => goToNext() : undefined}
           />
         ) : (
-          <NotePanel text={encounter.note_text} defaultOpen={!encounter.extraction} />
+          <NotePanel
+            text={encounter.note_text}
+            scrubbedAt={encounter.note_scrubbed_at}
+            defaultOpen={!encounter.extraction}
+          />
         )}
       </div>
     </AppPage>

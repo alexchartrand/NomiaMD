@@ -15,19 +15,12 @@
   - Physicians use the app from hospitals, clinics, home and cellular, so `ALLOWED_CIDRS` has to be `0.0.0.0/0,::/0` and the IP allowlist no longer protects anything. Email + password (`app/auth/`) is now the only barrier in front of patient data. Add TOTP (authenticator app) at login, with recovery codes and an admin reset in the admin console (`app/admin/users.py`). Admin accounts first: since 10/19 they can create accounts and reset any password.
   - Acceptable while the app holds only synthetic data; must be done before real patient data (Law 25's "reasonable security measures" for remote access to health data).
 
-- [ ] 🔴 No purge/retention policy on `encounters` — *added 8/21, moved from DEPLOY.md, escalated 8/24, escalated 8/29, reworded 9/30, retargeted 10/1*
-  - The note text lives in `encounters.note_text` (with the patient's name and NAM verbatim), so the encounter is the purge target. Deleting one cascades to its runs and their results and sets `claims.extraction_run_id` to NULL; claims keep `source_note_hash`/`external_note_id`. `encounters.purge_after` (indexed) exists but nothing sets or acts on it — pick the retention period, set it where encounters are created, and add the job (intake step 05).
-  - Acceptable while demoing with the synthetic notes in `consultations/`; must be done before this ever touches real patient data (Law 25). The NAM is scrubbed from the *prompt* (`app/patients/nam.py`'s `redact`), not from what's stored.
-
 - [ ] 🔴 No Alembic — schema changes require a DB wipe or a hand-run `ALTER TABLE` — *added 8/24, escalated 8/27, deferred 9/30*
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one.
   - Decided 9/30: not needed until the next release — every existing DB (local SQLite and the demo Postgres) is deleted and recreated on a schema change until then. Adopt Alembic (with the current schema as its baseline revision) before the first release that holds data worth keeping; it gates going live.
 
-- [ ] 🟢 Login matches the email case-sensitively — *added 10/19, from the admin console*
-  - The admin console stores emails lowercased (`AdminUserCreate`), but `scripts/create_user.py` stores them as typed and `AuthService.login` looks them up exactly, so « Dr.X@… » fails against « dr.x@… » (the login throttle already keys on the lowercased email). Normalize at login and in the script, after lowercasing the existing rows.
-
-- [ ] 🟢 `audit_events` and `llm_calls` have no retention — *added 10/19, from the admin console*
-  - Both are append-only and grow with every login and every LLM call. Neither holds note text, but the audit trail holds IPs. Pick retention periods (the privacy policy should name them) and purge in the same job as the encounters' retention purge.
+- [ ] 🟢 `EncounterPage.test.tsx`'s « saves and opens the next encounter, saying whose claim was saved » is flaky — *added 10/30, found while running the retention branch*
+  - Fails about one run in three when run alone, on `dev` as well (so not from the retention work); the full suite usually passes. Likely a timing race between the save and the navigation to the next encounter; look for a missing `await`/`findBy` there.
 
 - [ ] 🟢 `login_throttles` grows with every distinct email tried — *added 10/19, from the per-account login throttle*
   - Unknown emails are throttled like real ones (so a lock reveals nothing), which means an attacker rotating IPs can add rows without bound. Purge rows whose `last_attempt_at` is older than `LoginThrottlePolicy.forget_after` (a periodic job, or a delete inside `reserve`).
@@ -60,7 +53,7 @@
   - `claims.bill_id` is a single FK, so `BillService.delete` has to clear it to release the claims for re-billing. The voided `bills` row keeps its number, period, `total_amount` and `claim_count`, but not the claim list. If an audit needs that, add a `bill_claim_history` (append-only) or snapshot the claim ids onto the bill when it's voided.
 
 - [ ] 🟢 NAM stored in plaintext — *added 8/27, from schema review*
-  - `patients.ramq_number` and the NAM inside `encounters.note_text` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data, alongside the retention item above.
+  - `patients.ramq_number` and the NAM inside `encounters.note_text` are a direct government identifier at rest with no column-level protection. Worth a pgcrypto/application-level encryption decision before real patient data; retention (`app/retention/`) only scrubs a note's text 180 days after the visit or a year after its claim's last billing.
 
 - [ ] 🟢 No backup of the `postgres_data` volume — *added 8/21, moved from DEPLOY.md*
   - Fine for a short-lived demo seeded with synthetic data; take a manual `pg_dump` first if that stops being true.
@@ -94,6 +87,9 @@
 
 - [ ] 🟡 Shift codes read the default holiday calendar, not the établissement's — *added 10/27, from shift claims*
   - 09791 vs 19953 turns on jours fériés, and an établissement's own dates (sent to RAMQ before April 30) win over the Entente's (`app/shifts/holidays.py`). Until a per-site calendar exists, the physician adds 19953 by hand (origin « manual ») on a day the site counts as a holiday.
+
+- [ ] 🟢 Hold a note's text while its claim is disputed with RAMQ — *added 10/30, from the retention scrub*
+  - The retention scrub (`app/retention/`) keeps a note until 180 days after the visit or a year after the last change to its claim, whichever is later. A refusal handled more than a year after billing would find the note gone (re-importing it from the DMÉ restores it). A « Conserver la note » toggle on the claim, which `EncounterRepository.list_due_for_scrub` skips until it's cleared, would cover that without lengthening retention for everyone.
 
 - [ ] 🟢 Shift claims don't carry RAMQ's « secteur d'activité » or per-day dates — *added 10/27, from shift claims*
   - RAMQ asks for the garde's start and end time (the claim keeps them) and, for a CLSC, the « Service d'urgence CLSC réseau de garde » sector. A Friday-evening shift running into Saturday bills its 19953 hours under the Friday date on the PDF. Settle both when building direct RAMQ submission.
@@ -162,6 +158,9 @@
 
 ## ✅ Done
 
+- [x] 🔴 No purge/retention policy on `encounters` — *added 8/21, moved from DEPLOY.md, escalated 8/24, escalated 8/29, reworded 9/30, retargeted 10/1, done 10/30 (note text scrubbed, never the encounter — `app/retention/`)*
+- [x] 🟢 `audit_events` and `llm_calls` have no retention — *added 10/19, from the admin console, done 10/30 (audit events deleted after a year, llm_calls rolled up into daily totals after 90 days)*
+- [x] 🟢 Login matches the email case-sensitively — *added 10/19, from the admin console, done 10/30 (`UserRepository` lowercases on create and lookup)*
 - [x] 🟢 The admin console's default LLM prices are unverified — *added 10/19, from the admin console, done 10/19*
 - [x] 🟢 Contact requests have no admin screen — *added 10/2, from the public-site work, done 10/19 (admin console's « Demandes de contact »)*
 - [x] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8, reworded 10/16, done 10/19 (`llm_calls`, stored with each extraction run; the admin console's « Utilisation IA »)*

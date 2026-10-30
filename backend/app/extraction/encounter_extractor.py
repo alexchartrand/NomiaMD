@@ -17,7 +17,8 @@ from app.shifts import EncounterSettingResolver, RunSettingSnapshot, ShiftPeriod
 
 
 class EncounterNotExtractableError(Exception):
-    """The encounter is gone, its physician is, or it has no patient yet."""
+    """The encounter is gone, its physician is, it has no patient yet, or its note was
+    scrubbed (app/retention/)."""
 
 
 class PipelineEncounterExtractor:
@@ -39,7 +40,7 @@ class PipelineEncounterExtractor:
             encounter = await EncounterRepository(session).get(encounter_id)
             user = await UserRepository(session).get_by_id(encounter.user_id) if encounter is not None else None
             setting = await EncounterSettingResolver(session).resolve(encounter) if encounter is not None else None
-        if encounter is None or user is None or encounter.patient_id is None:
+        if encounter is None or user is None or encounter.patient_id is None or encounter.note_text is None:
             raise EncounterNotExtractableError(encounter_id)
         assert setting is not None
 

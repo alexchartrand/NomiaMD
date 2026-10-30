@@ -43,6 +43,17 @@ async def test_login_success_sets_cookie_and_returns_user():
     assert "nomiamd_session" in response.cookies
 
 
+async def test_login_matches_the_email_case_insensitively():
+    _drop_auth_override()
+    user = await _create_user(email=f"Dr.{uuid.uuid4().hex[:8]}@Example.test")
+    assert user.email == user.email.lower()
+
+    with TestClient(app) as client:
+        response = client.post("/auth/login", json={"email": f"  {user.email.upper()} ", "password": PASSWORD})
+
+    assert response.status_code == 200
+
+
 async def test_login_success_logs_an_info_record(caplog):
     _drop_auth_override()
     user = await _create_user()

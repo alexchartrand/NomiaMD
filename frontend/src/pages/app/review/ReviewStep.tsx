@@ -13,7 +13,9 @@ import type { CodeReview } from "./useCodeReview";
 
 interface ReviewStepProps {
   result: BillingExtractionResponse;
-  noteText: string;
+  // null once the note was removed past retention (see NotePanel).
+  noteText: string | null;
+  noteScrubbedAt?: string | null;
   // The encounter's patient: codes added from the search are the ones they may be billed.
   patientId: number;
   review: CodeReview;
@@ -24,10 +26,21 @@ interface ReviewStepProps {
 
 // The proposed codes to tick, under the summary of the note they were read from; the note
 // itself, collapsed, below them.
-export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext, onNext }: ReviewStepProps) {
+export function ReviewStep({
+  result,
+  noteText,
+  noteScrubbedAt = null,
+  patientId,
+  review,
+  onSaveAndNext,
+  onNext,
+}: ReviewStepProps) {
   const { state } = review;
   const codes = result.billing.codes;
-  const quotes = useMemo(() => codes.map((c) => locateQuote(noteText, c.supporting_quote)), [codes, noteText]);
+  const quotes = useMemo(
+    () => codes.map((c) => (noteText === null ? null : locateQuote(noteText, c.supporting_quote))),
+    [codes, noteText],
+  );
   // The code whose supporting quote is marked in the note: the last one hovered or focused.
   const [focused, setFocused] = useState<number | null>(null);
   const added = manualEntries(state.manual);
@@ -111,7 +124,7 @@ export function ReviewStep({ result, noteText, patientId, review, onSaveAndNext,
         </CardContent>
       </Card>
 
-      <NotePanel text={noteText} highlight={focused !== null ? quotes[focused] : null} />
+      <NotePanel text={noteText} scrubbedAt={noteScrubbedAt} highlight={focused !== null ? quotes[focused] : null} />
     </div>
   );
 }

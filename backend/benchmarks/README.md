@@ -248,6 +248,29 @@ Selection by mistral-medium on those candidates (`run --stages selection --candi
 - **The ward and CHSLD subsections help on the current table**: 50 / 21 against 49 / 23, also within the
   noise. 15158 is now offered and retained with high confidence on both tables.
 
+**Sonnet table after post-processing (2026-10-30).** ramq-ingestion moved the trailing « (P.G. …) » /
+« réf. : … » of 185 descriptions into `rules` and pruned the `lexical_terms` that most codes of a
+`header_path` share when the description doesn't already say them (195 codes). The table was re-indexed in
+place. Retrieval only, same command, same summaries; the control was rerun on the same code (0.38 again, so
+it is deterministic):
+
+| run | codes table | recall | R@5 / R@10 / R@20 / R@40 | MRR | missed |
+|---|---|---|---|---|---|
+| `current-table-cands-v3` (control) | `codes_2026-09-17` | 99% | 53 / 73 / 87 / 96 | **0.38** | 01323 |
+| `sonnet-table-cands-v2` (before) | `codes_2026-09-17__claude-sonnet-4-6` | 100% | 49 / 68 / 87 / 99 | 0.32 | – |
+| `sonnet-table-cands-v3` (after) | `codes_2026-09-17__claude-sonnet-4-6` | 100% | 53 / 69 / 87 / 99 | 0.34 | – |
+
+- **Part of the gap closed.** R@5 is back to the control's 53 and R@40 is still the best (99). MRR is 0.34
+  against 0.38, and per note it is still 25 regressed / 9 improved / 9 mixed / 15 unchanged against the
+  control.
+- **Rank of the visit codes the section above lists** (control / Sonnet before / Sonnet after):
+  15790 #2 / #13 / #8, 15785 #6 / #30 / #27, 15786 #5 / #27 / #6, 15617 on CHSLD-2026-00053 #5 / #4 / #1,
+  15839 #4 / #12 / #11. 15765 on CLI-2026-01223 stays at #17 (control #6), and 15616 is #2 on all three.
+- **Selection not rerun yet.** Run `--stages selection --candidates-from sonnet-table-cands-v3` to see
+  whether 47 / 26 moves towards 50 / 21.
+- Not isolated: whether the reference move or the term pruning did the work. The pruner touches only 195
+  codes, since « chsgs », « clsc » and « gmf-u » are mostly also in the description.
+
 ## Care setting (2026-10-09)
 
 The section-B-wide visit query's « urgence » ranks the « déplacement d'urgence » supplements (15633–15635,

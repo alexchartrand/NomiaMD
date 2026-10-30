@@ -1,6 +1,8 @@
 """Composition root for the admin console's services — built per request session, since
 their repositories (and the audit trail) write in the caller's transaction."""
 
+from fastapi import Depends
+
 from app.admin.extractions import FailedExtractions
 from app.admin.lockouts import LockoutService
 from app.admin.passwords import TemporaryPasswordGenerator
@@ -10,6 +12,7 @@ from app.admin.usage import UsageReport
 from app.admin.users import UserAdminService
 from app.audit import SessionAuditLog
 from app.auth.factory import build_profile_service, password_hasher
+from app.clock import Clock, get_clock
 from app.code_catalog.registry import get_code_catalog_repository
 from app.postgresdb import (
     AuditEventRepository,
@@ -17,10 +20,12 @@ from app.postgresdb import (
     DbSession,
     EncounterRepository,
     LLMCallRepository,
+    LLMUsageDayRepository,
     LoginThrottleRepository,
     TableStatsRepository,
     UserRepository,
 )
+from app.retention import RetentionPolicy
 
 
 def get_user_admin_service(session: DbSession) -> UserAdminService:
@@ -34,15 +39,23 @@ def get_user_admin_service(session: DbSession) -> UserAdminService:
 
 
 def get_usage_report(session: DbSession) -> UsageReport:
-    return UsageReport(LLMCallRepository(session), UserRepository(session), PriceTable.from_settings())
+    return UsageReport(
+        LLMCallRepository(session), LLMUsageDayRepository(session), UserRepository(session), PriceTable.from_settings()
+    )
 
 
-def get_system_status(session: DbSession) -> SystemStatus:
+def get_system_status(session: DbSession, clock: Clock = Depends(get_clock)) -> SystemStatus:
     try:
         codes = get_code_catalog_repository()
     except RuntimeError:
         codes = None
-    return SystemStatus(TableStatsRepository(session), EncounterRepository(session), codes)
+    return SystemStatus(
+        TableStatsRepository(session),
+        EncounterRepository(session),
+        codes,
+        RetentionPolicy.from_settings(),
+        clock,
+    )
 
 
 def get_lockout_service(session: DbSession) -> LockoutService:

@@ -90,7 +90,9 @@ export interface EncounterDetail {
   // Source facts (time_start, time_end, location_label, author_ref...), see EncounterMeta.
   meta: Record<string, string | null>;
   duplicate_of_id: number | null;
-  note_text: string;
+  // null once past retention (scrubbed on the server): note_scrubbed_at says since when.
+  note_text: string | null;
+  note_scrubbed_at: string | null;
   extraction_error: string | null;
   extraction: BillingExtractionResponse | null;
   // The live claim saved from one of its runs: the codes the physician selected.
