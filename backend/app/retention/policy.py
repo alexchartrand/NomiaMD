@@ -43,6 +43,7 @@ class RetentionPolicy:
     def audit_cutoff(self, now: datetime) -> datetime:
         return now - timedelta(days=self.audit_days)
 
-    def llm_raw_first_day(self, today: date) -> date:
-        """The oldest clinic day still kept as raw calls; every day before it is rolled up."""
-        return today - timedelta(days=self.llm_raw_days)
+    def llm_rollup_before(self, today: date) -> datetime:
+        """Calls started before this instant are rolled up: the start of the oldest clinic day
+        still kept raw, so only whole days are folded."""
+        return clinic_day_bounds(today - timedelta(days=self.llm_raw_days))[0]

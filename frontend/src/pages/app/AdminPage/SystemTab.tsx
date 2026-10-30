@@ -36,7 +36,8 @@ const TABLE_LABELS: Record<string, string> = {
   claims: "Réclamations",
   bills: "Factures",
   contact_requests: "Demandes de contact",
-  llm_calls: "Appels IA",
+  llm_calls: "Appels IA (détail récent)",
+  llm_usage_daily: "Usage IA (totaux par jour)",
   audit_events: "Événements du journal",
 };
 

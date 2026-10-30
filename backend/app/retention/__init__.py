@@ -4,7 +4,16 @@ worker (app/worker.py) or by hand (scripts/purge.py)."""
 
 from app.retention.audit import AuditEventPurge
 from app.retention.job import RetentionJob, RetentionReport
+from app.retention.llm_usage import LLMUsageRollup
 from app.retention.note_scrub import NoteScrubber, ScrubOutcome
 from app.retention.policy import RetentionPolicy
 
-__all__ = ["AuditEventPurge", "NoteScrubber", "RetentionJob", "RetentionPolicy", "RetentionReport", "ScrubOutcome"]
+__all__ = [
+    "AuditEventPurge",
+    "LLMUsageRollup",
+    "NoteScrubber",
+    "RetentionJob",
+    "RetentionPolicy",
+    "RetentionReport",
+    "ScrubOutcome",
+]

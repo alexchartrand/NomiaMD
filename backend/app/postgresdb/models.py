@@ -496,8 +496,11 @@ class ExtractionRunResult(CreatedAtMixin, Base):
 class LLMCall(CreatedAtMixin, Base):
     """One metered chat or embedding call (app/llm/usage.py's LLMCallRecord), kept for the
     admin console's usage and cost report. Stored with what it was for: the physician, and
-    for an extraction its encounter and run (both SET NULL, so the retention purge of an
-    encounter never has to wait on its usage rows — the counts outlive the note)."""
+    for an extraction its encounter and run (both SET NULL, so deleting an encounter never
+    has to wait on its usage rows).
+
+    Kept raw for RETENTION_LLM_RAW_DAYS only: older days are folded into LLMUsageDay and
+    ExtractionUsageDay, then deleted (app/retention/llm_usage.py)."""
 
     __tablename__ = "llm_calls"
     __table_args__ = (Index("ix_llm_calls_started_at", "started_at"),)
@@ -518,6 +521,49 @@ class LLMCall(CreatedAtMixin, Base):
     finish_reason: Mapped[str | None] = mapped_column(String(32), nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class LLMUsageDay(CreatedAtMixin, Base):
+    """One clinic day of LLMCall rows past their raw retention, folded by everything the usage
+    report groups on (app/retention/llm_usage.py), and kept for good: tokens and calls per
+    physician, model and purpose, never what a call was about. Latency survives only as a
+    total, so a rolled-up day has no median or p95.
+
+    No unique key over the grouping columns: `user_id` and `purpose` are nullable, and NULLs
+    are distinct to both SQLite and Postgres. The nightly job is the only writer, and merges
+    into a day's existing rows itself."""
+
+    __tablename__ = "llm_usage_daily"
+    __table_args__ = (Index("ix_llm_usage_daily_day_user", "day", "user_id"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    day: Mapped[date] = mapped_column(Date)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    provider: Mapped[str] = mapped_column(String(32))
+    model: Mapped[str] = mapped_column(String(128))
+    purpose: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # Made for an extraction (LLMCall.run_id set): what the report's cost per extraction sums.
+    in_extraction: Mapped[bool] = mapped_column(Boolean)
+    calls: Mapped[int] = mapped_column(Integer)
+    input_tokens: Mapped[int] = mapped_column(Integer)
+    output_tokens: Mapped[int] = mapped_column(Integer)
+    errors: Mapped[int] = mapped_column(Integer)
+    latency_ms_total: Mapped[Decimal] = mapped_column(Numeric(16, 1))
+
+
+class ExtractionUsageDay(CreatedAtMixin, Base):
+    """How many extractions a physician ran on a rolled-up clinic day (distinct LLMCall.run_id).
+    Its own table: a distinct count can't be summed back from LLMUsageDay's model and purpose
+    rows, one extraction spanning several of them."""
+
+    __tablename__ = "extraction_usage_daily"
+    __table_args__ = (Index("ix_extraction_usage_daily_day_user", "day", "user_id"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    day: Mapped[date] = mapped_column(Date)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    extractions: Mapped[int] = mapped_column(Integer)
 
 
 class Bill(Base):

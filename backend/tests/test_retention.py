@@ -10,8 +10,11 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy import select, update
 
-from app.clock import CLINIC_ZONE
+from app.admin.pricing import PriceTable
+from app.admin.usage import UsageGrouping, UsageReport
+from app.clock import CLINIC_ZONE, clinic_day_bounds, clinic_day_of
 from app.intake import Channel, content_hash
+from app.llm.usage import LLMCallRecord
 from app.postgresdb import (
     AuditEvent,
     AuditEventInput,
@@ -29,10 +32,14 @@ from app.postgresdb import (
     ExtractionRunResult,
     ExtractionStageInput,
     Gender,
+    LLMCallOwner,
+    LLMCallRepository,
+    LLMUsageDayRepository,
     PatientRepository,
+    UserRepository,
     session_scope,
 )
-from app.retention import NoteScrubber, RetentionJob, RetentionPolicy
+from app.retention import LLMUsageRollup, NoteScrubber, RetentionJob, RetentionPolicy
 from tests.db_helpers import ensure_user_row, physician
 
 _physician_ids = itertools.count(7000)
@@ -287,3 +294,109 @@ async def test_a_failing_step_is_logged_and_the_others_still_run(caplog):
     assert report.notes_scrubbed is None
     assert "retention step notes_scrubbed failed" in caplog.text
     assert await _audit_ids([old]) == set()
+
+
+# --- llm_calls rollup ----------------------------------------------------------------
+
+ROLLUP_FIRST, ROLLUP_LAST = date(1999, 9, 1), date(1999, 9, 30)
+
+
+def _call(day: date, *, model="mistral-small-latest", purpose="billing_codes", tokens=(1000, 200), error=None):
+    return LLMCallRecord(
+        kind="chat",
+        provider="mistral",
+        model=model,
+        purpose=purpose,
+        input_tokens=tokens[0],
+        output_tokens=tokens[1],
+        latency_ms=850.0,
+        # 23:30 in Montréal: already the next day in UTC, so the clinic day is what's folded.
+        started_at=datetime.combine(day, time(23, 30), CLINIC_ZONE).astimezone(timezone.utc),
+        error=error,
+    )
+
+
+async def _seed_calls(session, user_id, patient_id):
+    encounter = await _encounter(session, user_id, patient_id, days_ago=120)
+    run = await _run(session, user_id, encounter)
+    calls = LLMCallRepository(session)
+    owner = LLMCallOwner(user_id=user_id, encounter_id=encounter.id, run_id=run.id)
+    await calls.add_many(
+        [_call(date(1999, 9, 3), purpose="consultation_summary"), _call(date(1999, 9, 3))], owner
+    )
+    await calls.add_many([_call(date(1999, 9, 3), purpose="ramq_chatbot", error="Timeout")], LLMCallOwner(user_id))
+    await calls.add_many(
+        [_call(date(1999, 9, 20), model="unpriced-model", purpose="ramq_chatbot", tokens=(50, 5))],
+        LLMCallOwner(user_id),
+    )
+    return run
+
+
+def _report(session) -> UsageReport:
+    return UsageReport(
+        LLMCallRepository(session), LLMUsageDayRepository(session), UserRepository(session), PriceTable.from_settings()
+    )
+
+
+def _bucket_numbers(bucket):
+    return (bucket.key, bucket.calls, bucket.input_tokens, bucket.output_tokens, bucket.cost, bucket.unpriced_calls, bucket.errors)
+
+
+async def test_the_rollup_folds_whole_clinic_days_and_deletes_the_raw_calls(db_session, physician_id, patient_id):
+    await _seed_calls(db_session, physician_id, patient_id)
+    rollup = LLMUsageRollup(db_session)
+    before = clinic_day_bounds(date(1999, 10, 1))[0]
+
+    assert await rollup.roll_up(before) == 4
+
+    rows = {
+        (r.day, r.purpose, r.in_extraction): (r.calls, r.input_tokens, r.output_tokens, r.errors)
+        for r in await LLMUsageDayRepository(db_session).list_between(ROLLUP_FIRST, ROLLUP_LAST)
+        if r.user_id == physician_id
+    }
+    assert rows == {
+        (date(1999, 9, 3), "consultation_summary", True): (1, 1000, 200, 0),
+        (date(1999, 9, 3), "billing_codes", True): (1, 1000, 200, 0),
+        (date(1999, 9, 3), "ramq_chatbot", False): (1, 1000, 200, 1),
+        (date(1999, 9, 20), "ramq_chatbot", False): (1, 50, 5, 0),
+    }
+    [extractions] = [
+        r for r in await LLMUsageDayRepository(db_session).list_extractions_between(ROLLUP_FIRST, ROLLUP_LAST)
+        if r.user_id == physician_id
+    ]
+    assert (extractions.day, extractions.extractions) == (date(1999, 9, 3), 1)
+    assert await LLMCallRepository(db_session).count_before(before) == 0
+    # Nothing raw is left before the cut-off: a rerun folds nothing twice.
+    assert await rollup.roll_up(before) == 0
+
+
+async def test_the_rollup_leaves_days_still_kept_raw(db_session, physician_id, patient_id):
+    await _seed_calls(db_session, physician_id, patient_id)
+
+    await LLMUsageRollup(db_session).roll_up(clinic_day_bounds(date(1999, 9, 20))[0])
+
+    remaining = await LLMCallRepository(db_session).list_between(*_range_instants())
+    assert [clinic_day_of(c.started_at) for c in remaining if c.user_id == physician_id] == [date(1999, 9, 20)]
+
+
+def _range_instants():
+    return clinic_day_bounds(ROLLUP_FIRST)[0], clinic_day_bounds(ROLLUP_LAST)[1]
+
+
+@pytest.mark.parametrize("grouping", list(UsageGrouping))
+async def test_the_usage_report_reads_the_same_before_and_after_the_rollup(db_session, physician_id, patient_id, grouping):
+    await _seed_calls(db_session, physician_id, patient_id)
+    raw = await _report(db_session).build(ROLLUP_FIRST, ROLLUP_LAST, grouping)
+
+    # Half the month rolled up, half still raw: the report adds both.
+    await LLMUsageRollup(db_session).roll_up(clinic_day_bounds(date(1999, 9, 10))[0])
+    mixed = await _report(db_session).build(ROLLUP_FIRST, ROLLUP_LAST, grouping)
+
+    assert _bucket_numbers(mixed.totals) == _bucket_numbers(raw.totals)
+    assert mixed.extractions == raw.extractions == 1
+    assert mixed.cost_per_extraction == raw.cost_per_extraction is not None
+    assert [_bucket_numbers(b) for b in mixed.by_day] == [_bucket_numbers(b) for b in raw.by_day]
+    assert [_bucket_numbers(b) for b in mixed.breakdown] == [_bucket_numbers(b) for b in raw.breakdown]
+    # The rolled-up 3rd has no latencies left; the raw 20th still does.
+    assert mixed.by_day[2].median_latency_ms is None
+    assert mixed.by_day[19].median_latency_ms == 850.0

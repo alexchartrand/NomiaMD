@@ -156,7 +156,7 @@ async def revoke_user_sessions(
     await _account_errors_as_http(service.revoke_sessions(actor, user_id))
 
 
-# A year at most: the report folds the range's rows in memory (app/admin/usage.py).
+# A year at most: the report folds the range's raw rows in memory (app/admin/usage.py).
 _MAX_USAGE_DAYS = 366
 
 

@@ -20,6 +20,7 @@ from app.postgresdb import (
     DbSession,
     EncounterRepository,
     LLMCallRepository,
+    LLMUsageDayRepository,
     LoginThrottleRepository,
     TableStatsRepository,
     UserRepository,
@@ -38,7 +39,9 @@ def get_user_admin_service(session: DbSession) -> UserAdminService:
 
 
 def get_usage_report(session: DbSession) -> UsageReport:
-    return UsageReport(LLMCallRepository(session), UserRepository(session), PriceTable.from_settings())
+    return UsageReport(
+        LLMCallRepository(session), LLMUsageDayRepository(session), UserRepository(session), PriceTable.from_settings()
+    )
 
 
 def get_system_status(session: DbSession, clock: Clock = Depends(get_clock)) -> SystemStatus:

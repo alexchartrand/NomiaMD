@@ -69,5 +69,8 @@ class AuditEventRepository(SessionRepository):
 
     async def delete_before(self, instant: datetime) -> int:
         """The retention purge's own operation (app/retention/audit.py): the only delete here."""
-        result = await self._session.execute(delete(AuditEvent).where(AuditEvent.created_at < instant))
+        # No in-session sync, as in LLMCallRepository.delete_before.
+        result = await self._session.execute(
+            delete(AuditEvent).where(AuditEvent.created_at < instant).execution_options(synchronize_session=False)
+        )
         return result.rowcount

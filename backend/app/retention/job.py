@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from app.clock import ClinicClock, Clock
 from app.postgresdb import session_scope
 from app.retention.audit import AuditEventPurge
+from app.retention.llm_usage import LLMUsageRollup
 from app.retention.note_scrub import NoteScrubber
 from app.retention.policy import RetentionPolicy
 
@@ -21,6 +22,7 @@ class RetentionReport:
 
     notes_scrubbed: int | None
     audit_events_deleted: int | None
+    llm_calls_rolled_up: int | None
 
 
 class RetentionJob:
@@ -32,6 +34,7 @@ class RetentionJob:
         report = RetentionReport(
             notes_scrubbed=await _step("notes_scrubbed", lambda: self._scrub_notes(dry_run)),
             audit_events_deleted=await _step("audit_events_deleted", lambda: self._purge_audit_events(dry_run)),
+            llm_calls_rolled_up=await _step("llm_calls_rolled_up", lambda: self._roll_up_llm_calls(dry_run)),
         )
         logger.info("retention_run", extra={"dry_run": dry_run, **vars(report)})
         return report
@@ -50,6 +53,12 @@ class RetentionJob:
         async with session_scope() as session:
             purge = AuditEventPurge(session)
             return await (purge.count_due(before) if dry_run else purge.purge(before))
+
+    async def _roll_up_llm_calls(self, dry_run: bool) -> int:
+        before = self._policy.llm_rollup_before(self._clock.today())
+        async with session_scope() as session:
+            rollup = LLMUsageRollup(session)
+            return await (rollup.count_due(before) if dry_run else rollup.roll_up(before))
 
 
 async def _step(name: str, run: Callable[[], Awaitable[int]]) -> int | None:
