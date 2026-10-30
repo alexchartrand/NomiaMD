@@ -166,9 +166,12 @@ export function SystemTab() {
               <Fact key={table} label={TABLE_LABELS[table] ?? table} value={formatCount(count)} />
             ))}
           </dl>
-          {report.encounters_past_purge > 0 && (
+          <dl className="m-0">
+            <Fact label="Notes retirées (conservation)" value={formatCount(report.notes_scrubbed)} />
+          </dl>
+          {report.notes_due_for_scrub > 0 && (
             <Banner tone="warning" className="mt-3">
-              {report.encounters_past_purge} rencontre(s) ont dépassé leur date de purge.
+              {report.notes_due_for_scrub} note(s) ont dépassé leur durée de conservation sans être retirées.
             </Banner>
           )}
         </Section>

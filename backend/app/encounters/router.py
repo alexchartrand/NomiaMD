@@ -27,7 +27,7 @@ from app.encounters.factory import (
 )
 from app.encounters.inbox import EncounterInbox
 from app.encounters.models import EncounterDetailOut, EncounterRowOut, PatientPick, ShiftPick
-from app.encounters.on_demand import EncounterHasNoPatientError, OnDemandExtraction
+from app.encounters.on_demand import EncounterHasNoPatientError, EncounterNoteScrubbedError, OnDemandExtraction
 from app.encounters.removal import EncounterHasClaimError, EncounterRemoval
 from app.encounters.shift_link import EncounterShiftLink, ShiftNotFoundError
 from app.extraction.models import BillingExtractionResponse
@@ -157,6 +157,10 @@ async def extract_encounter(
         raise HTTPException(status_code=404, detail=_NOT_FOUND) from exc
     except EncounterHasNoPatientError as exc:
         raise HTTPException(status_code=409, detail="Associez d'abord un patient à cette rencontre") from exc
+    except EncounterNoteScrubbedError as exc:
+        raise HTTPException(
+            status_code=409, detail="La note a été retirée (conservation) : réimportez-la pour l'extraire de nouveau"
+        ) from exc
 
 
 @router.post("/{encounter_id}/duplicate-of/{kept_id}", status_code=status.HTTP_204_NO_CONTENT)

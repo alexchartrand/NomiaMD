@@ -4,14 +4,16 @@ endpoint's credentials or any patient data."""
 
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime
 
+from app.clock import Clock
 from app.config import settings
 from app.lancedb import ICodeCatalogRepository
 from app.llm.structured import resolve_model
 from app.postgresdb import EncounterRepository, TableStatsRepository
 from app.ramq_chatbot.factory import CHAT_MODEL
 from app.ramq_codes import CodeSelector
+from app.retention import RetentionPolicy
 from app.summary import ConsultationSummarizer
 
 logger = logging.getLogger(__name__)
@@ -42,7 +44,9 @@ class SystemReport:
     models: ModelConfiguration
     row_counts: dict[str, int]
     failed_extractions: int
-    encounters_past_purge: int
+    # Past retention but not scrubbed yet: above 0 for long, the nightly job isn't running.
+    notes_due_for_scrub: int
+    notes_scrubbed: int
 
 
 class SystemStatus:
@@ -51,14 +55,18 @@ class SystemStatus:
         tables: TableStatsRepository,
         encounters: EncounterRepository,
         codes: ICodeCatalogRepository | None,
+        retention: RetentionPolicy,
+        clock: Clock,
     ) -> None:
         """`codes`: None when the code catalog isn't initialized (reported as down)."""
         self._tables = tables
         self._encounters = encounters
         self._codes = codes
+        self._retention = retention
+        self._clock = clock
 
     async def report(self) -> SystemReport:
-        now = datetime.now(timezone.utc)
+        now = self._clock.now()
         dialect = await self._tables.ping()
         return SystemReport(
             checked_at=now,
@@ -69,7 +77,10 @@ class SystemStatus:
             models=_model_configuration(),
             row_counts=await self._tables.row_counts(),
             failed_extractions=len(await self._encounters.list_failed_extractions(limit=1000)),
-            encounters_past_purge=await self._encounters.count_past_purge(now),
+            notes_due_for_scrub=await self._encounters.count_due_for_scrub(
+                self._retention.scrub_cutoffs(self._clock.today(), now)
+            ),
+            notes_scrubbed=await self._encounters.count_scrubbed(),
         )
 
     async def _codes_table(self) -> DependencyCheck:

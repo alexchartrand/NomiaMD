@@ -6,7 +6,7 @@ Each test acts as its own physician, so the inbox only ever holds that test's en
 Seeds through session_scope (committed): the routes open their own sessions."""
 
 import itertools
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
@@ -20,7 +20,8 @@ from app.encounters.masking import mask_name, mask_nam
 from app.encounters.readiness import is_all_clean
 from app.intake import EncounterStatus
 from app.main import app
-from app.postgresdb import Encounter, ExtractionRun, Gender, PatientRepository, session_scope
+from app.postgresdb import Encounter, EncounterRepository, ExtractionRun, Gender, PatientRepository, session_scope
+from app.retention import NoteScrubber
 from tests.db_helpers import ensure_user_row, physician
 from tests.test_extraction import MOCK_RESULT, MOCK_SUMMARY_RESULT, _mock_response
 
@@ -497,6 +498,21 @@ async def test_extract_on_demand_retries_a_failed_extraction(me, client):
 
 async def test_extract_on_demand_refuses_an_encounter_without_a_patient(me, client):
     [outcome] = _paste(client, _note_text("ZZZZ99999999")).json()
+    assert client.post(f"/encounters/{outcome['encounter_id']}/extract").status_code == 409
+
+
+async def test_a_scrubbed_encounter_keeps_its_codes_and_refuses_extraction(me, client):
+    patient = await _seed_patient()
+    [outcome] = _paste(client, _note_text(patient.ramq_number), billing=CLEAN_RESULT).json()
+    async with session_scope() as session:
+        encounter = await EncounterRepository(session).get(outcome["encounter_id"])
+        await NoteScrubber(session).scrub([encounter], datetime.now(timezone.utc))
+
+    detail = client.get(f"/encounters/{outcome['encounter_id']}").json()
+    assert detail["note_text"] is None
+    assert detail["note_scrubbed_at"] is not None
+    assert detail["extraction"]["summary"] is None
+    assert [c["code"] for c in detail["extraction"]["billing"]["codes"]] == ["TEST-BP-MGMT"]
     assert client.post(f"/encounters/{outcome['encounter_id']}/extract").status_code == 409
 
 

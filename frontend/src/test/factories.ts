@@ -286,6 +286,7 @@ export function makeEncounterDetail(overrides: Partial<EncounterDetail> = {}): E
     meta: {},
     duplicate_of_id: null,
     note_text: "Note de test.",
+    note_scrubbed_at: null,
     extraction_error: null,
     extraction: makeExtraction([makeProposedCode()]),
     claim: null,

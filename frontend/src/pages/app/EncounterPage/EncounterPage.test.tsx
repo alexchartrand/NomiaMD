@@ -206,6 +206,15 @@ describe("reviewing the proposed codes", () => {
     expect(note.querySelector("mark")).toBeNull();
   });
 
+  it("keeps a scrubbed note's codes and says the note was removed", async () => {
+    serveEncounter(withCodes({ note_text: null, note_scrubbed_at: "2026-09-01T12:00:00Z" }));
+    renderEncounter();
+    await screen.findByRole("heading", { level: 1 });
+    expect(checkbox("00200")).toBeInTheDocument();
+    expect(screen.queryByText("Note reçue")).not.toBeInTheDocument();
+    expect(screen.getByText(/Note retirée le 01\/09\/2026/)).toBeInTheDocument();
+  });
+
   it("totals the ticked codes at their chosen fee and leaves out a fee in units", async () => {
     serveEncounter(withCodes());
     const { user } = renderEncounter();

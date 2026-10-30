@@ -91,3 +91,24 @@ class ExtractionRepository(SessionRepository):
             select(ExtractionRunResult).where(ExtractionRunResult.run_id.in_(run_ids), ExtractionRunResult.task == task)
         )
         return {row.run_id: row for row in rows.all()}
+
+    async def results_of_encounters(self, encounter_ids: Sequence[int]) -> list[ExtractionRunResult]:
+        """Every stage result of every run of `encounter_ids`."""
+        if not encounter_ids:
+            return []
+        rows = await self._session.scalars(
+            select(ExtractionRunResult)
+            .join(ExtractionRun, ExtractionRun.id == ExtractionRunResult.run_id)
+            .where(ExtractionRun.encounter_id.in_(encounter_ids))
+            .order_by(ExtractionRunResult.id)
+        )
+        return list(rows.all())
+
+    async def replace_result(self, result: ExtractionRunResult, result_json: dict) -> None:
+        # A new dict, not an in-place edit: the JSON column doesn't track mutations.
+        result.result_json = result_json
+        await self._session.flush()
+
+    async def delete_result(self, result: ExtractionRunResult) -> None:
+        await self._session.delete(result)
+        await self._session.flush()

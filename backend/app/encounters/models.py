@@ -93,7 +93,9 @@ class EncounterDetailOut(BaseModel):
     meta: dict
     # Set once the physician confirmed it's the same visit as that encounter.
     duplicate_of_id: int | None
-    note_text: str
+    # None once past retention (app/retention/), `note_scrubbed_at` says since when.
+    note_text: str | None
+    note_scrubbed_at: datetime | None
     extraction_error: str | None
     extraction: BillingExtractionResponse | None
     # The live claim saved from one of its runs: the codes the physician selected.

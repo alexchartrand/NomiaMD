@@ -15,6 +15,11 @@ class EncounterHasNoPatientError(ValueError):
     picked (POST /encounters/{id}/patient)."""
 
 
+class EncounterNoteScrubbedError(ValueError):
+    """The note's text is past retention (app/retention/): there's nothing left to extract
+    from until the same note is received again, which restores it."""
+
+
 class OnDemandExtraction:
     def __init__(self, extractor: EncounterExtractor) -> None:
         self._extractor = extractor
@@ -44,3 +49,5 @@ class OnDemandExtraction:
             raise EncounterNotFoundError(encounter_id)
         if encounter.patient_id is None:
             raise EncounterHasNoPatientError(encounter_id)
+        if encounter.note_text is None:
+            raise EncounterNoteScrubbedError(encounter_id)

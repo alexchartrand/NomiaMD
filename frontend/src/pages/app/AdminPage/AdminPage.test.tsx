@@ -293,7 +293,8 @@ describe("system tab", () => {
     },
     row_counts: { users: 3, encounters: 40 },
     failed_extractions: 1,
-    encounters_past_purge: 0,
+    notes_due_for_scrub: 0,
+    notes_scrubbed: 0,
   };
 
   it("shows the checks, retries a failed extraction and unlocks a login", async () => {

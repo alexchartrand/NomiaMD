@@ -182,7 +182,8 @@ class SystemReportOut(BaseModel):
     models: ModelConfigurationOut
     row_counts: dict[str, int]
     failed_extractions: int
-    encounters_past_purge: int
+    notes_due_for_scrub: int
+    notes_scrubbed: int
 
     @classmethod
     def from_report(cls, report: SystemReport) -> "SystemReportOut":
@@ -200,7 +201,8 @@ class SystemReportOut(BaseModel):
             ),
             row_counts=report.row_counts,
             failed_extractions=report.failed_extractions,
-            encounters_past_purge=report.encounters_past_purge,
+            notes_due_for_scrub=report.notes_due_for_scrub,
+            notes_scrubbed=report.notes_scrubbed,
         )
 
 

@@ -32,7 +32,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.postgresdb.database import Base
 
-# JSON on SQLite (dev), JSONB on Postgres: keeps the retention purge and "which extractions
+# JSON on SQLite (dev), JSONB on Postgres: keeps the retention scrub and "which extractions
 # mention this NAM" query indexable instead of a full-table LIKE.
 _JSON = JSON().with_variant(JSONB, "postgresql")
 
@@ -369,11 +369,14 @@ class Encounter(TimestampMixin, Base):
     arrives (pasted, pushed by the extension or a scribe, pulled from a DMÉ), gets a patient,
     is extracted (ExtractionRun, possibly several times) and is reviewed into a claim.
 
-    The single target of the retention purge: the note text lives here and nowhere else.
-    Deleting an encounter cascades to its runs and their results, and detaches any claim
-    made from them (SET NULL — claims already snapshot what they need, including the note's
-    hash and external id). `purge_after` is when that may happen; nothing sets or acts on it
-    yet, since the retention period itself isn't decided.
+    The target of the retention scrub (app/retention/): the note text lives here and nowhere
+    else. Past retention, `note_text` is set to NULL (with the run results' clinical text,
+    app/retention/note_scrub.py) and `note_scrubbed_at` records when; the row itself, its
+    runs' codes and its claims stay, so billing history and RAMQ follow-ups outlive the note.
+    When that happens is derived (EncounterRepository.list_due_for_scrub), never stored: it
+    moves whenever a claim is billed again. Re-importing the same note restores its text
+    (`note_restored_at`). Deleting an encounter (only an unclaimed one, from the inbox)
+    cascades to its runs and their results.
 
     There is no stored status — see app/intake/status.py. `extraction_error` is stored only
     because a failed extraction leaves no other trace to derive it from.
@@ -423,7 +426,8 @@ class Encounter(TimestampMixin, Base):
     # Source-specific facts that don't drive any query: start/end times, location,
     # établissement...
     encounter_meta: Mapped[dict | None] = mapped_column(_JSON, nullable=True)
-    note_text: Mapped[str] = mapped_column(Text)
+    # NULL once scrubbed (note_scrubbed_at says when).
+    note_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     superseded_by_id: Mapped[int | None] = mapped_column(
         ForeignKey("encounters.id", ondelete="SET NULL"), nullable=True
     )
@@ -436,7 +440,9 @@ class Encounter(TimestampMixin, Base):
         ForeignKey("encounters.id", ondelete="SET NULL"), nullable=True
     )
     duplicate_dismissed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    purge_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    note_scrubbed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # When a re-import brought the scrubbed text back; retention counts again from here.
+    note_restored_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # The shift the physician said this encounter belongs to (picked at paste/upload or on the
     # encounter). Null means "not stated": the shift is then derived from the encounter's date
     # and time (app/shifts/matching.py), never stored.
@@ -570,12 +576,12 @@ class Claim(TimestampMixin, Base):
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="RESTRICT"), index=True)
     service_date: Mapped[date] = mapped_column(Date)
     # Snapshotted from the run's encounter at save time, like the billing context below:
-    # they outlive the encounter's purge, so a claim still says which exact note version
+    # they outlive the note's retention scrub, so a claim still says which exact note version
     # it was billed from.
     source_system: Mapped[str | None] = mapped_column(String(64), nullable=True)
     source_note_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     external_note_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    # SET NULL so the retention purge (see Encounter) never fails on a claim. Never set on a
+    # SET NULL so deleting an encounter (see Encounter) never fails on a voided claim. Never set on a
     # claim billed without an encounter (source_system "manual" — app/claims/manual.py).
     extraction_run_id: Mapped[int | None] = mapped_column(
         ForeignKey("extraction_runs.id", ondelete="SET NULL"), nullable=True

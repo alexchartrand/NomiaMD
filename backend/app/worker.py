@@ -5,7 +5,7 @@ process (ArqExtractionQueue). Boots the same composition root as the API
 from contextlib import AsyncExitStack
 from typing import Any
 
-from arq import Retry
+from arq import Retry, cron
 
 from app.bootstrap import application_services
 from app.config import settings
@@ -16,6 +16,7 @@ from app.extraction.background import (
     arq_redis_settings,
 )
 from app.logging_config import configure_logging
+from app.retention import RetentionJob
 
 configure_logging(settings.log_level)
 
@@ -25,6 +26,7 @@ async def on_startup(ctx: dict[str, Any]) -> None:
     await stack.enter_async_context(application_services())
     ctx["stack"] = stack
     ctx["extract_job"] = ExtractEncounterJob()
+    ctx["retention_job"] = RetentionJob()
 
 
 async def on_shutdown(ctx: dict[str, Any]) -> None:
@@ -38,11 +40,15 @@ async def extract_encounter(ctx: dict[str, Any], encounter_id: int) -> None:
         raise Retry(defer=retry.defer_seconds) from retry
 
 
+async def run_retention(ctx: dict[str, Any]) -> None:
+    await ctx["retention_job"].run()
+
 
 class WorkerSettings:
     functions = [extract_encounter]
-    # Later jobs (retention purge, Epic polling) register here: cron(fn, hour=3, minute=0).
-    cron_jobs: list[Any] = []
+    # Later jobs (Epic polling) register here too. arq's cron reads the container's clock, UTC:
+    # 08:00 is 03:00 or 04:00 in Montréal, outside clinic hours either way.
+    cron_jobs: list[Any] = [cron(run_retention, hour=8, minute=0)]
     on_startup = on_startup
     on_shutdown = on_shutdown
     redis_settings = arq_redis_settings()

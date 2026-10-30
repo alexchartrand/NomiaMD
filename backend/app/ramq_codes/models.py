@@ -149,3 +149,15 @@ class BillingCodesResult(BaseModel):
     )
     # The model's reasoning before it chose; None for results stored before it existed.
     analysis: str | None = None
+
+    def without_note_text(self) -> "BillingCodesResult":
+        """This result once its note is past retention (app/retention/): the codes, their tiers,
+        explanations and fees stay — a claim snapshots the same — while the verbatim quotes,
+        the analysis and the notes, which restate the note itself, go."""
+        return self.model_copy(
+            update={
+                "codes": [code.model_copy(update={"supporting_quote": ""}) for code in self.codes],
+                "analysis": None,
+                "notes": None,
+            }
+        )

@@ -65,6 +65,19 @@ class OverviewScope:
     latest: int
 
 
+@dataclass(frozen=True)
+class ScrubCutoffs:
+    """When a note's text may go (app/retention/policy.py builds these): it's due once its
+    visit is before `visit_before` (undated: received before `received_before`), no live
+    claim of it changed since `claim_changed_before`, and it wasn't restored since
+    `restored_before`."""
+
+    visit_before: date
+    received_before: datetime
+    claim_changed_before: datetime
+    restored_before: datetime
+
+
 class DuplicateEncounterError(Exception):
     """This exact version of an external note (same source, note id and content hash) was
     already received — the partial unique index ix_encounters_external_version is the
@@ -90,6 +103,24 @@ def _has_live_claim():
         ExtractionRun.encounter_id == Encounter.id,
         Claim.extraction_run_id == ExtractionRun.id,
         Claim.voided_at.is_(None),
+    )
+
+
+def _due_for_scrub(cutoffs: ScrubCutoffs):
+    recent_claim = exists().where(
+        ExtractionRun.encounter_id == Encounter.id,
+        Claim.extraction_run_id == ExtractionRun.id,
+        Claim.voided_at.is_(None),
+        Claim.updated_at >= cutoffs.claim_changed_before,
+    )
+    return and_(
+        Encounter.note_text.is_not(None),
+        or_(
+            Encounter.service_date < cutoffs.visit_before,
+            and_(Encounter.service_date.is_(None), Encounter.created_at < cutoffs.received_before),
+        ),
+        ~recent_claim,
+        or_(Encounter.note_restored_at.is_(None), Encounter.note_restored_at < cutoffs.restored_before),
     )
 
 
@@ -182,11 +213,39 @@ class EncounterRepository(SessionRepository):
         )
         return [FailedExtraction(*row) for row in result.tuples()]
 
-    async def count_past_purge(self, now: datetime) -> int:
+    async def list_due_for_scrub(self, cutoffs: ScrubCutoffs) -> list[Encounter]:
+        """Every physician's encounters whose note text is past retention (see ScrubCutoffs)."""
+        result = await self._session.scalars(
+            select(Encounter).where(_due_for_scrub(cutoffs)).order_by(Encounter.id)
+        )
+        return list(result)
+
+    async def count_due_for_scrub(self, cutoffs: ScrubCutoffs) -> int:
         result = await self._session.execute(
-            select(func.count()).select_from(Encounter).where(Encounter.purge_after < now)
+            select(func.count()).select_from(Encounter).where(_due_for_scrub(cutoffs))
         )
         return result.scalar_one()
+
+    async def count_scrubbed(self) -> int:
+        result = await self._session.execute(
+            select(func.count()).select_from(Encounter).where(Encounter.note_text.is_(None))
+        )
+        return result.scalar_one()
+
+    async def scrub_note(self, encounter: Encounter, at: datetime) -> None:
+        """Drops the note's text, and the extraction error that may quote it. The run results'
+        own clinical text is the caller's (app/retention/note_scrub.py)."""
+        encounter.note_text = None
+        encounter.extraction_error = None
+        encounter.note_scrubbed_at = at
+        await self._session.flush()
+
+    async def restore_note(self, encounter: Encounter, note_text: str, at: datetime) -> None:
+        """A scrubbed note received again: the caller has checked it's the same text (its hash)."""
+        encounter.note_text = note_text
+        encounter.note_scrubbed_at = None
+        encounter.note_restored_at = at
+        await self._session.flush()
 
     async def get(self, encounter_id: int) -> Encounter | None:
         """Unscoped — for background work that only has the id (app/intake/queue.py). Anything

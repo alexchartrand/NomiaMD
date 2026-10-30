@@ -8,6 +8,7 @@ import {
 } from "../../../api";
 import { Banner, Button, Modal, Spinner } from "../../../components";
 import { formatClinicTime } from "../../../utils/date";
+import { ScrubbedNote } from "../review/NotePanel";
 import { StatusChip } from "./StatusChip";
 
 interface DuplicateModalProps {
@@ -74,9 +75,13 @@ export function DuplicateModal({ encounterId, otherId, onClose, onResolved }: Du
                     {encounter.meta.time_start ? ` · début ${encounter.meta.time_start.slice(0, 5)}` : ""}
                   </span>
                 </div>
-                <pre className="m-0 max-h-[50vh] flex-1 overflow-y-auto rounded-md bg-muted p-3 font-mono text-xs whitespace-pre-wrap">
-                  {encounter.note_text}
-                </pre>
+                {encounter.note_text === null ? (
+                  <ScrubbedNote scrubbedAt={encounter.note_scrubbed_at} />
+                ) : (
+                  <pre className="m-0 max-h-[50vh] flex-1 overflow-y-auto rounded-md bg-muted p-3 font-mono text-xs whitespace-pre-wrap">
+                    {encounter.note_text}
+                  </pre>
+                )}
                 <Button
                   type="button"
                   disabled={saving}

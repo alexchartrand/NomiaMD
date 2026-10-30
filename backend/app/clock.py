@@ -13,10 +13,16 @@ CLINIC_ZONE = ZoneInfo("America/Montreal")
 class Clock(Protocol):
     def today(self) -> date: ...
 
+    def now(self) -> datetime: ...
+
 
 class ClinicClock:
     def today(self) -> date:
         return datetime.now(CLINIC_ZONE).date()
+
+    def now(self) -> datetime:
+        """The current instant, in UTC — what database timestamps are compared against."""
+        return datetime.now(timezone.utc)
 
 
 def get_clock() -> Clock:
