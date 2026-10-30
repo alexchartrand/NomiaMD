@@ -21,6 +21,11 @@ class DuplicateEmailError(Exception):
     """Another account already has this email (users.email is unique)."""
 
 
+def normalize_email(email: str) -> str:
+    """The one spelling stored and looked up, so « Dr.X@… » finds « dr.x@… »."""
+    return email.strip().lower()
+
+
 def _violates_unique(exc: IntegrityError, column: str) -> bool:
     message = str(exc.orig).lower()
     return "unique" in message and column in message
@@ -34,7 +39,7 @@ class AccountActivity:
 
 class UserRepository(SessionRepository):
     async def get_by_email(self, email: str) -> User | None:
-        result = await self._session.execute(select(User).where(User.email == email))
+        result = await self._session.execute(select(User).where(User.email == normalize_email(email)))
         return result.scalar_one_or_none()
 
     async def get_by_id(self, user_id: int) -> User | None:
@@ -78,7 +83,7 @@ class UserRepository(SessionRepository):
         must_change_password: bool = False,
     ) -> User:
         user = User(
-            email=email,
+            email=normalize_email(email),
             hashed_password=hashed_password,
             full_name=full_name,
             role=role,

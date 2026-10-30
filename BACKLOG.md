@@ -23,9 +23,6 @@
   - `init_db()` only runs `Base.metadata.create_all`, which creates missing tables but never alters an existing one.
   - Decided 9/30: not needed until the next release — every existing DB (local SQLite and the demo Postgres) is deleted and recreated on a schema change until then. Adopt Alembic (with the current schema as its baseline revision) before the first release that holds data worth keeping; it gates going live.
 
-- [ ] 🟢 Login matches the email case-sensitively — *added 10/19, from the admin console*
-  - The admin console stores emails lowercased (`AdminUserCreate`), but `scripts/create_user.py` stores them as typed and `AuthService.login` looks them up exactly, so « Dr.X@… » fails against « dr.x@… » (the login throttle already keys on the lowercased email). Normalize at login and in the script, after lowercasing the existing rows.
-
 - [ ] 🟢 `audit_events` and `llm_calls` have no retention — *added 10/19, from the admin console*
   - Both are append-only and grow with every login and every LLM call. Neither holds note text, but the audit trail holds IPs. Pick retention periods (the privacy policy should name them) and purge in the same job as the encounters' retention purge.
 
@@ -162,6 +159,7 @@
 
 ## ✅ Done
 
+- [x] 🟢 Login matches the email case-sensitively — *added 10/19, from the admin console, done 10/30 (`UserRepository` lowercases on create and lookup)*
 - [x] 🟢 The admin console's default LLM prices are unverified — *added 10/19, from the admin console, done 10/19*
 - [x] 🟢 Contact requests have no admin screen — *added 10/2, from the public-site work, done 10/19 (admin console's « Demandes de contact »)*
 - [x] 🟢 Persist LLM usage (token counts, execution time) — *added 8/27, reworded 10/8, reworded 10/16, done 10/19 (`llm_calls`, stored with each extraction run; the admin console's « Utilisation IA »)*
