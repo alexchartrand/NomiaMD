@@ -18,19 +18,23 @@ Have what Law 25 and every vendor or clinic will ask for before any real patient
 - [ ] An incident register and a breach-response procedure.
 - [ ] A security questionnaire answer pack: hosting (Canada), encryption, access control,
   logging. Note where SOC 2 is on the roadmap.
-- [ ] Decide the **retention period** for note text, and record it in BACKLOG.md's 🔴 retention item.
+- [x] Decide the **retention period** for note text (10/30): 180 days after the visit, and at least a
+  year after the last change to its claim. Confirm it with counsel and the clinics.
 
 ## Code tasks (land after step 06)
-- [ ] Set `encounters.purge_after` at creation (`service_date` + retention period, with the
-  period defined once in config).
-- [ ] Purge job (worker cron from step 10): delete encounters past `purge_after`. This cascades
-  to runs and results; claims keep their snapshot and the audit fields (`source_note_hash`,
-  `external_note_id`).
+- [x] Retention periods defined once in config (`RETENTION_*`, `app/retention/policy.py`). The
+  due date is derived, not stored (`purge_after` was dropped): it moves whenever a claim is billed again.
+- [x] Retention job (worker cron from step 10, `app/retention/`): instead of deleting encounters,
+  it scrubs their clinical text (the note, the summary, the quotes and analysis of the code
+  selection) and keeps the encounter, its codes, claims and bills, so RAMQ follow-ups and the
+  year-end report still work. Re-importing the note restores it. The same job deletes audit
+  events after a year and rolls `llm_calls` up into daily totals after 90 days.
 - [ ] Decide on NAM encryption at rest (BACKLOG 🟢 item). Implement it if counsel or the clinics
   require it.
 
 ## Done when
 - Counsel's answers are recorded in this file.
 - Templates exist (they can live outside the repo; link them here).
-- The purge job is tested: an expired encounter is gone, its claim survives with its audit fields.
-- The BACKLOG retention item is checked off.
+- [x] The retention job is tested (`backend/tests/test_retention.py`): an expired note's text is
+  gone, its codes and claim survive with their audit fields.
+- [x] The BACKLOG retention item is checked off.
