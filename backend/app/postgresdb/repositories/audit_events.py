@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import or_, select
+from sqlalchemy import delete, func, or_, select
 
 from app.postgresdb.models import AuditEvent
 from app.postgresdb.repositories.base import SessionRepository
@@ -60,3 +60,14 @@ class AuditEventRepository(SessionRepository):
         query = query.order_by(AuditEvent.created_at.desc(), AuditEvent.id.desc()).limit(limit).offset(offset)
         result = await self._session.execute(query)
         return list(result.scalars())
+
+    async def count_before(self, instant: datetime) -> int:
+        result = await self._session.execute(
+            select(func.count()).select_from(AuditEvent).where(AuditEvent.created_at < instant)
+        )
+        return result.scalar_one()
+
+    async def delete_before(self, instant: datetime) -> int:
+        """The retention purge's own operation (app/retention/audit.py): the only delete here."""
+        result = await self._session.execute(delete(AuditEvent).where(AuditEvent.created_at < instant))
+        return result.rowcount

@@ -5,6 +5,7 @@ other test's rows are that old, so they're never due here."""
 import itertools
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
+from unittest.mock import patch
 
 import pytest
 from sqlalchemy import select, update
@@ -12,6 +13,9 @@ from sqlalchemy import select, update
 from app.clock import CLINIC_ZONE
 from app.intake import Channel, content_hash
 from app.postgresdb import (
+    AuditEvent,
+    AuditEventInput,
+    AuditEventRepository,
     Claim,
     ClaimCodeInput,
     ClaimContextInput,
@@ -26,8 +30,9 @@ from app.postgresdb import (
     ExtractionStageInput,
     Gender,
     PatientRepository,
+    session_scope,
 )
-from app.retention import NoteScrubber, RetentionPolicy
+from app.retention import NoteScrubber, RetentionJob, RetentionPolicy
 from tests.db_helpers import ensure_user_row, physician
 
 _physician_ids = itertools.count(7000)
@@ -231,3 +236,54 @@ async def test_scrubbing_leaves_notes_still_in_retention_alone(db_session, physi
     assert encounter.note_text is not None
     tasks = set(await db_session.scalars(select(ExtractionRunResult.task).where(ExtractionRunResult.run_id == run.id)))
     assert tasks == {"consultation_summary", "billing_codes"}
+
+
+class _Clock:
+    def today(self) -> date:
+        return TODAY
+
+    def now(self) -> datetime:
+        return NOW
+
+
+async def _audit_event(days_ago: int) -> int:
+    async with session_scope() as session:
+        event = await AuditEventRepository(session).add(AuditEventInput(action="login_succeeded", ip="10.0.0.1"))
+        await session.execute(
+            update(AuditEvent).where(AuditEvent.id == event.id).values(created_at=NOW - timedelta(days=days_ago))
+        )
+        return event.id
+
+
+async def _audit_ids(ids: list[int]) -> set[int]:
+    async with session_scope() as session:
+        return set(await session.scalars(select(AuditEvent.id).where(AuditEvent.id.in_(ids))))
+
+
+async def test_the_job_deletes_audit_events_after_a_year():
+    old, recent = await _audit_event(366), await _audit_event(364)
+
+    report = await RetentionJob(RetentionPolicy(audit_days=365), _Clock()).run()
+
+    assert report.audit_events_deleted is not None and report.audit_events_deleted >= 1
+    assert await _audit_ids([old, recent]) == {recent}
+
+
+async def test_a_dry_run_counts_without_deleting():
+    old = await _audit_event(400)
+
+    report = await RetentionJob(RetentionPolicy(audit_days=365), _Clock()).run(dry_run=True)
+
+    assert report.audit_events_deleted is not None and report.audit_events_deleted >= 1
+    assert await _audit_ids([old]) == {old}
+
+
+async def test_a_failing_step_is_logged_and_the_others_still_run(caplog):
+    old = await _audit_event(400)
+
+    with patch.object(NoteScrubber, "scrub_due", side_effect=RuntimeError("boom")):
+        report = await RetentionJob(RetentionPolicy(audit_days=365), _Clock()).run()
+
+    assert report.notes_scrubbed is None
+    assert "retention step notes_scrubbed failed" in caplog.text
+    assert await _audit_ids([old]) == set()

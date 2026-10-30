@@ -150,7 +150,8 @@ class LoginThrottle(Base):
 
 class AuditEvent(CreatedAtMixin, Base):
     """Append-only trail of account-level events: what an admin did to which account, and
-    every login on a real account (app/audit/). Never updated or deleted by the app.
+    every login on a real account (app/audit/). Never updated by the app, and deleted only
+    once past retention (app/retention/audit.py) — it holds IP addresses.
 
     `action` is a plain String (app/audit/actions.py's AuditAction values), not a native
     Enum, so a new action needs no schema change. `details` carries what changed (field
